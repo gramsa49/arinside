@@ -1,0 +1,336 @@
+==================================================================
+About ARInside
+==================================================================
+
+ARInside is a commandline application that generates linked HTML pages to document ARSystem
+workflow. The program can be run in online mode connecting to an ARSystem server or file mode using an
+ARSystem Administrator generated XML server definition file. In advance a Packing List with all ARSystem
+server objects not to include in the documentation can be specified in the application configuration. ARInside
+is programmed and maintained by Stefan Nerlich (stefan.nerlich@gmx.com)
+
+
+==================================================================
+Commandline Parameters
+==================================================================
+
+Required Parameters
+-s (string) ARSystem server name to connect
+-l (string) Login Name used to connect to the ARSystem server
+-i (string) File Name of the configuration file
+Optional Parameters
+-p (string) Password
+-t (integer) The port number that the program will use to communicate with the AR System server. If you do
+not specify this parameter or provide 0 for the port number, your program will use the port number supplied
+by the portmapper. This parameter is overridden by the ARTCPPORT environment variable.
+-r (integer) The RPC program number of the server. Specify 390600 to use the admin server, a number from
+390621 to 390634 or 390636 to 390669 or 390680-390694 to use a private server, or 0 (default) to use the
+fast or list server queue. This parameter is overridden by the ARRPC environment variable.
+
+Examples
+arinside.exe -s servername -l Demo -i settings.ini
+arinside.exe -l Demo -s servername -p mypassword -i settings.ini
+arinside.exe -p "my&password" -i settings.ini -s servername -l Demo
+arinside.exe -s servername -l Demo -i "my settings.ini“
+arinside.exe -s servername -l Demo -i "my settings.ini“ -t 1044 -r 390621
+
+Comments:
+- The order of the parameters is irrelevant
+- Parameters with special characters (for example empty spaces) can be surrounded by quotation marks
+
+
+
+==================================================================
+Configuration
+==================================================================
+
+The ARInside application settings can be configured using a text-file with the following key-values.
+
+Application Settings
+
+TargetFolder
+ Description: Relative path to the output directory where the documentation is saved.
+ Type: String
+ Default value: DefaultOutputFolder
+
+FileMode
+ Description: Specify if the application will connect to an ARSystem server (FileMode=FALSE) or load
+ information from a file specified in parameter ObjListXML (FileMode=TRUE).
+ Type: Boolean
+ Default value: FALSE
+ Option: TRUE / FALSE
+
+ObjListXML
+ Description: An ARSystem Administrator server definition file in XML format. The parameter specifies the
+ filename. Refer to the ARSystem Administrator Guide how to export server definitions in XML format.
+ Type: String
+ Default value: <EMPTY>
+
+UTF-8
+ Refer to your ARSystem Database configuration if UTF-8 encoding is required.
+ Type: Boolean
+ Default value: FALSE
+ Option: TRUE / FALSE
+
+BlackList
+ Description: Name of an ARSystem PackingList with a list of ARSystem objects NOT to include in the
+ documentation. Server objects type of Application or Packinglist will be considered as container without the
+ including objects. Refer to the ARSystem Administrator Guide how to create a PackingList and add/remove
+ objects to the list.
+ Type: String
+ Default value: <EMPTY>
+
+LoadServerInfoList
+ Description: Load extended server informations.
+ Type: Boolean
+ Default value: TRUE
+ Option: TRUE / FALSE
+
+CompactFolder
+ Use NTFS file system compression to save some disk space. The application uses the Windows NT
+ (tm) compact command.
+ Type: Boolean
+ Default value: TRUE
+ Option: TRUE / FALSE
+ 
+DeleteExistingFiles
+ Delete all existing files in target folder.
+ Type: Boolean
+ Default value: TRUE
+ Option: TRUE / FALSE
+ Data Retrieval
+
+LoadUserList
+ Description: Load User data from ARSystem form „User“. Requires the following fields in the form:
+ RequestId (1), LoginName (101), Email (103), GroupList (104), FullName (8), DefNotify (108), LicType
+ (109), FtLicType (110), CreatedBy (2), Created (3), ModifiedBy (5), Modified (6)
+ If this parameter is set to „FALSE“ no user data will be loaded.
+ Type: Boolean
+ Default value: TRUE
+ Option: TRUE / FALSE
+
+UserForm
+ Description: Name of the ARSystem user form.
+ Type: String
+ Default value: User
+
+UserQuery
+ Description: Query to restrict the number of users returned from the server
+ Type: String
+ Default value: '1'!=$NULL$
+
+LoadGroupList
+ Description: Load Group data from ARSystem form „Group“. Requires the following fields in the form:
+ RequestId (1), GroupName (105), GroupId (106), GroupType (107), LongGroupName (8), CreatedBy (2),
+ Created (3), ModifiedBy (5), Modified (6)
+ If this parameter is set to “FALSE” no group data will be loaded.
+ Type: Boolean
+ Default value: TRUE
+ Option: TRUE / FALSE
+
+GroupForm
+ Description: Name of the ARSystem group form.
+ Type: String
+ Default value: Group
+ GroupQuery
+ Description: Query to restrict the number of groups returned from the server
+ Type: String
+ Default value: '1'!=$NULL$
+
+LoadRoleList
+ Description: Load Roles data from ARSystem form „Role“. Requires the following fields in the form:
+ RequestId (1), ApplicationName (1700), RoleName (1701), RoleID (1702), GroupName Test (2001),
+ GroupName Production (2002), CreatedBy (2), Created (3), ModifiedBy (5), Modified (6)
+ If this parameter is set to “FALSE” no role data will be loaded.
+ Type: Boolean
+ Default value: TRUE
+ Option: TRUE / FALSE
+ RoleForm
+ Description: Name of the ARSystem role form.
+ Type: String
+ Default value: Roles
+
+RoleQuery
+ Description: Query to restrict the number of roles returned from the server
+ Type: String
+ Default value: '1'!=$NULL$
+ MaxRetrieve
+ Description: The maximum number of entries to retrieve. Use this parameter to limit the amount of data
+ returned if the qualification does not sufficiently narrow the list. Specify 0 to assign no maximum.
+ Type: Integer
+ Default value: 0
+
+Layout
+ CompanyName
+ Description: Your company name displayed in the documentation.
+ Type: String
+ Default value: yourcompanyname
+ CompanyUrl
+ Description: Html link to the specified company (CompanyName)
+ Type: String
+ Default value: http://companyurl.com
+
+
+
+==================================================================
+Security
+==================================================================
+ARInside uses the following ARSystem API calls to load objects from server / file.
+
+Online Mode:
+ARInitialzation
+ARTermination
+ARGetList(...)
+ARGet(...)
+FreeAR
+
+File Mode:
+ARInitialzation
+ARGet(...)FromXML
+Security Comments:
+ARInside uses NO DirectSQL, Run Process or ARExecuteProcess API calls.
+
+
+
+==================================================================
+User visible changes for ARInside
+==================================================================
+
+27-Jul-2007 [Version 2.07.4]
+ -Internal update
+
+27-Jul-2007 [Version 2.07.3]
+ -Internal update
+
+09-Jul-2007 [Version 2.07.2]
+ -Added StatusHistory documentation in qualification and push fields assignememt
+ -Updated NULL value field assignement
+
+05-Jul-2007 [Version 2.07.1]
+ -Added tab-separated csv data information to field documentation to load data into external applications
+ -Included a new list of server objects with no permission groups (Administrator only access)
+
+23-Jun-2007 [Version 2.07.0]
+ -Additional error and plausibility validation
+
+22-Jun-2007 [Version 2.06.7]
+ -Additional error checking
+ -Added reference information for ActiveLink and Filter SetFields and PushFields 'All matching IDs' action
+
+20-Jun-2007 [Version 2.06.6]
+ -Improved application logging functionality
+
+19-Jun-2007 [Version 2.06.5]
+ -Fixed a bug in Filter SetFields action struct using Filter API
+
+26-Apr-2007 [Version 2.06.4]
+ -Added a new CmdUtility to the project to start ARInside from Windows form application (includes source)
+
+26-Apr-2007 [Version 2.06.3]
+ -Moved C++ project solution to VS 2005 and updated group list helper class
+ -Added application installer
+
+23-Apr-2007 [Version 2.06.1]
+ -In addition to workflow information for each field i added a new workflow documentation for each form that lists all related
+  al's, filters and escalations
+ -Validator documentation not saved - fixed
+
+20-Apr-2007 [Version 2.04.8]
+ -Added Role support (Requires updated configuration file)
+ -Improved Application and Container documentation
+ 
+ -Permission documentation for all server objects updated
+
+29-Jan-2007 [Version 2.02.1]
+ -Fixed CurrentField in SearchMenu qualification
+ -Limited ActiveLink OpenWindowAction to required window modes
+
+24-Jan-2007 [Version 2.02.0]
+ -Fixed a bug in the SetFields Action (Filters/ActiveLinks/Escalations)
+
+19-Jan-2007 [Version 2.01.8]
+ -Fixed ActiveLink SetFields from WebService
+ -Updated ActiveLink SetFields from Process
+
+18-Jan-2007 [Version 2.01.0]
+ -Fixed an error in the ActiveLink OpenWindow action that caused dublicate fields to appear in the validator
+ -AR_DATA_TYPE_NULL added to field assignment enumeration
+ -Added ExecuteOn to escalation object list
+ -Added permission informations based on field permissions to form documentation (Form -> Formname -> Permissions)
+ -Added a list of Forms/Fields a group can access
+
+17-Jan-2007 [Version 1.08.7]
+ -Added informations to the Escalation documentation
+ -Added "Execute On" information to the object tables of Active Links and Filters
+ -It is now possible to use NTFS file compression to save disk space
+ -2 new keys in the settings configuration file
+ -Updated documentation
+
+27-Dec-2006 [Version 1.08.6]
+ -Added WindowLocation property to ActiveLink WindowOpen action
+ -Updated datatype enumeration
+
+11-Dec-2006 [Version 1.08.5]
+ -Added analyzer informations for index fields
+
+11-Dec-2006 [Version 1.08.4]
+ -Updated html layout in schema details
+
+10-Dec-2006 [Version 1.08.3]
+ -Added documentation about deleted fields and affected workflow
+
+06-Dec-2006 [Version 1.08.2]
+ -SetFields in Filters and ActiveLinks now show correct the CURRENT_SCREEN and CURRENT_TRANSACTION information
+
+05-Dec-2006 [Version 1.08.0]
+ -Fixed some bugs in the application, webservice and packinglist documentation
+
+03-Dec-2006 [Version 1.07.5]
+ -Added some object property informations to AL, Filter, Escalation, Container and Schema
+ -Updated quailification enumeration (RunIf, Table, JoinForm)
+
+01-Dec-2006 (1.04.9)
+ -External added to qualification documentation
+ -Added execution order of active links and filters to fields workflow references
+
+01-Dec-2006 [Version 1.04.8]
+ -Added Webservice Documentation
+ -ChangeField Visible Flag added to documentation
+ -Added some details to the workflow references
+
+25-Nov-2006 [Version 1.04.7]
+ -Added ActiveLink, Filter and Escalation status (Enabled, Disabled) to the reference informations
+
+22-Nov-2006 [Version 1.03.9]
+ -Fixed a bug in Set- and Push-Field assignement
+ -UPdated field id 1 in join forms to display RequestId(primary Form) | RequestId (secondary Form)
+ -Added notify field reference for message text fields
+
+17-Nov-2006 [Version 1.03.1]
+ -Changed the load field functions from ARGetField to ARGetMultipleFields to improve the speed
+ -Updated LastChanged html link to the correct user information
+
+13-Nov-2006 [Version 1.02.8]
+ -Some minor changes to improve the globalField enumeration
+ -fixed a bug in the message enumeration
+
+09-Nov-2006
+ -Release of Version 1.02.0
+
+
+
+==================================================================
+Disclaimer
+==================================================================
+THIS SOFTWARE IS PROVIDED `AS IS' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
+ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
+OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
+STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
+OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.THIS
+PROGRAM IS FREEWARE - YOU ARE ALLOWED TO SPREAD IT AS YOU WANT AS LONG AS YOU
+DONT CHARGE ANYTHIN FOR IT YOURSELF:
+ALL TRADEMARKS AND REGISTERED TRADEMARKS ARE THE PROPERTY OF THEIR RESPECTIVE
+OWNERS.
