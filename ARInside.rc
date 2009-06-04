@@ -1,0 +1,102 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+LANGUAGE 7, 1
+#pragma code_page(1252)
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE  
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE  
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE  
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Data
+//
+
+STYLE_CSS           	Rcdata DISCARDABLE      "Res/style.css"
+SCRIPT	            	Rcdata DISCARDABLE      "Res/script.js"
+TABSCRIPT            	Rcdata DISCARDABLE      "Res/tabscript.js"
+SORTSCRIPT            	Rcdata DISCARDABLE      "Res/sortscript.js"
+NAVIGATION_HTM        	Rcdata DISCARDABLE      "Res/navigation.htm"
+SERVER			Rcdata DISCARDABLE      "Res/server.gif"
+ACTIVE_LINK		Rcdata DISCARDABLE      "Res/active_link.gif"
+AL_GUIDE		Rcdata DISCARDABLE      "Res/al_guide.gif"
+APPLICATION		Rcdata DISCARDABLE      "Res/application.gif"
+ARS_EDIT		Rcdata DISCARDABLE      "Res/ars_edit.gif"
+DISABLED		Rcdata DISCARDABLE      "Res/disabled.gif"
+DOC			Rcdata DISCARDABLE      "Res/doc.gif"
+DOWN			Rcdata DISCARDABLE      "Res/down.gif"
+USER			Rcdata DISCARDABLE      "Res/user.gif"
+EMPTY_LIST		Rcdata DISCARDABLE      "Res/empty_list.gif"
+ESCALATION		Rcdata DISCARDABLE      "Res/escalation.gif"
+FILTER			Rcdata DISCARDABLE      "Res/filter.gif"
+FILTER_GUIDE		Rcdata DISCARDABLE      "Res/filter_guide.gif"
+FOLDER			Rcdata DISCARDABLE      "Res/folder.gif"
+GROUP			Rcdata DISCARDABLE      "Res/group.gif"
+CHAPTER			Rcdata DISCARDABLE      "Res/chapter.gif"
+MENU			Rcdata DISCARDABLE      "Res/menu.gif"
+NEXT			Rcdata DISCARDABLE      "Res/next.gif"
+PACKING_LIST		Rcdata DISCARDABLE      "Res/packing_list.gif"
+PREV			Rcdata DISCARDABLE      "Res/prev.gif"
+SCHEMA			Rcdata DISCARDABLE      "Res/schema.gif"
+SEARCH			Rcdata DISCARDABLE      "Res/search.gif"
+UP			Rcdata DISCARDABLE      "Res/up.gif"
+WEBSERVICE		Rcdata DISCARDABLE      "Res/webservice.gif"
+SORT_DESC		Rcdata DISCARDABLE      "Res/sort_desc.gif"
+SORT_ASC		Rcdata DISCARDABLE      "Res/sort_asc.gif"
+VISIBLE			Rcdata DISCARDABLE      "Res/visible.gif"
+EDIT			Rcdata DISCARDABLE      "Res/edit.gif"
+HIDDEN			Rcdata DISCARDABLE      "Res/hidden.gif"
+INFO			Rcdata DISCARDABLE      "Res/info.gif"
