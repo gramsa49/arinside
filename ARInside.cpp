@@ -1730,8 +1730,12 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 								return field->limit.u.enumLimits.u.regularList.nameList[enumPosition];
 							break;
 							case AR_ENUM_STYLE_CUSTOM:
-								return field->limit.u.enumLimits.u.customList.enumItemList[enumPosition].itemName;
-							break;
+								for (int i=0; i< field->limit.u.enumLimits.u.customList.numItems; i++) { 
+									if (field->limit.u.enumLimits.u.customList.enumItemList[i].itemNumber == enumPosition) 
+										return field->limit.u.enumLimits.u.customList.enumItemList[i].itemName; 
+								} 
+								return "";
+								break;
 							case AR_ENUM_STYLE_QUERY:
 								return "QUERY";
 							break;
