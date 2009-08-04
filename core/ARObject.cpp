@@ -37,7 +37,7 @@ CARObject::~CARObject(void)
 
 string CARObject::FileID()
 {
-	char buffer[10];
+	char buffer[20];
 	return _itoa(this->insideId, buffer, 10);
 }
 
