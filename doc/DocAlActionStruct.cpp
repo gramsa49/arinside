@@ -543,15 +543,15 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 
 		//Visibility
 		tmp = "";
-		for(unsigned int i=0; i< action.props.numItems; i++) {	
-			switch(action.props.props[i].prop) {				
-				case AR_DPROP_VISIBLE: {					
-					if(action.props.props[i].value.u.intVal != NULL) {
+		for(unsigned int i=0; i< action.props.numItems; i++)
+		{	
+			switch(action.props.props[i].prop)
+			{				
+				case AR_DPROP_VISIBLE:
+				{					
+					if(action.props.props[i].value.dataType == AR_DATA_TYPE_ENUM || action.props.props[i].value.dataType == AR_DATA_TYPE_INTEGER)
+					{
 						tmp =  CAREnum::SetCharFieldVisibility(action.props.props[i].value.u.intVal);
-					} else {
-						//ljlongwing - for some reason, hidden attributes show up as null instead of 0 like they are supposed to
-						//added else statement in here to have it handle and display the proper value anyway
-						tmp = "Hidden";
 					}
 				}
 				break;
