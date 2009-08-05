@@ -48,8 +48,7 @@
 
 using namespace OUTPUT;
 
-CARInside::CARInside(AppConfig &appConfig)
-{
+CARInside::CARInside(AppConfig &appConfig) {
 	this->appConfig = appConfig;
 	this->schemaList.clear();
 	this->filterList.clear();
@@ -71,12 +70,9 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->nDurationDocumentation = 0;
 }
 
-CARInside::~CARInside(void)
-{
-}
+CARInside::~CARInside(void) {}
 
-int CARInside::Init(string user, string pw, string server, int port, int rpc)
-{
+int CARInside::Init(string user, string pw, string server, int port, int rpc) {
 	cout << endl << "Connecting to server " << server << "..." << endl;
 
 	memset(&arControl, '\0', sizeof(arControl));
@@ -94,19 +90,12 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	int nResult = ARInitialization(&this->arControl,&this->arStatus);
 
 	if(server == "" && nResult == AR_RETURN_OK) // Filemode
-	{
 		return AR_RETURN_OK;
-	}
-
-	if ( nResult == AR_RETURN_OK)
-	{
+	if ( nResult == AR_RETURN_OK) {
 		if(port>0)
-		{
 			nResult = ARSetServerPort(&this->arControl, this->arControl.server, port, rpc, &this->arStatus);
-		}
 
-		if(nResult == AR_RETURN_OK)
-		{
+		if(nResult == AR_RETURN_OK) {
 			ARNameList nameList;
 			nResult = ARGetListSchema(&this->arControl,
 				0,
@@ -118,11 +107,8 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 				&this->arStatus);
 			
 			if(nameList.numItems == 0)
-			{							
 				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
-			}
-			else
-			{
+			else {
 				CARServerInfo serverInfo(this->arControl, this->arStatus);
 				this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
 				this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
@@ -140,19 +126,15 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	return nResult;
 }
 
-int CARInside::Terminate(void)
-{
+int CARInside::Terminate(void) {
 	ARTermination(&this->arControl, &this->arStatus);
 	FreeARStatusList(&this->arStatus, false);
 	return 0;
 }
 
-void CARInside::LoadBlackList(void)
-{
-	try
-	{
-		if(appConfig.blackList.size() > 0)
-		{
+void CARInside::LoadBlackList(void) {
+	try {
+		if(appConfig.blackList.size() > 0) {
 			ARReferenceTypeList		refTypes;
 			refTypes.refType = (int *) malloc(sizeof(unsigned int) * 1);
 			refTypes.numItems = 1;
@@ -178,67 +160,56 @@ void CARInside::LoadBlackList(void)
 				NULL,
 				NULL,
 				NULL,
-				&this->arStatus) == AR_RETURN_OK)
-			{
-				for(unsigned int i=0; i< obj.references.numItems; i ++)
-				{
-					if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
-					{
+				&this->arStatus) == AR_RETURN_OK) {
+				for(unsigned int i=0; i< obj.references.numItems; i ++) {
+					if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6) {
 						CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
 				
 						this->blackList.insert(blackList.end(), *blackListItem);
 						cout << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
 					}
 				}
-			}		
-			else
+				//this->blackList.insert(blackList.end(), CARContainer obj(appConfig.blackList, 0));
+			} else
 				cout << "Failed loading the blacklist." << endl;	
 		}
 	} 
-	catch (...)
-	{ 
+	catch (...) { 
 		cerr << "Failed loading the blacklist." << endl; 
 	}
 }
 
-bool CARInside::InBlacklist(int refType, string objName)
-{
+bool CARInside::InBlacklist(int refType, string objName) {
+	if(refType == ARREF_CONTAINER && strcmp(objName.c_str(), (char*)appConfig.blackList.c_str())==0)
+		return true;
+
 	list<CBlackListItem>::iterator bItemIter;
 	CBlackListItem *bItem;
 
-	for ( bItemIter = blackList.begin(); bItemIter != blackList.end(); bItemIter++ )
-	{
+	for ( bItemIter = blackList.begin(); bItemIter != blackList.end(); bItemIter++ ) {
 		bItem = &(*bItemIter);
 
 		if(bItem->refType == refType && strcmp(objName.c_str(), bItem->name.c_str())==0)
-		{
 			return true;
-		}	
 	}
 	return false;
 }
 
-string CARInside::GetARStatusError()
-{
+string CARInside::GetARStatusError() {
 	stringstream strm;
 	strm.str("");
-	if(this->arStatus.statusList != NULL)
-	{
+	if(this->arStatus.statusList != NULL) {
 		if(this->arStatus.numItems > 0)
-		{
 			strm << this->arStatus.statusList[0].messageText;
-		}
 	}
 
 	FreeARStatusList(&this->arStatus, false);
 	return strm.str();
 }
 
-int CARInside::ValidateTargetDir(string targetFolder)
-{		
+int CARInside::ValidateTargetDir(string targetFolder) {		
 	int nResult = -1;
-	try
-	{
+	try {
 		cout << "Validating target folder: " << targetFolder << endl;
 		
 		stringstream fName;
@@ -249,34 +220,27 @@ int CARInside::ValidateTargetDir(string targetFolder)
 		fout.close();
 
 		nResult = remove(fName.str().c_str());
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION ValidateTargetDir '" << targetFolder << "'" << endl;
 	}
 
 	return nResult;
 }
 
-bool CARInside::FileExists(string fName)
-{
+bool CARInside::FileExists(string fName) {
 	bool result = false;
 
-	try
-	{
+	try {
 		bool flag = false;
 		fstream fin;
 		fin.open(fName.c_str(),ios::in);
-		if( fin.is_open() )
-		{
-		cout << fName << "exists" << endl;
-		result =true;
+		if( fin.is_open() ) {
+			cout << fName << "exists" << endl;
+			result =true;
 		}
 		fin.close();
-
 	}
-	catch(...)
-	{
+	catch(...) {
 		cout << "EXCEPTION An error occured validating the target path" << endl;
 	}
 
@@ -284,14 +248,12 @@ bool CARInside::FileExists(string fName)
 }
 
 
-void CARInside::Prepare(void)
-{	
+void CARInside::Prepare(void) {	
 	CWindowsUtil wUtil(this->appConfig);
 
 	CDocMain *docMain = new CDocMain(*this);
 
-	if( docMain->Index() == 1)
-	{
+	if( docMain->Index() == 1) {
 		wUtil.CreateSubDirectory("active_link");
 		wUtil.CreateSubDirectory("active_link_guide");
 		wUtil.CreateSubDirectory("application");
@@ -311,48 +273,37 @@ void CARInside::Prepare(void)
 	}
 }
 
-bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, CFieldRefItem &refItem)
-{
+bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, CFieldRefItem &refItem) {
 	list<CFieldRefItem>::iterator iter;
 	CFieldRefItem *item;
 
-	for ( iter = this->listFieldRefItem.begin(); iter != this->listFieldRefItem.end(); iter++ )
-	{	
+	for ( iter = this->listFieldRefItem.begin(); iter != this->listFieldRefItem.end(); iter++ ) {	
 		item = &(*iter);
 		if(	item->fieldInsideId == fieldInsideId
 			&& item->schemaInsideId == schemaInsideId
 			&& item->arsStructItemType == refItem.arsStructItemType
 			&& strcmp(item->fromName.c_str(), refItem.fromName.c_str()) == 0
-			&& strcmp(item->description.c_str(), refItem.description.c_str()) == 0)
-			
-		{
+			&& strcmp(item->description.c_str(), refItem.description.c_str()) == 0) {
 			return true;
 		}
 	}	
 	return false;
 }
 
-void CARInside::LoadServerObjects(int nMode)
-{
+void CARInside::LoadServerObjects(int nMode) {
 	CAppTimer mTimer;
 	mTimer.StartTimer();
 
 	if(nMode==1)
-	{
 		this->LoadFromFile();
-	}
 	else
-	{
 		this->LoadFromServer();
-	}
 	mTimer.EndTimer();
 	this->nDurationLoad = mTimer.GetDuration();
 }
 
-void CARInside::LoadFromFile(void)
-{
-	try
-	{
+void CARInside::LoadFromFile(void) {
+	try {
 		cout << endl << "Loading objects from file '" << appConfig.objListXML << "'" << endl;
 
 		ARXMLInputDoc xmlInputDoc;
@@ -376,8 +327,7 @@ void CARInside::LoadFromFile(void)
 			&parsedStream,
 			&parsedObjects,
 			NULL,
-			&this->arStatus) == AR_RETURN_OK)
-		{			
+			&this->arStatus) == AR_RETURN_OK) {			
 			unsigned int arInsideIdSchema = 0;
 			unsigned int arInsideIdAl = 0;
 			unsigned int arInsideIdFilter = 0;
@@ -385,12 +335,9 @@ void CARInside::LoadFromFile(void)
 			unsigned int arInsideIdCont = 0;
 			unsigned int arInsideIdMenu = 0;
 			
-			for(unsigned int i=0; i< parsedObjects.numItems; i++)
-			{
-				switch(parsedObjects.structItemList[i].type)
-				{						
-				case AR_STRUCT_ITEM_XML_FILTER:
-				{
+			for(unsigned int i=0; i< parsedObjects.numItems; i++) {
+				switch(parsedObjects.structItemList[i].type) {						
+				case AR_STRUCT_ITEM_XML_FILTER: {
 					cout << "Loading Filter: " << parsedObjects.structItemList[i].name; 
 					CARFilter *obj = new CARFilter(parsedObjects.structItemList[i].name, arInsideIdFilter);
 
@@ -412,21 +359,18 @@ void CARInside::LoadFromFile(void)
 						&obj->changeDiary,
 						&obj->objPropList,
 						&obj->xmlDocVersion,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						this->filterList.insert(this->filterList.end(), *obj);
 										
 						cout << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
 						arInsideIdFilter++;
-					}
-					else
+					} else
 						cout << " [ERROR]" << endl;
 
 					FreeARStatusList(&this->arStatus, false);
 				}
 				break;
-				case AR_STRUCT_ITEM_XML_SCHEMA:
-					{
+				case AR_STRUCT_ITEM_XML_SCHEMA: {
 						cout << "Loading Form: " << parsedObjects.structItemList[i].name; 
 						CARSchema *schema = new CARSchema(parsedObjects.structItemList[i].name, arInsideIdSchema);
 
@@ -458,12 +402,10 @@ void CARInside::LoadFromFile(void)
 							&schema->changeDiary,
 							&schema->objPropList,
 							&schema->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
-						{										
+							&this->arStatus) == AR_RETURN_OK) {										
 
 							//Fields
-							for(unsigned int nField = 0; nField < fieldInfoList.numItems; nField++)
-							{									
+							for(unsigned int nField = 0; nField < fieldInfoList.numItems; nField++) {									
 								ARFieldInfoStruct tmpField = fieldInfoList.fieldList[nField];
 								cout << "Loading Field: " << tmpField.fieldName;	
 
@@ -491,8 +433,7 @@ void CARInside::LoadFromFile(void)
 								schema->fieldList.insert(schema->fieldList.end(), *field);
 
 								//Check if this is a global field and add it to the globalfieldlist
-								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
-								{
+								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999) {
 									CARGlobalField *globalField = new CARGlobalField(schema->insideId, field->insideId, field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}	
@@ -501,8 +442,7 @@ void CARInside::LoadFromFile(void)
 							}
 
 							//VuiList
-							for(unsigned int nViewCnt=0; nViewCnt < vuiInfoList.numItems; nViewCnt++)
-							{
+							for(unsigned int nViewCnt=0; nViewCnt < vuiInfoList.numItems; nViewCnt++) {
 								ARVuiInfoStruct tmpVui = vuiInfoList.vuiList[nViewCnt];
 								CARVui *vui = new CARVui(tmpVui.vuiId);
 								
@@ -523,18 +463,15 @@ void CARInside::LoadFromFile(void)
 
 							cout << " (InsideID: " << arInsideIdSchema << ") [OK]" << endl;
 							arInsideIdSchema++;
-						}
-						else
+						} else
 							cout << " [ERROR]" << endl;
 
 						//FreeARFieldInfoList(&fieldInfoList, false);
 						//FreeARVuiInfoList(&vuiInfoList, false);
 						FreeARStatusList(&this->arStatus, false);
-						
 					}
 					break;					
-				case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
-					{
+				case AR_STRUCT_ITEM_XML_ACTIVE_LINK: {
 						cout << "Loading ActiveLink: " << parsedObjects.structItemList[i].name; 
 						CARActiveLink *obj = new CARActiveLink(parsedObjects.structItemList[i].name, arInsideIdAl);
 
@@ -560,21 +497,18 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
-						{
+							&this->arStatus) == AR_RETURN_OK) {
 							this->alList.insert(this->alList.end(), *obj);
 
 							cout << " (InsideID: " << arInsideIdAl << ") [OK]" << endl;
 							arInsideIdAl++;								
-						}
-						else
+						} else
 							cout << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
-				case AR_STRUCT_ITEM_XML_CHAR_MENU:
-					{
+				case AR_STRUCT_ITEM_XML_CHAR_MENU: {
 						cout << "Loading CharMenu: " << parsedObjects.structItemList[i].name; 
 						CARCharMenu *obj = new CARCharMenu(parsedObjects.structItemList[i].name, arInsideIdMenu);
 
@@ -591,21 +525,18 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
-						{
+							&this->arStatus) == AR_RETURN_OK) {
 							this->menuList.insert(this->menuList.end(), *obj);
 
 							cout << " (InsideID: " << arInsideIdMenu << ") [OK]" << endl;
 							arInsideIdMenu++;								
-						}
-						else
+						} else
 							cout << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
-				case AR_STRUCT_ITEM_XML_ESCALATION:
-					{
+				case AR_STRUCT_ITEM_XML_ESCALATION: {
 						cout << "Loading Escalation: " << parsedObjects.structItemList[i].name; 
 						CAREscalation *obj = new CAREscalation(parsedObjects.structItemList[i].name, arInsideIdEscal);
 
@@ -626,21 +557,18 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
-						{
+							&this->arStatus) == AR_RETURN_OK) {
 							this->escalList.insert(this->escalList.end(), *obj);
 
 							cout << " (InsideID: " << arInsideIdEscal << ") [OK]" << endl;
 							arInsideIdEscal++;								
-						}
-						else
+						} else
 							cout << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
-				case AR_STRUCT_ITEM_XML_CONTAINER:
-					{
+				case AR_STRUCT_ITEM_XML_CONTAINER: {
 						cout << "Loading Container: " << parsedObjects.structItemList[i].name; 
 						CARContainer *obj = new CARContainer(parsedObjects.structItemList[i].name, arInsideIdCont);
 
@@ -662,14 +590,12 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
-						{
+							&this->arStatus) == AR_RETURN_OK) {
 							this->containerList.insert(this->containerList.end(), *obj);
 
 							cout << " (InsideID: " << arInsideIdCont << ") [OK]" << endl;
 							arInsideIdCont++;								
-						}
-						else
+						} else
 							cout << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
@@ -677,44 +603,33 @@ void CARInside::LoadFromFile(void)
 					break;
 				}										
 			}		
-
-		}
-		else
-		{
+		} else 
 			cout << "An error occured parsing the xml document '" << appConfig.objListXML << "'" << endl;
-		}
 
 		FreeARXMLParsedStream(&parsedStream, false);
 		FreeARStatusList(&this->arStatus, false);
-
 		
 		//Add fieldreferences
 		SearchCustomFieldReferences();
-	} 
-	catch (...)
-	{ 
+	} catch (...) { 
 		cerr << "EXCEPTION loading server objects from xml file." << endl; 
 	}
 }
 
-void CARInside::LoadFromServer(void)
-{
+void CARInside::LoadFromServer(void) {
 	cout << endl << "Loading objects from server '" << appConfig.serverName << "'" << endl;
 	
 	//LoadServerInfoList	
-	if(appConfig.bLoadServerInfoList)
-	{
+	if(appConfig.bLoadServerInfoList) {
 		cout << "Start loading server informations:" << endl;
 		CARServerInfo serverInfo(this->arControl, this->arStatus);
 		serverInfo.GetList(serverInfoList);
 		cout << (unsigned int)serverInfoList.size() << " server settings loaded" << endl;
-	}
-	else
+	} else
 		cout << endl << "Loading server informations [SKIPPED]" << endl;
 
 	//LoadUserList
-	if(appConfig.bLoadUserList)
-	{
+	if(appConfig.bLoadUserList) {
 		cout << endl << "Start laoding users:" << endl;		
 		
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
@@ -724,14 +639,11 @@ void CARInside::LoadFromServer(void)
 		cout << (unsigned int)userList.size() << " users loaded" << endl;
 
 		delete dataFactory;
-	}
-	else
+	} else
 		cout << endl << "Loading users [SKIPPED]" << endl;
 
-
 	//LoadGroupList
-	if(appConfig.bLoadGroupList)
-	{
+	if(appConfig.bLoadGroupList) {
 		cout << endl << "Start loading groups:" << endl;		
 		
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
@@ -740,13 +652,11 @@ void CARInside::LoadFromServer(void)
 		dataFactory->Sort(groupList);
 		cout << (unsigned int)groupList.size() << " groups loaded" << endl;
 		delete dataFactory;
-	}
-	else
+	} else
 		cout << endl << "Loading groups [SKIPPED]" << endl;
 	
 	//LoadRoleList
-	if(appConfig.bLoadRoleList)
-	{
+	if(appConfig.bLoadRoleList) {
 		cout << endl << "Start loading roles:" << endl;		
 		
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
@@ -755,15 +665,13 @@ void CARInside::LoadFromServer(void)
 		dataFactory->Sort(roleList);
 		cout << (unsigned int)roleList.size() << " roles loaded" << endl;
 		delete dataFactory;
-	}
-	else
+	} else
 		cout << endl << "Loading roles [SKIPPED]" << endl;
 
 	//ActiveLinks		
 	cout << endl << "Start loading active links:" << endl;
 	int nResult = LoadActiveLinks();
 	cout << nResult << " ActiveLinks loaded" << endl;
-	
 
 	//Filters	
 	cout << endl << "Start loading filters:" << endl;
@@ -813,21 +721,16 @@ void CARInside::LoadFromServer(void)
 	SearchCustomFieldReferences();
 }
 
-int CARInside::LoadForms(int nType, int &schemaInsideId)
-{
+int CARInside::LoadForms(int nType, int &schemaInsideId) {
 	int nCnt =0;
 
-	try
-	{
+	try {
 		ARNameList nameList;
 		ARNameList aliasList;
 
-		if(ARGetListSchemaWithAlias(&this->arControl, 0, AR_HIDDEN_INCREMENT | nType, NULL, NULL, NULL, NULL, &nameList, &aliasList, &this->arStatus) == AR_RETURN_OK)
-		{
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_SCHEMA, nameList.nameList[i]))
-				{
+		if(ARGetListSchemaWithAlias(&this->arControl, 0, AR_HIDDEN_INCREMENT | nType, NULL, NULL, NULL, NULL, &nameList, &aliasList, &this->arStatus) == AR_RETURN_OK) {
+			for(unsigned int i=0; i< nameList.numItems; i++) {
+				if(!this->InBlacklist(ARREF_SCHEMA, nameList.nameList[i])) {
 					cout << "Loading Form: " << nameList.nameList[i] << endl;
 					CARSchema *schema = new CARSchema(nameList.nameList[i], schemaInsideId);
 					
@@ -852,16 +755,13 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 						schema->lastChanged,
 						&schema->changeDiary,
 						&schema->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						//Load form views
 						ARInternalIdList idList;
 
 						schema->vuiList.clear();
-						if(ARGetListVUI(&this->arControl, nameList.nameList[i], 0, &idList, &this->arStatus) == AR_RETURN_OK)
-						{
-							for(unsigned int nViewCnt=0; nViewCnt < idList.numItems; nViewCnt++)
-							{
+						if(ARGetListVUI(&this->arControl, nameList.nameList[i], 0, &idList, &this->arStatus) == AR_RETURN_OK) {
+							for(unsigned int nViewCnt=0; nViewCnt < idList.numItems; nViewCnt++) {
 								CARVui *vui = new CARVui(idList.internalIdList[nViewCnt]);
 								if(ARGetVUI(&this->arControl, 
 									nameList.nameList[i],
@@ -875,14 +775,12 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 									vui->owner,
 									vui->lastChanged,
 									&vui->changeDiary,
-									&this->arStatus) == AR_RETURN_OK)
-								{
+									&this->arStatus) == AR_RETURN_OK) {
 									cout << "Loading Form: " << nameList.nameList[i] << " Vui: " << vui->vuiName << endl;
 									vui->schemaInsideId = schemaInsideId;
 									vui->name = vui->vuiName;
 									schema->vuiList.insert(schema->vuiList.end(), *vui);
-								}
-								else
+								} else
 									cout << " [ERROR]" << endl;
 
 								FreeARStatusList(&this->arStatus, false);
@@ -931,10 +829,8 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 							&owner,
 							&lastChanged, 
 							&changeDiary, 
-							&this->arStatus)==AR_RETURN_OK)
-							{
-								for(unsigned int nFieldCnt=0; nFieldCnt< fieldId2.numItems; nFieldCnt++)
-								{
+							&this->arStatus)==AR_RETURN_OK) {
+								for(unsigned int nFieldCnt=0; nFieldCnt< fieldId2.numItems; nFieldCnt++) {
 									CARField *field = new CARField(fieldId2.internalIdList[nFieldCnt]);
 
 									field->schemaInsideId = schemaInsideId;
@@ -957,13 +853,11 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 									schema->fieldList.insert(schema->fieldList.end(), *field);
 
 									//Check if this is a global field and add it to the globalfieldlist
-									if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
-									{
+									if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999) {
 										CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->insideId, field->fieldId);
 										this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 									}
 								}
-
 								this->Sort(schema->fieldList);
 							}
 
@@ -975,8 +869,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 						schemaInsideId++;
 
 						nCnt++;
-					}			
-					else
+					} else
 						cout << " [ERROR]" << endl;
 				}
 			}
@@ -987,9 +880,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 		FreeARStatusList(&this->arStatus, false);
 
 		this->Sort(schemaList);
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION loading Schema " << endl;
 		GetARStatusError();
 	}
@@ -998,12 +889,10 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 }
 
 
-int CARInside::LoadContainer(void)
-{
+int CARInside::LoadContainer(void) {
 	int insideId=0;
 
-	try
-	{
+	try {
 		ARContainerInfoList conList;
 		
 		ARReferenceTypeList		refTypes;
@@ -1011,13 +900,10 @@ int CARInside::LoadContainer(void)
 		refTypes.numItems = 1;
 		refTypes.refType[0] = ARREF_ALL;
 
-		if(ARGetListContainer(&this->arControl, 0, ARCON_ALL, AR_HIDDEN_INCREMENT, NULL, NULL, &conList, &this->arStatus) == AR_RETURN_OK)
-		{
+		if(ARGetListContainer(&this->arControl, 0, ARCON_ALL, AR_HIDDEN_INCREMENT, NULL, NULL, &conList, &this->arStatus) == AR_RETURN_OK) {
 			this->containerList.clear();	
-			for(unsigned int i=0; i< conList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_CONTAINER, conList.conInfoList[i].name))
-				{
+			for(unsigned int i=0; i< conList.numItems; i++) {
+				if(!this->InBlacklist(ARREF_CONTAINER, conList.conInfoList[i].name)) {
 					cout << "Loading " << CAREnum::ContainerType(conList.conInfoList[i].type) << ": " << conList.conInfoList[i].name; 
 					CARContainer *obj = new CARContainer(conList.conInfoList[i].name, insideId);
 
@@ -1037,16 +923,14 @@ int CARInside::LoadContainer(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						this->containerList.insert(this->containerList.end(), *obj);
 
 						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
-					}		
-					else
+					}  else
 						cout << " [ERROR]" << endl;
 				}
 			}
@@ -1057,9 +941,7 @@ int CARInside::LoadContainer(void)
 		FreeARStatusList(&this->arStatus, false);
 
 		this->Sort(containerList);		
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION loading Container " << endl;
 		GetARStatusError();
 	}
@@ -1067,21 +949,16 @@ int CARInside::LoadContainer(void)
 	return insideId;
 }
 
-int CARInside::LoadCharMenus(void)
-{
+int CARInside::LoadCharMenus(void) {
 	int insideId=0;
 
-	try
-	{
+	try {
 		ARNameList nameList;
 			
-		if(ARGetListCharMenu(&this->arControl, 0, NULL, NULL, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
+		if(ARGetListCharMenu(&this->arControl, 0, NULL, NULL, NULL, &nameList, &this->arStatus) == AR_RETURN_OK) {
 			this->menuList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_CHAR_MENU, nameList.nameList[i]))
-				{
+			for(unsigned int i=0; i< nameList.numItems; i++) {
+				if(!this->InBlacklist(ARREF_CHAR_MENU, nameList.nameList[i])) {
 					cout << "Loading Menu: " << nameList.nameList[i]; 
 					CARCharMenu *obj = new CARCharMenu(nameList.nameList[i], insideId);
 
@@ -1095,16 +972,14 @@ int CARInside::LoadCharMenus(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						this->menuList.insert(this->menuList.end(), *obj);
 
 						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
-					}
-					else
+					} else
 						cout << " [ERROR]" << endl;
 				}
 			}
@@ -1114,9 +989,7 @@ int CARInside::LoadCharMenus(void)
 		FreeARStatusList(&this->arStatus, false);
 
 		this->Sort(menuList);		
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION loading CharMenus " << endl;
 		GetARStatusError();
 	}
@@ -1128,17 +1001,13 @@ int CARInside::LoadEscalations(void)
 {
 	int insideId=0;
 
-	try
-	{
+	try {
 		ARNameList nameList;
 			
-		if(ARGetListEscalation(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
+		if(ARGetListEscalation(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK) {
 			this->escalList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_ESCALATION, nameList.nameList[i]))
-				{
+			for(unsigned int i=0; i< nameList.numItems; i++) {
+				if(!this->InBlacklist(ARREF_ESCALATION, nameList.nameList[i])) {
 					cout << "Loading Escalation: " << nameList.nameList[i]; 
 					CAREscalation *obj = new CAREscalation(nameList.nameList[i], insideId);
 
@@ -1156,16 +1025,14 @@ int CARInside::LoadEscalations(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						this->escalList.insert(this->escalList.end(), *obj);
 
 						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
-					}	
-					else
+					} else
 						cout << " [ERROR]" << endl;
 				}
 			}
@@ -1175,9 +1042,7 @@ int CARInside::LoadEscalations(void)
 		FreeARStatusList(&this->arStatus, false);
 
 		this->Sort(escalList);
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION loading Escalations " << endl;
 		GetARStatusError();
 	}
@@ -1185,21 +1050,16 @@ int CARInside::LoadEscalations(void)
 	return insideId;
 }
 
-int CARInside::LoadFilters(void)
-{
+int CARInside::LoadFilters(void) {
 	int insideId=0;
 
-	try
-	{
+	try {
 		ARNameList nameList;
 			
-		if(ARGetListFilter(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
+		if(ARGetListFilter(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK) {
 			this->filterList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_FILTER, nameList.nameList[i]))
-				{
+			for(unsigned int i=0; i< nameList.numItems; i++) {
+				if(!this->InBlacklist(ARREF_FILTER, nameList.nameList[i])) {
 					cout << "Loading Filter: " << nameList.nameList[i]; 
 					CARFilter *obj = new CARFilter(nameList.nameList[i], insideId);
 
@@ -1218,16 +1078,14 @@ int CARInside::LoadFilters(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						this->filterList.insert(this->filterList.end(), *obj);
 
 						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
-					}	
-					else
+					} else
 						cout << " [ERROR]" << endl;
 				}
 			}
@@ -1237,9 +1095,7 @@ int CARInside::LoadFilters(void)
 		FreeARStatusList(&this->arStatus, false);
 
 		this->Sort(filterList);
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION loading Filters " << endl;
 		GetARStatusError();
 	}
@@ -1247,21 +1103,16 @@ int CARInside::LoadFilters(void)
 	return insideId;
 }
 
-int CARInside::LoadActiveLinks(void)
-{
+int CARInside::LoadActiveLinks(void) {
 	int insideId=0;
 
-	try
-	{
+	try {
 		ARNameList nameList;
 			
-		if(ARGetListActiveLink(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
+		if(ARGetListActiveLink(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK) {
 			this->alList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_ACTLINK, nameList.nameList[i]))
-				{
+			for(unsigned int i=0; i< nameList.numItems; i++) {
+				if(!this->InBlacklist(ARREF_ACTLINK, nameList.nameList[i])) {
 					cout << "Loading ActiveLink: " << nameList.nameList[i]; 
 					CARActiveLink *obj = new CARActiveLink(nameList.nameList[i], insideId);
 
@@ -1283,18 +1134,15 @@ int CARInside::LoadActiveLinks(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
+						&this->arStatus) == AR_RETURN_OK) {
 						this->alList.insert(this->alList.end(), *obj);
 
 						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
-					}		
-					else
+					} else 
 						cout << " [ERROR]" << endl;
-
 				}
 			}
 		}
@@ -1303,9 +1151,7 @@ int CARInside::LoadActiveLinks(void)
 		FreeARStatusList(&this->arStatus, false);
 
 		this->Sort(alList);
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION loading ActiveLinks " << endl;
 		GetARStatusError();
 	}
@@ -1313,50 +1159,41 @@ int CARInside::LoadActiveLinks(void)
 	return insideId;
 }
 
-void CARInside::Sort(list<CARSchema> &listResult)
-{
+void CARInside::Sort(list<CARSchema> &listResult) {
 	listResult.sort(SortByName);
 }
 
-void CARInside::Sort(list<CARFilter> &listResult)
-{
+void CARInside::Sort(list<CARFilter> &listResult) {
 	listResult.sort(SortByName);
 }
 
-void CARInside::Sort(list<CAREscalation> &listResult)
-{
+void CARInside::Sort(list<CAREscalation> &listResult) {
 	listResult.sort(SortByName);
 }
 
-void CARInside::Sort(list<CARActiveLink> &listResult)
-{
+void CARInside::Sort(list<CARActiveLink> &listResult) {
 	listResult.sort(SortByName);
 }
 
-void CARInside::Sort(list<CARContainer> &listResult)
-{
+void CARInside::Sort(list<CARContainer> &listResult) {
 	listResult.sort(SortByName);
 }
 
-void CARInside::Sort(list<CARCharMenu> &listResult)
-{
+void CARInside::Sort(list<CARCharMenu> &listResult) {
 	listResult.sort(SortByName);
 }
 
-void CARInside::Sort(list<CARField> &listResult)
-{
+void CARInside::Sort(list<CARField> &listResult) {
 	listResult.sort(SortByName);
 }
 
-bool CARInside::SortByName(const CARServerObject& t1, const CARServerObject& t2 )
-{
+bool CARInside::SortByName(const CARServerObject& t1, const CARServerObject& t2 ) {
 	string tmpStr1 = CUtil::String2Comp(t1.name.c_str());
 	string tmpStr2 = CUtil::String2Comp(t2.name.c_str());
 	return ( strcmp(tmpStr1.c_str(), tmpStr2.c_str()) < 0);
 }
 
-string CARInside::ObjListFilename(string firstChar)
-{
+string CARInside::ObjListFilename(string firstChar) {
 	string fName = "index_";
 	if(firstChar != "#")
 		fName += firstChar;
@@ -1366,8 +1203,7 @@ string CARInside::ObjListFilename(string firstChar)
 	return fName;
 }
 
-void CARInside::Documentation(void)
-{	
+void CARInside::Documentation(void) {	
 	CAppTimer mTimer;
 	mTimer.StartTimer();
 
@@ -1383,8 +1219,7 @@ void CARInside::Documentation(void)
 	docMain->ContainerList(ARCON_PACK, "index", "ContainerList (PackingList)", "*");
 	docMain->ContainerList(ARCON_FILTER_GUIDE, "index", "ContainerList (FilterGuide)", "*");
 	docMain->ContainerList(ARCON_WEBSERVICE, "index", "ContainerList (Webservice)", "*");	
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->ContainerList(ARCON_GUIDE, ObjListFilename(std::string(1, strValue.at(i))), "GuideList", std::string(1, strValue.at(i)));
 		docMain->ContainerList(ARCON_APP, ObjListFilename(std::string(1, strValue.at(i))), "ApplicationList", std::string(1, strValue.at(i)));
 		docMain->ContainerList(ARCON_PACK, ObjListFilename(std::string(1, strValue.at(i))), "PackinglistList", std::string(1, strValue.at(i)));
@@ -1396,21 +1231,17 @@ void CARInside::Documentation(void)
 	int nTmpCnt = 1;
 	//Create documentation here to fill objects applicationName reference information	
 	list<CARContainer>::iterator listIter;	
-	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ )
-	{
+	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ ) {
 		CARContainer *cont = &(*listIter);
 
-		switch(cont->type)
-		{
-			case ARCON_APP:
-			{
+		switch(cont->type) {
+			case ARCON_APP: {
 				cout << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocApplicationDetails appDetails(*this, *cont);
 				appDetails.Documentation();
 			}
 			break;
-			default:
-			{
+			default: {
 				cout << "Container [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
 			}
 			break;
@@ -1420,41 +1251,34 @@ void CARInside::Documentation(void)
 	}
 
 	nTmpCnt = 1;
-	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ )
-	{
+	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ ) {
 		CARContainer *cont = &(*listIter);
-		switch(cont->type)
-		{
-			case ARCON_WEBSERVICE:
-			{
+		switch(cont->type) {
+			case ARCON_WEBSERVICE: {
 				cout << "Webservice [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocWebserviceDetails wsDetails(*this, *cont);
 				wsDetails.Documentation();
 			}
 			break;
-			case ARCON_GUIDE:
-			{
+			case ARCON_GUIDE: {
 				cout << "ActiveLinkGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocAlGuideDetails guideDetails(*this, *cont);
 				guideDetails.Documentation();
 			}
 			break;
-			case ARCON_FILTER_GUIDE:
-			{
+			case ARCON_FILTER_GUIDE: {
 				cout << "FilterGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocFilterGuideDetails fltGuideDetails(*this, *cont);
 				fltGuideDetails.Documentation();
 			}
 			break;
-			case ARCON_PACK:
-			{
+			case ARCON_PACK: {
 				cout << "PackingList [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocPacklistDetails packDetails(*this, *cont);
 				packDetails.Documentation();
 			}
 			break;
-			case ARCON_APP:
-			{
+			case ARCON_APP: {
 				cout << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
 			}
 			break;
@@ -1465,8 +1289,7 @@ void CARInside::Documentation(void)
 
 	//ActiveLink List
 	docMain->ActiveLinkList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->ActiveLinkList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
 
@@ -1475,8 +1298,7 @@ void CARInside::Documentation(void)
 	//ActiveLink Details
 	nTmpCnt = 1;
 	list<CARActiveLink>::iterator alIter;
-	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
-	{	
+	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ ) {	
 		CARActiveLink *al = &(*alIter);
 
 		cout << "ActiveLink [" << nTmpCnt << "-" << alList.size() << "] '" << al->name << "': ";
@@ -1490,8 +1312,7 @@ void CARInside::Documentation(void)
 
 	//Filter List
 	docMain->FilterList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->FilterList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
 	docMain->FilterActionList("index_action");
@@ -1499,8 +1320,7 @@ void CARInside::Documentation(void)
 	//Filter Details
 	nTmpCnt=1;
 	list<CARFilter>::iterator filterIter;
-	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++)
-	{
+	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++) {
 		CARFilter *filter = &(*filterIter);
 		
 		cout << "Filter [" << nTmpCnt << "-" << filterList.size() << "] '" << filter->name << "': ";
@@ -1514,8 +1334,7 @@ void CARInside::Documentation(void)
 	
 	//Escalation List
 	docMain->EscalationList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->EscalationList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}
 	docMain->EscalationActionList("index_action");
@@ -1523,8 +1342,7 @@ void CARInside::Documentation(void)
 	//Escalation Details
 	nTmpCnt=1;
 	list<CAREscalation>::iterator escalIter;
-	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++)
-	{
+	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++) {
 		CAREscalation *escal = &(*escalIter);
 
 		cout << "Escalation [" << nTmpCnt << "-" << escalList.size() << "] '" << escal->name << "': ";
@@ -1538,16 +1356,14 @@ void CARInside::Documentation(void)
 
 	//CharMenus
 	docMain->CharMenuList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->CharMenuList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
 
 	// Char Menu Details
 	nTmpCnt = 1;
 	list<CARCharMenu>::iterator menuIter;	
-	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ )
-	{
+	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ ) {
 		CARCharMenu *menu = &(*menuIter);	
 
 		cout << "Menu [" << nTmpCnt << "-" << menuList.size() << "] '" << menu->name << "': ";
@@ -1567,16 +1383,14 @@ void CARInside::Documentation(void)
 	docMain->SchemaList(AR_SCHEMA_VIEW, "index_view", "Formlist (View)", "*");
 	docMain->SchemaList(AR_SCHEMA_DIALOG, "index_dialog", "Formlist (Dialog)", "*");
 	docMain->SchemaList(AR_SCHEMA_VENDOR, "index_vendor", "Formlist (Vendor)", "*");	
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->SchemaList(AR_SCHEMA_NONE, ObjListFilename(std::string(1, strValue.at(i))), "Formlist", std::string(1, strValue.at(i)));
 	}
 
 	//Schema and field Details
 	nTmpCnt=1;
 	list<CARSchema>::iterator schemaIter;	
-	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-	{
+	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {
 		int rootLevel = 2;
 
 		CARSchema *schema = &(*schemaIter);		
@@ -1591,8 +1405,7 @@ void CARInside::Documentation(void)
 		//VuiDetails
 		cout << "VuiDetails Schema '" << schema->name << "'" << endl;
 		list<CARVui>::iterator vuiIter;			
-		for( vuiIter = schema->vuiList.begin(); vuiIter != schema->vuiList.end(); vuiIter++)
-		{
+		for( vuiIter = schema->vuiList.begin(); vuiIter != schema->vuiList.end(); vuiIter++) {
 			CARVui *vui = &(*vuiIter);
 
 			cout << "SchemaView '" << vui->name << "': ";
@@ -1604,8 +1417,7 @@ void CARInside::Documentation(void)
 		//FieldDetails
 		cout << "FieldDetails Schema '" << schema->name << "'" << endl;		
 		list<CARField>::iterator fieldIter;
-		for ( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++ )
-		{	
+		for ( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++ ) {	
 			CARField *field = &(*fieldIter);			
 			CDocFieldDetails *fieldDetails = new CDocFieldDetails(*this, *schema, *field, path, rootLevel);
 			fieldDetails->Documentation();
@@ -1633,17 +1445,14 @@ void CARInside::Documentation(void)
 
 	//Group List
 	docMain->GroupList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->GroupList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
-	
 
 	//Group Details
 	nTmpCnt=1;
 	list<CARGroup>::iterator groupIter;
-	for ( groupIter = this->groupList.begin(); groupIter != this->groupList.end(); groupIter++ )
-	{
+	for ( groupIter = this->groupList.begin(); groupIter != this->groupList.end(); groupIter++ ) {
 		CARGroup *grp = &(*groupIter);
 
 		cout << "Group [" << nTmpCnt << "-" << groupList.size() << "] '" << grp->name << "': ";
@@ -1653,19 +1462,16 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
-
 	//Role List
 	docMain->RoleList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->RoleList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
 
 	//Role Details
 	nTmpCnt=1;
 	list<CARRole>::iterator roleIter;
-	for ( roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++ )
-	{
+	for ( roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++ ) {
 		CARRole *role = &(*roleIter);
 
 		cout << "Role [" << nTmpCnt << "-" << roleList.size() << "] '" << role->name << "': ";
@@ -1675,19 +1481,16 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
-	
 	//Userlists
 	docMain->UserList("index", "*");
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
+	for (unsigned int i = 0; i < strValue.size(); ++i) {		
 		docMain->UserList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
 
 	//User Details	list<CARUser>::iterator userIter;
 	nTmpCnt=1;
 	list<CARUser>::iterator userIter;
-	for ( userIter = this->userList.begin(); userIter != this->userList.end(); userIter++ )
-	{
+	for ( userIter = this->userList.begin(); userIter != this->userList.end(); userIter++ ) {
 		CARUser *user = &(*userIter);
 
 		cout << "User [" << nTmpCnt << "-" << userList.size() << "] '" << user->loginName << "': ";
@@ -1706,31 +1509,24 @@ void CARInside::Documentation(void)
 	delete docMain;
 }
 
-string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition)
-{
+string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition) {
 	list<CARSchema>::iterator schemaIter;		
 	
-	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-	{			
+	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 		CARSchema *schema = &(*schemaIter);
 
-		if(schema->insideId == schemaInsideId)
-		{
+		if(schema->insideId == schemaInsideId) {
 			list<CARField>::iterator fieldIter;					
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-			{
+			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++) {
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
-				{					
-					if(field->dataType == AR_DATA_TYPE_ENUM)
-					{
-						switch(field->limit.u.enumLimits.listStyle)
-						{
+				if(field->insideId == fieldInsideId) {					
+					if(field->dataType == AR_DATA_TYPE_ENUM) {
+						switch(field->limit.u.enumLimits.listStyle) {
 							case AR_ENUM_STYLE_REGULAR:
 								return field->limit.u.enumLimits.u.regularList.nameList[enumPosition];
 							break;
 							case AR_ENUM_STYLE_CUSTOM:
-								for (int i=0; i< field->limit.u.enumLimits.u.customList.numItems; i++) { 
+								for (int i=0; i < (int)field->limit.u.enumLimits.u.customList.numItems; i++) { 
 									if (field->limit.u.enumLimits.u.customList.enumItemList[i].itemNumber == enumPosition) 
 										return field->limit.u.enumLimits.u.customList.enumItemList[i].itemName; 
 								} 
@@ -1748,37 +1544,29 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 	return EmptyValue;
 }
 
-string CARInside::LinkToField(string schemaName, int fieldInsideId, int fromRootLevel)
-{	
+string CARInside::LinkToField(string schemaName, int fieldInsideId, int fromRootLevel) {	
 	return LinkToField(SchemaGetInsideId(schemaName), fieldInsideId, fromRootLevel);
 }
 
-string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel)
-{	
+string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel) {	
 	stringstream tmp;
 	tmp.str("");
 
 	list<CARSchema>::iterator schemaIter;		
-	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-	{			
+	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
-		{
+		if(schema->insideId == schemaInsideId) {
 			list<CARField>::iterator fieldIter;
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-			{
+			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++) {
 				CARField *field = &(*fieldIter);
 				if(field->insideId == fieldInsideId)
-				{
 					return field->GetURL(fromRootLevel);
-				}
 			}
 		}
 	}
 
 	//Field has not been found
-	if(fieldInsideId > 0) //OpenWindow uses 0 what is no valid field
-	{
+	if(fieldInsideId > 0) {//OpenWindow uses 0 what is no valid field
 		CFieldRefItem *refItemNotFound = new CFieldRefItem();
 		refItemNotFound->arsStructItemType = AR_STRUCT_ITEM_XML_FIELD;
 		refItemNotFound->fromName = "";						
@@ -1793,25 +1581,19 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 	return tmp.str();
 }
 
-string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel)
-{	
+string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel) {	
 	stringstream tmp;
 	tmp.str("");
 
 	list<CARSchema>::iterator schemaIter;			
-	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-	{			
+	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
-		{
+		if(schema->insideId == schemaInsideId) {
 			list<CARField>::iterator fieldIter;					
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-			{
+			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++) {
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
-				{
+				if(field->insideId == fieldInsideId) {
 					tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << schemaInsideId << "/" << CWebUtil::DocName(field->FileID());
-					
 					return CWebUtil::Link(field->name, tmp.str(), "", fromRootLevel);
 				}
 			}
@@ -1823,11 +1605,9 @@ string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fro
 	return tmp.str();
 }
 
-string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
-{
+string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel) {
 	string strFileUrl = "";
-	switch (schemaType)
-	{		
+	switch (schemaType) {		
 		case AR_SCHEMA_REGULAR: strFileUrl = CWebUtil::DocName("index_regular"); break;
 		case AR_SCHEMA_JOIN: strFileUrl = CWebUtil::DocName("index_join"); break;
 		case AR_SCHEMA_VIEW: strFileUrl = CWebUtil::DocName("index_view"); break;
@@ -1839,102 +1619,75 @@ string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
 	return CWebUtil::Link(CAREnum::SchemaType(schemaType), "../"+strFileUrl, "", rootLevel);
 }
 
-string CARInside::LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel)
-{
+string CARInside::LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel) {
 	stringstream tmp;
 	tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << schemaInsideId << "/" << CWebUtil::DocName("form_index_list");	
 	return CWebUtil::Link(indexName, tmp.str(), "", fromRootLevel, true);
 }
 
-string CARInside::LinkToSchema(int insideId, int fromRootLevel)
-{
+string CARInside::LinkToSchema(int insideId, int fromRootLevel) {
 	list<CARSchema>::iterator schemaIter;
-	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-	{			
+	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 		CARSchema *schema = &(*schemaIter);
 		if(insideId == schema->insideId)
-		{
 			return schema->GetURL(fromRootLevel);
-		}
 	}
 	return EmptyValue;
 }
 
-string CARInside::LinkToSchema(string schemaName, int fromRootLevel)
-{
+string CARInside::LinkToSchema(string schemaName, int fromRootLevel) {
 	list<CARSchema>::iterator schemaIter;
-	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-	{			
+	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 		CARSchema *schema = &(*schemaIter);
 		if(strcmp(schemaName.c_str(), schema->name.c_str())==0)
-		{
 			return schema->GetURL(fromRootLevel);
-		}
 	}
 	return schemaName;
 }
 
-int CARInside::SchemaGetInsideId(string searchObjName)
-{
+int CARInside::SchemaGetInsideId(string searchObjName) {
 	list<CARSchema>::iterator iter;			
-	for ( iter = schemaList.begin(); iter != schemaList.end(); iter++ )
-	{			
+	for ( iter = schemaList.begin(); iter != schemaList.end(); iter++ ) {			
 		CARSchema *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
 			return obj->insideId;
-		}
 	}
 	return -1;
 }
 
-int CARInside::AlGetInsideId(string searchObjName)
-{
+int CARInside::AlGetInsideId(string searchObjName) {
 	list<CARActiveLink>::iterator iter;			
-	for ( iter = alList.begin(); iter != alList.end(); iter++ )
-	{			
+	for ( iter = alList.begin(); iter != alList.end(); iter++ ) {			
 		CARActiveLink *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
 			return obj->insideId;
-		}
 	}
 	return -1;
 }
 
-int CARInside::FilterGetInsideId(string searchObjName)
-{
+int CARInside::FilterGetInsideId(string searchObjName) {
 	list<CARFilter>::iterator iter;			
-	for ( iter = filterList.begin(); iter != filterList.end(); iter++ )
-	{			
+	for ( iter = filterList.begin(); iter != filterList.end(); iter++ ) {			
 		CARFilter *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
 			return obj->insideId;
-		}
 	}
 	return -1;
 }
 
-int CARInside::ContainerGetInsideId(string searchObjName)
-{
+int CARInside::ContainerGetInsideId(string searchObjName) {
 	list<CARContainer>::iterator iter;			
-	for ( iter = containerList.begin(); iter != containerList.end(); iter++ )
-	{			
+	for ( iter = containerList.begin(); iter != containerList.end(); iter++ ) {			
 		CARContainer *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
 			return obj->insideId;
-		}
 	}
 	return -1;
 }
 
-int CARInside::MenuGetInsideId(string searchObjName)
-{
+int CARInside::MenuGetInsideId(string searchObjName) {
 	list<CARCharMenu>::iterator iter;			
-	for ( iter = menuList.begin(); iter != menuList.end(); iter++ )
-	{			
+	for ( iter = menuList.begin(); iter != menuList.end(); iter++ ) {			
 		CARCharMenu *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
@@ -1944,86 +1697,60 @@ int CARInside::MenuGetInsideId(string searchObjName)
 	return -1;
 }
 
-int CARInside::EscalationGetInsideId(string searchObjName)
-{
+int CARInside::EscalationGetInsideId(string searchObjName) {
 	list<CAREscalation>::iterator iter;
-	for ( iter = escalList.begin(); iter != escalList.end(); iter++ )
-	{			
+	for ( iter = escalList.begin(); iter != escalList.end(); iter++ ) {			
 		CAREscalation *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
 			return obj->insideId;
-		}
 	}
 	return -1;
 }
 
-string CARInside::LinkToUser(string loginName, int rootLevel)
-{	
+string CARInside::LinkToUser(string loginName, int rootLevel) {	
 	list<CARUser>::iterator userIter;			
-	for ( userIter = userList.begin(); userIter != userList.end(); userIter++ )
-	{	
+	for ( userIter = userList.begin(); userIter != userList.end(); userIter++ ) {	
 		CARUser *user = &(*userIter);
 		if(strcmp(loginName.c_str(), user->name.c_str())==0)
-		{
 			return CWebUtil::Link(loginName, CWebUtil::RootPath(rootLevel)+"user/"+CWebUtil::DocName(user->FileID()), "", rootLevel);
-		}
 	}
 	return loginName;
 }
 
-bool CARInside::ValidateGroup(string appRefName, int permissionId)
-{
+bool CARInside::ValidateGroup(string appRefName, int permissionId) {
 	if(permissionId >= 0)
-	{
 		return true;
-	}
-	else
-	{
+	else {
 		list<CARRole>::iterator roleIter;
-		for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++)
-		{
+		for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++) {
 			CARRole *role = &(*roleIter);
 			if(role->roleId == permissionId && strcmp(role->applicationName.c_str(), appRefName.c_str())==0)
-			{
 				return true;
-			}
 		}
 	}
 
 	return false;
 }
 
-string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel)
-{	
+string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel) {	
 	stringstream strmTmp;
 	strmTmp.str("");
 	strmTmp << permissionId;
 	
-	if(permissionId >= 0)
-	{
+	if(permissionId >= 0) {
 		list<CARGroup>::iterator grpIter;			
-		for ( grpIter = this->groupList.begin(); grpIter != this->groupList.end(); grpIter++ )
-		{	
+		for ( grpIter = this->groupList.begin(); grpIter != this->groupList.end(); grpIter++ ) {	
 			CARGroup *group = &(*grpIter);		
 			if(group->groupId == permissionId)
-			{
 				return CWebUtil::Link(group->groupName, CWebUtil::RootPath(rootLevel)+"group/"+CWebUtil::DocName(group->FileID()), "group.gif", rootLevel);
-			}		
 		}
-	}
-	else
-	{
-		if(appRefName.c_str() != NULL && strcmp(appRefName.c_str(), "") != 0)
-		{
+	} else {
+		if(appRefName.c_str() != NULL && strcmp(appRefName.c_str(), "") != 0) {
 			list<CARRole>::iterator roleIter;
-			for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++)
-			{
+			for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++) {
 				CARRole *role = &(*roleIter);
 				if(role->roleId == permissionId && strcmp(role->applicationName.c_str(), appRefName.c_str())==0)
-				{
 					return CWebUtil::Link(role->roleName, CWebUtil::RootPath(rootLevel)+"role/"+CWebUtil::DocName(role->FileID()), "doc.gif", rootLevel);
-				}
 			}
 		}
 	}
@@ -2031,14 +1758,11 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 	return strmTmp.str();
 }
 
-string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
-{		
+string CARInside::LinkToAlRef(int alInsideId, int rootLevel) {		
 	list<CARActiveLink>::iterator alIter;	
-	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
-	{
+	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ ) {
 		CARActiveLink *al = &(*alIter);
-		if(al->insideId == alInsideId)
-		{
+		if(al->insideId == alInsideId) {
 			stringstream strmTmp;
 			strmTmp.str("");
 
@@ -2049,29 +1773,22 @@ string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
 	return EmptyValue;
 }
 
-string CARInside::LinkToAl(string alName, int fromRootLevel)
-{
+string CARInside::LinkToAl(string alName, int fromRootLevel) {
 	list<CARActiveLink>::iterator alIter;	
-	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
-	{
+	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ ) {
 		CARActiveLink *al = &(*alIter);
 		if(strcmp(alName.c_str(), al->name.c_str())==0)
-		{
 			return al->GetURL(fromRootLevel);
-		}
 	}
 
 	return alName;
 }
 
-string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
-{	
+string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel) {	
 	list<CARFilter>::iterator filterIter;	
-	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
-	{	
+	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ ) {	
 		CARFilter *filter = &(*filterIter);
-		if(filter->insideId == filterInsideId)
-		{
+		if(filter->insideId == filterInsideId) {
 			stringstream strmTmp;
 			strmTmp.str("");
 
@@ -2082,252 +1799,178 @@ string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
 	return EmptyValue;
 }
 
-string CARInside::LinkToFilter(string filterName, int fromRootLevel)
-{
+string CARInside::LinkToFilter(string filterName, int fromRootLevel) {
 	list<CARFilter>::iterator filterIter;	
-	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
-	{	
+	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ ) {	
 		CARFilter *filter = &(*filterIter);
 		if(strcmp(filterName.c_str(), filter->name.c_str())==0)
-		{
 			return filter->GetURL(fromRootLevel);
-		}
 	}
 	return filterName;
 }
 
-string CARInside::LinkToMenu(string menuName, int fromRootLevel)
-{
+string CARInside::LinkToMenu(string menuName, int fromRootLevel) {
 	list<CARCharMenu>::iterator menuIter;	
-	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ )
-	{	
+	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ ) {	
 		CARCharMenu *menu = &(*menuIter);
 		if(strcmp(menuName.c_str(), menu->name.c_str())==0)
-		{
 			return menu->GetURL(fromRootLevel);
-		}
 	}
 	return EmptyValue;
 }
 
-string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
-{
+string CARInside::LinkToEscalation(string escalationName, int fromRootLevel) {
 	list<CAREscalation>::iterator escalIter;	
-	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ )
-	{	
+	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ ) {	
 		CAREscalation *escal = &(*escalIter);
 		if(strcmp(escalationName.c_str(), escal->name.c_str())==0)
-		{
 			return escal->GetURL(fromRootLevel);			
-		}
 	}
 	return escalationName;
 }
 
-string CARInside::LinkToContainer(string containerName, int fromRootLevel)
-{
+string CARInside::LinkToContainer(string containerName, int fromRootLevel) {
 	list<CARContainer>::iterator contIter;
-	for ( contIter = this->containerList.begin(); contIter != this->containerList.end(); contIter++ )
-	{	
+	for ( contIter = this->containerList.begin(); contIter != this->containerList.end(); contIter++ ) {	
 		CARContainer *container = &(*contIter);
 		if(strcmp(containerName.c_str(), container->name.c_str())==0)
-		{			
 			return container->GetURL(fromRootLevel);
-		}
 	}
 	return containerName;
 }
 
-string CARInside::LinkToServerInfo(string srvName, int rootLevel)
-{		
+string CARInside::LinkToServerInfo(string srvName, int rootLevel) {		
 	string result;
 		
 	if(strcmp(srvName.c_str(), "")==0)
-	{
 		return CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
-	}
 	else if(strcmp(srvName.c_str(), AR_CURRENT_SERVER_TAG)==0 || strcmp(srvName.c_str(), AR_CURRENT_SCREEN_TAG)==0)
-	{
 		return CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
-	}
 	else
-	{
 		return CWebUtil::Link(srvName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
-	}
-
 
 	return result;
 }
 
-string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int rootLevel)
-{
+string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int rootLevel) {
 	string result = EmptyValue;
 
-	switch(arsStructItemType)
-	{
+	switch(arsStructItemType) {
 		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
-		{
 			result = this->LinkToAlRef(AlGetInsideId(objName), rootLevel);
-		}
-		break;
+			break;
 		case AR_STRUCT_ITEM_XML_FILTER:
-		{
 			result = this->LinkToFilterRef(FilterGetInsideId(objName), rootLevel);
-		}
-		break;
+			break;
 		case AR_STRUCT_ITEM_XML_SCHEMA:
-		{
 			result = this->LinkToSchema(objName, rootLevel);
-		}
-		break;
+			break;
 		case AR_STRUCT_ITEM_XML_ESCALATION:
-		{
 			result = this->LinkToEscalation(objName, rootLevel);
-		}
-		break;
+			break;
 		case AR_STRUCT_ITEM_XML_CHAR_MENU:
-		{
 			result = this->LinkToMenu(objName, rootLevel);
-		}
-		break;		
+			break;		
 		case AR_STRUCT_ITEM_XML_CONTAINER:
-		{
 			result = this->LinkToContainer(objName, rootLevel);
-		}
-		break;
+			break;
 	}
-
 	return result;
 }
 
 
-string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
-{
+string CARInside::XmlObjEnabled(int arsStructItemType, string objName) {
 	string result = "";
 		
-	switch(arsStructItemType)
-	{
-		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
-		{
+	switch(arsStructItemType) {
+		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: {
 			list<CARActiveLink>::iterator alIter;			
-			for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
-			{	
+			for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ ) {	
 				CARActiveLink *al = &(*alIter);
 				if(strcmp(objName.c_str(), al->name.c_str())==0)
-				{
 					result = CAREnum::ObjectEnable(al->enable);					
-				}
 			}
+			break;
 		}
-		break;
-		case AR_STRUCT_ITEM_XML_FILTER:
-		{
+		case AR_STRUCT_ITEM_XML_FILTER: {
 			list<CARFilter>::iterator filterIter;			
-			for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
-			{	
+			for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ ) {	
 				CARFilter *filter = &(*filterIter);
 				if(strcmp(objName.c_str(), filter->name.c_str())==0)
-				{
 					result = CAREnum::ObjectEnable(filter->enable);		
-				}
 			}
+			break;
 		}
-		break;		
-		case AR_STRUCT_ITEM_XML_ESCALATION:
-		{
+		case AR_STRUCT_ITEM_XML_ESCALATION: {
 			list<CAREscalation>::iterator escalIter;			
-			for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ )
-			{	
+			for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ ) {	
 				CAREscalation *escal = &(*escalIter);
 				if(strcmp(objName.c_str(), escal->name.c_str())==0)
-				{
 					result = CAREnum::ObjectEnable(escal->enable);		
-				}
 			}
+			break;
 		}
-		break;	
 		default:
-		{
 			result = "";
-		}
-		break;
+			break;
 	}
 
 	return result;
 }
 
 
-void CARInside::SearchCustomFieldReferences()
-{
-	try
-	{
+void CARInside::SearchCustomFieldReferences() {
+	try {
 		cout << "Checking field references [";
 
 		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-		{			
+		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 			CARSchema *schema = &(*schemaIter);
 
 			list<CARField>::iterator fieldIter;		
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-			{
+			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++) {
 				CARField *field = &(*fieldIter);
-
 				CustomFieldReferences(*schema, *field);
 			}
-
 			cout << ".";
 		}
-
 		cout << "]" << endl;
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION SearchCustomFieldReferences" << endl;
 	}
 }
 
 //Find references at startup
-//This function is necessary because when we wouldt try to add the reference at runtime for example
+//This function is necessary because when we wouldnt try to add the reference at runtime for example
 //Columns might be enumerated at a time when the datafield has been already saved to html file
-void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
-{
-	try
-	{
+void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj) {
+	try {
 		int rootLevel = 2;
 
 		stringstream strm;
 		strm.str("");
 
-		switch(obj.dataType)
-		{		
-			case AR_DATA_TYPE_COLUMN: //Find column references
-			{
+		switch(obj.dataType) {		
+			//Find column references 
+			case AR_DATA_TYPE_COLUMN: {
 				ARColumnLimitsStruct fLimit = obj.limit.u.columnLimits;
 				
 				//To create a link to the datafield we first must find the target schema of the table
 				int tblTargetSchemaInsideId = schema.insideId;
 
 				list<CARSchema>::iterator schemaIter;						
-				for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-				{			
+				for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 					CARSchema *searchSchema = &(*schemaIter);
-					if(schema.insideId == searchSchema->insideId)
-					{
+					if(schema.insideId == searchSchema->insideId) {
 						list<CARField>::iterator fieldIter;		
-						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); fieldIter++)
-						{
+						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); fieldIter++) {
 							CARField *field = &(*fieldIter);
-							if(field->insideId == fLimit.parent) // we found the table
-							{				
-								if(field->limit.dataType == AR_DATA_TYPE_TABLE)
-								{
+							// we found the table 
+							if(field->insideId == fLimit.parent) {
+								if(field->limit.dataType == AR_DATA_TYPE_TABLE) {
 									ARTableLimitsStruct tblLimits = field->limit.u.tableLimits;
-
 									if(!strcmp(tblLimits.schema, AR_CURRENT_SCHEMA_TAG)==0)
-									{
 										tblTargetSchemaInsideId = SchemaGetInsideId(tblLimits.schema);
-									}
 								}
 							}
 						}
@@ -2345,19 +1988,15 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 				delete refItem;
 			}
 			break;
-			case AR_DATA_TYPE_TABLE:
-			{
+			case AR_DATA_TYPE_TABLE: {
 				ARTableLimitsStruct fLimit = obj.limit.u.tableLimits;
 
 				string tmpSchema = fLimit.schema;
 				if(strcmp(fLimit.schema, AR_CURRENT_SCHEMA_TAG) == 0)
-				{
 					tmpSchema = schema.name;
-				}
 								
 				stringstream strmQuery;
-				if(fLimit.qualifier.operation != NULL)
-				{		
+				if(fLimit.qualifier.operation != NULL) {		
 					CFieldRefItem *refItem = new CFieldRefItem();
 					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 					refItem->description = "Table Qualification: " +  obj.GetURL(rootLevel);
@@ -2373,49 +2012,35 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 			}
 			break;
 		}
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION CustomFieldReferences" << endl;
 	}
 }
 
-void CARInside::AddReferenceItem(CFieldRefItem *refItem)
-{
-	try
-	{
+void CARInside::AddReferenceItem(CFieldRefItem *refItem) {
+	try {
 		if(refItem->schemaInsideId > -1 && refItem->arsStructItemType != AR_STRUCT_ITEM_XML_NONE)
-		{
 			this->listFieldRefItem.insert(this->listFieldRefItem.end(), *refItem);
-		}
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION AddReferenceItem" << endl;
 	}
 }
 
-string CARInside::TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, CFieldRefItem *refItem)
-{	
-
-	try
-	{
+string CARInside::TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, CFieldRefItem *refItem) {	
+	try {
 		if(inText.size() == 0)
 			return "";
 
 		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
 		
 		list<CARSchema>::iterator schemaIter;				
-		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-		{			
+		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 			CARSchema *schema = &(*schemaIter);
-			if(schema->insideId == schemaInsideId)
-			{
+			if(schema->insideId == schemaInsideId) {
 				list<CARField>::iterator fieldIter;		
 				CARField *field;
 
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-				{
+				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++) {
 					field = &(*fieldIter);
 
 					stringstream strmTmp;
@@ -2433,8 +2058,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 					inText = CUtil::StrReplace(dummySeparator, fieldSeparator, inText);
 
 					//if the string is longer because we have added a link (long string) we add a field reference
-					if(inText.length() > nLengthOrg) 
-					{						
+					if(inText.length() > nLengthOrg) {						
 						refItem->fieldInsideId = field->fieldId;
 						AddReferenceItem(refItem);
 					}
@@ -2443,12 +2067,8 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 		}
 
 		if(findKeywords == true)
-		{
 			inText = TextFindKeywords(inText, fieldSeparator);
-		}
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION in TextFindField" << endl;
 	}
 
@@ -2456,13 +2076,9 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 }
 
 
-string CARInside::TextFindKeywords(string inText, string fieldSeparator)
-{	
-
-	try
-	{
-		for(unsigned int nKeyword=0; nKeyword< AR_KEYWORD_NO; nKeyword++)
-		{
+string CARInside::TextFindKeywords(string inText, string fieldSeparator) {	
+	try {
+		for(unsigned int nKeyword=0; nKeyword< AR_KEYWORD_NO; nKeyword++) {
 			stringstream strmKeyword;
 			strmKeyword << fieldSeparator << "-" << nKeyword << fieldSeparator;
 		
@@ -2471,9 +2087,7 @@ string CARInside::TextFindKeywords(string inText, string fieldSeparator)
 
 			inText = CUtil::StrReplace(strmKeyword.str(), strmTxtKeyword.str(), inText);	
 		}
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION in TextFindField" << endl;
 	}
 
@@ -2481,24 +2095,19 @@ string CARInside::TextFindKeywords(string inText, string fieldSeparator)
 }
 
 
-string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
-{	
-	try
-	{
+string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem) {	
+	try {
 		if(inText.size() == 0)
 			return "";
 		
 		list<CARSchema>::iterator schemaIter;				
-		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-		{			
+		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ ) {			
 			CARSchema *schema = &(*schemaIter);
-			if(schema->insideId == schemaInsideId)
-			{
+			if(schema->insideId == schemaInsideId) {
 				list<CARField>::iterator fieldIter;		
 				CARField *field;
 
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-				{
+				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++) {
 					field = &(*fieldIter);
 
 					stringstream strmTmp;
@@ -2513,30 +2122,25 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 					inText = CUtil::StrReplace(fField, fieldLink.str(), inText);
 				
 					//if the string is longer because we have added a link (long string) we add a field reference
-					if(inText.length() > nLengthOrg) 
-					{						
+					if(inText.length() > nLengthOrg) {						
 						refItem->fieldInsideId = field->fieldId;
 						AddReferenceItem(refItem);
 					}
 				}
 			}
 		}
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION in XMLFindField" << endl;
 	}
 
 	return inText;
 }
 
-string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
-{		
+string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel) {		
 	stringstream strm;
 	strm.str("");
 
-	try
-	{				
+	try {				
 		CTable tbl("history", "TblObjectHistory");
 		tbl.AddColumn(20, "Description");
 		tbl.AddColumn(80, "Value");
@@ -2561,32 +2165,24 @@ string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
 
 		strm << tbl.ToXHtml();
 		tbl.Clear();
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION writing dataobject history " << endl;
 	}	
 
 	return strm.str();		
 }
 
-string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
-{		
+string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel) {		
 	stringstream strm;
 	strm.str("");
 	
-	try
-	{
+	try {
 		list<CChangeHistoryEntry> listHistoryEntry;
-		if(obj->changeDiary != NULL)
-		{				
+		if(obj->changeDiary != NULL) {				
 			ARDiaryList diaryList;
-			if(ARDecodeDiary(&this->arControl, obj->changeDiary, &diaryList, &this->arStatus)==AR_RETURN_OK)
-			{
-				if(diaryList.diaryList != NULL)
-				{			
-					for(unsigned int j=0; j<diaryList.numItems; j++)
-					{
+			if(ARDecodeDiary(&this->arControl, obj->changeDiary, &diaryList, &this->arStatus)==AR_RETURN_OK) {
+				if(diaryList.diaryList != NULL) {			
+					for(unsigned int j=0; j<diaryList.numItems; j++) {
 						CChangeHistoryEntry entry(diaryList.diaryList[j].timeVal, diaryList.diaryList[j].user, diaryList.diaryList[j].value);		
 						listHistoryEntry.push_back(entry);
 					}
@@ -2596,20 +2192,15 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		}
 
 		stringstream historyLog;
-		if(listHistoryEntry.size() > 0)
-		{
+		if(listHistoryEntry.size() > 0) {
 			list<CChangeHistoryEntry>::iterator listIter;		
-			for ( listIter = listHistoryEntry.begin(); listIter != listHistoryEntry.end(); listIter++ )
-			{	
+			for ( listIter = listHistoryEntry.begin(); listIter != listHistoryEntry.end(); listIter++ ) {	
 				CChangeHistoryEntry historyEntry = (CChangeHistoryEntry) *listIter;
 				historyLog << CUtil::TimeToString(historyEntry.ts) << " " << this->LinkToUser(historyEntry.user, rootLevel) << "<br/>" << endl;
 				historyLog << historyEntry.entry << "<br/><br/>" << endl;
 			}
-		}
-		else
-		{
+		} else 
 			historyLog << EmptyValue << endl;
-		}
 
 		CTable tbl("history", "TblObjectHistory");
 		tbl.AddColumn(20, "Description");
@@ -2637,8 +2228,7 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 		//Helptext
 		string tmpHelptext = EmptyValue;
-		if(obj->helptext != NULL)
-		{
+		if(obj->helptext != NULL) {
 			tmpHelptext = CUtil::StrReplace("\n", "<br/>", obj->helptext);
 		}
 
@@ -2647,9 +2237,7 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 		strm << tbl.ToXHtml();
 		tbl.Clear();
-	}
-	catch(...)
-	{
+	} catch(...) {
 		cout << "EXCEPTION writing server object history " << endl;
 	}	
 
