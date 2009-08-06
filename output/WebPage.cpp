@@ -22,8 +22,11 @@
 #include "StdAfx.h"
 #include "webpage.h"
 #include "webutil.h"
+#include "..\arinside.h"
 
 using namespace OUTPUT;
+
+#define LOG if(verboseMode) cout
 
 extern int nFilesCreated;
 
@@ -178,13 +181,13 @@ int CWebPage::SaveInFolder(string path)
 
 	try
 	{	
-		cout << "Save file '" << strm.str();
+		LOG << "Save file '" << strm.str();
 
 		ofstream fout( strm.str().c_str(), ios::out);
 		fout << this->GetFileContent() << endl;
 		fout.close();
 
-		cout << "' [OK]" << endl;
+		LOG << "' [OK]" << endl;
 		
 		nFilesCreated++;
 		result = 1;

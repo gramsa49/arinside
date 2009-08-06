@@ -21,6 +21,9 @@
 
 #include "StdAfx.h"
 #include ".\ardatafactory.h"
+#include "..\arinside.h"
+
+#define LOG if(verboseMode) cout
 
 CARDataFactory::CARDataFactory(ARControlStruct &control, ARStatusList &status)
 {
@@ -147,11 +150,11 @@ CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 			if(fieldList.fieldValueList[8].value.u.timeVal != NULL)
 				grp->modified = fieldList.fieldValueList[8].value.u.timeVal;
 
-			cout << "Group '" << grp->groupName <<"' [OK]" << endl;		
+			LOG << "Group '" << grp->groupName <<"' [OK]" << endl;		
 		}
 		else
 		{
-			cout << "Group '" << requestId <<"' [ERROR]" << endl;		
+			LOG << "Group '" << requestId <<"' [ERROR]" << endl;		
 		}
 
 
@@ -321,11 +324,11 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 			if(fieldList.fieldValueList[11].value.u.timeVal != NULL)
 				arUser->modified = fieldList.fieldValueList[11].value.u.timeVal;
 
-			cout << "User '" << arUser->loginName <<"' [OK]" << endl;
+			LOG << "User '" << arUser->loginName <<"' [OK]" << endl;
 		}
 		else
 		{
-			cout << "User '" << requestId <<"' [ERROR]" << endl;
+			LOG << "User '" << requestId <<"' [ERROR]" << endl;
 		}
 	    
 		delete[] entryId.entryIdList;
@@ -500,11 +503,11 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 			if(fieldList.fieldValueList[9].value.u.timeVal != NULL)
 				role->modified = fieldList.fieldValueList[9].value.u.timeVal;
 
-			cout << "Role '" << role->roleName <<"' [OK]" << endl;		
+			LOG << "Role '" << role->roleName <<"' [OK]" << endl;		
 		}
 		else
 		{
-			cout << "Role '" << requestId <<"' [ERROR]" << endl;		
+			LOG << "Role '" << requestId <<"' [ERROR]" << endl;		
 		}
 
 		delete[] entryId.entryIdList;

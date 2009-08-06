@@ -40,6 +40,8 @@
 #include "util\menurefitem.h"
 #include "util\apptimer.h"
 
+extern bool verboseMode;
+
 class CARInside
 {
 public:
@@ -64,7 +66,8 @@ public:
 	void LoadBlackList(void);	
 	void Prepare(void);		
 	void Documentation(void);
-	
+
+
 	string srvHostName;
 	string srvFullHostName;
 	list<CARSchema> schemaList;

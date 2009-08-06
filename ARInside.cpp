@@ -46,7 +46,11 @@
 #include "output\table.h"
 #include "output\webutil.h"
 
+bool verboseMode = false;
+
 using namespace OUTPUT;
+
+#define LOG if(verboseMode) cout
 
 CARInside::CARInside(AppConfig &appConfig)
 {
@@ -158,7 +162,7 @@ void CARInside::LoadBlackList(void)
 			refTypes.numItems = 1;
 			refTypes.refType[0] = ARREF_ALL;
 
-			cout << "Loading blacklist from packinglist'" << appConfig.blackList << "'" << endl;
+			cout << "Loading blacklist from packinglist '" << appConfig.blackList << "'" << endl;
 
 			CARContainer obj(appConfig.blackList, 0);
 
@@ -187,7 +191,7 @@ void CARInside::LoadBlackList(void)
 						CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
 				
 						this->blackList.insert(blackList.end(), *blackListItem);
-						cout << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
+						LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
 					}
 				}
 			}		
@@ -394,7 +398,7 @@ void CARInside::LoadFromFile(void)
 				{						
 				case AR_STRUCT_ITEM_XML_FILTER:
 				{
-					cout << "Loading Filter: " << parsedObjects.structItemList[i].name; 
+					LOG << "Loading Filter: " << parsedObjects.structItemList[i].name; 
 					CARFilter *obj = new CARFilter(parsedObjects.structItemList[i].name, arInsideIdFilter);
 
 					if( ARGetFilterFromXML(&this->arControl, 
@@ -419,18 +423,18 @@ void CARInside::LoadFromFile(void)
 					{
 						this->filterList.insert(this->filterList.end(), *obj);
 										
-						cout << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
+						LOG << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
 						arInsideIdFilter++;
 					}
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 
 					FreeARStatusList(&this->arStatus, false);
 				}
 				break;
 				case AR_STRUCT_ITEM_XML_SCHEMA:
 					{
-						cout << "Loading Form: " << parsedObjects.structItemList[i].name; 
+						LOG << "Loading Form: " << parsedObjects.structItemList[i].name; 
 						CARSchema *schema = new CARSchema(parsedObjects.structItemList[i].name, arInsideIdSchema);
 
 						ARFieldInfoList fieldInfoList;
@@ -468,7 +472,7 @@ void CARInside::LoadFromFile(void)
 							for(unsigned int nField = 0; nField < fieldInfoList.numItems; nField++)
 							{									
 								ARFieldInfoStruct tmpField = fieldInfoList.fieldList[nField];
-								cout << "Loading Field: " << tmpField.fieldName;	
+								LOG << "Loading Field: " << tmpField.fieldName;	
 
 								CARField *field = new CARField(tmpField.fieldId);
 								
@@ -500,7 +504,7 @@ void CARInside::LoadFromFile(void)
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}	
 
-								cout << " [OK]" << endl;												
+								LOG << " [OK]" << endl;												
 							}
 
 							//VuiList
@@ -524,11 +528,11 @@ void CARInside::LoadFromFile(void)
 
 							this->schemaList.insert(this->schemaList.end(), *schema);
 
-							cout << " (InsideID: " << arInsideIdSchema << ") [OK]" << endl;
+							LOG << " (InsideID: " << arInsideIdSchema << ") [OK]" << endl;
 							arInsideIdSchema++;
 						}
 						else
-							cout << " [ERROR]" << endl;
+							LOG << " [ERROR]" << endl;
 
 						//FreeARFieldInfoList(&fieldInfoList, false);
 						//FreeARVuiInfoList(&vuiInfoList, false);
@@ -538,7 +542,7 @@ void CARInside::LoadFromFile(void)
 					break;					
 				case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
 					{
-						cout << "Loading ActiveLink: " << parsedObjects.structItemList[i].name; 
+						LOG << "Loading ActiveLink: " << parsedObjects.structItemList[i].name; 
 						CARActiveLink *obj = new CARActiveLink(parsedObjects.structItemList[i].name, arInsideIdAl);
 
 						if( ARGetActiveLinkFromXML(&this->arControl, 
@@ -567,18 +571,18 @@ void CARInside::LoadFromFile(void)
 						{
 							this->alList.insert(this->alList.end(), *obj);
 
-							cout << " (InsideID: " << arInsideIdAl << ") [OK]" << endl;
+							LOG << " (InsideID: " << arInsideIdAl << ") [OK]" << endl;
 							arInsideIdAl++;								
 						}
 						else
-							cout << " [ERROR]" << endl;
+							LOG << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_CHAR_MENU:
 					{
-						cout << "Loading CharMenu: " << parsedObjects.structItemList[i].name; 
+						LOG << "Loading CharMenu: " << parsedObjects.structItemList[i].name; 
 						CARCharMenu *obj = new CARCharMenu(parsedObjects.structItemList[i].name, arInsideIdMenu);
 
 						if( ARGetMenuFromXML(&this->arControl, 
@@ -598,18 +602,18 @@ void CARInside::LoadFromFile(void)
 						{
 							this->menuList.insert(this->menuList.end(), *obj);
 
-							cout << " (InsideID: " << arInsideIdMenu << ") [OK]" << endl;
+							LOG << " (InsideID: " << arInsideIdMenu << ") [OK]" << endl;
 							arInsideIdMenu++;								
 						}
 						else
-							cout << " [ERROR]" << endl;
+							LOG << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_ESCALATION:
 					{
-						cout << "Loading Escalation: " << parsedObjects.structItemList[i].name; 
+						LOG << "Loading Escalation: " << parsedObjects.structItemList[i].name; 
 						CAREscalation *obj = new CAREscalation(parsedObjects.structItemList[i].name, arInsideIdEscal);
 
 						if( ARGetEscalationFromXML(&this->arControl, 
@@ -633,18 +637,18 @@ void CARInside::LoadFromFile(void)
 						{
 							this->escalList.insert(this->escalList.end(), *obj);
 
-							cout << " (InsideID: " << arInsideIdEscal << ") [OK]" << endl;
+							LOG << " (InsideID: " << arInsideIdEscal << ") [OK]" << endl;
 							arInsideIdEscal++;								
 						}
 						else
-							cout << " [ERROR]" << endl;
+							LOG << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_CONTAINER:
 					{
-						cout << "Loading Container: " << parsedObjects.structItemList[i].name; 
+						LOG << "Loading Container: " << parsedObjects.structItemList[i].name; 
 						CARContainer *obj = new CARContainer(parsedObjects.structItemList[i].name, arInsideIdCont);
 
 						if( ARGetContainerFromXML(&this->arControl, 
@@ -669,11 +673,11 @@ void CARInside::LoadFromFile(void)
 						{
 							this->containerList.insert(this->containerList.end(), *obj);
 
-							cout << " (InsideID: " << arInsideIdCont << ") [OK]" << endl;
+							LOG << " (InsideID: " << arInsideIdCont << ") [OK]" << endl;
 							arInsideIdCont++;								
 						}
 						else
-							cout << " [ERROR]" << endl;
+							LOG << " [ERROR]" << endl;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
@@ -707,110 +711,110 @@ void CARInside::LoadFromServer(void)
 	//LoadServerInfoList	
 	if(appConfig.bLoadServerInfoList)
 	{
-		cout << "Start loading server informations:" << endl;
+		cout << "Start loading Server Informations:" << endl;
 		CARServerInfo serverInfo(this->arControl, this->arStatus);
 		serverInfo.GetList(serverInfoList);
 		cout << (unsigned int)serverInfoList.size() << " server settings loaded" << endl;
 	}
 	else
-		cout << endl << "Loading server informations [SKIPPED]" << endl;
+		cout << endl << "Loading Server Informations [SKIPPED]" << endl;
 
 	//LoadUserList
 	if(appConfig.bLoadUserList)
 	{
-		cout << endl << "Start laoding users:" << endl;		
+		cout << endl << "Start laoding Users:" << endl;		
 		
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListUser(this->appConfig, userList);
 		
 		dataFactory->Sort(userList);
-		cout << (unsigned int)userList.size() << " users loaded" << endl;
+		cout << (unsigned int)userList.size() << " Users loaded" << endl;
 
 		delete dataFactory;
 	}
 	else
-		cout << endl << "Loading users [SKIPPED]" << endl;
+		cout << endl << "Loading Users [SKIPPED]" << endl;
 
 
 	//LoadGroupList
 	if(appConfig.bLoadGroupList)
 	{
-		cout << endl << "Start loading groups:" << endl;		
+		cout << endl << "Start loading Groups:" << endl;		
 		
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListGroup(this->appConfig, groupList);
 				
 		dataFactory->Sort(groupList);
-		cout << (unsigned int)groupList.size() << " groups loaded" << endl;
+		cout << (unsigned int)groupList.size() << " Groups loaded" << endl;
 		delete dataFactory;
 	}
 	else
-		cout << endl << "Loading groups [SKIPPED]" << endl;
+		cout << endl << "Loading Groups [SKIPPED]" << endl;
 	
 	//LoadRoleList
 	if(appConfig.bLoadRoleList)
 	{
-		cout << endl << "Start loading roles:" << endl;		
+		cout << endl << "Start loading Roles:" << endl;		
 		
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListRoles(this->appConfig, roleList);
 				
 		dataFactory->Sort(roleList);
-		cout << (unsigned int)roleList.size() << " roles loaded" << endl;
+		cout << (unsigned int)roleList.size() << " Roles loaded" << endl;
 		delete dataFactory;
 	}
 	else
-		cout << endl << "Loading roles [SKIPPED]" << endl;
+		cout << endl << "Loading Roles [SKIPPED]" << endl;
 
 	//ActiveLinks		
-	cout << endl << "Start loading active links:" << endl;
+	cout << endl << "Start loading Active Links:" << endl;
 	int nResult = LoadActiveLinks();
-	cout << nResult << " ActiveLinks loaded" << endl;
+	cout << nResult << " Active Links loaded" << endl;
 	
 
 	//Filters	
-	cout << endl << "Start loading filters:" << endl;
+	cout << endl << "Start loading Filters:" << endl;
 	nResult = LoadFilters();
 	cout << nResult << " Filters loaded" << endl;
 	
 	//Container	
-	cout << endl << "Start loading containers:" << endl;
+	cout << endl << "Start loading Containers:" << endl;
 	nResult = LoadContainer();
 	cout << nResult << " Containers loaded" << endl;
 
 	//Escalations	
-	cout << endl << "Start loading escalations:" << endl;
+	cout << endl << "Start loading Escalations:" << endl;
 	nResult = LoadEscalations();
 	cout << nResult << " Escalations loaded" << endl;
 
 	//CharMenus	
-	cout << endl << "Start loading char menus:" << endl;
+	cout << endl << "Start loading Menus:" << endl;
 	nResult = LoadCharMenus();
-	cout << nResult << " CharMenus loaded" << endl;
+	cout << nResult << " Menus loaded" << endl;
 
 	//Load schemas
 	int insideId = 0;
-	cout << endl << "Start loading forms:" << endl;
+	cout << endl << "Start loading Forms:" << endl;
 
 	//Regular forms
 	nResult = LoadForms(AR_LIST_SCHEMA_REGULAR, insideId);
-	cout << endl << nResult << " RegularForms loaded" << endl;
+	cout << nResult << " Regular Forms loaded" << endl;
 
 	//Dialogs
 	nResult = LoadForms(AR_LIST_SCHEMA_DIALOG, insideId);
-	cout << endl << nResult << " DialogForms loaded" << endl;
+	cout << nResult << " Dialog Forms loaded" << endl;
 	
 	//Join
 	nResult = LoadForms(AR_LIST_SCHEMA_JOIN, insideId);
-	cout << endl << nResult << " JoinForms loaded" << endl;
+	cout << nResult << " Join Forms loaded" << endl;
 
 	//Vendor
 	nResult = LoadForms(AR_LIST_SCHEMA_VENDOR, insideId);
-	cout << endl << nResult << " VendorForms loaded" << endl;
+	cout << nResult << " Vendor Forms loaded" << endl;
 
 	//View
 	nResult = LoadForms(AR_LIST_SCHEMA_VIEW, insideId);
-	cout << endl << nResult << " ViewForms loaded" << endl;
+	cout << nResult << " View Forms loaded" << endl << endl;
 
 	//Add fieldreferences
 	SearchCustomFieldReferences();
@@ -831,7 +835,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 			{
 				if(!this->InBlacklist(ARREF_SCHEMA, nameList.nameList[i]))
 				{
-					cout << "Loading Form: " << nameList.nameList[i] << endl;
+					LOG << "Loading Form: " << nameList.nameList[i] << endl;
 					CARSchema *schema = new CARSchema(nameList.nameList[i], schemaInsideId);
 					
 					if(aliasList.nameList[i] != NULL)
@@ -880,13 +884,13 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 									&vui->changeDiary,
 									&this->arStatus) == AR_RETURN_OK)
 								{
-									cout << "Loading Form: " << nameList.nameList[i] << " Vui: " << vui->vuiName << endl;
+									LOG << "Loading Form: " << nameList.nameList[i] << " Vui: " << vui->vuiName << endl;
 									vui->schemaInsideId = schemaInsideId;
 									vui->name = vui->vuiName;
 									schema->vuiList.insert(schema->vuiList.end(), *vui);
 								}
 								else
-									cout << " [ERROR]" << endl;
+									LOG << " [ERROR]" << endl;
 
 								FreeARStatusList(&this->arStatus, false);
 							}
@@ -974,13 +978,13 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 						//Add form to list
 						this->schemaList.push_back(*schema);
 
-						cout << nameList.nameList[i] << " (InsideID: " << schemaInsideId << ") [OK]" << endl;
+						LOG << nameList.nameList[i] << " (InsideID: " << schemaInsideId << ") [OK]" << endl;
 						schemaInsideId++;
 
 						nCnt++;
 					}			
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 				}
 			}
 		}
@@ -1021,7 +1025,7 @@ int CARInside::LoadContainer(void)
 			{
 				if(!this->InBlacklist(ARREF_CONTAINER, conList.conInfoList[i].name))
 				{
-					cout << "Loading " << CAREnum::ContainerType(conList.conInfoList[i].type) << ": " << conList.conInfoList[i].name; 
+					LOG << "Loading " << CAREnum::ContainerType(conList.conInfoList[i].type) << ": " << conList.conInfoList[i].name; 
 					CARContainer *obj = new CARContainer(conList.conInfoList[i].name, insideId);
 
 					if( ARGetContainer(&this->arControl,
@@ -1044,13 +1048,13 @@ int CARInside::LoadContainer(void)
 					{
 						this->containerList.insert(this->containerList.end(), *obj);
 
-						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
+						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
 					}		
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 				}
 			}
 		}
@@ -1085,7 +1089,7 @@ int CARInside::LoadCharMenus(void)
 			{
 				if(!this->InBlacklist(ARREF_CHAR_MENU, nameList.nameList[i]))
 				{
-					cout << "Loading Menu: " << nameList.nameList[i]; 
+					LOG << "Loading Menu: " << nameList.nameList[i]; 
 					CARCharMenu *obj = new CARCharMenu(nameList.nameList[i], insideId);
 
 					if( ARGetCharMenu(&this->arControl, 
@@ -1102,13 +1106,13 @@ int CARInside::LoadCharMenus(void)
 					{
 						this->menuList.insert(this->menuList.end(), *obj);
 
-						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
+						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
 					}
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 				}
 			}
 		}
@@ -1120,7 +1124,7 @@ int CARInside::LoadCharMenus(void)
 	}
 	catch(...)
 	{
-		cout << "EXCEPTION loading CharMenus " << endl;
+		cout << "EXCEPTION loading Menus " << endl;
 		GetARStatusError();
 	}
 
@@ -1142,7 +1146,7 @@ int CARInside::LoadEscalations(void)
 			{
 				if(!this->InBlacklist(ARREF_ESCALATION, nameList.nameList[i]))
 				{
-					cout << "Loading Escalation: " << nameList.nameList[i]; 
+					LOG << "Loading Escalation: " << nameList.nameList[i]; 
 					CAREscalation *obj = new CAREscalation(nameList.nameList[i], insideId);
 
 					if( ARGetEscalation(&this->arControl, 
@@ -1163,13 +1167,13 @@ int CARInside::LoadEscalations(void)
 					{
 						this->escalList.insert(this->escalList.end(), *obj);
 
-						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
+						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
 					}	
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 				}
 			}
 		}
@@ -1203,7 +1207,7 @@ int CARInside::LoadFilters(void)
 			{
 				if(!this->InBlacklist(ARREF_FILTER, nameList.nameList[i]))
 				{
-					cout << "Loading Filter: " << nameList.nameList[i]; 
+					LOG << "Loading Filter: " << nameList.nameList[i]; 
 					CARFilter *obj = new CARFilter(nameList.nameList[i], insideId);
 
 					if( ARGetFilter(&this->arControl, 
@@ -1225,13 +1229,13 @@ int CARInside::LoadFilters(void)
 					{
 						this->filterList.insert(this->filterList.end(), *obj);
 
-						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
+						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
 					}	
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 				}
 			}
 		}
@@ -1265,7 +1269,7 @@ int CARInside::LoadActiveLinks(void)
 			{
 				if(!this->InBlacklist(ARREF_ACTLINK, nameList.nameList[i]))
 				{
-					cout << "Loading ActiveLink: " << nameList.nameList[i]; 
+					LOG << "Loading ActiveLink: " << nameList.nameList[i]; 
 					CARActiveLink *obj = new CARActiveLink(nameList.nameList[i], insideId);
 
 					if( ARGetActiveLink(&this->arControl, 
@@ -1290,13 +1294,13 @@ int CARInside::LoadActiveLinks(void)
 					{
 						this->alList.insert(this->alList.end(), *obj);
 
-						cout << " (InsideID: " << insideId << ") [OK]" << endl;						
+						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
 						insideId++;
 
 						FreeARStatusList(&this->arStatus, false);
 					}		
 					else
-						cout << " [ERROR]" << endl;
+						LOG << " [ERROR]" << endl;
 
 				}
 			}
@@ -1407,14 +1411,14 @@ void CARInside::Documentation(void)
 		{
 			case ARCON_APP:
 			{
-				cout << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
+				LOG << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocApplicationDetails appDetails(*this, *cont);
 				appDetails.Documentation();
 			}
 			break;
 			default:
 			{
-				cout << "Container [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
+				LOG << "Container [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
 			}
 			break;
 		}
@@ -1430,35 +1434,35 @@ void CARInside::Documentation(void)
 		{
 			case ARCON_WEBSERVICE:
 			{
-				cout << "Webservice [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
+				LOG << "Webservice [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocWebserviceDetails wsDetails(*this, *cont);
 				wsDetails.Documentation();
 			}
 			break;
 			case ARCON_GUIDE:
 			{
-				cout << "ActiveLinkGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
+				LOG << "ActiveLinkGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocAlGuideDetails guideDetails(*this, *cont);
 				guideDetails.Documentation();
 			}
 			break;
 			case ARCON_FILTER_GUIDE:
 			{
-				cout << "FilterGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
+				LOG << "FilterGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocFilterGuideDetails fltGuideDetails(*this, *cont);
 				fltGuideDetails.Documentation();
 			}
 			break;
 			case ARCON_PACK:
 			{
-				cout << "PackingList [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
+				LOG << "PackingList [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocPacklistDetails packDetails(*this, *cont);
 				packDetails.Documentation();
 			}
 			break;
 			case ARCON_APP:
 			{
-				cout << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
+				LOG << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
 			}
 			break;
 		}
@@ -1482,7 +1486,7 @@ void CARInside::Documentation(void)
 	{	
 		CARActiveLink *al = &(*alIter);
 
-		cout << "ActiveLink [" << nTmpCnt << "-" << alList.size() << "] '" << al->name << "': ";
+		LOG << "ActiveLink [" << nTmpCnt << "-" << alList.size() << "] '" << al->name << "': ";
 		CDocAlDetails *alDetails = new CDocAlDetails(*this, *al, "active_link\\"+al->FileID(), 2);
 		alDetails->Documentation();
 		delete alDetails;
@@ -1506,7 +1510,7 @@ void CARInside::Documentation(void)
 	{
 		CARFilter *filter = &(*filterIter);
 		
-		cout << "Filter [" << nTmpCnt << "-" << filterList.size() << "] '" << filter->name << "': ";
+		LOG << "Filter [" << nTmpCnt << "-" << filterList.size() << "] '" << filter->name << "': ";
 		CDocFilterDetails *filterDetails = new CDocFilterDetails(*this, *filter, "filter\\"+filter->FileID(), 2);
 		filterDetails->Documentation();
 		delete filterDetails;
@@ -1530,7 +1534,7 @@ void CARInside::Documentation(void)
 	{
 		CAREscalation *escal = &(*escalIter);
 
-		cout << "Escalation [" << nTmpCnt << "-" << escalList.size() << "] '" << escal->name << "': ";
+		LOG << "Escalation [" << nTmpCnt << "-" << escalList.size() << "] '" << escal->name << "': ";
 		CDocEscalationDetails *escalDetails = new CDocEscalationDetails(*this, *escal, "escalation\\"+escal->FileID(), 2);
 		escalDetails->Documentation();
 		delete escalDetails;		
@@ -1553,7 +1557,7 @@ void CARInside::Documentation(void)
 	{
 		CARCharMenu *menu = &(*menuIter);	
 
-		cout << "Menu [" << nTmpCnt << "-" << menuList.size() << "] '" << menu->name << "': ";
+		LOG << "Menu [" << nTmpCnt << "-" << menuList.size() << "] '" << menu->name << "': ";
 		string path = "menu\\"+menu->FileID();
 		CDocCharMenuDetails *menuDetails = new CDocCharMenuDetails(*this, *menu, path, 2);
 		menuDetails->Documentation();
@@ -1585,27 +1589,27 @@ void CARInside::Documentation(void)
 		CARSchema *schema = &(*schemaIter);		
 		string path="schema\\"+schema->FileID();
 		
-		cout << "Schema [" << nTmpCnt << "-" << schemaList.size() << "] '" << schema->name << "': ";
+		LOG << "Schema [" << nTmpCnt << "-" << schemaList.size() << "] '" << schema->name << "': ";
 		CDocSchemaDetails *schemaDetails = new CDocSchemaDetails(*this, *schema, path, rootLevel);
 		schemaDetails->Documentation();
 		delete schemaDetails;
 
 
 		//VuiDetails
-		cout << "VuiDetails Schema '" << schema->name << "'" << endl;
+		LOG << "VuiDetails Schema '" << schema->name << "'" << endl;
 		list<CARVui>::iterator vuiIter;			
 		for( vuiIter = schema->vuiList.begin(); vuiIter != schema->vuiList.end(); vuiIter++)
 		{
 			CARVui *vui = &(*vuiIter);
 
-			cout << "SchemaView '" << vui->name << "': ";
+			LOG << "SchemaView '" << vui->name << "': ";
 			CDocVuiDetails *vuiDetails = new CDocVuiDetails(*this, *schema, *vui, path, rootLevel);
 			vuiDetails->Documentation();
 			delete vuiDetails;
 		}
 
 		//FieldDetails
-		cout << "FieldDetails Schema '" << schema->name << "'" << endl;		
+		LOG << "FieldDetails Schema '" << schema->name << "'" << endl;		
 		list<CARField>::iterator fieldIter;
 		for ( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++ )
 		{	
@@ -1649,7 +1653,7 @@ void CARInside::Documentation(void)
 	{
 		CARGroup *grp = &(*groupIter);
 
-		cout << "Group [" << nTmpCnt << "-" << groupList.size() << "] '" << grp->name << "': ";
+		LOG << "Group [" << nTmpCnt << "-" << groupList.size() << "] '" << grp->name << "': ";
 		CDocGroupDetails *grpDetails = new CDocGroupDetails(*this, *grp);
 		grpDetails->Documentation();
 		delete grpDetails;
@@ -1671,7 +1675,7 @@ void CARInside::Documentation(void)
 	{
 		CARRole *role = &(*roleIter);
 
-		cout << "Role [" << nTmpCnt << "-" << roleList.size() << "] '" << role->name << "': ";
+		LOG << "Role [" << nTmpCnt << "-" << roleList.size() << "] '" << role->name << "': ";
 		CDocRoleDetails *roleDetails = new CDocRoleDetails(*this, *role);
 		roleDetails->Documentation();
 		delete roleDetails;
@@ -1693,7 +1697,7 @@ void CARInside::Documentation(void)
 	{
 		CARUser *user = &(*userIter);
 
-		cout << "User [" << nTmpCnt << "-" << userList.size() << "] '" << user->loginName << "': ";
+		LOG << "User [" << nTmpCnt << "-" << userList.size() << "] '" << user->loginName << "': ";
 		CDocUserDetails *userDetails = new CDocUserDetails(*this, *user);
 		userDetails->Documentation();
 		delete userDetails;
@@ -1733,7 +1737,7 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 								return field->limit.u.enumLimits.u.regularList.nameList[enumPosition];
 							break;
 							case AR_ENUM_STYLE_CUSTOM:
-								for (int i=0; i< field->limit.u.enumLimits.u.customList.numItems; i++) { 
+								for (int i=0; i< (int)field->limit.u.enumLimits.u.customList.numItems; i++) { 
 									if (field->limit.u.enumLimits.u.customList.enumItemList[i].itemNumber == enumPosition) 
 										return field->limit.u.enumLimits.u.customList.enumItemList[i].itemName; 
 								} 

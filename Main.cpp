@@ -31,6 +31,8 @@
 
 using namespace TCLAP;
 
+#define LOG if(verboseMode) cout
+
 const string AppName = "ARInside";
 void LoadConfigFile(string fileName, AppConfig &cfg);
 string LoadFromFile(string fileName);
@@ -73,6 +75,9 @@ int _tmain(int argc, _TCHAR* argv[])
 		ValueArg<int> rpcArg("r", "rcp", "Rcp port", false, 0, "int");
 		cmd.add(rpcArg);
 
+		SwitchArg verboseArg("v","verbose","Verbose Output",false);
+		cmd.add(verboseArg);
+
 		cmd.parse( argc, argv );
 		server = serverArg.getValue();
 		login = loginArg.getValue();
@@ -80,7 +85,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		tcp = tcpArg.getValue();
 		rpc = rpcArg.getValue();
 		settingsIni = iniArg.getValue();
-
+		verboseMode = verboseArg.getValue();
 	} 
 	catch (ArgException &e)
 	{ 
@@ -90,7 +95,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	try
 	{
-		cout << "ARInside Version" << AppVersion << endl;
+		cout << "ARInside Version " << AppVersion << endl;
 		
 		std::ifstream in(settingsIni.c_str());		
 		if(!in)
@@ -225,27 +230,27 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto(cfg.bDeleteExistingFiles, "DeleteExistingFiles");
 		cout << endl;
 		
-		cout << "UserForm: " << cfg.userForm << endl;		
-		cout << "UserQuery: " << cfg.userQuery << endl;
-		cout << "GroupForm: " << cfg.groupForm << endl;
-		cout << "GroupQuery: " << cfg.groupQuery << endl;
-		cout << "RoleForm: " << cfg.roleForm << endl;
-		cout << "RoleQuery: " << cfg.roleQuery << endl;
-		cout << "MaxRetrieve: " << cfg.maxRetrieve << endl;
-		cout << "CompanyName: " << cfg.companyName << endl;
-		cout << "CompanyUrl: " << cfg.companyUrl << endl;
-		cout << "TargetFolder: " << cfg.targetFolder << endl;
-		cout << "FileMode: " << cfg.fileMode << endl;
-		cout << "ObjListXML: " << cfg.objListXML << endl;
-		cout << "BlackList: " << cfg.blackList << endl;
-		cout << "LoadServerInfoList: " << cfg.bLoadServerInfoList << endl;
-		cout << "LoadUserList: " << cfg.bLoadUserList << endl;
-		cout << "LoadGroupList: " << cfg.bLoadGroupList << endl;
-		cout << "LoadRoleList: " << cfg.bLoadRoleList << endl;
-		cout << "Utf-8: " << cfg.bUseUtf8 << endl;
-		cout << "CompactFolder: " << cfg.bCompactFolder << endl;
-		cout << "DeleteExistingFiles: " << cfg.bDeleteExistingFiles << endl;
-		cout << endl;		
+		LOG << "UserForm: " << cfg.userForm << endl;		
+		LOG << "UserQuery: " << cfg.userQuery << endl;
+		LOG << "GroupForm: " << cfg.groupForm << endl;
+		LOG << "GroupQuery: " << cfg.groupQuery << endl;
+		LOG << "RoleForm: " << cfg.roleForm << endl;
+		LOG << "RoleQuery: " << cfg.roleQuery << endl;
+		LOG << "MaxRetrieve: " << cfg.maxRetrieve << endl;
+		LOG << "CompanyName: " << cfg.companyName << endl;
+		LOG << "CompanyUrl: " << cfg.companyUrl << endl;
+		LOG << "TargetFolder: " << cfg.targetFolder << endl;
+		LOG << "FileMode: " << cfg.fileMode << endl;
+		LOG << "ObjListXML: " << cfg.objListXML << endl;
+		LOG << "BlackList: " << cfg.blackList << endl;
+		LOG << "LoadServerInfoList: " << cfg.bLoadServerInfoList << endl;
+		LOG << "LoadUserList: " << cfg.bLoadUserList << endl;
+		LOG << "LoadGroupList: " << cfg.bLoadGroupList << endl;
+		LOG << "LoadRoleList: " << cfg.bLoadRoleList << endl;
+		LOG << "Utf-8: " << cfg.bUseUtf8 << endl;
+		LOG << "CompactFolder: " << cfg.bCompactFolder << endl;
+		LOG << "DeleteExistingFiles: " << cfg.bDeleteExistingFiles << endl;
+		LOG << endl;		
 	}
 	catch(...)
 	{
@@ -319,7 +324,7 @@ BOOL DeleteDirectory(const TCHAR* sPath)
 			if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 			{
 				// we have found a directory, recurse
-				cout << "Delete " << FileName << endl;
+				LOG << "Delete " << FileName << endl;
 
 				if( !DeleteDirectory(FileName) )
 				break; // directory couldn't be deleted
@@ -329,7 +334,7 @@ BOOL DeleteDirectory(const TCHAR* sPath)
 				if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
 					_chmod(FileName, _S_IWRITE); // change read-only file mode
 
-				cout << "Delete " << FileName << endl;
+				LOG << "Delete " << FileName << endl;
 				if( !DeleteFile(FileName) )
 					break; // file couldn't be deleted
 			}
