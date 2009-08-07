@@ -31,7 +31,7 @@
 
 #include "util\util.h"
 
-const string AppVersion = "2.07.4";
+const string AppVersion = "3.0";
 
 const string MenuSeparator = " -> ";
 const string EmptyRunIf = "No qualification specified";
