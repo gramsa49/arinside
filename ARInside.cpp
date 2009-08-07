@@ -418,6 +418,8 @@ void CARInside::LoadFromFile(void)
 						&obj->helptext,
 						&obj->changeDiary,
 						&obj->objPropList,
+						&obj->errorOptions,
+						obj->errorFilterName,
 						&obj->xmlDocVersion,
 						&this->arStatus) == AR_RETURN_OK)
 					{
@@ -1225,6 +1227,8 @@ int CARInside::LoadFilters(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
+						&obj->errorOptions,
+						obj->errorFilterName,
 						&this->arStatus) == AR_RETURN_OK)
 					{
 						this->filterList.insert(this->filterList.end(), *obj);

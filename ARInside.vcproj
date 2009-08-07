@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\Api701\include"
+				AdditionalIncludeDirectories=".\Tclap;..\..\Api710\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -66,9 +66,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi70.lib arxmlutil70.lib"
+				AdditionalDependencies="arapi71.lib arxmlutil71.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\Api701\lib"
+				AdditionalLibraryDirectories="..\..\Api710\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				RandomizedBaseAddress="1"

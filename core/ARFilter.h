@@ -32,6 +32,8 @@ public:
 	unsigned int order;
 	unsigned int opSet;
 	unsigned int enable;
+	unsigned int errorOptions;
+	ARNameType errorFilterName;
 	ARQualifierStruct query;
 	ARFilterActionList actionList;
 	ARFilterActionList elseList;

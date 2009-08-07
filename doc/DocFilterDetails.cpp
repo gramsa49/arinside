@@ -74,6 +74,19 @@ void CDocFilterDetails::Documentation()
 			//Execute On
 			tblRow.AddCellList(CTableCell("Execute On"), CTableCell(this->pFilter->GetExecuteOn()));
 			tblObjProp.AddRow(tblRow);
+
+			// Error Handler
+			strmTmp.str("");
+			if (this->pFilter->errorOptions == AR_FILTER_ERRHANDLER_ENABLE)
+			{
+				strmTmp << pInside->LinkToFilter(this->pFilter->errorFilterName, rootLevel);
+			}
+			else 
+			{
+				strmTmp << "None";
+			}
+			tblRow.AddCellList(CTableCell("Error Handler"), strmTmp.str());
+			tblObjProp.AddRow(tblRow);
 			
 			//Workflow	
 			if(this->pFilter->schemaList.u.schemaList->numItems > 0)
