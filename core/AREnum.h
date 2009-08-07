@@ -1339,7 +1339,10 @@ public:
 			case AR_KEYWORD_FIELDLABEL: return "FIELDLABEL";      
 			case AR_KEYWORD_SERVERTIMESTAMP: return "SERVERTIMESTAMP"; 
 			case AR_KEYWORD_GROUPIDS: return "GROUPIDS";
-			case AR_KEYWORD_NO: return "NO";		
+			case AR_KEYWORD_EVENTDATA: return "EVENTDATA";
+			case AR_KEYWORD_ERRNO: return "ERRNO";
+			case AR_KEYWORD_ERRMSG: return "ERRMSG";
+			case AR_KEYWORD_ERRAPPENDMSG: return "ERRAPPENDMSG";
 			default: return EnumDefault;
 		}
 	}
