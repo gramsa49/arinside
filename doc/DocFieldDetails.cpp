@@ -386,7 +386,7 @@ string CDocFieldDetails::FieldLimits()
 						strm << "Items: " << "<br/>" << endl;
 						for(unsigned int i=0; i < fLimit.u.regularList.numItems; i++)
 						{
-							strm << fLimit.u.regularList.nameList[i] << "<br/>" << endl;
+							strm << i << " - " << fLimit.u.regularList.nameList[i] << "<br/>" << endl;
 						}
 					}
 					break;

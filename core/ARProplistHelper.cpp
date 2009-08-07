@@ -49,10 +49,35 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 		break;
 		case AR_DATA_TYPE_CHAR:
 		{
-			if(arV.u.charVal != NULL)
+			if (nProp == AR_DPROP_ENUM_LABELS){
+				string enumLabels = arV.u.charVal;
+				//find first separator
+				size_t next=enumLabels.find('\\');
+				//get the total entries off the front of the string
+				int numItems = atoi(enumLabels.substr(0,next).c_str());
+				//clear the number of entries off the front of the list
+				enumLabels = enumLabels.substr(next+1);
+				for(int i=0; i < numItems; i++)
+				{
+					//determine size of text
+					next=enumLabels.find('\\');
+					//add enumerated number to list
+					strmValue << enumLabels.substr(0,next) << " - ";
+					//get rid of enumerated number
+					enumLabels = enumLabels.substr(next+1);
+					//find next separator
+					next=enumLabels.find('\\');
+					//add enumerated value to list
+					strmValue << enumLabels.substr(0,next) << "<BR/>";
+					//get rid of enumerated value
+					enumLabels = enumLabels.substr(next+1);
+				}
+			}
+			else
 			{
-				strmValue << CWebUtil::Validate( arV.u.charVal );	
-			}			
+				if(arV.u.charVal != NULL)
+					strmValue << CWebUtil::Validate( arV.u.charVal );	
+			}
 		}
 		break;
 		case AR_DATA_TYPE_INTEGER:
