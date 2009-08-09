@@ -546,10 +546,7 @@ string CDocFieldDetails::DefaultValue()
 			break;
 			case AR_DATA_TYPE_DATE:
 			{
-				if(this->pField->defaultVal.u.dateVal != NULL)
-				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
-				}
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
 			case AR_DATA_TYPE_DECIMAL:
@@ -570,26 +567,17 @@ string CDocFieldDetails::DefaultValue()
 			break;	
 			case AR_DATA_TYPE_ENUM:
 			{
-				if(this->pField->defaultVal.u.enumVal != NULL)
-				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
-				}							
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
 			case AR_DATA_TYPE_INTEGER:
 			{
-				if(this->pField->defaultVal.u.intVal != NULL)
-				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
-				}	
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
 			case AR_DATA_TYPE_REAL:
 			{
-				if(this->pField->defaultVal.u.realVal != NULL)
-				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
-				}	
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
 		}

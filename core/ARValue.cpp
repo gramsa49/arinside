@@ -88,16 +88,11 @@ string CARValue::ValueToString(ARValueStruct &value)
 		break;
 		case AR_DATA_TYPE_DATE:
 		{
-			if(value.u.dateVal != NULL)
-			{
-				stringstream strm;
-				strm.str("");
-				strm << value.u.dateVal;
+			stringstream strm;
+			strm.str("");
+			strm << value.u.dateVal;
 
-				return strm.str();
-			}
-			else
-				return "0";
+			return strm.str();
 		}
 		break;
 		case AR_DATA_TYPE_DECIMAL:

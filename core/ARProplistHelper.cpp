@@ -82,23 +82,17 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 		break;
 		case AR_DATA_TYPE_INTEGER:
 		{	
-			if(arV.u.intVal != NULL)
-			{			
-				strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.intVal);			
-				if(strmValue.str() == "Unknown")
-				{
-					strmValue.str("");
-					strmValue << arV.u.intVal;
-				}	
-			}			
+			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.intVal);
+			if(strmValue.str() == "Unknown")
+			{
+				strmValue.str("");
+				strmValue << arV.u.intVal;
+			}	
 		}
 		break;
 		case AR_DATA_TYPE_DATE:
 		{
-			if(arV.u.dateVal != NULL)
-			{
-				strmValue << arV.u.dateVal;
-			}
+			strmValue << arV.u.dateVal;
 		}
 		break;
 		case AR_DATA_TYPE_DECIMAL:
@@ -111,53 +105,41 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 		break;
 		case AR_DATA_TYPE_REAL:
 		{	
-			if(arV.u.realVal != NULL)
-			{
-				strmValue << arV.u.realVal;
-			}
+			strmValue << arV.u.realVal;
 		}
 		break;
 		case AR_DATA_TYPE_ULONG:
 		{
-			if(arV.u.ulongVal != NULL)
+			if(nProp == AR_OPROP_SCC_TIMESTAMP)
 			{
-				if(nProp == AR_OPROP_SCC_TIMESTAMP)
+				strmValue.str("");
+				strmValue << CUtil::TimeToString(arV.u.ulongVal);
+			}
+			else
+			{
+				strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.ulongVal);
+			
+				if(strmValue.str() == "Unknown")
 				{
 					strmValue.str("");
-					strmValue << CUtil::TimeToString(arV.u.ulongVal);
-				}
-				else
-				{
-					strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.ulongVal);
-				
-					if(strmValue.str() == "Unknown")
-					{
-						strmValue.str("");
-						strmValue << arV.u.ulongVal;
-					}
+					strmValue << arV.u.ulongVal;
 				}
 			}
 		}
 		break;
 		case AR_DATA_TYPE_TIME:
 		{
-			if(arV.u.timeVal != NULL)
-			{
-				strmValue << arV.u.timeVal;
-			}
+			strmValue << arV.u.timeVal;
 		}
 		break;
 		case AR_DATA_TYPE_ENUM:
 		{
-			if(arV.u.enumVal != NULL)
+			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.enumVal);
+		
+			if(strmValue.str() == "Unknown")
 			{
-				strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.enumVal);
-			
-				if(strmValue.str() == "Unknown")
-				{
-					strmValue.str("");
-					strmValue << arV.u.enumVal;
-				}
+				strmValue.str("");
+				strmValue << arV.u.enumVal;
 			}
 		}
 		break;
@@ -178,10 +160,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 		break;
 		case AR_DATA_TYPE_BITMASK:
 		{
-			if(arV.u.maskVal != NULL)
-			{
-				strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.maskVal);				
-			}
+			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.maskVal);				
 		}
 		break;
 	}

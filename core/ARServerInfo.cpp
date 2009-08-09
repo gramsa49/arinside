@@ -36,7 +36,7 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 {	
 	try
 	{
-		for(int i=0; i< 214; i++)
+		for(int i=0; i< 255; i++)
 		{
 			string infoValue = GetValue(i+1);
 			CARServerInfoItem *infoItem = new CARServerInfoItem(i+1, infoValue);
@@ -84,10 +84,7 @@ string CARServerInfo::GetValue(int apiCall)
 			break;
 			case AR_DATA_TYPE_INTEGER:
 			{
-				if(serverInfo.serverInfoList->value.u.intVal != NULL)
-				{
 					strm << serverInfo.serverInfoList->value.u.intVal;
-				}
 			}
 			break;				
 		}
