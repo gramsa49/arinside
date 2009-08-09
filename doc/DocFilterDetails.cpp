@@ -75,6 +75,10 @@ void CDocFilterDetails::Documentation()
 			tblRow.AddCellList(CTableCell("Execute On"), CTableCell(this->pFilter->GetExecuteOn()));
 			tblObjProp.AddRow(tblRow);
 
+// this is just a little workaround for a bug in ar.h version 7.5
+#ifndef AR_FILTER_ERRHANDLER_ENABLE
+#define AR_FILTER_ERRHANDLER_ENABLE 1
+#endif
 			// Error Handler
 			strmTmp.str("");
 			if (this->pFilter->errorOptions == AR_FILTER_ERRHANDLER_ENABLE)

@@ -226,6 +226,51 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 	return strm.str();
 }
 
+string CARAssignHelper::ServiceAssignment(ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo)
+{
+	stringstream strm;
+	strm.str("");
+	try
+	{
+		CTable tblFieldList("setFieldsList", "TblObjectList");
+		tblFieldList.AddColumn(30, "Field Name");
+		tblFieldList.AddColumn(70, "Value");
+
+		for(unsigned int i=0; i< action.numItems; i++)
+		{
+			int nTargetFieldId = action.fieldAssignList[i].fieldId;
+
+			//Add a reference to the target field 
+			stringstream desc;
+			desc << "Target in '" << serviceInfo << "' " << ifElse << "-Action " << nAction;
+			CFieldRefItem *refItem = new CFieldRefItem();
+			refItem->arsStructItemType = this->objType;
+			refItem->description = desc.str();
+			refItem->fromName = this->objName;	
+			refItem->fieldInsideId = nTargetFieldId;
+			refItem->schemaInsideId = this->schemaInsideId2;
+			arIn->AddReferenceItem(refItem);
+			delete refItem;	
+			
+			stringstream assignText;		
+			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, serviceInfo);
+            
+			CTableRow row("cssStdRow");
+			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
+			row.AddCell(CTableCell(assignText.str()));
+			tblFieldList.AddRow(row);	
+		}
+
+		strm << tblFieldList.ToXHtml();
+	}
+	catch(...)
+	{
+		cout << "EXCEPTION ServiceAssignment: " << this->objName << endl;
+	}
+
+	return strm.str();
+}
+
 void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, string refItemDesc)
 {	
 	try

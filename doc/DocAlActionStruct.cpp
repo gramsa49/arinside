@@ -159,6 +159,11 @@ string CDocAlActionStruct::Get(string ifElse, ARActiveLinkActionList &actList)
 					actionDesc << ActionGotoAction(action.u.gotoAction, nAction);				
 				}
 				break;
+				case AR_ACTIVE_LINK_ACTION_SERVICE:
+				{
+					actionDesc << ActionService(action.u.service, nAction);
+				}
+				break;
 				default:
 				{
 					actionDesc.str("");				
@@ -1221,6 +1226,60 @@ string CDocAlActionStruct::ActionGotoAction(ARGotoActionStruct &action, int nAct
 	catch(...)
 	{
 		cout << "EXCEPTION in AlActionGotoAction: " << this->obj->name << endl;
+	}
+
+	return strm.str();
+}
+
+// AR_ACTIVE_LINK_ACTION_SERVICE
+string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, int nAction)
+{
+	stringstream strm;
+	strm.str("");
+	 
+	try
+	{
+		strm << "Server Name: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
+		strm << "Service Form: " << arIn->LinkToSchema(action.serviceSchema, rootLevel) << "<br/>" << endl;
+
+		strm << "Request Id: ";
+		if (action.requestIdMap != NULL)
+		{
+			strm << arIn->LinkToField(schemaName, action.requestIdMap, rootLevel);
+			CFieldRefItem *refItem = new CFieldRefItem();
+			refItem->arsStructItemType = this->structItemType;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Service Request-Id " << ifElse << "-Action " << nAction;
+			refItem->description = strmTmpDesc.str();
+
+			refItem->fromName = this->obj->name;
+			refItem->fieldInsideId = action.requestIdMap;
+			refItem->schemaInsideId = schemaInsideId;
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		strm << "<br/>" << endl;
+
+		// input mapping
+		strm << "Input Mapping: "; if (action.inputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
+		if (action.inputFieldMapping.numItems > 0)
+		{
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, action.serviceSchema);
+			strm << assignHelper.ServiceAssignment(action.inputFieldMapping, nAction, ifElse, "Service Input Mapping");
+		}
+
+		// output mapping
+		strm << "Output Mapping: "; if (action.outputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
+		if (action.outputFieldMapping.numItems > 0)
+		{
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, action.serviceSchema);
+			strm << assignHelper.ServiceAssignment(action.outputFieldMapping, nAction, ifElse, "Service Output Mapping");
+		}
+	}
+	catch (...)
+	{
+		cout << "EXCEPTION in AlActionService: " << this->obj->name << endl;
 	}
 
 	return strm.str();

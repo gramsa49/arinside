@@ -1275,6 +1275,7 @@ public:
 			case AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL: return "Go To Guide Label";
 			case AR_ACTIVE_LINK_ACTION_WAIT: return "Wait";
 			case AR_ACTIVE_LINK_ACTION_GOTOACTION: return "Goto";
+			case AR_ACTIVE_LINK_ACTION_SERVICE: return "Service";
 			default: return EnumDefault;
 		}
 	}

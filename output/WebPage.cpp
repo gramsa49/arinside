@@ -66,7 +66,7 @@ string CWebPage::PageHeader()
 	strm << "<?xml version=\"1.0\" ?>" << endl;
 	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
     strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << endl;
-	strm << "<!-- saved from url=(0025)http://devdor.org/ -->" << endl;
+	strm << "<!-- saved from url=(0025)http://arinside.org/ -->" << endl;
 	strm << "<head>" << endl;
 	strm << "<title>" << title << "</title>" << endl;
 	strm << "<meta http-equiv=\"content-language\" content=\"EN\" />" << endl;
@@ -114,7 +114,7 @@ string CWebPage::DynamicFooterText()
 	strm << "<td>&nbsp;</td>" << endl;
 	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
-	strm << "<td>(Page created "<< CurrentDateTime() <<" by <a href=\"http://devdor.org\" target=\"_blank\">ARInside v"<< AppVersion <<"</a>)</td>";
+	strm << "<td>(Page created "<< CurrentDateTime() <<" by <a href=\"http://arinside.org\" target=\"_blank\">ARInside v"<< AppVersion <<"</a>)</td>";
 	strm << "</tr></table>" << endl;
 	return strm.str();
 }

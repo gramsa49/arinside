@@ -102,4 +102,7 @@ private:
 
 	// AR_ACTIVE_LINK_ACTION_GOTOACTION
 	string ActionGotoAction(ARGotoActionStruct &action, int nAction);
+
+	// AR_ACTIVE_LINK_ACTION_SERVICE
+	string ActionService(ARActiveLinkSvcActionStruct &action, int nAction);
 };

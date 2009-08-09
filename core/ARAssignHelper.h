@@ -40,6 +40,7 @@ public:
 	string SetFieldsAssignment(ARSetFieldsActionStruct &action, int nAction, string ifElse);
 	string OpenWindowAssignment(ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
 	string CloseWindowAssignment(ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
+	string ServiceAssignment(ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo);
 	void CheckAssignment(int targetFieldId, string ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, string refItemDesc);
 	
 	void AssignValue(int targetFieldId, string ifElse, ARValueStruct &v, stringstream &assignText, string refItemDesc);	

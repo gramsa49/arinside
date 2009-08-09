@@ -68,13 +68,14 @@ string CARFilter::GetExecuteOn()
 		}
 		else
 		{
-			unsigned int bitmask[6] = { AR_OPERATION_GET, AR_OPERATION_SET, AR_OPERATION_CREATE, AR_OPERATION_DELETE, AR_OPERATION_MERGE, AR_OPERATION_SERVICE };
-			char executeText[6][30] = { "Get Entry", "Modify", "Submit", "Delete", "Merge", "Service"};
+			const unsigned int opCount = 6;
+			unsigned int bitmask[opCount] = { AR_OPERATION_GET, AR_OPERATION_SET, AR_OPERATION_CREATE, AR_OPERATION_DELETE, AR_OPERATION_MERGE, AR_OPERATION_SERVICE };
+			char executeText[opCount][30] = { "Get Entry", "Modify", "Submit", "Delete", "Merge", "Service"};
 
-			for (unsigned int k= 0; k < 5; k++)
+			for (unsigned int k= 0; k < opCount; k++)
 			{
 				if ( (opSet & bitmask[k]) != 0)
-				{				
+				{
 					strm << executeText[k] << "<br/>";
 				}
 			}	
@@ -105,10 +106,11 @@ string CARFilter::GetExecuteOnEx()
 		}
 		else
 		{
-			unsigned int bitmask[5] = { 1, 1<<1, 1<<2, 1<<3, 1<<4 };
-			char executeText[5][30] = { "Get Entry", "Modify", "Submit", "Delete", "Merge"};
+			const unsigned int opCount = 6;
+			unsigned int bitmask[opCount] = { AR_OPERATION_GET, AR_OPERATION_SET, AR_OPERATION_CREATE, AR_OPERATION_DELETE, AR_OPERATION_MERGE, AR_OPERATION_SERVICE };
+			char executeText[opCount][30] = { "Get Entry", "Modify", "Submit", "Delete", "Merge", "Service"};
 
-			for (unsigned int k= 0; k < 5; k++)
+			for (unsigned int k= 0; k < opCount; k++)
 			{
 				if ( (opSet & bitmask[k]) != 0)
 				{				

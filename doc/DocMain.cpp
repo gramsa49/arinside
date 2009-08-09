@@ -257,7 +257,7 @@ void CDocMain::ActiveLinkActionList(string fileName)
 		tbl.AddColumn(100, "Active Link Action (Items count if/else)");
 
 		//Search all possible action type
-		for(int nActionType=0; nActionType<16; nActionType++)
+		for(int nActionType=0; nActionType<19; nActionType++)
 		{		
 			int nCountIf = 0;
 			int nCountElse = 0;
