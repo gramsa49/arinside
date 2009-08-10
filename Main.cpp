@@ -1,23 +1,23 @@
 
 /****************************************************************************** 
- * 
- *  file:  Main.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+* 
+*  file:  Main.cpp
+* 
+*  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
+*  All rights reverved.
+* 
+*  See the file COPYING in the top directory of this distribution for
+*  more information.
+*  
+*  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
+*  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
+*  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
+*  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
+*  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
+*  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
+*  DEALINGS IN THE SOFTWARE.  
+*  
+*****************************************************************************/
 
 #include "stdafx.h"
 #include <windows.h>
@@ -61,7 +61,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		ValueArg<string> serverArg("s","server","ARSystem server",true,"servername","string");
 		cmd.add(serverArg);
-		
+
 		ValueArg<string> loginArg("l", "login", "Login name", true, "Demo", "string");
 		cmd.add(loginArg);
 
@@ -70,7 +70,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		ValueArg<string> iniArg("i", "ini", "Application settings filename", true, "settings.ini", "string");
 		cmd.add(iniArg);
-		
+
 		ValueArg<int> tcpArg("t", "tcp", "Tcp port", false, 0, "int");
 		cmd.add(tcpArg);
 
@@ -98,7 +98,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	try
 	{
 		cout << "ARInside Version " << AppVersion << endl;
-		
+
 		std::ifstream in(settingsIni.c_str());		
 		if(!in)
 		{
@@ -110,15 +110,16 @@ int _tmain(int argc, _TCHAR* argv[])
 		//Load application settings
 		AppConfig appConfig;
 		LoadConfigFile(settingsIni, appConfig);
-				
+
 		appConfig.serverName = server;
-		
+
 		CWindowsUtil winUtil(appConfig);		
 		CARInside arInside(appConfig);;
 
 		//Delete existing files
 		if(appConfig.bDeleteExistingFiles)
 		{
+			cout << "Deleting existing files" << endl;
 			DeleteDirectory(appConfig.targetFolder.c_str());
 		}
 
@@ -133,7 +134,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			{
 				string compactCmd = "compact /C /I /Q /S:" + appConfig.targetFolder;
 				WinExec(compactCmd.c_str(), SW_SHOWNORMAL);
-			
+
 				//ShellExecute(NULL, compactCmd.c_str(), "", "", "", SW_SHOWNORMAL);
 			}
 
@@ -235,7 +236,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto(cfg.bCompactFolder, "CompactFolder");
 		config.readInto(cfg.bDeleteExistingFiles, "DeleteExistingFiles");
 		cout << endl;
-		
+
 		LOG << "UserForm: " << cfg.userForm << endl;		
 		LOG << "UserQuery: " << cfg.userQuery << endl;
 		LOG << "GroupForm: " << cfg.groupForm << endl;
@@ -267,7 +268,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 string LoadFromFile(string fileName)
 {
 	string result = "";
-	
+
 	try
 	{
 		stringstream strm;			
@@ -298,8 +299,8 @@ string LoadFromFile(string fileName)
 
 BOOL IsDots(const TCHAR* str) 
 {
-    if(_tcscmp(str,".") && _tcscmp(str,"..")) return FALSE;
-    return TRUE;
+	if(_tcscmp(str,".") && _tcscmp(str,"..")) return FALSE;
+	return TRUE;
 }
 
 BOOL DeleteDirectory(const TCHAR* sPath)
@@ -322,33 +323,32 @@ BOOL DeleteDirectory(const TCHAR* sPath)
 		{
 			do
 			{
-				if( IsDots(FindFileData.cFileName) 
-			)
-			continue;
+				if( IsDots(FindFileData.cFileName))
+					continue;
 
-			_tcscpy(FileName + _tcslen(DirPath), FindFileData.cFileName);
-			if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-			{
-				// we have found a directory, recurse
-				LOG << "Delete " << FileName << endl;
+				_tcscpy(FileName + _tcslen(DirPath), FindFileData.cFileName);
+				if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
+				{
+					// we have found a directory, recurse
+					LOG << "Delete " << FileName << endl;
 
-				if( !DeleteDirectory(FileName) )
-				break; // directory couldn't be deleted
+					if( !DeleteDirectory(FileName) )
+						break; // directory couldn't be deleted
+				}
+				else
+				{
+					if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
+						_chmod(FileName, _S_IWRITE); // change read-only file mode
+
+					LOG << "Delete " << FileName << endl;
+					if( !DeleteFile(FileName) )
+						break; // file couldn't be deleted
+				}
 			}
-			else
-			{
-				if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
-					_chmod(FileName, _S_IWRITE); // change read-only file mode
 
-				LOG << "Delete " << FileName << endl;
-				if( !DeleteFile(FileName) )
-					break; // file couldn't be deleted
-			}
-		}
+			while( FindNextFile(hFind,&FindFileData) );	
+			FindClose(hFind); // closing file handle
 
-		while( FindNextFile(hFind,&FindFileData) );	
-		FindClose(hFind); // closing file handle
-		
 		}
 	}
 	catch(...)
