@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ARInside.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 #include "ARInside.h"
@@ -87,7 +82,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 
 	if(this->appConfig.bUseUtf8)
 		strcpy(arControl.localeInfo.charSet, "UTF-8");
-    
+
 	strncpy(arControl.user, user.c_str(), AR_MAX_NAME_SIZE);
 	arControl.user[AR_MAX_NAME_SIZE]='\0';
 	strncpy(arControl.password, pw.c_str(), AR_MAX_NAME_SIZE);
@@ -120,7 +115,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 				NULL,
 				&nameList,
 				&this->arStatus);
-			
+
 			if(nameList.numItems == 0)
 			{							
 				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
@@ -139,7 +134,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			FreeARStatusList(&this->arStatus, false);
 		}
 	}
-	
+
 	FreeARStatusList(&this->arStatus, false);
 	return nResult;
 }
@@ -189,7 +184,7 @@ void CARInside::LoadBlackList(void)
 					if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
 					{
 						CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
-				
+
 						this->blackList.insert(blackList.end(), *blackListItem);
 						LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
 					}
@@ -209,7 +204,7 @@ bool CARInside::InBlacklist(int refType, string objName)
 {
 	if(refType == ARREF_CONTAINER && strcmp(objName.c_str(), (char*)appConfig.blackList.c_str())==0)
 		return true;
-	
+
 	list<CBlackListItem>::iterator bItemIter;
 	CBlackListItem *bItem;
 
@@ -247,7 +242,7 @@ int CARInside::ValidateTargetDir(string targetFolder)
 	try
 	{
 		cout << "Validating target folder: " << targetFolder << endl;
-		
+
 		stringstream fName;
 		fName << targetFolder << "\\valid.txt";
 
@@ -276,8 +271,8 @@ bool CARInside::FileExists(string fName)
 		fin.open(fName.c_str(),ios::in);
 		if( fin.is_open() )
 		{
-		cout << fName << "exists" << endl;
-		result =true;
+			cout << fName << "exists" << endl;
+			result =true;
 		}
 		fin.close();
 
@@ -331,7 +326,7 @@ bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, CFie
 			&& item->arsStructItemType == refItem.arsStructItemType
 			&& strcmp(item->fromName.c_str(), refItem.fromName.c_str()) == 0
 			&& strcmp(item->description.c_str(), refItem.description.c_str()) == 0)
-			
+
 		{
 			return true;
 		}
@@ -373,7 +368,7 @@ void CARInside::LoadFromFile(void)
 		objectsToParse.structItemList[0].type = AR_STRUCT_ITEM_XML_SCHEMA;
 		strcpy(objectsToParse.structItemList[0].name, "xxTest");
 		*/
-		
+
 		ARXMLParsedStream parsedStream;
 		ARStructItemList parsedObjects;
 
@@ -391,49 +386,49 @@ void CARInside::LoadFromFile(void)
 			unsigned int arInsideIdEscal = 0;
 			unsigned int arInsideIdCont = 0;
 			unsigned int arInsideIdMenu = 0;
-			
+
 			for(unsigned int i=0; i< parsedObjects.numItems; i++)
 			{
 				switch(parsedObjects.structItemList[i].type)
 				{						
 				case AR_STRUCT_ITEM_XML_FILTER:
-				{
-					LOG << "Loading Filter: " << parsedObjects.structItemList[i].name; 
-					CARFilter *obj = new CARFilter(parsedObjects.structItemList[i].name, arInsideIdFilter);
-
-					if( ARGetFilterFromXML(&this->arControl, 
-						&parsedStream,
-						parsedObjects.structItemList[i].name,
-						NULL, 
-						&obj->order,
-						&obj->schemaList,								
-						&obj->opSet,
-						&obj->enable,								
-						&obj->query,
-						&obj->actionList,
-						&obj->elseList,
-						obj->owner,
-						obj->lastChanged,
-						&obj->timestamp,								
-						&obj->helptext,
-						&obj->changeDiary,
-						&obj->objPropList,
-						&obj->errorOptions,
-						obj->errorFilterName,
-						&obj->xmlDocVersion,
-						&this->arStatus) == AR_RETURN_OK)
 					{
-						this->filterList.insert(this->filterList.end(), *obj);
-										
-						LOG << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
-						arInsideIdFilter++;
-					}
-					else
-						LOG << " [ERROR]" << endl;
+						LOG << "Loading Filter: " << parsedObjects.structItemList[i].name; 
+						CARFilter *obj = new CARFilter(parsedObjects.structItemList[i].name, arInsideIdFilter);
 
-					FreeARStatusList(&this->arStatus, false);
-				}
-				break;
+						if( ARGetFilterFromXML(&this->arControl, 
+							&parsedStream,
+							parsedObjects.structItemList[i].name,
+							NULL, 
+							&obj->order,
+							&obj->schemaList,								
+							&obj->opSet,
+							&obj->enable,								
+							&obj->query,
+							&obj->actionList,
+							&obj->elseList,
+							obj->owner,
+							obj->lastChanged,
+							&obj->timestamp,								
+							&obj->helptext,
+							&obj->changeDiary,
+							&obj->objPropList,
+							&obj->errorOptions,
+							obj->errorFilterName,
+							&obj->xmlDocVersion,
+							&this->arStatus) == AR_RETURN_OK)
+						{
+							this->filterList.insert(this->filterList.end(), *obj);
+
+							LOG << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
+							arInsideIdFilter++;
+						}
+						else
+							LOG << " [ERROR]" << endl;
+
+						FreeARStatusList(&this->arStatus, false);
+					}
+					break;
 				case AR_STRUCT_ITEM_XML_SCHEMA:
 					{
 						LOG << "Loading Form: " << parsedObjects.structItemList[i].name; 
@@ -477,7 +472,7 @@ void CARInside::LoadFromFile(void)
 								LOG << "Loading Field: " << tmpField.fieldName;	
 
 								CARField *field = new CARField(tmpField.fieldId);
-								
+
 								field->schemaInsideId = arInsideIdSchema;
 								field->changeDiary = tmpField.changeDiary;
 								field->createMode = tmpField.createMode;
@@ -514,7 +509,7 @@ void CARInside::LoadFromFile(void)
 							{
 								ARVuiInfoStruct tmpVui = vuiInfoList.vuiList[nViewCnt];
 								CARVui *vui = new CARVui(tmpVui.vuiId);
-								
+
 								vui->vuiType = tmpVui.vuiType;
 								vui->objPropList = tmpVui.props;
 								vui->name = tmpVui.vuiName;								
@@ -539,7 +534,7 @@ void CARInside::LoadFromFile(void)
 						//FreeARFieldInfoList(&fieldInfoList, false);
 						//FreeARVuiInfoList(&vuiInfoList, false);
 						FreeARStatusList(&this->arStatus, false);
-						
+
 					}
 					break;					
 				case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
@@ -696,7 +691,7 @@ void CARInside::LoadFromFile(void)
 		FreeARXMLParsedStream(&parsedStream, false);
 		FreeARStatusList(&this->arStatus, false);
 
-		
+
 		//Add fieldreferences
 		SearchCustomFieldReferences();
 	} 
@@ -709,7 +704,7 @@ void CARInside::LoadFromFile(void)
 void CARInside::LoadFromServer(void)
 {
 	cout << endl << "Loading objects from server '" << appConfig.serverName << "'" << endl;
-	
+
 	//LoadServerInfoList	
 	if(appConfig.bLoadServerInfoList)
 	{
@@ -725,10 +720,10 @@ void CARInside::LoadFromServer(void)
 	if(appConfig.bLoadUserList)
 	{
 		cout << endl << "Start laoding Users:" << endl;		
-		
+
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListUser(this->appConfig, userList);
-		
+
 		dataFactory->Sort(userList);
 		cout << (unsigned int)userList.size() << " Users loaded" << endl;
 
@@ -742,25 +737,25 @@ void CARInside::LoadFromServer(void)
 	if(appConfig.bLoadGroupList)
 	{
 		cout << endl << "Start loading Groups:" << endl;		
-		
+
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListGroup(this->appConfig, groupList);
-				
+
 		dataFactory->Sort(groupList);
 		cout << (unsigned int)groupList.size() << " Groups loaded" << endl;
 		delete dataFactory;
 	}
 	else
 		cout << endl << "Loading Groups [SKIPPED]" << endl;
-	
+
 	//LoadRoleList
 	if(appConfig.bLoadRoleList)
 	{
 		cout << endl << "Start loading Roles:" << endl;		
-		
+
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListRoles(this->appConfig, roleList);
-				
+
 		dataFactory->Sort(roleList);
 		cout << (unsigned int)roleList.size() << " Roles loaded" << endl;
 		delete dataFactory;
@@ -772,13 +767,13 @@ void CARInside::LoadFromServer(void)
 	cout << endl << "Start loading Active Links:" << endl;
 	int nResult = LoadActiveLinks();
 	cout << nResult << " Active Links loaded" << endl;
-	
+
 
 	//Filters	
 	cout << endl << "Start loading Filters:" << endl;
 	nResult = LoadFilters();
 	cout << nResult << " Filters loaded" << endl;
-	
+
 	//Container	
 	cout << endl << "Start loading Containers:" << endl;
 	nResult = LoadContainer();
@@ -805,7 +800,7 @@ void CARInside::LoadFromServer(void)
 	//Dialogs
 	nResult = LoadForms(AR_LIST_SCHEMA_DIALOG, insideId);
 	cout << nResult << " Dialog Forms loaded" << endl;
-	
+
 	//Join
 	nResult = LoadForms(AR_LIST_SCHEMA_JOIN, insideId);
 	cout << nResult << " Join Forms loaded" << endl;
@@ -839,7 +834,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 				{
 					LOG << "Loading Form: " << nameList.nameList[i] << endl;
 					CARSchema *schema = new CARSchema(nameList.nameList[i], schemaInsideId);
-					
+
 					if(aliasList.nameList[i] != NULL)
 						schema->alias = aliasList.nameList[i];
 
@@ -898,7 +893,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 							}
 						}
 						FreeARInternalIdList(&idList, false);
-						
+
 						//Load fields
 						schema->fieldList.clear();
 
@@ -941,40 +936,40 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 							&lastChanged, 
 							&changeDiary, 
 							&this->arStatus)==AR_RETURN_OK)
+						{
+							for(unsigned int nFieldCnt=0; nFieldCnt< fieldId2.numItems; nFieldCnt++)
 							{
-								for(unsigned int nFieldCnt=0; nFieldCnt< fieldId2.numItems; nFieldCnt++)
+								CARField *field = new CARField(fieldId2.internalIdList[nFieldCnt]);
+
+								field->schemaInsideId = schemaInsideId;
+								field->fieldId = fieldId2.internalIdList[nFieldCnt];
+								field->name = fieldName.nameList[nFieldCnt];
+								field->fieldMap = fieldMap.mappingList[nFieldCnt];
+								field->dataType = dataType.intList[nFieldCnt];
+								field->option = option.intList[nFieldCnt];
+								field->createMode = createMode.intList[nFieldCnt];
+								field->defaultVal = defaultVal.valueList[nFieldCnt];
+								field->permissions = permissions.permissionList[nFieldCnt];
+								field->limit = limit.fieldLimitList[nFieldCnt];
+								field->dInstanceList = dInstanceList.dInstanceList[nFieldCnt];
+								field->helptext = helpText.stringList[nFieldCnt];
+								field->timestamp = timestamp.timestampList[nFieldCnt];
+								strncpy(field->owner ,owner.nameList[nFieldCnt], AR_MAX_NAME_SIZE);
+								strncpy(field->lastChanged, lastChanged.nameList[nFieldCnt], AR_MAX_NAME_SIZE);
+								field->changeDiary = changeDiary.stringList[nFieldCnt];
+
+								schema->fieldList.insert(schema->fieldList.end(), *field);
+
+								//Check if this is a global field and add it to the globalfieldlist
+								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
 								{
-									CARField *field = new CARField(fieldId2.internalIdList[nFieldCnt]);
-
-									field->schemaInsideId = schemaInsideId;
-									field->fieldId = fieldId2.internalIdList[nFieldCnt];
-									field->name = fieldName.nameList[nFieldCnt];
-									field->fieldMap = fieldMap.mappingList[nFieldCnt];
-									field->dataType = dataType.intList[nFieldCnt];
-									field->option = option.intList[nFieldCnt];
-									field->createMode = createMode.intList[nFieldCnt];
-									field->defaultVal = defaultVal.valueList[nFieldCnt];
-									field->permissions = permissions.permissionList[nFieldCnt];
-									field->limit = limit.fieldLimitList[nFieldCnt];
-									field->dInstanceList = dInstanceList.dInstanceList[nFieldCnt];
-									field->helptext = helpText.stringList[nFieldCnt];
-									field->timestamp = timestamp.timestampList[nFieldCnt];
-									strncpy(field->owner ,owner.nameList[nFieldCnt], AR_MAX_NAME_SIZE);
-									strncpy(field->lastChanged, lastChanged.nameList[nFieldCnt], AR_MAX_NAME_SIZE);
-									field->changeDiary = changeDiary.stringList[nFieldCnt];
-
-									schema->fieldList.insert(schema->fieldList.end(), *field);
-
-									//Check if this is a global field and add it to the globalfieldlist
-									if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
-									{
-										CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->insideId, field->fieldId);
-										this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
-									}
+									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->insideId, field->fieldId);
+									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}
-
-								this->Sort(schema->fieldList);
 							}
+
+							this->Sort(schema->fieldList);
+						}
 
 
 						//Add form to list
@@ -1014,7 +1009,7 @@ int CARInside::LoadContainer(void)
 	try
 	{
 		ARContainerInfoList conList;
-		
+
 		ARReferenceTypeList		refTypes;
 		refTypes.refType = (int *) malloc(sizeof(unsigned int) * 1);
 		refTypes.numItems = 1;
@@ -1083,7 +1078,7 @@ int CARInside::LoadCharMenus(void)
 	try
 	{
 		ARNameList nameList;
-			
+
 		if(ARGetListCharMenu(&this->arControl, 0, NULL, NULL, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
 		{
 			this->menuList.clear();	
@@ -1140,7 +1135,7 @@ int CARInside::LoadEscalations(void)
 	try
 	{
 		ARNameList nameList;
-			
+
 		if(ARGetListEscalation(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
 		{
 			this->escalList.clear();	
@@ -1201,7 +1196,7 @@ int CARInside::LoadFilters(void)
 	try
 	{
 		ARNameList nameList;
-			
+
 		if(ARGetListFilter(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
 		{
 			this->filterList.clear();	
@@ -1265,7 +1260,7 @@ int CARInside::LoadActiveLinks(void)
 	try
 	{
 		ARNameList nameList;
-			
+
 		if(ARGetListActiveLink(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
 		{
 			this->alList.clear();	
@@ -1413,14 +1408,14 @@ void CARInside::Documentation(void)
 
 		switch(cont->type)
 		{
-			case ARCON_APP:
+		case ARCON_APP:
 			{
 				LOG << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocApplicationDetails appDetails(*this, *cont);
 				appDetails.Documentation();
 			}
 			break;
-			default:
+		default:
 			{
 				LOG << "Container [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
 			}
@@ -1436,35 +1431,35 @@ void CARInside::Documentation(void)
 		CARContainer *cont = &(*listIter);
 		switch(cont->type)
 		{
-			case ARCON_WEBSERVICE:
+		case ARCON_WEBSERVICE:
 			{
 				LOG << "Webservice [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocWebserviceDetails wsDetails(*this, *cont);
 				wsDetails.Documentation();
 			}
 			break;
-			case ARCON_GUIDE:
+		case ARCON_GUIDE:
 			{
 				LOG << "ActiveLinkGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocAlGuideDetails guideDetails(*this, *cont);
 				guideDetails.Documentation();
 			}
 			break;
-			case ARCON_FILTER_GUIDE:
+		case ARCON_FILTER_GUIDE:
 			{
 				LOG << "FilterGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocFilterGuideDetails fltGuideDetails(*this, *cont);
 				fltGuideDetails.Documentation();
 			}
 			break;
-			case ARCON_PACK:
+		case ARCON_PACK:
 			{
 				LOG << "PackingList [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
 				CDocPacklistDetails packDetails(*this, *cont);
 				packDetails.Documentation();
 			}
 			break;
-			case ARCON_APP:
+		case ARCON_APP:
 			{
 				LOG << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
 			}
@@ -1513,7 +1508,7 @@ void CARInside::Documentation(void)
 	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++)
 	{
 		CARFilter *filter = &(*filterIter);
-		
+
 		LOG << "Filter [" << nTmpCnt << "-" << filterList.size() << "] '" << filter->name << "': ";
 		CDocFilterDetails *filterDetails = new CDocFilterDetails(*this, *filter, "filter\\"+filter->FileID(), 2);
 		filterDetails->Documentation();
@@ -1522,7 +1517,7 @@ void CARInside::Documentation(void)
 	}
 
 
-	
+
 	//Escalation List
 	docMain->EscalationList("index", "*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
@@ -1569,8 +1564,8 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
-	
-		
+
+
 	//Schema List
 	docMain->SchemaList(AR_SCHEMA_NONE, "index", "Formlist (All)", "*");
 	docMain->SchemaList(AR_SCHEMA_REGULAR, "index_regular", "Formlist (Regular)", "*");
@@ -1592,7 +1587,7 @@ void CARInside::Documentation(void)
 
 		CARSchema *schema = &(*schemaIter);		
 		string path="schema\\"+schema->FileID();
-		
+
 		LOG << "Schema [" << nTmpCnt << "-" << schemaList.size() << "] '" << schema->name << "': ";
 		CDocSchemaDetails *schemaDetails = new CDocSchemaDetails(*this, *schema, path, rootLevel);
 		schemaDetails->Documentation();
@@ -1625,7 +1620,7 @@ void CARInside::Documentation(void)
 
 		nTmpCnt++;
 	}
-		
+
 	//GlobalFieldList
 	docMain->GlobalFieldList();	
 
@@ -1648,7 +1643,7 @@ void CARInside::Documentation(void)
 	{		
 		docMain->GroupList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
 	}	
-	
+
 
 	//Group Details
 	nTmpCnt=1;
@@ -1686,7 +1681,7 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
-	
+
 	//Userlists
 	docMain->UserList("index", "*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
@@ -1713,14 +1708,14 @@ void CARInside::Documentation(void)
 
 	CDocSummaryInfo indexSummary(*this, "");
 	indexSummary.Documentation();
-	
+
 	delete docMain;
 }
 
 string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition)
 {
 	list<CARSchema>::iterator schemaIter;		
-	
+
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
@@ -1737,18 +1732,18 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 					{
 						switch(field->limit.u.enumLimits.listStyle)
 						{
-							case AR_ENUM_STYLE_REGULAR:
-								return field->limit.u.enumLimits.u.regularList.nameList[enumPosition];
+						case AR_ENUM_STYLE_REGULAR:
+							return field->limit.u.enumLimits.u.regularList.nameList[enumPosition];
 							break;
-							case AR_ENUM_STYLE_CUSTOM:
-								for (int i=0; i< (int)field->limit.u.enumLimits.u.customList.numItems; i++) { 
-									if (field->limit.u.enumLimits.u.customList.enumItemList[i].itemNumber == enumPosition) 
-										return field->limit.u.enumLimits.u.customList.enumItemList[i].itemName; 
-								} 
-								return "";
-								break;
-							case AR_ENUM_STYLE_QUERY:
-								return "QUERY";
+						case AR_ENUM_STYLE_CUSTOM:
+							for (int i=0; i< (int)field->limit.u.enumLimits.u.customList.numItems; i++) { 
+								if (field->limit.u.enumLimits.u.customList.enumItemList[i].itemNumber == enumPosition) 
+									return field->limit.u.enumLimits.u.customList.enumItemList[i].itemName; 
+							} 
+							return "";
+							break;
+						case AR_ENUM_STYLE_QUERY:
+							return "QUERY";
 							break;
 						}						
 					}
@@ -1798,7 +1793,7 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 		refItemNotFound->description = "Field does not exist";	
 		this->listFieldNotFound.push_back(*refItemNotFound);
 	}
-	
+
 	tmp << "<span class=\"fieldNotFound\">" << fieldInsideId << "</span>";
 
 	return tmp.str();
@@ -1822,13 +1817,13 @@ string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fro
 				if(field->insideId == fieldInsideId)
 				{
 					tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << schemaInsideId << "/" << CWebUtil::DocName(field->FileID());
-					
+
 					return CWebUtil::Link(field->name, tmp.str(), "", fromRootLevel);
 				}
 			}
 		}
 	}
-	
+
 	tmp << fieldInsideId;
 
 	return tmp.str();
@@ -1839,12 +1834,12 @@ string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
 	string strFileUrl = "";
 	switch (schemaType)
 	{		
-		case AR_SCHEMA_REGULAR: strFileUrl = CWebUtil::DocName("index_regular"); break;
-		case AR_SCHEMA_JOIN: strFileUrl = CWebUtil::DocName("index_join"); break;
-		case AR_SCHEMA_VIEW: strFileUrl = CWebUtil::DocName("index_view"); break;
-		case AR_SCHEMA_DIALOG: strFileUrl = CWebUtil::DocName("index_dialog"); break;
-		case AR_SCHEMA_VENDOR: strFileUrl = CWebUtil::DocName("index_vendor"); break;
-		default: strFileUrl = CWebUtil::DocName("index");
+	case AR_SCHEMA_REGULAR: strFileUrl = CWebUtil::DocName("index_regular"); break;
+	case AR_SCHEMA_JOIN: strFileUrl = CWebUtil::DocName("index_join"); break;
+	case AR_SCHEMA_VIEW: strFileUrl = CWebUtil::DocName("index_view"); break;
+	case AR_SCHEMA_DIALOG: strFileUrl = CWebUtil::DocName("index_dialog"); break;
+	case AR_SCHEMA_VENDOR: strFileUrl = CWebUtil::DocName("index_vendor"); break;
+	default: strFileUrl = CWebUtil::DocName("index");
 	}
 
 	return CWebUtil::Link(CAREnum::SchemaType(schemaType), "../"+strFileUrl, "", rootLevel);
@@ -2010,7 +2005,7 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 	stringstream strmTmp;
 	strmTmp.str("");
 	strmTmp << permissionId;
-	
+
 	if(permissionId >= 0)
 	{
 		list<CARGroup>::iterator grpIter;			
@@ -2152,7 +2147,7 @@ string CARInside::LinkToContainer(string containerName, int fromRootLevel)
 string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 {		
 	string result;
-		
+
 	if(strcmp(srvName.c_str(), "")==0)
 	{
 		return CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
@@ -2176,32 +2171,32 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int ro
 
 	switch(arsStructItemType)
 	{
-		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
 			result = this->LinkToAlRef(AlGetInsideId(objName), rootLevel);
 		}
 		break;
-		case AR_STRUCT_ITEM_XML_FILTER:
+	case AR_STRUCT_ITEM_XML_FILTER:
 		{
 			result = this->LinkToFilterRef(FilterGetInsideId(objName), rootLevel);
 		}
 		break;
-		case AR_STRUCT_ITEM_XML_SCHEMA:
+	case AR_STRUCT_ITEM_XML_SCHEMA:
 		{
 			result = this->LinkToSchema(objName, rootLevel);
 		}
 		break;
-		case AR_STRUCT_ITEM_XML_ESCALATION:
+	case AR_STRUCT_ITEM_XML_ESCALATION:
 		{
 			result = this->LinkToEscalation(objName, rootLevel);
 		}
 		break;
-		case AR_STRUCT_ITEM_XML_CHAR_MENU:
+	case AR_STRUCT_ITEM_XML_CHAR_MENU:
 		{
 			result = this->LinkToMenu(objName, rootLevel);
 		}
 		break;		
-		case AR_STRUCT_ITEM_XML_CONTAINER:
+	case AR_STRUCT_ITEM_XML_CONTAINER:
 		{
 			result = this->LinkToContainer(objName, rootLevel);
 		}
@@ -2215,10 +2210,10 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int ro
 string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 {
 	string result = "";
-		
+
 	switch(arsStructItemType)
 	{
-		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
 			list<CARActiveLink>::iterator alIter;			
 			for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
@@ -2231,7 +2226,7 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 			}
 		}
 		break;
-		case AR_STRUCT_ITEM_XML_FILTER:
+	case AR_STRUCT_ITEM_XML_FILTER:
 		{
 			list<CARFilter>::iterator filterIter;			
 			for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
@@ -2244,7 +2239,7 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 			}
 		}
 		break;		
-		case AR_STRUCT_ITEM_XML_ESCALATION:
+	case AR_STRUCT_ITEM_XML_ESCALATION:
 		{
 			list<CAREscalation>::iterator escalIter;			
 			for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ )
@@ -2257,7 +2252,7 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 			}
 		}
 		break;	
-		default:
+	default:
 		{
 			result = "";
 		}
@@ -2312,10 +2307,10 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 
 		switch(obj.dataType)
 		{		
-			case AR_DATA_TYPE_COLUMN: //Find column references
+		case AR_DATA_TYPE_COLUMN: //Find column references
 			{
 				ARColumnLimitsStruct fLimit = obj.limit.u.columnLimits;
-				
+
 				//To create a link to the datafield we first must find the target schema of the table
 				int tblTargetSchemaInsideId = schema.insideId;
 
@@ -2356,7 +2351,7 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 				delete refItem;
 			}
 			break;
-			case AR_DATA_TYPE_TABLE:
+		case AR_DATA_TYPE_TABLE:
 			{
 				ARTableLimitsStruct fLimit = obj.limit.u.tableLimits;
 
@@ -2365,7 +2360,7 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 				{
 					tmpSchema = schema.name;
 				}
-								
+
 				stringstream strmQuery;
 				if(fLimit.qualifier.operation != NULL)
 				{		
@@ -2415,7 +2410,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 			return "";
 
 		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
-		
+
 		list<CARSchema>::iterator schemaIter;				
 		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 		{			
@@ -2431,15 +2426,15 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 
 					stringstream strmTmp;
 					strmTmp << fieldSeparator << field->fieldId << fieldSeparator;			
-					
+
 					stringstream fieldLink;
 					fieldLink << dummySeparator << field->GetURL(rootLevel) << dummySeparator;					
-				
+
 					unsigned int nLengthOrg = (unsigned int)inText.length();
 
 					string fField = strmTmp.str();
 					inText = CUtil::StrReplace(fField, fieldLink.str(), inText);
-				
+
 					//Finally replace the dummy placeholder
 					inText = CUtil::StrReplace(dummySeparator, fieldSeparator, inText);
 
@@ -2476,7 +2471,7 @@ string CARInside::TextFindKeywords(string inText, string fieldSeparator)
 		{
 			stringstream strmKeyword;
 			strmKeyword << fieldSeparator << "-" << nKeyword << fieldSeparator;
-		
+
 			stringstream strmTxtKeyword;
 			strmTxtKeyword << fieldSeparator << CAREnum::Keyword(nKeyword) << fieldSeparator;		
 
@@ -2498,7 +2493,7 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 	{
 		if(inText.size() == 0)
 			return "";
-		
+
 		list<CARSchema>::iterator schemaIter;				
 		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 		{			
@@ -2514,15 +2509,15 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 
 					stringstream strmTmp;
 					strmTmp << "arFieldId=&quot;" << field->fieldId << "&quot;";			
-					
+
 					stringstream fieldLink;
 					fieldLink << "arFieldId=&quot;" << field->GetURL(rootLevel) << "&quot;";					
-				
+
 					unsigned int nLengthOrg = (unsigned int)inText.length();
 
 					string fField = strmTmp.str();
 					inText = CUtil::StrReplace(fField, fieldLink.str(), inText);
-				
+
 					//if the string is longer because we have added a link (long string) we add a field reference
 					if(inText.length() > nLengthOrg) 
 					{						
@@ -2566,7 +2561,7 @@ string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
 		//Modified
 		strmTmp.str("");
 		strmTmp << CUtil::TimeToString(obj->modified) << " " << this->LinkToUser(obj->modifiedBy, rootLevel);
-				
+
 		tblRow.AddCellList(CTableCell("Modified"), CTableCell(strmTmp.str()));
 		tbl.AddRow(tblRow);
 
@@ -2585,7 +2580,7 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 {		
 	stringstream strm;
 	strm.str("");
-	
+
 	try
 	{
 		list<CChangeHistoryEntry> listHistoryEntry;
@@ -2637,11 +2632,11 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		stringstream strmLastChanged;
 		strmLastChanged.str("");
 		strmLastChanged << CUtil::TimeToString(obj->timestamp) << " " << this->LinkToUser(obj->lastChanged, rootLevel) << endl;
-		
+
 		tblRow.AddCellList(CTableCell("Last changed"), CTableCell(strmLastChanged.str()));
 		tbl.AddRow(tblRow);
 
-		
+
 		//History
 		tblRow.AddCellList(CTableCell("History Log"), CTableCell(historyLog.str()));
 		tbl.AddRow(tblRow);

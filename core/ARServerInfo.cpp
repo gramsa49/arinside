@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ARServerInfo.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\arserverinfo.h"
@@ -56,7 +51,7 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 string CARServerInfo::GetValue(int apiCall)
 {	
 	stringstream strm;
-	
+
 	ARServerInfoRequestList requestList;
 	ARServerInfoList serverInfo;
 
@@ -69,12 +64,12 @@ string CARServerInfo::GetValue(int apiCall)
 		int datatype=serverInfo.serverInfoList->value.dataType;
 		switch (datatype)
 		{
-			case AR_DATA_TYPE_NULL:
+		case AR_DATA_TYPE_NULL:
 			{
 				strm << "NULL";
 			}
 			break;
-			case AR_DATA_TYPE_CHAR:
+		case AR_DATA_TYPE_CHAR:
 			{
 				if(serverInfo.serverInfoList->value.u.charVal != NULL)
 				{
@@ -82,9 +77,9 @@ string CARServerInfo::GetValue(int apiCall)
 				}
 			}
 			break;
-			case AR_DATA_TYPE_INTEGER:
+		case AR_DATA_TYPE_INTEGER:
 			{
-					strm << serverInfo.serverInfoList->value.u.intVal;
+				strm << serverInfo.serverInfoList->value.u.intVal;
 			}
 			break;				
 		}

@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocContainerHelper.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\doccontainerhelper.h"
@@ -110,7 +105,7 @@ string CDocContainerHelper::SubadminList()
 		{			
 			grpTbl->AddRow(this->pContainer->appRefName, this->pContainer->admingrpList.internalIdList[i], this->rootLevel);
 		}
-		
+
 		strm << grpTbl->Print();
 		delete grpTbl;
 	}
@@ -125,14 +120,14 @@ string CDocContainerHelper::SubadminList()
 string CDocContainerHelper::PermissionList()
 {
 	CTable tbl("permissionList", "TblObjectList");
-	
+
 	try
 	{
 		tbl.AddColumn(5, "Permission");
 		tbl.AddColumn(10, "Description");
 		tbl.AddColumn(75, "Name");
 		tbl.AddColumn(10, "Id");
-		
+
 		for(unsigned int i=0; i< this->pContainer->groupList.numItems; i++)
 		{			
 			CTableRow row("");			
@@ -140,11 +135,11 @@ string CDocContainerHelper::PermissionList()
 
 			if(this->pContainer->groupList.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
 				img = CWebUtil::ImageTag("hidden.gif", rootLevel);
-			
+
 			string appRefName = this->pContainer->appRefName;
 			if(strcmp(appRefName.c_str(), "")==0)
 				appRefName = this->pContainer->name;
-			
+
 
 			row.AddCell(CTableCell(img));
 			row.AddCell(CTableCell(CAREnum::ObjectPermission(this->pContainer->groupList.permissionList[i].permissions)));

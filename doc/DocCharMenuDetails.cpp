@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocCharMenuDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\doccharmenudetails.h"
@@ -42,11 +37,11 @@ void CDocCharMenuDetails::Documentation()
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			CWebPage webPage("index", this->pMenu->name, this->rootLevel, this->pInside->appConfig);
-			
+
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
-			
+
 			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pMenu->name) + " (" + CAREnum::MenuType(this->pMenu->menuDefn.menuType) + ")";
 			if(this->pMenu->appRefName.c_str() != NULL && this->pMenu->appRefName.size() > 0)
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pMenu->appRefName, this->rootLevel);
@@ -58,7 +53,7 @@ void CDocCharMenuDetails::Documentation()
 			CTable tblObjProp("objProperties", "TblObjectList");
 			tblObjProp.AddColumn(30, "Property");	
 			tblObjProp.AddColumn(70, "Value");
-			
+
 			//Status
 			CTableRow row("cssStdRow");		
 			CTableCell cellProp("Refresh", "");				
@@ -73,21 +68,21 @@ void CDocCharMenuDetails::Documentation()
 			cellPropValue.content = "";
 			switch (this->pMenu->menuDefn.menuType)
 			{		
-				case AR_CHAR_MENU_LIST: 
-					cellPropValue.content = CharMenuDetails(); 
-					break;
-				case AR_CHAR_MENU_QUERY:
-					cellPropValue.content = SearchMenuDetails(); 
-					break;
-				case AR_CHAR_MENU_FILE:
-					cellPropValue.content = FileMenuDetails(); 
-					break;
-				case AR_CHAR_MENU_SQL:
-					cellPropValue.content = SqlMenuDetails(); 
-					break;
-				case AR_CHAR_MENU_DATA_DICTIONARY:
-					cellPropValue.content = DataDictMenuDetails(); 
-					break;
+			case AR_CHAR_MENU_LIST: 
+				cellPropValue.content = CharMenuDetails(); 
+				break;
+			case AR_CHAR_MENU_QUERY:
+				cellPropValue.content = SearchMenuDetails(); 
+				break;
+			case AR_CHAR_MENU_FILE:
+				cellPropValue.content = FileMenuDetails(); 
+				break;
+			case AR_CHAR_MENU_SQL:
+				cellPropValue.content = SqlMenuDetails(); 
+				break;
+			case AR_CHAR_MENU_DATA_DICTIONARY:
+				cellPropValue.content = DataDictMenuDetails(); 
+				break;
 			}		
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
@@ -132,7 +127,7 @@ string CDocCharMenuDetails::CharMenuDetails()
 {
 	stringstream strm;
 	strm.str("");
-	
+
 	try
 	{
 		CTable tbl("menuItems", "TblObjectList");
@@ -191,11 +186,11 @@ string CDocCharMenuDetails::SqlMenuDetails()
 {
 	stringstream strm;
 	strm.str("");
-	
+
 	try
 	{
 		ARCharMenuSQLStruct menu = this->pMenu->menuDefn.u.menuSQL;
-		
+
 		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
 		strm << "Label Index List: " << menu.labelIndex << "<br/>" << endl;
 		strm << "Value Index: " << menu.valueIndex << "<br/><br/>" << endl;
@@ -213,7 +208,7 @@ string CDocCharMenuDetails::GetFieldTypes(unsigned int fieldMask)
 {		
 	stringstream strm;
 	strm.str("");
-    	
+
 	try
 	{
 		unsigned int bitmask[9] = { 1, 1<<1, 1<<2, 1<<3, 1<<4, 1<<5, 1<<6, 1<<7, 1<<8 };
@@ -238,18 +233,18 @@ string CDocCharMenuDetails::DataDictMenuDetails()
 {
 	stringstream strm;
 	strm.str("");
-	
+
 	try
 	{
 		ARCharMenuDDStruct menu = this->pMenu->menuDefn.u.menuDD;
-		
+
 		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
 		strm << "Label Format: " << CAREnum::MenuDDLabelFormat(menu.nameType) << "<br/>" << endl;
 		strm << "Value Format: " << CAREnum::MenuDDValueFormat(menu.valueFormat) << "<br/>" << endl;
 
 		switch(menu.structType)
 		{
-			case AR_CHAR_MENU_DD_FORM:
+		case AR_CHAR_MENU_DD_FORM:
 			{
 				strm << "Object Type: Form<br/>" << endl;
 
@@ -258,15 +253,15 @@ string CDocCharMenuDetails::DataDictMenuDetails()
 					schemaType = CAREnum::SchemaType(menu.u.formDefn.schemaType);
 
 				strm << "Form Type: " << schemaType << "<br/>" << endl;
-				
+
 				string showHiddenForms = "Yes";
 				if(!menu.u.formDefn.includeHidden)
 					showHiddenForms = "No";
-				
+
 				strm << "Show Hidden Forms: " << showHiddenForms << "<br/>" << endl;
 			}
 			break;
-			case AR_CHAR_MENU_DD_FIELD:
+		case AR_CHAR_MENU_DD_FIELD:
 			{
 				strm << "Object Type: Field<br/>" << endl;
 				strm << "Form Name: " << menu.u.fieldDefn.schema << "<br/><br/>" << endl;	
@@ -287,13 +282,13 @@ string CDocCharMenuDetails::SearchMenuDetails()
 {
 	stringstream strm;
 	strm.str("");
-	
+
 	try
 	{
 		ARCharMenuQueryStruct menu = this->pMenu->menuDefn.u.menuQuery;
 		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
 		strm << "Schema: " << this->pInside->LinkToSchema(menu.schema, rootLevel) << "<br/>" << endl;	
-		
+
 		//Label Fields
 		for(int i=0; i< 5; i++)
 		{
@@ -332,7 +327,7 @@ string CDocCharMenuDetails::SearchMenuDetails()
 		delete refItem;
 		strm << " (FieldId: " << menu.valueField << ")<br/>" << endl;
 
-			
+
 		//Query
 		stringstream strmQuery;
 		strmQuery.str("");
@@ -342,8 +337,8 @@ string CDocCharMenuDetails::SearchMenuDetails()
 		refItemQuery->description = "Search Menu Qualification";
 		refItemQuery->fromName = this->pMenu->name;
 		refItemQuery->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
-		
-		
+
+
 		CARQualification arQual(*this->pInside);
 		int pFormId = this->pInside->SchemaGetInsideId(menu.schema);
 		int sFormId = this->pInside->SchemaGetInsideId(menu.schema);
@@ -382,7 +377,7 @@ string CDocCharMenuDetails::RelatedFields()
 		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
 		{			
 			CARSchema *schema = &(*schemaIter);
-			
+
 			list<CARField>::iterator fieldIter;
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{

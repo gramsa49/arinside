@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocAlActionStruct.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docalactionstruct.h"
@@ -58,119 +53,119 @@ string CDocAlActionStruct::Get(string ifElse, ARActiveLinkActionList &actList)
 
 			CTableRow row("cssStdRow");		
 			row.AddCell(CTableCell(nAction));				
-			
+
 			stringstream strmTmpLink;
 			strmTmpLink.str("");
 			strmTmpLink << "../../active_link/index_action_" << action.action << "." << CWebUtil::WebPageSuffix();
 			row.AddCell(CTableCell(CWebUtil::Link(CAREnum::ActiveLinkAction(action.action), strmTmpLink.str(), "", rootLevel)));			
-	        	                    
+
 			stringstream actionDesc;
 			actionDesc.str("");
 
 			switch(action.action)
 			{
-				case AR_ACTIVE_LINK_ACTION_NONE:
+			case AR_ACTIVE_LINK_ACTION_NONE:
 				{
 					actionDesc << ActionNone(nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_MACRO:
+			case AR_ACTIVE_LINK_ACTION_MACRO:
 				{
 					actionDesc << ActionMacro(action.u.macro, nAction);					
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_FIELDP:
+			case AR_ACTIVE_LINK_ACTION_FIELDP:
 				{					
 					actionDesc << ActionPushFields(action.u.pushFields, nAction);					
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_FIELDS:
+			case AR_ACTIVE_LINK_ACTION_FIELDS:
 				{
 					actionDesc << ActionSetFields(action.u.setFields, nAction);	
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_PROCESS:
+			case AR_ACTIVE_LINK_ACTION_PROCESS:
 				{
 					actionDesc << ActionProcess(action.u.process, nAction);	
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_MESSAGE:
+			case AR_ACTIVE_LINK_ACTION_MESSAGE:
 				{
 					actionDesc << ActionMessage(action.u.message, nAction);					
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_SET_CHAR:
+			case AR_ACTIVE_LINK_ACTION_SET_CHAR:
 				{
 					actionDesc << ActionSetChar(action.u.characteristics, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_DDE:
+			case AR_ACTIVE_LINK_ACTION_DDE:
 				{
 					actionDesc << ActionDde(action.u.dde, nAction);
 				}
 				break;				
-				case AR_ACTIVE_LINK_ACTION_SQL:
+			case AR_ACTIVE_LINK_ACTION_SQL:
 				{
 					actionDesc << ActionSql(action.u.sqlCommand, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_AUTO:
+			case AR_ACTIVE_LINK_ACTION_AUTO:
 				{
 					actionDesc << ActionAutomation(action.u.automation, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_OPENDLG:
+			case AR_ACTIVE_LINK_ACTION_OPENDLG:
 				{
 					actionDesc << ActionOpenDlg(action.u.openDlg, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_COMMITC:
+			case AR_ACTIVE_LINK_ACTION_COMMITC:
 				{
 					actionDesc << ActionCommitChanges(action.u.commitChanges, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_CLOSEWND:
+			case AR_ACTIVE_LINK_ACTION_CLOSEWND:
 				{
 					actionDesc << ActionCloseWindow(action.u.closeWnd, nAction);		
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_CALLGUIDE:
+			case AR_ACTIVE_LINK_ACTION_CALLGUIDE:
 				{
 					actionDesc << ActionCallGuide(action.u.callGuide, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_EXITGUIDE:
+			case AR_ACTIVE_LINK_ACTION_EXITGUIDE:
 				{
 					actionDesc << ActionExitGuide(action.u.exitGuide, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL:
+			case AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL:
 				{
 					actionDesc << ActionGotoGuideLabel(action.u.gotoGuide, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_WAIT:
+			case AR_ACTIVE_LINK_ACTION_WAIT:
 				{
 					actionDesc << ActionWait(action.u.waitAction, nAction);
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_GOTOACTION:
+			case AR_ACTIVE_LINK_ACTION_GOTOACTION:
 				{					
 					actionDesc << ActionGotoAction(action.u.gotoAction, nAction);				
 				}
 				break;
-				case AR_ACTIVE_LINK_ACTION_SERVICE:
+			case AR_ACTIVE_LINK_ACTION_SERVICE:
 				{
 					actionDesc << ActionService(action.u.service, nAction);
 				}
 				break;
-				default:
+			default:
 				{
 					actionDesc.str("");				
 				}
 				break;
 			}
-			
+
 			row.AddCell(CTableCell(actionDesc.str()));
 			tblListAction.AddRow(row);	
 		}
@@ -336,7 +331,7 @@ string CDocAlActionStruct::ActionMacro(ARActiveLinkMacroStruct &action, int nAct
 					stringstream strmTmpDesc;
 					strmTmpDesc << "Field in Macro " << ifElse << "-Action " << nAction;
 					refItemTmp->description = strmTmpDesc.str();
-					
+
 					refItemTmp->fromName = this->obj->name;						
 					refItemTmp->schemaInsideId = schemaInsideId;	
 
@@ -383,14 +378,14 @@ string CDocAlActionStruct::ActionSetFields(ARSetFieldsActionStruct &action, int 
 
 		//For the following internal calculations we need a secondary form
 		string schemaName2 = secondaryFormRaw.str();
-		
+
 		string tmpDisplayName = secondaryFormDisplay.str();
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = schemaName2;
 
 		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;
 		strm << "Read Value for Field from: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
-		
+
 		//Qualification
 		strm << qualification.str() << endl;		
 
@@ -405,7 +400,7 @@ string CDocAlActionStruct::ActionSetFields(ARSetFieldsActionStruct &action, int 
 				strm << this->AllMatchingIds(schemaName, tmpDisplayName, "Set Fields", nAction);
 			}
 		}
-		
+
 		if(strcmp(setFieldInfo.c_str(), "Field Mapping") ==  0)
 		{
 			strm << setFieldInfo << ":<br/>" << endl;
@@ -438,7 +433,7 @@ string CDocAlActionStruct::ActionProcess(char *action, int nAction)
 		{
 			CFieldRefItem *refItemTmp = new CFieldRefItem();
 			refItemTmp->arsStructItemType = this->structItemType;
-			
+
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Field in Run Process " << ifElse << "-Action " << nAction;
 			refItemTmp->description = strmTmpDesc.str();
@@ -477,11 +472,11 @@ string CDocAlActionStruct::ActionMessage(ARMessageStruct &action, int nAction)
 		{
 			CFieldRefItem *refItemTmp = new CFieldRefItem();
 			refItemTmp->arsStructItemType = this->structItemType;
-			
+
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Message " << ifElse << "-Action " << nAction;
 			refItemTmp->description = strmTmpDesc.str();
-			
+
 			refItemTmp->fromName = this->obj->name;						
 			refItemTmp->schemaInsideId = schemaInsideId;
 			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
@@ -518,10 +513,10 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 
 		//FieldName
 		strm << "Field Name: " << arIn->LinkToField(schemaName, action.fieldId, rootLevel) << "<br/>" << endl;
-		
+
 		//Access Option
 		strm << "Field Access: " << CAREnum::SetCharFieldAccess(action.accessOption) << "<br/>" << endl;					
-				
+
 
 		//Font
 		string tmp = "";
@@ -529,7 +524,7 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 		{	
 			switch(action.props.props[i].prop)
 			{
-				case AR_DPROP_LABEL_FONT_STYLE:
+			case AR_DPROP_LABEL_FONT_STYLE:
 				{
 					if(action.props.props[i].value.u.charVal != NULL)
 					{
@@ -552,7 +547,7 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 		{	
 			switch(action.props.props[i].prop)
 			{				
-				case AR_DPROP_VISIBLE:
+			case AR_DPROP_VISIBLE:
 				{					
 					if(action.props.props[i].value.dataType == AR_DATA_TYPE_ENUM || action.props.props[i].value.dataType == AR_DATA_TYPE_INTEGER)
 					{
@@ -562,7 +557,7 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 				break;
 			}
 		}
-		
+
 		if(tmp.size() > 0)
 			strm << "Visibility: " << tmp << "<br/>" << endl;
 		else
@@ -590,11 +585,11 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 		{	
 			switch(action.props.props[i].prop)
 			{
-				case AR_DPROP_LABEL_COLOR_TEXT:
+			case AR_DPROP_LABEL_COLOR_TEXT:
 				{
 					stringstream strmTmp;
 					strmTmp << CARValue::ValueToString(action.props.props[i].value);
-					
+
 
 					if(strmTmp.str().size() > 0)
 						strm << "Default Label Color: " << strmTmp.str() << "<br/>" << endl;
@@ -602,12 +597,12 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 						strm << "Default Label Color" << "<br/>" << endl;
 				}
 				break;
-				case AR_DPROP_REFRESH:
+			case AR_DPROP_REFRESH:
 				{
 					strm << "<input type=\"checkbox\" name=\"refTableFieldInAl\" value=\"refrTblField\" checked>Refresh Table Field" << endl;
 				}
 				break;
-				case AR_DPROP_LABEL:
+			case AR_DPROP_LABEL:
 				{	
 					//if(action.props.props[i].value != NULL)
 					{
@@ -712,14 +707,14 @@ string CDocAlActionStruct::ActionPushFields(ARPushFieldsActionStruct &action, in
 				stringstream strmTmpDesc;
 				strmTmpDesc << "Push Field Qualification " << ifElse << "-Action " << nAction;
 				refItem->description = strmTmpDesc.str();
-				
+
 				refItem->fromName = this->obj->name;
 
 				CARQualification arQual(*arIn);
 				int pFormId = this->arIn->SchemaGetInsideId(schemaName.c_str());
 				int sFormId = this->arIn->SchemaGetInsideId(secondaryFormRaw.str());
 				arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[i].field.qualifier, *refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
-				
+
 				delete refItem;
 
 				if(strmTmpQual.str().length() > 0)
@@ -739,7 +734,7 @@ string CDocAlActionStruct::ActionPushFields(ARPushFieldsActionStruct &action, in
 
 		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;
 		strm << "Push Value To: " << arIn->LinkToSchema(secondaryFormRaw.str(), rootLevel) << "<br/>" << endl;
-		
+
 		//Qualification
 		strm << assignQual.str() << endl;
 
@@ -785,12 +780,12 @@ string CDocAlActionStruct::ActionSql(ARSQLStruct &action, int nAction)
 	{		
 		if(action.server != NULL)
 			strm << "Server: " << arIn->LinkToServerInfo(action.server, rootLevel) << "<br/>" << endl;
-		
+
 		if(action.command != NULL)
 		{			
 			CFieldRefItem *refItemTmp = new CFieldRefItem();
 			refItemTmp->arsStructItemType = this->structItemType;
-			
+
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Value in Direct SQL " << ifElse << "-Action " << nAction;
 			refItemTmp->description = strmTmpDesc.str();
@@ -868,17 +863,17 @@ bool CDocAlActionStruct::ActionOpenDlgQualifier(int nWindowType)
 {
 	switch(nWindowType)
 	{
-		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
-		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
-		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
-		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
-		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
-		case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
-		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
-		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
-		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
-			return true;
-		default: return false;
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
+	case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+		return true;
+	default: return false;
 	}
 }
 
@@ -924,10 +919,10 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 
 			strm << "Target Location: " << arIn->TextFindFields(action.targetLocation, "$", this->schemaInsideId, this->rootLevel, true, refItemLocation) << "<br/>" << endl;
 		}
-		
+
 		strm << "Window Mode: " << CAREnum::OpenWindowMode(action.windowMode) << "<br/>" << endl;
 		strm << "Form Name: " << arIn->LinkToSchema(action.schemaName, rootLevel) << "<br/>" << endl;
-		
+
 		if(action.vuiLabel == NULL || strcmp(action.vuiLabel, "")==0)
 		{
 			strm << "Form View: (Clear)<br/>" << endl; 
@@ -946,7 +941,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 			}
 		}
 
-		
+
 		if(ActionOpenDlgQualifier(action.windowMode))
 		{
 			if(action.query.operation != NULL)
@@ -977,7 +972,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\" checked>Show Close Button in Dialog" << endl;
 		else
 			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\">Show Close Button in Dialog" << endl;
-		
+
 		strm << "<br/>" << endl;
 
 		//Field Mapping WindowOpen
@@ -994,7 +989,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 				setFieldInfo = "Field Mapping (On Open): Set Fields to Default Values<br/>";
 			}
 		}
-		
+
 		if(strcmp(setFieldInfo.c_str(), "Field Mapping (On Open)") ==  0)
 		{
 			strm << setFieldInfo << ":<br/>" << endl;
@@ -1024,7 +1019,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 					setFieldInfo = "Field Mapping (On Close): Set Fields to Default Values<br/>";
 				}
 			}
-			
+
 			if(strcmp(setFieldInfo.c_str(), "Field Mapping (On Close)") ==  0)
 			{
 				strm << setFieldInfo << ":<br/>" << endl;
@@ -1103,7 +1098,7 @@ string CDocAlActionStruct::ActionCallGuide(ARCallGuideStruct &action, int nActio
 		if(action.guideTableId > 0)
 		{
 			strm << "Table Loop: " << arIn->LinkToField(schemaName, action.guideTableId, rootLevel) << "<br/>" << endl;
-			
+
 			if(action.guideMode == AR_CALL_GUIDE_LOOP_SELECTED_ONLY)
 				strm << "<input type=\"checkbox\" name=\"tblLoopInGuide\" value=\"loopTbl\" checked>Table Loop Selected Rows Only" << endl;
 			else
@@ -1115,7 +1110,7 @@ string CDocAlActionStruct::ActionCallGuide(ARCallGuideStruct &action, int nActio
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Guide Table Loop " << ifElse << "-Action " << nAction;
 			refItem->description = strmTmpDesc.str();
-			
+
 			refItem->fromName = this->obj->name;	
 			refItem->fieldInsideId = action.guideTableId;
 			refItem->schemaInsideId = schemaInsideId;
@@ -1236,7 +1231,7 @@ string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, in
 {
 	stringstream strm;
 	strm.str("");
-	 
+
 	try
 	{
 		strm << "Server Name: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;

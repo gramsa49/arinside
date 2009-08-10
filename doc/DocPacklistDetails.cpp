@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocPacklistDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docpacklistdetails.h"
@@ -47,7 +42,7 @@ void CDocPacklistDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
-			
+
 			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pPackList->name);
 			if(this->pPackList->appRefName.c_str() != NULL && this->pPackList->appRefName.size() > 0)
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pPackList->appRefName, this->rootLevel);
@@ -81,7 +76,7 @@ string CDocPacklistDetails::PackListInformation()
 	CTable tblProp("specificPropList", "TblObjectList");
 	tblProp.AddColumn(20, "Type");
 	tblProp.AddColumn(80, "Server Object");
-	
+
 	try
 	{
 		for(unsigned int i=0; i< this->pPackList->references.numItems; i++)
@@ -89,51 +84,51 @@ string CDocPacklistDetails::PackListInformation()
 			stringstream srvType, srvObj;
 			srvType.str("");
 			srvObj.str("");
-			
+
 			switch(this->pPackList->references.referenceList[i].type)
 			{							
 				if(this->pPackList->references.referenceList[i].reference.u.name != NULL
 					&& strcmp(this->pPackList->references.referenceList[i].reference.u.name, "")!=0)
 				{
-					case ARREF_SCHEMA:
-					{
-						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-						srvObj << this->pInside->LinkToSchema(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
-					}
-					break;
-					case ARREF_FILTER:
-					{
-						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-						srvObj << this->pInside->LinkToFilter(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
-					}
-					break;
-					case ARREF_ESCALATION:
-					{
-						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-						srvObj << this->pInside->LinkToEscalation(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
-					}
-					break;
-					case ARREF_ACTLINK:
-					{
-						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-						srvObj << this->pInside->LinkToAl(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
-					}
-					break;
-					case ARREF_CONTAINER:
-					{
-						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-						srvObj << this->pInside->LinkToContainer(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
-					}
-					break;
-					case ARREF_CHAR_MENU:
-					{
-						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-						srvObj << this->pInside->LinkToMenu(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
-					}
-					break;
+			case ARREF_SCHEMA:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					srvObj << this->pInside->LinkToSchema(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_FILTER:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					srvObj << this->pInside->LinkToFilter(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_ESCALATION:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					srvObj << this->pInside->LinkToEscalation(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_ACTLINK:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					srvObj << this->pInside->LinkToAl(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_CONTAINER:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					srvObj << this->pInside->LinkToContainer(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_CHAR_MENU:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					srvObj << this->pInside->LinkToMenu(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
 				}
 			}
-		
+
 			//Avoid empty rows in table
 			if(srvType.str().size() > 0)
 			{

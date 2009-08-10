@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ARInside.h
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 #include "arapi.h"
@@ -85,17 +80,17 @@ public:
 	list<CFieldRefItem> listFieldRefItem;
 	list<CMenuRefItem> listMenuRefItem;
 	list<CFieldRefItem> listFieldNotFound;
-		
+
 	string LinkToServerInfo(string srvName, int rootLevel);
 	string LinkToXmlObjType(int arsStructItemType, string objName, int rootLevel);
 	string XmlObjEnabled(int arsStructItemType, string objName);
-	
+
 	int SchemaGetInsideId(string searchObjName);
 
 	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 	string LinkToField(string schemaName, int fieldInsideId, int fromRootLevel);	
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);	
-	
+
 	string LinkToContainer(string containerName, int rootLevel);
 	string LinkToAl(string alName, int rootLevel);
 	string LinkToAlRef(int alInsideId, int rootLevel);
@@ -128,7 +123,7 @@ private:
 	string GetARStatusError();	
 	static bool SortByName(const CARServerObject& t1, const CARServerObject& t2 );	
 	string ObjListFilename(string firstChar);
-	
+
 	int ContainerGetInsideId(string searchObjName);	
 	int AlGetInsideId(string searchObjName);	
 	int FilterGetInsideId(string searchObjName);	
@@ -142,14 +137,14 @@ private:
 	void Sort(list<CARContainer> &listResult);
 	void Sort(list<CARCharMenu> &listResult);
 	void Sort(list<CARField> &listResult);
-	
+
 	int LoadActiveLinks(void);
 	int LoadFilters(void);
 	int LoadEscalations(void);
 	int LoadCharMenus(void);
 	int LoadContainer(void);
 	int LoadForms(int nType, int &schemaInsideId);
-			
+
 	void SearchCustomFieldReferences();
 	void CustomFieldReferences(CARSchema &schema, CARField &obj);
 };

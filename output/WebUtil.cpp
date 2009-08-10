@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  WebUtil.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\webutil.h"
@@ -36,11 +31,11 @@ string CWebUtil::RootPath(int level)
 {
 	switch(level)
 	{
-		case 0:
-		default: return "./";
-		case 1: return "../";
-		case 2: return "../../";
-		case 3: return "../../../";
+	case 0:
+	default: return "./";
+	case 1: return "../";
+	case 2: return "../../";
+	case 3: return "../../../";
 	}
 }
 
@@ -48,7 +43,7 @@ string CWebUtil::Validate(string text)
 {
 	text = CUtil::StrReplace("&", "&amp;", text);
 	text = CUtil::StrReplace("\"", "&quot;", text);
-    text = CUtil::StrReplace("<", "&lt;", text);
+	text = CUtil::StrReplace("<", "&lt;", text);
 	text = CUtil::StrReplace(">", "&gt;", text);
 	return text;
 }
@@ -92,7 +87,7 @@ string CWebUtil::ImageTag(string imgName, int rootLevel)
 	if(strcmp(imgName.c_str(), "hidden.gif")==0)		{ width =18 ; height =18 ; }
 
 	strm << "<img src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\">";
-	
+
 	return strm.str();
 }
 
@@ -129,7 +124,7 @@ string CWebUtil::Link(string caption, string linkTo, string imgName, int rootLev
 	strm.str("");
 
 	string xhtmlCaption = caption;
-	
+
 	if(validate)
 	{
 		xhtmlCaption = Validate(caption);
@@ -371,12 +366,12 @@ string CWebUtil::LinkToContainer(int objectCount, int rootLevel, int containerTy
 {
 	switch(containerType)
 	{
-		case ARCON_GUIDE: return LinkToActiveLinkGuideIndex(objectCount, rootLevel);
-		case ARCON_APP: return LinkToApplicationIndex(objectCount, rootLevel);
-		case ARCON_PACK: return LinkToPackingListIndex(objectCount, rootLevel);
-		case ARCON_FILTER_GUIDE: return LinkToFilterGuideIndex(objectCount, rootLevel);
-		case ARCON_WEBSERVICE: return LinkToWebServiceIndex(objectCount, rootLevel);
-		default: return "";
+	case ARCON_GUIDE: return LinkToActiveLinkGuideIndex(objectCount, rootLevel);
+	case ARCON_APP: return LinkToApplicationIndex(objectCount, rootLevel);
+	case ARCON_PACK: return LinkToPackingListIndex(objectCount, rootLevel);
+	case ARCON_FILTER_GUIDE: return LinkToFilterGuideIndex(objectCount, rootLevel);
+	case ARCON_WEBSERVICE: return LinkToWebServiceIndex(objectCount, rootLevel);
+	default: return "";
 	}
 }
 

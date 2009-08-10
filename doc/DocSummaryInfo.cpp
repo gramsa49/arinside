@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocsummaryInfo.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include "docsummaryinfo.h"
@@ -47,7 +42,7 @@ void CDocSummaryInfo::Documentation()
 
 		stringstream strm;
 		strm.str("");
-		
+
 		CTable tblListObjectInfo("tblDocSummary", "TblObjectList");
 		tblListObjectInfo.AddColumn(10, "Objects");		
 		tblListObjectInfo.AddColumn(90, "Description");
@@ -56,7 +51,7 @@ void CDocSummaryInfo::Documentation()
 		row.AddCell(CTableCell((int)this->pInside->alList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Active Links", "active_link/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
-		
+
 		unsigned int nWebservice = 0;
 		unsigned int nAlGuide = 0;
 		unsigned int nFilterGuide = 0;
@@ -68,27 +63,27 @@ void CDocSummaryInfo::Documentation()
 			CARContainer *cont = &(*contIter);
 			switch(cont->type)
 			{
-				case ARCON_WEBSERVICE:
+			case ARCON_WEBSERVICE:
 				{
 					nWebservice++;
 				}
 				break;
-				case ARCON_GUIDE:
+			case ARCON_GUIDE:
 				{
 					nAlGuide++;
 				}
 				break;
-				case ARCON_FILTER_GUIDE:
+			case ARCON_FILTER_GUIDE:
 				{
 					nFilterGuide++;
 				}
 				break;
-				case ARCON_PACK:
+			case ARCON_PACK:
 				{
 					nPacklist++;
 				}
 				break;
-				case ARCON_APP:
+			case ARCON_APP:
 				{
 					nApplication++;
 				}
@@ -115,7 +110,7 @@ void CDocSummaryInfo::Documentation()
 		row.AddCell(CTableCell(nPacklist));
 		row.AddCell(CTableCell(CWebUtil::Link("Packing Lists", "packing_list/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
-		
+
 		row.ClearCells();
 		row.AddCell(CTableCell(nApplication));
 		row.AddCell(CTableCell(CWebUtil::Link("Applications", "application/index.htm", "", 0)));

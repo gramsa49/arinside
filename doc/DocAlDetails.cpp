@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocAlDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include "docaldetails.h"
@@ -47,7 +42,7 @@ void CDocAlDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
-			
+
 			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pAl->name);
 			if(this->pAl->appRefName.c_str() != NULL && this->pAl->appRefName.size() > 0)
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pAl->appRefName, this->rootLevel);
@@ -59,7 +54,7 @@ void CDocAlDetails::Documentation()
 			CTable tblObjProp("objProperties", "TblObjectList");
 			tblObjProp.AddColumn(30, "Property");	
 			tblObjProp.AddColumn(70, "Value");
-			
+
 			//Status
 			CTableRow row("cssStdRow");		
 			CTableCell cellProp("Status", "");				
@@ -85,7 +80,7 @@ void CDocAlDetails::Documentation()
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
-			
+
 			//Workflow	
 			if(this->pAl->schemaList.u.schemaList->numItems > 0)
 			{		
@@ -130,7 +125,7 @@ void CDocAlDetails::Documentation()
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);
-			                
+
 			//Table description
 			stringstream tblDesc;
 			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Active Link Properties";
@@ -139,7 +134,7 @@ void CDocAlDetails::Documentation()
 			//Add table to page
 			webPage.AddContent(tblObjProp.ToXHtml());
 			tblObjProp.Clear();
-		    
+
 			//Properties
 			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pAl->objPropList));
 
@@ -166,7 +161,7 @@ string CDocAlDetails::Permissions()
 		{			
 			grpTbl->AddRow(this->pAl->appRefName, this->pAl->groupList.internalIdList[i], this->rootLevel);
 		}
-		
+
 		strm << grpTbl->Print();
 		delete grpTbl;
 
@@ -278,7 +273,7 @@ string CDocAlDetails::CreateSpecific(string schemaName)
 		}
 
 		pgStrm << "Run If Qualification: <br/>" << strmTmp.str();
-	   
+
 		//If-Actions		
 		CDocAlActionStruct actionStruct(*this->pInside, *this->pAl, schemaName, this->path, this->rootLevel);
 		pgStrm << actionStruct.Get("If", this->pAl->actionList);
@@ -290,6 +285,6 @@ string CDocAlDetails::CreateSpecific(string schemaName)
 	{
 		cout << "EXCEPTION enumerating active link details: " << this->pAl->name << endl;
 	}
-		
+
 	return pgStrm.str();
 }

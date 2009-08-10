@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocWebserviceDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docwebservicedetails.h"
@@ -133,9 +128,9 @@ string CDocWebserviceDetails::WSInformation()
 						strmWsDesc << "Property";                    
 						switch(ref.reference.u.extRef.value.dataType)
 						{
-							case AR_DATA_TYPE_CHAR:
+						case AR_DATA_TYPE_CHAR:
 							{
-																
+
 								try
 								{				
 									int schemaId = pInside->SchemaGetInsideId(pWs->ownerObjList.ownerObjList[0].ownerName);
@@ -148,13 +143,13 @@ string CDocWebserviceDetails::WSInformation()
 
 									string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);							
 									strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-								
+
 									delete refItemMap;
 								}
 								catch(...)
 								{
 								}								
-								
+
 							}
 							break;
 						}
@@ -165,7 +160,7 @@ string CDocWebserviceDetails::WSInformation()
 						strmWsDesc << "Operation";
 						switch(ref.reference.u.extRef.value.dataType)
 						{
-							case AR_DATA_TYPE_CHAR:
+						case AR_DATA_TYPE_CHAR:
 							{
 								try
 								{				
@@ -179,7 +174,7 @@ string CDocWebserviceDetails::WSInformation()
 
 									string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);							
 									strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-								
+
 									delete refItemMap;
 								}
 								catch(...)
@@ -195,7 +190,7 @@ string CDocWebserviceDetails::WSInformation()
 						strmWsDesc << "Mapping";
 						switch(ref.reference.u.extRef.value.dataType)
 						{
-							case AR_DATA_TYPE_CHAR:
+						case AR_DATA_TYPE_CHAR:
 							{
 								try
 								{				
@@ -209,7 +204,7 @@ string CDocWebserviceDetails::WSInformation()
 
 									string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);							
 									strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-								
+
 									delete refItemMap;
 								}
 								catch(...)
@@ -225,7 +220,7 @@ string CDocWebserviceDetails::WSInformation()
 						strmWsDesc << "WSDL";
 						switch(ref.reference.u.extRef.value.dataType)
 						{
-							case AR_DATA_TYPE_CHAR:
+						case AR_DATA_TYPE_CHAR:
 							{																
 								if(ref.reference.u.extRef.value.u.charVal != NULL)
 								{
@@ -241,7 +236,7 @@ string CDocWebserviceDetails::WSInformation()
 						strmWsDesc << "Publishing Location";
 						switch(ref.reference.u.extRef.value.dataType)
 						{
-							case AR_DATA_TYPE_CHAR:
+						case AR_DATA_TYPE_CHAR:
 							{
 								if(ref.reference.u.extRef.value.u.charVal != NULL)
 								{								
@@ -257,7 +252,7 @@ string CDocWebserviceDetails::WSInformation()
 						strmWsDesc << "XML Schema";
 						switch(ref.reference.u.extRef.value.dataType)
 						{
-							case AR_DATA_TYPE_CHAR:
+						case AR_DATA_TYPE_CHAR:
 							{
 								if(ref.reference.u.extRef.value.u.charVal != NULL)
 								{								

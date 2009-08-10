@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ARAssignHelper.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\arassignhelper.h"
@@ -69,7 +64,7 @@ string CARAssignHelper::PushFieldsAssignment(ARPushFieldsActionStruct &action, i
 			refItem->schemaInsideId = this->schemaInsideId2;
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
-			
+
 			stringstream assignText;
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.pushFieldsList.pushFieldsList[i].assign, assignText, "Push Fields");
 
@@ -114,10 +109,10 @@ string CARAssignHelper::SetFieldsAssignment(ARSetFieldsActionStruct &action, int
 			refItem->schemaInsideId = this->schemaInsideId1;
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
-			
+
 			stringstream assignText;		
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldList.fieldAssignList[i].assignment, assignText, "Set Fields");
-            
+
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
@@ -160,10 +155,10 @@ string CARAssignHelper::OpenWindowAssignment(ARFieldAssignList &action, int nAct
 			refItem->schemaInsideId = this->schemaInsideId1;
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
-			
+
 			stringstream assignText;		
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
-            
+
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
@@ -206,10 +201,10 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 			refItem->schemaInsideId = this->schemaInsideId2;
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
-			
+
 			stringstream assignText;		
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
-            
+
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
@@ -251,10 +246,10 @@ string CARAssignHelper::ServiceAssignment(ARFieldAssignList &action, int nAction
 			refItem->schemaInsideId = this->schemaInsideId2;
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
-			
+
 			stringstream assignText;		
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, serviceInfo);
-            
+
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
@@ -277,12 +272,12 @@ void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAct
 	{
 		switch(assignment.assignType)
 		{
-			case AR_ASSIGN_TYPE_VALUE:
+		case AR_ASSIGN_TYPE_VALUE:
 			{					
 				AssignValue(targetFieldId, ifElse, assignment.u.value, assignText, refItemDesc);
 			}
 			break;
-			case AR_ASSIGN_TYPE_FIELD:
+		case AR_ASSIGN_TYPE_FIELD:
 			{	
 				if(assignment.u.field->u.statHistory.userOrTime == 0)
 				{
@@ -300,88 +295,88 @@ void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAct
 
 					switch(assignment.u.field->u.statHistory.userOrTime)
 					{						
-						case AR_STAT_HISTORY_USER:
-							{
-								assignText << ".USER$";
-							}
-							break;
-						case AR_STAT_HISTORY_TIME:
-							{
-								assignText << ".TIME$";
-							}
-							break;
+					case AR_STAT_HISTORY_USER:
+						{
+							assignText << ".USER$";
+						}
+						break;
+					case AR_STAT_HISTORY_TIME:
+						{
+							assignText << ".TIME$";
+						}
+						break;
 					}
 				}				
 			}
 			break;
-			case AR_ASSIGN_TYPE_PROCESS:
+		case AR_ASSIGN_TYPE_PROCESS:
 			{
 				AssignProcess(ifElse, assignment.u.process, assignText, refItemDesc);
 			}
 			break;
-			case AR_ASSIGN_TYPE_ARITH:
+		case AR_ASSIGN_TYPE_ARITH:
 			{			
 				switch (assignment.u.arithOp->operation) 
-					{
-					case AR_ARITH_OP_ADD:
-						assignText << "(";
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
-						assignText << CAREnum::Operand(AR_ARITH_OP_ADD);
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-						assignText << ")";
-						break;
-					case AR_ARITH_OP_SUBTRACT:
-						assignText << "(";
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
-						assignText << CAREnum::Operand(AR_ARITH_OP_SUBTRACT);
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-						assignText << ")";
-						break;
-					case AR_ARITH_OP_MULTIPLY:
-						assignText << "(";
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
-						assignText << CAREnum::Operand(AR_ARITH_OP_MULTIPLY);
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-						assignText << ")";
-						break;
-					case AR_ARITH_OP_DIVIDE:
-						assignText << "(";
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
-						assignText << CAREnum::Operand(AR_ARITH_OP_DIVIDE);
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-						assignText << ")";
-						break;
-					case AR_ARITH_OP_MODULO:
-						assignText << "(";
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
-						assignText << CAREnum::Operand(AR_ARITH_OP_MODULO);
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-						assignText << ")";
-						break;
-					case AR_ARITH_OP_NEGATE:
-						assignText << CAREnum::Operand(AR_ARITH_OP_NEGATE);
-						CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-						break;
-					}
+				{
+				case AR_ARITH_OP_ADD:
+					assignText << "(";
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					assignText << CAREnum::Operand(AR_ARITH_OP_ADD);
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					assignText << ")";
+					break;
+				case AR_ARITH_OP_SUBTRACT:
+					assignText << "(";
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					assignText << CAREnum::Operand(AR_ARITH_OP_SUBTRACT);
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					assignText << ")";
+					break;
+				case AR_ARITH_OP_MULTIPLY:
+					assignText << "(";
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					assignText << CAREnum::Operand(AR_ARITH_OP_MULTIPLY);
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					assignText << ")";
+					break;
+				case AR_ARITH_OP_DIVIDE:
+					assignText << "(";
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					assignText << CAREnum::Operand(AR_ARITH_OP_DIVIDE);
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					assignText << ")";
+					break;
+				case AR_ARITH_OP_MODULO:
+					assignText << "(";
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					assignText << CAREnum::Operand(AR_ARITH_OP_MODULO);
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					assignText << ")";
+					break;
+				case AR_ARITH_OP_NEGATE:
+					assignText << CAREnum::Operand(AR_ARITH_OP_NEGATE);
+					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					break;
+				}
 
 			}
 			break;
-			case AR_ASSIGN_TYPE_FUNCTION:
+		case AR_ASSIGN_TYPE_FUNCTION:
 			{
 				AssignFunction(targetFieldId, ifElse, nAction, *assignment.u.function, assignText, refItemDesc);
 			}
 			break;
-			case AR_ASSIGN_TYPE_DDE:
+		case AR_ASSIGN_TYPE_DDE:
 			{
 				AssignDDE(ifElse, *assignment.u.dde, assignText, refItemDesc);
 			}
 			break;
-			case AR_ASSIGN_TYPE_SQL:
+		case AR_ASSIGN_TYPE_SQL:
 			{
 				AssignSQL(ifElse, *assignment.u.sql, assignText, refItemDesc);
 			}
 			break;
-			case AR_ASSIGN_TYPE_FILTER_API:
+		case AR_ASSIGN_TYPE_FILTER_API:
 			{
 				AssignFilterApi(ifElse, *assignment.u.filterApi, assignText, refItemDesc);
 			}
@@ -399,42 +394,42 @@ void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruc
 	try
 	{
 		stringstream strmValue;
-		
+
 		switch(v.dataType)
 		{
-			case AR_DATA_TYPE_NULL:
+		case AR_DATA_TYPE_NULL:
 			{
 				strmValue << "$NULL$";
 			}
 			break;
-			case AR_DATA_TYPE_CHAR:
+		case AR_DATA_TYPE_CHAR:
 			{
 				strmValue << "\"" << CARValue::ValueToString(v) << "\"";
 			}
 			break;
-			case AR_DATA_TYPE_REAL:
-			case AR_DATA_TYPE_ULONG:
-			case AR_DATA_TYPE_INTEGER:
+		case AR_DATA_TYPE_REAL:
+		case AR_DATA_TYPE_ULONG:
+		case AR_DATA_TYPE_INTEGER:
 			{
 				strmValue << CARValue::ValueToString(v);
 			}
 			break;
-			case AR_DATA_TYPE_KEYWORD:
+		case AR_DATA_TYPE_KEYWORD:
 			{
 				strmValue << "$" << CARValue::ValueToString(v) << "$";
 			}
 			break;
-			case AR_DATA_TYPE_ENUM:
+		case AR_DATA_TYPE_ENUM:
 			{
 				int nTmpActionSchemaId = schemaInsideId1;
 
 				if(this->pushFieldFlag==true)
 					nTmpActionSchemaId = schemaInsideId2;
-				
+
 				strmValue << arIn->GetFieldEnumValue(nTmpActionSchemaId, targetFieldId, v.u.enumVal);
 			}
 			break;
-			default:
+		default:
 			{
 				strmValue << "\"" << CARValue::ValueToString(v) << "\"";
 			}
@@ -455,14 +450,14 @@ void CARAssignHelper::AssignField( string ifElse, int nAction, ARAssignFieldStru
 	{
 		stringstream desc;
 		desc << "Value in '"<< refItemDesc <<"' " << ifElse << "-Action " << nAction;
-		
+
 		int nTmpActionSchemaId = schemaInsideId1;
-		
+
 		if(schemaInsideId1 != schemaInsideId2 && this->pushFieldFlag == false)
 		{
 			nTmpActionSchemaId = schemaInsideId2;
 		}
-		
+
 		if(schemaInsideId1 != schemaInsideId2 && this->openWindowFlag == true)
 		{
 			nTmpActionSchemaId = schemaInsideId1;
@@ -479,7 +474,7 @@ void CARAssignHelper::AssignField( string ifElse, int nAction, ARAssignFieldStru
 		delete refItem;	
 
 		assignText << "$" << arIn->LinkToField(nTmpActionSchemaId, v.u.fieldId, rootLevel) << "$";
-		
+
 	}
 	catch(...)
 	{
@@ -590,4 +585,3 @@ void CARAssignHelper::AssignFilterApi(string ifElse, ARAssignFilterApiStruct &v,
 		cout << "EXCEPTION in AssignFilterApi: " << this->objName << endl;
 	}
 }
-

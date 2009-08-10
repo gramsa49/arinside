@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocApplicationDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docapplicationdetails.h"
@@ -79,7 +74,7 @@ string CDocApplicationDetails::GetPrimaryForm()
 			switch(this->pApp->references.referenceList[i].type)
 			{						
 				//case ARREF_APPLICATION_PRIMARY_FORM:
-				case ARREF_SCHEMA:
+			case ARREF_SCHEMA:
 				{
 					if(InList(this->pApp->references.referenceList[i].reference.u.name, ARREF_SCHEMA))
 					{
@@ -131,7 +126,7 @@ string CDocApplicationDetails::ApplicationInformation()
 	{
 		CTableRow row("");		
 
-        //Get the primary form of this application		
+		//Get the primary form of this application		
 		row.ClearCells();
 		CTableCell cellSrvType("Primary Form", "");
 		CTableCell cellSrvObj(this->pInside->LinkToSchema(this->GetPrimaryForm(), this->rootLevel), "");
@@ -141,7 +136,7 @@ string CDocApplicationDetails::ApplicationInformation()
 		row.AddCell(cellSrvType);
 		row.AddCell(cellSrvObj);
 		tblProp.AddRow(row);
-		
+
 
 		int nResult = 0;
 		string strResult = "";
@@ -197,7 +192,7 @@ string CDocApplicationDetails::ApplicationInformation()
 		row.AddCell(cellSrvObj);
 		tblProp.AddRow(row);
 
-        
+
 		//Related containers
 		for(int nType=1; nType<6; nType++)
 		{			
@@ -441,7 +436,7 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 				{
 					nResult++;
 					strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
-				
+
 					obj->appRefName = this->pApp->name;
 				}
 			}
@@ -474,7 +469,7 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
 			{			
 				CARSchema *schema = &(*schemaIter);
-				
+
 				if(InList(schema->name, ARREF_SCHEMA))
 				{
 					list<CARField>::iterator fieldIter;
@@ -499,7 +494,7 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 			{
 				nResult++;
 				strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
-			
+
 				obj->appRefName = this->pApp->name;
 			}
 		}

@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocSchemaDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docschemadetails.h"
@@ -62,16 +57,16 @@ void CDocSchemaDetails::Documentation()
 		{
 			stringstream pgStrm;	
 			CWebPage webPage("index", this->pSchema->name, rootLevel, this->pInside->appConfig);
-			
+
 			//ContentHead informations
 			stringstream contHeadStrm;
 			contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->pSchema->schema.schemaType, rootLevel) << endl;
 			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->pSchema->name) << endl;
-			
+
 			if(this->pSchema->appRefName.c_str() != NULL && this->pSchema->appRefName.size() > 0)
 				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pSchema->appRefName, this->rootLevel);
-		
+
 			pgStrm << contHeadStrm.str();
 
 			//Add schema navigation menu	
@@ -140,7 +135,7 @@ void CDocSchemaDetails::Documentation()
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);
-			
+
 			//Join References
 			row.ClearCells();
 			cellProp.content = "Join Form References";
@@ -164,45 +159,45 @@ void CDocSchemaDetails::Documentation()
 			//Fields
 			switch(this->pSchema->schema.schemaType)
 			{
-				case AR_SCHEMA_JOIN:
-					pgStrm << this->AllFieldsJoin(this->pSchema->FileID());
-					break;
-				default:	
-					pgStrm << this->AllFields(this->pSchema->FileID());
-					break;
+			case AR_SCHEMA_JOIN:
+				pgStrm << this->AllFieldsJoin(this->pSchema->FileID());
+				break;
+			default:	
+				pgStrm << this->AllFields(this->pSchema->FileID());
+				break;
 			}
-				
+
 			//indexes
 			this->IndexDoc();
-					
+
 			//sortlist
 			this->SortListDoc();
-					
+
 			//resultlist link
 			this->ResultListDoc();
-					
+
 			//views
 			this->VuiListDoc();
-			
+
 			//permissions
 			this->SchemaPermissionDoc();
-			
+
 			//Workflow
 			this->WorkflowDoc();
 
 			//subadmins
 			this->SchemaSubadminDoc();
-			
+
 			//active links
 			this->SchemaAlDoc();
-			
+
 
 			//filter
 			this->SchemaFilterDoc();
-					
+
 			//escalation
 			this->SchemaEscalDoc();
-			
+
 
 			webPage.AddContent(pgStrm.str());
 
@@ -211,7 +206,7 @@ void CDocSchemaDetails::Documentation()
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pSchema, this->rootLevel));
-			
+
 			webPage.SaveInFolder(this->path);
 			pgStrm.str("");
 		}
@@ -287,12 +282,12 @@ string CDocSchemaDetails::AllFields(string fName)
 			field = &(*listIter);
 
 			CTableRow row("");
-			
+
 
 			CTableCell cellName(field->GetURL(rootLevel), "");
 			CTableCell cellFieldId(field->fieldId, "");
 			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");
-			
+
 			stringstream strmTmp;
 			if(field->dInstanceList.numItems == 0 && field->fieldId != 15)				
 				strmTmp << "<span class=\"fieldInNoView\">" << field->dInstanceList.numItems << "</span" << endl;
@@ -302,7 +297,7 @@ string CDocSchemaDetails::AllFields(string fName)
 
 			CTableCell cellTimestamp(CUtil::TimeToString(field->timestamp), "");
 			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, 2), "");
-			
+
 			row.AddCell(cellName);		
 			row.AddCell(cellFieldId);
 			row.AddCell(cellDataType);
@@ -352,7 +347,7 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 			CTableCell cellNumViews(field->dInstanceList.numItems, "");	
 			CTableCell cellTimestamp(CUtil::TimeToTextString(field->timestamp), "");
 			CTableCell cellLastChanged(field->lastChanged, "");
-			
+
 			row.AddCell(cellName);		
 			row.AddCell(cellFieldId);
 			row.AddCell(cellDataType);
@@ -405,7 +400,7 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 			CTableCell cellNumViews(strmTmp.str(), "");	
 
 			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");
-			
+
 			strmTmp.str("");			
 			if(field->fieldId == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
 			{
@@ -422,7 +417,7 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 					string tmpBaseSchema = this->pSchema->schema.u.join.memberA;
 					if(field->fieldMap.u.join.schemaIndex > 0)
 						tmpBaseSchema = this->pSchema->schema.u.join.memberB;
-					
+
 					strmTmp << this->pInside->LinkToField(tmpBaseSchema, field->fieldMap.u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
 				}
 				else
@@ -481,7 +476,7 @@ void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
 			CTableCell cellFieldId(field->fieldId, "");
 			CTableCell cellNumViews(field->dInstanceList.numItems, "");
 			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");
-			
+
 			int nFieldRealId = 0;		
 			if(field->fieldId == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
 			{
@@ -639,7 +634,7 @@ void CDocSchemaDetails::WorkflowDoc()
 			}
 		}
 
-		
+
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
 
@@ -667,7 +662,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 
 		//Add schema navigation menu	
 		webPage.AddNavigation(this->SchemaNavigation());
-		
+
 		CTable tbl("permissionList", "TblObjectList");
 		tbl.AddColumn(5, "Permission");
 		tbl.AddColumn(10, "Description");
@@ -693,7 +688,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 			}
 		}	    
 		webPage.AddContent(tbl.ToXHtml());
-		
+
 
 		//Show all fields with all group permissions
 		CTable fieldTbl("fieldList", "TblObjectList");
@@ -703,13 +698,13 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		fieldTbl.AddColumn(10, "Datatype");		
 		fieldTbl.AddColumn(40, "Permissions");
 
-	
+
 		list<CARField>::iterator listIter;
 		CARField *field;
 		for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
 		{
 			field = &(*listIter);
-						
+
 			//Field Permissions
 			stringstream strmFieldPermissions;
 			strmFieldPermissions.str("");
@@ -741,7 +736,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 				strmFieldPermissions << EmptyValue << endl;
 			}
 
-			
+
 			CTableRow row("");			
 			row.AddCell(CTableCell(field->GetURL(rootLevel)));
 			row.AddCell(CTableCell(field->fieldId));
@@ -785,7 +780,7 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 			row.AddCell(CTableCell(this->pInside->LinkToGroup(this->pSchema->appRefName, this->pSchema->admingrpList.internalIdList[i], rootLevel)));		
 			tbl.AddRow(row);
 		}
-	    
+
 		webPage.AddContent(tbl.ToXHtml());
 		webPage.SaveInFolder(this->path);	
 	}
@@ -824,7 +819,7 @@ void CDocSchemaDetails::IndexDoc()
 				tblDesc << "Unique Index :" <<  CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
 			else
 				tblDesc << "Index :" << CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
-			
+
 			tbl.description = tblDesc.str();
 
 			for(unsigned int nField=0; nField < this->pSchema->indexList.indexList[nIndex].numFields; nField++)
@@ -848,7 +843,7 @@ void CDocSchemaDetails::IndexDoc()
 						//Add a reference
 						CFieldRefItem *refItem = new CFieldRefItem();
 						refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-						
+
 						stringstream strmTmpIndexInfo;
 						strmTmpIndexInfo.str("");
 						strmTmpIndexInfo << "Index: " << this->pSchema->indexList.indexList[nIndex].indexName;
@@ -926,7 +921,7 @@ void CDocSchemaDetails::ResultListDoc()
 
 					string tmp = CWebUtil::Link("ResultList", CWebUtil::DocName("form_result_list"), "", 2);
 					refItem->description = "Field in "+tmp;
-					
+
 					refItem->fromName = this->pSchema->name;
 					refItem->fieldInsideId = field->insideId;
 					refItem->schemaInsideId = this->pSchema->insideId;
@@ -974,7 +969,7 @@ void CDocSchemaDetails::SortListDoc()
 		for(unsigned int i=0; i< this->pSchema->sortList.numItems; i++)
 		{
 			ARSortStruct sList = this->pSchema->sortList.sortList[i];
-			
+
 			list<CARField>::iterator listIter;			
 			CARField *field;
 			for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
@@ -995,7 +990,7 @@ void CDocSchemaDetails::SortListDoc()
 					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));				
 					row.AddCell( CTableCell(CUtil::TimeToString(field->timestamp)));
 					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
-					
+
 					tbl.AddRow(row);
 
 					//Add a reference
@@ -1049,7 +1044,7 @@ void CDocSchemaDetails::VuiListDoc()
 		for ( vuiIter = this->pSchema->vuiList.begin(); vuiIter != this->pSchema->vuiList.end(); vuiIter++ )
 		{
 			vui = &(*vuiIter);
-			
+
 			CTableRow row("");			
 			row.AddCell( CTableCell(vui->GetURL(rootLevel)));
 			row.AddCell( CTableCell(vui->Label()));
@@ -1109,7 +1104,7 @@ void CDocSchemaDetails::SchemaFilterDoc()
 		tblDesc << CWebUtil::ImageTag("filter.gif", rootLevel) << tbl->NumRows() << " ";
 		tblDesc << CWebUtil::Link("Filter", CWebUtil::DocName("../../filter/index"), "", rootLevel);
 		tbl->SetDescription(tblDesc.str());
-		
+
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
@@ -1186,7 +1181,7 @@ void CDocSchemaDetails::SchemaEscalDoc()
 		webPage.AddNavigation(this->SchemaNavigation());
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
-		
+
 		list<CAREscalation>::iterator iter;			
 		CAREscalation *enumObj;
 		for (iter = this->pInside->escalList.begin(); iter != this->pInside->escalList.end(); iter++)
@@ -1230,7 +1225,7 @@ string CDocSchemaDetails::TypeDetails()
 	{
 		switch(this->pSchema->schema.schemaType)
 		{
-			case AR_SCHEMA_JOIN:
+		case AR_SCHEMA_JOIN:
 			{
 				strm << "Primary Form: " << this->pInside->LinkToSchema(this->pSchema->schema.u.join.memberA, rootLevel) << " <-> Secondary Form: " << this->pInside->LinkToSchema(this->pSchema->schema.u.join.memberB, rootLevel) << "<br/>";
 
@@ -1259,19 +1254,19 @@ string CDocSchemaDetails::TypeDetails()
 				}
 			}
 			break;
-			case AR_SCHEMA_VIEW:
+		case AR_SCHEMA_VIEW:
 			{
 				strm << "Table Name: " << this->pSchema->schema.u.view.tableName << "<br/>" << endl;
 				strm << "Key Field: " << this->pSchema->schema.u.view.keyField << "<br/>" << endl;
 			}
 			break;			
-			case AR_SCHEMA_VENDOR:
+		case AR_SCHEMA_VENDOR:
 			{
 				strm << "Vendor Name: " << this->pSchema->schema.u.vendor.vendorName << "<br/>";
 				strm << "Table Name: " << this->pSchema->schema.u.vendor.tableName << "<br/>" << endl;
 			}
 			break;
-			default:
+		default:
 			{
 				strm << EmptyValue;
 			}
@@ -1312,8 +1307,8 @@ string CDocSchemaDetails::ContainerReferences()
 				}
 			}
 		}		
-		
-		
+
+
 		if(contTable->NumRows() > 0)
 			strm << contTable->Print();
 		else
@@ -1386,7 +1381,7 @@ string CDocSchemaDetails::TableFieldReferences()
 				if(field->dataType == AR_DATA_TYPE_TABLE)
 				{
 					ARTableLimitsStruct limit = field->limit.u.tableLimits;
-					
+
 					if(limit.schema != NULL)
 					{
 						if(strcmp(limit.schema, this->pSchema->name.c_str())==0)
@@ -1433,8 +1428,8 @@ string CDocSchemaDetails::SearchMenuReferences()
 				}
 			}
 		}		
-		
-		
+
+
 		if(menuTable->NumRows() > 0)
 			strm << menuTable->Print();
 		else

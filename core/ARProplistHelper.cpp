@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ARProplistHelper.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\arproplisthelper.h"
@@ -42,12 +37,12 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 
 	switch(arV.dataType)
 	{
-		case AR_DATA_TYPE_NULL:
+	case AR_DATA_TYPE_NULL:
 		{
 			strmValue << "NULL";
 		}
 		break;
-		case AR_DATA_TYPE_CHAR:
+	case AR_DATA_TYPE_CHAR:
 		{
 			if (nProp == AR_DPROP_ENUM_LABELS){
 				string enumLabels = arV.u.charVal;
@@ -80,7 +75,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			}
 		}
 		break;
-		case AR_DATA_TYPE_INTEGER:
+	case AR_DATA_TYPE_INTEGER:
 		{	
 			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.intVal);
 			if(strmValue.str() == "Unknown")
@@ -90,12 +85,12 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			}	
 		}
 		break;
-		case AR_DATA_TYPE_DATE:
+	case AR_DATA_TYPE_DATE:
 		{
 			strmValue << arV.u.dateVal;
 		}
 		break;
-		case AR_DATA_TYPE_DECIMAL:
+	case AR_DATA_TYPE_DECIMAL:
 		{
 			if(arV.u.decimalVal != NULL)
 			{
@@ -103,12 +98,12 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			}
 		}
 		break;
-		case AR_DATA_TYPE_REAL:
+	case AR_DATA_TYPE_REAL:
 		{	
 			strmValue << arV.u.realVal;
 		}
 		break;
-		case AR_DATA_TYPE_ULONG:
+	case AR_DATA_TYPE_ULONG:
 		{
 			if(nProp == AR_OPROP_SCC_TIMESTAMP)
 			{
@@ -118,7 +113,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			else
 			{
 				strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.ulongVal);
-			
+
 				if(strmValue.str() == "Unknown")
 				{
 					strmValue.str("");
@@ -127,15 +122,15 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			}
 		}
 		break;
-		case AR_DATA_TYPE_TIME:
+	case AR_DATA_TYPE_TIME:
 		{
 			strmValue << arV.u.timeVal;
 		}
 		break;
-		case AR_DATA_TYPE_ENUM:
+	case AR_DATA_TYPE_ENUM:
 		{
 			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.enumVal);
-		
+
 			if(strmValue.str() == "Unknown")
 			{
 				strmValue.str("");
@@ -143,7 +138,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			}
 		}
 		break;
-		case AR_DATA_TYPE_COORDS:
+	case AR_DATA_TYPE_COORDS:
 		{				
 			if(arV.u.coordListVal != NULL)
 			{
@@ -158,7 +153,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			}
 		}
 		break;
-		case AR_DATA_TYPE_BITMASK:
+	case AR_DATA_TYPE_BITMASK:
 		{
 			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.maskVal);				
 		}

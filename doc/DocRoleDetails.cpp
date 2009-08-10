@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocRoleDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docroledetails.h"
@@ -38,7 +33,7 @@ void CDocRoleDetails::Documentation()
 	try
 	{
 		CWebPage webPage(this->pRole->FileID(), this->pRole->roleName, this->rootLevel, this->pInside->appConfig);
-		
+
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pRole->roleName) << endl;
@@ -49,7 +44,7 @@ void CDocRoleDetails::Documentation()
 		CTable tbl("roleDetails", "TblObjectList");
 		tbl.AddColumn(30, "Description");
 		tbl.AddColumn(70, "Value");
-				
+
 		CTableRow tblRow("");
 		tblRow.AddCellList(CTableCell("Application"), CTableCell(this->pInside->LinkToContainer(this->pRole->applicationName, this->rootLevel)));
 		tbl.AddRow(tblRow);
@@ -59,7 +54,7 @@ void CDocRoleDetails::Documentation()
 
 		tblRow.AddCellList(CTableCell("Production Group"), CTableCell(this->pInside->LinkToGroup(this->pRole->applicationName, this->pRole->productionGroupId, this->rootLevel)));
 		tbl.AddRow(tblRow);
-	
+
 		tblRow.AddCellList(CTableCell("Permissions"), this->RolePermissions());
 		tbl.AddRow(tblRow);
 
@@ -198,7 +193,7 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 		schemaTbl.AddColumn(10, "Type");
 		schemaTbl.AddColumn(20, "Modified");
 		schemaTbl.AddColumn(20, "By");
-			
+
 		//Create table with forms for role subadmin permission
 		CTable subadminTbl("schemaListSubadmin", "TblObjectList");
 		subadminTbl.description = "Form Subadministrator Permission";
@@ -224,7 +219,7 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 						{
 							visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
 						}
-						
+
 						CTableRow row("");
 						row.AddCell(CTableCell(visibleInfo));
 						row.AddCell(CTableCell(schema->GetURL(rootLevel)));						
@@ -256,7 +251,7 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 			}
 		}
 
-		
+
 		webPage.AddContent(schemaTbl.ToXHtml());
 		schemaTbl.Clear();
 
@@ -306,7 +301,7 @@ void CDocRoleDetails::AlPermissionDoc(string fName, int &nResult, string title)
 			}
 		}
 
-		
+
 		webPage.AddContent(alTable->Print());
 		delete alTable;
 
@@ -336,7 +331,7 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 		//Create table with forms the role can access
 		CContainerTable *contTbl = new CContainerTable(*this->pInside);
 		contTbl->SetDescription("Container Permission");
-		
+
 		list<CARContainer>::iterator contIter;		
 		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
 		{	
@@ -357,7 +352,7 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 			}
 		}
 
-		
+
 		webPage.AddContent(contTbl->Print());
 		delete contTbl;
 
@@ -367,7 +362,7 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 			//Create table with forms for role subadmin permission
 			CContainerTable *subadminTbl = new CContainerTable(*this->pInside);
 			subadminTbl->SetDescription("Subadministrator Permission");		
-			
+
 			list<CARContainer>::iterator contIter;		
 			for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
 			{	
@@ -478,7 +473,7 @@ void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string titl
 					{
 						visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
 					}				
-					
+
 					strmFormDesc << visibleInfo << schema->GetURL(rootLevel) << endl;
 				}
 				else

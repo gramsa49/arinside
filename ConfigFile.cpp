@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ConfigFile.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include "ConfigFile.h"
@@ -25,8 +20,8 @@
 using std::string;
 
 ConfigFile::ConfigFile( string filename, string delimiter,
-                        string comment, string sentry )
-	: myDelimiter(delimiter), myComment(comment), mySentry(sentry)
+					   string comment, string sentry )
+					   : myDelimiter(delimiter), myComment(comment), mySentry(sentry)
 {	
 	std::ifstream in( filename.c_str() );	
 	if( !in ) 
@@ -37,7 +32,7 @@ ConfigFile::ConfigFile( string filename, string delimiter,
 
 
 ConfigFile::ConfigFile()
-	: myDelimiter( string(1,'=') ), myComment( string(1,'#') )
+: myDelimiter( string(1,'=') ), myComment( string(1,'#') )
 {
 	// Construct a ConfigFile without a file; empty
 }
@@ -73,8 +68,8 @@ std::ostream& operator<<( std::ostream& os, const ConfigFile& cf )
 {
 	// Save a ConfigFile to os
 	for( ConfigFile::mapci p = cf.myContents.begin();
-	     p != cf.myContents.end();
-		 ++p )
+		p != cf.myContents.end();
+		++p )
 	{
 		os << p->first << " " << cf.myDelimiter << " ";
 		os << p->second << std::endl;
@@ -92,9 +87,9 @@ std::istream& operator>>( std::istream& is, ConfigFile& cf )
 	const string& comm   = cf.myComment;    // comment
 	const string& sentry = cf.mySentry;     // end of file sentry
 	const pos skip = delim.length();        // length of separator
-	
+
 	string nextline = "";  // might need to read ahead to see where value ends
-	
+
 	while( is || nextline.length() > 0 )
 	{
 		// Read an entire line at a time
@@ -108,13 +103,13 @@ std::istream& operator>>( std::istream& is, ConfigFile& cf )
 		{
 			std::getline( is, line );
 		}
-		
+
 		// Ignore comments
 		line = line.substr( 0, line.find(comm) );
-		
+
 		// Check for end of file sentry
 		if( sentry != "" && line.find(sentry) != string::npos ) return is;
-		
+
 		// Parse the line if it contains a delimiter
 		pos delimPos = line.find( delim );
 		if( delimPos < string::npos )
@@ -122,7 +117,7 @@ std::istream& operator>>( std::istream& is, ConfigFile& cf )
 			// Extract the key
 			string key = line.substr( 0, delimPos );
 			line.replace( 0, delimPos+skip, "" );
-			
+
 			// See if value continues on the next line
 			// Stop at blank line, next line with a key, end of stream,
 			// or end of file sentry
@@ -131,30 +126,30 @@ std::istream& operator>>( std::istream& is, ConfigFile& cf )
 			{
 				std::getline( is, nextline );
 				terminate = true;
-				
+
 				string nlcopy = nextline;
 				ConfigFile::trim(nlcopy);
 				if( nlcopy == "" ) continue;
-				
+
 				nextline = nextline.substr( 0, nextline.find(comm) );
 				if( nextline.find(delim) != string::npos )
 					continue;
 				if( sentry != "" && nextline.find(sentry) != string::npos )
 					continue;
-				
+
 				nlcopy = nextline;
 				ConfigFile::trim(nlcopy);
 				if( nlcopy != "" ) line += "\n";
 				line += nextline;
 				terminate = false;
 			}
-			
+
 			// Store key and value
 			ConfigFile::trim(key);
 			ConfigFile::trim(line);
 			cf.myContents[key] = line;  // overwrites if key is repeated
 		}
 	}
-	
+
 	return is;
 }

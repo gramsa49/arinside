@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocMain.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docmain.h"
@@ -96,7 +91,7 @@ string CDocMain::ShortMenu(string curCharacter)
 		{	
 			stringstream tmp;
 			tmp << "index_" << std::string(1, strValue.at(i));
-			
+
 			if(std::string(1, strValue.at(i)) != curCharacter)
 				strm << "<td>" << CWebUtil::Link( std::string(1, strValue.at(i)), CWebUtil::DocName(tmp.str()), "", 1) << "</td>" << endl;
 			else
@@ -126,12 +121,12 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 		CWebPage webPage(fileName, title, rootLevel, this->pInside->appConfig);
 
 		CSchemaTable *tbl = new CSchemaTable(*this->pInside);
-			
+
 		list<CARSchema>::iterator schemaIter;
 		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
 		{	
 			CARSchema *schema = &(*schemaIter);
-			
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
@@ -154,8 +149,8 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 					bInsert = true;		
 				}
 			}
-			
-			
+
+
 			if(bInsert)
 			{
 				tbl->AddRow(*schema, rootLevel);
@@ -191,7 +186,7 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "Active Link List", 1, this->pInside->appConfig);
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
-		
+
 		list<CARActiveLink>::iterator alIter;
 		CARActiveLink *al;
 		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
@@ -217,7 +212,7 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{
 				tbl->AddRow(*al, rootLevel);
@@ -271,7 +266,7 @@ void CDocMain::ActiveLinkActionList(string fileName)
 			for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
 			{	
 				al = &(*alIter);
-				
+
 				//actionList
 				for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
 				{
@@ -290,10 +285,10 @@ void CDocMain::ActiveLinkActionList(string fileName)
 					}
 				}		
 			}
-			
+
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::ActiveLinkAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
-			
+
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
 			tbl.AddRow(row);
@@ -322,7 +317,7 @@ void CDocMain::ActiveLinkActionDetails(int nActionType)
 		stringstream strmTmp;
 		strmTmp << "index_action_" << nActionType;
 		CWebPage webPage(strmTmp.str(), "Active Link Actions", rootLevel, this->pInside->appConfig);
-		
+
 		CAlTable *tbl = new CAlTable(*this->pInside);	
 
 		list<CARActiveLink>::iterator alIter;
@@ -331,7 +326,7 @@ void CDocMain::ActiveLinkActionDetails(int nActionType)
 		{	
 			int nActionExists = 0;
 			al = &(*alIter);
-		
+
 			//actionList
 			for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
 			{
@@ -355,7 +350,7 @@ void CDocMain::ActiveLinkActionDetails(int nActionType)
 				tbl->AddRow(*al, rootLevel);
 			}
 		}
-		
+
 		strmTmp.str("");
 		strmTmp << CWebUtil::Link("Active Links", CWebUtil::DocName("index_action"), "active_link.gif", 1) << " with " << CAREnum::ActiveLinkAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
@@ -380,7 +375,7 @@ void CDocMain::FilterList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "Filter List", 1, this->pInside->appConfig);
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
-		
+
 		list<CARFilter>::iterator filterIter;	
 		CARFilter *filter;
 		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
@@ -406,7 +401,7 @@ void CDocMain::FilterList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{
 				tbl->AddRow(*filter, rootLevel);
@@ -461,7 +456,7 @@ void CDocMain::FilterActionList(string fileName)
 			for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
 			{	
 				filter = &(*filterIter);
-				
+
 				//actionList
 				for(unsigned int nAction=0; nAction < filter->actionList.numItems; nAction++)
 				{
@@ -480,10 +475,10 @@ void CDocMain::FilterActionList(string fileName)
 					}
 				}		
 			}
-			
+
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
-			
+
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));		
 			tbl.AddRow(row);	
@@ -514,14 +509,14 @@ void CDocMain::FilterActionDetails(int nActionType)
 		CWebPage webPage(strmTmp.str(), "Filter Actions", rootLevel, this->pInside->appConfig);
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
-		
+
 		list<CARFilter>::iterator filterIter;
 		CARFilter *filter;
 		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
 		{	
 			int nActionExists = 0;
 			filter = &(*filterIter);
-		
+
 			//actionList
 			for(unsigned int nAction=0; nAction<filter->actionList.numItems; nAction++)
 			{
@@ -545,7 +540,7 @@ void CDocMain::FilterActionDetails(int nActionType)
 				tbl->AddRow(*filter, rootLevel);
 			}
 		}
-		
+
 		strmTmp.str("");
 		strmTmp << CWebUtil::Link("Filter", CWebUtil::DocName("index_action"), "filter.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
@@ -569,7 +564,7 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "Escalation List", 1, this->pInside->appConfig);
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
-		
+
 		list<CAREscalation>::iterator escalIter;
 		CAREscalation *escal;
 
@@ -596,7 +591,7 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{
 				tbl->AddRow(*escal, rootLevel);			
@@ -651,7 +646,7 @@ void CDocMain::EscalationActionList(string fileName)
 			for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
 			{	
 				escal = &(*escalIter);
-				
+
 				//actionList
 				for(unsigned int nAction=0; nAction < escal->actionList.numItems; nAction++)
 				{
@@ -670,11 +665,11 @@ void CDocMain::EscalationActionList(string fileName)
 					}
 				}		
 			}
-			
+
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
-			
-			
+
+
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
 			tbl.AddRow(row);
@@ -706,14 +701,14 @@ void CDocMain::EscalationActionDetails(int nActionType)
 		CWebPage webPage(strmTmp.str(), "Escalation Actions", rootLevel, this->pInside->appConfig);
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
-		
+
 		list<CAREscalation>::iterator escalIter;
 		CAREscalation *escal;
 		for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
 		{	
 			int nActionExists = 0;
 			escal = &(*escalIter);
-		
+
 			//actionList
 			for(unsigned int nAction=0; nAction<escal->actionList.numItems; nAction++)
 			{
@@ -737,7 +732,7 @@ void CDocMain::EscalationActionDetails(int nActionType)
 				tbl->AddRow(*escal, rootLevel);
 			}
 		}
-		
+
 		strmTmp.str("");
 		strmTmp << CWebUtil::Link("Escalation", CWebUtil::DocName("index_action"), "escalation.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
@@ -762,7 +757,7 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "CharMenu List", 1, this->pInside->appConfig);
 
 		CMenuTable *tbl = new CMenuTable(*this->pInside);
-		
+
 		list<CARCharMenu>::iterator menuIter;
 		CARCharMenu *menu;
 		for ( menuIter = this->pInside->menuList.begin(); menuIter != this->pInside->menuList.end(); menuIter++ )
@@ -788,7 +783,7 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{
 				tbl->AddRow(*menu, rootLevel);
@@ -821,12 +816,12 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 		CWebPage webPage(fileName, title, rootLevel, this->pInside->appConfig);
 
 		CContainerTable *tbl = new CContainerTable(*this->pInside);
-				
+
 		list<CARContainer>::iterator contIter;		
 		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
 		{	
 			CARContainer *cont = &(*contIter);
-			
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
@@ -849,7 +844,7 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 					bInsert = true;		
 				}
 			}
-			
+
 			if(bInsert)
 			{
 				tbl->AddRow(*cont, rootLevel);
@@ -860,7 +855,7 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 		strmTmp << CWebUtil::LinkToContainer(tbl->NumRows(), rootLevel, nType);
 		strmTmp << ShortMenu(searchChar);
 		tbl->SetDescription(strmTmp.str());
-		
+
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
@@ -882,7 +877,7 @@ void CDocMain::RoleList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "Role List", rootLevel, this->pInside->appConfig);
 
 		CRoleTable *tbl = new CRoleTable(*this->pInside);
-		
+
 		list<CARRole>::iterator listIter;				
 		for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); listIter++ )
 		{	
@@ -907,7 +902,7 @@ void CDocMain::RoleList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{	
 				tbl->AddRow(*role, rootLevel);
@@ -937,7 +932,7 @@ void CDocMain::GroupList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "Group List", rootLevel, this->pInside->appConfig);
 
 		CGroupTable *tbl = new CGroupTable(*this->pInside);
-		
+
 		list<CARGroup>::iterator listIter;				
 		for ( listIter = this->pInside->groupList.begin(); listIter != this->pInside->groupList.end(); listIter++ )
 		{	
@@ -962,7 +957,7 @@ void CDocMain::GroupList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{	
 				tbl->AddRow("", grp->groupId, rootLevel);
@@ -992,7 +987,7 @@ void CDocMain::UserList(string fileName, string searchChar)
 		CWebPage webPage(fileName, "User List", rootLevel, this->pInside->appConfig);
 
 		CUserTable *tbl = new CUserTable(*this->pInside);
-			
+
 		list<CARUser>::iterator listIter;		
 		for ( listIter = this->pInside->userList.begin(); listIter != this->pInside->userList.end(); listIter++ )
 		{	
@@ -1017,7 +1012,7 @@ void CDocMain::UserList(string fileName, string searchChar)
 					bInsert = true;		
 				}
 			}
-		
+
 			if(bInsert)
 			{	
 				tbl->AddRow(*user, rootLevel);
@@ -1060,7 +1055,7 @@ void CDocMain::GlobalFieldList()
 			for ( tmpListIter = uiGlobalFieldList.begin(); tmpListIter != uiGlobalFieldList.end(); tmpListIter++ )
 			{
 				tmpGlField = &(*tmpListIter);
-        		if(tmpGlField->arGlobalFieldId == glField->arGlobalFieldId)
+				if(tmpGlField->arGlobalFieldId == glField->arGlobalFieldId)
 				{				
 					bInList = true;
 				}
@@ -1084,18 +1079,18 @@ void CDocMain::GlobalFieldList()
 			CTable tbl("fieldListAll", "TblObjectList");
 			tbl.AddColumn(20, "GlobalFieldId");
 			tbl.AddColumn(80, "References");
-			
+
 			list<CARGlobalField>::iterator uiListIter;
 			CARGlobalField *uiField;
 			for ( uiListIter = uiGlobalFieldList.begin(); uiListIter != uiGlobalFieldList.end(); uiListIter++ )
 			{
 				uiField = &(*uiListIter);
-			
-				
+
+
 				CTable innerTbl("refList", "TblObjectList");
 				innerTbl.AddColumn(50, "Schema Name");
 				innerTbl.AddColumn(50, "Field Name");
-		        
+
 				list<CARGlobalField>::iterator glListIter;
 				for ( glListIter = this->pInside->globalFieldList.begin(); glListIter != this->pInside->globalFieldList.end(); glListIter++ )
 				{	
@@ -1115,7 +1110,7 @@ void CDocMain::GlobalFieldList()
 				CTableRow tblRow("");
 				tblRow.AddCellList(CTableCell(uiField->arGlobalFieldId), CTableCell(innerTbl.ToXHtml()));
 				innerTbl.Clear();
-                
+
 				tbl.AddRow(tblRow);
 			}
 
@@ -1163,7 +1158,7 @@ void CDocMain::MessageList()
 		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
 		{
 			CARActiveLink *al = &(*alIter);
-		
+
 			//actionList
 			for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
 			{
@@ -1174,7 +1169,7 @@ void CDocMain::MessageList()
 					strmTmp << "If-Action "<<nAction;
 
 					ARMessageStruct &msg = al->actionList.actionList[nAction].u.message;
-					
+
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
@@ -1195,7 +1190,7 @@ void CDocMain::MessageList()
 					strmTmp << "Else-Action "<<nAction;
 
 					ARMessageStruct &msg = al->elseList.actionList[nAction].u.message;
-					
+
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
@@ -1214,7 +1209,7 @@ void CDocMain::MessageList()
 		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
 		{
 			filter = &(*filterIter);
-		
+
 			//actionList
 			for(unsigned int nAction=0; nAction<filter->actionList.numItems; nAction++)
 			{
@@ -1226,7 +1221,7 @@ void CDocMain::MessageList()
 					strmTmp << "If-Action "<<nAction;
 
 					ARFilterStatusStruct &msg = filter->actionList.actionList[nAction].u.message;
-					
+
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
@@ -1247,7 +1242,7 @@ void CDocMain::MessageList()
 					strmTmp << "Else-Action "<<nAction;
 
 					ARFilterStatusStruct &msg = filter->elseList.actionList[nAction].u.message;
-					
+
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
@@ -1258,13 +1253,13 @@ void CDocMain::MessageList()
 				}
 			}
 		}	
-			
+
 
 		CWebPage webPage("message_list", "Messages", rootLevel, this->pInside->appConfig);
 		if(listMsgItem.size() > 0)
 		{
 			Sort(listMsgItem);
-			
+
 			//Print all Messages		
 			CTable tbl("fieldListAll", "TblObjectList");
 			tbl.AddColumn(5, "Number");
@@ -1278,7 +1273,7 @@ void CDocMain::MessageList()
 			for ( msgIter = listMsgItem.begin(); msgIter != listMsgItem.end(); msgIter++ )
 			{
 				msg = &(*msgIter);
-				
+
 				CTableRow row("");
 				row.AddCell( CTableCell(msg->msgNumber));
 				row.AddCell( CTableCell(msg->objectLink));

@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  WebPage.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include "webpage.h"
@@ -65,7 +60,7 @@ string CWebPage::PageHeader()
 	stringstream strm;
 	strm << "<?xml version=\"1.0\" ?>" << endl;
 	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
-    strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << endl;
+	strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << endl;
 	strm << "<!-- saved from url=(0025)http://arinside.org/ -->" << endl;
 	strm << "<head>" << endl;
 	strm << "<title>" << title << "</title>" << endl;
@@ -87,7 +82,7 @@ string CWebPage::DynamicHeaderText()
 	strm << "<tr>" << endl;
 	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel)+ CWebUtil::DocName("index"), "server.gif", rootLevel) << "</td>" << endl;
 	strm << "<td>" << " (Server: " << CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel) + "other/" +CWebUtil::DocName("server"), "", rootLevel) << "</td>" << endl;
-    strm << "<td>" << "@" << "</td>" << endl;
+	strm << "<td>" << "@" << "</td>" << endl;
 	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
 	strm << "</tr>" << endl;
 	strm << "</table>" << endl;	
@@ -130,7 +125,7 @@ string CWebPage::ContentOpen()
 	strm << "</td></tr><tr><td class=\"TdMainMenu\">" << endl;
 	strm << "<iframe id=\"IFrameMenu\" src=\"" << CWebUtil::RootPath(rootLevel) << "template/navigation.htm\" name=\"Navigation\" frameborder=\"0\">" << endl;
 	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << endl;
-	
+
 	return strm.str();
 }
 
@@ -188,7 +183,7 @@ int CWebPage::SaveInFolder(string path)
 		fout.close();
 
 		LOG << "' [OK]" << endl;
-		
+
 		nFilesCreated++;
 		result = 1;
 	}

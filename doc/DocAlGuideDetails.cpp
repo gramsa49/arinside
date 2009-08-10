@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocAlGuideDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docalguidedetails.h"
@@ -45,7 +40,7 @@ void CDocAlGuideDetails::Documentation()
 		//ContentHead informations
 		stringstream strmHead;
 		strmHead.str("");
-		
+
 		strmHead << CWebUtil::LinkToActiveLinkGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pAlGuide->name);
 		if(this->pAlGuide->appRefName.c_str() != NULL && this->pAlGuide->appRefName.size() > 0)
 			strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pAlGuide->appRefName, this->rootLevel);
@@ -60,7 +55,7 @@ void CDocAlGuideDetails::Documentation()
 		//Object specific documentation
 		webPage.AddContent(AlGuideInformation());
 		webPage.AddContent(ActiveLinkActions());
-		
+
 		//History
 		webPage.AddContent(this->pInside->ServerObjectHistory(this->pAlGuide, this->rootLevel));
 
@@ -86,12 +81,12 @@ string CDocAlGuideDetails::AlGuideInformation()
 
 			switch(pAlGuide->references.referenceList[i].type)
 			{
-				case ARREF_ACTLINK:
+			case ARREF_ACTLINK:
 				{
 					actLink << pInside->LinkToAl(pAlGuide->references.referenceList[i].reference.u.name, rootLevel);
 				}
 				break;
-				case ARREF_NULL_STRING:
+			case ARREF_NULL_STRING:
 				{
 					label << pAlGuide->references.referenceList[i].label;
 				}
@@ -129,7 +124,7 @@ string CDocAlGuideDetails::ActiveLinkActions()
 		for ( listIter = pInside->alList.begin(); listIter != pInside->alList.end(); listIter++ )
 		{
 			CARActiveLink *al = &(*listIter);
-			
+
 			//Search if-actions
 			for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
 			{

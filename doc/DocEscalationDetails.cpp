@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocEscalationDetails.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docescalationdetails.h"
@@ -47,20 +42,20 @@ void CDocEscalationDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
-			
+
 			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pEscal->name);
 			if(this->pEscal->appRefName.c_str() != NULL && this->pEscal->appRefName.size() > 0)
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pEscal->appRefName, this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
-		
+
 
 			//Escalation Properties
 			stringstream strmTmp;
 			CTable tblObjProp("objProperties", "TblObjectList");
 			tblObjProp.AddColumn(30, "Property");	
 			tblObjProp.AddColumn(70, "Value");
-			
+
 			//Status
 			CTableRow row("cssStdRow");		
 			CTableCell cellProp("Status", "");				
@@ -76,7 +71,7 @@ void CDocEscalationDetails::Documentation()
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
-					
+
 			//Workflow	
 			if(this->pEscal->schemaList.u.schemaList->numItems > 0)
 			{		
@@ -104,12 +99,12 @@ void CDocEscalationDetails::Documentation()
 				row.AddCell(cellPropValue);
 				tblObjProp.AddRow(row);	
 			}	
-		    
+
 			//Table description
 			stringstream tblDesc;
 			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Escalation Properties";
 			tblObjProp.description = tblDesc.str();
-			
+
 			//Escalation used in container?
 			row.ClearCells();
 			cellProp.content = "Container References";
@@ -117,7 +112,7 @@ void CDocEscalationDetails::Documentation()
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);
-			
+
 			//Add table to page
 			webPage.AddContent(tblObjProp.ToXHtml());
 			tblObjProp.Clear();
@@ -198,7 +193,7 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 			int pFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
 			int sFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
 			arQual.CheckQuery(&this->pEscal->query, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
-			
+
 			delete refItem;
 		}
 		else
@@ -207,7 +202,7 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 		}
 
 		pgStrm << "Run If Qualification: <br/>" << strmQuery.str();
-	   
+
 		//If-Actions		
 		CDocFilterActionStruct actionStruct(*this->pInside, *this->pEscal, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_ESCALATION);
 		pgStrm << actionStruct.Get("If", this->pEscal->actionList);
@@ -219,6 +214,6 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 	{
 		cout << "EXCEPTION escalation details specific props: " << this->pEscal->name << endl;
 	}
-	
+
 	return pgStrm.str();
 }

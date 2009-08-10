@@ -1,14 +1,10 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9,00"
+	Version="9.00"
 	Name="ARInside"
 	ProjectGUID="{C4A5B46D-42BD-4AAB-BA88-8FCC37AE7639}"
 	RootNamespace="ARInside"
-	SccProjectName="SAK"
-	SccAuxPath="SAK"
-	SccLocalPath="SAK"
-	SccProvider="SAK"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="131072"
 	>
@@ -122,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api701\include"
+				AdditionalIncludeDirectories=".\tclap;..\..\Api710\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -141,9 +137,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi70.lib arxmlutil70.lib"
+				AdditionalDependencies="arapi71.lib arxmlutil71.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\Api701\lib"
+				AdditionalLibraryDirectories="..\..\Api710\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

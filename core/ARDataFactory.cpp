@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  ARDataFactory.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\ardatafactory.h"
@@ -59,16 +54,16 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 			unsigned int numMatches;
 			AREntryListList		entryList;	
 			if(ARGetListEntry(this->pControl,
-					schemaName,
-					&qualifier,
-					NULL,
-					NULL,
-					AR_START_WITH_FIRST_ENTRY,
-					appConfig.maxRetrieve,
-					FALSE,
-					&entryList,
-					&numMatches,
-					this->pStatus) == AR_RETURN_OK)
+				schemaName,
+				&qualifier,
+				NULL,
+				NULL,
+				AR_START_WITH_FIRST_ENTRY,
+				appConfig.maxRetrieve,
+				FALSE,
+				&entryList,
+				&numMatches,
+				this->pStatus) == AR_RETURN_OK)
 			{
 				if(entryList.entryList != NULL)
 				{
@@ -103,7 +98,7 @@ CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 	{
 		ARInternalIdList idList;
 		ARFieldValueList fieldList;
-		
+
 		idList.numItems = 9;
 		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
 		idList.internalIdList[0] = 1;		//RequestId
@@ -115,7 +110,7 @@ CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 		idList.internalIdList[6] = 3;		//Created
 		idList.internalIdList[7] = 5;		//ModifiedBy
 		idList.internalIdList[8] = 6;		//Modified
-				
+
 		AREntryIdList entryId;
 		entryId.numItems=1;
 		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
@@ -166,7 +161,7 @@ CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 	{		
 		cout << "WARNING error loading group: " << requestId << endl;
 	}
-		
+
 	return *grp;
 }
 
@@ -205,16 +200,16 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 			unsigned int numMatches;
 			AREntryListList		entryList;	
 			if(ARGetListEntry(this->pControl,
-					schemaName,
-					&qualifier,
-					NULL,
-					NULL,
-					AR_START_WITH_FIRST_ENTRY,
-					appConfig.maxRetrieve,
-					FALSE,
-					&entryList,
-					&numMatches,
-					this->pStatus) == AR_RETURN_OK)
+				schemaName,
+				&qualifier,
+				NULL,
+				NULL,
+				AR_START_WITH_FIRST_ENTRY,
+				appConfig.maxRetrieve,
+				FALSE,
+				&entryList,
+				&numMatches,
+				this->pStatus) == AR_RETURN_OK)
 			{
 				if(entryList.entryList != NULL)
 				{
@@ -253,7 +248,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 
 		idList.numItems = 12;
 		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
-		
+
 		idList.internalIdList[0] = 1;		//RequestId
 		idList.internalIdList[1] = 101;		//LoginName
 		idList.internalIdList[2] = 103;		//Email
@@ -266,7 +261,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 		idList.internalIdList[9] = 3;		//Created
 		idList.internalIdList[10] = 5;		//ModifiedBy
 		idList.internalIdList[11] = 6;		//Modified	
-				
+
 		AREntryIdList entryId;
 		entryId.numItems=1;
 		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
@@ -294,7 +289,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
 			{
 				string tmpGroupList = fieldList.fieldValueList[3].value.u.charVal;
-//				CUtil::SplitString(tmpGroupList, ";", arUser->groupList, false);
+				//				CUtil::SplitString(tmpGroupList, ";", arUser->groupList, false);
 
 				CUtil::SplitString(tmpGroupList, arUser->groupList);
 
@@ -305,7 +300,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 
 			if(fieldList.fieldValueList[5].value.u.intVal != NULL)
 				arUser->defNotify = fieldList.fieldValueList[5].value.u.intVal;
-			
+
 			if(fieldList.fieldValueList[6].value.u.intVal != NULL)			
 				arUser->licenseType = fieldList.fieldValueList[6].value.u.intVal;
 
@@ -330,7 +325,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 		{
 			LOG << "User '" << requestId <<"' [ERROR]" << endl;
 		}
-	    
+
 		delete[] entryId.entryIdList;
 		delete idList.internalIdList;	
 		FreeARFieldValueList(&fieldList,  false);
@@ -379,16 +374,16 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 			unsigned int numMatches;
 			AREntryListList		entryList;	
 			if(ARGetListEntry(this->pControl,
-					schemaName,
-					&qualifier,
-					NULL,
-					NULL,
-					AR_START_WITH_FIRST_ENTRY,
-					appConfig.maxRetrieve,
-					FALSE,
-					&entryList,
-					&numMatches,
-					this->pStatus) == AR_RETURN_OK)
+				schemaName,
+				&qualifier,
+				NULL,
+				NULL,
+				AR_START_WITH_FIRST_ENTRY,
+				appConfig.maxRetrieve,
+				FALSE,
+				&entryList,
+				&numMatches,
+				this->pStatus) == AR_RETURN_OK)
 			{
 				if(entryList.entryList != NULL)
 				{
@@ -424,7 +419,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 	{
 		ARInternalIdList idList;
 		ARFieldValueList fieldList;
-		
+
 		idList.numItems = 10;
 		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
 		idList.internalIdList[0] = 1;		//RequestId
@@ -437,7 +432,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 		idList.internalIdList[7] = 3;		//Created
 		idList.internalIdList[8] = 5;		//ModifiedBy
 		idList.internalIdList[9] = 6;		//Modified
-				
+
 		AREntryIdList entryId;
 		entryId.numItems=1;
 		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
@@ -454,7 +449,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 
 			if(fieldList.fieldValueList[1].value.u.charVal != NULL)
 				role->applicationName = fieldList.fieldValueList[1].value.u.charVal;
-			
+
 			if(fieldList.fieldValueList[2].value.u.charVal != NULL)
 			{
 				role->roleName = fieldList.fieldValueList[2].value.u.charVal;
@@ -463,15 +458,15 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 
 			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
 				role->roleId = fieldList.fieldValueList[3].value.u.intVal;
-			
+
 			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
 			{
 				string tmp = fieldList.fieldValueList[4].value.u.charVal;
 
 				vector<string> tmpGroupList;
 				tmpGroupList.clear();
-				
-//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
+
+				//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
 				CUtil::SplitString(tmp, tmpGroupList);
 
 				role->testGroupId = atoi(tmpGroupList[0].c_str());
@@ -484,7 +479,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 				vector<string> tmpGroupList;
 				tmpGroupList.clear();
 
-//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
+				//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
 				CUtil::SplitString(tmp, tmpGroupList);
 
 
@@ -518,7 +513,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 	{		
 		cout << "WARNING error loading role: " << requestId << endl;
 	}
-		
+
 	return *role;
 }
 

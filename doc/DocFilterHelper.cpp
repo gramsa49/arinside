@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocFilterHelper.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docfilterhelper.h"
@@ -62,7 +57,7 @@ void CDocFilterHelper::FieldAssignment(ARAssignStruct &assignment, string fromSc
 		assignSchemaDisplay.str("");
 		assignServer.str("");
 		assignQual.str("");
-										
+
 		if(strcmp(assignment.u.field->schema, AR_CURRENT_SCHEMA_TAG)==0 
 			|| strcmp(assignment.u.field->schema, AR_CURRENT_TRAN_TAG)==0
 			|| strcmp(assignment.u.field->schema, "") ==0
@@ -77,7 +72,7 @@ void CDocFilterHelper::FieldAssignment(ARAssignStruct &assignment, string fromSc
 		}					
 
 		assignServer << assignment.u.field->server;
-							
+
 		assignQual << "<br/>Set Field If<br/>" << endl;
 
 		stringstream strmTmpQual;
@@ -93,7 +88,7 @@ void CDocFilterHelper::FieldAssignment(ARAssignStruct &assignment, string fromSc
 		int pFormId = this->pInside->SchemaGetInsideId(fromSchema.c_str());
 		int sFormId = this->pInside->SchemaGetInsideId(assignSchema.str().c_str());
 		arQual.CheckQuery(&assignment.u.field->qualifier, *refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
-		
+
 		delete refItem;
 
 		if(strmTmpQual.str().length() > 0)
@@ -120,7 +115,7 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 	{
 		switch(assignment.assignType)
 		{
-			case AR_ASSIGN_TYPE_VALUE:
+		case AR_ASSIGN_TYPE_VALUE:
 			{
 				if(assignSchema.str().size()==0)
 				{
@@ -135,13 +130,13 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				}
 			}
 			break;
-			case AR_ASSIGN_TYPE_FIELD:
+		case AR_ASSIGN_TYPE_FIELD:
 			{
 				assignSchema.str("");
 				assignSchemaDisplay.str("");
 				assignServer.str("");
 				assignQual.str("");
-												
+
 				if(strcmp(assignment.u.field->schema, AR_CURRENT_SCHEMA_TAG)==0 
 					|| strcmp(assignment.u.field->schema, AR_CURRENT_TRAN_TAG)==0
 					|| strcmp(assignment.u.field->schema, "") ==0
@@ -156,7 +151,7 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				}					
 
 				assignServer << assignment.u.field->server;
-									
+
 				assignQual << "<br/>Set Field If<br/>" << endl;
 
 				stringstream strmTmpQual;
@@ -172,7 +167,7 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				int pFormId = this->pInside->SchemaGetInsideId(fromSchema.c_str());
 				int sFormId = this->pInside->SchemaGetInsideId(assignSchema.str().c_str());
 				arQual.CheckQuery(&assignment.u.field->qualifier, *refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
-				
+
 				delete refItem;
 
 				if(strmTmpQual.str().length() > 0)
@@ -188,7 +183,7 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				assignQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(assignment.u.field->multiMatchOption) << "<br/><br/>" << endl;					
 			}
 			break;
-			case AR_ASSIGN_TYPE_PROCESS:
+		case AR_ASSIGN_TYPE_PROCESS:
 			{			
 				assignSchema.str("");
 				assignSchemaDisplay.str("");
@@ -200,38 +195,38 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				assignServer << AR_CURRENT_SERVER_TAG;		
 			}
 			break;
-			case AR_ASSIGN_TYPE_ARITH:
+		case AR_ASSIGN_TYPE_ARITH:
 			{			
 				switch (assignment.u.arithOp->operation) 
-					{
-					case AR_ARITH_OP_ADD:			
-						CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						break;
-					case AR_ARITH_OP_SUBTRACT:						
-						CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						break;
-					case AR_ARITH_OP_MULTIPLY:						
-						CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						break;
-					case AR_ARITH_OP_DIVIDE:						
-						CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						break;
-					case AR_ARITH_OP_MODULO:						
-						CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
-						break;
-					case AR_ARITH_OP_NEGATE:						
-						CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);
-						break;
-					}
+				{
+				case AR_ARITH_OP_ADD:			
+					CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					break;
+				case AR_ARITH_OP_SUBTRACT:						
+					CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					break;
+				case AR_ARITH_OP_MULTIPLY:						
+					CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					break;
+				case AR_ARITH_OP_DIVIDE:						
+					CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					break;
+				case AR_ARITH_OP_MODULO:						
+					CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);						
+					break;
+				case AR_ARITH_OP_NEGATE:						
+					CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual, refItemDesc);
+					break;
+				}
 
 			}
 			break;
-			case AR_ASSIGN_TYPE_FUNCTION:
+		case AR_ASSIGN_TYPE_FUNCTION:
 			{
 				for(unsigned int i=0; i< assignment.u.function->numItems; i++)
 				{
@@ -239,7 +234,7 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				}
 			}
 			break;
-			case AR_ASSIGN_TYPE_DDE:
+		case AR_ASSIGN_TYPE_DDE:
 			{
 				assignSchema.str("");
 				assignSchemaDisplay.str("");
@@ -251,7 +246,7 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 				assignServer << AR_CURRENT_SERVER_TAG;		
 			}
 			break;
-			case AR_ASSIGN_TYPE_SQL:
+		case AR_ASSIGN_TYPE_SQL:
 			{							
 				assignSchema.str("");
 				assignServer.str("");
@@ -259,12 +254,12 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 
 				assignSchema << AR_ASSIGN_SQL_SCHEMA_NAME;
 				assignServer << AR_CURRENT_SERVER_TAG;
-				
+
 				assignQual << "<br/>SQL command<br/>" << endl;
 
 				stringstream strmTmpQual;
 				strmTmpQual << assignment.u.sql->sqlCommand;
-				
+
 				if(strmTmpQual.str().length() > 0)
 				{
 					assignQual << strmTmpQual.str() << "<br/><br/>" << endl;
@@ -276,10 +271,10 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 
 				assignQual << "If No Requests Match: " << CAREnum::NoMatchRequest(assignment.u.sql->noMatchOption) << "<br/>" << endl;
 				assignQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(assignment.u.sql->multiMatchOption) << "<br/><br/>" << endl;	
-			
+
 			}
 			break;
-			case AR_ASSIGN_TYPE_FILTER_API:
+		case AR_ASSIGN_TYPE_FILTER_API:
 			{
 				assignSchema.str("");
 				assignSchemaDisplay.str("");

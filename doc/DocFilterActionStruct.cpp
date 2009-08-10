@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocFilterActionStruct.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include ".\docfilteractionstruct.h"
@@ -67,73 +62,73 @@ string CDocFilterActionStruct::Get(string ifElse, ARFilterActionList &actList)
 				tmpActionType = CWebUtil::Link(CAREnum::FilterAction(action.action), tmpLink.str(), "", rootLevel);
 			}
 			CTableCell cellActionType(tmpActionType.c_str(), "");			
-	                    
+
 			stringstream actionDesc;
 			actionDesc.str("");
 
 			switch(action.action)
 			{
-				case AR_FILTER_ACTION_NONE:
+			case AR_FILTER_ACTION_NONE:
 				{					
 					actionDesc << FilterActionNone(nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_NOTIFY:
+			case AR_FILTER_ACTION_NOTIFY:
 				{
 					actionDesc << FilterActionNotify(action.u.notify, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_MESSAGE:
+			case AR_FILTER_ACTION_MESSAGE:
 				{
 					actionDesc << FilterActionMessage(action.u.message, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_LOG:
+			case AR_FILTER_ACTION_LOG:
 				{
 					actionDesc << FilterActionLog(action.u.logFile, nAction);					
 				}
 				break;
-				case AR_FILTER_ACTION_FIELDS:
+			case AR_FILTER_ACTION_FIELDS:
 				{
 					actionDesc << FilterActionSetFields(action.u.setFields, nAction);	
 				}
 				break;
-				case AR_FILTER_ACTION_PROCESS:
+			case AR_FILTER_ACTION_PROCESS:
 				{
 					actionDesc << FilterActionProcess(action.u.process, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_FIELDP:
+			case AR_FILTER_ACTION_FIELDP:
 				{
 					actionDesc << FilterActionPushFields(action.u.pushFields, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_SQL:
+			case AR_FILTER_ACTION_SQL:
 				{
 					actionDesc << FilterActionSql(action.u.sqlCommand, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_GOTOACTION:
+			case AR_FILTER_ACTION_GOTOACTION:
 				{
 					actionDesc << FilterActionGotoAction(action.u.gotoAction, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_CALLGUIDE:
+			case AR_FILTER_ACTION_CALLGUIDE:
 				{
 					actionDesc << FilterActionCallGuide(action.u.callGuide, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_EXITGUIDE:
+			case AR_FILTER_ACTION_EXITGUIDE:
 				{
 					actionDesc << FilterActionExitGuide(action.u.exitGuide, nAction);
 				}
 				break;
-				case AR_FILTER_ACTION_GOTOGUIDELABEL:
+			case AR_FILTER_ACTION_GOTOGUIDELABEL:
 				{
 					actionDesc << FilterActionGotoGuideLabel(action.u.gotoGuide, nAction);
 				}
 				break;
-				default:
+			default:
 				{
 					actionDesc.str("");				
 				}
@@ -338,7 +333,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				ARFilterActionNotifyAdvanced *adv = action.notifyAdvanced;
 
 				strm << "<br/><br/>" << endl;
-				
+
 				if(adv->mailboxName != NULL)
 				{
 					CFieldRefItem *refItemMbName = new CFieldRefItem();
@@ -523,22 +518,22 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		//Find the seconds form in the set fields assignemt
 		//Possible values: "", "*", "schemaName" 
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
-		
+
 		CDocFilterHelper *filterHelper = new CDocFilterHelper(*this->arIn, *this->obj, this->structItemType);
 		filterHelper->SetFieldsGetSecondaryForm(action, schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
 		delete filterHelper;
 
 		//For the following internal calculations we need a secondary form
 		string schemaName2 = secondaryFormRaw.str();
-				
+
 		string tmpDisplayName = secondaryFormDisplay.str();
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = schemaName2;
 
 		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;	
-		
-		
-		
+
+
+
 		//check if it is a webservice set fields
 		bool bFromWebservice = false;
 		if(strcmp(tmpDisplayName.c_str(), "FILTER API")==0)
@@ -547,9 +542,9 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			{
 				/*
 				if(action.fieldList.fieldAssignList[0].assignment.u.filterApi->serviceName != NULL && 
-					strcmp(action.fieldList.fieldAssignList[0].assignment.u.filterApi->serviceName, "ARSYS.ARF.WEBSERVICE")==0)
+				strcmp(action.fieldList.fieldAssignList[0].assignment.u.filterApi->serviceName, "ARSYS.ARF.WEBSERVICE")==0)
 				{
-					bFromWebservice = true;
+				bFromWebservice = true;
 				}
 				*/
 
@@ -572,7 +567,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		//Qualification
 		strm << qualification.str() << endl;
 
-		
+
 
 		if(!bFromWebservice)
 		{
@@ -587,11 +582,11 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 					strm << this->AllMatchingIds(schemaName, tmpDisplayName, "Set Fields", nAction);
 				}
 			}
-			
+
 			if(strcmp(setFieldInfo.c_str(), "Field Mapping") ==  0)
 			{
 				strm << setFieldInfo << ":<br/>" << endl;			
-				
+
 				CARAssignHelper assignHelper(*arIn, dir, rootLevel, obj->name, this->structItemType, schemaName, schemaName2);
 				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 			}
@@ -716,7 +711,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 
 		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;
 		strm << "Push Value To: " << arIn->LinkToSchema(secondaryFormRaw.str(), rootLevel) << "<br/>" << endl;
-		
+
 		//Qualification
 		strm << assignQual.str() << endl;
 
@@ -735,7 +730,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		if(strcmp(pushFieldInfo.c_str(), "Field Mapping") ==  0)
 		{
 			strm << pushFieldInfo << ":<br/>" << endl;
-			
+
 			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, secondaryFormRaw.str());
 			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
 		}
@@ -762,7 +757,7 @@ string CDocFilterActionStruct::FilterActionSql(ARSQLStruct &action, int nAction)
 	{
 		if(action.server != NULL)
 			strm << "Server: " << arIn->LinkToServerInfo(action.server, rootLevel) << "<br/>" << endl;
-		
+
 		if(action.command != NULL)
 			strm << "SQL command: <br/>" << action.command << endl;
 	}
@@ -799,7 +794,7 @@ string CDocFilterActionStruct::FilterActionGotoAction(ARGotoActionStruct &action
 	return strm.str();
 }
 
-	// AR_FILTER_ACTION_CALLGUIDE
+// AR_FILTER_ACTION_CALLGUIDE
 string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, int nAction)
 {
 	stringstream strm;
@@ -816,7 +811,7 @@ string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, 
 		if(action.guideTableId > 0)
 		{
 			strm << "Table Loop: " << arIn->LinkToField(schemaInsideId, action.guideTableId, rootLevel) << "<br/>" << endl;
-			
+
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = this->structItemType;
 			refItem->description = "Guide Table Loop";

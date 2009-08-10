@@ -1,23 +1,18 @@
-
-/****************************************************************************** 
- * 
- *  file:  DocValidator.cpp
- * 
- *  Copyright (c) 2007, Stefan Nerlich | stefan.nerlich@hotmail.com 
- *  All rights reverved.
- * 
- *  See the file COPYING in the top directory of this distribution for
- *  more information.
- *  
- *  THE SOFTWARE IS PROVIDED _AS IS_, WITHOUT WARRANTY OF ANY KIND, EXPRESS 
- *  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
- *  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL 
- *  THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
- *  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
- *  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER 
- *  DEALINGS IN THE SOFTWARE.  
- *  
- *****************************************************************************/
+//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
 #include "docvalidator.h"
@@ -68,7 +63,7 @@ void CDocValidator::Main()
 			cout << "Form access group validation" << endl;
 			webPage.AddContent(CWebUtil::Link("Forms", CWebUtil::DocName("validation_group_form"), "doc.gif", rootLevel, true));
 			this->FormGroupValidator();
-			
+
 			cout << "Field access group validation" << endl;
 			webPage.AddContent("<br/>");
 			webPage.AddContent(CWebUtil::Link("Fields", CWebUtil::DocName("validation_group_field"), "doc.gif", rootLevel, true));
@@ -209,7 +204,7 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
 			contHeadStrm << "Fields with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
-			
+
 			CTable tblObj("FieldsNoPermission", "TblObjectList");
 			tblObj.AddColumn(100, "Field Name");
 
@@ -217,7 +212,7 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 			for( fieldIter = schema.fieldList.begin(); fieldIter != schema.fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				
+
 				if(field->permissions.permissionList== NULL  //First check if the field has any access group
 					|| field->permissions.numItems == 0)
 				{
@@ -256,7 +251,7 @@ void CDocValidator::FieldGroupValidator()
 			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
 			contHeadStrm << "Fields with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
-						
+
 			//Check fields
 			CTable tblObj("FieldsNoPermission", "TblObjectList");
 			tblObj.AddColumn(10, "Num. Fields");
@@ -272,7 +267,7 @@ void CDocValidator::FieldGroupValidator()
 				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 				{
 					CARField *field = &(*fieldIter);
-					
+
 					if(field->permissions.permissionList== NULL  //First check if the field has any access group
 						|| field->permissions.numItems == 0)
 					{
@@ -376,7 +371,7 @@ void CDocValidator::FieldReferenceValidator()
 				tbl.AddColumn(30, "Form");		
 				tbl.AddColumn(60, "Workflow Items");
 
-				
+
 				list<CFieldRefItem>::iterator missingFieldIter;			
 				for(missingFieldIter = this->uniqueMissingFieldList.begin(); missingFieldIter != this->uniqueMissingFieldList.end(); missingFieldIter++)
 				{
