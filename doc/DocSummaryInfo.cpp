@@ -53,7 +53,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddColumn(90, "Description");
 
 		CTableRow row("cssStdRow");		
-		row.AddCell(CTableCell(this->pInside->alList.size()));
+		row.AddCell(CTableCell((int)this->pInside->alList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Active Links", "active_link/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 		
@@ -122,49 +122,49 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->escalList.size()));
+		row.AddCell(CTableCell((int)this->pInside->escalList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Escalations", "escalation/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->filterList.size()));
+		row.AddCell(CTableCell((int)this->pInside->filterList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Filters", "filter/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->groupList.size()));
+		row.AddCell(CTableCell((int)this->pInside->groupList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Groups", "group/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->menuList.size()));
+		row.AddCell(CTableCell((int)this->pInside->menuList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Menus", "menu/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->roleList.size()));
+		row.AddCell(CTableCell((int)this->pInside->roleList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Roles", "role/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->schemaList.size()));
+		row.AddCell(CTableCell((int)this->pInside->schemaList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Forms", "schema/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(this->pInside->userList.size()));
+		row.AddCell(CTableCell((int)this->pInside->userList.size()));
 		row.AddCell(CTableCell(CWebUtil::Link("Users", "user/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
-		unsigned int nNumTotalObjects = this->pInside->alList.size();
-		nNumTotalObjects += this->pInside->containerList.size();
-		nNumTotalObjects += this->pInside->escalList.size();
-		nNumTotalObjects += this->pInside->filterList.size();
-		nNumTotalObjects += this->pInside->groupList.size();
-		nNumTotalObjects += this->pInside->menuList.size();
-		nNumTotalObjects += this->pInside->roleList.size();
-		nNumTotalObjects += this->pInside->schemaList.size();
-		nNumTotalObjects += this->pInside->userList.size();
+		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->containerList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->escalList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->filterList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->menuList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->roleList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->schemaList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->userList.size();
 
 
 		int nNumTotalFields = 0;
@@ -172,7 +172,7 @@ void CDocSummaryInfo::Documentation()
 		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
 		{			
 			CARSchema *schema = &(*schemaIter);
-			nNumTotalFields += schema->fieldList.size();
+			nNumTotalFields += (int)schema->fieldList.size();
 		}
 
 		webPage.AddContent(tblListObjectInfo.ToXHtml());

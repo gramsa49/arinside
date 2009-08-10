@@ -44,6 +44,8 @@ BOOL DeleteDirectory(const TCHAR* sPath);
 
 int _tmain(int argc, _TCHAR* argv[])
 {
+	CAppTimer mTimer;
+	mTimer.StartTimer();
 	int result = AR_RETURN_ERROR;
 
 	string server, login, pwd, settingsIni;
@@ -184,7 +186,11 @@ int _tmain(int argc, _TCHAR* argv[])
 
 		if(result == AR_RETURN_OK)
 		{
-			cout << endl << nFilesCreated << " files created in " << arInside.nDurationLoad + arInside.nDurationDocumentation << " seconds." << endl;
+			mTimer.EndTimer();
+			float nTotalDuration = mTimer.GetDuration();
+
+			cout << endl << nFilesCreated << " files created in " << nTotalDuration << " seconds." << endl;
+			//cout << endl << nFilesCreated << " files created in " << arInside.nDurationLoad + arInside.nDurationDocumentation << " seconds." << endl;
 			cout << "Documentation successfully saved. The application will now exit." << endl;
 			result =  AR_RETURN_OK;		
 		}
