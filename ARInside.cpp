@@ -41,11 +41,10 @@
 #include "output\table.h"
 #include "output\webutil.h"
 
-bool verboseMode = false;
-
 using namespace OUTPUT;
 
-#define LOG if(verboseMode) cout
+// some kind of singleton pattern to keep compatibility
+CARInside* CARInside::pInsideInstance = NULL;
 
 CARInside::CARInside(AppConfig &appConfig)
 {
@@ -68,10 +67,18 @@ CARInside::CARInside(AppConfig &appConfig)
 
 	this->nDurationLoad = 0;
 	this->nDurationDocumentation = 0;
+
+	if (CARInside::pInsideInstance == NULL) 
+		CARInside::pInsideInstance = this;
 }
 
 CARInside::~CARInside(void)
 {
+}
+
+CARInside* CARInside::GetInstance()
+{
+	return CARInside::pInsideInstance;
 }
 
 int CARInside::Init(string user, string pw, string server, int port, int rpc)
@@ -191,7 +198,7 @@ void CARInside::LoadBlackList(void)
 				}
 			}		
 			else
-				cout << "Failed loading the blacklist." << endl;	
+				LOG << "Failed loading the blacklist: " << GetARStatusError();	
 		}
 	} 
 	catch (...)
@@ -220,20 +227,36 @@ bool CARInside::InBlacklist(int refType, string objName)
 	return false;
 }
 
-string CARInside::GetARStatusError()
+string CARInside::GetARStatusError(ARStatusList* status)
 {
+	const unsigned int maxTypes = 3;		// max index of the following array
+	const char* returnTypes[] = { "ARROK", "ARWARN", "ARERR", "" };
 	stringstream strm;
 	strm.str("");
-	if(this->arStatus.statusList != NULL)
+
+	if (status == NULL || status->numItems == 0) return strm.str();
+
+	if(status->statusList != NULL)
 	{
-		if(this->arStatus.numItems > 0)
+		for (int i = 0; i < status->numItems; i++)
 		{
-			strm << this->arStatus.statusList[0].messageText;
+			const char* typeStr = returnTypes[min(this->arStatus.statusList[0].messageType,maxTypes)];
+			strm << "[" << typeStr << this->arStatus.statusList[0].messageNum << "] ";
+			strm << this->arStatus.statusList[0].messageText << endl;
+			if (this->arStatus.statusList[0].appendedText != NULL) 
+				strm << "  " << this->arStatus.statusList[0].appendedText << endl;
 		}
 	}
 
 	FreeARStatusList(&this->arStatus, false);
 	return strm.str();
+}
+
+string CARInside::GetARStatusError()
+{
+	string errorText = GetARStatusError(&this->arStatus);
+	FreeARStatusList(&this->arStatus, false);
+	return errorText;
 }
 
 int CARInside::ValidateTargetDir(string targetFolder)
@@ -271,7 +294,7 @@ bool CARInside::FileExists(string fName)
 		fin.open(fName.c_str(),ios::in);
 		if( fin.is_open() )
 		{
-			cout << fName << "exists" << endl;
+			cout << fName << " exists" << endl;
 			result =true;
 		}
 		fin.close();
@@ -424,7 +447,7 @@ void CARInside::LoadFromFile(void)
 							arInsideIdFilter++;
 						}
 						else
-							LOG << " [ERROR]" << endl;
+							cerr << GetARStatusError();
 
 						FreeARStatusList(&this->arStatus, false);
 					}
@@ -529,7 +552,7 @@ void CARInside::LoadFromFile(void)
 							arInsideIdSchema++;
 						}
 						else
-							LOG << " [ERROR]" << endl;
+							cerr << GetARStatusError();
 
 						//FreeARFieldInfoList(&fieldInfoList, false);
 						//FreeARVuiInfoList(&vuiInfoList, false);
@@ -572,7 +595,7 @@ void CARInside::LoadFromFile(void)
 							arInsideIdAl++;								
 						}
 						else
-							LOG << " [ERROR]" << endl;
+							cerr << GetARStatusError();
 
 						FreeARStatusList(&this->arStatus, false);
 					}
@@ -603,7 +626,7 @@ void CARInside::LoadFromFile(void)
 							arInsideIdMenu++;								
 						}
 						else
-							LOG << " [ERROR]" << endl;
+							cerr << GetARStatusError();
 
 						FreeARStatusList(&this->arStatus, false);
 					}
@@ -638,7 +661,7 @@ void CARInside::LoadFromFile(void)
 							arInsideIdEscal++;								
 						}
 						else
-							LOG << " [ERROR]" << endl;
+							cerr << GetARStatusError();
 
 						FreeARStatusList(&this->arStatus, false);
 					}
@@ -674,7 +697,7 @@ void CARInside::LoadFromFile(void)
 							arInsideIdCont++;								
 						}
 						else
-							LOG << " [ERROR]" << endl;
+							cerr << GetARStatusError();
 
 						FreeARStatusList(&this->arStatus, false);
 					}
@@ -686,6 +709,7 @@ void CARInside::LoadFromFile(void)
 		else
 		{
 			cout << "An error occured parsing the xml document '" << appConfig.objListXML << "'" << endl;
+			cout << GetARStatusError();
 		}
 
 		FreeARXMLParsedStream(&parsedStream, false);
@@ -1051,7 +1075,7 @@ int CARInside::LoadContainer(void)
 						FreeARStatusList(&this->arStatus, false);
 					}		
 					else
-						LOG << " [ERROR]" << endl;
+						cerr << GetARStatusError();
 				}
 			}
 		}
@@ -1109,7 +1133,7 @@ int CARInside::LoadCharMenus(void)
 						FreeARStatusList(&this->arStatus, false);
 					}
 					else
-						LOG << " [ERROR]" << endl;
+						cerr << GetARStatusError();
 				}
 			}
 		}
@@ -1170,7 +1194,7 @@ int CARInside::LoadEscalations(void)
 						FreeARStatusList(&this->arStatus, false);
 					}	
 					else
-						LOG << " [ERROR]" << endl;
+						cerr << GetARStatusError();
 				}
 			}
 		}
@@ -1234,7 +1258,7 @@ int CARInside::LoadFilters(void)
 						FreeARStatusList(&this->arStatus, false);
 					}	
 					else
-						LOG << " [ERROR]" << endl;
+						cerr << GetARStatusError();
 				}
 			}
 		}
@@ -1299,7 +1323,7 @@ int CARInside::LoadActiveLinks(void)
 						FreeARStatusList(&this->arStatus, false);
 					}		
 					else
-						LOG << " [ERROR]" << endl;
+						cerr << GetARStatusError();
 
 				}
 			}

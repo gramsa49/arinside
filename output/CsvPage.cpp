@@ -21,8 +21,6 @@
 
 using namespace OUTPUT;
 
-#define LOG if(verboseMode) cout
-
 extern int nFilesCreated;
 
 CCsvPage::CCsvPage(string fileName, AppConfig &appConfig)

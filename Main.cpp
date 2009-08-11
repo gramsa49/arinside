@@ -26,8 +26,6 @@
 
 using namespace TCLAP;
 
-#define LOG if(verboseMode) cout
-
 const string AppName = "ARInside";
 void LoadConfigFile(string fileName, AppConfig &cfg);
 string LoadFromFile(string fileName);
@@ -82,7 +80,7 @@ int _tmain(int argc, _TCHAR* argv[])
 		tcp = tcpArg.getValue();
 		rpc = rpcArg.getValue();
 		settingsIni = iniArg.getValue();
-		verboseMode = verboseArg.getValue();
+		AppConfig::verboseMode = verboseArg.getValue();
 	} 
 	catch (ArgException &e)
 	{ 

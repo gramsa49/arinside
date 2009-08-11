@@ -17,6 +17,8 @@
 #include "StdAfx.h"
 #include ".\appconfig.h"
 
+bool AppConfig::verboseMode = false;
+
 AppConfig::AppConfig(void)
 {
 	// ARSystem data

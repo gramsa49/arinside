@@ -18,8 +18,6 @@
 #include ".\ardatafactory.h"
 #include "..\arinside.h"
 
-#define LOG if(verboseMode) cout
-
 CARDataFactory::CARDataFactory(ARControlStruct &control, ARStatusList &status)
 {
 	this->pControl = &control;
@@ -240,6 +238,7 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 
 CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int insideId)
 {
+	CARInside* pInside = CARInside::GetInstance();
 	CARUser *arUser = new CARUser(requestId);
 	try
 	{
@@ -323,7 +322,8 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 		}
 		else
 		{
-			LOG << "User '" << requestId <<"' [ERROR]" << endl;
+			cerr << "Retrieving User '" << requestId <<"' failed!" << endl;
+			cerr << pInside->GetARStatusError(this->pStatus);
 		}
 
 		delete[] entryId.entryIdList;

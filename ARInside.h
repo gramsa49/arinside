@@ -35,8 +35,6 @@
 #include "util\menurefitem.h"
 #include "util\apptimer.h"
 
-extern bool verboseMode;
-
 class CARInside
 {
 public:
@@ -48,8 +46,11 @@ public:
 	ARStatusList		arStatus;
 	AppConfig			appConfig;	
 
+	static CARInside* GetInstance();
+	
 	int Init(string user, string pw, string server, int port, int rpc);
 	int Terminate(void);
+	string GetARStatusError(ARStatusList* status);	
 
 	bool FileExists(string fName);
 	int ValidateTargetDir(string targetFolder);
@@ -119,6 +120,8 @@ public:
 
 	float nDurationLoad;
 	float nDurationDocumentation;
+private:
+	static CARInside*	pInsideInstance;
 private:	
 	string GetARStatusError();	
 	static bool SortByName(const CARServerObject& t1, const CARServerObject& t2 );	

@@ -21,8 +21,6 @@
 
 using namespace OUTPUT;
 
-#define LOG if(verboseMode) cout
-
 extern int nFilesCreated;
 
 CWebPage::CWebPage(string fileName, string title, int dirLevel, AppConfig &appConfig)
