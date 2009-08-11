@@ -804,21 +804,20 @@ void CDocSchemaDetails::IndexDoc()
 		//Add schema navigation menu	
 		webPage.AddNavigation(this->SchemaNavigation());
 
-
-		CTable tbl("fieldListAll", "TblObjectList");
-		tbl.AddColumn(40, "Field Name");
-		tbl.AddColumn(10, "Field ID");
-		tbl.AddColumn(10, "Datatype");
-		tbl.AddColumn(20, "Modified");
-		tbl.AddColumn(20, "By");
-
 		for(unsigned int nIndex=0; nIndex < this->pSchema->indexList.numItems; nIndex++)
 		{		
+			CTable tbl("fieldListAll", "TblObjectList");
+			tbl.AddColumn(0, "Field Name");
+			tbl.AddColumn(0, "Field ID");
+			tbl.AddColumn(0, "Datatype");
+			tbl.AddColumn(0, "Modified");
+			tbl.AddColumn(0, "By");
+
 			stringstream tblDesc;
 			if(this->pSchema->indexList.indexList[nIndex].unique)
 				tblDesc << "Unique Index :" <<  CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
 			else
-				tblDesc << "Index :" << CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
+				tblDesc << "Index: " << CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
 
 			tbl.description = tblDesc.str();
 
@@ -844,11 +843,8 @@ void CDocSchemaDetails::IndexDoc()
 						CFieldRefItem *refItem = new CFieldRefItem();
 						refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 
-						stringstream strmTmpIndexInfo;
-						strmTmpIndexInfo.str("");
-						strmTmpIndexInfo << "Index: " << this->pSchema->indexList.indexList[nIndex].indexName;
-
-						refItem->description = strmTmpIndexInfo.str();
+						string tmp = CWebUtil::Link(this->pSchema->indexList.indexList[nIndex].indexName, CWebUtil::DocName("form_index_list"), "", 2);
+						refItem->description = "Field in "+tmp;
 						refItem->fromName = this->pSchema->name;
 						refItem->fieldInsideId = field->insideId;
 						refItem->schemaInsideId = this->pSchema->insideId;
