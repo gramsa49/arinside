@@ -116,7 +116,20 @@ string CDocPacklistDetails::PackListInformation()
 				break;
 			case ARREF_CONTAINER:
 				{
-					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					bool found = false;
+					list<CARContainer>::iterator contIter;
+					for ( contIter = pInside->containerList.begin(); contIter != pInside->containerList.end() || found == true; contIter++ )
+					{	
+						CARContainer *container = &(*contIter);
+						if(strcmp(this->pPackList->references.referenceList[i].reference.u.name, container->name.c_str())==0)
+						{
+							srvType << CAREnum::ContainerType(container->type);
+							found = true;
+						}
+					}
+					if (!found)
+						srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+					
 					srvObj << this->pInside->LinkToContainer(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
 				}
 				break;

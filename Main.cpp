@@ -50,7 +50,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	try 
 	{  
 		cout << "ARInside Version " << AppVersion << endl;
-		cout << "Copyright (c) 2006-2007 Stefan Nerlich" << endl << endl;
+		cout << "Copyright (c) 2009 Stefan Nerlich" << endl << endl;
 
 		CmdLine cmd("ARInside command arguments", ' ', AppVersion);
 
@@ -92,8 +92,6 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	try
 	{
-		cout << "ARInside Version " << AppVersion << endl;
-
 		std::ifstream in(settingsIni.c_str());		
 		if(!in)
 		{
