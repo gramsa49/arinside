@@ -25,6 +25,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="&quot;$(ProjectDir)SubWCRev.exe&quot; &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -41,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\Api710\include"
+				AdditionalIncludeDirectories=".\Tclap;..\..\Api750\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -62,9 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi71.lib arxmlutil71.lib"
+				AdditionalDependencies="arapi75.lib arxmlutil75.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\Api710\lib"
+				AdditionalLibraryDirectories="..\..\Api750\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				RandomizedBaseAddress="1"

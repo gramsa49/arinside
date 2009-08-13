@@ -19,3 +19,12 @@
 #include <arfree.h>
 #include <arstruct.h>
 #include <arextern.h>
+
+// this is just a little workaround for a bug in ar.h version 7.5
+#ifndef AR_FILTER_ERRHANDLER_ENABLE
+#ifdef AR_ERRHANDLER_ENABLE
+#define AR_FILTER_ERRHANDLER_ENABLE AR_ERRHANDLER_ENABLE
+#else
+#define AR_FILTER_ERRHANDLER_ENABLE 1
+#endif
+#endif

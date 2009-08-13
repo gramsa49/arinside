@@ -35,6 +35,8 @@
 #include "util\menurefitem.h"
 #include "util\apptimer.h"
 
+extern const string AppVersion;
+
 class CARInside
 {
 public:

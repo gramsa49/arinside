@@ -27,8 +27,6 @@
 
 #include "util\util.h"
 
-const string AppVersion = "3.0";
-
 const string MenuSeparator = " -> ";
 const string EmptyRunIf = "No qualification specified";
 const string EmptyValue = "(null)";

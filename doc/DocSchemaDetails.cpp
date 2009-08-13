@@ -201,6 +201,9 @@ void CDocSchemaDetails::Documentation()
 
 			webPage.AddContent(pgStrm.str());
 
+			// Basics / Entry Points
+			webPage.AddContent(ShowBasicProperties());
+
 			//Properties
 			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
 
@@ -1664,6 +1667,99 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 	catch(...)
 	{
 		cout << "EXCEPTION enumerating filter push fields references in schema: " << this->pSchema->name << endl;
+	}
+
+	return strm.str();
+}
+
+string CDocSchemaDetails::ShowBasicProperties()
+{
+	stringstream strm;
+	strm.str("");
+
+	try
+	{
+		ARLong32 entryPointNewOrder = -1;
+		ARLong32 entryPointSearchOrder = -1;
+		ARLong32 nextIDBlockSize = -1;
+		ARLong32 cacheDisplayProps = -1;
+
+		ARPropList* propList = &this->pSchema->objPropList;
+		for(unsigned int i=0; i< propList->numItems; i++)
+		{
+
+			switch (propList->props[i].prop)
+			{
+				case AR_SMOPROP_ENTRYPOINT_DEFAULT_NEW_ORDER:
+					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
+						entryPointNewOrder = propList->props[i].value.u.intVal; 
+					break;
+				case AR_SMOPROP_ENTRYPOINT_DEFAULT_SEARCH_ORDER:
+					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
+						entryPointSearchOrder = propList->props[i].value.u.intVal;
+					break;
+				case AR_OPROP_NEXT_ID_BLOCK_SIZE:
+					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
+						nextIDBlockSize = propList->props[i].value.u.intVal;
+					break;
+				case AR_OPROP_CACHE_DISP_PROP:
+					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
+						cacheDisplayProps = propList->props[i].value.u.intVal;
+					break;
+			}
+		}
+
+		CTable tbl("displayPropList", "TblObjectList");
+		tbl.AddColumn(20, "Description");
+		tbl.AddColumn(80, "Value");
+
+		// entry points
+		stringstream tmpStrm; tmpStrm.str("");
+		tmpStrm << "New Mode: " << (entryPointNewOrder >= 0 ? "Enabled" : "Disabled") << "<br/>";
+		tmpStrm << "Application List Order: "; if (entryPointNewOrder >=0) tmpStrm << entryPointNewOrder; tmpStrm << "<br/><br/>";
+
+		tmpStrm << "Search Mode: " << (entryPointSearchOrder >= 0 ? "Enabled":"Disabled") << "<br/>";
+		tmpStrm << "Application List Order: "; if (entryPointSearchOrder >= 0) tmpStrm << entryPointSearchOrder; tmpStrm << endl;
+		
+		CTableRow rowEP("");
+		rowEP.AddCell(CTableCell("Entry Points"));
+		rowEP.AddCell(tmpStrm.str());
+		tbl.AddRow(rowEP);
+
+		// entry id block size
+		tmpStrm.str("");
+		tmpStrm << (nextIDBlockSize>0?"Enabled":"Disabled") << "<br/>";
+		if (nextIDBlockSize>0)
+			tmpStrm << "Size: " << nextIDBlockSize;
+
+		CTableRow rowBS("");
+		rowBS.AddCell("Next Request ID Block");
+		rowBS.AddCell(tmpStrm.str());
+		tbl.AddRow(rowBS);
+
+		// cache properties
+		tmpStrm.str("");
+		tmpStrm << "Override Server Settings: " << (cacheDisplayProps>=0?"Enabled":"Disabled");
+		if (cacheDisplayProps>=0)
+		{
+			tmpStrm << "<br/>";
+			tmpStrm << "<input type=\"checkbox\" name=\"disableVUICaching\" value=\"disableVUICaching\" " << ((cacheDisplayProps & AR_CACHE_DPROP_VUI) > 0?"checked":"") << "/>Disable VUI Display Property Caching<br/>" ;
+			tmpStrm << "<input type=\"checkbox\" name=\"disableFieldCaching\" value=\"disableFieldCaching\" " << ((cacheDisplayProps & AR_CACHE_DPROP_FIELD) > 0?"checked":"") << "/>Disable Field Display Property Caching" ;
+		}
+
+		CTableRow rowOC("");
+		rowOC.AddCell("Display Property Caching");
+		rowOC.AddCell(tmpStrm.str());
+		tbl.AddRow(rowOC);
+
+		// now write the table
+		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Basic / EntryPoints:";
+		strm << tbl.ToXHtml();
+		tbl.Clear();
+	}
+	catch(...)
+	{
+		cout << "EXCEPTION enumerating basic properties" << endl;
 	}
 
 	return strm.str();

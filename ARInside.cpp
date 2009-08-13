@@ -41,6 +41,22 @@
 #include "output\table.h"
 #include "output\webutil.h"
 
+#ifdef _DEBUG
+#include "svnrev.h"
+#endif
+
+/////////
+// version information block
+#define VERSION "3.0"
+#if _DEBUG
+	#define VERSION_STR VERSION "r" SVN_REV_STR
+#else
+	#define VERSION_STR VERSION
+#endif
+const string AppVersion = VERSION_STR;
+/////////
+
+
 using namespace OUTPUT;
 
 // some kind of singleton pattern to keep compatibility
@@ -587,6 +603,7 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
+							NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
 							&this->arStatus) == AR_RETURN_OK)
 						{
 							this->alList.insert(this->alList.end(), *obj);
@@ -1306,6 +1323,7 @@ int CARInside::LoadActiveLinks(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
+						NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
 						&this->arStatus) == AR_RETURN_OK)
 					{
 						this->alList.insert(this->alList.end(), *obj);

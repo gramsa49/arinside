@@ -62,6 +62,7 @@ private:
 	string AlWindowOpenReferences();
 	string JoinFormReferences();
 	string SearchMenuReferences();
+	string ShowBasicProperties();
 
 	string SchemaNavigation();	
 	string FormPageHeader(string description);
