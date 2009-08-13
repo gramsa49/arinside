@@ -24,6 +24,7 @@ public:
 	CARFilter(string name, int insideId);
 	~CARFilter(void);
 
+	// filter base informations from api
 	unsigned int order;
 	unsigned int opSet;
 	unsigned int enable;
@@ -35,6 +36,10 @@ public:
 	ARWorkflowConnectStruct schemaList;
 	ARPropList objPropList;
 
+	// filter enhanced informations
+	list<string> errorCallers;
+
+	// some helper methods
 	string GetExecuteOn();
 	string GetExecuteOnEx();
 	string GetURL(int rootLevel);

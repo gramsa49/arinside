@@ -238,13 +238,13 @@ string CARInside::GetARStatusError(ARStatusList* status)
 
 	if(status->statusList != NULL)
 	{
-		for (int i = 0; i < status->numItems; i++)
+		for (unsigned int i = 0; i < status->numItems; i++)
 		{
-			const char* typeStr = returnTypes[min(this->arStatus.statusList[0].messageType,maxTypes)];
-			strm << "[" << typeStr << this->arStatus.statusList[0].messageNum << "] ";
-			strm << this->arStatus.statusList[0].messageText << endl;
-			if (this->arStatus.statusList[0].appendedText != NULL) 
-				strm << "  " << this->arStatus.statusList[0].appendedText << endl;
+			const char* typeStr = returnTypes[min(this->arStatus.statusList[i].messageType,maxTypes)];
+			strm << "[" << typeStr << this->arStatus.statusList[i].messageNum << "] ";
+			strm << this->arStatus.statusList[i].messageText << endl;
+			if (this->arStatus.statusList[i].appendedText != NULL) 
+				strm << "  " << this->arStatus.statusList[i].appendedText << endl;
 		}
 	}
 
@@ -714,10 +714,6 @@ void CARInside::LoadFromFile(void)
 
 		FreeARXMLParsedStream(&parsedStream, false);
 		FreeARStatusList(&this->arStatus, false);
-
-
-		//Add fieldreferences
-		SearchCustomFieldReferences();
 	} 
 	catch (...)
 	{ 
@@ -836,9 +832,6 @@ void CARInside::LoadFromServer(void)
 	//View
 	nResult = LoadForms(AR_LIST_SCHEMA_VIEW, insideId);
 	cout << nResult << " View Forms loaded" << endl << endl;
-
-	//Add fieldreferences
-	SearchCustomFieldReferences();
 }
 
 int CARInside::LoadForms(int nType, int &schemaInsideId)
@@ -2684,4 +2677,83 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 	}	
 
 	return strm.str();
+}
+
+void CARInside::BuildReferences()
+{
+	SearchCustomFieldReferences();
+	SearchFilterReferences();
+}
+
+void CARInside::SearchFilterReferences()
+{
+	typedef map<string,list<string>> ErrorCallMap;
+	typedef pair<string,list<string>> ErrCallPair;
+
+	ErrorCallMap errorCalls;
+
+	try
+	{
+		cout << "Checking filter references";
+
+		list<CARFilter>::iterator filterIter;
+		for ( filterIter = filterList.begin(); filterIter != filterList.end(); filterIter++)
+		{
+			CARFilter *filter = &(*filterIter);
+			if (filter->errorOptions == AR_FILTER_ERRHANDLER_ENABLE)
+			{
+				ErrorCallMap::iterator item = errorCalls.find(filter->errorFilterName);
+				if (item == errorCalls.end())
+				{
+					ErrCallPair newItem(filter->errorFilterName, list<string>());
+					newItem.second.insert(newItem.second.end(), filter->name);
+					errorCalls.insert(newItem);
+				}
+				else
+				{
+					item->second.insert(item->second.end(), filter->name);
+				}
+			}
+		}
+
+		if (errorCalls.size() > 0)
+		{
+			for ( filterIter = filterList.begin(); filterIter != filterList.end(); filterIter++)
+			{
+				CARFilter *filter = &(*filterIter);
+				ErrorCallMap::iterator item = errorCalls.find(filter->name);
+				if (item != errorCalls.end())
+				{
+					for ( list<string>::iterator caller = item->second.begin(); caller != item->second.end(); caller++)
+					{
+						filter->errorCallers.insert(filter->errorCallers.end(), *caller);
+					}
+				}
+			}
+		}
+
+		cout << endl;
+	}
+	catch (...)
+	{
+		cerr << "EXCEPTION SearchFilterReferences" << endl;
+	}
+}
+
+void CARInside::DoWork(int nMode)
+{
+	CWindowsUtil winUtil(appConfig);
+
+	// first step is to create directory structure and resources (images, css and js)
+	Prepare();
+	winUtil.Load();
+
+	// now load the object either from server or from file
+	LoadServerObjects(nMode);
+
+	// build needed reference tables
+	BuildReferences();
+
+	// write documentation
+	Documentation();
 }

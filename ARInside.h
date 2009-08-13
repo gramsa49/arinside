@@ -49,6 +49,7 @@ public:
 	static CARInside* GetInstance();
 	
 	int Init(string user, string pw, string server, int port, int rpc);
+	void DoWork(int nMode);
 	int Terminate(void);
 	string GetARStatusError(ARStatusList* status);	
 
@@ -148,6 +149,9 @@ private:
 	int LoadContainer(void);
 	int LoadForms(int nType, int &schemaInsideId);
 
+	void BuildReferences();
+
 	void SearchCustomFieldReferences();
+	void SearchFilterReferences();
 	void CustomFieldReferences(CARSchema &schema, CARField &obj);
 };

@@ -133,12 +133,9 @@ int _tmain(int argc, _TCHAR* argv[])
 			{
 				if(arInside.Init(login, pwd, server, tcp, rpc) == AR_RETURN_OK)
 				{
-					arInside.Prepare();
-					winUtil.Load();
-					arInside.LoadServerObjects(0);			
-					arInside.Documentation();
+					arInside.DoWork(0);
 					result = AR_RETURN_OK;
-				}			
+				}
 			}
 			else //FileMode
 			{
@@ -148,12 +145,9 @@ int _tmain(int argc, _TCHAR* argv[])
 					{
 						if(arInside.Init("", "", "", 0, 0) == AR_RETURN_OK)
 						{
-							arInside.Prepare();
-							winUtil.Load();
-							arInside.LoadServerObjects(1);
-							arInside.Documentation();
+							arInside.DoWork(1);
 							result = AR_RETURN_OK;
-						}	
+						}
 					}
 					else
 					{

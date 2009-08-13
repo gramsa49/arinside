@@ -121,6 +121,9 @@ void CDocFilterDetails::Documentation()
 			//Properties
 			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pFilter->objPropList));
 
+			// Workflow References
+			webPage.AddContent(this->WorkflowReferences());
+
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pFilter, this->rootLevel));
 			webPage.SaveInFolder(this->path);
@@ -216,3 +219,59 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 
 	return pgStrm.str();
 }
+
+string CDocFilterDetails::WorkflowReferences()
+{
+	unsigned int refCount = 0; 
+	stringstream strm;
+	strm.str("");
+
+	try
+	{
+		//create table for workflow references
+		CTable tblRef("referenceList", "TblObjectList");
+		tblRef.AddColumn(15, "Type");
+		tblRef.AddColumn(25, "Server object");
+		tblRef.AddColumn(10, "Enabled");
+		tblRef.AddColumn(50, "Description");
+
+		// output error handler callers here
+		list<string>::iterator iter;
+		for ( iter = this->pFilter->errorCallers.begin(); iter != this->pFilter->errorCallers.end(); iter++)
+		{		
+			CTableRow row("cssStdRow");
+			row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FILTER));
+			row.AddCell(pInside->LinkToXmlObjType(AR_STRUCT_ITEM_XML_FILTER, *iter, rootLevel));
+
+			string tmpEnabled = this->pInside->XmlObjEnabled(AR_STRUCT_ITEM_XML_FILTER, *iter);
+			string tmpCssEnabled = "";
+
+			if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
+				tmpCssEnabled = "objStatusDisabled";
+
+			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+			row.AddCell("Selected as Error Handler");				
+			tblRef.AddRow(row);
+			refCount++;
+		}
+			
+		// output table on if references exists
+		if (refCount > 0)
+		{
+			stringstream tblDesc;
+			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
+
+			tblRef.description = tblDesc.str();
+
+			strm << tblRef.ToXHtml();
+		}
+		tblRef.Clear();
+	}
+	catch (...)
+	{
+		cout << "EXCEPTION enumerating workflow references for filter: " << this->pFilter->name << endl;
+	}
+
+	return strm.str();
+}
+

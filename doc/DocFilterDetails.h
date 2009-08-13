@@ -34,4 +34,5 @@ private:
 	void CreateCommon();
 	string CreateSpecific(string schemaName);
 	string ContainerReferences();
+	string WorkflowReferences();
 };
