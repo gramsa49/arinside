@@ -53,7 +53,7 @@ void CFilterTable::AddRow(CARFilter &filter, int rootLevel)
 	tblRow.AddCell( CTableCell(filter.GetExecuteOnEx()));
 	tblRow.AddCell( CTableCell(filter.actionList.numItems));
 	tblRow.AddCell( CTableCell(filter.elseList.numItems));
-	tblRow.AddCell( CTableCell(CUtil::TimeToString(filter.timestamp)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(filter.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(filter.lastChanged, rootLevel)));
 
 	this->tbl->AddRow(tblRow);

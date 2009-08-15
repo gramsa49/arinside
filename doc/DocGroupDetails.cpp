@@ -245,7 +245,7 @@ void CDocGroupDetails::UserDoc(string fName, int &nResult, string title)
 					{
 						CTableRow row("");
 						row.AddCell(CTableCell(CWebUtil::Link(user->loginName, CWebUtil::DocName(user->FileID()),"", 1 )));			
-						row.AddCell(CTableCell(CUtil::TimeToString(user->modified)));
+						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user->modified)));
 						row.AddCell(CTableCell(this->pInside->LinkToUser(user->modifiedBy, 1)));
 						tbl.AddRow(row);
 
@@ -322,7 +322,7 @@ void CDocGroupDetails::FormsDoc(string fName, int &nResult, string title)
 					row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
 					row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
 					row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-					row.AddCell(CTableCell(CUtil::TimeToString(schema->timestamp)));
+					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
 					row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
 					schemaTbl.AddRow(row);
 					nResult++;
@@ -338,7 +338,7 @@ void CDocGroupDetails::FormsDoc(string fName, int &nResult, string title)
 					row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
 					row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
 					row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-					row.AddCell(CTableCell(CUtil::TimeToString(schema->timestamp)));
+					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
 					row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
 					subadminTbl.AddRow(row);
 					nResult++;

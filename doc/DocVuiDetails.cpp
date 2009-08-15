@@ -112,7 +112,7 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 					row.AddCell(CTableCell(field->fieldId));
 					row.AddCell(CTableCell(tmpLabel.str()));				
 					row.AddCell(CTableCell(CAREnum::DataType(field->dataType)));				
-					row.AddCell(CTableCell(CUtil::TimeToString(field->timestamp)));
+					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
 					row.AddCell(CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
 					tbl.AddRow(row);
 				}
@@ -177,7 +177,7 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 					row.AddCell(CTableCell(field->fieldId));
 					row.AddCell(CTableCell(tmpLabel.str()));				
 					row.AddCell(CTableCell(CAREnum::DataType(field->dataType)));				
-					row.AddCell(CTableCell(CUtil::TimeToTextString(field->timestamp)));
+					row.AddCell(CTableCell(CUtil::DateTimeToString(field->timestamp)));
 					row.AddCell(CTableCell(field->lastChanged));
 					tbl.AddRow(row);
 				}

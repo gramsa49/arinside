@@ -46,7 +46,7 @@ void CSchemaTable::AddRow(CARSchema &schema, int rootLevel)
 	tblRow.AddCell( CTableCell((unsigned int)schema.fieldList.size()));
 	tblRow.AddCell( CTableCell((unsigned int)schema.vuiList.size()));
 	tblRow.AddCell( CTableCell(CAREnum::SchemaType(schema.schema.schemaType)));
-	tblRow.AddCell( CTableCell(CUtil::TimeToString(schema.timestamp)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(schema.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(schema.lastChanged, rootLevel)));
 
 	this->tbl->AddRow(tblRow);

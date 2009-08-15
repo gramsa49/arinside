@@ -518,9 +518,14 @@ string CDocFieldDetails::DefaultValue()
 	{
 		switch(this->pField->dataType)
 		{
-		case AR_DATA_TYPE_ATTACH:
+		case AR_DATA_TYPE_INTEGER:
 			{
-				strm << EmptyValue;
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+			}
+			break;
+		case AR_DATA_TYPE_REAL:
+			{
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
 		case AR_DATA_TYPE_CHAR:
@@ -528,27 +533,6 @@ string CDocFieldDetails::DefaultValue()
 				if(this->pField->defaultVal.u.charVal != NULL)
 				{
 					strm << "\"" << CARValue::ValueToString(this->pField->defaultVal) << "\"" << endl;
-				}
-			}
-			break;
-		case AR_DATA_TYPE_CURRENCY:
-			{
-				if(this->pField->defaultVal.u.currencyVal->currencyCode != NULL)
-				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
-				}
-			}
-			break;
-		case AR_DATA_TYPE_DATE:
-			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
-			}
-			break;
-		case AR_DATA_TYPE_DECIMAL:
-			{
-				if(this->pField->defaultVal.u.decimalVal != NULL)
-				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 				}
 			}
 			break;
@@ -565,12 +549,33 @@ string CDocFieldDetails::DefaultValue()
 				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
-		case AR_DATA_TYPE_INTEGER:
+		case AR_DATA_TYPE_TIME:
 			{
 				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}
 			break;
-		case AR_DATA_TYPE_REAL:
+		case AR_DATA_TYPE_DECIMAL:
+			{
+				if(this->pField->defaultVal.u.decimalVal != NULL)
+				{
+					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				}
+			}
+			break;
+		case AR_DATA_TYPE_CURRENCY:
+			{
+				if(this->pField->defaultVal.u.currencyVal->currencyCode != NULL)
+				{
+					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				}
+			}
+			break;
+		case AR_DATA_TYPE_DATE:
+			{
+				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+			}
+			break;
+		case AR_DATA_TYPE_TIME_OF_DAY:
 			{
 				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
 			}

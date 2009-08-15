@@ -48,7 +48,7 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 	tblRow.AddCell( CTableCell(cellNameValue));		
 	tblRow.AddCell( CTableCell(CAREnum::MenuType(menu.menuDefn.menuType)));
 	tblRow.AddCell( CTableCell(CAREnum::MenuRefresh(menu.refreshCode)));
-	tblRow.AddCell( CTableCell(CUtil::TimeToString(menu.timestamp)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(menu.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.lastChanged, rootLevel)));
 
 	this->tbl->AddRow(tblRow);

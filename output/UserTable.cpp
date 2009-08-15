@@ -41,7 +41,7 @@ void CUserTable::AddRow(CARUser &user, int rootLevel)
 		CTableRow tblRow("");
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.loginName, rootLevel)));
 		tblRow.AddCell( CTableCell(CAREnum::UserGetLicType(user.licenseType)));
-		tblRow.AddCell( CTableCell(CUtil::TimeToString(user.modified)));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.modifiedBy, rootLevel)));
 
 		this->tbl->AddRow(tblRow);

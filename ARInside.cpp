@@ -2586,7 +2586,7 @@ string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
 		stringstream strmTmp;	
 
 		//Created
-		strmTmp << CUtil::TimeToString(obj->created) << " " << this->LinkToUser(obj->createdBy, rootLevel);
+		strmTmp << CUtil::DateTimeToHTMLString(obj->created) << " " << this->LinkToUser(obj->createdBy, rootLevel);
 
 		CTableRow tblRow("");
 		tblRow.AddCellList(CTableCell("Created"), CTableCell(strmTmp.str()));
@@ -2595,7 +2595,7 @@ string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
 
 		//Modified
 		strmTmp.str("");
-		strmTmp << CUtil::TimeToString(obj->modified) << " " << this->LinkToUser(obj->modifiedBy, rootLevel);
+		strmTmp << CUtil::DateTimeToHTMLString(obj->modified) << " " << this->LinkToUser(obj->modifiedBy, rootLevel);
 
 		tblRow.AddCellList(CTableCell("Modified"), CTableCell(strmTmp.str()));
 		tbl.AddRow(tblRow);
@@ -2643,7 +2643,7 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 			for ( listIter = listHistoryEntry.begin(); listIter != listHistoryEntry.end(); listIter++ )
 			{	
 				CChangeHistoryEntry historyEntry = (CChangeHistoryEntry) *listIter;
-				historyLog << CUtil::TimeToString(historyEntry.ts) << " " << this->LinkToUser(historyEntry.user, rootLevel) << "<br/>" << endl;
+				historyLog << CUtil::DateTimeToHTMLString(historyEntry.ts) << " " << this->LinkToUser(historyEntry.user, rootLevel) << "<br/>" << endl;
 				historyLog << historyEntry.entry << "<br/><br/>" << endl;
 			}
 		}
@@ -2666,7 +2666,7 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		//Last changed		
 		stringstream strmLastChanged;
 		strmLastChanged.str("");
-		strmLastChanged << CUtil::TimeToString(obj->timestamp) << " " << this->LinkToUser(obj->lastChanged, rootLevel) << endl;
+		strmLastChanged << CUtil::DateTimeToHTMLString(obj->timestamp) << " " << this->LinkToUser(obj->lastChanged, rootLevel) << endl;
 
 		tblRow.AddCellList(CTableCell("Last changed"), CTableCell(strmLastChanged.str()));
 		tbl.AddRow(tblRow);

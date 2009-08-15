@@ -56,7 +56,7 @@ void CAlTable::AddRow(CARActiveLink &al, int rootLevel)
 	tblRow.AddCell(	CTableCell(al.GetExecuteOnEx()));
 	tblRow.AddCell(	CTableCell(al.actionList.numItems));
 	tblRow.AddCell(	CTableCell(al.elseList.numItems));
-	tblRow.AddCell(	CTableCell(CUtil::TimeToString(al.timestamp)));
+	tblRow.AddCell(	CTableCell(CUtil::DateTimeToHTMLString(al.timestamp)));
 	tblRow.AddCell(	CTableCell(this->pInside->LinkToUser(al.lastChanged, rootLevel)));
 	this->tbl->AddRow(tblRow);
 

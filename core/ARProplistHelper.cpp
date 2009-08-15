@@ -108,7 +108,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 			if(nProp == AR_OPROP_SCC_TIMESTAMP)
 			{
 				strmValue.str("");
-				strmValue << CUtil::TimeToString(arV.u.ulongVal);
+				strmValue << CUtil::DateTimeToHTMLString(arV.u.ulongVal);
 			}
 			else
 			{

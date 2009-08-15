@@ -66,7 +66,7 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 		tblRow.AddCell( CTableCell("Role"));
 		tblRow.AddCell( CTableCell(insertRole->GetURL(rootLevel)));	
 		tblRow.AddCell( CTableCell(insertRole->roleId));
-		tblRow.AddCell( CTableCell(CUtil::TimeToString(insertRole->modified)));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertRole->modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertRole->modifiedBy, rootLevel)));
 		this->tbl->AddRow(tblRow);
 	}
@@ -108,7 +108,7 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 		tblRow.AddCell( CTableCell("Group"));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToGroup(appRefName, insertGrp->insideId, rootLevel)));	
 		tblRow.AddCell( CTableCell(insertGrp->groupId));
-		tblRow.AddCell( CTableCell(CUtil::TimeToString(insertGrp->modified)));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertGrp->modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertGrp->modifiedBy, rootLevel)));
 		this->tbl->AddRow(tblRow);
 	}

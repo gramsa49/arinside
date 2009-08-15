@@ -33,8 +33,10 @@ public:
 	CUtil(void);
 public:
 	~CUtil(void);	
-	static string TimeToString(ARTimestamp ts);
-	static string TimeToTextString(ARTimestamp ts);
+	static string DateTimeToString(ARTimestamp ts);
+	static string DateTimeToHTMLString(ARTimestamp ts);
+	static string DateToString(int dateInt);
+	static string TimeOfDayToString(ARTime time);
 	static string ClearSpaces(string strIn);
 	static string String2Comp(string strIn);
 	static string StrReplace(const std::string &search, const std::string &replace, std::string searchin);

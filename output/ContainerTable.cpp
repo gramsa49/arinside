@@ -61,7 +61,7 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 
 	tblRow.AddCell( CTableCell(cellNameValue));
 	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.type)));
-	tblRow.AddCell( CTableCell(CUtil::TimeToString(cont.timestamp)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.lastChanged, rootLevel)));
 	this->tbl->AddRow(tblRow);
 }

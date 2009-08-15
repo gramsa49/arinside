@@ -41,7 +41,7 @@ void CRoleTable::AddRow(CARRole &role, int rootLevel)
 	tblRow.AddCell( CTableCell(role.GetURL(rootLevel)));
 	tblRow.AddCell( CTableCell(role.roleId));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToContainer(role.applicationName, rootLevel)));
-	tblRow.AddCell( CTableCell(CUtil::TimeToString(role.modified)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(role.modified)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(role.modifiedBy, rootLevel)));
 	this->tbl->AddRow(tblRow);
 }

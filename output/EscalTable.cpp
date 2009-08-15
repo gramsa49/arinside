@@ -49,7 +49,7 @@ void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 	tblRow.AddCell( CTableCell(escal.GetExecuteOn()));
 	tblRow.AddCell( CTableCell(escal.actionList.numItems));
 	tblRow.AddCell( CTableCell(escal.elseList.numItems));
-	tblRow.AddCell( CTableCell(CUtil::TimeToString(escal.timestamp)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(escal.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(escal.lastChanged, rootLevel)));
 	this->tbl->AddRow(tblRow);
 }

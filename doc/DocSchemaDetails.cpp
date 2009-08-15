@@ -298,7 +298,7 @@ string CDocSchemaDetails::AllFields(string fName)
 				strmTmp << field->dInstanceList.numItems;			
 			CTableCell cellNumViews(strmTmp.str(), "");			
 
-			CTableCell cellTimestamp(CUtil::TimeToString(field->timestamp), "");
+			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field->timestamp), "");
 			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, 2), "");
 
 			row.AddCell(cellName);		
@@ -348,7 +348,7 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 			CTableCell cellFieldId(field->fieldId, "");
 			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");			
 			CTableCell cellNumViews(field->dInstanceList.numItems, "");	
-			CTableCell cellTimestamp(CUtil::TimeToTextString(field->timestamp), "");
+			CTableCell cellTimestamp(CUtil::DateTimeToString(field->timestamp), "");
 			CTableCell cellLastChanged(field->lastChanged, "");
 
 			row.AddCell(cellName);		
@@ -428,7 +428,7 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 			}			
 
 			CTableCell cellFieldRealId(strmTmp.str(), "");
-			CTableCell cellTimestamp(CUtil::TimeToString(field->timestamp), "");
+			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field->timestamp), "");
 			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, 1), "");
 
 			row.AddCell(cellName);
@@ -494,7 +494,7 @@ void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
 			}			
 
 			CTableCell cellFieldRealId(nFieldRealId, "");
-			CTableCell cellTimestamp(CUtil::TimeToTextString(field->timestamp), "");
+			CTableCell cellTimestamp(CUtil::DateTimeToString(field->timestamp), "");
 			CTableCell cellLastChanged(field->lastChanged, "");
 
 			row.AddCell(cellName);
@@ -838,7 +838,7 @@ void CDocSchemaDetails::IndexDoc()
 						row.AddCell( CTableCell(field->GetURL(2)));
 						row.AddCell( CTableCell(field->fieldId));
 						row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));
-						row.AddCell( CTableCell(CUtil::TimeToString(field->timestamp)));
+						row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
 						row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
 						tbl.AddRow(row);
 
@@ -910,7 +910,7 @@ void CDocSchemaDetails::ResultListDoc()
 					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));
 					row.AddCell( CTableCell(fList.columnWidth));
 					row.AddCell( CTableCell(fList.separator));
-					row.AddCell( CTableCell(CUtil::TimeToString(field->timestamp)));
+					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
 					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
 					tbl.AddRow(row);
 
@@ -987,7 +987,7 @@ void CDocSchemaDetails::SortListDoc()
 					row.AddCell( CTableCell(field->GetURL(2)));
 					row.AddCell( CTableCell(field->fieldId));
 					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));				
-					row.AddCell( CTableCell(CUtil::TimeToString(field->timestamp)));
+					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
 					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
 
 					tbl.AddRow(row);
@@ -1049,7 +1049,7 @@ void CDocSchemaDetails::VuiListDoc()
 			row.AddCell( CTableCell(vui->Label()));
 			row.AddCell( CTableCell(vui->webAlias()));
 			row.AddCell( CTableCell(CAREnum::VuiType(vui->vuiType)));
-			row.AddCell( CTableCell(CUtil::TimeToString(vui->timestamp)));
+			row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(vui->timestamp)));
 			row.AddCell( CTableCell(this->pInside->LinkToUser(vui->lastChanged, 1)));
 			tbl.AddRow(row);
 		}

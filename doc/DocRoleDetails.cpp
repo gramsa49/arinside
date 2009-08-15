@@ -226,7 +226,7 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 						row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
 						row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
 						row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-						row.AddCell(CTableCell(CUtil::TimeToString(schema->timestamp)));
+						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
 						row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
 						schemaTbl.AddRow(row);
 						nResult++;
@@ -242,7 +242,7 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 						row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
 						row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
 						row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-						row.AddCell(CTableCell(CUtil::TimeToString(schema->timestamp)));
+						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
 						row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
 						subadminTbl.AddRow(row);
 						nResult++;

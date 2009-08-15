@@ -300,6 +300,11 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 					qText << "\""<< data->u.charVal << "\"";
 				}
 				break;
+			case AR_DATA_TYPE_DIARY:
+				{
+					qText << "\""<< data->u.diaryVal << "\"";
+				}
+				break;
 			case AR_DATA_TYPE_ENUM:
 				{
 					try
@@ -319,12 +324,32 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 				break;
 			case AR_DATA_TYPE_TIME:
 				{
-					qText << CUtil::TimeToString(data->u.timeVal);
+					qText << CUtil::DateTimeToHTMLString(data->u.timeVal);
 				}
 				break;
 			case AR_DATA_TYPE_DECIMAL:
 				{
 					qText << data->u.decimalVal;
+				}
+				break;
+			case AR_DATA_TYPE_ATTACH:
+				{
+					qText << data->u.attachVal;
+				}
+				break;
+			case AR_DATA_TYPE_CURRENCY:
+				{
+					qText << data->u.currencyVal;
+				}
+				break;
+			case AR_DATA_TYPE_DATE:
+				{
+					qText << CUtil::DateToString(data->u.dateVal);
+				}
+				break;
+			case AR_DATA_TYPE_TIME_OF_DAY:
+				{
+					qText << CUtil::TimeOfDayToString(data->u.timeOfDayVal);
 				}
 				break;
 			default:

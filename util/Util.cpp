@@ -25,7 +25,7 @@ CUtil::~CUtil(void)
 {
 }
 
-string CUtil::TimeToString(ARTimestamp ts)
+string CUtil::DateTimeToHTMLString(ARTimestamp ts)
 {
 	string result = "";
 	struct tm *stm;
@@ -40,7 +40,7 @@ string CUtil::TimeToString(ARTimestamp ts)
 }
 
 
-string CUtil::TimeToTextString(ARTimestamp ts)
+string CUtil::DateTimeToString(ARTimestamp ts)
 {
 	string result = "";
 	struct tm *stm;
@@ -110,4 +110,43 @@ void CUtil::CleanUpStream(stringstream &strm, unsigned int nLength)
 		strm.str("");
 		strm << tmp;
 	}
+}
+
+string CUtil::DateToString(int dateInt)
+{
+	//formula found from http://en.wikipedia.org/wiki/Julian_day#Gregorian_calendar_from_Julian_day_number
+	int J = dateInt;
+	int j = J+32044;
+	int g = j/146097;
+	int dg = j%146097;
+	int c = ((dg/36524) + 1)*3/4;
+	int dc = dg - (c*36524);
+	int b = dc/1461;
+	int db = dc%1461;
+	int a = (db/365 + 1)*3/4;
+	int da = db - a*365;
+	int y = g*400 + c*100 + b*4 + a;
+	int m = (da*5 + 308)/153 - 2;
+	int d = da - (m + 4)*153/5 + 122;
+	int Y = y - 4800 + (m + 2)/12;
+	int M = (m + 2)%12 + 1; 
+	int D = d + 1;
+
+	stringstream strm;
+	strm.str("");
+	strm << M << "/" << D << "/" << Y;
+	return strm.str();
+}
+
+string CUtil::TimeOfDayToString(ARTime time)
+{
+	time_t rawtime = (time_t) time;
+	struct tm * timeinfo;
+	char buffer [20];
+
+	timeinfo = gmtime ( &rawtime );
+
+	strftime (buffer,80,"%I:%M:%S %p",timeinfo);
+
+	return buffer;
 }

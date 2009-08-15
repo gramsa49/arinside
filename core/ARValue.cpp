@@ -40,13 +40,22 @@ string CARValue::ValueToString(ARValueStruct &value)
 			return CAREnum::Keyword(value.u.keyNum);
 		}
 		break;
-	case AR_DATA_TYPE_ATTACH:
-		{		
-			if(value.u.attachVal != NULL
-				&& value.u.attachVal->name != NULL)
-			{
-				return value.u.attachVal->name;	
-			}
+	case AR_DATA_TYPE_INTEGER:
+		{
+			stringstream strm;
+			strm.str("");
+
+			strm << value.u.intVal;
+			return strm.str();
+		}
+		break;
+	case AR_DATA_TYPE_REAL:
+		{
+			stringstream strm;
+			strm.str("");
+
+			strm <<value.u.realVal;
+			return strm.str();
 		}
 		break;
 	case AR_DATA_TYPE_CHAR:
@@ -57,6 +66,69 @@ string CARValue::ValueToString(ARValueStruct &value)
 			}
 			else
 				return "";
+		}
+		break;
+	case AR_DATA_TYPE_DIARY:
+		{
+			if(value.u.diaryVal != NULL)
+			{
+				stringstream strm;
+				strm.str("");
+				strm << value.u.diaryVal;
+
+				return strm.str();
+			}
+			else
+				return "";
+		}
+		break;	
+	case AR_DATA_TYPE_ENUM:
+		{
+			stringstream strm;
+			strm.str("");
+			strm << value.u.enumVal;
+			return strm.str();
+		}
+		break;
+	case AR_DATA_TYPE_TIME:
+		{
+			stringstream strm;
+			strm.str("");
+			strm << CUtil::DateTimeToHTMLString(value.u.timeVal);
+			return strm.str();
+		}
+		break;
+	case AR_DATA_TYPE_BITMASK:
+		{
+			return "BitMask";
+		}
+		break;
+	case AR_DATA_TYPE_BYTES:
+		{
+			return "Bytelist";
+		}
+		break;
+	case AR_DATA_TYPE_DECIMAL:
+		{
+			if(value.u.decimalVal != NULL)
+			{
+				stringstream strm;
+				strm.str("");
+				strm << value.u.decimalVal;
+
+				return strm.str();
+			}
+			else
+				return "0.0";
+		}
+		break;
+	case AR_DATA_TYPE_ATTACH:
+		{		
+			if(value.u.attachVal != NULL
+				&& value.u.attachVal->name != NULL)
+			{
+				return value.u.attachVal->name;	
+			}
 		}
 		break;
 	case AR_DATA_TYPE_CURRENCY:
@@ -85,68 +157,10 @@ string CARValue::ValueToString(ARValueStruct &value)
 		{
 			stringstream strm;
 			strm.str("");
-			strm << value.u.dateVal;
+			//strm << value.u.dateVal;
+			strm << CUtil::DateToString(value.u.dateVal);
 
 			return strm.str();
-		}
-		break;
-	case AR_DATA_TYPE_DECIMAL:
-		{
-			if(value.u.decimalVal != NULL)
-			{
-				stringstream strm;
-				strm.str("");
-				strm << value.u.decimalVal;
-
-				return strm.str();
-			}
-			else
-				return "0.0";
-		}
-		break;
-	case AR_DATA_TYPE_DIARY:
-		{
-			if(value.u.diaryVal != NULL)
-			{
-				stringstream strm;
-				strm.str("");
-				strm << value.u.diaryVal;
-
-				return strm.str();
-			}
-			else
-				return "";
-		}
-		break;	
-	case AR_DATA_TYPE_ENUM:
-		{
-			stringstream strm;
-			strm.str("");
-			strm << value.u.enumVal;
-			return strm.str();
-		}
-		break;
-	case AR_DATA_TYPE_INTEGER:
-		{
-			stringstream strm;
-			strm.str("");
-
-			strm << value.u.intVal;
-			return strm.str();
-		}
-		break;
-	case AR_DATA_TYPE_REAL:
-		{
-			stringstream strm;
-			strm.str("");
-
-			strm <<value.u.realVal;
-			return strm.str();
-		}
-		break;
-	case AR_DATA_TYPE_BYTES:
-		{
-			return "Bytelist";
 		}
 		break;
 	case AR_DATA_TYPE_ULONG:
@@ -154,6 +168,15 @@ string CARValue::ValueToString(ARValueStruct &value)
 			stringstream strm;
 			strm.str("");
 			strm << value.u.ulongVal;
+
+			return strm.str();
+		}
+		break;
+	case AR_DATA_TYPE_TIME_OF_DAY:
+		{
+			stringstream strm;
+			strm.str("");
+			strm << CUtil::TimeOfDayToString(value.u.timeOfDayVal);
 
 			return strm.str();
 		}
