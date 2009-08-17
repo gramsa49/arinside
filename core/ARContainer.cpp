@@ -22,8 +22,14 @@ CARContainer::CARContainer(string name, int insideId)
 	this->name = name;
 	this->insideId = insideId;	
 	this->type = 0;
+	this->label = NULL;
+	this->description = NULL;
 
-	this->objPropList.props = NULL;
+	memset(&groupList,0,sizeof(ARPermissionList));
+	memset(&admingrpList,0,sizeof(ARInternalIdList));
+	memset(&ownerObjList,0,sizeof(ARContainerOwnerObjList));
+	memset(&references,0,sizeof(ARReferenceList));
+	memset(&objPropList,0,sizeof(ARPropList));
 }
 
 CARContainer::~CARContainer(void)
