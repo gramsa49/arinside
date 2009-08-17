@@ -257,7 +257,7 @@ string CARInside::GetARStatusError(ARStatusList* status)
 		for (unsigned int i = 0; i < status->numItems; i++)
 		{
 			const char* typeStr = returnTypes[min(this->arStatus.statusList[i].messageType,maxTypes)];
-			strm << "[" << typeStr << this->arStatus.statusList[i].messageNum << "] ";
+			strm << "[" << typeStr << " " << this->arStatus.statusList[i].messageNum << "] ";
 			strm << this->arStatus.statusList[i].messageText << endl;
 			if (this->arStatus.statusList[i].appendedText != NULL) 
 				strm << "  " << this->arStatus.statusList[i].appendedText << endl;
@@ -745,7 +745,7 @@ void CARInside::LoadFromServer(void)
 	//LoadServerInfoList	
 	if(appConfig.bLoadServerInfoList)
 	{
-		cout << "Start loading Server Informations:" << endl;
+		cout << "Start loading Server Information:" << endl;
 		CARServerInfo serverInfo(this->arControl, this->arStatus);
 		serverInfo.GetList(serverInfoList);
 		cout << (unsigned int)serverInfoList.size() << " server settings loaded" << endl;
@@ -1437,6 +1437,7 @@ void CARInside::Documentation(void)
 	int nTmpCnt = 1;
 	//Create documentation here to fill objects applicationName reference information	
 	list<CARContainer>::iterator listIter;	
+	cout << "Starting Container Documentation" << endl;
 	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ )
 	{
 		CARContainer *cont = &(*listIter);
@@ -1516,6 +1517,7 @@ void CARInside::Documentation(void)
 	//ActiveLink Details
 	nTmpCnt = 1;
 	list<CARActiveLink>::iterator alIter;
+	cout << "Starting ActiveLink Documentation" << endl;
 	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
 	{	
 		CARActiveLink *al = &(*alIter);
@@ -1540,6 +1542,7 @@ void CARInside::Documentation(void)
 	//Filter Details
 	nTmpCnt=1;
 	list<CARFilter>::iterator filterIter;
+	cout << "Starting Filter Documentation" << endl;
 	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++)
 	{
 		CARFilter *filter = &(*filterIter);
@@ -1564,6 +1567,7 @@ void CARInside::Documentation(void)
 	//Escalation Details
 	nTmpCnt=1;
 	list<CAREscalation>::iterator escalIter;
+	cout << "Starting Escalation Documentation" << endl;
 	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++)
 	{
 		CAREscalation *escal = &(*escalIter);
@@ -1587,6 +1591,7 @@ void CARInside::Documentation(void)
 	// Char Menu Details
 	nTmpCnt = 1;
 	list<CARCharMenu>::iterator menuIter;	
+	cout << "Starting Menu Documentation" << endl;
 	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ )
 	{
 		CARCharMenu *menu = &(*menuIter);	
@@ -1616,6 +1621,7 @@ void CARInside::Documentation(void)
 	//Schema and field Details
 	nTmpCnt=1;
 	list<CARSchema>::iterator schemaIter;	
+	cout << "Starting Schema Documentation" << endl;
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{
 		int rootLevel = 2;
@@ -1683,6 +1689,7 @@ void CARInside::Documentation(void)
 	//Group Details
 	nTmpCnt=1;
 	list<CARGroup>::iterator groupIter;
+	cout << "Starting Group Documentation" << endl;
 	for ( groupIter = this->groupList.begin(); groupIter != this->groupList.end(); groupIter++ )
 	{
 		CARGroup *grp = &(*groupIter);
@@ -1705,6 +1712,7 @@ void CARInside::Documentation(void)
 	//Role Details
 	nTmpCnt=1;
 	list<CARRole>::iterator roleIter;
+	cout << "Starting Role Documentation" << endl;
 	for ( roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++ )
 	{
 		CARRole *role = &(*roleIter);
@@ -1727,6 +1735,7 @@ void CARInside::Documentation(void)
 	//User Details	list<CARUser>::iterator userIter;
 	nTmpCnt=1;
 	list<CARUser>::iterator userIter;
+	cout << "Starting User Documentation" << endl;
 	for ( userIter = this->userList.begin(); userIter != this->userList.end(); userIter++ )
 	{
 		CARUser *user = &(*userIter);

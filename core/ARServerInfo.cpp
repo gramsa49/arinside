@@ -16,6 +16,7 @@
 
 #include "StdAfx.h"
 #include ".\arserverinfo.h"
+#include "..\ARInside.h"
 
 CARServerInfo::CARServerInfo(ARControlStruct &arControl, ARStatusList &arStatus)
 {
@@ -31,16 +32,63 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 {	
 	try
 	{
-		for(int i=0; i< 255; i++)
+		stringstream strm;
+
+		ARServerInfoRequestList requestList;
+		ARServerInfoList serverInfo;
+
+		requestList.numItems = 254;
+		requestList.requestList = (unsigned int *) malloc (sizeof(unsigned int)*requestList.numItems);
+		int infoProp = 1;
+		for(unsigned int i=0; i < requestList.numItems; i++)
 		{
-			string infoValue = GetValue(i+1);
-			CARServerInfoItem *infoItem = new CARServerInfoItem(i+1, infoValue);
-			if(infoValue.length() > 0)
-			{			
-				listResult.push_back(*infoItem);
-				cout << "Loading ServerInfo: " << CAREnum::ServerInfoApiCall(i+1) << "[OK]" << endl;
+			if (infoProp == 10)
+				infoProp++;
+
+			requestList.requestList[i] = infoProp;
+			infoProp++;
+		}
+
+		if( ARGetServerInfo(&arControl, &requestList, &serverInfo, &arStatus) == AR_RETURN_OK)
+		{
+			for(unsigned int i=0; i< serverInfo.numItems; i++)
+			{
+				strm.str("");
+				ARServerInfoStruct info = serverInfo.serverInfoList[i];
+				int datatype = info.value.dataType;
+				switch (datatype)
+				{
+				case AR_DATA_TYPE_NULL:
+					{
+						strm << "NULL";
+					}
+					break;
+				case AR_DATA_TYPE_CHAR:
+					{
+						if(info.value.u.charVal != NULL)
+						{
+							strm << info.value.u.charVal;
+						}
+					}
+					break;
+				case AR_DATA_TYPE_INTEGER:
+					{
+						strm << info.value.u.intVal;
+					}
+					break;				
+				}
+				string infoValue = strm.str();
+				CARServerInfoItem *infoItem = new CARServerInfoItem(i+1, infoValue);
+				if(infoValue.length() > 0)
+				{			
+					listResult.push_back(*infoItem);
+					LOG << "Loading ServerInfo: " << CAREnum::ServerInfoApiCall(i+1) << "[OK]" << endl;
+				}
 			}
 		}
+		delete requestList.requestList;
+		FreeARServerInfoList(&serverInfo, false);
+		FreeARStatusList(&arStatus, false);
 	}
 	catch(...)
 	{

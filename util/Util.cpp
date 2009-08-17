@@ -134,7 +134,7 @@ string CUtil::DateToString(int dateInt)
 
 	stringstream strm;
 	strm.str("");
-	strm << M << "/" << D << "/" << Y;
+	strm << Y << "-" << M << "-" << D;
 	return strm.str();
 }
 

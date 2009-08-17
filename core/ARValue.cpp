@@ -157,7 +157,6 @@ string CARValue::ValueToString(ARValueStruct &value)
 		{
 			stringstream strm;
 			strm.str("");
-			//strm << value.u.dateVal;
 			strm << CUtil::DateToString(value.u.dateVal);
 
 			return strm.str();
