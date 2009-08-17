@@ -17,8 +17,23 @@
 #include "StdAfx.h"
 #include ".\arproplisthelper.h"
 
-CARProplistHelper::CARProplistHelper(void)
+CARProplistHelper::CARProplistHelper(ARPropList* propList)
 {
+	if (propList == NULL) return;
+
+	try
+	{
+		for (unsigned int i=0; i < propList->numItems; ++i)
+		{
+			properties.push_back(PropHelpData(propList->props[i].prop, &propList->props[i].value));
+		}
+		sort(properties.begin(), properties.end());
+	}
+	catch (...)
+	{
+		cerr << "EXCEPTION in constructing CARProplistHelper" << endl;
+		throw;
+	}
 }
 
 CARProplistHelper::~CARProplistHelper(void)
@@ -193,4 +208,91 @@ string CARProplistHelper::GetList(CARInside &arIn, ARPropList &objPropList)
 	}
 
 	return strm.str();
+}
+
+ARValueStruct* CARProplistHelper::GetAndUseValue(ARULong32 nProp)
+{
+	vector<PropHelpData>::iterator propIter = 
+		  lower_bound(properties.begin(), properties.end(), nProp);
+
+	if (propIter != properties.end() && !(*propIter < nProp))
+	{
+		(*propIter).isUsed = true;
+		return (*propIter).Value;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+ARValueStruct* CARProplistHelper::GetValue(ARULong32 nProp)
+{
+	vector<PropHelpData>::iterator propIter = 
+		  lower_bound(properties.begin(), properties.end(), nProp);
+
+	if (propIter != properties.end() && !(*propIter < nProp))
+	{
+		return (*propIter).Value;
+	}
+	else
+	{
+		return NULL;
+	}
+}
+
+string CARProplistHelper::UnusedPropertiesToHTML()
+{
+	stringstream strm;
+	strm.str("");
+
+	try
+	{
+		CTable tbl("displayPropList", "TblObjectList");
+		tbl.AddColumn(20, "Description");
+		tbl.AddColumn(80, "Values");
+
+		vector<PropHelpData>::iterator propIter = properties.begin();
+		vector<PropHelpData>::iterator propEnd = properties.end();
+
+		
+		for ( ; propIter != propEnd; ++propIter)
+		{
+			if ((*propIter).isUsed == false)
+			{
+				CTableRow row("");			
+				row.AddCell(CTableCell(CARProplistHelper::GetLabel((*propIter).pId)));
+				row.AddCell(CTableCell(CARProplistHelper::GetValue((*propIter).pId,*(*propIter).Value)));		
+				tbl.AddRow(row);
+			}
+		}
+
+		tbl.description = "Object Properties:";
+		strm << tbl.ToXHtml();
+
+	}
+	catch(...)
+	{
+		cout << "EXCEPTION enumerating unused object properties" << endl;
+	}
+
+	return strm.str();
+}
+
+CARProplistHelper::PropHelpData::PropHelpData(void)
+{
+	pId = NULL;
+	Value = NULL;
+	isUsed = false;
+}
+
+CARProplistHelper::PropHelpData::PropHelpData(ARULong32 propId, ARValueStruct *value)
+{
+	pId = propId;
+	Value = value;
+	isUsed = false;
+}
+
+CARProplistHelper::PropHelpData::~PropHelpData()
+{
 }

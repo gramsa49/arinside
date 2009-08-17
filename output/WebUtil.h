@@ -35,6 +35,7 @@ namespace OUTPUT
 		static string DocName(string fName);
 		static string CsvDocName(string fName);
 		static string ObjName(string objName);
+		static string ChkBoxInput(string nameAndValue, bool checked);
 
 		static string LinkToActiveLinkIndex(int rootLevel);
 		static string LinkToActiveLinkIndex(int objectCount, int rootLevel);

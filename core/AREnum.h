@@ -1844,4 +1844,26 @@ public:
 		default: return EnumDefault;
 		}
 	}
+
+	static string AuditStyle(int nType)
+	{
+		switch (nType)
+		{
+		case AR_AUDIT_NONE: return "None";
+		case AR_AUDIT_COPY: return "Form";
+		case AR_AUDIT_LOG: return "Log";
+		default: return EnumDefault;
+		}
+	}
+
+	static string AuditChangedFields(int nType)
+	{
+		switch (nType)
+		{
+		case AR_AUDIT_ONLY_CHNG_FLDS_DEFAULT: return "Default";
+		case AR_AUDIT_ONLY_CHNG_FLDS_YES: return "Yes";
+		case AR_AUDIT_ONLY_CHNG_FLDS_NO: return "No";
+		default: return EnumDefault;
+		}
+	}
 };

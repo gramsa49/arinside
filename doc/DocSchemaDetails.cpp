@@ -18,6 +18,7 @@
 #include ".\docschemadetails.h"
 #include ".\docfielddetails.h"
 #include "../output/csvpage.h"
+#include "../core/ARDayStructHelper.h"
 
 CDocSchemaDetails::CDocSchemaDetails(CARInside &arInside, CARSchema &schema, string path, int rootLevel)
 {
@@ -202,10 +203,10 @@ void CDocSchemaDetails::Documentation()
 			webPage.AddContent(pgStrm.str());
 
 			// Basics / Entry Points
-			webPage.AddContent(ShowBasicProperties());
+			webPage.AddContent(ShowProperties());
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
+			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pSchema, this->rootLevel));
@@ -1672,48 +1673,71 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 	return strm.str();
 }
 
-string CDocSchemaDetails::ShowBasicProperties()
+string CDocSchemaDetails::ShowProperties()
 {
 	stringstream strm;
 	strm.str("");
+	map<ARLong32,ARValueStruct*> propIdx;
 
 	try
 	{
-		ARLong32 entryPointNewOrder = -1;
-		ARLong32 entryPointSearchOrder = -1;
-		ARLong32 nextIDBlockSize = -1;
-		ARLong32 cacheDisplayProps = -1;
-
 		ARPropList* propList = &this->pSchema->objPropList;
-		for(unsigned int i=0; i< propList->numItems; i++)
-		{
+		CARProplistHelper propIdx(propList);
 
-			switch (propList->props[i].prop)
-			{
-				case AR_SMOPROP_ENTRYPOINT_DEFAULT_NEW_ORDER:
-					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
-						entryPointNewOrder = propList->props[i].value.u.intVal; 
-					break;
-				case AR_SMOPROP_ENTRYPOINT_DEFAULT_SEARCH_ORDER:
-					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
-						entryPointSearchOrder = propList->props[i].value.u.intVal;
-					break;
-				case AR_OPROP_NEXT_ID_BLOCK_SIZE:
-					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
-						nextIDBlockSize = propList->props[i].value.u.intVal;
-					break;
-				case AR_OPROP_CACHE_DISP_PROP:
-					if (propList->props[i].value.dataType == AR_DATA_TYPE_INTEGER)
-						cacheDisplayProps = propList->props[i].value.u.intVal;
-					break;
-			}
+		//for (unsigned int i=0; i < propList->numItems; ++i)
+		//{
+		//	propIdx[propList->props[i].prop] = &propList->props[i].value;
+		//}
+
+		// doc basic properties
+		strm << ShowBasicProperties(&propIdx);
+
+		if (this->pSchema->schema.schemaType != AR_SCHEMA_DIALOG)
+		{
+			// doc archive properties
+			strm << ShowArchiveProperties();
+
+			// doc audit properties
+			strm << ShowAuditProperties();
 		}
 
+		// doc properties left
+		//strm << ShowPropertiesLeft(&propIdx);
+		strm << propIdx.UnusedPropertiesToHTML();
+	}
+	catch(...)
+	{
+		cerr << "EXCEPTION enumerating properties" << endl;
+	}
+	return strm.str();
+}
+
+string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
+{
+	stringstream strm;
+	strm.str("");
+	ARValueStruct* propVal;
+
+	try
+	{
 		CTable tbl("displayPropList", "TblObjectList");
 		tbl.AddColumn(20, "Description");
 		tbl.AddColumn(80, "Value");
 
 		// entry points
+		ARLong32 entryPointNewOrder = -1;
+		ARLong32 entryPointSearchOrder = -1;
+
+		propVal = propIndex->GetAndUseValue(AR_SMOPROP_ENTRYPOINT_DEFAULT_NEW_ORDER);
+		if (propVal != NULL) 
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				entryPointNewOrder = propVal->u.intVal;
+
+		propVal = propIndex->GetAndUseValue(AR_SMOPROP_ENTRYPOINT_DEFAULT_SEARCH_ORDER);
+		if (propVal != NULL) 
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				entryPointSearchOrder = propVal->u.intVal;
+
 		stringstream tmpStrm; tmpStrm.str("");
 		tmpStrm << "New Mode: " << (entryPointNewOrder >= 0 ? "Enabled" : "Disabled") << "<br/>";
 		tmpStrm << "Application List Order: "; if (entryPointNewOrder >=0) tmpStrm << entryPointNewOrder; tmpStrm << "<br/><br/>";
@@ -1727,6 +1751,13 @@ string CDocSchemaDetails::ShowBasicProperties()
 		tbl.AddRow(rowEP);
 
 		// entry id block size
+		ARLong32 nextIDBlockSize = -1;
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_NEXT_ID_BLOCK_SIZE);
+		if (propVal != NULL)
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				nextIDBlockSize = propVal->u.intVal;
+
 		tmpStrm.str("");
 		tmpStrm << (nextIDBlockSize>0?"Enabled":"Disabled") << "<br/>";
 		if (nextIDBlockSize>0)
@@ -1738,13 +1769,20 @@ string CDocSchemaDetails::ShowBasicProperties()
 		tbl.AddRow(rowBS);
 
 		// cache properties
+		ARLong32 cacheDisplayProps = -1;
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_CACHE_DISP_PROP);
+		if (propVal != NULL) 
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				cacheDisplayProps = propVal->u.intVal;
+
 		tmpStrm.str("");
 		tmpStrm << "Override Server Settings: " << (cacheDisplayProps>=0?"Enabled":"Disabled");
 		if (cacheDisplayProps>=0)
 		{
 			tmpStrm << "<br/>";
-			tmpStrm << "<input type=\"checkbox\" name=\"disableVUICaching\" value=\"disableVUICaching\" " << ((cacheDisplayProps & AR_CACHE_DPROP_VUI) > 0?"checked":"") << "/>Disable VUI Display Property Caching<br/>" ;
-			tmpStrm << "<input type=\"checkbox\" name=\"disableFieldCaching\" value=\"disableFieldCaching\" " << ((cacheDisplayProps & AR_CACHE_DPROP_FIELD) > 0?"checked":"") << "/>Disable Field Display Property Caching" ;
+			tmpStrm << CWebUtil::ChkBoxInput("disableVUICaching",(cacheDisplayProps & AR_CACHE_DPROP_VUI) > 0) << "Disable VUI Display Property Caching<br/>" ;
+			tmpStrm << CWebUtil::ChkBoxInput("disableFieldCaching",(cacheDisplayProps & AR_CACHE_DPROP_FIELD) > 0) << "Disable Field Display Property Caching" ;
 		}
 
 		CTableRow rowOC("");
@@ -1764,3 +1802,229 @@ string CDocSchemaDetails::ShowBasicProperties()
 
 	return strm.str();
 }
+
+string CDocSchemaDetails::ShowAuditProperties()
+{
+	stringstream strm; strm.str("");
+
+	try
+	{
+		CTable tbl("displayPropList", "TblObjectList");
+		tbl.AddColumn(20, "Description");
+		tbl.AddColumn(80, "Values");
+
+		CTableRow row("");
+		row.AddCell("Audit Style");
+		row.AddCell(CAREnum::AuditStyle(this->pSchema->auditInfo.style));
+		tbl.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("Audit Enabled");
+		row.AddCell((this->pSchema->auditInfo.enable==0?"No":"Yes"));
+		tbl.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("Audit Only Changed Fields");
+		row.AddCell(CAREnum::AuditChangedFields(this->pSchema->auditInfo.auditMask));
+		tbl.AddRow(row);
+
+		row.ClearCells();
+		switch (this->pSchema->auditInfo.style)
+		{
+			case AR_AUDIT_NONE:
+				{
+					if (this->pSchema->auditInfo.formName[0] != NULL)
+					{
+						row.AddCell("Audited From Form");
+						row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(this->pSchema->auditInfo.formName),rootLevel));
+						tbl.AddRow(row);
+					}
+				}
+				break;
+			case AR_AUDIT_COPY:
+				{
+					row.AddCell("Audit Form");
+					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(this->pSchema->auditInfo.formName),rootLevel));
+					tbl.AddRow(row);
+				}
+				break;
+			case AR_AUDIT_LOG:
+				{
+					row.AddCell("Audit Log Form");
+					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(this->pSchema->auditInfo.formName),rootLevel));
+					tbl.AddRow(row);
+				}
+				break;
+		}
+
+		// audit qualification
+		stringstream qualStrm; qualStrm.str("");
+		int pFormId = this->pInside->SchemaGetInsideId(this->pSchema->name);
+
+		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->pSchema->name, "Audit Qualification", 0, 0);
+
+		if (this->pSchema->auditInfo.query.operation != AR_COND_OP_NONE)
+		{
+			CARQualification arQual(*this->pInside);
+			arQual.CheckQuery(&this->pSchema->auditInfo.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
+		}
+		else
+		{
+			qualStrm << EmptyRunIf << endl;
+		}
+
+		row.ClearCells();
+		row.AddCell("Qualification");
+		row.AddCell(qualStrm.str());
+		tbl.AddRow(row);
+
+		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Audit Settings:";
+		strm << tbl.ToXHtml();
+		tbl.Clear();
+	}
+	catch (...)
+	{
+		cerr << "EXCEPTION audit properties" << endl;
+	}
+	return strm.str();
+}
+
+string CDocSchemaDetails::ShowArchiveProperties()
+{
+	stringstream strm; strm.str("");
+
+	try
+	{
+		bool archiveToForm = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_FORM)>0;
+		bool deleteSource = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_DELETE)>0;
+		bool archiveToFile = (pSchema->archiveInfo.archiveType & (AR_ARCHIVE_FILE_ARX | AR_ARCHIVE_FILE_XML))>0;
+		unsigned int fileFormat = (pSchema->archiveInfo.archiveType & (AR_ARCHIVE_FILE_ARX | AR_ARCHIVE_FILE_XML)) << 2;
+		bool noAttachments = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_NO_ATTACHMENTS)>0;
+		bool noDiary = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_NO_DIARY)>0;
+
+		CTable tbl("displayPropList", "TblObjectList");
+		tbl.AddColumn(20, "Description");
+		tbl.AddColumn(80, "Values");
+
+		// archive type
+		stringstream typeStrm; typeStrm.str("");
+		if (!archiveToForm && !archiveToFile)
+		{
+			typeStrm << "None";
+		}
+		else if (archiveToForm || deleteSource)
+		{
+			if (archiveToForm) typeStrm << "Copy to Archive";
+			if (deleteSource && archiveToForm) typeStrm << " and ";
+			if (deleteSource) typeStrm << "Delete From Source";
+		}
+
+		CTableRow row("");
+		row.AddCell("Archive Type");
+		row.AddCell(typeStrm.str());
+		tbl.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("Archive State");
+		row.AddCell((this->pSchema->archiveInfo.enable==0?"Disabled":"Enabled"));
+		tbl.AddRow(row);		
+
+		row.ClearCells();
+		if (archiveToFile)
+		{
+			// archive to file is not supported by admin/developer tool; but maybe some day...
+			row.AddCell("Archive to File");
+			row.AddCell(pSchema->archiveInfo.u.dirPath);
+			tbl.AddRow(row);
+		}
+		else if (archiveToForm)
+		{
+			stringstream tmpStrm; tmpStrm.str("");
+			tmpStrm << this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(pSchema->archiveInfo.u.formName),rootLevel) << "<br/>" << endl;
+			tmpStrm << CWebUtil::ChkBoxInput("noAttachments",noAttachments) << "No Attachments&nbsp;&nbsp;";
+			tmpStrm << CWebUtil::ChkBoxInput("noDiary",noDiary) << "No Diary" << endl;
+
+			row.AddCell("Archive to Form");
+			row.AddCell(tmpStrm.str());
+			tbl.AddRow(row);
+		}
+
+		if (pSchema->archiveInfo.archiveFrom[0] != NULL)
+		{
+			row.ClearCells();
+			row.AddCell("Archive From Form");
+			row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(pSchema->archiveInfo.archiveFrom), rootLevel));
+			tbl.AddRow(row);
+		}
+
+		stringstream qualStrm; qualStrm.str("");
+		int pFormId = this->pInside->SchemaGetInsideId(this->pSchema->name);
+		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->pSchema->name, "Archive Qualification", 0, 0);
+
+		if (this->pSchema->archiveInfo.query.operation != AR_COND_OP_NONE)
+		{
+			CARQualification arQual(*this->pInside);
+			arQual.CheckQuery(&this->pSchema->archiveInfo.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
+		}
+		else
+		{
+			qualStrm << EmptyRunIf << endl;
+		}
+
+		row.ClearCells();
+		row.AddCell("Times");
+		row.AddCell(CARDayStructHelper::DayStructToHTMLString(&pSchema->archiveInfo.archiveTime));
+		tbl.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("Qualification");
+		row.AddCell(qualStrm.str());
+		tbl.AddRow(row);
+
+		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Archive Settings:";
+		strm << tbl.ToXHtml();
+		tbl.Clear();
+	}
+	catch (...)
+	{
+		cerr << "EXCEPTION archive properties" << endl;
+	}
+	return strm.str();
+}
+
+//string CDocSchemaDetails::ShowPropertiesLeft(CARProplistHelper* propIndex)
+//{
+//	stringstream strm;
+//	strm.str("");
+//
+//	ARValueStruct* propVal;
+//
+//	try
+//	{
+//		CTable tbl("displayPropList", "TblObjectList");
+//		tbl.AddColumn(20, "Description");
+//		tbl.AddColumn(80, "Values");
+//
+//		
+//		for (propIter = propIndex->begin(); propIter != propIndex->end(); ++propIter)
+//		{
+//			if (propIter->second != NULL)
+//			{
+//				CTableRow row("");			
+//				row.AddCell(CTableCell(CARProplistHelper::GetLabel(propIter->first)));
+//				row.AddCell(CTableCell(CARProplistHelper::GetValue(propIter->first,*propIter->second)));		
+//				tbl.AddRow(row);
+//			}
+//		}
+//
+//		tbl.description = "Object Properties:";
+//		strm << tbl.ToXHtml();
+//
+//	}
+//	catch(...)
+//	{
+//		cout << "EXCEPTION enumerating object properties" << endl;
+//	}
+//
+//	return strm.str();
+//}

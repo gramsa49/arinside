@@ -319,6 +319,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARDayStructHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARDayStructHelper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\AREnum.h"
 				>
 			</File>

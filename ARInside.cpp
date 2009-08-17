@@ -214,7 +214,7 @@ void CARInside::LoadBlackList(void)
 				}
 			}		
 			else
-				LOG << "Failed loading the blacklist: " << GetARStatusError();	
+				cerr << "Failed loading the blacklist: " << GetARStatusError();
 		}
 	} 
 	catch (...)

@@ -388,3 +388,13 @@ string CWebUtil::LinkToHelper(string name, int objectCount, string folderName, s
 	strmTmp << CWebUtil::Link(name, RootPath(rootLevel) + folderName + "/" + CWebUtil::DocName("index"), image, rootLevel);
 	return strmTmp.str();
 }
+
+string CWebUtil::ChkBoxInput(std::string nameAndValue, bool checked)
+{
+	stringstream strmTmp; strmTmp.str("");
+
+	strmTmp << "<input type=\"checkbox\" name=\"" << nameAndValue << "\" value=\"" << nameAndValue << "\"";
+	if (checked) strmTmp << " checked";
+	strmTmp << " />";
+	return strmTmp.str();
+}

@@ -16,6 +16,7 @@
 
 #include "StdAfx.h"
 #include ".\arescalation.h"
+#include ".\ARDayStructHelper.h"
 
 CAREscalation::CAREscalation(string name, int insideId)
 {
@@ -75,55 +76,8 @@ string CAREscalation::GetTimeCriteria()
 			strm << days << " Days " << hours << " Hours " << minutes << " Minutes";
 		}
 		else
-		{			
-			char weekdays[][15] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-
-			strm << "Weekday(s):<br/> ";
-			bool bWeekDay=false;
-			for (unsigned int i = 0; i < 7; i++)
-			{
-				if (AR_DAY(escalationTm.u.date.weekday, i))
-				{
-					strm << weekdays[i] << ", ";
-					bWeekDay=true;
-				}				
-			}
-			if(!bWeekDay)
-				strm << "None ";
-			else
-				CUtil::CleanUpStream(strm, 2);
-
-			strm << "\n<br/><br/>Day of Month:<br/>\n";
-			bool bDayOfMonth=false;
-			for (unsigned int i = 0; i < 31; i++)
-			{
-				if (AR_DAY(escalationTm.u.date.monthday, i))
-				{
-					strm << i+1 << ", ";
-					bDayOfMonth=true;
-				}
-			}
-			if(!bDayOfMonth)
-				strm << "None ";
-			else
-				CUtil::CleanUpStream(strm, 2);
-
-			strm << "<br/><br/>Time:<br/>";
-			bool bTime=false;
-			for (unsigned int i = 0; i < 24; i++)
-			{
-				if (AR_HOUR(escalationTm.u.date.hourmask, i))
-				{
-					char tmp[10];
-					sprintf(tmp, "%.02d:%.02d", i, escalationTm.u.date.minute);
-					strm << tmp << ", ";
-					bTime=true;
-				}
-			}
-			if(!bTime)
-				strm << "None";
-			else
-				CUtil::CleanUpStream(strm, 2);
+		{
+			return CARDayStructHelper::DayStructToHTMLString(&escalationTm.u.date);
 		}
 	}
 	catch(...)

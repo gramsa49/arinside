@@ -62,7 +62,11 @@ private:
 	string AlWindowOpenReferences();
 	string JoinFormReferences();
 	string SearchMenuReferences();
-	string ShowBasicProperties();
+	
+	string ShowProperties();
+	string ShowBasicProperties(CARProplistHelper* propIndex);
+	string ShowAuditProperties();
+	string ShowArchiveProperties();
 
 	string SchemaNavigation();	
 	string FormPageHeader(string description);

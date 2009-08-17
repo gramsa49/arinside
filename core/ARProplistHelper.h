@@ -24,10 +24,31 @@ using namespace OUTPUT;
 class CARProplistHelper
 {
 public:
-	CARProplistHelper(void);
+	CARProplistHelper(ARPropList* propList);
 	~CARProplistHelper(void);
 
 	static string GetList(CARInside &arIn, ARPropList &objPropList);
 	static string GetLabel(ARULong32 nProp);
 	static string GetValue(ARULong32 nProp, ARValueStruct &arV);
+
+	ARValueStruct* GetAndUseValue(ARULong32 nProp);
+	ARValueStruct* GetValue(ARULong32 nProp);
+	string UnusedPropertiesToHTML();
+
+private:
+	class PropHelpData
+	{
+	public:
+		PropHelpData(void);
+		PropHelpData(ARULong32 propId, ARValueStruct* value);
+		~PropHelpData(void);
+
+		operator ARULong32() { return pId; }
+
+		ARULong32       pId;    // property id
+		ARValueStruct*  Value;  // value struct
+		bool            isUsed; // used flag
+	};
+	std::vector<PropHelpData> properties;
+
 };
