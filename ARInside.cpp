@@ -2579,6 +2579,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 					}
 					break;
 				}
+				break;
 			}
 			if (curPos < startPos)
 				strmTmp << inText.substr(curPos,startPos - curPos);
