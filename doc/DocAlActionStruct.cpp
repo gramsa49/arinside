@@ -154,11 +154,13 @@ string CDocAlActionStruct::Get(string ifElse, ARActiveLinkActionList &actList)
 					actionDesc << ActionGotoAction(action.u.gotoAction, nAction);				
 				}
 				break;
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 			case AR_ACTIVE_LINK_ACTION_SERVICE:
 				{
 					actionDesc << ActionService(action.u.service, nAction);
 				}
 				break;
+#endif
 			default:
 				{
 					actionDesc.str("");				
@@ -1226,6 +1228,7 @@ string CDocAlActionStruct::ActionGotoAction(ARGotoActionStruct &action, int nAct
 	return strm.str();
 }
 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 // AR_ACTIVE_LINK_ACTION_SERVICE
 string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, int nAction)
 {
@@ -1279,3 +1282,4 @@ string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, in
 
 	return strm.str();
 }
+#endif

@@ -98,6 +98,8 @@ private:
 	// AR_ACTIVE_LINK_ACTION_GOTOACTION
 	string ActionGotoAction(ARGotoActionStruct &action, int nAction);
 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 	// AR_ACTIVE_LINK_ACTION_SERVICE
 	string ActionService(ARActiveLinkSvcActionStruct &action, int nAction);
+#endif
 };

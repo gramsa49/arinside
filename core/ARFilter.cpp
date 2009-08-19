@@ -64,8 +64,26 @@ string CARFilter::GetExecuteOn()
 		else
 		{
 			const unsigned int opCount = 6;
-			unsigned int bitmask[opCount] = { AR_OPERATION_GET, AR_OPERATION_SET, AR_OPERATION_CREATE, AR_OPERATION_DELETE, AR_OPERATION_MERGE, AR_OPERATION_SERVICE };
-			char executeText[opCount][30] = { "Get Entry", "Modify", "Submit", "Delete", "Merge", "Service"};
+			unsigned int bitmask[opCount] = { 
+				AR_OPERATION_GET, 
+				AR_OPERATION_SET, 
+				AR_OPERATION_CREATE, 
+				AR_OPERATION_DELETE, 
+				AR_OPERATION_MERGE, 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+				AR_OPERATION_SERVICE 
+#endif
+			};
+			char executeText[opCount][30] = { 
+				"Get Entry", 
+				"Modify", 
+				"Submit", 
+				"Delete", 
+				"Merge", 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+				"Service"
+#endif
+			};
 
 			for (unsigned int k= 0; k < opCount; k++)
 			{
@@ -102,8 +120,28 @@ string CARFilter::GetExecuteOnEx()
 		else
 		{
 			const unsigned int opCount = 6;
-			unsigned int bitmask[opCount] = { AR_OPERATION_GET, AR_OPERATION_SET, AR_OPERATION_CREATE, AR_OPERATION_DELETE, AR_OPERATION_MERGE, AR_OPERATION_SERVICE };
-			char executeText[opCount][30] = { "Get Entry", "Modify", "Submit", "Delete", "Merge", "Service"};
+			unsigned int bitmask[opCount] = 
+			{ 
+				AR_OPERATION_GET, 
+				AR_OPERATION_SET, 
+				AR_OPERATION_CREATE, 
+				AR_OPERATION_DELETE, 
+				AR_OPERATION_MERGE, 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+				AR_OPERATION_SERVICE 
+#endif
+			};
+			char executeText[opCount][30] = 
+			{ 
+				"Get Entry", 
+				"Modify", 
+				"Submit", 
+				"Delete", 
+				"Merge", 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+				"Service"
+#endif
+			};
 
 			for (unsigned int k= 0; k < opCount; k++)
 			{

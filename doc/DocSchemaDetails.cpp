@@ -1768,6 +1768,7 @@ string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
 		rowBS.AddCell(tmpStrm.str());
 		tbl.AddRow(rowBS);
 
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		// cache properties
 		ARLong32 cacheDisplayProps = -1;
 
@@ -1789,6 +1790,7 @@ string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
 		rowOC.AddCell("Display Property Caching");
 		rowOC.AddCell(tmpStrm.str());
 		tbl.AddRow(rowOC);
+#endif
 
 		// now write the table
 		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Basic / EntryPoints:";
@@ -1823,10 +1825,12 @@ string CDocSchemaDetails::ShowAuditProperties()
 		row.AddCell((this->pSchema->auditInfo.enable==0?"No":"Yes"));
 		tbl.AddRow(row);
 
+#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
 		row.ClearCells();
 		row.AddCell("Audit Only Changed Fields");
 		row.AddCell(CAREnum::AuditChangedFields(this->pSchema->auditInfo.auditMask));
 		tbl.AddRow(row);
+#endif
 
 		row.ClearCells();
 		switch (this->pSchema->auditInfo.style)

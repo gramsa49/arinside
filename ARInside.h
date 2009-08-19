@@ -67,6 +67,10 @@ public:
 	void Documentation(void);
 
 
+	CARSchema* FindSchema(int schemaInsideId);
+	CARSchema* FindSchema(string schemaName);	
+	CARField* FindField(CARSchema* schema, int fieldId);
+
 	string srvHostName;
 	string srvFullHostName;
 	list<CARSchema> schemaList;

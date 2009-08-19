@@ -42,6 +42,25 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 		qualString = new char[appConfig.groupQuery.size() + 1];
 		strcpy(qualString, appConfig.groupQuery.c_str());
 
+		AREntryListFieldList fields;
+		AREntryListFieldValueList values;
+
+		fields.numItems = 9;
+		fields.fieldsList = (AREntryListFieldStruct*)new AREntryListFieldStruct[fields.numItems];
+		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
+
+		fields.fieldsList[0].fieldId = 1;     //RequestId
+		fields.fieldsList[1].fieldId = 105;   //GroupName
+		fields.fieldsList[2].fieldId = 106;   //GroupId
+		fields.fieldsList[3].fieldId = 107;   //GroupType
+		fields.fieldsList[4].fieldId = 8;     //LongGroupName
+		fields.fieldsList[5].fieldId = 2;     //CreatedBy
+		fields.fieldsList[6].fieldId = 3;     //Created
+		fields.fieldsList[7].fieldId = 5;     //ModifiedBy
+		fields.fieldsList[8].fieldId = 6;     //Modified
+
+		for (unsigned int k=0; k<fields.numItems; ++k) { fields.fieldsList[k].columnWidth=1; fields.fieldsList[k].separator[0]='|'; }
+
 		if(ARLoadARQualifierStruct(this->pControl, 
 			schemaName,
 			NULL, 
@@ -49,38 +68,51 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 			&qualifier, 
 			this->pStatus) == AR_RETURN_OK)
 		{
-			unsigned int numMatches;
-			AREntryListList		entryList;	
-			if(ARGetListEntry(this->pControl,
+			if (ARGetListEntryWithFields(
+				this->pControl,
 				schemaName,
 				&qualifier,
-				NULL,
-				NULL,
-				AR_START_WITH_FIRST_ENTRY,
-				appConfig.maxRetrieve,
-				FALSE,
-				&entryList,
-				&numMatches,
-				this->pStatus) == AR_RETURN_OK)
+				&fields,
+				NULL,0,0,0,  // sort, first, max, locale
+				&values,
+				0,this->pStatus) == AR_RETURN_OK)
 			{
-				if(entryList.entryList != NULL)
+				for (unsigned int row=0; row<values.numItems; ++row)
 				{
-					for(unsigned int i=0; i< entryList.numItems; i++)
-					{
-						if(entryList.entryList[i].entryId.numItems >0)
-						{							
-							CARGroup grp = this->LoadGroup(schemaName, entryList.entryList[i].entryId.entryIdList[0]);
-							if(grp.groupName != "")
-							{
-								listResult.push_back(grp);
-							}							
-						}
-					}
+					if (values.entryList[row].entryValues->fieldValueList[0].value.u.charVal == NULL) continue;
+					
+					CARGroup grp(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
+					grp.groupName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
+					grp.name = grp.groupName;
+
+					grp.groupId   = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
+					grp.insideId  = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
+					grp.groupType	= values.entryList[row].entryValues->fieldValueList[3].value.u.intVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[4].value.u.charVal != NULL)
+						grp.longGroupName = values.entryList[row].entryValues->fieldValueList[4].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[5].value.u.charVal != NULL)
+						grp.createdBy = values.entryList[row].entryValues->fieldValueList[5].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[6].value.u.timeVal != NULL)
+						grp.created = values.entryList[row].entryValues->fieldValueList[6].value.u.timeVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[7].value.u.charVal != NULL)
+						grp.modifiedBy = values.entryList[row].entryValues->fieldValueList[7].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[8].value.u.timeVal != NULL)
+						grp.modified = values.entryList[row].entryValues->fieldValueList[8].value.u.timeVal;
+
+					LOG << "Group '" << grp.groupName <<"' [OK]" << endl;
+
+					listResult.push_back(grp);
 				}
+				FreeAREntryListFieldValueList(&values,false);
 			}
-			FreeAREntryListList(&entryList, false);
 		}
 
+		delete[] fields.fieldsList;
 		delete[] qualString;
 	}
 	catch(...)
@@ -89,6 +121,7 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 	}
 }
 
+// TODO: function currently unused
 CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 {
 	CARGroup *grp = new CARGroup(requestId);
@@ -188,6 +221,28 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 		qualString = new char[appConfig.userQuery.size() + 1];
 		strcpy(qualString, appConfig.userQuery.c_str());
 
+		AREntryListFieldList fields;
+		AREntryListFieldValueList values;
+
+		fields.numItems = 12;
+		fields.fieldsList = (AREntryListFieldStruct*)new AREntryListFieldStruct[fields.numItems];
+		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
+
+		fields.fieldsList[0].fieldId = 1;     //RequestId
+		fields.fieldsList[1].fieldId = 101;   //LoginName
+		fields.fieldsList[2].fieldId = 103;   //Email
+		fields.fieldsList[3].fieldId = 104;   //GroupList
+		fields.fieldsList[4].fieldId = 8;     //FullName
+		fields.fieldsList[5].fieldId = 108;   //DefNorify
+		fields.fieldsList[6].fieldId = 109;   //LicType
+		fields.fieldsList[7].fieldId = 110;   //FtLicType
+		fields.fieldsList[8].fieldId = 2;     //CreatedBy
+		fields.fieldsList[9].fieldId = 3;     //Created
+		fields.fieldsList[10].fieldId = 5;    //ModifiedBy
+		fields.fieldsList[11].fieldId = 6;    //Modified
+		
+		for (unsigned int k=0; k<fields.numItems; ++k) { fields.fieldsList[k].columnWidth=1; fields.fieldsList[k].separator[0]='|'; }
+
 		if(ARLoadARQualifierStruct(this->pControl, 
 			schemaName,
 			NULL, 
@@ -195,39 +250,71 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 			&qualifier, 
 			this->pStatus) == AR_RETURN_OK)
 		{
-			unsigned int numMatches;
-			AREntryListList		entryList;	
-			if(ARGetListEntry(this->pControl,
+			if (ARGetListEntryWithFields(
+				this->pControl,
 				schemaName,
 				&qualifier,
-				NULL,
-				NULL,
-				AR_START_WITH_FIRST_ENTRY,
-				appConfig.maxRetrieve,
-				FALSE,
-				&entryList,
-				&numMatches,
-				this->pStatus) == AR_RETURN_OK)
+				&fields,
+				NULL,0,0,0, // sort, first, max, locale,
+				&values,
+				0,this->pStatus) == AR_RETURN_OK)
 			{
-				if(entryList.entryList != NULL)
+				for (unsigned int row=0; row<values.numItems; ++row)
 				{
-					for(unsigned int i=0; i< entryList.numItems; i++)
-					{
-						if(entryList.entryList[i].entryId.numItems == 1)
-						{
-							CARUser arUser = this->LoadUser(schemaName, entryList.entryList[i].entryId.entryIdList[0], i);
-							if(arUser.loginName != "")
-							{
-								listResult.push_back(arUser);
-							}
-						}
-					}
-				}
-			}
-			FreeAREntryListList(&entryList, false);
+					if (values.entryList[row].entryValues->fieldValueList[0].value.u.charVal == NULL) continue;
 
+					CARUser arUser(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
+					arUser.insideId = row;
+
+					if(values.entryList[row].entryValues->fieldValueList[1].value.u.charVal != NULL)
+					{
+						arUser.loginName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
+						arUser.name = arUser.loginName;
+					}
+
+					if(values.entryList[row].entryValues->fieldValueList[2].value.u.charVal != NULL)
+						arUser.email = values.entryList[row].entryValues->fieldValueList[2].value.u.charVal;
+
+					arUser.groupList.clear();
+					if(values.entryList[row].entryValues->fieldValueList[3].value.u.charVal != NULL)
+					{
+						string tmpGroupList = values.entryList[row].entryValues->fieldValueList[3].value.u.charVal;
+						CUtil::SplitString(tmpGroupList, arUser.groupList);
+					}
+
+					if(values.entryList[row].entryValues->fieldValueList[4].value.u.charVal != NULL)
+						arUser.fullName = values.entryList[row].entryValues->fieldValueList[4].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[5].value.u.intVal != NULL)
+						arUser.defNotify = values.entryList[row].entryValues->fieldValueList[5].value.u.intVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[6].value.u.intVal != NULL)			
+						arUser.licenseType = values.entryList[row].entryValues->fieldValueList[6].value.u.intVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[7].value.u.intVal != NULL)		
+						arUser.ftLicenseType = values.entryList[row].entryValues->fieldValueList[7].value.u.intVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[8].value.u.charVal != NULL)
+						arUser.createdBy = values.entryList[row].entryValues->fieldValueList[8].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[9].value.u.timeVal != NULL)
+						arUser.created = values.entryList[row].entryValues->fieldValueList[9].value.u.timeVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[10].value.u.charVal != NULL)
+						arUser.modifiedBy = values.entryList[row].entryValues->fieldValueList[10].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[11].value.u.timeVal != NULL)
+						arUser.modified = values.entryList[row].entryValues->fieldValueList[11].value.u.timeVal;
+
+					LOG << "User '" << arUser.loginName <<"' [OK]" << endl;
+					
+					listResult.push_back(arUser);
+				}
+				FreeAREntryListFieldValueList(&values,false);
+			}
 		}
 
+		delete[] fields.fieldsList;
 		delete[] qualString;
 	}
 	catch(...)
@@ -236,6 +323,7 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 	}
 }
 
+// TODO: function currently unused
 CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int insideId)
 {
 	CARInside* pInside = CARInside::GetInstance();
@@ -246,7 +334,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 		ARFieldValueList fieldList;
 
 		idList.numItems = 12;
-		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
+		idList.internalIdList = (ARInternalId *) new ARInternalId[idList.numItems];
 
 		idList.internalIdList[0] = 1;		//RequestId
 		idList.internalIdList[1] = 101;		//LoginName
@@ -327,7 +415,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 		}
 
 		delete[] entryId.entryIdList;
-		delete idList.internalIdList;	
+		delete[] idList.internalIdList;	
 		FreeARFieldValueList(&fieldList,  false);
 		FreeARStatusList(this->pStatus, false);
 	}

@@ -406,7 +406,19 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 		break;
 	case AR_STAT_HISTORY:
 		{
-			qText << "Status History.";
+			qText << "'" << arIn->LinkToField(pFormId, 15, rootLevel) << ".";
+
+			if(!arIn->FieldreferenceExists(pFormId, 15, refItem))
+			{
+				CFieldRefItem *item = new CFieldRefItem();
+				item->arsStructItemType = refItem.arsStructItemType;
+				item->description = refItem.description;
+				item->fromName = refItem.fromName;					
+				item->fieldInsideId = 15;					
+				item->schemaInsideId = pFormId;
+				arIn->AddReferenceItem(item);
+				delete item;
+			}
 
 			string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
 			if(strcmp(tmp.c_str(), EmptyValue.c_str())!=0)
@@ -427,6 +439,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 				}
 				break;
 			}
+			qText << "'";
 		}
 		break;
 	}

@@ -452,8 +452,10 @@ void CARInside::LoadFromFile(void)
 							&obj->helptext,
 							&obj->changeDiary,
 							&obj->objPropList,
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 							&obj->errorOptions,
 							obj->errorFilterName,
+#endif
 							&obj->xmlDocVersion,
 							&this->arStatus) == AR_RETURN_OK)
 						{
@@ -603,7 +605,9 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
+#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
 							NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
+#endif
 							&this->arStatus) == AR_RETURN_OK)
 						{
 							this->alList.insert(this->alList.end(), *obj);
@@ -756,7 +760,7 @@ void CARInside::LoadFromServer(void)
 	//LoadUserList
 	if(appConfig.bLoadUserList)
 	{
-		cout << endl << "Start laoding Users:" << endl;		
+		cout << endl << "Start loading Users:" << endl;		
 
 		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
 		dataFactory->GetListUser(this->appConfig, userList);
@@ -1256,8 +1260,10 @@ int CARInside::LoadFilters(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 						&obj->errorOptions,
 						obj->errorFilterName,
+#endif
 						&this->arStatus) == AR_RETURN_OK)
 					{
 						this->filterList.insert(this->filterList.end(), *obj);
@@ -1323,7 +1329,9 @@ int CARInside::LoadActiveLinks(void)
 						obj->lastChanged,
 						&obj->changeDiary,
 						&obj->objPropList,
+#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
 						NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
+#endif
 						&this->arStatus) == AR_RETURN_OK)
 					{
 						this->alList.insert(this->alList.end(), *obj);
@@ -2447,7 +2455,6 @@ void CARInside::AddReferenceItem(CFieldRefItem *refItem)
 
 string CARInside::TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, CFieldRefItem *refItem)
 {	
-
 	try
 	{
 		if(inText.size() == 0)
@@ -2455,47 +2462,131 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 
 		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
 
-		list<CARSchema>::iterator schemaIter;				
-		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-		{			
-			CARSchema *schema = &(*schemaIter);
-			if(schema->insideId == schemaInsideId)
+		CARSchema *schema = FindSchema(schemaInsideId);
+		if (schema == NULL) return inText;
+
+		stringstream strmTmp;
+		unsigned int startPos = 0;
+		unsigned int maxLen = (unsigned int)inText.length();
+		unsigned int curPos = 0;
+		unsigned int fieldIdPos = 0;
+		char fieldId[20];
+		char *enumId;    // points to the enum part of status history within fieldId later
+		char *usrOrTime; // points to the "user or time" part of status history within fieldId later
+		
+		while ( (startPos = (unsigned int)inText.find(fieldSeparator.at(0),curPos)) != std::string::npos)
+		{
+			++startPos;
+			strmTmp << inText.substr(curPos,startPos - curPos); curPos = startPos;
+											
+			// reset
+			fieldIdPos = 0;	
+			fieldId[0] = 0;
+			enumId = NULL;
+			usrOrTime = NULL;
+
+			for (curPos = startPos; curPos < maxLen; ++curPos)
 			{
-				list<CARField>::iterator fieldIter;		
-				CARField *field;
-
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				char currChar = inText.at(curPos);
+				if (currChar == '-' && fieldIdPos != 0)  
 				{
-					field = &(*fieldIter);
+					break; // - is only allowed at the beginning
+				}
+				if (currChar >= '0' && currChar <= '9' || currChar == '-' || currChar == '.')
+				{
+					if (fieldIdPos + 1 == 20) break;	// max length .. that cant be a field
 
-					stringstream strmTmp;
-					strmTmp << fieldSeparator << field->fieldId << fieldSeparator;			
+					if (currChar != '.' && fieldIdPos > 1 && fieldId[fieldIdPos-1] == '.')
+					{
+						fieldId[fieldIdPos-1] = 0;
+						if (enumId == NULL)
+						{
+							enumId = &fieldId[fieldIdPos];
+						}
+						else if (usrOrTime == NULL)
+						{
+							usrOrTime = &fieldId[fieldIdPos];
+						}
+						else
+						{
+							break; // uhh ohh
+						}
+					}
+					// copy it over
+					fieldId[fieldIdPos++] = currChar;
+					continue;
+				}
+				if (currChar == fieldSeparator.at(0))
+				{
+					// end found
+					fieldId[fieldIdPos] = 0;
 
-					stringstream fieldLink;
-					fieldLink << dummySeparator << field->GetURL(rootLevel) << dummySeparator;					
+					if (fieldId[0] == 0) break;	// two $$ .. someone must be dreaming about more money
 
-					unsigned int nLengthOrg = (unsigned int)inText.length();
+					int iFieldId = atoi(fieldId);
+					if (iFieldId > 0)
+					{
+						CARSchema *schema = FindSchema(schemaInsideId);
+						CARField *field = FindField(schema,iFieldId);
+						CARField *fieldStatus = NULL;
 
-					string fField = strmTmp.str();
-					inText = CUtil::StrReplace(fField, fieldLink.str(), inText);
+						if (field == NULL) break;
 
-					//Finally replace the dummy placeholder
-					inText = CUtil::StrReplace(dummySeparator, fieldSeparator, inText);
-
-					//if the string is longer because we have added a link (long string) we add a field reference
-					if(inText.length() > nLengthOrg) 
-					{						
+						// now link to the field
+						strmTmp << field->GetURL(rootLevel);
 						refItem->fieldInsideId = field->fieldId;
 						AddReferenceItem(refItem);
+
+						// special handling for status history
+						if (iFieldId == 15)
+						{
+							if (enumId == NULL || usrOrTime == NULL) break;
+							
+							// resolve user or time attribute
+							int iUsrOrTime = atoi(usrOrTime);
+							char* usrOrTimeStr = usrOrTime;
+							switch (iUsrOrTime)
+							{
+							case AR_STAT_HISTORY_USER:
+								usrOrTimeStr = "USER";
+								break;
+							case AR_STAT_HISTORY_TIME:
+								usrOrTimeStr = "TIME";
+								break;
+							}
+
+							// handle status history
+							fieldStatus = FindField(schema,7);	// get status field
+							if (fieldStatus != NULL)
+							{
+								int iEnumId = atoi(enumId);
+								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus->insideId, iEnumId) << "." << usrOrTimeStr;
+							}
+							else
+							{
+								strmTmp << "." << enumId << "." << usrOrTimeStr;
+							}
+						}
+						strmTmp << "$";
+						++curPos; // skip the $ so it isnt found again
 					}
+					else if (fieldId[0] == '-' && iFieldId <= 0)
+					{
+						// keyword handling
+						int iKeyword = abs(iFieldId);
+						strmTmp << CAREnum::Keyword(iKeyword) << "$";
+						++curPos; // skip the $ so it isnt found again
+					}
+					break;
 				}
 			}
+			if (curPos < startPos)
+				strmTmp << inText.substr(curPos,startPos - curPos);
 		}
+		if (curPos < maxLen)
+			strmTmp << inText.substr(curPos,maxLen - curPos);
 
-		if(findKeywords == true)
-		{
-			inText = TextFindKeywords(inText, fieldSeparator);
-		}
+		return strmTmp.str();
 	}
 	catch(...)
 	{
@@ -2783,4 +2874,48 @@ void CARInside::DoWork(int nMode)
 
 	// write documentation
 	Documentation();
+}
+
+CARSchema* CARInside::FindSchema(int schemaInsideId)
+{
+	list<CARSchema>::iterator schemaIter;		
+	for (schemaIter = schemaList.begin(); schemaIter != schemaList.end(); ++schemaIter)
+	{			
+		CARSchema *schema = &(*schemaIter);
+		if(schema->insideId == schemaInsideId)
+		{
+			return schema;
+		}
+	}
+	return NULL;
+}
+
+CARSchema* CARInside::FindSchema(std::string schemaName)
+{
+	list<CARSchema>::iterator schemaIter;		
+	for (schemaIter = schemaList.begin(); schemaIter != schemaList.end(); ++schemaIter)
+	{			
+		CARSchema *schema = &(*schemaIter);
+		if(schema->name.compare(schemaName)==0)
+		{
+			return schema;
+		}
+	}
+	return NULL;
+}
+
+CARField* CARInside::FindField(CARSchema* schema, int fieldId)
+{
+	if (schema == NULL) return NULL;
+
+	list<CARField>::iterator fieldIter;
+	for(fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); ++fieldIter)
+	{
+		CARField *field = &(*fieldIter);
+		if(field->fieldId == fieldId)
+		{
+			return field;
+		}
+	}
+	return NULL;
 }

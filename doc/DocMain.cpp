@@ -252,7 +252,12 @@ void CDocMain::ActiveLinkActionList(string fileName)
 		tbl.AddColumn(100, "Active Link Action (Items count if/else)");
 
 		//Search all possible action type
-		for(int nActionType=0; nActionType<19; nActionType++)
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+#define LAST_ACTIVE_LINK_ACTION 18
+#else
+#define LAST_ACTIVE_LINK_ACTION 17
+#endif
+		for(int nActionType=0; nActionType<=LAST_ACTIVE_LINK_ACTION; nActionType++)
 		{		
 			int nCountIf = 0;
 			int nCountElse = 0;

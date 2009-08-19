@@ -160,7 +160,9 @@ public:
 		case AR_OPROP_INTEGRITY_KEY: return "Integrity Key";
 		case AR_OPROP_NEXT_ID_BLOCK_SIZE: return "Next ID block size";
 		case AR_OPROP_GUIDE_PARAMETERS: return "Guide Parameters";
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_OPROP_CACHE_DISP_PROP: return "Cache Display Prop";
+#endif
 		case AR_DPROP_NONE: return "None";
 		case AR_DPROP_TRIM_TYPE: return "Trim Type";
 		case AR_DPROP_CNTL_TYPE: return "Control Type";
@@ -356,10 +358,12 @@ public:
 		case AR_DPROP_NAVBAR_INITIAL_SELECTED_ITEM: return "Navbar Initial Selected Item";
 		case AR_DPROP_NAVBAR_WORKFLOW_ON_SELECTED_ITEM : return "Bavbar Workflow on Selected Item";
 		case AR_DPROP_NAVBAR_SELECT_ITEM_ON_CLICK: return "Navbar Select Item on Click";
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_DPROP_BUTTON_ALT_TEXT: return "Button Alt Text";
 		case AR_DPROP_TABLE_USE_LOCALE: return "Use Locale";
 		case AR_DPROP_QUERY_LIST_BKG_COLOR: return "Query List Background Color";
 		case AR_DPROP_AUTO_MAXIMIZE_WINDOW: return "Auto Maximize Window";
+#endif
 		default: 
 #ifdef _DEBUG
 			stringstream tmpLabel; tmpLabel.str(""); tmpLabel << "Unknown (" << nType << ")"; return tmpLabel.str();
@@ -1279,7 +1283,9 @@ public:
 		case AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL: return "Go To Guide Label";
 		case AR_ACTIVE_LINK_ACTION_WAIT: return "Wait";
 		case AR_ACTIVE_LINK_ACTION_GOTOACTION: return "Goto";
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_ACTIVE_LINK_ACTION_SERVICE: return "Service";
+#endif
 		default: return EnumDefault;
 		}
 	}
@@ -1345,9 +1351,11 @@ public:
 		case AR_KEYWORD_SERVERTIMESTAMP: return "SERVERTIMESTAMP"; 
 		case AR_KEYWORD_GROUPIDS: return "GROUPIDS";
 		case AR_KEYWORD_EVENTDATA: return "EVENTDATA";
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_KEYWORD_ERRNO: return "ERRNO";
 		case AR_KEYWORD_ERRMSG: return "ERRMSG";
 		case AR_KEYWORD_ERRAPPENDMSG: return "ERRAPPENDMSG";
+#endif
 		default: return EnumDefault;
 		}
 	}
@@ -1832,6 +1840,7 @@ public:
 		case AR_SERVER_INFO_NEXT_ID_BLOCK_SIZE: return  "AR_SERVER_INFO_NEXT_ID_BLOCK_SIZE";
 		case AR_SERVER_INFO_NEXT_ID_COMMIT: return  "AR_SERVER_INFO_NEXT_ID_COMMIT";
 		case AR_SERVER_INFO_RPC_CLIENT_XDR_LIMIT: return  "AR_SERVER_INFO_RPC_CLIENT_XDR_LIMIT";
+#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_SERVER_INFO_CACHE_DISP_PROP: return  "AR_SERVER_INFO_CACHE_DISP_PROP";
 		case AR_SERVER_INFO_USE_CON_NAME_IN_STATS: return  "AR_SERVER_INFO_USE_CON_NAME_IN_STATS";
 		case AR_SERVER_INFO_DB_MAX_ATTACH_SIZE: return  "AR_SERVER_INFO_DB_MAX_ATTACH_SIZE";
@@ -1841,6 +1850,7 @@ public:
 		case AR_SERVER_INFO_ORACLE_BULK_FETCH_COUNT: return  "AR_SERVER_INFO_ORACLE_BULK_FETCH_COUNT";
 		case AR_SERVER_INFO_MINIMUM_CMDB_API_VER: return  "AR_SERVER_INFO_MINIMUM_CMDB_API_VER";
 		case AR_SERVER_INFO_PLUGIN_PORT: return  "AR_SERVER_INFO_PLUGIN_PORT";
+#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
 		case AR_SERVER_INFO_PLUGIN_LIST: return "AR_SERVER_INFO_PLUGIN_LIST";
 		case AR_SERVER_INFO_PLUGIN_PATH_LIST: return "AR_SERVER_INFO_PLUGIN_PATH_LIST";
 		case AR_SERVER_INFO_SHARED_LIB: return "AR_SERVER_INFO_SHARED_LIB";
@@ -1910,6 +1920,8 @@ public:
 		case AR_SERVER_INFO_PRELOAD_NUM_THREADS: return "AR_SERVER_INFO_PRELOAD_NUM_THREADS";
 		case AR_SERVER_INFO_PRELOAD_NUM_SCHEMA_SEGS: return "AR_SERVER_INFO_PRELOAD_NUM_SCHEMA_SEGS";
 		case AR_SERVER_INFO_PRELOAD_THREAD_INIT_ONLY: return "AR_SERVER_INFO_PRELOAD_THREAD_INIT_ONLY";
+#endif
+#endif
 		default: return EnumDefault;
 		}
 	}
@@ -1925,6 +1937,7 @@ public:
 		}
 	}
 
+#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
 	static string AuditChangedFields(int nType)
 	{
 		switch (nType)
@@ -1935,4 +1948,5 @@ public:
 		default: return EnumDefault;
 		}
 	}
+#endif
 };
