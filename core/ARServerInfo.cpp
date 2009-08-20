@@ -33,12 +33,22 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 	try
 	{
 		stringstream strm;
-
+		string serverVerStr = GetValue(AR_SERVER_INFO_VERSION);
+		
 		ARServerInfoRequestList requestList;
 		ARServerInfoList serverInfo;
 
-		requestList.numItems = 254;
-		//requestList.numItems = AR_MAX_SERVER_INFO_USED;
+		if (strcmp((serverVerStr.substr(0,3)).c_str(), "7.5")==0)
+			requestList.numItems = 323;
+		else if (strcmp((serverVerStr.substr(0,3)).c_str(), "7.1")==0)
+			requestList.numItems = 254;
+		else if (strcmp((serverVerStr.substr(0,5)).c_str(), "7.0.1")==0)
+			requestList.numItems = 246;
+		else if (strcmp((serverVerStr.substr(0,4)).c_str(), "6.03")==0)
+			requestList.numItems = 214;
+		else
+			cout << serverVerStr << endl;
+
 
 		requestList.requestList = (unsigned int *) malloc (sizeof(unsigned int)*requestList.numItems);
 		int infoProp = 1;

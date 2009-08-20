@@ -30,17 +30,17 @@ CDocFilterHelper::~CDocFilterHelper(void)
 
 void CDocFilterHelper::SetFieldsGetSecondaryForm(ARSetFieldsActionStruct sFieldStruct, string fromSchema, int rootLevel, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {	
-	bool bFieldAssignement = false;
+	bool bFieldAssignment = false;
 	for(unsigned int i=0; i < sFieldStruct.fieldList.numItems; i++)
 	{		
 		if(sFieldStruct.fieldList.fieldAssignList[i].assignment.assignType == AR_ASSIGN_TYPE_FIELD)
 		{
 			this->FieldAssignment(sFieldStruct.fieldList.fieldAssignList[i].assignment, fromSchema, rootLevel, strmSchema, strmSchemaDisplay, strmServer, strmQual, "Set Field");	
-			bFieldAssignement = true;
+			bFieldAssignment = true;
 		}	
 	}
 
-	if(!bFieldAssignement)
+	if(!bFieldAssignment)
 	{
 		for(unsigned int i=0; i < sFieldStruct.fieldList.numItems; i++)
 		{
@@ -276,13 +276,12 @@ void CDocFilterHelper::CheckAssignment(ARAssignStruct &assignment, string fromSc
 			break;
 		case AR_ASSIGN_TYPE_FILTER_API:
 			{
-				assignSchema.str("");
 				assignSchemaDisplay.str("");
 				assignServer.str("");
 				assignQual.str("");
 
 				assignSchema << fromSchema;
-				assignSchemaDisplay << "FILTER API";
+				assignSchemaDisplay << assignment.u.filterApi->serviceName;
 				assignServer << AR_CURRENT_SERVER_TAG;		
 			}
 			break;			

@@ -515,7 +515,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 
 	try
 	{
-		//Find the seconds form in the set fields assignemt
+		//Find the secondary form in the set fields assignemt
 		//Possible values: "", "*", "schemaName" 
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
 
@@ -535,42 +535,29 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 
 
 		//check if it is a webservice set fields
-		bool bFromWebservice = false;
-		if(strcmp(tmpDisplayName.c_str(), "FILTER API")==0)
+		if(strcmp(tmpDisplayName.c_str(), "ARSYS.ARF.WEBSERVICE")==0)
 		{
-			try
-			{
-				/*
-				if(action.fieldList.fieldAssignList[0].assignment.u.filterApi->serviceName != NULL && 
-				strcmp(action.fieldList.fieldAssignList[0].assignment.u.filterApi->serviceName, "ARSYS.ARF.WEBSERVICE")==0)
-				{
-				bFromWebservice = true;
-				}
-				*/
+			//cout << "NumItems: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems << endl;
+			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[0].u.value.u.charVal << endl;
+			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[1].u.value.u.charVal << endl;
+			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[2].u.value.u.charVal << endl;
+			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[3].u.value.u.charVal << endl;
+			cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal<< endl;
+			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal << endl;
+			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal << endl;
 
-				bFromWebservice = true;
-			}
-			catch(...)
-			{
-			}
-		}		
-
-		if(!bFromWebservice)
-		{
-			strm << "Read Value for Field from: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
+			strm << "Read Value for Field from: WEB SERVICE<br/>" << endl;
+			strm << "Service Name: " << action.fieldList.fieldAssignList->assignment.u.filterApi->serviceName << "<br/>" << endl;
+			strm << "WSDL Location: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value.u.charVal << "<br/>" << endl;
+			strm << "Web Service: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value.u.charVal << "<br/>" << endl;
+			strm << "Port: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value.u.charVal << "<br/>" << endl;
+			strm << "URI: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value.u.charVal << "<br/>" << endl;
+			strm << "URN: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value.u.charVal << "<br/>" << endl;
 		}
 		else
 		{
-			strm << "Read Value for Field from: WEB SERVICE<br/>" << endl;
-		}
+			strm << "Read Value for Field from: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
-		//Qualification
-		strm << qualification.str() << endl;
-
-
-
-		if(!bFromWebservice)
-		{
 			//All matching Ids?
 			string setFieldInfo = "Field Mapping";
 			for(unsigned int i= 0; i< action.fieldList.numItems; i++)
@@ -582,6 +569,9 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 					strm << this->AllMatchingIds(schemaName, tmpDisplayName, "Set Fields", nAction);
 				}
 			}
+
+			//Qualification
+			strm << qualification.str() << endl;
 
 			if(strcmp(setFieldInfo.c_str(), "Field Mapping") ==  0)
 			{
@@ -595,21 +585,6 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				strm << setFieldInfo << endl;
 			}
 		}
-		else //Webservice
-		{
-			try
-			{
-				if(action.fieldList.fieldAssignList[0].assignment.u.filterApi->serviceName != NULL)
-					strm << "Service Name: " << action.fieldList.fieldAssignList->assignment.u.filterApi->serviceName << "<br/>" << endl;
-				else
-					strm << "Service Name: " << "<br/>" << endl;
-
-			}
-			catch(...)
-			{
-			}
-		}
-
 	}
 	catch(...)
 	{
