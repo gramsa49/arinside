@@ -37,7 +37,9 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 		ARServerInfoRequestList requestList;
 		ARServerInfoList serverInfo;
 
+		//requestList.numItems = 254;
 		requestList.numItems = AR_MAX_SERVER_INFO_USED;
+
 		requestList.requestList = (unsigned int *) malloc (sizeof(unsigned int)*requestList.numItems);
 		int infoProp = 1;
 		for(unsigned int i=0; i < requestList.numItems; i++)
@@ -85,6 +87,10 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 					LOG << "Loading ServerInfo: " << CAREnum::ServerInfoApiCall(i+1) << "[OK]" << endl;
 				}
 			}
+		}
+		else
+		{
+			cerr << "Error Loading System Information properties" << endl;
 		}
 		delete requestList.requestList;
 		FreeARServerInfoList(&serverInfo, false);

@@ -6,7 +6,8 @@ ARInside is a commandline application that generates linked HTML pages to docume
 workflow. The program can be run in online mode connecting to an ARSystem server or file mode using an
 ARSystem Administrator generated XML server definition file. In advance a Packing List with all ARSystem
 server objects not to include in the documentation can be specified in the application configuration. ARInside
-is programmed and maintained by Stefan Nerlich (stefan.nerlich@gmx.com)
+was originally programmed by Stefan Nerlich (stefan.nerlich@gmx.com), but is now maintained as an open source
+GPL application available at www.arinside.com.
 
 
 ==================================================================
@@ -25,13 +26,15 @@ by the portmapper. This parameter is overridden by the ARTCPPORT environment var
 -r (integer) The RPC program number of the server. Specify 390600 to use the admin server, a number from
 390621 to 390634 or 390636 to 390669 or 390680-390694 to use a private server, or 0 (default) to use the
 fast or list server queue. This parameter is overridden by the ARRPC environment variable.
+-v Verbose, This parameter expands upon the base system output and gives you detailed actions performed
+by the system instead of just output headings
 
 Examples
 arinside.exe -s servername -l Demo -i settings.ini
 arinside.exe -l Demo -s servername -p mypassword -i settings.ini
-arinside.exe -p "my&password" -i settings.ini -s servername -l Demo
-arinside.exe -s servername -l Demo -i "my settings.ini“
-arinside.exe -s servername -l Demo -i "my settings.ini“ -t 1044 -r 390621
+arinside.exe -p "my&password" -i settings.ini -s servername -l Demo -v
+arinside.exe -s servername -l Demo -i "my settings.ini"
+arinside.exe -s servername -l Demo -i "my settings.ini" -t 1044 -r 390621
 
 Comments:
 - The order of the parameters is irrelevant
@@ -100,10 +103,10 @@ DeleteExistingFiles
  Data Retrieval
 
 LoadUserList
- Description: Load User data from ARSystem form „User“. Requires the following fields in the form:
+ Description: Load User data from ARSystem. Requires the following fields in the form:
  RequestId (1), LoginName (101), Email (103), GroupList (104), FullName (8), DefNotify (108), LicType
  (109), FtLicType (110), CreatedBy (2), Created (3), ModifiedBy (5), Modified (6)
- If this parameter is set to „FALSE“ no user data will be loaded.
+ If this parameter is set to "FALSE" no user data will be loaded.
  Type: Boolean
  Default value: TRUE
  Option: TRUE / FALSE
@@ -119,10 +122,10 @@ UserQuery
  Default value: '1'!=$NULL$
 
 LoadGroupList
- Description: Load Group data from ARSystem form „Group“. Requires the following fields in the form:
+ Description: Load Group data from ARSystem. Requires the following fields in the form:
  RequestId (1), GroupName (105), GroupId (106), GroupType (107), LongGroupName (8), CreatedBy (2),
  Created (3), ModifiedBy (5), Modified (6)
- If this parameter is set to “FALSE” no group data will be loaded.
+ If this parameter is set to "FALSE" no group data will be loaded.
  Type: Boolean
  Default value: TRUE
  Option: TRUE / FALSE
@@ -137,10 +140,10 @@ GroupForm
  Default value: '1'!=$NULL$
 
 LoadRoleList
- Description: Load Roles data from ARSystem form „Role“. Requires the following fields in the form:
+ Description: Load Roles data from ARSystem. Requires the following fields in the form:
  RequestId (1), ApplicationName (1700), RoleName (1701), RoleID (1702), GroupName Test (2001),
  GroupName Production (2002), CreatedBy (2), Created (3), ModifiedBy (5), Modified (6)
- If this parameter is set to “FALSE” no role data will be loaded.
+ If this parameter is set to "FALSE" no role data will be loaded.
  Type: Boolean
  Default value: TRUE
  Option: TRUE / FALSE
@@ -316,21 +319,18 @@ User visible changes for ARInside
 09-Nov-2006
  -Release of Version 1.02.0
 
+Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
 
+This file is part of ARInside.
 
-==================================================================
-Disclaimer
-==================================================================
-THIS SOFTWARE IS PROVIDED `AS IS' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
-INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
-FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE AUTHOR OR
-ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY,
-OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
-SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
-INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT,
-STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
-OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.THIS
-PROGRAM IS FREEWARE - YOU ARE ALLOWED TO SPREAD IT AS YOU WANT AS LONG AS YOU
-DONT CHARGE ANYTHIN FOR IT YOURSELF:
-ALL TRADEMARKS AND REGISTERED TRADEMARKS ARE THE PROPERTY OF THEIR RESPECTIVE
-OWNERS.
+    ARInside is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, version 2 of the License.
+
+    ARInside is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with Foobar.  If not, see <http:www.gnu.org/licenses/>.
