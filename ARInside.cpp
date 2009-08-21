@@ -204,13 +204,13 @@ void CARInside::LoadBlackList(void)
 			{
 				for(unsigned int i=0; i< obj.references.numItems; i ++)
 				{
-					if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
-					{
+					//if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
+					//{
 						CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
 
 						this->blackList.insert(blackList.end(), *blackListItem);
 						LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
-					}
+					//}
 				}
 			}		
 			else

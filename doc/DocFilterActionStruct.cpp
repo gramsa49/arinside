@@ -542,7 +542,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[1].u.value.u.charVal << endl;
 			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[2].u.value.u.charVal << endl;
 			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[3].u.value.u.charVal << endl;
-			cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal<< endl;
+			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal<< endl;
 			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal << endl;
 			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal << endl;
 
