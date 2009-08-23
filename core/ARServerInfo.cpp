@@ -33,31 +33,46 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 	try
 	{
 		stringstream strm;
-		string serverVerStr = GetValue(AR_SERVER_INFO_VERSION);
-		
+
 		ARServerInfoRequestList requestList;
 		ARServerInfoList serverInfo;
+		CARInside* pInside = CARInside::GetInstance();
 
-		if (strcmp((serverVerStr.substr(0,3)).c_str(), "7.5")==0)
-			requestList.numItems = 323;
-		else if (strcmp((serverVerStr.substr(0,3)).c_str(), "7.1")==0)
-			requestList.numItems = 254;
-		else if (strcmp((serverVerStr.substr(0,5)).c_str(), "7.0.1")==0)
-			requestList.numItems = 246;
-		else if (strcmp((serverVerStr.substr(0,4)).c_str(), "6.03")==0)
-			requestList.numItems = 214;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		if      (pInside->CompareServerVersion(7,5,0) >= 0) { requestList.numItems = 324; } else
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+		if      (pInside->CompareServerVersion(7,1,0) >= 0) { requestList.numItems = 255; } else
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_700
+		if      (pInside->CompareServerVersion(7,0,1) >= 0) { requestList.numItems = 247; }
+		else if (pInside->CompareServerVersion(7,0,0) >= 0) { requestList.numItems = 246; }
+		else if (pInside->CompareServerVersion(6,3,0) >= 0) { requestList.numItems = 215; }
+		else if (pInside->CompareServerVersion(6,0,0) >= 0) { requestList.numItems = 206; }
+		else if (pInside->CompareServerVersion(5,1,0) >= 0) { requestList.numItems = 184; }
+		else if (pInside->CompareServerVersion(4,5,1) >= 0) { requestList.numItems = 121; }
+#endif
 		else
-			cout << serverVerStr << endl;
+		{
+			cerr << "[ERROR] Unsupported server version: " << pInside->arServerVersion << endl;
+			return;
+		}
 
 
 		requestList.requestList = (unsigned int *) malloc (sizeof(unsigned int)*requestList.numItems);
 		int infoProp = 1;
 		for(unsigned int i=0; i < requestList.numItems; i++)
 		{
-			if (infoProp == 10)
-				infoProp++;
-
-			requestList.requestList[i] = infoProp;
+			switch (infoProp)
+			{
+			case AR_SERVER_INFO_DB_PASSWORD:
+				--requestList.numItems;
+				--i;
+				break;
+			default:
+				requestList.requestList[i] = infoProp;
+				break;
+			}
 			infoProp++;
 		}
 
@@ -100,7 +115,7 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 		}
 		else
 		{
-			cerr << "Error Loading System Information properties" << endl;
+			cerr << "Error Loading System Information properties:" << pInside->GetARStatusError(&arStatus);
 		}
 		delete requestList.requestList;
 		FreeARServerInfoList(&serverInfo, false);

@@ -256,11 +256,11 @@ string CARInside::GetARStatusError(ARStatusList* status)
 	{
 		for (unsigned int i = 0; i < status->numItems; i++)
 		{
-			const char* typeStr = returnTypes[min(this->arStatus.statusList[i].messageType,maxTypes)];
-			strm << "[" << typeStr << " " << this->arStatus.statusList[i].messageNum << "] ";
-			strm << this->arStatus.statusList[i].messageText << endl;
-			if (this->arStatus.statusList[i].appendedText != NULL) 
-				strm << "  " << this->arStatus.statusList[i].appendedText << endl;
+			const char* typeStr = returnTypes[min(status->statusList[i].messageType,maxTypes)];
+			strm << "[" << typeStr << " " << status->statusList[i].messageNum << "] ";
+			strm << status->statusList[i].messageText << endl;
+			if (status->statusList[i].appendedText != NULL) 
+				strm << "  " << status->statusList[i].appendedText << endl;
 		}
 	}
 
@@ -745,6 +745,11 @@ void CARInside::LoadFromFile(void)
 void CARInside::LoadFromServer(void)
 {
 	cout << endl << "Loading objects from server '" << appConfig.serverName << "'" << endl;
+
+	CARServerInfo srvInfo(this->arControl, this->arStatus);
+	arServerVersion = srvInfo.GetValue(AR_SERVER_INFO_VERSION);
+	cout << "server version: " << arServerVersion << endl;
+	ParseVersionString(arServerVersion);
 
 	//LoadServerInfoList	
 	if(appConfig.bLoadServerInfoList)
@@ -2919,4 +2924,72 @@ CARField* CARInside::FindField(CARSchema* schema, int fieldId)
 		}
 	}
 	return NULL;
+}
+
+void CARInside::ParseVersionString(string version)
+{
+	char ver[40];
+	int part = 0;
+
+	vMajor = 0;
+	vMinor = 0;
+	vRevision = 0;
+
+	unsigned int verPos=0;
+	unsigned int verStart=0;
+	for (; verPos < version.size(); ++verPos)
+	{
+		char c = version.at(verPos);
+		if (c >= '0' && c <= '9' ) 
+		{
+			ver[verPos] = c;
+			continue;
+		}
+		if (verPos > verStart)
+		{
+			ver[verPos] = 0;
+			int num = atoi(&ver[verStart]);
+			switch (part)
+			{
+			case 0:
+				vMajor = num;
+				break;
+			case 1:
+				vMinor = num;
+				break;
+			case 2:
+				vRevision = num;
+				break;
+			}
+			++part;
+			verStart = verPos + 1;
+		}
+		if (c != '.') break;
+	}
+	ver[verPos] = 0;
+}
+
+int CARInside::CompareServerVersion(int major, int minor, int revision)
+{
+	if (vMajor == major)
+	{
+		if (minor > -1)
+		{
+			if (vMinor == minor)
+			{
+				if (revision > -1)
+				{
+					 if (vRevision == revision) return 0;
+					 if (vRevision < revision) return -1;
+					 if (vRevision > revision) return 1;
+				}
+				return 0;
+			}
+			if (vMinor < minor) return -1;
+			if (vMinor > minor) return 1;
+		}
+		return 0;
+	}
+	if (vMajor < major) return -1;
+	/*if (vMajor > major)*/ return 1;
 }

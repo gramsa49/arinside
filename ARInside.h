@@ -48,6 +48,11 @@ public:
 	ARStatusList		arStatus;
 	AppConfig			appConfig;	
 
+	string				arServerVersion;
+	int					vMajor;
+	int					vMinor;
+	int					vRevision;
+
 	static CARInside* GetInstance();
 	
 	int Init(string user, string pw, string server, int port, int rpc);
@@ -124,6 +129,7 @@ public:
 	string ServerObjectHistory(CARServerObject *obj, int rootLevel);
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);
 	bool ValidateGroup(string appRefName, int permissionId);
+	int CompareServerVersion(int major, int minor = -1, int revision = -1);
 
 	float nDurationLoad;
 	float nDurationDocumentation;
@@ -160,4 +166,6 @@ private:
 	void SearchCustomFieldReferences();
 	void SearchFilterReferences();
 	void CustomFieldReferences(CARSchema &schema, CARField &obj);
+
+	void ParseVersionString(string version);
 };
