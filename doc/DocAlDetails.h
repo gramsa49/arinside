@@ -35,5 +35,6 @@ private:
 	string Permissions();
 	string ContainerReferences();
 	string CreateSpecific(string schemaName);
+	CARProplistHelper *props;
 
 };

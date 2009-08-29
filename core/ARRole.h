@@ -28,6 +28,7 @@ public:
 
 	string applicationName;
 	string roleName;
+	string comparableRoleName;
 	int roleId;
 
 	int testGroupId;

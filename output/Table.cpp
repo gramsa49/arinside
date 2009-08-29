@@ -88,7 +88,8 @@ string CTable::GetHtmlRows()
 {	
 	stringstream strm;
 	list<CTableRow>::iterator rowIter;
-	for ( rowIter = listRows.begin(); rowIter != listRows.end(); rowIter++ )
+	list<CTableRow>::iterator endIter = listRows.end();
+	for ( rowIter = listRows.begin(); rowIter != endIter; ++rowIter )
 	{	
 		CTableRow *rowItem = &(*rowIter);
 		strm << rowItem->ToXHtml() << endl;
@@ -181,7 +182,7 @@ string CTable::ToXHtml(string styleTag)
 		strm << " style=\"" << styleTag << "\"";
 	}
 
-	if(this->cssClass.length() == 0)
+	if(this->cssClass.empty())
 	{
 		strm << ">" << endl;
 	}

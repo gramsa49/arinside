@@ -55,76 +55,89 @@ CARActiveLink::~CARActiveLink(void)
 	}
 }
 
-string CARActiveLink::GetExecuteOn()
+/// Builds a ExecuteOn-string
+string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 {		
 	stringstream strm;
 	strm.str("");
+	bool strmHasContent = false; // use a local var to avoid use of 'strm.str().empty', because this make a copy of the string buffer evrytime
 
 	try
 	{		
-		if(executeMask==NULL)
+		typedef	struct ARInsideExecOnStruct {
+			unsigned int exec;
+			char        *text;
+		} ARInsideExecOnStruct;
+
+		const ARInsideExecOnStruct executeText[] = {
+			AR_EXECUTE_ON_BUTTON, "Button",
+			AR_EXECUTE_ON_RETURN, "Return",
+			AR_EXECUTE_ON_SUBMIT, "Submit",
+			AR_EXECUTE_ON_MODIFY, "Modify",
+			AR_EXECUTE_ON_DISPLAY, "Display",
+			//AR_EXECUTE_ON_MODIFY_ALL, "Modify All", // its now a $OPERATION$
+			//AR_EXECUTE_ON_MENU_OPEN, "OPEN",        // unsupported
+			AR_EXECUTE_ON_MENU_CHOICE, "Menu Choise",
+			AR_EXECUTE_ON_LOSE_FOCUS, "Loose Focus",
+			AR_EXECUTE_ON_SET_DEFAULT, "Set Default",
+			AR_EXECUTE_ON_QUERY, "Search",
+			AR_EXECUTE_ON_AFTER_MODIFY, "After Modify",
+			AR_EXECUTE_ON_AFTER_SUBMIT, "After Submit",
+			AR_EXECUTE_ON_GAIN_FOCUS, "Gain Focus",
+			AR_EXECUTE_ON_WINDOW_OPEN, "Window Open",
+			AR_EXECUTE_ON_WINDOW_CLOSE, "Window Close",
+			AR_EXECUTE_ON_UNDISPLAY, "Un-Display",
+			AR_EXECUTE_ON_COPY_SUBMIT, "Copy To New",
+			AR_EXECUTE_ON_LOADED, "Window Loaded",			
+			// AR_EXECUTE_ON_INTERVAL is obsolete; 7.5 handle this only as object property; 
+			// and older servers use this flag AND the object property. so its not needed 
+			// to check this at all
+			AR_EXECUTE_ON_EVENT, "Event",
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+			AR_EXECUTE_ON_TABLE_CONTENT_CHANGE, "Table Refresh",
+			AR_EXECUTE_ON_HOVER_FIELD_LABEL, "Hover On Label",
+			AR_EXECUTE_ON_HOVER_FIELD_DATA, "Hover On Data",
+			AR_EXECUTE_ON_HOVER_FIELD, "Hover On Field",
+			AR_EXECUTE_ON_PAGE_EXPAND, "Expand",
+			AR_EXECUTE_ON_PAGE_COLLAPSE, "Collapse",
+#endif
+			0,NULL
+		};
+
+		for (unsigned int k = 0; true; ++k)
+		{
+			if (executeText[k].exec == 0) break;
+
+			if ( (executeMask & executeText[k].exec) != 0)
+			{
+				if (!singleLine && strmHasContent) strm << "<br/>";
+				if (singleLine && strmHasContent) strm << ", ";
+				strm << executeText[k].text;
+				strmHasContent = true;
+			}
+		}
+		if (props != NULL)
+		{
+			// now check for special execution properties
+			ARValueStruct* val = props->GetAndUseValue(AR_OPROP_INTERVAL_VALUE);
+			if (val != NULL)
+				if (val->dataType == AR_DATA_TYPE_INTEGER)
+				{
+					if (!singleLine && strmHasContent) strm << "<br/>";
+					if (singleLine && strmHasContent) strm << ", ";
+					strm << "Interval";
+					if (!singleLine) strm << ": " << val->u.intVal;
+				}
+		}
+		if(!strmHasContent)
 		{
 			strm << "None";
-		}
-		else
-		{
-			unsigned int bitmask[19] = { 1, 1<<1, 1<<2, 1<<3, 1<<4, 1<<7, 1<<8, 1<<9, 1<<10, 1<<11, 1<<12, 1<<13, 1<<14, 1<<15, 1<<16, 1<<17, 1<<18, 1<<19, 1<<20 };
-			char executeText[19][30] = { "Button", "Return", "Submit", "Modify", "Display", "Menu Choice", "Loose Focus", "Set Default", "Search", "After Modify", "After Submit", "Gain Focus", "Window Open", "Window Close", "Undisplay", "Copy to New", "Loaded", "Interval", "Event"};
-
-			for (unsigned int k= 0; k < 19; k++)
-			{
-				if ( (executeMask & bitmask[k]) != 0)
-				{				
-					strm << executeText[k] << "<br/>";			
-				}
-			}
-
-			if(strm.str().size() > 5)
-			{
-				CUtil::CleanUpStream(strm, 5);
-			}
 		}
 	}
 	catch(...)
 	{
 		cout << "EXCEPTION in ActiveLink GetExecuteOn" << endl; 
-	}
-	return strm.str();
-}
-
-string CARActiveLink::GetExecuteOnEx()
-{		
-	stringstream strm;
-	strm.str("");
-
-	try
-	{		
-		if(executeMask==NULL)
-		{
-			strm << "None";
-		}
-		else
-		{
-			unsigned int bitmask[19] = { 1, 1<<1, 1<<2, 1<<3, 1<<4, 1<<7, 1<<8, 1<<9, 1<<10, 1<<11, 1<<12, 1<<13, 1<<14, 1<<15, 1<<16, 1<<17, 1<<18, 1<<19, 1<<20 };
-			char executeText[19][30] = { "Button", "Return", "Submit", "Modify", "Display", "Menu Choice", "Loose Focus", "Set Default", "Search", "After Modify", "After Submit", "Gain Focus", "Window Open", "Window Close", "Undisplay", "Copy to New", "Loaded", "Interval", "Event"};
-
-			for (unsigned int k= 0; k < 19; k++)
-			{
-				if ( (executeMask & bitmask[k]) != 0)
-				{				
-					strm << executeText[k] << ", ";			
-				}
-			}
-
-			if(strm.str().size() > 2)
-			{
-				CUtil::CleanUpStream(strm, 2);
-			}
-		}
-	}
-	catch(...)
-	{
-		cout << "EXCEPTION in ActiveLink GetExecuteOnEx" << endl; 
 	}
 	return strm.str();
 }

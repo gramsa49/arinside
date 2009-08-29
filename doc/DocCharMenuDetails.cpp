@@ -109,7 +109,7 @@ void CDocCharMenuDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pMenu->objPropList));
+			webPage.AddContent(CARProplistHelper::GetList(this->pMenu->objPropList));
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pMenu, this->rootLevel));

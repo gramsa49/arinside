@@ -48,6 +48,7 @@ public:
 	ARStatusList		arStatus;
 	AppConfig			appConfig;	
 
+	int					arXmlVersion;
 	string				arServerVersion;
 	int					vMajor;
 	int					vMinor;
@@ -107,8 +108,12 @@ public:
 	string LinkToContainer(string containerName, int rootLevel);
 	string LinkToAl(string alName, int rootLevel);
 	string LinkToAlRef(int alInsideId, int rootLevel);
+	string LinkToAlRef(string alName, int rootLevel);
+	string LinkToAlRef(CARActiveLink* al, int rootLevel);
 	string LinkToFilter(string filterName, int rootLevel);	
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
+	string LinkToFilterRef(string fltName, int rootLevel);	
+	string LinkToFilterRef(CARFilter* filter, int rootLevel);
 	string LinkToMenu(string menuName, int rootLevel);
 	string LinkToSchema(string schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
@@ -168,4 +173,5 @@ private:
 	void CustomFieldReferences(CARSchema &schema, CARField &obj);
 
 	void ParseVersionString(string version);
+	void ParseVersionString(int xmlVersion);
 };

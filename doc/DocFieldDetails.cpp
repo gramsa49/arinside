@@ -139,12 +139,13 @@ string CDocFieldDetails::WorkflowReferences()
 		tblRef.AddColumn(50, "Description");
 
 		list<CFieldRefItem>::iterator iter;
-		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )
+		list<CFieldRefItem>::iterator endIt = this->pInside->listFieldRefItem.end();
+		for ( iter = this->pInside->listFieldRefItem.begin(); iter != endIt; ++iter )
 		{	
 			CFieldRefItem *item = &(*iter);
 			if(item->schemaInsideId == this->pSchema->insideId && item->fieldInsideId == this->pField->insideId)
 			{			
-				if(strcmp(item->fromName.c_str(), EmptyValue.c_str())!=0)
+				if(item->fromName.compare(EmptyValue)!=0)
 				{
 					CTableRow row("cssStdRow");		
 					row.AddCell(CAREnum::XmlStructItem(item->arsStructItemType));				
@@ -153,7 +154,7 @@ string CDocFieldDetails::WorkflowReferences()
 					string tmpEnabled = this->pInside->XmlObjEnabled(item->arsStructItemType, item->fromName);
 					string tmpCssEnabled = "";
 
-					if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
+					if(tmpEnabled.compare("Disabled")==0)
 						tmpCssEnabled = "objStatusDisabled";
 
 					row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));

@@ -31,4 +31,6 @@ public:
 	int ftLicenseType;
 	int defNotify;
 	vector<string> groupList;
+
+	string comparableName;
 };

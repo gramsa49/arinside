@@ -84,7 +84,7 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 					CARGroup grp(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
 					grp.groupName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
 					grp.name = grp.groupName;
-
+					grp.comparableName = CUtil::String2Comp(grp.groupName);
 					grp.groupId   = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
 					grp.insideId  = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
 					grp.groupType	= values.entryList[row].entryValues->fieldValueList[3].value.u.intVal;
@@ -198,9 +198,7 @@ CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 
 bool CARDataFactory::SortGroupsByName(const CARGroup& t1, const CARGroup& t2 )
 {
-	string tmpStr1 = CUtil::String2Comp(t1.groupName.c_str());
-	string tmpStr2 = CUtil::String2Comp(t2.groupName.c_str());
-	return ( strcmp(tmpStr1.c_str(), tmpStr2.c_str()) < 0);
+	return t1.comparableName.compare(t2.comparableName) < 0;
 }
 
 void CARDataFactory::Sort(list<CARGroup> &listResult)
@@ -270,6 +268,7 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 					{
 						arUser.loginName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
 						arUser.name = arUser.loginName;
+						arUser.comparableName = CUtil::String2Comp(arUser.loginName);
 					}
 
 					if(values.entryList[row].entryValues->fieldValueList[2].value.u.charVal != NULL)
@@ -429,9 +428,7 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 
 bool CARDataFactory::SortUsersByName(const CARUser& t1, const CARUser& t2 )
 {
-	string tmpStr1 = CUtil::String2Comp(t1.loginName.c_str());
-	string tmpStr2 = CUtil::String2Comp(t2.loginName.c_str());
-	return ( strcmp(tmpStr1.c_str(), tmpStr2.c_str()) < 0);
+	return t1.comparableName.compare(t2.comparableName) < 0;
 }
 
 void CARDataFactory::Sort(list<CARUser> &listResult)
@@ -452,6 +449,26 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 		qualString = new char[appConfig.roleQuery.size() + 1];
 		strcpy(qualString, appConfig.roleQuery.c_str());
 
+		AREntryListFieldList fields;
+		AREntryListFieldValueList values;
+
+		fields.numItems = 10;
+		fields.fieldsList = new AREntryListFieldStruct[fields.numItems];
+		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
+
+		fields.fieldsList[0].fieldId = 1;		//RequestId
+		fields.fieldsList[1].fieldId = 1700;	//ApplicationName
+		fields.fieldsList[2].fieldId = 1701;	//RoleName
+		fields.fieldsList[3].fieldId = 1702;	//RoleID
+		fields.fieldsList[4].fieldId = 2001;	//GroupName Test
+		fields.fieldsList[5].fieldId = 2002;	//GroupName Production
+		fields.fieldsList[6].fieldId = 2;		//CreatedBy
+		fields.fieldsList[7].fieldId = 3;		//Created
+		fields.fieldsList[8].fieldId = 5;		//ModifiedBy
+		fields.fieldsList[9].fieldId = 6;		//Modified
+
+		for (unsigned int k=0; k<fields.numItems; ++k) { fields.fieldsList[k].columnWidth=1; fields.fieldsList[k].separator[0]='|'; }
+
 		if(ARLoadARQualifierStruct(this->pControl, 
 			schemaName,
 			NULL, 
@@ -459,38 +476,83 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 			&qualifier, 
 			this->pStatus) == AR_RETURN_OK)
 		{
-			unsigned int numMatches;
-			AREntryListList		entryList;	
-			if(ARGetListEntry(this->pControl,
+			if (ARGetListEntryWithFields(
+				this->pControl,
 				schemaName,
 				&qualifier,
-				NULL,
-				NULL,
-				AR_START_WITH_FIRST_ENTRY,
-				appConfig.maxRetrieve,
-				FALSE,
-				&entryList,
-				&numMatches,
-				this->pStatus) == AR_RETURN_OK)
+				&fields,
+				NULL,0,0,0,
+				&values,
+				0,this->pStatus) == AR_RETURN_OK)
 			{
-				if(entryList.entryList != NULL)
+				for (unsigned int row=0; row<values.numItems; ++row)
 				{
-					for(unsigned int i=0; i< entryList.numItems; i++)
+					if (values.entryList[row].entryValues->fieldValueList[0].value.u.charVal == NULL) continue;
+
+					CARRole role(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
+					role.insideId = row;
+
+					if(values.entryList[row].entryValues->fieldValueList[1].value.u.charVal != NULL)
+						role.applicationName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[2].value.u.charVal != NULL)
 					{
-						if(entryList.entryList[i].entryId.numItems >0)
-						{							
-							CARRole role = this->LoadRole(schemaName, entryList.entryList[i].entryId.entryIdList[0], i);
-							if(role.roleName != "")
-							{
-								listResult.push_back(role);
-							}							
-						}
+						role.roleName = values.entryList[row].entryValues->fieldValueList[2].value.u.charVal;
+						role.name = role.roleName;
+						role.comparableRoleName = role.roleName;
 					}
+
+					if(values.entryList[row].entryValues->fieldValueList[3].value.u.charVal != NULL)
+						role.roleId = values.entryList[row].entryValues->fieldValueList[3].value.u.intVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[4].value.u.charVal != NULL)
+					{
+						string tmp = values.entryList[row].entryValues->fieldValueList[4].value.u.charVal;
+
+						vector<string> tmpGroupList;
+						tmpGroupList.clear();
+
+						//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
+						CUtil::SplitString(tmp, tmpGroupList);
+
+						role.testGroupId = atoi(tmpGroupList[0].c_str());
+					}
+
+					if(values.entryList[row].entryValues->fieldValueList[5].value.u.charVal != NULL)
+					{
+						string tmp = values.entryList[row].entryValues->fieldValueList[5].value.u.charVal;
+
+						vector<string> tmpGroupList;
+						tmpGroupList.clear();
+
+						//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
+						CUtil::SplitString(tmp, tmpGroupList);
+
+
+						role.productionGroupId = atoi(tmpGroupList[0].c_str());
+					}
+
+					if(values.entryList[row].entryValues->fieldValueList[6].value.u.charVal != NULL)
+						role.createdBy = values.entryList[row].entryValues->fieldValueList[6].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[7].value.u.timeVal != NULL)
+						role.created = values.entryList[row].entryValues->fieldValueList[7].value.u.timeVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[8].value.u.charVal != NULL)
+						role.modifiedBy = values.entryList[row].entryValues->fieldValueList[8].value.u.charVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[9].value.u.timeVal != NULL)
+						role.modified = values.entryList[row].entryValues->fieldValueList[9].value.u.timeVal;
+
+					LOG << "Role '" << role.roleName <<"' [OK]" << endl;	
+
+					listResult.push_back(role);
 				}
+				FreeAREntryListFieldValueList(&values,false);
 			}
-			FreeAREntryListList(&entryList, false);
 		}
 
+		delete[] fields.fieldsList;
 		delete[] qualString;
 	}
 	catch(...)
@@ -499,6 +561,7 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 	}
 }
 
+// TODO: function currently unused
 CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int insideId)
 {	
 	CARRole *role = new CARRole(requestId);
@@ -542,6 +605,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 			{
 				role->roleName = fieldList.fieldValueList[2].value.u.charVal;
 				role->name = role->roleName;
+				role->comparableRoleName = role->roleName;
 			}
 
 			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
@@ -607,9 +671,7 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 
 bool CARDataFactory::SortRolesByName(const CARRole& t1, const CARRole& t2 )
 {
-	string tmpStr1 = CUtil::String2Comp(t1.roleName.c_str());
-	string tmpStr2 = CUtil::String2Comp(t2.roleName.c_str());
-	return ( strcmp(tmpStr1.c_str(), tmpStr2.c_str()) < 0);
+	return t1.comparableRoleName.compare(t2.comparableRoleName) < 0;
 }
 
 void CARDataFactory::Sort(list<CARRole> &listResult)

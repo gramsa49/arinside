@@ -83,7 +83,8 @@ string CTableRow::GetCells()
 {
 	stringstream strm;
 	list<CTableCell>::iterator cellIter;
-	for ( cellIter = listCells.begin(); cellIter != listCells.end(); cellIter++ )
+	list<CTableCell>::iterator endIter = listCells.end();
+	for ( cellIter = listCells.begin(); cellIter != endIter; ++cellIter )
 	{		
 		CTableCell *cell = &(*cellIter);
 		strm << cell->ToXHtml() << endl;
@@ -96,7 +97,7 @@ string CTableRow::ToXHtml()
 	stringstream strm;	
 	strm.str("");
 
-	if(this->cssClass.length() == 0)
+	if(this->cssClass.empty())
 	{
 		strm << "<tr>" << endl << this->GetCells() << "</tr>" << endl;
 	}

@@ -16,6 +16,7 @@
 
 #pragma once
 #include ".\arserverobject.h"
+#include "arproplisthelper.h"
 
 class CARActiveLink :
 	public CARServerObject
@@ -36,7 +37,6 @@ public:
 	ARActiveLinkActionList elseList;		
 	ARPropList objPropList;
 
-	string GetExecuteOn();
-	string GetExecuteOnEx();
+	string GetExecuteOn(bool singleLine=false, CARProplistHelper* props=NULL);
 	string GetURL(int rootLevel);
 };

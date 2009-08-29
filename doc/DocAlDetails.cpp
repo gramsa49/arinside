@@ -23,6 +23,7 @@ CDocAlDetails::CDocAlDetails(CARInside &arInside, CARActiveLink &arActiveLink, s
 	this->pAl = &arActiveLink;
 	this->path = path;
 	this->rootLevel = rootLevel;
+	this->props = NULL;
 }
 
 CDocAlDetails::~CDocAlDetails(void)
@@ -42,6 +43,9 @@ void CDocAlDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
+
+			// temp list to output only infos that arent already displayed
+			props = new CARProplistHelper(&pAl->objPropList);
 
 			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pAl->name);
 			if(this->pAl->appRefName.c_str() != NULL && this->pAl->appRefName.size() > 0)
@@ -76,7 +80,7 @@ void CDocAlDetails::Documentation()
 			//Execute On
 			row.ClearCells();
 			cellProp.content = "Execute On";
-			cellPropValue.content = this->pAl->GetExecuteOn();
+			cellPropValue.content = pAl->GetExecuteOn(false, props);
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
@@ -136,12 +140,15 @@ void CDocAlDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pAl->objPropList));
+			webPage.AddContent(props->UnusedPropertiesToHTML());
+			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pAl->objPropList));
 
 			//History		
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pAl, this->rootLevel));
 
 			webPage.SaveInFolder(path);
+
+			delete props; props = NULL;
 		}
 	}
 	catch(...)
@@ -288,3 +295,4 @@ string CDocAlDetails::CreateSpecific(string schemaName)
 
 	return pgStrm.str();
 }
+

@@ -29,6 +29,7 @@ CARGroup::CARGroup(string requestId)
 	this->groupType = 0;
 	this->groupName = "";
 	this->longGroupName = "";
+	this->comparableName = "";
 }
 
 CARGroup::~CARGroup(void)

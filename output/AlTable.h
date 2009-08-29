@@ -17,6 +17,7 @@
 #pragma once
 #include "..\arinside.h"
 #include ".\objecttable.h"
+#include "../doc/docaldetails.h"
 
 namespace OUTPUT
 {

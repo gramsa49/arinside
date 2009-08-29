@@ -17,7 +17,6 @@
 #pragma once
 #include "..\output\table.h"
 #include "..\output\tablerow.h"
-#include "..\arinside.h"
 
 using namespace OUTPUT;
 
@@ -27,7 +26,7 @@ public:
 	CARProplistHelper(ARPropList* propList);
 	~CARProplistHelper(void);
 
-	static string GetList(CARInside &arIn, ARPropList &objPropList);
+	static string GetList(ARPropList &objPropList);
 	static string GetLabel(ARULong32 nProp);
 	static string GetValue(ARULong32 nProp, ARValueStruct &arV);
 

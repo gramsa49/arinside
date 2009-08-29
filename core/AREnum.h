@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+#include "../arapi.h"
 
 #define EnumDefault "Unknown";
 
@@ -1404,9 +1405,14 @@ public:
 	{
 		switch(nType)
 		{
-		case 0: return "Note";
-		case 1: return "Warning";
-		case 2: return "Error";
+		case AR_RETURN_OK: return "Note";
+		case AR_RETURN_WARNING: return "Warning";
+		case AR_RETURN_ERROR: return "Error";
+		case AR_RETURN_PROMPT: return "Prompt";
+		case AR_RETURN_ACCESSIBLE: return "Accessible";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_RETURN_TOOLTIP: return "Tooltip";
+#endif
 		default: return EnumDefault;
 		}
 	}

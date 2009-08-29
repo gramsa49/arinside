@@ -84,6 +84,11 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->nDurationLoad = 0;
 	this->nDurationDocumentation = 0;
 
+	this->vMajor = 0;
+	this->vMinor = 0;
+	this->vRevision = 0;
+	this->arXmlVersion = 0;
+
 	if (CARInside::pInsideInstance == NULL) 
 		CARInside::pInsideInstance = this;
 }
@@ -264,7 +269,7 @@ string CARInside::GetARStatusError(ARStatusList* status)
 		}
 	}
 
-	FreeARStatusList(&this->arStatus, false);
+	FreeARStatusList(status, false);
 	return strm.str();
 }
 
@@ -355,17 +360,17 @@ void CARInside::Prepare(void)
 bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, CFieldRefItem &refItem)
 {
 	list<CFieldRefItem>::iterator iter;
+	list<CFieldRefItem>::iterator endIt = this->listFieldRefItem.end();
 	CFieldRefItem *item;
 
-	for ( iter = this->listFieldRefItem.begin(); iter != this->listFieldRefItem.end(); iter++ )
+	for ( iter = this->listFieldRefItem.begin(); iter != endIt; ++iter)
 	{	
 		item = &(*iter);
 		if(	item->fieldInsideId == fieldInsideId
 			&& item->schemaInsideId == schemaInsideId
 			&& item->arsStructItemType == refItem.arsStructItemType
-			&& strcmp(item->fromName.c_str(), refItem.fromName.c_str()) == 0
-			&& strcmp(item->description.c_str(), refItem.description.c_str()) == 0)
-
+			&& item->fromName.compare(refItem.fromName) == 0
+			&& item->description.compare(refItem.description) == 0)
 		{
 			return true;
 		}
@@ -459,6 +464,8 @@ void CARInside::LoadFromFile(void)
 							&obj->xmlDocVersion,
 							&this->arStatus) == AR_RETURN_OK)
 						{
+							ParseVersionString(obj->xmlDocVersion);
+
 							this->filterList.insert(this->filterList.end(), *obj);
 
 							LOG << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
@@ -505,6 +512,7 @@ void CARInside::LoadFromFile(void)
 							&schema->xmlDocVersion,
 							&this->arStatus) == AR_RETURN_OK)
 						{										
+							ParseVersionString(schema->xmlDocVersion);
 
 							//Fields
 							for(unsigned int nField = 0; nField < fieldInfoList.numItems; nField++)
@@ -610,6 +618,8 @@ void CARInside::LoadFromFile(void)
 #endif
 							&this->arStatus) == AR_RETURN_OK)
 						{
+							ParseVersionString(obj->xmlDocVersion);
+
 							this->alList.insert(this->alList.end(), *obj);
 
 							LOG << " (InsideID: " << arInsideIdAl << ") [OK]" << endl;
@@ -641,6 +651,8 @@ void CARInside::LoadFromFile(void)
 							&obj->xmlDocVersion,
 							&this->arStatus) == AR_RETURN_OK)
 						{
+							ParseVersionString(obj->xmlDocVersion);
+
 							this->menuList.insert(this->menuList.end(), *obj);
 
 							LOG << " (InsideID: " << arInsideIdMenu << ") [OK]" << endl;
@@ -676,6 +688,8 @@ void CARInside::LoadFromFile(void)
 							&obj->xmlDocVersion,
 							&this->arStatus) == AR_RETURN_OK)
 						{
+							ParseVersionString(obj->xmlDocVersion);
+
 							this->escalList.insert(this->escalList.end(), *obj);
 
 							LOG << " (InsideID: " << arInsideIdEscal << ") [OK]" << endl;
@@ -712,6 +726,8 @@ void CARInside::LoadFromFile(void)
 							&obj->xmlDocVersion,
 							&this->arStatus) == AR_RETURN_OK)
 						{
+							ParseVersionString(obj->xmlDocVersion);
+
 							this->containerList.insert(this->containerList.end(), *obj);
 
 							LOG << " (InsideID: " << arInsideIdCont << ") [OK]" << endl;
@@ -732,6 +748,8 @@ void CARInside::LoadFromFile(void)
 			cout << "An error occured parsing the xml document '" << appConfig.objListXML << "'" << endl;
 			cout << GetARStatusError();
 		}
+		if (!arServerVersion.empty())
+			cout << "server version: " << arServerVersion << endl;
 
 		FreeARXMLParsedStream(&parsedStream, false);
 		FreeARStatusList(&this->arStatus, false);
@@ -2097,25 +2115,47 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
 {		
 	list<CARActiveLink>::iterator alIter;	
-	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
+	list<CARActiveLink>::iterator endIt = this->alList.end();
+	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter)
 	{
 		CARActiveLink *al = &(*alIter);
-		if(al->insideId == alInsideId)
-		{
-			stringstream strmTmp;
-			strmTmp.str("");
-
-			strmTmp << CWebUtil::Link(al->name, CWebUtil::RootPath(rootLevel)+"active_link/"+al->FileID()+"/"+CWebUtil::DocName("index"), "active_link.gif", rootLevel) << " (" << al->order << ")";
-			return strmTmp.str();
-		}
+		if(al->insideId == alInsideId) 
+			return LinkToAlRef(al, rootLevel);
 	}
 	return EmptyValue;
 }
 
-string CARInside::LinkToAl(string alName, int fromRootLevel)
+string CARInside::LinkToAlRef(string alName, int rootLevel)
 {
 	list<CARActiveLink>::iterator alIter;	
-	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
+	list<CARActiveLink>::iterator endIt = this->alList.end();
+	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter)
+	{
+		CARActiveLink *al = &(*alIter);
+		if(al->name.compare(alName)==0) 
+			return LinkToAlRef(al, rootLevel);
+	}
+	return EmptyValue;
+}
+
+string CARInside::LinkToAlRef(CARActiveLink* al, int rootLevel)
+{
+	stringstream strmTmp;
+	strmTmp.str("");
+
+	if (al != NULL) 
+	{
+		strmTmp << al->GetURL(rootLevel) << " (" << al->order << ")";
+	}
+
+	return strmTmp.str();
+}
+
+string CARInside::LinkToAl(string alName, int fromRootLevel)
+{
+	list<CARActiveLink>::iterator alIter;
+	list<CARActiveLink>::iterator endIt = this->alList.end();
+	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter )
 	{
 		CARActiveLink *al = &(*alIter);
 		if(strcmp(alName.c_str(), al->name.c_str())==0)
@@ -2129,26 +2169,46 @@ string CARInside::LinkToAl(string alName, int fromRootLevel)
 
 string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
 {	
-	list<CARFilter>::iterator filterIter;	
-	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
+	list<CARFilter>::iterator filterIter;
+	list<CARFilter>::iterator endIt = this->filterList.end();
+	for ( filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter)
 	{	
 		CARFilter *filter = &(*filterIter);
 		if(filter->insideId == filterInsideId)
-		{
-			stringstream strmTmp;
-			strmTmp.str("");
-
-			strmTmp << CWebUtil::Link(filter->name, CWebUtil::RootPath(rootLevel)+"filter/"+filter->FileID()+"/"+CWebUtil::DocName("index"), "filter.gif", rootLevel) << " (" << filter->order << ")";
-			return strmTmp.str();
-		}
+			return LinkToFilterRef(filter, rootLevel);
 	}
 	return EmptyValue;
 }
 
+string CARInside::LinkToFilterRef(string fltName, int rootLevel)
+{	
+	list<CARFilter>::iterator filterIter;
+	list<CARFilter>::iterator endIt = this->filterList.end();
+	for (filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter)
+	{	
+		CARFilter *filter = &(*filterIter);
+		if(filter->name.compare(fltName)==0)
+			return LinkToFilterRef(filter, rootLevel);
+	}
+	return EmptyValue;
+}
+
+string CARInside::LinkToFilterRef(CARFilter* filter, int rootLevel)
+{
+	stringstream strmTmp;
+	strmTmp.str("");
+
+	if (filter != NULL)
+		strmTmp << filter->GetURL(rootLevel) << " (" << filter->order << ")";
+
+	return strmTmp.str();
+}
+
 string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 {
-	list<CARFilter>::iterator filterIter;	
-	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
+	list<CARFilter>::iterator filterIter;
+	list<CARFilter>::iterator endIt = this->filterList.end();
+	for ( filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter )
 	{	
 		CARFilter *filter = &(*filterIter);
 		if(strcmp(filterName.c_str(), filter->name.c_str())==0)
@@ -2161,11 +2221,12 @@ string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 
 string CARInside::LinkToMenu(string menuName, int fromRootLevel)
 {
-	list<CARCharMenu>::iterator menuIter;	
-	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ )
+	list<CARCharMenu>::iterator menuIter;
+	list<CARCharMenu>::iterator endIt = this->menuList.end();
+	for ( menuIter = this->menuList.begin(); menuIter != endIt; ++menuIter )
 	{	
 		CARCharMenu *menu = &(*menuIter);
-		if(strcmp(menuName.c_str(), menu->name.c_str())==0)
+		if(menuName.compare(menu->name) == 0)
 		{
 			return menu->GetURL(fromRootLevel);
 		}
@@ -2175,11 +2236,12 @@ string CARInside::LinkToMenu(string menuName, int fromRootLevel)
 
 string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
 {
-	list<CAREscalation>::iterator escalIter;	
-	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ )
+	list<CAREscalation>::iterator escalIter;
+	list<CAREscalation>::iterator endIt = this->escalList.end();
+	for ( escalIter = this->escalList.begin(); escalIter != endIt; ++escalIter )
 	{	
 		CAREscalation *escal = &(*escalIter);
-		if(strcmp(escalationName.c_str(), escal->name.c_str())==0)
+		if(escalationName.compare(escal->name) == 0)
 		{
 			return escal->GetURL(fromRootLevel);			
 		}
@@ -2190,10 +2252,11 @@ string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
 string CARInside::LinkToContainer(string containerName, int fromRootLevel)
 {
 	list<CARContainer>::iterator contIter;
-	for ( contIter = this->containerList.begin(); contIter != this->containerList.end(); contIter++ )
+	list<CARContainer>::iterator endIt = this->containerList.end();
+	for ( contIter = this->containerList.begin(); contIter != endIt; ++contIter )
 	{	
 		CARContainer *container = &(*contIter);
-		if(strcmp(containerName.c_str(), container->name.c_str())==0)
+		if(containerName.compare(container->name) == 0)
 		{			
 			return container->GetURL(fromRootLevel);
 		}
@@ -2230,12 +2293,12 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int ro
 	{
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
-			result = this->LinkToAlRef(AlGetInsideId(objName), rootLevel);
+			result = this->LinkToAlRef(objName, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_FILTER:
 		{
-			result = this->LinkToFilterRef(FilterGetInsideId(objName), rootLevel);
+			result = this->LinkToFilterRef(objName, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_SCHEMA:
@@ -2273,12 +2336,12 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
 			list<CARActiveLink>::iterator alIter;			
-			for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
+			for ( alIter = this->alList.begin(); alIter != this->alList.end(); ++alIter)
 			{	
 				CARActiveLink *al = &(*alIter);
-				if(strcmp(objName.c_str(), al->name.c_str())==0)
+				if(objName.compare(al->name) == 0)
 				{
-					result = CAREnum::ObjectEnable(al->enable);					
+					return CAREnum::ObjectEnable(al->enable);
 				}
 			}
 		}
@@ -2286,12 +2349,12 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 	case AR_STRUCT_ITEM_XML_FILTER:
 		{
 			list<CARFilter>::iterator filterIter;			
-			for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++ )
+			for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); ++filterIter)
 			{	
 				CARFilter *filter = &(*filterIter);
-				if(strcmp(objName.c_str(), filter->name.c_str())==0)
+				if(objName.compare(filter->name) == 0)
 				{
-					result = CAREnum::ObjectEnable(filter->enable);		
+					return CAREnum::ObjectEnable(filter->enable);
 				}
 			}
 		}
@@ -2299,12 +2362,12 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 	case AR_STRUCT_ITEM_XML_ESCALATION:
 		{
 			list<CAREscalation>::iterator escalIter;			
-			for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++ )
+			for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); ++escalIter)
 			{	
 				CAREscalation *escal = &(*escalIter);
-				if(strcmp(objName.c_str(), escal->name.c_str())==0)
+				if(objName.compare(escal->name)==0)
 				{
-					result = CAREnum::ObjectEnable(escal->enable);		
+					return CAREnum::ObjectEnable(escal->enable);
 				}
 			}
 		}
@@ -2967,6 +3030,60 @@ void CARInside::ParseVersionString(string version)
 		if (c != '.') break;
 	}
 	ver[verPos] = 0;
+}
+
+void CARInside::ParseVersionString(int xmlVersion)
+{
+	if (xmlVersion <= arXmlVersion) return;
+
+	if (xmlVersion >= AR_XML_VERSION_750)
+	{
+		arServerVersion = "7.5.00";
+		vMajor = 7; vMinor = 5; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_710)
+	{
+		arServerVersion = "7.1.00";
+		vMajor = 7; vMinor = 1; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_700)
+	{
+		arServerVersion = "7.0.00";
+		vMajor = 7; vMinor = 0; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_710)
+	{
+		arServerVersion = "7.1.00";
+		vMajor = 7; vMinor = 1; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_710)
+	{
+		arServerVersion = "7.1.00";
+		vMajor = 7; vMinor = 1; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_600)
+	{
+		// 6.0 and 6.3 use the same export version number. To show keywords
+		// and other things (in case of a 6.3 export file) correctly, the
+		// version is set to 6.3
+		arServerVersion = "6.03.00";
+		vMajor = 6; vMinor = 3; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_510)
+	{
+		arServerVersion = "5.1.00";
+		vMajor = 5; vMinor = 1; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_500)
+	{
+		arServerVersion = "5.0.00";
+		vMajor = 5; vMinor = 0; vRevision = 0;
+	}
+	else if (xmlVersion >= AR_XML_VERSION_450)
+	{
+		arServerVersion = "4.5.00";
+		vMajor = 4; vMinor = 5; vRevision = 0;
+	}
 }
 
 int CARInside::CompareServerVersion(int major, int minor, int revision)

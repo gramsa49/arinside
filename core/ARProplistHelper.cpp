@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
+#include "..\ARInside.h"
 #include ".\arproplisthelper.h"
 
 CARProplistHelper::CARProplistHelper(ARPropList* propList)
@@ -179,7 +180,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 }
 
 
-string CARProplistHelper::GetList(CARInside &arIn, ARPropList &objPropList)
+string CARProplistHelper::GetList(ARPropList &objPropList)
 {
 	stringstream strm;
 	strm.str("");

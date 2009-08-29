@@ -41,6 +41,7 @@ CAlTable::~CAlTable(void)
 
 void CAlTable::AddRow(CARActiveLink &al, int rootLevel)
 {
+	CARProplistHelper props(&al.objPropList);
 	CTableRow tblRow("");
 	tblRow.AddCell( CTableCell(al.GetURL(rootLevel)));
 
@@ -53,7 +54,7 @@ void CAlTable::AddRow(CARActiveLink &al, int rootLevel)
 	strmNumGroup << al.groupList.numItems;
 	tblRow.AddCell(	CTableCell(strmNumGroup.str(), ""));
 	tblRow.AddCell(	CTableCell(al.order));
-	tblRow.AddCell(	CTableCell(al.GetExecuteOnEx()));
+	tblRow.AddCell(	CTableCell(al.GetExecuteOn(true,&props)));
 	tblRow.AddCell(	CTableCell(al.actionList.numItems));
 	tblRow.AddCell(	CTableCell(al.elseList.numItems));
 	tblRow.AddCell(	CTableCell(CUtil::DateTimeToHTMLString(al.timestamp)));

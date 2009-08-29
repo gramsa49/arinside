@@ -28,6 +28,7 @@ CARUser::CARUser(string requestId)
 	this->ftLicenseType = 0;
 	this->defNotify = 0;
 	this->groupList.clear();
+	this->comparableName = "";
 }
 
 CARUser::~CARUser(void)

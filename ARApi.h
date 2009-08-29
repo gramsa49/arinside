@@ -31,10 +31,19 @@
 
 #define AR_API_VERSION_450 7
 #define AR_API_VERSION_500 8			// TODO: check this again !!
-#define AR_API_VERSION_510 9			// TODO: check this again !!
+#define AR_API_VERSION_510 9
 #define AR_API_VERSION_600 10
 #define AR_API_VERSION_630 11
 #define AR_API_VERSION_700 12
 #define AR_API_VERSION_710 13
 #define AR_API_VERSION_750 14
 
+// see AR_EXPORT_VERSION in arstruct.h for definition
+#define AR_XML_VERSION_450 5
+#define AR_XML_VERSION_500 6
+#define AR_XML_VERSION_510 7
+#define AR_XML_VERSION_600 8
+#define AR_XML_VERSION_630 8
+#define AR_XML_VERSION_700 9
+#define AR_XML_VERSION_710 10
+#define AR_XML_VERSION_750 11

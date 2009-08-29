@@ -118,7 +118,7 @@ void CDocEscalationDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pEscal->objPropList));
+			webPage.AddContent(CARProplistHelper::GetList(this->pEscal->objPropList));
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pEscal, this->rootLevel));

@@ -115,7 +115,7 @@ void CDocFilterDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pFilter->objPropList));
+			webPage.AddContent(CARProplistHelper::GetList(this->pFilter->objPropList));
 
 			// Workflow References
 			webPage.AddContent(this->WorkflowReferences());

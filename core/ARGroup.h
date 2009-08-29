@@ -29,4 +29,6 @@ public:
 	int groupType;
 	string groupName;
 	string longGroupName;
+
+	string comparableName;
 };
