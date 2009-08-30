@@ -444,9 +444,14 @@ void CDocMain::FilterActionList(string fileName)
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Filter Action (Items count if/else)");
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750 // Version 7.5 and higher
+#define LAST_FILTER_ACTION 12
+#else
+#define LAST_FILTER_ACTION 11
+#endif
 
 		//Search all possible actions
-		for(int nActionType=0; nActionType<11; nActionType++)
+		for(int nActionType=0; nActionType<=LAST_FILTER_ACTION; nActionType++)
 		{		
 			int nCountIf = 0;
 			int nCountElse = 0;
@@ -455,10 +460,11 @@ void CDocMain::FilterActionList(string fileName)
 			linkto << "index_action_" << nActionType;
 
 			//Search all filters
-			list<CARFilter>::iterator filterIter;		
+			list<CARFilter>::iterator filterIter = this->pInside->filterList.begin();
+			list<CARFilter>::iterator endIt = this->pInside->filterList.end();
 			CARFilter *filter;
 
-			for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
+			for ( ; filterIter != endIt; ++filterIter )
 			{	
 				filter = &(*filterIter);
 

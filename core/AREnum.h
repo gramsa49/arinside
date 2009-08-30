@@ -1397,6 +1397,9 @@ public:
 		case AR_FILTER_ACTION_CALLGUIDE: return "Call Guide";
 		case AR_FILTER_ACTION_EXITGUIDE: return "Exit Guide";
 		case AR_FILTER_ACTION_GOTOGUIDELABEL: return "Go To Guide Label";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_FILTER_ACTION_SERVICE: return "Service";
+#endif
 		default: return EnumDefault;
 		}
 	}

@@ -44,6 +44,7 @@ string CDocFilterActionStruct::Get(string ifElse, ARFilterActionList &actList)
 		tblListAction.AddColumn(5, "Position");	
 		tblListAction.AddColumn(15, "Action Type");
 		tblListAction.AddColumn(80, "Description");
+		this->ifElse = ifElse;
 
 		for(unsigned int nAction = 0; nAction < actList.numItems; nAction++)
 		{
@@ -128,6 +129,13 @@ string CDocFilterActionStruct::Get(string ifElse, ARFilterActionList &actList)
 					actionDesc << FilterActionGotoGuideLabel(action.u.gotoGuide, nAction);
 				}
 				break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+			case AR_FILTER_ACTION_SERVICE:
+				{
+					actionDesc << FilterActionService(action.u.serviceAction, nAction);
+				}
+				break;
+#endif
 			default:
 				{
 					actionDesc.str("");				
@@ -850,3 +858,85 @@ string CDocFilterActionStruct::FilterActionGotoGuideLabel(ARGotoGuideLabelStruct
 
 	return strm.str();
 }
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+// AR_FILTER_ACTION_SERVICE
+string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, int nAction)
+{
+	stringstream strm;
+	strm.str("");
+
+	try
+	{
+		// check for SAMPLE DATA
+		string serviceSchema;
+		if (action.serviceSchema[0] == '$' && action.sampleSchema[0] != 0)
+		{
+			int fieldId = atoi(&action.serviceSchema[1]);
+			serviceSchema = action.sampleSchema;
+			strm << "Sample Form: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << "<br/>" << endl;
+			strm << "Read Form From: " << "$" << arIn->LinkToField(action.sampleSchema, fieldId, rootLevel) << "$<br/>" << endl;
+
+			CFieldRefItem *refItem = new CFieldRefItem();
+			refItem->arsStructItemType = this->structItemType;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Used as Service Form in " << ifElse << "-Action " << nAction;
+			refItem->description = strmTmpDesc.str();
+
+			refItem->fromName = this->obj->name;
+			refItem->fieldInsideId = fieldId;
+			refItem->schemaInsideId = schemaInsideId;
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		else
+		{
+			serviceSchema = action.serviceSchema;
+			strm << "Service Form: " << arIn->LinkToSchema(action.serviceSchema, rootLevel) << "<br/>" << endl;
+		}
+
+		strm << "Request Id: ";
+		if (action.requestIdMap != NULL)
+		{
+			strm << arIn->LinkToField(schemaName, action.requestIdMap, rootLevel);
+			CFieldRefItem *refItem = new CFieldRefItem();
+			refItem->arsStructItemType = this->structItemType;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Service Request-Id " << ifElse << "-Action " << nAction;
+			refItem->description = strmTmpDesc.str();
+
+			refItem->fromName = this->obj->name;
+			refItem->fieldInsideId = action.requestIdMap;
+			refItem->schemaInsideId = schemaInsideId;
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		strm << "<br/>" << endl;
+
+
+		// input mapping
+		strm << "Input Mapping: "; if (action.inputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
+		if (action.inputFieldMapping.numItems > 0)
+		{
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, serviceSchema);
+			strm << assignHelper.ServiceAssignment(action.inputFieldMapping, nAction, ifElse, "Service Input Mapping");
+		}
+
+		// output mapping
+		strm << "Output Mapping: "; if (action.outputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
+		if (action.outputFieldMapping.numItems > 0)
+		{
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, serviceSchema);
+			strm << assignHelper.ServiceAssignment(action.outputFieldMapping, nAction, ifElse, "Service Output Mapping");
+		}
+	}
+	catch (...)
+	{
+		cout << "EXCEPTION in AlActionService: " << this->obj->name << endl;
+	}
+
+	return strm.str();
+}
+#endif

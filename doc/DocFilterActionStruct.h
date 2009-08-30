@@ -78,4 +78,9 @@ private:
 
 	// AR_FILTER_ACTION_GOTOGUIDELABEL
 	string FilterActionGotoGuideLabel(ARGotoGuideLabelStruct &action, int nAction);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	// AR_FILTER_ACTION_SERVICE
+	string FilterActionService(ARSvcActionStruct &action, int nAction);
+#endif
 };

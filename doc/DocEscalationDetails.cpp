@@ -38,6 +38,7 @@ void CDocEscalationDetails::Documentation()
 		{
 			stringstream pgStream;
 			CWebPage webPage("index", this->pEscal->name, this->rootLevel, this->pInside->appConfig);
+			CARProplistHelper props(&this->pEscal->objPropList);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -62,7 +63,25 @@ void CDocEscalationDetails::Documentation()
 			CTableCell cellPropValue(CAREnum::ObjectEnable(this->pEscal->enable), "");    
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
+			tblObjProp.AddRow(row);
+
+			// Pool for server version >= 7.1
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+			if (this->pInside->CompareServerVersion(7,1) >= 0)
+			{				
+				ARValueStruct* val = props.GetAndUseValue(AR_OPROP_POOL_NUMBER);
+				if (val != NULL)
+					cellPropValue.content = CARValue::ValueToString(*val);
+				else
+					cellPropValue.content = "";
+
+				row.ClearCells();
+				cellProp.content = "Pool Number";
+				row.AddCell(cellProp);
+				row.AddCell(cellPropValue);
+				tblObjProp.AddRow(row);
+			}
+#endif
 
 			//Time criteria
 			row.ClearCells();
@@ -118,7 +137,7 @@ void CDocEscalationDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(this->pEscal->objPropList));
+			webPage.AddContent(props.UnusedPropertiesToHTML());
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(this->pEscal, this->rootLevel));

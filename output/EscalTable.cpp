@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
+#include "../core/arvalue.h"
 #include ".\escaltable.h"
 
 using namespace OUTPUT;
@@ -26,6 +27,10 @@ CEscalTable::CEscalTable(CARInside &arIn)
 	tbl = new CTable("escalationList", "TblObjectList");
 	tbl->AddColumn(30, "Escalation Name");
 	tbl->AddColumn(10, "Enabled");
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+	if (pInside->CompareServerVersion(7, 1) >= 0)
+		tbl->AddColumn(5, "Pool");
+#endif
 	tbl->AddColumn(10, "ExecuteOn");
 	tbl->AddColumn(5, "If");
 	tbl->AddColumn(5, "Else");
@@ -42,10 +47,27 @@ void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 	CTableRow tblRow("");
 	tblRow.AddCell( CTableCell(escal.GetURL(rootLevel)));
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+	string escalPool;
+	if (pInside->CompareServerVersion(7, 1) >= 0)
+	{
+		CARProplistHelper props(&escal.objPropList);
+		ARValueStruct* val = props.GetValue(AR_OPROP_POOL_NUMBER);
+		if (val != NULL)
+			escalPool = CARValue::ValueToString(*val);
+		else
+			escalPool = "";
+	}
+#endif
+
 	string tmpCssEnabled = "";
 	if(escal.enable==0)
 		tmpCssEnabled = "objStatusDisabled";
 	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(escal.enable), tmpCssEnabled));
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+	if (pInside->CompareServerVersion(7, 1) >= 0)
+		tblRow.AddCell( CTableCell(escalPool));
+#endif
 	tblRow.AddCell( CTableCell(escal.GetExecuteOn()));
 	tblRow.AddCell( CTableCell(escal.actionList.numItems));
 	tblRow.AddCell( CTableCell(escal.elseList.numItems));
