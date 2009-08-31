@@ -119,7 +119,7 @@ void CDocCharMenuDetails::Documentation()
 	}
 	catch(...)
 	{
-		cout << "EXCEPTION char menu doc: " << this->pMenu->name << endl;
+		cout << "EXCEPTION Menu doc: " << this->pMenu->name << endl;
 	}
 }
 
@@ -157,7 +157,7 @@ string CDocCharMenuDetails::CharMenuDetails()
 	}
 	catch(...)
 	{
-		cout << "EXCEPTION char menu details doc: " << this->pMenu->name << endl;
+		cout << "EXCEPTION Menu details doc: " << this->pMenu->name << endl;
 	}
 
 

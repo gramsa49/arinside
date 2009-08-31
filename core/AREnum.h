@@ -900,7 +900,7 @@ public:
 		case ARREF_ESCALATION: return "Escalation";
 		case ARREF_ACTLINK: return "Active Link";
 		case ARREF_CONTAINER: return "Container";
-		case ARREF_CHAR_MENU: return "Char Menu";
+		case ARREF_CHAR_MENU: return "Menu";
 		case ARREF_LAST_SERVER_OBJ: return "LastServerObject";			
 		case ARREF_ICON: return "Icon";
 		case ARREF_SMALL_ICON: return "Small Icon";

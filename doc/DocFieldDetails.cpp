@@ -224,7 +224,7 @@ string CDocFieldDetails::FieldLimits()
 				ARCharLimitsStruct fLimit = this->pField->limit.u.charLimits;
 
 				if(fLimit.charMenu != NULL && !strcmp(fLimit.charMenu, "")==0)
-					strm << "Char Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel) << "<br/>" << endl;
+					strm << "Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel) << "<br/>" << endl;
 
 				strm << "Fulltext Option: " << CAREnum::FieldFTOption(fLimit.fullTextOptions) << "<br/>" << endl;
 				strm << "QBE Match: " << CAREnum::FieldQbeMatch(fLimit.qbeMatchOperation) << "<br/>" << endl;

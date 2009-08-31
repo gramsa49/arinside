@@ -551,16 +551,16 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[2].u.value.u.charVal << endl;
 			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[3].u.value.u.charVal << endl;
 			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal<< endl;
-			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal << endl;
-			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal << endl;
+			//cout << "Sub?: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value) << endl;
+			//cout << "Sub?: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value) << endl;
 
 			strm << "Read Value for Field from: WEB SERVICE<br/>" << endl;
 			strm << "Service Name: " << action.fieldList.fieldAssignList->assignment.u.filterApi->serviceName << "<br/>" << endl;
-			strm << "WSDL Location: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value.u.charVal << "<br/>" << endl;
-			strm << "Web Service: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value.u.charVal << "<br/>" << endl;
-			strm << "Port: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value.u.charVal << "<br/>" << endl;
-			strm << "URI: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value.u.charVal << "<br/>" << endl;
-			strm << "URN: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value.u.charVal << "<br/>" << endl;
+			strm << "WSDL Location: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) << "<br/>" << endl;
+			strm << "Web Service: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value) << "<br/>" << endl;
+			strm << "Port: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value) << "<br/>" << endl;
+			strm << "URI: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value) << "<br/>" << endl;
+			strm << "URN: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) << "<br/>" << endl;
 		}
 		else
 		{
