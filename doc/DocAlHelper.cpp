@@ -29,17 +29,18 @@ CDocAlHelper::~CDocAlHelper(void)
 
 void CDocAlHelper::SetFieldsGetSecondaryForm(ARSetFieldsActionStruct sFieldStruct, string fromSchema, int rootLevel, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {	
-	bool bFieldAssignement = false;
+	bool bFieldAssignment = false;
 	for(unsigned int i=0; i < sFieldStruct.fieldList.numItems; i++)
 	{		
 		if(sFieldStruct.fieldList.fieldAssignList[i].assignment.assignType == AR_ASSIGN_TYPE_FIELD)
 		{
-			this->FieldAssignement(sFieldStruct.fieldList.fieldAssignList[i].assignment, fromSchema, rootLevel, strmSchema, strmSchemaDisplay, strmServer, strmQual, "Set Field");	
-			bFieldAssignement = true;
+			this->FieldAssignment(sFieldStruct.fieldList.fieldAssignList[i].assignment, fromSchema, rootLevel, strmSchema, strmSchemaDisplay, strmServer, strmQual, "Set Field");	
+			bFieldAssignment = true;
+			break;
 		}	
 	}
 
-	if(!bFieldAssignement)
+	if(!bFieldAssignment)
 	{
 		for(unsigned int i=0; i < sFieldStruct.fieldList.numItems; i++)
 		{
@@ -48,7 +49,7 @@ void CDocAlHelper::SetFieldsGetSecondaryForm(ARSetFieldsActionStruct sFieldStruc
 	}
 }
 
-void CDocAlHelper::FieldAssignement(ARAssignStruct &assignment, string fromSchema, int rootLevel, stringstream &assignSchema, stringstream &assignSchemaDisplay, stringstream &assignServer, stringstream &assignQual, string refItemDesc)
+void CDocAlHelper::FieldAssignment(ARAssignStruct &assignment, string fromSchema, int rootLevel, stringstream &assignSchema, stringstream &assignSchemaDisplay, stringstream &assignServer, stringstream &assignQual, string refItemDesc)
 {	
 	try
 	{
@@ -250,7 +251,7 @@ void CDocAlHelper::CheckAssignment(ARAssignStruct &assignment, string fromSchema
 
 				assignSchema << AR_ASSIGN_SQL_SCHEMA_NAME;
 				assignSchemaDisplay << "SQL";
-				assignServer << AR_CURRENT_SERVER_TAG;
+				assignServer << assignment.u.sql->server;
 
 				assignQual << "<br/>SQL command<br/>" << endl;
 

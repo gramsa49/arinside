@@ -20,7 +20,7 @@ class CFieldRefItem
 {
 public:
 	CFieldRefItem();
-	CFieldRefItem(int arsStructItemType, string fromName, string description, int fieldInsideId, int schemaInisdeId);
+	CFieldRefItem(int arsStructItemType, string fromName, string description, int fieldInsideId, int schemaInsideId);
 	~CFieldRefItem(void);
 
 	int arsStructItemType;

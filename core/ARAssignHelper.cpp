@@ -510,14 +510,40 @@ void CARAssignHelper::AssignFunction(int targetFieldId, string ifElse, int nActi
 	{				
 		assignText << CAREnum::Function(v.functionCode) << "(";
 
-		for(unsigned int i=0; i< v.numItems; i++)
+		switch (v.functionCode)
 		{
-			if(i > 0)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_FUNCTION_HOVER:
 			{
-				assignText << " ,";
-			}
+				for(unsigned int i=0; i< v.numItems; ++i)
+				{
+					if(i > 0) assignText << ", ";
 
-			CheckAssignment(targetFieldId, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+					if (i == 0 && v.parameterList[i].assignType == AR_ASSIGN_TYPE_VALUE && v.parameterList[i].u.value.dataType == AR_DATA_TYPE_INTEGER)
+					{
+						stringstream desc; desc << "HOVER-Parameter in '"<< refItemDesc <<"' " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(this->objType, this->objName, desc.str(), v.parameterList[i].u.value.u.intVal, arIn->SchemaGetInsideId(this->schemaName1));
+						arIn->AddReferenceItem(&refItem);
+
+						assignText << arIn->LinkToField(this->schemaName1, v.parameterList[i].u.value.u.intVal, rootLevel);
+						continue;
+					}
+
+					CheckAssignment(targetFieldId, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+				}
+			}
+			break;
+#endif
+		default:
+			{
+				for(unsigned int i=0; i< v.numItems; ++i)
+				{
+					if(i > 0)	assignText << ", ";
+
+					CheckAssignment(targetFieldId, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+				}
+			}
+			break;
 		}
 		assignText << ")";
 	}

@@ -189,12 +189,12 @@ string CDocCharMenuDetails::SqlMenuDetails()
 
 	try
 	{
-		ARCharMenuSQLStruct menu = this->pMenu->menuDefn.u.menuSQL;
+		ARCharMenuSQLStruct *menu = &this->pMenu->menuDefn.u.menuSQL;
 
-		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-		strm << "Label Index List: " << menu.labelIndex << "<br/>" << endl;
-		strm << "Value Index: " << menu.valueIndex << "<br/><br/>" << endl;
-		strm << "SQL Command: " << menu.sqlCommand << endl;
+		strm << "Server: " << this->pInside->LinkToServerInfo(menu->server, rootLevel) << "<br/>" << endl;
+		strm << "Label Index List: " << GetSQLLabelList(menu) << "<br/>" << endl;
+		strm << "Value Index: " << menu->valueIndex << "<br/><br/>" << endl;
+		strm << "SQL Command: " << menu->sqlCommand << endl;
 	}
 	catch(...)
 	{
@@ -472,4 +472,23 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 	}
 
 	return tbl.ToXHtml();
+}
+
+string CDocCharMenuDetails::GetSQLLabelList(ARCharMenuSQLStruct *sqlMenu)
+{
+	stringstream strm;
+	char buffer[16];
+
+	if (sqlMenu == NULL) return "";
+
+	for (int k=0; k<5; ++k)
+	{
+		if (sqlMenu->labelIndex[k] == 0) break;
+		
+		if (k > 0) strm << ",";
+		_itoa(sqlMenu->labelIndex[k], buffer, 16);
+		strm << buffer;
+	}
+
+	return strm.str();
 }

@@ -128,6 +128,10 @@ public:
 		case AR_FUNCTION_SUBSTRC: return "SUBSTRC";
 		case AR_FUNCTION_ENCRYPT: return "ENCRYPT";
 		case AR_FUNCTION_DECRYPT: return "DECRYPT";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_FUNCTION_HOVER: return "HOVER";
+		case AR_FUNCTION_TEMPLATE: return "TEMPLATE";
+#endif
 		default: return EnumDefault;
 		}
 	}
