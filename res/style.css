@@ -321,3 +321,9 @@ iframe.tabContent {
 #tblDocSummary{
 	width: 50%;
 }
+
+p 
+{
+    margin-top: 0px;
+    margin-bottom: 6px;
+}

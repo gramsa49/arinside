@@ -868,25 +868,19 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 
 	try
 	{
+		strm << "<p>";
 		// check for SAMPLE DATA
 		string serviceSchema;
 		if (action.serviceSchema[0] == '$' && action.sampleSchema[0] != 0)
 		{
 			int fieldId = atoi(&action.serviceSchema[1]);
 			serviceSchema = action.sampleSchema;
-			strm << "Sample Form: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << "<br/>" << endl;
-			strm << "Read Form From: " << "$" << arIn->LinkToField(action.sampleSchema, fieldId, rootLevel) << "$<br/>" << endl;
-
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->structItemType;
+			strm << "Service Form: " << "$" << arIn->LinkToField(this->schemaName, fieldId, rootLevel) << "$ (Sample Form: " << arIn->LinkToSchema(serviceSchema, rootLevel) << ")<br/>" << endl;
 
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Used as Service Form in " << ifElse << "-Action " << nAction;
-			refItem->description = strmTmpDesc.str();
 
-			refItem->fromName = this->obj->name;
-			refItem->fieldInsideId = fieldId;
-			refItem->schemaInsideId = schemaInsideId;
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
@@ -900,27 +894,22 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		if (action.requestIdMap != NULL)
 		{
 			strm << arIn->LinkToField(schemaName, action.requestIdMap, rootLevel);
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->structItemType;
 
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Service Request-Id " << ifElse << "-Action " << nAction;
-			refItem->description = strmTmpDesc.str();
 
-			refItem->fromName = this->obj->name;
-			refItem->fieldInsideId = action.requestIdMap;
-			refItem->schemaInsideId = schemaInsideId;
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.requestIdMap, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
-		strm << "<br/>" << endl;
+		strm << "</p>" << endl;
 
 
 		// input mapping
 		strm << "Input Mapping: "; if (action.inputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.inputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, serviceSchema);
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, serviceSchema, schemaName);
 			strm << assignHelper.ServiceAssignment(action.inputFieldMapping, nAction, ifElse, "Service Input Mapping");
 		}
 
@@ -934,7 +923,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 	}
 	catch (...)
 	{
-		cout << "EXCEPTION in AlActionService: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionService: " << this->obj->name << endl;
 	}
 
 	return strm.str();

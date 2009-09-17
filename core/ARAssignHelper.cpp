@@ -238,12 +238,7 @@ string CARAssignHelper::ServiceAssignment(ARFieldAssignList &action, int nAction
 			//Add a reference to the target field 
 			stringstream desc;
 			desc << "Target in '" << serviceInfo << "' " << ifElse << "-Action " << nAction;
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->objType;
-			refItem->description = desc.str();
-			refItem->fromName = this->objName;	
-			refItem->fieldInsideId = nTargetFieldId;
-			refItem->schemaInsideId = this->schemaInsideId2;
+			CFieldRefItem *refItem = new CFieldRefItem(this->objType, this->objName, desc.str(), nTargetFieldId, this->schemaInsideId1);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
 
@@ -251,7 +246,7 @@ string CARAssignHelper::ServiceAssignment(ARFieldAssignList &action, int nAction
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, serviceInfo);
 
 			CTableRow row("cssStdRow");
-			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
+			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
 			tblFieldList.AddRow(row);	
 		}

@@ -1228,42 +1228,70 @@ string CDocAlActionStruct::ActionGotoAction(ARGotoActionStruct &action, int nAct
 	return strm.str();
 }
 
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 // AR_ACTIVE_LINK_ACTION_SERVICE
 string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, int nAction)
 {
 	stringstream strm;
 	strm.str("");
+	string serviceServer;
+	string serviceSchema;
 
 	try
 	{
-		strm << "Server Name: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
-		strm << "Service Form: " << arIn->LinkToSchema(action.serviceSchema, rootLevel) << "<br/>" << endl;
+		strm << "<p>";
+		// check for sample data for the server part
+		if (action.serverName[0] == '$' && action.sampleServer[0] != 0)
+		{
+			int fieldId = atoi(&action.serverName[1]);
+			serviceServer = action.sampleServer;			
+			strm << "Server Name: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$ (Sample Server: " << arIn->LinkToServerInfo(action.sampleServer, rootLevel) << ")<br/>" << endl;
+		}
+		else
+		{
+			serviceServer = action.serverName;
+			strm << "Server Name: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
+		}
+
+		if (action.serviceSchema[0] == '$' && action.sampleSchema[0] != 0)
+		{
+			int fieldId = atoi(&action.serviceSchema[1]);
+			serviceSchema = action.sampleSchema;
+			//strm << "Sample Form: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << "<br/>" << endl;
+			strm << "Service Form: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$ (Sample Form: " << arIn->LinkToSchema(serviceSchema, rootLevel) << ")<br/>" << endl;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Used as Service Form in " << ifElse << "-Action " << nAction;
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		else
+		{
+			serviceSchema = action.serviceSchema;
+			strm << "Service Form: " << arIn->LinkToSchema(action.serviceSchema, rootLevel) << "<br/>" << endl;
+		}
 
 		strm << "Request Id: ";
 		if (action.requestIdMap != NULL)
 		{
 			strm << arIn->LinkToField(schemaName, action.requestIdMap, rootLevel);
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->structItemType;
-
+			
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Service Request-Id " << ifElse << "-Action " << nAction;
-			refItem->description = strmTmpDesc.str();
 
-			refItem->fromName = this->obj->name;
-			refItem->fieldInsideId = action.requestIdMap;
-			refItem->schemaInsideId = schemaInsideId;
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.requestIdMap, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
-		strm << "<br/>" << endl;
+		strm << "</p>" << endl;
 
 		// input mapping
 		strm << "Input Mapping: "; if (action.inputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.inputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, action.serviceSchema);
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, serviceSchema, schemaName);
 			strm << assignHelper.ServiceAssignment(action.inputFieldMapping, nAction, ifElse, "Service Input Mapping");
 		}
 
@@ -1271,7 +1299,7 @@ string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, in
 		strm << "Output Mapping: "; if (action.outputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.outputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, action.serviceSchema);
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, serviceSchema);
 			strm << assignHelper.ServiceAssignment(action.outputFieldMapping, nAction, ifElse, "Service Output Mapping");
 		}
 	}
