@@ -785,22 +785,34 @@ string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, 
 
 	try
 	{
-		if(action.serverName != NULL)
-			strm << "Server: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
+		//if(action.serverName != NULL)
+		//	strm << "Server: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
+	
+		if (action.guideName[0] == '$' /*&& action.sampleGuide[0] != 0*/)
+		{
+			int fieldId = atoi(&action.guideName[1]);
+			strm << "Guide: $" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$<br/>" << endl;
 
-		if(action.guideName != NULL)
+			stringstream tmpDesc;
+			tmpDesc << "Used as Guide Name in " << ifElse << "-Action " << nAction;
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, tmpDesc.str(), fieldId, this->schemaInsideId);
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		else 
+		{
 			strm << "Guide: " << arIn->LinkToContainer(action.guideName, rootLevel) << "<br/>" << endl;
+		}
 
 		if(action.guideTableId > 0)
 		{
 			strm << "Table Loop: " << arIn->LinkToField(schemaInsideId, action.guideTableId, rootLevel) << "<br/>" << endl;
 
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->structItemType;
-			refItem->description = "Guide Table Loop";
-			refItem->fromName = this->obj->name;	
-			refItem->fieldInsideId = action.guideTableId;
-			refItem->schemaInsideId = schemaInsideId;
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Guide Table Loop " << ifElse << "-Action " << nAction;
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.guideTableId, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}

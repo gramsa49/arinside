@@ -1094,8 +1094,39 @@ string CDocAlActionStruct::ActionCallGuide(ARCallGuideStruct &action, int nActio
 
 	try
 	{
-		strm << "Server: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
-		strm << "Guide: " << arIn->LinkToContainer(action.guideName, rootLevel) << "<br/>" << endl;
+		if (action.serverName[0] == '$' /*&& action.sampleServer[0] != 0*/)
+		{
+			int fieldId = atoi(&action.serverName[1]);
+			strm << "Server: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$<br/>" << endl;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Used as CallGuide Server in " << ifElse << "-Action " << nAction;
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		else
+		{
+			strm << "Server : " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
+		}
+
+		if (action.guideName[0] == '$' /*&& action.sampleGuide[0] != 0*/)
+		{
+			int fieldId = atoi(&action.guideName[1]);
+			strm << "Guide: $" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$<br/>" << endl;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Used as CallGuide Name in " << ifElse << "-Action " << nAction;
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
+		}
+		else
+		{
+			strm << "Guide: " << arIn->LinkToContainer(action.guideName, rootLevel) << "<br/>" << endl;
+		}
 
 		if(action.guideTableId > 0)
 		{
@@ -1106,16 +1137,10 @@ string CDocAlActionStruct::ActionCallGuide(ARCallGuideStruct &action, int nActio
 			else
 				strm << "<input type=\"checkbox\" name=\"tblLoopInGuide\" value=\"loopTbl\">Table Loop Selected Rows Only" << endl;
 
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->structItemType;
-
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Guide Table Loop " << ifElse << "-Action " << nAction;
-			refItem->description = strmTmpDesc.str();
 
-			refItem->fromName = this->obj->name;	
-			refItem->fieldInsideId = action.guideTableId;
-			refItem->schemaInsideId = schemaInsideId;
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.guideTableId, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
@@ -1246,6 +1271,13 @@ string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, in
 			int fieldId = atoi(&action.serverName[1]);
 			serviceServer = action.sampleServer;			
 			strm << "Server Name: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$ (Sample Server: " << arIn->LinkToServerInfo(action.sampleServer, rootLevel) << ")<br/>" << endl;
+
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Used as Service Server in " << ifElse << "-Action " << nAction;
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+			arIn->AddReferenceItem(refItem);
+			delete refItem;
 		}
 		else
 		{
