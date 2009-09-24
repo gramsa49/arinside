@@ -1958,10 +1958,11 @@ string CARInside::LinkToSchema(string schemaName, int fromRootLevel)
 int CARInside::SchemaGetInsideId(string searchObjName)
 {
 	list<CARSchema>::iterator iter;			
-	for ( iter = schemaList.begin(); iter != schemaList.end(); iter++ )
+	list<CARSchema>::iterator endIt = schemaList.end();
+	for ( iter = schemaList.begin(); iter != endIt; ++iter )
 	{			
 		CARSchema *obj = &(*iter);
-		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
+		if(obj->name.compare(searchObjName)==0)
 		{
 			return obj->insideId;
 		}
@@ -2219,7 +2220,7 @@ string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 	return filterName;
 }
 
-string CARInside::LinkToMenu(string menuName, int fromRootLevel)
+string CARInside::LinkToMenu(string menuName, int fromRootLevel, bool* bFound)
 {
 	list<CARCharMenu>::iterator menuIter;
 	list<CARCharMenu>::iterator endIt = this->menuList.end();
@@ -2228,10 +2229,17 @@ string CARInside::LinkToMenu(string menuName, int fromRootLevel)
 		CARCharMenu *menu = &(*menuIter);
 		if(menuName.compare(menu->name) == 0)
 		{
+			if (bFound) { *bFound = true; }
 			return menu->GetURL(fromRootLevel);
 		}
 	}
-	return EmptyValue;
+
+	//Menu has not been found
+	if (bFound) { *bFound = false; }
+
+	//if the menu is missing, we just return the name of it. maybe link to the
+	//"missing menus" page (must be implemented first) of CDocValidator later.
+	return "<span class=\"fieldNotFound\">" + menuName + "</span>";
 }
 
 string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
@@ -2518,6 +2526,28 @@ void CARInside::AddReferenceItem(CFieldRefItem *refItem)
 	catch(...)
 	{
 		cout << "EXCEPTION AddReferenceItem" << endl;
+	}
+}
+
+void CARInside::AddMissingMenu(const CMissingMenuRefItem& refItem)
+{
+	try
+	{
+		list<CMissingMenuRefItem>::iterator mIter = listMenuNotFound.begin();
+		list<CMissingMenuRefItem>::iterator endIt = listMenuNotFound.end();
+		for ( ; mIter != endIt; ++mIter)
+		{
+			CMissingMenuRefItem current = *mIter;
+			if (current == refItem)
+			{
+				return;
+			}
+		}
+		listMenuNotFound.push_back(refItem);
+	}
+	catch (...)
+	{
+		cout << "EXCEPTION in AddMissingMenu" << endl;
 	}
 }
 

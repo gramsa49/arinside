@@ -51,11 +51,16 @@ void CDocValidator::Main()
 			//this->FieldReferenceValidator();
 
 			//Field reference check
-			webPage.AddContent("Missing fields (Workflow references):<br/>");
+			webPage.AddContent("Missing Objects referenced by Workflow:<br/>");
 			cout << "Field reference validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Field references", CWebUtil::DocName("validation_field_references"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Fields", CWebUtil::DocName("validation_field_references"), "doc.gif", rootLevel, true));
 			this->FieldReferenceValidator();
+			webPage.AddContent("<br/>");
 
+			//Menu reference check
+			cout << "Menu reference validation" << endl;
+			webPage.AddContent(CWebUtil::Link("Menus", CWebUtil::DocName("validation_menu_references"), "doc.gif", rootLevel, true));
+			this->MenuReferenceValidator();
 
 			//Group permission check
 			webPage.AddContent("<br/><br/>List of server objects with no specified access groups:<br/>");
@@ -512,4 +517,78 @@ int CDocValidator::NumReferences(int searchSchemaId, int searchFieldId)
 	}
 
 	return nResult;
+}
+
+void CDocValidator::MenuReferenceValidator()
+{
+	try
+	{
+		CWindowsUtil winUtil(this->pInside->appConfig);
+		if(winUtil.CreateSubDirectory(this->path)>=0)
+		{
+			stringstream pgStream;
+			CWebPage webPage("validation_menu_references", "Menu validator", rootLevel, this->pInside->appConfig);
+
+			//ContentHead informations
+			stringstream contHeadStrm;
+			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << "List of missing menus that are referenced in ARSystem workflow:" << endl;
+			webPage.AddContentHead(contHeadStrm.str());
+
+			if (pInside->listMenuNotFound.size() > 0)
+			{
+				pInside->listMenuNotFound.sort();
+
+				CTable tbl("missingMenus", "TblObjectList");
+				tbl.AddColumn(40, "Menu Name");
+				tbl.AddColumn(10, "Object Type");
+				tbl.AddColumn(40, "Server object");
+				tbl.AddColumn(10, "Details");
+
+				list<CMissingMenuRefItem>::iterator mIter = pInside->listMenuNotFound.begin();
+				list<CMissingMenuRefItem>::iterator endIt = pInside->listMenuNotFound.end();
+
+				for ( ; mIter != endIt; ++mIter)
+				{
+					CMissingMenuRefItem mnuRefItem = *mIter;
+					CTableRow row("cssStdRow");
+
+					string tmpEnabled = pInside->XmlObjEnabled(mnuRefItem.arsStructItemType, mnuRefItem.fromName);
+					string tmpCssClass = "";
+
+					if (tmpEnabled.compare("Disabled")==0)
+						tmpCssClass = "objStatusDisabled";
+
+					row.AddCell(mnuRefItem.menuName);				
+					row.AddCell(CAREnum::XmlStructItem(mnuRefItem.arsStructItemType));
+
+					if (mnuRefItem.arsStructItemType == AR_STRUCT_ITEM_XML_FIELD)
+					{
+						row.AddCell(pInside->LinkToField(mnuRefItem.schemaInsideId, mnuRefItem.fieldInsideId, rootLevel));
+						row.AddCell(pInside->LinkToSchema(mnuRefItem.schemaInsideId, rootLevel));
+					}
+					else
+					{
+						row.AddCell(pInside->LinkToXmlObjType(mnuRefItem.arsStructItemType, mnuRefItem.fromName, rootLevel));
+						row.AddCell(CTableCell(tmpEnabled, tmpCssClass));
+					}
+
+					
+					tbl.AddRow(row);
+				}
+				webPage.AddContent(tbl.ToXHtml());
+				tbl.ClearRows();
+			}
+			else
+			{
+				webPage.AddContent("Integrity check found no missing menus in workflow.");
+			}
+
+			webPage.SaveInFolder(this->path);	
+		}
+	}
+	catch (...)
+	{
+		cout << "EXCEPTION in MenuReferenceValidator" << endl;
+	}
 }

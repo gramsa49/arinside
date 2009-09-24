@@ -1392,11 +1392,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Util\MenuRefItem.cpp"
+				RelativePath=".\Util\MissingMenuRefItem.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\Util\MenuRefItem.h"
+				RelativePath=".\Util\MissingMenuRefItem.h"
 				>
 			</File>
 			<File

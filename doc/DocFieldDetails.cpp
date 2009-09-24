@@ -223,8 +223,17 @@ string CDocFieldDetails::FieldLimits()
 			{
 				ARCharLimitsStruct fLimit = this->pField->limit.u.charLimits;
 
-				if(fLimit.charMenu != NULL && !strcmp(fLimit.charMenu, "")==0)
-					strm << "Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel) << "<br/>" << endl;
+				if(fLimit.charMenu[0] != 0)
+				{
+					bool menuFound = false;
+					strm << "Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel, &menuFound) << "<br/>" << endl;
+
+					if (!menuFound)
+					{
+						CMissingMenuRefItem refItemNotFound(fLimit.charMenu, AR_STRUCT_ITEM_XML_FIELD, this->pSchema->insideId, this->pField->insideId);
+						pInside->AddMissingMenu(refItemNotFound);
+					}
+				}
 
 				strm << "Fulltext Option: " << CAREnum::FieldFTOption(fLimit.fullTextOptions) << "<br/>" << endl;
 				strm << "QBE Match: " << CAREnum::FieldQbeMatch(fLimit.qbeMatchOperation) << "<br/>" << endl;

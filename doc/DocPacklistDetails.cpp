@@ -135,8 +135,15 @@ string CDocPacklistDetails::PackListInformation()
 				break;
 			case ARREF_CHAR_MENU:
 				{
+					bool menuFound = false;
 					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
-					srvObj << this->pInside->LinkToMenu(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+					srvObj << this->pInside->LinkToMenu(this->pPackList->references.referenceList[i].reference.u.name, rootLevel, &menuFound);
+
+					if (!menuFound)
+					{
+						CMissingMenuRefItem refItemNotFound(this->pPackList->references.referenceList[i].reference.u.name, AR_STRUCT_ITEM_XML_CONTAINER, this->pPackList->name);
+						pInside->AddMissingMenu(refItemNotFound);
+					}
 				}
 				break;
 				}

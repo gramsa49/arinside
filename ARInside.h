@@ -32,7 +32,7 @@
 #include "windowsutil.h"
 #include "appconfig.h"
 #include "util\fieldrefitem.h"
-#include "util\menurefitem.h"
+#include "util\missingmenurefitem.h"
 #include "util\apptimer.h"
 
 extern const string AppVersion;
@@ -92,8 +92,9 @@ public:
 	list<CARGlobalField> globalFieldList;
 	list<CBlackListItem> blackList;
 	list<CFieldRefItem> listFieldRefItem;
-	list<CMenuRefItem> listMenuRefItem;
+	list<CMissingMenuRefItem> listMenuRefItem;
 	list<CFieldRefItem> listFieldNotFound;
+	list<CMissingMenuRefItem> listMenuNotFound;
 
 	string LinkToServerInfo(string srvName, int rootLevel);
 	string LinkToXmlObjType(int arsStructItemType, string objName, int rootLevel);
@@ -114,7 +115,7 @@ public:
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
 	string LinkToFilterRef(string fltName, int rootLevel);	
 	string LinkToFilterRef(CARFilter* filter, int rootLevel);
-	string LinkToMenu(string menuName, int rootLevel);
+	string LinkToMenu(string menuName, int rootLevel, bool* bFound = NULL);
 	string LinkToSchema(string schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
 	string LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel);	
@@ -125,6 +126,7 @@ public:
 	string GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition);
 
 	void AddReferenceItem(CFieldRefItem *refItem);
+	void AddMissingMenu(const CMissingMenuRefItem& refItem);
 	string TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, CFieldRefItem *refItem);
 	string TextFindKeywords(string inText, string fieldSeparator);	
 	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);

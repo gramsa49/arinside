@@ -32,6 +32,7 @@ private:
 	list<CFieldRefItem> uniqueMissingFieldList;
 
 	void FieldReferenceValidator();
+	void MenuReferenceValidator();
 
 	//Permission check
 	void FieldGroupValidator();

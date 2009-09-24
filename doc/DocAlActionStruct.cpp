@@ -499,22 +499,24 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 	strm.str("");
 
 	try
-	{		
-		CFieldRefItem *refItem = new CFieldRefItem();
-		refItem->arsStructItemType = this->structItemType;
-
+	{
 		stringstream strmTmpDesc;
-		strmTmpDesc << "Change Field " << ifElse << "-Action " << nAction;
-		refItem->description = strmTmpDesc.str();
+		strmTmpDesc << "Change Field " << (action.option == AR_FIELD_CHAR_OPTION_REFERENCE ? "From Value " : "") << ifElse << "-Action " << nAction;
 
-		refItem->fromName = this->obj->name;	
-		refItem->fieldInsideId = action.fieldId;
-		refItem->schemaInsideId = schemaInsideId;
+		CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.fieldId, schemaInsideId);
 		arIn->AddReferenceItem(refItem);
 		delete refItem;	
 
 		//FieldName
-		strm << "Field Name: " << arIn->LinkToField(schemaName, action.fieldId, rootLevel) << "<br/>" << endl;
+		strm << "Field ";
+		if (action.option == AR_FIELD_CHAR_OPTION_REFERENCE)
+		{
+			strm << "(Use Value Of): $" << arIn->LinkToField(schemaName, action.fieldId, rootLevel) << "$<br/>" << endl;
+		}
+		else
+		{
+			strm << "Name: " << arIn->LinkToField(schemaName, action.fieldId, rootLevel) << "<br/>" << endl;
+		}
 
 		//Access Option
 		strm << "Field Access: " << CAREnum::SetCharFieldAccess(action.accessOption) << "<br/>" << endl;					
@@ -572,7 +574,14 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 		{
 			if(strcmp(action.charMenu, "") != 0)
 			{
-				strm << "Menu: " << arIn->LinkToMenu(action.charMenu, rootLevel) << "<br/>" << endl;
+				bool menuFound = false;
+				strm << "Menu: " << arIn->LinkToMenu(action.charMenu, rootLevel, &menuFound) << "<br/>" << endl;
+
+				if (!menuFound)
+				{
+					CMissingMenuRefItem refItemNotFound(action.charMenu, AR_STRUCT_ITEM_XML_ACTIVE_LINK, this->obj->name);
+					arIn->AddMissingMenu(refItemNotFound);
+				}
 			}
 		}
 
@@ -590,13 +599,46 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 			case AR_DPROP_LABEL_COLOR_TEXT:
 				{
 					stringstream strmTmp;
-					strmTmp << CARValue::ValueToString(action.props.props[i].value);
+					//strmTmp << CARValue::ValueToString(action.props.props[i].value);
 
+					bool colorUnknown = true;
+					char color[7];
+					size_t colorStrLen = 0;
 
-					if(strmTmp.str().size() > 0)
-						strm << "Default Label Color: " << strmTmp.str() << "<br/>" << endl;
+					if (action.props.props[i].value.dataType == AR_DATA_TYPE_CHAR)
+					{
+						colorStrLen = strlen(action.props.props[i].value.u.charVal);
+					}
+
+					if (action.props.props[i].value.dataType == AR_DATA_TYPE_CHAR && strncmp(action.props.props[i].value.u.charVal,"0x",2) == 0 && colorStrLen == 8)
+					{
+						color[0] = action.props.props[i].value.u.charVal[6];
+						color[1] = action.props.props[i].value.u.charVal[7];
+						color[2] = action.props.props[i].value.u.charVal[4];
+						color[3] = action.props.props[i].value.u.charVal[5];
+						color[4] = action.props.props[i].value.u.charVal[2];
+						color[5] = action.props.props[i].value.u.charVal[3];
+						color[6] = 0;
+						colorUnknown = false;
+					}
+
+					strm << "Label Color: ";
+
+					if(colorStrLen > 0)
+					{
+						if (colorUnknown)
+						{
+							strm << CARValue::ValueToString(action.props.props[i].value);
+						}
+						else
+						{
+							strm << "<span style='background-color:#" << color << "; width:16px; height:16px;'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>";
+						}
+					}
 					else
-						strm << "Default Label Color" << "<br/>" << endl;
+						strm << "Default";
+
+					strm << "<br/>" << endl;
 				}
 				break;
 			case AR_DPROP_REFRESH:

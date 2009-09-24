@@ -564,7 +564,20 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		}
 		else
 		{
-			strm << "Read Value for Field from: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
+			strm << "Read Value for Field from: ";
+			if (schemaName2.size()>0 && schemaName2[0] == '$' && action.sampleSchema[0] != 0)
+			{
+				int fieldId = atoi(&schemaName2[1]);
+				schemaName2 = action.sampleSchema;
+				tmpDisplayName = action.sampleSchema;
+				strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaInsideId, fieldId, rootLevel)) << "$ (Sample Form: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << ")";
+			}
+			else
+			{
+				strm << arIn->LinkToSchema(tmpDisplayName, rootLevel);
+			}
+			strm << "<br/>" << endl;
+
 
 			//All matching Ids?
 			string setFieldInfo = "Field Mapping";
@@ -581,7 +594,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			//Qualification
 			strm << qualification.str() << endl;
 
-			if(strcmp(setFieldInfo.c_str(), "Field Mapping") ==  0)
+			if(setFieldInfo.compare("Field Mapping") ==  0)
 			{
 				strm << setFieldInfo << ":<br/>" << endl;			
 

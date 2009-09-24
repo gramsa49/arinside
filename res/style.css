@@ -135,7 +135,7 @@ table.TblObjectList th {
 
 table.TblObjectList td {
  border-width: 1px 1px 1px 1px;
- border-style: ridge;
+ border-style: solid;
  border-color: #c0c0c0;
  vertical-align: top;
 }
