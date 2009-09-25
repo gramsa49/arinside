@@ -77,7 +77,7 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 			AR_EXECUTE_ON_DISPLAY, "Display",
 			//AR_EXECUTE_ON_MODIFY_ALL, "Modify All", // its now a $OPERATION$
 			//AR_EXECUTE_ON_MENU_OPEN, "OPEN",        // unsupported
-			AR_EXECUTE_ON_MENU_CHOICE, "Menu Choise",
+			AR_EXECUTE_ON_MENU_CHOICE, "Menu Choice",
 			AR_EXECUTE_ON_LOSE_FOCUS, "Loose Focus",
 			AR_EXECUTE_ON_SET_DEFAULT, "Set Default",
 			AR_EXECUTE_ON_QUERY, "Search",
