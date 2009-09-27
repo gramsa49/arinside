@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "docalhelper.h"
+#include "docactionsetfieldshelper.h"
 #include "..\core\arassignhelper.h"
 #include "..\core\arqualification.h"
 

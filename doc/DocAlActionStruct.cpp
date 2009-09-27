@@ -374,8 +374,8 @@ string CDocAlActionStruct::ActionSetFields(ARSetFieldsActionStruct &action, int 
 		serverRaw.str("");
 		qualification.str("");
 
-		CDocAlHelper *alHelper = new CDocAlHelper(*arIn, *obj);
-		alHelper->SetFieldsGetSecondaryForm(action, schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification);
+		CDocActionSetFieldsHelper *alHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction);
+		alHelper->SetFieldsGetSecondaryForm(schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification);
 		delete alHelper;
 
 		//For the following internal calculations we need a secondary form
@@ -385,7 +385,7 @@ string CDocAlActionStruct::ActionSetFields(ARSetFieldsActionStruct &action, int 
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = schemaName2;
 
-		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;
+		strm << "Server Name: " << serverRaw.str() << "<br/>" << endl;
 		strm << "Read Value for Field from: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
 		//Qualification

@@ -119,6 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				Optimization="3"
 				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
@@ -479,6 +480,14 @@
 			Name="Doc"
 			>
 			<File
+				RelativePath=".\Doc\DocActionSetFieldsHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Doc\DocActionSetFieldsHelper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocAlActionStruct.cpp"
 				>
 			</File>
@@ -500,14 +509,6 @@
 			</File>
 			<File
 				RelativePath=".\Doc\DocAlGuideDetails.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Doc\DocAlHelper.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Doc\DocAlHelper.h"
 				>
 			</File>
 			<File
@@ -588,14 +589,6 @@
 			</File>
 			<File
 				RelativePath=".\Doc\DocFilterGuideDetails.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Doc\DocFilterHelper.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Doc\DocFilterHelper.h"
 				>
 			</File>
 			<File

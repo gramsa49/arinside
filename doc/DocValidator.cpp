@@ -540,10 +540,10 @@ void CDocValidator::MenuReferenceValidator()
 				pInside->listMenuNotFound.sort();
 
 				CTable tbl("missingMenus", "TblObjectList");
-				tbl.AddColumn(40, "Menu Name");
+				tbl.AddColumn(30, "Menu Name");
 				tbl.AddColumn(10, "Object Type");
-				tbl.AddColumn(40, "Server object");
-				tbl.AddColumn(10, "Details");
+				tbl.AddColumn(30, "Server object");
+				tbl.AddColumn(30, "Details");
 
 				list<CMissingMenuRefItem>::iterator mIter = pInside->listMenuNotFound.begin();
 				list<CMissingMenuRefItem>::iterator endIt = pInside->listMenuNotFound.end();

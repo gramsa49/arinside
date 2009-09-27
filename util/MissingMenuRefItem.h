@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -24,9 +24,15 @@ public:
 	CMissingMenuRefItem(const string& menuName, int arsStructItemType, string fromName);
 	~CMissingMenuRefItem(void);
 
+	int compare(const CMissingMenuRefItem& item);
+
 	bool operator<(const CMissingMenuRefItem& item);
 	bool operator==(const CMissingMenuRefItem& item);
 
+private:
+	int GetStructTypeOrder(int xmlStructItemType);
+
+public:
 	string menuName;
 	int arsStructItemType;
 	string fromName;

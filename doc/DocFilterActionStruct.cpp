@@ -527,8 +527,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		//Possible values: "", "*", "schemaName" 
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
 
-		CDocFilterHelper *filterHelper = new CDocFilterHelper(*this->arIn, *this->obj, this->structItemType);
-		filterHelper->SetFieldsGetSecondaryForm(action, schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
+		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction);
+		filterHelper->SetFieldsGetSecondaryForm(schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
 		delete filterHelper;
 
 		//For the following internal calculations we need a secondary form
@@ -538,7 +538,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = schemaName2;
 
-		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;	
+		//strm << "Server Name: " << serverRaw.str << "<br/>" << endl;	
 
 
 
