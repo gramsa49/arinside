@@ -58,9 +58,9 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 		{
 		case AR_ASSIGN_TYPE_FIELD:
 			{
-				if(assignment.u.field->schema[0] == '@'	&& // AR_CURRENT_SCHEMA_TAG
-				   assignment.u.field->schema[0] == '*' && // AR_CURRENT_SCREEN_TAG / AR_CURRENT_TRAN_TAG
-					 assignment.u.field->schema[1] == 0)
+				if((assignment.u.field->schema[0] == '@' ||  // AR_CURRENT_SCHEMA_TAG
+				    assignment.u.field->schema[0] == '*') && // AR_CURRENT_SCREEN_TAG / AR_CURRENT_TRAN_TAG
+				    assignment.u.field->schema[1] == 0)
 				{
 					// if this assignment uses a field from current screen, we are not interested
 					return false;
@@ -220,3 +220,4 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 	}
 	return false;
 }
+

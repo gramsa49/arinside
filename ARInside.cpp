@@ -2222,6 +2222,12 @@ string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 
 string CARInside::LinkToMenu(string menuName, int fromRootLevel, bool* bFound)
 {
+	if (menuName.compare("$NULL$")==0)
+	{
+		if (bFound) *bFound = true;
+		return menuName;
+	}
+
 	list<CARCharMenu>::iterator menuIter;
 	list<CARCharMenu>::iterator endIt = this->menuList.end();
 	for ( menuIter = this->menuList.begin(); menuIter != endIt; ++menuIter )
@@ -3140,3 +3146,4 @@ int CARInside::CompareServerVersion(int major, int minor, int revision)
 	if (vMajor < major) return -1;
 	/*if (vMajor > major)*/ return 1;
 }
+
