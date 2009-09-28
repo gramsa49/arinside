@@ -723,87 +723,91 @@ string CDocAlActionStruct::ActionPushFields(ARPushFieldsActionStruct &action, in
 
 	try
 	{
-		stringstream secondaryFormRaw, serverRaw, assignQual;
-		for(unsigned int i=0; i< action.pushFieldsList.numItems; i++)
+		string pushServer;
+		string pushSchema;
+
+		// target server **************************************
+		strm << "Server Name: ";
+		if (action.pushFieldsList.pushFieldsList[0].field.server[0] == '$' && action.sampleServer[0] != 0)
 		{
-			secondaryFormRaw.str("");
-			serverRaw.str("");
-			assignQual.str("");
+			int fieldId = atoi(&action.pushFieldsList.pushFieldsList[0].field.server[1]);
 
-			if(action.pushFieldsList.pushFieldsList[i].field.schema != NULL)
-			{
-				secondaryFormRaw << action.pushFieldsList.pushFieldsList[i].field.schema;
-			}
+			pushServer = action.sampleServer;
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Server: " << arIn->LinkToServerInfo(action.sampleServer, rootLevel) << ")";
 
-			if(action.pushFieldsList.pushFieldsList[i].field.server != NULL)
-			{
-				serverRaw << action.pushFieldsList.pushFieldsList[i].field.server;
-			}
-
-			assignQual << "<br/>Push Field If<br/>" << endl;
-			if(action.pushFieldsList.pushFieldsList[i].field.qualifier.operation != NULL)
-			{
-				stringstream strmTmpQual;
-
-				CFieldRefItem *refItem = new CFieldRefItem();
-				refItem->arsStructItemType = this->structItemType;
-
-				stringstream strmTmpDesc;
-				strmTmpDesc << "Push Field Qualification " << ifElse << "-Action " << nAction;
-				refItem->description = strmTmpDesc.str();
-
-				refItem->fromName = this->obj->name;
-
-				CARQualification arQual(*arIn);
-				int pFormId = this->arIn->SchemaGetInsideId(schemaName.c_str());
-				int sFormId = this->arIn->SchemaGetInsideId(secondaryFormRaw.str());
-				arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[i].field.qualifier, *refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
-
-				delete refItem;
-
-				if(strmTmpQual.str().length() > 0)
-				{
-					assignQual << strmTmpQual.str() << "<br/><br/>" << endl;
-				}
-				else
-				{
-					assignQual << EmptyValue << "<br/><br/>" << endl;
-				}
-
-				assignQual << "If No Requests Match: " << CAREnum::NoMatchRequest(action.pushFieldsList.pushFieldsList[i].field.noMatchOption) << "<br/>" << endl;
-				assignQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(action.pushFieldsList.pushFieldsList[i].field.multiMatchOption) << "<br/><br/>" << endl;
-
-			}
-		}
-
-		strm << "Server Name: " << arIn->LinkToServerInfo(serverRaw.str(), rootLevel) << "<br/>" << endl;
-		strm << "Push Value To: " << arIn->LinkToSchema(secondaryFormRaw.str(), rootLevel) << "<br/>" << endl;
-
-		//Qualification
-		strm << assignQual.str() << endl;
-
-		//All matching Ids
-		string pushFieldInfo = "Field Mapping";
-		for(unsigned int i= 0; i< action.pushFieldsList.numItems; i++)
-		{
-			if(action.pushFieldsList.pushFieldsList[i].field.u.fieldId == AR_LIKE_ID)
-			{
-				pushFieldInfo = "Field Mapping: All Matching Ids";
-
-				strm << this->AllMatchingIds(schemaName.c_str(), secondaryFormRaw.str(), "Push Fields", nAction);
-			}
-		}
-
-		if(strcmp(pushFieldInfo.c_str(), "Field Mapping") ==  0)
-		{
-			strm << pushFieldInfo << ":<br/>" << endl;
-
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, obj->name, this->structItemType, schemaName, secondaryFormRaw.str());
-			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
+			// create field reference
+			stringstream tmpDesc;
+			tmpDesc << "Server Name in 'Push Fields' " << ifElse << "-Action " << nAction;
+			CFieldRefItem refItem(this->structItemType, this->obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+			arIn->AddReferenceItem(&refItem);
 		}
 		else
 		{
-			strm << pushFieldInfo << endl;
+			pushServer = action.pushFieldsList.pushFieldsList[0].field.server;
+			strm << arIn->LinkToServerInfo(pushServer, rootLevel);
+		}
+		strm << "<br/>" << endl;
+
+		// target form ******************************************
+		strm << "Push Value To: ";		
+		if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$' && action.sampleSchema[0] != 0)
+		{
+			int fieldId = atoi(&action.pushFieldsList.pushFieldsList[0].field.schema[1]);
+
+			pushSchema = action.sampleSchema;
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << ")";
+
+			// create field reference
+			stringstream tmpDesc;
+			tmpDesc << "Form Name in 'Push Fields' " << ifElse << "-Action " << nAction;
+			CFieldRefItem refItem(this->structItemType, this->obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+			arIn->AddReferenceItem(&refItem);
+		}
+		else
+		{
+			pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+			strm << arIn->LinkToSchema(pushSchema, rootLevel);
+		}
+		strm << "<br/>" << endl;
+
+		// push field if **************************************
+		strm << "<br/>Push Field If<br/>" << endl;
+		stringstream strmTmpQual;
+
+		CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Push Field If", -1, -1);
+		CARQualification arQual(*arIn);
+
+		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
+		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
+
+		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, *refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
+
+		delete refItem;
+
+		if(strmTmpQual.str().length() > 0)
+		{
+			strm << strmTmpQual.str() << "<br/><br/>" << endl;
+		}
+		else
+		{
+			strm << EmptyValue << "<br/><br/>" << endl;
+		}
+
+		strm << "If No Requests Match: " << CAREnum::NoMatchRequest(action.pushFieldsList.pushFieldsList[0].field.noMatchOption) << "<br/>" << endl;
+		strm << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(action.pushFieldsList.pushFieldsList[0].field.multiMatchOption) << "<br/><br/>" << endl;
+
+		// push field mapping *********************************
+		strm << "Field Mapping:";
+		if(action.pushFieldsList.pushFieldsList[0].field.u.fieldId == AR_LIKE_ID)
+		{
+			strm << " All Matching Ids<br/>";
+			strm << this->AllMatchingIds(schemaName, pushSchema, "Push Fields", nAction);
+		}
+		else
+		{
+			strm << "<br/>" << endl;
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, obj->name, this->structItemType, schemaName, pushSchema);
+			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
 		}
 	}
 	catch(...)
