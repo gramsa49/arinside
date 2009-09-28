@@ -63,4 +63,5 @@ public:
 	bool bDeleteExistingFiles;
 
 	string serverName;
+	string runNotes;
 };

@@ -175,6 +175,11 @@ void CDocSummaryInfo::Documentation()
 		strm << nNumTotalObjects << " ARSystem objects and " << nNumTotalFields << " fields loaded in " << this->pInside->nDurationLoad << " seconds.<br/>" << endl;		
 		strm << nFilesCreated << " files created in " << this->pInside->nDurationDocumentation << " seconds. <br/>" << endl;
 
+		if (!this->pInside->appConfig.runNotes.empty()) {
+			strm << "<br/>";
+			strm << "Run Notes: " << this->pInside->appConfig.runNotes;
+		}
+
 		webPage.AddContent(strm.str());
 		webPage.SaveInFolder(this->path);	
 	}

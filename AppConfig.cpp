@@ -50,6 +50,9 @@ AppConfig::AppConfig(void)
 	serverName = "";
 	bCompactFolder = false;
 	bDeleteExistingFiles = false;
+
+	//Notes to be displayed on home page
+	runNotes = "";
 }
 
 AppConfig::~AppConfig(void)

@@ -220,6 +220,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto(cfg.bUseUtf8, "Utf-8");
 		config.readInto(cfg.bCompactFolder, "CompactFolder");
 		config.readInto(cfg.bDeleteExistingFiles, "DeleteExistingFiles");
+		config.readInto(cfg.runNotes, "RunNotes");
 		cout << endl;
 
 		LOG << "UserForm: " << cfg.userForm << endl;		
@@ -242,6 +243,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		LOG << "Utf-8: " << cfg.bUseUtf8 << endl;
 		LOG << "CompactFolder: " << cfg.bCompactFolder << endl;
 		LOG << "DeleteExistingFiles: " << cfg.bDeleteExistingFiles << endl;
+		LOG << "RunNotes: " << cfg.runNotes << endl;
 		LOG << endl;		
 	}
 	catch(...)
