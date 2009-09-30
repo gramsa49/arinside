@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
-#include ".\docalactionstruct.h"
+#include "docalactionstruct.h"
 
 CDocAlActionStruct::CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, string dir, int rootLevel)
 {
@@ -754,7 +754,14 @@ string CDocAlActionStruct::ActionPushFields(ARPushFieldsActionStruct &action, in
 		{
 			int fieldId = atoi(&action.pushFieldsList.pushFieldsList[0].field.schema[1]);
 
-			pushSchema = action.sampleSchema;
+			if (action.sampleSchema[0] == '@' && action.sampleSchema[1] == 0)
+			{
+				pushSchema = schemaName;
+			}
+			else
+			{
+				pushSchema = action.sampleSchema;
+			}
 			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << ")";
 
 			// create field reference
@@ -1334,8 +1341,16 @@ string CDocAlActionStruct::ActionService(ARActiveLinkSvcActionStruct &action, in
 		if (action.serviceSchema[0] == '$' && action.sampleSchema[0] != 0)
 		{
 			int fieldId = atoi(&action.serviceSchema[1]);
-			serviceSchema = action.sampleSchema;
-			//strm << "Sample Form: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << "<br/>" << endl;
+
+			if (action.sampleSchema[0] == '@' && action.sampleSchema[1] == 0)
+			{
+				serviceSchema = schemaName;
+			}
+			else
+			{
+				serviceSchema = action.sampleSchema;
+			}
+
 			strm << "Service Form: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$ (Sample Form: " << arIn->LinkToSchema(serviceSchema, rootLevel) << ")<br/>" << endl;
 
 			stringstream strmTmpDesc;

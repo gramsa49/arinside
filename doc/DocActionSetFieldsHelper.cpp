@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "StdAfx.h"
-#include ".\docactionsetfieldshelper.h"
+#include "docactionsetfieldshelper.h"
 
 CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, ARSetFieldsActionStruct& sFieldStruct, int structItemType, string& strIfElse, int numAction)
 : arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(strIfElse)
@@ -77,7 +77,14 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 				{
 					int fieldId = atoi(&assignment.u.field->schema[1]);
 
-					readSchema = setFieldsStruct.sampleSchema;
+					if (setFieldsStruct.sampleSchema[0] == '@' && setFieldsStruct.sampleSchema[1] == 0)
+					{
+						readSchema = fromSchema;
+					}
+					else
+					{
+						readSchema = setFieldsStruct.sampleSchema;
+					}
 					assignSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
 					assignSchema << setFieldsStruct.sampleSchema;
 
