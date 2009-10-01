@@ -15,9 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\arserverobject.h"
-#include ".\arfield.h"
-#include ".\arvui.h"
+#include "ARServerObject.h"
+#include "ARField.h"
+#include "ARVui.h"
 
 class CARSchema :
 	public CARServerObject

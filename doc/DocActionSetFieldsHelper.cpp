@@ -14,8 +14,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include "docactionsetfieldshelper.h"
+#include "stdafx.h"
+#include "DocActionSetFieldsHelper.h"
 
 CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, ARSetFieldsActionStruct& sFieldStruct, int structItemType, string& strIfElse, int numAction)
 : arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(strIfElse)

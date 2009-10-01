@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\output\table.h"
-#include "..\output\tablerow.h"
+#include "../output/Table.h"
+#include "../output/TableRow.h"
 
 using namespace OUTPUT;
 

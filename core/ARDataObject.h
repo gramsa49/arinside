@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\arobject.h"
-#include "..\output\webutil.h"
+#include "ARObject.h"
+#include "../output/WebUtil.h"
 
 using namespace OUTPUT;
 

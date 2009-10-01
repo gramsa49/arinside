@@ -15,9 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\webcontrol.h"
-#include ".\ulistitem.h"
-#include ".\webutil.h"
+#include "WebControl.h"
+#include "UListItem.h"
+#include "WebUtil.h"
 
 namespace OUTPUT
 {

@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\appconfig.h"
+#include "AppConfig.h"
 
 class CWindowsUtil
 {

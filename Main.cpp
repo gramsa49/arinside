@@ -15,13 +15,17 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#ifdef WIN32 // JLS17 LINUX
 #include <windows.h>
-#include "arinside.h"
-#include "configfile.h"
-#include "tclap\CmdLine.h"
-#include "appexception.h"
-#include "windowsutil.h"
+#endif
+#include "ARInside.h"
+#include "ConfigFile.h"
+#include "tclap/CmdLine.h"
+#include "AppException.h"
+#include "WindowsUtil.h"
+#ifdef WIN32 // JLS17 LINUX
 #include <io.h>
+#endif
 #include <sys/stat.h>
 
 using namespace TCLAP;

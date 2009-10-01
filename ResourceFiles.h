@@ -17,7 +17,7 @@
 
 #pragma once
 #include <windows.h>
-#include ".\appconfig.h"
+#include "AppConfig.h"
 
 class CResourceFiles
 {

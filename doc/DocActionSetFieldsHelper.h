@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\arinside.h"
-#include "..\core\arqualification.h"
+#include "../ARInside.h"
+#include "../core/ARQualification.h"
 
 class CDocActionSetFieldsHelper
 {

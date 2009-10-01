@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\docbase.h"
-#include "..\output\grouptable.h"
+#include "DocBase.h"
+#include "../output/GroupTable.h"
 
 
 class CDocContainerHelper :

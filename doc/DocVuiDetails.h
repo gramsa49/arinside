@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\docbase.h"
-#include "..\core\arproplisthelper.h"
+#include "DocBase.h"
+#include "../core/ARProplistHelper.h"
 
 class CDocVuiDetails :
 	public CDocBase

@@ -14,8 +14,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\missingmenurefitem.h"
+#include "stdafx.h"
+#include "MissingMenuRefItem.h"
 
 CMissingMenuRefItem::CMissingMenuRefItem()
 {

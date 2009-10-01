@@ -14,8 +14,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\windowsutil.h"
+#include "stdafx.h"
+#include "WindowsUtil.h"
 #include "windows.h"
 
 CWindowsUtil::CWindowsUtil(AppConfig &appConfig)

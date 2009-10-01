@@ -14,10 +14,10 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include "webpage.h"
-#include "webutil.h"
-#include "..\arinside.h"
+#include "stdafx.h"
+#include "WebPage.h"
+#include "WebUtil.h"
+#include "../ARInside.h"
 
 using namespace OUTPUT;
 

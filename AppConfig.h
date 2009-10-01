@@ -21,7 +21,7 @@ using namespace std;
 /****
  * the following macro should be used instead of cout to show the output only 
  * in verbose mode. to make the macro available in a code file just make sure
- * you have included "arinside.h".
+ * you have included "ARInside.h".
  */ 
 #define LOG if(AppConfig::verboseMode) cout
 

@@ -14,8 +14,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\doccharmenudetails.h"
+#include "stdafx.h"
+#include "DocCharMenuDetails.h"
 
 CDocCharMenuDetails::CDocCharMenuDetails(CARInside &arInside, CARCharMenu &arCharMenu, string path, int rootLevel)
 {
@@ -486,7 +486,8 @@ string CDocCharMenuDetails::GetSQLLabelList(ARCharMenuSQLStruct *sqlMenu)
 		if (sqlMenu->labelIndex[k] == 0) break;
 		
 		if (k > 0) strm << ",";
-		_itoa(sqlMenu->labelIndex[k], buffer, 16);
+		sprintf(buffer, "%d", sqlMenu->labelIndex[k]);
+		//_itoa(sqlMenu->labelIndex[k], buffer, 16);
 		strm << buffer;
 	}
 

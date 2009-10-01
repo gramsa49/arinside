@@ -14,9 +14,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\arescalation.h"
-#include ".\ARDayStructHelper.h"
+#include "stdafx.h"
+#include "AREscalation.h"
+#include "ARDayStructHelper.h"
 
 CAREscalation::CAREscalation(string name, int insideId)
 {

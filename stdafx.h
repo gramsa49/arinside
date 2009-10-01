@@ -23,9 +23,12 @@
 #include <map>
 #include <vector>
 #include <time.h>
+#include <stdlib.h> // JLS17_LINUX
+#if WIN32 // JLS17_LINUX
 #include <tchar.h>
+#endif
 
-#include "util\util.h"
+#include "util/Util.h"
 
 const string MenuSeparator = " -> ";
 const string EmptyRunIf = "No qualification specified";

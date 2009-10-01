@@ -15,19 +15,19 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\docbase.h"
-#include ".\messageitem.h"
-#include "..\output\table.h"
-#include "..\output\tablerow.h"
-#include "..\output\filtertable.h"
-#include "..\output\altable.h"
-#include "..\output\escaltable.h"
-#include "..\output\containertable.h"
-#include "..\output\menutable.h"
-#include "..\output\schematable.h"
-#include "..\output\roletable.h"
-#include "..\output\grouptable.h"
-#include "..\output\usertable.h"
+#include "DocBase.h"
+#include "MessageItem.h"
+#include "../output/Table.h"
+#include "../output/TableRow.h"
+#include "../output/FilterTable.h"
+#include "../output/AlTable.h"
+#include "../output/EscalTable.h"
+#include "../output/ContainerTable.h"
+#include "../output/MenuTable.h"
+#include "../output/SchemaTable.h"
+#include "../output/RoleTable.h"
+#include "../output/GroupTable.h"
+#include "../output/UserTable.h"
 
 using namespace OUTPUT;
 

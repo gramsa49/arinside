@@ -14,8 +14,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\docwebservicedetails.h"
+#include "stdafx.h"
+#include "DocWebserviceDetails.h"
 
 CDocWebserviceDetails::CDocWebserviceDetails(CARInside &arIn, CARContainer &obj)
 {

@@ -15,9 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\docbase.h"
-#include "..\output\altable.h"
-#include "..\output\containertable.h"
+#include "DocBase.h"
+#include "../output/AlTable.h"
+#include "../output/ContainerTable.h"
 
 class CDocRoleDetails :
 	public CDocBase

@@ -15,10 +15,10 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\arvalue.h"
-#include "..\output\table.h"
-#include "..\output\tablerow.h"
-#include "..\arinside.h"
+#include "ARValue.h"
+#include "../output/Table.h"
+#include "../output/TableRow.h"
+#include "../ARInside.h"
 
 using namespace OUTPUT;
 

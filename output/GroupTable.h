@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\arinside.h"
-#include ".\objecttable.h"
+#include "../ARInside.h"
+#include "ObjectTable.h"
 
 namespace OUTPUT
 {

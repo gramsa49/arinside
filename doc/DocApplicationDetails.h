@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\docbase.h"
-#include ".\doccontainerhelper.h"
+#include "DocBase.h"
+#include "DocContainerHelper.h"
 
 class CDocApplicationDetails :
 	public CDocBase

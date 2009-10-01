@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\appconfig.h"
-#include "..\appexception.h"
+#include "../AppConfig.h"
+#include "../AppException.h"
 
 namespace OUTPUT
 {

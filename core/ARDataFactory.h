@@ -15,11 +15,11 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\aruser.h"
-#include ".\argroup.h"
-#include ".\arrole.h"
-#include "..\appconfig.h"
-#include "..\appexception.h"
+#include "ARUser.h"
+#include "ARGroup.h"
+#include "ARRole.h"
+#include "../AppConfig.h"
+#include "../AppException.h"
 
 class CARDataFactory
 {

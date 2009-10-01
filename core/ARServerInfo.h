@@ -15,9 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\arapi.h"
-#include ".\arenum.h"
-#include ".\arserverinfoitem.h"
+#include "../ARApi.h"
+#include "AREnum.h"
+#include "ARServerInfoItem.h"
 
 class CARServerInfo
 {

@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\arserverobject.h"
-#include "..\core\arenum.h"
+#include "ARServerObject.h"
+#include "../core/AREnum.h"
 
 class CARContainer :
 	public CARServerObject

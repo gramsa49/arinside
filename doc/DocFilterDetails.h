@@ -15,10 +15,10 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include ".\docbase.h"
-#include ".\docfilteractionstruct.h"
-#include "..\output\containertable.h"
-#include "..\core\arproplisthelper.h"
+#include "DocBase.h"
+#include "DocFilterActionStruct.h"
+#include "../output/ContainerTable.h"
+#include "../core/ARProplistHelper.h"
 
 class CDocFilterDetails :
 	public CDocBase

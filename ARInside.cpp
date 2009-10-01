@@ -17,29 +17,29 @@
 #include "stdafx.h"
 #include "ARInside.h"
 
-#include "doc\docmain.h"
-#include "doc\docuserdetails.h"
-#include "doc\docgroupdetails.h"
-#include "doc\docschemadetails.h"
-#include "doc\docaldetails.h"
-#include "doc\docfilterdetails.h"
-#include "doc\docescalationdetails.h"
-#include "doc\doccharmenudetails.h"
-#include "doc\docfielddetails.h"
-#include "doc\docvuidetails.h"
-#include "doc\docwebservicedetails.h"
-#include "doc\docpacklistdetails.h"
-#include "doc\docapplicationdetails.h"
-#include "doc\docalguidedetails.h"
-#include "doc\docfilterguidedetails.h"
-#include "doc\doccontainerhelper.h"
-#include "doc\docanalyzer.h"
-#include "doc\docvalidator.h"
-#include "doc\docroledetails.h"
-#include "doc\docsummaryinfo.h"
+#include "doc/DocMain.h"
+#include "doc/DocUserDetails.h"
+#include "doc/DocGroupDetails.h"
+#include "doc/DocSchemaDetails.h"
+#include "doc/DocAlDetails.h"
+#include "doc/DocFilterDetails.h"
+#include "doc/DocEscalationDetails.h"
+#include "doc/DocCharMenuDetails.h"
+#include "doc/DocFieldDetails.h"
+#include "doc/DocVuiDetails.h"
+#include "doc/DocWebserviceDetails.h"
+#include "doc/DocPacklistDetails.h"
+#include "doc/DocApplicationDetails.h"
+#include "doc/DocAlGuideDetails.h"
+#include "doc/DocFilterGuideDetails.h"
+#include "doc/DocContainerHelper.h"
+#include "doc/DocAnalyzer.h"
+#include "doc/DocValidator.h"
+#include "doc/DocRoleDetails.h"
+#include "doc/DocSummaryInfo.h"
 
-#include "output\table.h"
-#include "output\webutil.h"
+#include "output/Table.h"
+#include "output/WebUtil.h"
 
 #ifdef _DEBUG
 #include "svnrev.h"
@@ -424,6 +424,7 @@ void CARInside::LoadFromFile(void)
 			NULL,
 			&this->arStatus) == AR_RETURN_OK)
 		{			
+			cout << parsedObjects.numItems << " items loaded." << endl;
 			unsigned int arInsideIdSchema = 0;
 			unsigned int arInsideIdAl = 0;
 			unsigned int arInsideIdFilter = 0;
@@ -739,7 +740,12 @@ void CARInside::LoadFromFile(void)
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
-				}										
+#if _DEBUG
+				default:
+					cout << "Unused object type: [" << parsedObjects.structItemList[i].type << "] " << parsedObjects.structItemList[i].name << endl;
+					break;
+#endif
+				}	
 			}		
 
 		}
@@ -2910,8 +2916,8 @@ void CARInside::BuildReferences()
 
 void CARInside::SearchFilterReferences()
 {
-	typedef map<string,list<string>> ErrorCallMap;
-	typedef pair<string,list<string>> ErrCallPair;
+	typedef map< string,list<string> > ErrorCallMap;
+	typedef pair< string,list<string> > ErrCallPair;
 
 	ErrorCallMap errorCalls;
 

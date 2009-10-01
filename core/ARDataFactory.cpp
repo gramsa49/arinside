@@ -14,9 +14,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\ardatafactory.h"
-#include "..\arinside.h"
+#include "stdafx.h"
+#include "ARDataFactory.h"
+#include "../ARInside.h"
 
 CARDataFactory::CARDataFactory(ARControlStruct &control, ARStatusList &status)
 {

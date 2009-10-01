@@ -15,12 +15,12 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\arinside.h"
-#include "..\output\table.h"
-#include "..\output\tablerow.h"
-#include "..\output\ulist.h"
-#include "..\output\ulistitem.h"
-#include "..\core\arqualification.h"
+#include "../ARInside.h"
+#include "../output/Table.h"
+#include "../output/TableRow.h"
+#include "../output/UList.h"
+#include "../output/UListItem.h"
+#include "../core/ARQualification.h"
 
 using namespace OUTPUT;
 

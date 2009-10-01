@@ -14,10 +14,10 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\docschemadetails.h"
-#include ".\docfielddetails.h"
-#include "../output/csvpage.h"
+#include "stdafx.h"
+#include "DocSchemaDetails.h"
+#include "DocFieldDetails.h"
+#include "../output/CsvPage.h"
 #include "../core/ARDayStructHelper.h"
 
 CDocSchemaDetails::CDocSchemaDetails(CARInside &arInside, CARSchema &schema, string path, int rootLevel)

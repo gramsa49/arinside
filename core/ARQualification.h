@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "..\arinside.h"
+#include "../ARInside.h"
 
 class CARQualification
 {

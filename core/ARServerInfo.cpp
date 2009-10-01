@@ -14,9 +14,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\arserverinfo.h"
-#include "..\ARInside.h"
+#include "stdafx.h"
+#include "ARServerInfo.h"
+#include "../ARInside.h"
 
 CARServerInfo::CARServerInfo(ARControlStruct &arControl, ARStatusList &arStatus)
 {

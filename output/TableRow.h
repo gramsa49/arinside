@@ -15,8 +15,8 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "webcontrol.h"
-#include "tablecell.h"
+#include "WebControl.h"
+#include "TableCell.h"
 
 namespace OUTPUT
 {

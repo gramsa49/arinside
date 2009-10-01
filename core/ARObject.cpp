@@ -14,9 +14,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
+#include "stdafx.h"
 #include "ARObject.h"
-#include "..\output\webpage.h"
+#include "../output/WebPage.h"
 
 using namespace OUTPUT;
 
@@ -33,7 +33,11 @@ CARObject::~CARObject(void)
 string CARObject::FileID()
 {
 	char buffer[20];
-	return _itoa(this->insideId, buffer, 10);
+	// use sprintf instead of _itoa to make it work under linux. 
+	// Linux doesnt come with an implementation for itoa.
+	sprintf(buffer,"%d", insideId);	
+	//return _itoa(this->insideId, buffer, 10);
+	return buffer;
 }
 
 string CARObject::GetNameFirstChar()

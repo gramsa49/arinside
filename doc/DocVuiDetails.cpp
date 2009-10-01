@@ -14,9 +14,9 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\docvuidetails.h"
-#include "../output/csvpage.h"
+#include "stdafx.h"
+#include "DocVuiDetails.h"
+#include "../output/CsvPage.h"
 
 CDocVuiDetails::CDocVuiDetails(CARInside &arInside, CARSchema &schema, CARVui &vui, string path, int rootLevel)
 {

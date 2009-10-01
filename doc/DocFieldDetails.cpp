@@ -14,8 +14,8 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "StdAfx.h"
-#include ".\docfielddetails.h"
+#include "stdafx.h"
+#include "DocFieldDetails.h"
 
 CDocFieldDetails::CDocFieldDetails(CARInside &arInside, CARSchema &schema, CARField &field, string path, int rootLevel)
 {
