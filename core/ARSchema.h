@@ -45,6 +45,7 @@ public:
 	list<CARVui> vuiList;
 
 	string GetURL(int rootLevel);
+	string GetURL(int rootLevel, bool useImage);
 
 	string LinkToVui(int vuiId, int fromRootLevel);
 	string LinkToVui(string vuiName, int fromRootLevel);

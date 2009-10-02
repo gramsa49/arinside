@@ -69,6 +69,16 @@ string CARSchema::GetURL(int rootLevel)
 	return CWebUtil::Link(this->name, tmp.str(), "schema.gif", rootLevel);
 }
 
+string CARSchema::GetURL(int rootLevel, bool useImage)
+{
+	stringstream tmp;
+	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->insideId << "/" << CWebUtil::DocName("index");	
+	if (useImage)
+		return CWebUtil::Link(this->name, tmp.str(), "schema.gif", rootLevel);
+	else
+		return CWebUtil::Link(this->name, tmp.str(), "", rootLevel);
+}
+
 string CARSchema::WebAlias()
 {
 	stringstream strm;

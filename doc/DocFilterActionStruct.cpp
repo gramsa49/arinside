@@ -480,7 +480,7 @@ string CDocFilterActionStruct::FilterActionMessage(ARFilterStatusStruct &action,
 			refItemTmp->description = "Field in Message";
 			refItemTmp->fromName = this->obj->name;						
 			refItemTmp->schemaInsideId = schemaInsideId;
-			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
+			strm << "Message Text: <br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
 		}
 	}
 	catch(...)
@@ -547,13 +547,13 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		if(strcmp(tmpDisplayName.c_str(), "ARSYS.ARF.WEBSERVICE")==0)
 		{
 			//cout << "NumItems: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems << endl;
-			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[0].u.value.u.charVal << endl;
-			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[1].u.value.u.charVal << endl;
-			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[2].u.value.u.charVal << endl;
-			//cout << "Unknown: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[3].u.value.u.charVal << endl;
-			//cout << "Sub?: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal<< endl;
-			//cout << "Sub?: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value) << endl;
-			//cout << "Sub?: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value) << endl;
+			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[0].u.value) << endl;
+			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[1].u.value) << endl;
+			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[2].u.value) << endl;
+			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[3].u.value) << endl;
+			//cout << "WSDL: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value) << endl;
+			//cout << "Input Mappings: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value) << endl;
+			//cout << "Output Mappings: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value) << endl;
 
 #if _DEBUG
 			/**********
@@ -660,12 +660,12 @@ string CDocFilterActionStruct::FilterActionProcess(char *action, int nAction)
 			refItem->fromName = this->obj->name;						
 			refItem->schemaInsideId = schemaInsideId;	
 
-			strm << "Command Line: " << arIn->TextFindFields(action, "$", schemaInsideId, rootLevel, true, refItem) << endl;
+			strm << arIn->TextFindFields(action, "$", schemaInsideId, rootLevel, true, refItem) << endl;
 			delete refItem;
 		}
 		else
 		{
-			strm << "No SQL command specified." << endl;
+			strm << "No Run Process command specified." << endl;
 		}
 	}
 	catch(...)

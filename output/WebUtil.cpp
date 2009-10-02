@@ -100,8 +100,8 @@ string CWebUtil::ObjName(string objName)
 
 
 //targetMode
-//_blank, um den Verweis in einem neuen Fenster zu öffnen,
-//_self, um den Verweis im aktuellen Fenster zu öffnen,
+//_blank, to open the link in a new window
+//_self, to open the link in the current window,
 //_parent, um bei verschachtelten Framesets das aktuelle Frameset zu sprengen,
 //_top, um bei verschachtelten Framesets alle Framesets zu sprengen.
 string CWebUtil::Link(string caption, string linkTo, string imgName, int rootLevel)

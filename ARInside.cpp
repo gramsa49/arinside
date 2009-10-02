@@ -49,9 +49,9 @@
 // version information block
 #define VERSION "3.0"
 #if _DEBUG
-	#define VERSION_STR VERSION "r" SVN_REV_STR
+#define VERSION_STR VERSION "r" SVN_REV_STR
 #else
-	#define VERSION_STR VERSION
+#define VERSION_STR VERSION
 #endif
 const string AppVersion = VERSION_STR;
 /////////
@@ -211,10 +211,10 @@ void CARInside::LoadBlackList(void)
 				{
 					//if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
 					//{
-						CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
+					CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
 
-						this->blackList.insert(blackList.end(), *blackListItem);
-						LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
+					this->blackList.insert(blackList.end(), *blackListItem);
+					LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
 					//}
 				}
 			}		
@@ -2570,25 +2570,29 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 		if(inText.size() == 0)
 			return "";
 
+		stringstream strmTmp;
+		unsigned int curPos = 0;
+
 		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
 
 		CARSchema *schema = FindSchema(schemaInsideId);
-		if (schema == NULL) return inText;
+		if (schema == NULL)
+			return inText;
 
-		stringstream strmTmp;
 		unsigned int startPos = 0;
 		unsigned int maxLen = (unsigned int)inText.length();
-		unsigned int curPos = 0;
 		unsigned int fieldIdPos = 0;
+
 		char fieldId[20];
 		char *enumId;    // points to the enum part of status history within fieldId later
 		char *usrOrTime; // points to the "user or time" part of status history within fieldId later
-		
-		while ( (startPos = (unsigned int)inText.find(fieldSeparator.at(0),curPos)) != std::string::npos)
+
+		while ((startPos = (unsigned int)inText.find(fieldSeparator.at(0),curPos)) != std::string::npos)
 		{
 			++startPos;
-			strmTmp << inText.substr(curPos,startPos - curPos); curPos = startPos;
-											
+			strmTmp << inText.substr(curPos,startPos - curPos);
+			curPos = startPos;
+
 			// reset
 			fieldIdPos = 0;	
 			fieldId[0] = 0;
@@ -2599,28 +2603,21 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 			{
 				char currChar = inText.at(curPos);
 				if (currChar == '-' && fieldIdPos != 0)  
-				{
 					break; // - is only allowed at the beginning
-				}
 				if (currChar >= '0' && currChar <= '9' || currChar == '-' || currChar == '.')
 				{
-					if (fieldIdPos + 1 == 20) break;	// max length .. that cant be a field
+					if (fieldIdPos + 1 == 20)
+						break;	// max length .. that cant be a field
 
 					if (currChar != '.' && fieldIdPos > 1 && fieldId[fieldIdPos-1] == '.')
 					{
 						fieldId[fieldIdPos-1] = 0;
 						if (enumId == NULL)
-						{
 							enumId = &fieldId[fieldIdPos];
-						}
 						else if (usrOrTime == NULL)
-						{
 							usrOrTime = &fieldId[fieldIdPos];
-						}
 						else
-						{
 							break; // uhh ohh
-						}
 					}
 					// copy it over
 					fieldId[fieldIdPos++] = currChar;
@@ -2631,7 +2628,8 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 					// end found
 					fieldId[fieldIdPos] = 0;
 
-					if (fieldId[0] == 0) break;	// two $$ .. someone must be dreaming about more money
+					if (fieldId[0] == 0)
+						break;	// two $$ .. someone must be dreaming about more money
 
 					int iFieldId = atoi(fieldId);
 					if (iFieldId > 0)
@@ -2640,7 +2638,8 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 						CARField *field = FindField(schema,iFieldId);
 						CARField *fieldStatus = NULL;
 
-						if (field == NULL) break;
+						if (field == NULL)
+							break;
 
 						// now link to the field
 						strmTmp << field->GetURL(rootLevel);
@@ -2651,7 +2650,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 						if (iFieldId == 15)
 						{
 							if (enumId == NULL || usrOrTime == NULL) break;
-							
+
 							// resolve user or time attribute
 							int iUsrOrTime = atoi(usrOrTime);
 							char* usrOrTimeStr = usrOrTime;
@@ -2673,9 +2672,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus->insideId, iEnumId) << "." << usrOrTimeStr;
 							}
 							else
-							{
 								strmTmp << "." << enumId << "." << usrOrTimeStr;
-							}
 						}
 						strmTmp << "$";
 						++curPos; // skip the $ so it isnt found again
@@ -2696,6 +2693,188 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 		}
 		if (curPos < maxLen)
 			strmTmp << inText.substr(curPos,maxLen - curPos);
+
+		//write the current string back ot inText, then clear the stream for use with the application code
+		inText = strmTmp.str();
+		strmTmp.clear();
+		strmTmp.str("");
+
+		if (getPos(inText,"Application-Copy-Field-Value "))
+		{
+			strmTmp << processTwoFields("Application-Copy-Field-Value", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Delete-Entry "))
+		{
+			strmTmp << processForm("Application-Delete-Entry", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Format-Qual "))
+		{
+			strmTmp << processForm("Application-Format-Qual", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Format-Qual-Filter "))
+		{
+			strmTmp << processForm("Application-Format-Qual-Filter", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Format-Qual-ID "))
+		{
+			strmTmp << processForm("Application-Format-Qual-ID", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Format-Qual-L "))
+		{
+			strmTmp << processForm("Application-Format-Qual-L", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-Approval-Join "))
+		{
+			strmTmp << processForm("Application-Get-Approval-Join", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-Approval-Join2 "))
+		{
+			strmTmp << processForm("Application-Get-Approval-Join2", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-DetSig-Join "))
+		{
+			strmTmp << processForm("Application-Get-DetSig-Join", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-DetSig-Join2 "))
+		{
+			strmTmp << processForm("Application-Get-DetSig-Join2", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-Form-Alias "))
+		{
+			strmTmp << processForm("Application-Get-Form-Alias", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-Locale-VuiID "))
+		{
+			strmTmp << processForm("Application-Get-Locale-VuiID", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Get-Next-Recurrence-Time "))
+		{
+			strmTmp << processForm("Application-Get-Next-Recurrence-Time", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Map-Ids-To-Names "))
+		{
+			strmTmp << processForm("Application-Map-Ids-To-Names", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Map-Ids-To-Names-L "))
+		{
+			strmTmp << processForm("Application-Map-Ids-To-Names-L", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Map-Names-To-Ids "))
+		{
+			strmTmp << processForm("Application-Map-Names-To-Ids", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Map-Names-To-Ids-L "))
+		{
+			strmTmp << processForm("Application-Map-Names-To-Ids-L", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Parse-Qual "))
+		{
+			strmTmp << processForm("Application-Parse-Qual", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Parse-Qual-Filter "))
+		{
+			strmTmp << processForm("Application-Parse-Qual-Filter", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Parse-Qual-L "))
+		{
+			strmTmp << processForm("Application-Parse-Qual-L", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Parse-Qual-SField-L "))
+		{
+			strmTmp << processForm("Application-Parse-Qual-SField-L", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Parse-Val-SField "))
+		{
+			strmTmp << processForm("Application-Parse-Val-SField", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"Application-Query-Delete-Entry "))
+		{
+			strmTmp << processForm("Application-Query-Delete-Entry", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-ACTIVE-LINK "))
+		{
+			strmTmp << processSecondParameter("PERFORM-ACTION-ACTIVE-LINK", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-ADD-ATTACHMENT "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-ADD-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-DELETE-ATTACHMENT "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-DELETE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-GET-FIELD-LABEL "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-GET-FIELD-LABEL", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-GET-PREFERENCE "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-GET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-OPEN-ATTACHMENT "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-OPEN-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-SAVE-ATTACHMENT "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-SAVE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-SET-PREFERENCE "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-SET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-CLEAR "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-DESELECTALL "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-DESELECTALL", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-IS-LEAF-SELECTED "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-IS-LEAF-SELECTED", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-NEXT-CHUNK "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-NEXT-CHUNK", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-PREV-CHUNK "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-PREV-CHUNK", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-REFRESH "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-REFRESH", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-REPORT "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-REPORT", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-SELECT-NODE "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECT-NODE", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else if (getPos(inText,"PERFORM-ACTION-TABLE-SELECTALL "))
+		{
+			strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECTALL", inText, schemaInsideId, rootLevel, refItem);
+		}
+		else
+		{
+			strmTmp << inText;
+		}
 
 		return strmTmp.str();
 	}
@@ -3138,9 +3317,9 @@ int CARInside::CompareServerVersion(int major, int minor, int revision)
 			{
 				if (revision > -1)
 				{
-					 if (vRevision == revision) return 0;
-					 if (vRevision < revision) return -1;
-					 if (vRevision > revision) return 1;
+					if (vRevision == revision) return 0;
+					if (vRevision < revision) return -1;
+					if (vRevision > revision) return 1;
 				}
 				return 0;
 			}
@@ -3153,3 +3332,177 @@ int CARInside::CompareServerVersion(int major, int minor, int revision)
 	/*if (vMajor > major)*/ return 1;
 }
 
+string CARInside::processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+{
+	stringstream strmTmp;
+	int fieldId = 0;
+	size_t length = command.length()+1;
+	size_t pos = inText.find(command);
+
+	//put the command into the stream
+	strmTmp << inText.substr(0,(length+pos));
+	//get everything after the command
+	string tmp = inText.substr(length+pos);
+	//get position of next space
+	pos = tmp.find(" ");
+
+	//set the fieldID = to the one we found
+
+	if (pos != std::string::npos)
+		fieldId = atoi(tmp.substr(0,pos).c_str());
+	else
+		fieldId = atoi(tmp.c_str());
+
+	if (fieldId != std::string::npos && fieldId > 0)
+		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+
+	if (pos != std::string::npos)
+	{
+		tmp = tmp.substr(pos,tmp.length());
+		strmTmp << tmp;
+	}
+
+	return strmTmp.str();
+}
+string CARInside::processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+{
+	stringstream strmTmp;
+	int fieldId = 0;
+	size_t length = command.length()+1;
+	size_t pos = inText.find(command);
+
+	//put the command into the stream
+	strmTmp << inText.substr(0,(length+pos));
+	//get everything after the command
+	string tmp = inText.substr(length+pos);
+	//get position of next space
+	pos = tmp.find(" ");
+	//set the fieldID = to the one we found
+	fieldId = stringToInt(tmp.substr(0,pos));
+
+	if (fieldId != std::string::npos)
+		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+
+	//put a space between the field ID's
+	strmTmp << " ";
+
+	//get position of next space
+	pos = tmp.find(" ");
+	//get everything after the space
+	tmp = tmp.substr(pos);
+	//set the fieldID = to the one we found
+	fieldId = stringToInt(tmp.substr(0,tmp.length()));
+
+	if (fieldId != std::string::npos)
+		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
+
+	return strmTmp.str();
+}
+string CARInside::processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+{
+	stringstream strmTmp;
+	string form = "";
+	size_t length = command.length()+1;
+	size_t pos = inText.find(command);
+
+
+	//add the reference
+	//CARField *field = FindField(schema,iFieldId);
+	//CARField *fieldStatus = NULL;
+
+	//strmTmp << field->GetURL(rootLevel);
+	//refItem->fieldInsideId = field->fieldId;
+	//refItem->
+	//AddReferenceItem(refItem);
+
+	//put the command into the stream
+	strmTmp << inText.substr(0,(length+pos));
+	//get everything after the command
+	string tmp = inText.substr(length+pos);
+	//ok, we are at the first parameter, need to first find if it starts with a "
+	if (tmp.substr(0,1) == "\"")
+	{
+		strmTmp << "\"";
+		pos = tmp.find("\"",1);
+		form = tmp.substr(1,pos-1);
+	}
+	else
+	{
+		//get position of next space
+		pos = tmp.find(" ");
+		form = tmp.substr(0,pos);
+	}
+	//generate link for form
+	CARSchema *schema = FindSchema(schemaInsideId);
+	strmTmp << schema->GetURL(rootLevel, false);
+	//refItem->fieldInsideId = schema->FileID;
+	//AddReferenceItem(refItem);
+
+	//write anything past the form to output
+	strmTmp << tmp.substr(pos);
+
+	return strmTmp.str();
+}
+string CARInside::processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+{
+	stringstream strmTmp;
+	int fieldId = 0;
+	size_t length = command.length()+1;
+	size_t pos = inText.find(command);
+
+	//put the command into the stream
+	strmTmp << inText.substr(0,(length+pos));
+	//get everything after the command
+	string tmp = inText.substr(length+pos);
+	//get position of next space
+	pos = tmp.find(" ");
+	//set the fieldID = to the one we found
+	strmTmp << tmp.substr(0,pos);
+	//put a space in there
+	strmTmp << " ";
+	//get position of next space
+	pos = tmp.find(" ");
+	//get everything after the space
+	tmp = tmp.substr(pos);
+	//set the fieldID = to the one we found
+	fieldId = stringToInt(tmp.substr(0,tmp.length()));
+
+	if (fieldId != std::string::npos)
+		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
+
+	return strmTmp.str();
+}
+bool CARInside::getPos(string inText, string findText)
+{
+	size_t pos = inText.find(findText);
+	bool found = false;
+	if (pos != std::string::npos)
+		found = true;
+	else
+		pos = 0;
+
+	return found;
+}
+
+string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+{
+	stringstream strmTmp;
+
+	//add the reference
+	CARSchema *schema = FindSchema(schemaInsideId);
+	CARField *field = FindField(schema,iFieldId);
+	CARField *fieldStatus = NULL;
+
+	strmTmp << field->GetURL(rootLevel);
+	refItem->fieldInsideId = field->fieldId;
+	AddReferenceItem(refItem);
+
+	return strmTmp.str();
+}
+int CARInside::stringToInt(string s)
+{
+	int i;
+	istringstream myStream(s);
+	myStream >> i;
+	return i;
+}

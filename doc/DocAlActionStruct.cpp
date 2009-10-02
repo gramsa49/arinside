@@ -443,12 +443,12 @@ string CDocAlActionStruct::ActionProcess(char *action, int nAction)
 			refItemTmp->fromName = this->obj->name;						
 			refItemTmp->schemaInsideId = schemaInsideId;		
 
-			strm << "Command Line: " << arIn->TextFindFields(action, "$", refItemTmp->schemaInsideId, rootLevel, true, refItemTmp) << endl;
+			strm << arIn->TextFindFields(action, "$", refItemTmp->schemaInsideId, rootLevel, true, refItemTmp) << endl;
 			delete refItemTmp;
 		}
 		else
 		{
-			strm << "No SQL command specified." << endl;
+			strm << "No Run Process command specified." << endl;
 		}
 	}
 	catch(...)
