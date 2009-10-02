@@ -119,7 +119,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				Optimization="3"
+				Optimization="2"
 				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
@@ -1398,6 +1398,34 @@
 			</File>
 			<File
 				RelativePath=".\Util\Util.h"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="tinyxml"
+			>
+			<File
+				RelativePath=".\tinyxml\tinystr.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tinyxml\tinystr.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tinyxml\tinyxml.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tinyxml\tinyxml.h"
+				>
+			</File>
+			<File
+				RelativePath=".\tinyxml\tinyxmlerror.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\tinyxml\tinyxmlparser.cpp"
 				>
 			</File>
 		</Filter>

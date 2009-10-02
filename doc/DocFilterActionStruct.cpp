@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFilterActionStruct.h"
+#include "../tinyxml/tinyxml.h"
 
 CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, string dir, int rootLevel, int structItemType)
 {
@@ -554,6 +555,34 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			//cout << "Sub?: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value) << endl;
 			//cout << "Sub?: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value) << endl;
 
+#if _DEBUG
+			/**********
+			 * this is just a small sampe code for using tinyxml as xml parser.
+			 * we should also check out tinyXML++ (http://code.google.com/p/ticpp) which
+			 * supports the same interface as tinyXML but is updated more recently.
+			 **********/
+			if (action.fieldList.fieldAssignList->assignment.u.filterApi->numItems > 9)
+			{
+				TiXmlDocument document;
+				document.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal , 0, TIXML_DEFAULT_ENCODING);
+
+				TiXmlHandle hDoc(&document);
+				TiXmlHandle formMap(hDoc.FirstChild("arDocMapping").FirstChild("formMapping"));
+				TiXmlElement *formNode = formMap.FirstChild("form").Element();
+				if (formNode)
+				{
+					string service = formNode->Attribute("formName");
+					strm << "Calling: " << service << "<br/>" << endl;
+				}
+				TiXmlHandle element(formMap.FirstChild("element").FirstChild("element"));
+				TiXmlElement *elementNode = element.Element();
+				if (elementNode)
+				{
+					strm << "Parameter:<br/>";
+					strm << "&nbsp;&nbsp;" << elementNode->Attribute("name") << " (data type: " << elementNode->Attribute("dataType") << ") <br/>" << endl;
+				}
+			}
+#endif
 			strm << "Read Value for Field from: WEB SERVICE<br/>" << endl;
 			strm << "Service Name: " << action.fieldList.fieldAssignList->assignment.u.filterApi->serviceName << "<br/>" << endl;
 			strm << "WSDL Location: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) << "<br/>" << endl;
