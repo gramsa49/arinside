@@ -489,7 +489,7 @@ void CARAssignHelper::AssignProcess(string ifElse, char *v, stringstream &assign
 			refItem->fromName = objName;						
 			refItem->schemaInsideId = schemaInsideId2;		
 
-			assignText << "$PROCESS$"<< arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, refItem) << endl;
+			assignText << "$PROCESS$ "<< arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, refItem) << endl;
 			delete refItem;
 		}
 	}

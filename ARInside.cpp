@@ -2699,6 +2699,8 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 		strmTmp.clear();
 		strmTmp.str("");
 
+		//cout << refItem->fromName << endl;
+
 		if (getPos(inText,"Application-Copy-Field-Value "))
 		{
 			strmTmp << processTwoFields("Application-Copy-Field-Value", inText, schemaInsideId, rootLevel, refItem);
@@ -3375,13 +3377,18 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 	strmTmp << inText.substr(0,(length+pos));
 	//get everything after the command
 	string tmp = inText.substr(length+pos);
-	//get position of next space
-	pos = tmp.find(" ");
-	//set the fieldID = to the one we found
-	fieldId = stringToInt(tmp.substr(0,pos));
-
-	if (fieldId != std::string::npos)
+	if (tmp.find("$") == 0 && tmp.find("$") != std::string::npos)
+	{
+		tmp = tmp.substr(1);
+		pos = tmp.find("$")+1;
+		strmTmp << "$" << tmp.substr(0,pos);
+	}
+	else
+	{
+		pos = tmp.find(" ");
+		fieldId = stringToInt(tmp.substr(0,pos));
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+	}
 
 	//put a space between the field ID's
 	strmTmp << " ";
@@ -3389,12 +3396,17 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 	//get position of next space
 	pos = tmp.find(" ");
 	//get everything after the space
-	tmp = tmp.substr(pos);
-	//set the fieldID = to the one we found
-	fieldId = stringToInt(tmp.substr(0,tmp.length()));
+	tmp = tmp.substr(pos+1);
 
-	if (fieldId != std::string::npos)
-		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
+	if (tmp.find("$") == 0 && tmp.find("$") != std::string::npos)
+	{
+		strmTmp << tmp;
+	}
+	else
+	{
+		fieldId = stringToInt(tmp);
+		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+	}
 
 	return strmTmp.str();
 }
@@ -3404,16 +3416,6 @@ string CARInside::processForm(string command, string inText, int schemaInsideId,
 	string form = "";
 	size_t length = command.length()+1;
 	size_t pos = inText.find(command);
-
-
-	//add the reference
-	//CARField *field = FindField(schema,iFieldId);
-	//CARField *fieldStatus = NULL;
-
-	//strmTmp << field->GetURL(rootLevel);
-	//refItem->fieldInsideId = field->fieldId;
-	//refItem->
-	//AddReferenceItem(refItem);
 
 	//put the command into the stream
 	strmTmp << inText.substr(0,(length+pos));
@@ -3433,10 +3435,12 @@ string CARInside::processForm(string command, string inText, int schemaInsideId,
 		form = tmp.substr(0,pos);
 	}
 	//generate link for form
-	CARSchema *schema = FindSchema(schemaInsideId);
-	strmTmp << schema->GetURL(rootLevel, false);
-	//refItem->fieldInsideId = schema->FileID;
-	//AddReferenceItem(refItem);
+	CARSchema *schema = FindSchema(form);
+	if (schema != NULL)
+		strmTmp << schema->GetURL(rootLevel, false);
+	else
+		strmTmp << form;
+		//AddReferenceItem(refItem);
 
 	//write anything past the form to output
 	strmTmp << tmp.substr(pos);
@@ -3463,12 +3467,13 @@ string CARInside::processSecondParameter(string command, string inText, int sche
 	//get position of next space
 	pos = tmp.find(" ");
 	//get everything after the space
-	tmp = tmp.substr(pos);
-	//set the fieldID = to the one we found
-	fieldId = stringToInt(tmp.substr(0,tmp.length()));
-
-	if (fieldId != std::string::npos)
+	if (pos != std::string::npos)
+	{
+		tmp = tmp.substr(pos);
+		//set the fieldID = to the one we found
+		fieldId = stringToInt(tmp);
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
+	}
 
 	return strmTmp.str();
 }
@@ -3487,22 +3492,44 @@ bool CARInside::getPos(string inText, string findText)
 string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
 {
 	stringstream strmTmp;
+	strmTmp.str("");
 
 	//add the reference
-	CARSchema *schema = FindSchema(schemaInsideId);
-	CARField *field = FindField(schema,iFieldId);
-	CARField *fieldStatus = NULL;
+	try {
+		CARSchema *schema = FindSchema(schemaInsideId);
+		if (schema != NULL)
+		{
+			CARField *field = FindField(schema,iFieldId);
+			if (field != NULL)
+			{
+				CARField *fieldStatus = NULL;
 
-	strmTmp << field->GetURL(rootLevel);
-	refItem->fieldInsideId = field->fieldId;
-	AddReferenceItem(refItem);
+				strmTmp << field->GetURL(rootLevel);
+				refItem->fieldInsideId = field->fieldId;
+				AddReferenceItem(refItem);
+			}
+			else
+				strmTmp << iFieldId;
+		}
+		else
+			strmTmp << iFieldId;
+	}
+	catch (...) {
+		cout << "Exception in refFieldID" << endl;
+	}
 
 	return strmTmp.str();
 }
 int CARInside::stringToInt(string s)
 {
-	int i;
-	istringstream myStream(s);
-	myStream >> i;
+	int i = 0;
+	try {
+		istringstream myStream(s);
+		myStream >> i;
+	}
+	catch (...)
+	{
+		cout << "Exception in stringToInt" << endl;
+	}
 	return i;
 }
