@@ -2409,16 +2409,17 @@ void CARInside::SearchCustomFieldReferences()
 	{
 		cout << "Checking field references [";
 
-		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
+		list<CARSchema>::iterator schemaIter = schemaList.begin();
+		list<CARSchema>::iterator endIt = schemaList.end();
+		for ( ; schemaIter != endIt; ++schemaIter )
 		{			
 			CARSchema *schema = &(*schemaIter);
 
-			list<CARField>::iterator fieldIter;		
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+			list<CARField>::iterator fieldIter = schema->fieldList.begin();
+			list<CARField>::iterator endIt = schema->fieldList.end();
+			for( ; fieldIter != endIt; ++fieldIter)
 			{
 				CARField *field = &(*fieldIter);
-
 				CustomFieldReferences(*schema, *field);
 			}
 
@@ -2445,7 +2446,7 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 		stringstream strm;
 		strm.str("");
 
-		switch(obj.dataType)
+		switch(obj.limit.dataType)
 		{		
 		case AR_DATA_TYPE_COLUMN: //Find column references
 			{
@@ -2454,29 +2455,23 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 				//To create a link to the datafield we first must find the target schema of the table
 				int tblTargetSchemaInsideId = schema.insideId;
 
-				list<CARSchema>::iterator schemaIter;						
-				for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
-				{			
-					CARSchema *searchSchema = &(*schemaIter);
-					if(schema.insideId == searchSchema->insideId)
-					{
-						list<CARField>::iterator fieldIter;		
-						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); fieldIter++)
+				list<CARField>::iterator fldIt = schema.fieldList.begin();
+				list<CARField>::iterator endIt = schema.fieldList.end();
+				for( ; fldIt != endIt; ++fldIt)
+				{
+					CARField *field = &(*fldIt);
+					if(field->insideId == fLimit.parent) // we found the table
+					{				
+						if(field->limit.dataType == AR_DATA_TYPE_TABLE)
 						{
-							CARField *field = &(*fieldIter);
-							if(field->insideId == fLimit.parent) // we found the table
-							{				
-								if(field->limit.dataType == AR_DATA_TYPE_TABLE)
-								{
-									ARTableLimitsStruct tblLimits = field->limit.u.tableLimits;
+							ARTableLimitsStruct tblLimits = field->limit.u.tableLimits;
 
-									if(!strcmp(tblLimits.schema, AR_CURRENT_SCHEMA_TAG)==0)
-									{
-										tblTargetSchemaInsideId = SchemaGetInsideId(tblLimits.schema);
-									}
-								}
+							if(!strcmp(tblLimits.schema, AR_CURRENT_SCHEMA_TAG)==0)
+							{
+								tblTargetSchemaInsideId = SchemaGetInsideId(tblLimits.schema);
 							}
 						}
+						break; // ok, field was found .. stop searching here
 					}
 				}
 
@@ -2510,8 +2505,8 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					refItem->fromName = schema.name;
 
 					CARQualification arQual(*this);
-					int pFormId = SchemaGetInsideId(schema.name.c_str());
-					int sFormId = SchemaGetInsideId(tmpSchema.c_str());
+					int pFormId = SchemaGetInsideId(schema.name);
+					int sFormId = SchemaGetInsideId(tmpSchema);
 
 					arQual.CheckQuery(&fLimit.qualifier, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 					delete refItem;
@@ -2519,6 +2514,10 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 			}
 			break;
 		}
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION CustomFieldReferences:" << e.what() << endl;
 	}
 	catch(...)
 	{
