@@ -102,8 +102,8 @@ public:
 
 	int SchemaGetInsideId(string searchObjName);
 
-	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 	string LinkToField(string schemaName, int fieldInsideId, int fromRootLevel);	
+	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);	
 
 	string LinkToContainer(string containerName, int rootLevel);
@@ -183,5 +183,4 @@ private:
 	string CARInside::processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 	string CARInside::processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 	string CARInside::refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	int CARInside::stringToInt(string s);
 };

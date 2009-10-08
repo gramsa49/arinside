@@ -546,50 +546,81 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		//check if it is a webservice set fields
 		if(strcmp(tmpDisplayName.c_str(), "ARSYS.ARF.WEBSERVICE")==0)
 		{
-			//cout << "NumItems: " << action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems << endl;
-			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[0].u.value) << endl;
-			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[1].u.value) << endl;
-			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[2].u.value) << endl;
-			//cout << "Unknown: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[3].u.value) << endl;
-			//cout << "WSDL: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value) << endl;
-			//cout << "Input Mappings: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value) << endl;
-			//cout << "Output Mappings: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value) << endl;
+			//NumItems = action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems;
+			//action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[X].u.value
+			//0 = Unknown
+			//1 = Unknown
+			//2 = Unknown
+			//3 = Unknown
+			//4 = WSDL Location
+			//5 = Web Service
+			//6 = Operation
+			//7 = URI
+			//8 = URN
+			//9 = Input Mappings
+			//10 = Output Mappings
+			//11 = Port
 
-#if _DEBUG
-			/**********
-			 * this is just a small sampe code for using tinyxml as xml parser.
-			 * we should also check out tinyXML++ (http://code.google.com/p/ticpp) which
-			 * supports the same interface as tinyXML but is updated more recently.
-			 **********/
-			if (action.fieldList.fieldAssignList->assignment.u.filterApi->numItems > 9)
-			{
-				TiXmlDocument document;
-				document.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal , 0, TIXML_DEFAULT_ENCODING);
+			//populate operation string from input #6
+			string operation = "";
+			string form = "";
 
-				TiXmlHandle hDoc(&document);
-				TiXmlHandle formMap(hDoc.FirstChild("arDocMapping").FirstChild("formMapping"));
-				TiXmlElement *formNode = formMap.FirstChild("form").Element();
-				if (formNode)
-				{
-					string service = formNode->Attribute("formName");
-					strm << "Calling: " << service << "<br/>" << endl;
-				}
-				TiXmlHandle element(formMap.FirstChild("element").FirstChild("element"));
-				TiXmlElement *elementNode = element.Element();
-				if (elementNode)
-				{
-					strm << "Parameter:<br/>";
-					strm << "&nbsp;&nbsp;" << elementNode->Attribute("name") << " (data type: " << elementNode->Attribute("dataType") << ") <br/>" << endl;
-				}
-			}
-#endif
-			strm << "Read Value for Field from: WEB SERVICE<br/>" << endl;
-			strm << "Service Name: " << action.fieldList.fieldAssignList->assignment.u.filterApi->serviceName << "<br/>" << endl;
-			strm << "WSDL Location: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) << "<br/>" << endl;
-			strm << "Web Service: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value) << "<br/>" << endl;
-			strm << "Port: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value) << "<br/>" << endl;
-			strm << "URI: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value) << "<br/>" << endl;
-			strm << "URN: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) << "<br/>" << endl;
+			TiXmlDocument operationXML;
+			operationXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
+			TiXmlHandle opHandle(&operationXML);
+			TiXmlElement *opElement = opHandle.FirstChild("operation").FirstChild("inputMapping").ToElement();
+			if (opElement)
+				operation = opElement->Attribute("name");
+
+			//process input mapping
+			stringstream input;
+			input.str("");
+
+			TiXmlDocument inputXML;
+			inputXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
+			TiXmlHandle inputHandle(&inputXML);
+			TiXmlElement *formElement = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").FirstChild("form").ToElement();
+			if (formElement)
+				form = formElement->Attribute("formName");
+
+			TiXmlNode *element = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").Child(1).ToNode();
+
+			CTable tblInputMappingList("pushFieldsList", "TblObjectList");
+			tblInputMappingList.AddColumn(0, "Element");
+			tblInputMappingList.AddColumn(0, "Field");
+			input << processMappingXML(element, "", tblInputMappingList, form, "Input");
+			input << tblInputMappingList.ToXHtml();
+
+			//process output mapping
+			stringstream output;
+			output.str("");
+
+			TiXmlDocument outputXML;
+			outputXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
+			TiXmlHandle outputHandle(&outputXML);
+			formElement = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").FirstChild("form").ToElement();
+			if (formElement)
+				form = formElement->Attribute("formName");
+
+			element = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").Child(1).ToNode();
+
+			CTable tblOutputMappingList("pushFieldsList", "TblObjectList");
+			tblOutputMappingList.AddColumn(0, "Element");
+			tblOutputMappingList.AddColumn(0, "Field");
+
+			output << processMappingXML(element, "", tblOutputMappingList, form, "Output");
+			output << tblOutputMappingList.ToXHtml();
+
+			strm << "Read Value for Field from: WEB SERVICE<br/>";
+			strm << "WSDL Location: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) << "<br/>";
+			strm << "Web Service: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value) << "<br/>";
+			strm << "Port: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value) << "<br/>";
+			strm << "Operation: " << operation << "<br/>";
+			strm << "URI: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value) << "<br/>";
+			strm << "URN: " << CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) << "<br/>";
+			strm << "<BR/>";
+			strm << "Input Mapping: " << input.str() << "<BR/>";
+			strm << "Output Mapping: " << output.str();
 		}
 		else
 		{
@@ -892,6 +923,54 @@ string CDocFilterActionStruct::FilterActionGotoGuideLabel(ARGotoGuideLabelStruct
 	catch(...)
 	{
 		cout << "EXCEPTION in FilterActionGotoGuideLabel: " << this->obj->name << endl;
+	}
+
+	return strm.str();
+}
+
+string CDocFilterActionStruct::processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, string type)
+{
+	if ( !pParent )
+		return "";
+
+	//cout << "curS: " << s << endl;
+
+	stringstream strm;
+
+	TiXmlNode* pChild;
+	int t = pParent->Type();
+
+	switch ( t )
+	{
+	case TiXmlNode::ELEMENT:
+		if (strcmp("element",pParent->Value()) == 0)
+		{
+			//cout << "Parent: " << pParent->ToElement()->Attribute("name") << endl;
+			sParent = pParent->ToElement()->Attribute("name");
+		}
+		else if (strcmp("fieldMapping",pParent->Value()) == 0)
+		{
+			CTableRow row("cssStdRow");
+			row.AddCell(CTableCell(sParent));
+			stringstream ss(pParent->ToElement()->Attribute("arFieldId"));
+			int i;
+			ss >> i;
+			//row.AddCell(CTableCell(i));
+			row.AddCell(CTableCell(arIn->LinkToField(form, i, rootLevel)));
+			tblFieldList.AddRow(row);	
+
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Web Service Set Fields "+type+" Mapping", i, schemaInsideId);
+			CARSchema *schema = arIn->FindSchema(form);
+			CARField *field = arIn->FindField(schema,i);
+			field->GetURL(rootLevel);
+			refItem->fieldInsideId = field->fieldId;
+			arIn->AddReferenceItem(refItem);
+		}
+		break;
+	}
+	for ( pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling()) 
+	{
+		strm << processMappingXML( pChild, sParent, tblFieldList, form, type);
 	}
 
 	return strm.str();

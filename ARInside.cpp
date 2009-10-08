@@ -2435,7 +2435,7 @@ void CARInside::SearchCustomFieldReferences()
 }
 
 //Find references at startup
-//This function is necessary because when we wouldt try to add the reference at runtime for example
+//This function is necessary because when we would try to add the reference at runtime for example
 //Columns might be enumerated at a time when the datafield has been already saved to html file
 void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 {
@@ -3385,7 +3385,7 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 	else
 	{
 		pos = tmp.find(" ");
-		fieldId = stringToInt(tmp.substr(0,pos));
+		fieldId = printf("%i",tmp.substr(0,pos));
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
 	}
 
@@ -3403,7 +3403,7 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 	}
 	else
 	{
-		fieldId = stringToInt(tmp);
+		fieldId = printf("%i",tmp);
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
 	}
 
@@ -3470,7 +3470,7 @@ string CARInside::processSecondParameter(string command, string inText, int sche
 	{
 		tmp = tmp.substr(pos);
 		//set the fieldID = to the one we found
-		fieldId = stringToInt(tmp);
+		fieldId = printf("%i",tmp);
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
 	}
 
@@ -3518,17 +3518,4 @@ string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CF
 	}
 
 	return strmTmp.str();
-}
-int CARInside::stringToInt(string s)
-{
-	int i = 0;
-	try {
-		istringstream myStream(s);
-		myStream >> i;
-	}
-	catch (...)
-	{
-		cout << "Exception in stringToInt" << endl;
-	}
-	return i;
 }

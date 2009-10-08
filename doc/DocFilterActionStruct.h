@@ -18,6 +18,7 @@
 #include "DocActionSetFieldsHelper.h"
 #include "../core/ARAssignHelper.h"
 #include "../core/ARQualification.h"
+#include "../tinyxml/tinyxml.h"
 
 using namespace OUTPUT;
 
@@ -78,6 +79,8 @@ private:
 
 	// AR_FILTER_ACTION_GOTOGUIDELABEL
 	string FilterActionGotoGuideLabel(ARGotoGuideLabelStruct &action, int nAction);
+
+	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, string type);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// AR_FILTER_ACTION_SERVICE
