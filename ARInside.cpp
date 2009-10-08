@@ -3381,7 +3381,7 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 	else
 	{
 		pos = tmp.find(" ");
-		fieldId = printf("%i",tmp.substr(0,pos));
+		fieldId = atoi(tmp.substr(0,pos).c_str());
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
 	}
 
@@ -3399,7 +3399,7 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 	}
 	else
 	{
-		fieldId = printf("%i",tmp);
+		fieldId = atoi(tmp.c_str());
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
 	}
 
@@ -3466,7 +3466,7 @@ string CARInside::processSecondParameter(string command, string inText, int sche
 	{
 		tmp = tmp.substr(pos);
 		//set the fieldID = to the one we found
-		fieldId = printf("%i",tmp);
+		fieldId = atoi(tmp.c_str());
 		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
 	}
 
