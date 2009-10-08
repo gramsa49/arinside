@@ -128,6 +128,7 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 					if (singleLine && strmHasContent) strm << ", ";
 					strm << "Interval";
 					if (!singleLine) strm << ": " << val->u.intVal;
+					strmHasContent = true;
 				}
 		}
 		if(!strmHasContent)
