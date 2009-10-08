@@ -243,9 +243,9 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 				else
 					qText << data->u.intVal;
 			}
-			catch(...)
+			catch(exception& e)
 			{
-				cout << "EXCEPTION enumerating enum value" << endl;
+				cout << "EXCEPTION enumerating enum value: " << e.what() << endl;
 			}						
 			break;
 		case AR_DATA_TYPE_REAL:
@@ -267,9 +267,9 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 				else
 					qText << data->u.intVal;
 			}
-			catch(...)
+			catch(exception& e)
 			{
-				cout << "EXCEPTION enumerating enum value" << endl;
+				cout << "EXCEPTION enumerating enum value: " << e.what() << endl;
 			}
 			break;
 		case AR_DATA_TYPE_TIME:

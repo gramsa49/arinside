@@ -121,9 +121,9 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 		FreeARServerInfoList(&serverInfo, false);
 		FreeARStatusList(&arStatus, false);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating server properties" << endl;
+		cout << "EXCEPTION enumerating server properties: " << e.what() << endl;
 	}
 }
 

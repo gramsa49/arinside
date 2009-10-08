@@ -185,10 +185,10 @@ int CWebPage::SaveInFolder(string path)
 		nFilesCreated++;
 		result = 1;
 	}
-	catch(...)
+	catch(exception& e)
 	{		
 		stringstream erStrm;
-		erStrm << "Error saving file '" << strm.str() << "' to disk. ";
+		erStrm << "Error saving file '" << strm.str() << "' to disk. Error: " << e.what();
 		throw(AppException(erStrm.str(), "undefined", "FileIo"));
 	}
 

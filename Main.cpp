@@ -250,9 +250,9 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		LOG << "RunNotes: " << cfg.runNotes << endl;
 		LOG << endl;		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		throw(AppException("Error in LoadConfigFile().", "undefined", "AppInitialization"));
+		throw(AppException(e.what(), "Error in LoadConfigFile().", "AppInitialization"));
 	}
 }
 
@@ -278,10 +278,10 @@ string LoadFromFile(string fileName)
 		fin.close();
 		result = strm.str();
 	}
-	catch(...)
+	catch(exception& e)
 	{
 		stringstream strm;
-		strm << "Error loading file '"<< fileName <<"'." << endl; 
+		strm << "Error loading file '"<< fileName <<"'. Error: " << e.what() << endl; 
 		throw(AppException(strm.str(), "undefined", "AppInitialization"));
 	}	
 
@@ -342,9 +342,9 @@ BOOL DeleteDirectory(const TCHAR* sPath)
 
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in DeleteDirectory" << endl; 
+		cout << "EXCEPTION in DeleteDirectory: " << e.what() << endl; 
 	}	
 
 	return RemoveDirectory(sPath); // remove the empty (maybe not) directory

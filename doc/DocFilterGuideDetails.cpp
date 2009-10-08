@@ -65,9 +65,9 @@ void CDocFilterGuideDetails::Documentation()
 			webPage.SaveInFolder(dir);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterGuideDetails_GetPrimaryForm" << endl; 
+		cout << "EXCEPTION in FilterGuideDetails_GetPrimaryForm: " << e.what() << endl; 
 	}
 }
 
@@ -109,9 +109,9 @@ string CDocFilterGuideDetails::FilterGuideInformation()
 			tblProp.AddRow(row);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterGuideDetails" << endl; 
+		cout << "EXCEPTION in FilterGuideDetails: " << e.what() << endl; 
 	}
 
 	tblProp.description = "Filter in Guide";
@@ -176,9 +176,9 @@ string CDocFilterGuideDetails::FilterActions()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterGuideDetails_FilterActions" << endl; 
+		cout << "EXCEPTION in FilterGuideDetails_FilterActions: " << e.what() << endl; 
 	}
 
 	return tblPropEx.ToXHtml();

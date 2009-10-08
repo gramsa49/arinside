@@ -61,9 +61,9 @@ void CDocVuiDetails::Documentation()
 		csvPage.SaveInFolder(path, this->FieldPropertiesCsv(fName).ToCsv());
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION vui details documentation"<< endl;
+		cout << "EXCEPTION vui details documentation: " << e.what() << endl;
 	}
 }
 
@@ -123,9 +123,9 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 		tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("data", CWebUtil::CsvDocName(fName), "", 0) << ")" <<  endl;
 		tbl.description = tblDesc.str();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating field properties in view: " << this->pVui->name << endl;
+		cout << "EXCEPTION enumerating field properties in view '" << this->pVui->name << "': " << e.what() << endl;
 	}
 
 	return tbl;
@@ -188,9 +188,9 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 		tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("csv", CWebUtil::CsvDocName(fName), "", 0) << ")" <<  endl;
 		tbl.description = tblDesc.str();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating field properties in view: " << this->pVui->name << endl;
+		cout << "EXCEPTION enumerating field properties in view '" << this->pVui->name << "': " << e.what() << endl;
 	}
 
 	return tbl;

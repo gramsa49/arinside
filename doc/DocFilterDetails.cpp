@@ -125,9 +125,9 @@ void CDocFilterDetails::Documentation()
 			webPage.SaveInFolder(this->path);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION filter details common props: " << this->pFilter->name << endl;
+		cout << "EXCEPTION filter details common props of '" << this->pFilter->name << "': " << e.what() << endl;
 	}
 }
 
@@ -162,9 +162,9 @@ string CDocFilterDetails::ContainerReferences()
 		strm << contTable->Print();
 		delete contTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating filter container references: " << this->pFilter->name << endl;
+		cout << "EXCEPTION enumerating filter container references of '" << this->pFilter->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -208,9 +208,9 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 		//Else-Actions
 		pgStrm << actionStruct.Get("Else", this->pFilter->elseList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION filter specific props: " << this->pFilter->name << endl;
+		cout << "EXCEPTION filter specific props of '" << this->pFilter->name << "': " << e.what() << endl;
 	}
 
 	return pgStrm.str();

@@ -76,9 +76,9 @@ string CARAssignHelper::PushFieldsAssignment(ARPushFieldsActionStruct &action, i
 
 		strm << tblFieldList.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION PushFieldsAssignment: " << objName << endl;
+		cout << "EXCEPTION PushFieldsAssignment of '" << objName << "':" << e.what() << endl;
 	}
 
 	return strm.str();
@@ -121,9 +121,9 @@ string CARAssignHelper::SetFieldsAssignment(ARSetFieldsActionStruct &action, int
 
 		strm << tblFieldList.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION SetFieldsAssignment: " << this->objName << endl;
+		cout << "EXCEPTION SetFieldsAssignment of '" << this->objName << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -167,9 +167,9 @@ string CARAssignHelper::OpenWindowAssignment(ARFieldAssignList &action, int nAct
 
 		strm << tblFieldList.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION SetFieldsAssignment: " << this->objName << endl;
+		cout << "EXCEPTION SetFieldsAssignment of '" << this->objName << "':" << e.what() << endl;
 	}
 
 	return strm.str();
@@ -213,9 +213,9 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 
 		strm << tblFieldList.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION SetFieldsAssignment: " << this->objName << endl;
+		cout << "EXCEPTION CloseWindowAssignment of '" << this->objName << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -253,9 +253,9 @@ string CARAssignHelper::ServiceAssignment(ARFieldAssignList &action, int nAction
 
 		strm << tblFieldList.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ServiceAssignment: " << this->objName << endl;
+		cout << "EXCEPTION ServiceAssignment of '" << this->objName << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -378,9 +378,9 @@ void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAct
 			break;
 		}	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ActiveLink CheckAssignment: " << this->objName << endl;
+		cout << "EXCEPTION in ActiveLink CheckAssignment of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -433,9 +433,9 @@ void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruc
 
 		assignText << strmValue.str();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignValue: " << this->objName << endl;
+		cout << "EXCEPTION in AssignValue of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -471,9 +471,9 @@ void CARAssignHelper::AssignField( string ifElse, int nAction, ARAssignFieldStru
 		assignText << "$" << arIn->LinkToField(nTmpActionSchemaId, v.u.fieldId, rootLevel) << "$";
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignField: " << this->objName << endl;
+		cout << "EXCEPTION in AssignField of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -493,9 +493,9 @@ void CARAssignHelper::AssignProcess(string ifElse, char *v, stringstream &assign
 			delete refItem;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignProcess: " << this->objName << endl;
+		cout << "EXCEPTION in AssignProcess of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -542,9 +542,9 @@ void CARAssignHelper::AssignFunction(int targetFieldId, string ifElse, int nActi
 		}
 		assignText << ")";
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignFunction: " << this->objName << endl;
+		cout << "EXCEPTION in AssignFunction of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -577,9 +577,9 @@ void CARAssignHelper::AssignDDE(string ifElse, ARDDEStruct &v, stringstream &ass
 			assignText << "Topic: " << v.topic << "<br/>" << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignDDE: " << this->objName << endl;
+		cout << "EXCEPTION in AssignDDE of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -589,9 +589,9 @@ void CARAssignHelper::AssignSQL(string ifElse, ARAssignSQLStruct &v, stringstrea
 	{
 		assignText << "$" << v.valueIndex << "$";
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignSQL: " << this->objName << endl;
+		cout << "EXCEPTION in AssignSQL of '" << this->objName << "': " << e.what() << endl;
 	}
 }
 
@@ -601,8 +601,8 @@ void CARAssignHelper::AssignFilterApi(string ifElse, ARAssignFilterApiStruct &v,
 	{
 		assignText << "$" << v.valueIndex << "$";		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignFilterApi: " << this->objName << endl;
+		cout << "EXCEPTION in AssignFilterApi of '" << this->objName << "': " << e.what() << endl;
 	}
 }

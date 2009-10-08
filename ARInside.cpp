@@ -296,9 +296,9 @@ int CARInside::ValidateTargetDir(string targetFolder)
 
 		nResult = remove(fName.str().c_str());
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ValidateTargetDir '" << targetFolder << "'" << endl;
+		cout << "EXCEPTION ValidateTargetDir '" << targetFolder << "' -- " << e.what() << endl;
 	}
 
 	return nResult;
@@ -321,9 +321,9 @@ bool CARInside::FileExists(string fName)
 		fin.close();
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION An error occured validating the target path" << endl;
+		cout << "EXCEPTION An error occured validating the target path: " << e.what() << endl;
 	}
 
 	return result;
@@ -1059,9 +1059,9 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 
 		this->Sort(schemaList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION loading Schema " << endl;
+		cout << "EXCEPTION loading Schema: " << e.what() << endl;
 		GetARStatusError();
 	}
 
@@ -1129,9 +1129,9 @@ int CARInside::LoadContainer(void)
 
 		this->Sort(containerList);		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION loading Container " << endl;
+		cout << "EXCEPTION loading Container: " << e.what() << endl;
 		GetARStatusError();
 	}
 
@@ -1186,9 +1186,9 @@ int CARInside::LoadCharMenus(void)
 
 		this->Sort(menuList);		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION loading Menus " << endl;
+		cout << "EXCEPTION loading Menus: " << e.what() << endl;
 		GetARStatusError();
 	}
 
@@ -1247,9 +1247,9 @@ int CARInside::LoadEscalations(void)
 
 		this->Sort(escalList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION loading Escalations " << endl;
+		cout << "EXCEPTION loading Escalations: " << e.what() << endl;
 		GetARStatusError();
 	}
 
@@ -1313,9 +1313,9 @@ int CARInside::LoadFilters(void)
 
 		this->Sort(filterList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION loading Filters " << endl;
+		cout << "EXCEPTION loading Filters: " << e.what() << endl;
 		GetARStatusError();
 	}
 
@@ -1382,9 +1382,9 @@ int CARInside::LoadActiveLinks(void)
 
 		this->Sort(alList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION loading ActiveLinks " << endl;
+		cout << "EXCEPTION loading ActiveLinks: " << e.what() << endl;
 		GetARStatusError();
 	}
 
@@ -2428,9 +2428,9 @@ void CARInside::SearchCustomFieldReferences()
 
 		cout << "]" << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION SearchCustomFieldReferences" << endl;
+		cout << "EXCEPTION SearchCustomFieldReferences: " << e.what() << endl;
 	}
 }
 
@@ -2517,11 +2517,7 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CustomFieldReferences:" << e.what() << endl;
-	}
-	catch(...)
-	{
-		cout << "EXCEPTION CustomFieldReferences" << endl;
+		cout << "EXCEPTION CustomFieldReferences: " << e.what() << endl;
 	}
 }
 
@@ -2534,9 +2530,9 @@ void CARInside::AddReferenceItem(CFieldRefItem *refItem)
 			this->listFieldRefItem.insert(this->listFieldRefItem.end(), *refItem);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION AddReferenceItem" << endl;
+		cout << "EXCEPTION AddReferenceItem: " << e.what() << endl;
 	}
 }
 
@@ -2879,9 +2875,9 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 
 		return strmTmp.str();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in TextFindField" << endl;
+		cout << "EXCEPTION in TextFindField: " << e.what() << endl;
 	}
 
 	return inText;
@@ -2904,9 +2900,9 @@ string CARInside::TextFindKeywords(string inText, string fieldSeparator)
 			inText = CUtil::StrReplace(strmKeyword.str(), strmTxtKeyword.str(), inText);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in TextFindField" << endl;
+		cout << "EXCEPTION in TextFindKeywords:" << e.what() << endl;
 	}
 
 	return inText;
@@ -2954,9 +2950,9 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in XMLFindField" << endl;
+		cout << "EXCEPTION in XMLFindField: " << e.what() << endl;
 	}
 
 	return inText;
@@ -2994,9 +2990,9 @@ string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
 		strm << tbl.ToXHtml();
 		tbl.Clear();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION writing dataobject history " << endl;
+		cout << "EXCEPTION writing dataobject history: " << e.what() << endl;
 	}	
 
 	return strm.str();		
@@ -3080,9 +3076,9 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		strm << tbl.ToXHtml();
 		tbl.Clear();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION writing server object history " << endl;
+		cout << "EXCEPTION writing server object history: " << e.what() << endl;
 	}	
 
 	return strm.str();

@@ -66,9 +66,9 @@ void CDocGroupDetails::Documentation()
 
 		webPage.SaveInFolder("group");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_Documentation: " << pGroup->name << endl;
+		cout << "EXCEPTION CDocGroupDetails_Documentation of '" << pGroup->name << "': " << e.what() << endl;
 	}
 }
 
@@ -260,9 +260,9 @@ void CDocGroupDetails::UserDoc(string fName, int &nResult, string title)
 
 		webPage.SaveInFolder("group");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FormsDoc: " << this->pGroup->groupName << endl;
+		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
 	}
 }
 
@@ -355,9 +355,9 @@ void CDocGroupDetails::FormsDoc(string fName, int &nResult, string title)
 
 		webPage.SaveInFolder("group");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FormsDoc: " << this->pGroup->groupName << endl;
+		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
 	}
 }
 
@@ -399,9 +399,9 @@ void CDocGroupDetails::AlPermissionDoc(string fName, int &nResult, string title)
 
 		webPage.SaveInFolder("group");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_ActiveLinkDoc: " << this->pGroup->groupName << endl;
+		cout << "EXCEPTION CDocGroupDetails_ActiveLinkDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
 	}
 }
 
@@ -473,9 +473,9 @@ void CDocGroupDetails::ContainerPermissionDoc(string fName, int &nResult, string
 
 		webPage.SaveInFolder("group");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FormsDoc: " << this->pGroup->groupName << endl;
+		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
 	}
 }
 
@@ -505,9 +505,9 @@ int CDocGroupDetails::NumAllowedFields(string schemaName)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_NumAllowedFields: " << this->pGroup->groupName << endl;
+		cout << "EXCEPTION CDocGroupDetails_NumAllowedFields of '" << this->pGroup->groupName << "': " << e.what() << endl;
 	}
 	return nResult;
 }
@@ -605,8 +605,8 @@ void CDocGroupDetails::FieldPermissionDoc(string fName, int &nResult, string tit
 
 		webPage.SaveInFolder("group");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FieldsDoc: " << this->pGroup->groupName << endl;
+		cout << "EXCEPTION CDocGroupDetails_FieldsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
 	}
 }

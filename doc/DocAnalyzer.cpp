@@ -49,9 +49,9 @@ void CDocAnalyzer::Documentation()
 			webPage.SaveInFolder(this->path);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Analyzer_Documentation" << endl;
+		cout << "EXCEPTION Analyzer_Documentation: " << e.what() << endl;
 	}
 }
 
@@ -147,8 +147,8 @@ void CDocAnalyzer::IndexAnalyzer()
 			webPage.SaveInFolder(this->path);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Analyzer_Index_Documentation" << endl;
+		cout << "EXCEPTION Analyzer_Index_Documentation: " << e.what() << endl;
 	}
 }

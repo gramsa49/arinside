@@ -71,9 +71,9 @@ string CARVui::webAlias()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating view web alias" << endl;
+		cout << "EXCEPTION enumerating view web alias: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -107,9 +107,9 @@ string CARVui::Label()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating view label" << endl;
+		cout << "EXCEPTION enumerating view label: " << e.what() << endl;
 	}
 
 	return strm.str();

@@ -67,9 +67,9 @@ void CDocRoleDetails::Documentation()
 
 		webPage.SaveInFolder("role");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_Documentation: " << this->pRole->roleName << endl;
+		cout << "EXCEPTION CDocRoleDetails_Documentation of '" << this->pRole->roleName << "': " << e.what() << endl;
 	}
 }
 
@@ -260,9 +260,9 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 
 		webPage.SaveInFolder("role");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_FormsDoc: " << this->pRole->roleName << endl;
+		cout << "EXCEPTION CDocRoleDetails_FormsDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
 	}
 }
 
@@ -307,9 +307,9 @@ void CDocRoleDetails::AlPermissionDoc(string fName, int &nResult, string title)
 
 		webPage.SaveInFolder("role");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_ActiveLinkDoc: " << this->pRole->roleName << endl;
+		cout << "EXCEPTION CDocRoleDetails_ActiveLinkDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
 	}
 }
 
@@ -387,9 +387,9 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 
 		webPage.SaveInFolder("role");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_FormsDoc: " << this->pRole->roleName << endl;
+		cout << "EXCEPTION CDocRoleDetails_FormsDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
 	}
 }
 
@@ -420,9 +420,9 @@ int CDocRoleDetails::NumAllowedFields(string schemaName)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_NumAllowedFields: " << this->pRole->roleName << endl;
+		cout << "EXCEPTION CDocRoleDetails_NumAllowedFields of '" << this->pRole->roleName << "': " << e.what() << endl;
 	}
 	return nResult;
 }
@@ -520,8 +520,8 @@ void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string titl
 
 		webPage.SaveInFolder("role");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_FieldsDoc: " << this->pRole->roleName << endl;
+		cout << "EXCEPTION CDocRoleDetails_FieldsDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
 	}
 }

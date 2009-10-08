@@ -117,9 +117,9 @@ void CDocCharMenuDetails::Documentation()
 			webPage.SaveInFolder(this->path);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Menu doc: " << this->pMenu->name << endl;
+		cout << "EXCEPTION Menu doc of '" << this->pMenu->name << "': " << e.what() << endl;
 	}
 }
 
@@ -155,9 +155,9 @@ string CDocCharMenuDetails::CharMenuDetails()
 		strm << tbl.ToXHtml();
 		tbl.Clear();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Menu details doc: " << this->pMenu->name << endl;
+		cout << "EXCEPTION Menu details doc of '" << this->pMenu->name << "': " << e.what() << endl;
 	}
 
 
@@ -174,9 +174,9 @@ string CDocCharMenuDetails::FileMenuDetails()
 		ARCharMenuFileStruct menu = this->pMenu->menuDefn.u.menuFile;
 		strm << "File Name: " << menu.filename << " (" << CAREnum::MenuFileLocation(menu.fileLocation) << ")" << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FieldMenuDetails" << endl; 
+		cout << "EXCEPTION in FieldMenuDetails: " << e.what() << endl; 
 	}
 
 	return strm.str();
@@ -196,9 +196,9 @@ string CDocCharMenuDetails::SqlMenuDetails()
 		strm << "Value Index: " << menu->valueIndex << "<br/><br/>" << endl;
 		strm << "SQL Command: " << menu->sqlCommand << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in SqlMenuDetails" << endl; 
+		cout << "EXCEPTION in SqlMenuDetails: " << e.what() << endl; 
 	}
 
 	return strm.str();
@@ -222,9 +222,9 @@ string CDocCharMenuDetails::GetFieldTypes(unsigned int fieldMask)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in DDCharMenu GetFieldType()" << endl; 
+		cout << "EXCEPTION in DDCharMenu GetFieldType(): " << e.what() << endl; 
 	}
 	return strm.str();
 }
@@ -270,9 +270,9 @@ string CDocCharMenuDetails::DataDictMenuDetails()
 			break;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in DDMenuDetails" << endl; 
+		cout << "EXCEPTION in DDMenuDetails: " << e.what() << endl; 
 	}
 
 	return strm.str();
@@ -356,9 +356,9 @@ string CDocCharMenuDetails::SearchMenuDetails()
 			strm << "Qualification: " << EmptyValue << "<br/>" << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in SearchMenuDetails" << endl; 
+		cout << "EXCEPTION in SearchMenuDetails: " << e.what() << endl; 
 	}
 
 	return strm.str();
@@ -402,9 +402,9 @@ string CDocCharMenuDetails::RelatedFields()
 			}		
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in CharMenu related fields" << endl; 
+		cout << "EXCEPTION in CharMenu related fields: " << e.what() << endl; 
 	}
 
 	return tbl.ToXHtml();
@@ -466,9 +466,9 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 			}		
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in CharMenu related active links" << endl; 
+		cout << "EXCEPTION in CharMenu related active links: " << e.what() << endl; 
 	}
 
 	return tbl.ToXHtml();

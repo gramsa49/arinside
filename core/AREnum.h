@@ -55,9 +55,9 @@ public:
 				}
 			}	
 		}
-		catch(...)
+		catch(exception& e)
 		{
-			cout << "EXCEPTION in Filter GetExecuteOn" << endl; 
+			cout << "EXCEPTION in Filter GetExecuteOn: " << e.what() << endl; 
 		}
 		return strm.str();
 	}

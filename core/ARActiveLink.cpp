@@ -136,9 +136,9 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 			strm << "None";
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ActiveLink GetExecuteOn" << endl; 
+		cout << "EXCEPTION in ActiveLink GetExecuteOn: " << e.what() << endl;
 	}
 	return strm.str();
 }

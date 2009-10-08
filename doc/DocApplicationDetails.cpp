@@ -59,9 +59,9 @@ void CDocApplicationDetails::Documentation()
 		else
 			cout << "[Skipped] Directory '" << dir << "' already exists." << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_Documentation" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_Documentation: " << e.what() << endl; 
 	}
 }
 
@@ -84,9 +84,9 @@ string CDocApplicationDetails::GetPrimaryForm()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_GetPrimaryForm" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_GetPrimaryForm: " << e.what() << endl; 
 	}
 
 	return EmptyValue;
@@ -107,9 +107,9 @@ bool CDocApplicationDetails::InList(string searchName, int nType)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_InList" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_InList: " << e.what() << endl; 
 	}
 
 	return false;
@@ -223,9 +223,9 @@ string CDocApplicationDetails::ApplicationInformation()
 		row.AddCell(cellSrvObj);
 		tblProp.AddRow(row);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_BaseDocumentation" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_BaseDocumentation: " << e.what() << endl; 
 	}
 
 	tblProp.description = "Application Properties";
@@ -262,9 +262,9 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 			}
 		}	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_SearchForms" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_SearchForms: " << e.what() << endl; 
 	}
 
 	return strmResult.str();
@@ -305,9 +305,9 @@ string CDocApplicationDetails::SearchActiveLinks(int &nResult)
 			}
 		}		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_SearchActiveLinks" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_SearchActiveLinks: " << e.what() << endl; 
 	}
 
 	return strmResult.str();
@@ -347,9 +347,9 @@ string CDocApplicationDetails::SearchFilters(int &nResult)
 			}
 		}		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_SearchFilters" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_SearchFilters: " << e.what() << endl; 
 	}
 
 	return strmResult.str();
@@ -389,9 +389,9 @@ string CDocApplicationDetails::SearchEscalations(int &nResult)
 			}
 		}		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_SearchEscalations" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_SearchEscalations: " << e.what() << endl; 
 	}
 
 	return strmResult.str();
@@ -442,9 +442,9 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 			}
 		}	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_SearchContainer" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_SearchContainer:" << e.what() << endl; 
 	}
 
 	return strmResult.str();
@@ -499,9 +499,9 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ApplicationDetails_SearchMenu" << endl; 
+		cout << "EXCEPTION in ApplicationDetails_SearchMenu: " << e.what() << endl; 
 	}
 
 	return strmResult.str();

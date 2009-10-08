@@ -151,9 +151,9 @@ void CDocAlDetails::Documentation()
 			delete props; props = NULL;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating common active link informations: " << this->pAl->name << endl;
+		cout << "EXCEPTION enumerating common active link informations of '" << this->pAl->name << "': " << e.what() << endl;
 	}
 }
 
@@ -173,9 +173,9 @@ string CDocAlDetails::Permissions()
 		delete grpTbl;
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link permissions: " << this->pAl->name << endl;
+		cout << "EXCEPTION enumerating active link permissions of '" << this->pAl->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -211,9 +211,9 @@ string CDocAlDetails::ContainerReferences()
 		strm << contTable->Print();
 		delete contTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link container references: " << this->pAl->name << endl;
+		cout << "EXCEPTION enumerating active link container references of '" << this->pAl->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -288,9 +288,9 @@ string CDocAlDetails::CreateSpecific(string schemaName)
 		//Else-Actions
 		pgStrm << actionStruct.Get("Else", this->pAl->elseList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link details: " << this->pAl->name << endl;
+		cout << "EXCEPTION enumerating active link details of '" << this->pAl->name << "': " << e.what() << endl;
 	}
 
 	return pgStrm.str();

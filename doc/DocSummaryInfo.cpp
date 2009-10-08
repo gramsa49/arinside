@@ -183,8 +183,8 @@ void CDocSummaryInfo::Documentation()
 		webPage.AddContent(strm.str());
 		webPage.SaveInFolder(this->path);	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION SummaryInfo" << endl;
+		cout << "EXCEPTION SummaryInfo: " << e.what() << endl;
 	}
 }

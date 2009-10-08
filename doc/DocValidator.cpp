@@ -87,9 +87,9 @@ void CDocValidator::Main()
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Group_Validation" << endl;
+		cout << "EXCEPTION Group_Validation: " << e.what() << endl;
 	}
 }
 
@@ -141,9 +141,9 @@ void CDocValidator::ContainerGroupValidator()
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Container_Group_Validation" << endl;
+		cout << "EXCEPTION Container_Group_Validation: " << e.what() << endl;
 	}
 }
 
@@ -188,9 +188,9 @@ void CDocValidator::AlGroupValidator()
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ActiveLink_Group_Validation" << endl;
+		cout << "EXCEPTION ActiveLink_Group_Validation: " << e.what() << endl;
 	}
 }
 
@@ -235,9 +235,9 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Field_Group_Validation_Details" << endl;
+		cout << "EXCEPTION Field_Group_Validation_Details: " << e.what() << endl;
 	}
 }
 
@@ -297,9 +297,9 @@ void CDocValidator::FieldGroupValidator()
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Field_Group_Validation" << endl;
+		cout << "EXCEPTION Field_Group_Validation: " << e.what() << endl;
 	}
 }
 
@@ -344,9 +344,9 @@ void CDocValidator::FormGroupValidator()
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Form_Group_Validation" << endl;
+		cout << "EXCEPTION Form_Group_Validation: " << e.what() << endl;
 	}
 }
 
@@ -435,9 +435,9 @@ void CDocValidator::FieldReferenceValidator()
 			webPage.SaveInFolder(this->path);	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Field_Reference_Validation" << endl;
+		cout << "EXCEPTION Field_Reference_Validation: " << e.what() << endl;
 	}
 }
 
@@ -457,9 +457,9 @@ bool CDocValidator::InList(int fieldId, int schemaId)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Validation_InList" << endl;
+		cout << "EXCEPTION Validation_InList: " << e.what() << endl;
 	}
 
 	return false;
@@ -484,9 +484,9 @@ void CDocValidator::BuildUniqueFieldList()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Validation_BuildUniqueFieldList" << endl;
+		cout << "EXCEPTION Validation_BuildUniqueFieldList: " << e.what() << endl;
 	}
 }
 
@@ -511,9 +511,9 @@ int CDocValidator::NumReferences(int searchSchemaId, int searchFieldId)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Validation_NumReferences" << endl;
+		cout << "EXCEPTION Validation_NumReferences: " << e.what() << endl;
 	}
 
 	return nResult;

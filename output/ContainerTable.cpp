@@ -103,9 +103,9 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating NumRelatedActiveLinks() in container: " << obj.name << endl;
+		cout << "EXCEPTION enumerating NumRelatedActiveLinks() in container '" << obj.name << "': " << e.what() << endl;
 	}
 
 	return nResult;
@@ -148,9 +148,9 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating NumRelatedFilters() in container: " << obj.name << endl;
+		cout << "EXCEPTION enumerating NumRelatedFilters() in container '" << obj.name << "': " << e.what() << endl;
 	}
 
 	return nResult;

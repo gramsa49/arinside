@@ -221,9 +221,9 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 			}
 		}	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in CheckAssignment: " << obj.name << endl;
+		cout << "EXCEPTION in CheckAssignment of '" << obj.name << "': " << e.what() << endl;
 	}
 	return false;
 }

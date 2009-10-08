@@ -34,9 +34,9 @@ int CDocMain::Index()
 		webPage.AddContent("This space is intentionally left blank...");
 		return webPage.SaveInFolder("");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION Index"<< endl;
+		cout << "EXCEPTION Index: " << e.what() << endl;
 	}
 	return 0;
 }
@@ -73,9 +73,9 @@ void CDocMain::ServerInfoList()
 
 		webPage.SaveInFolder("other");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ServerInfoList"<< endl;
+		cout << "EXCEPTION ServerInfoList: " << e.what() << endl;
 	}
 }
 
@@ -106,9 +106,9 @@ string CDocMain::ShortMenu(string curCharacter)
 
 		strm << "</tr></table>" << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ShortMenu"<< endl;
+		cout << "EXCEPTION ShortMenu: " << e.what() << endl;
 	}
 	return strm.str();
 }
@@ -172,9 +172,9 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 		webPage.SaveInFolder("schema");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION SchemaList"<< endl;
+		cout << "EXCEPTION SchemaList: " << e.what() << endl;
 	}
 }
 
@@ -230,9 +230,9 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("active_link");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ActiveLinkList"<< endl;
+		cout << "EXCEPTION ActiveLinkList: " << e.what() << endl;
 	}
 }
 
@@ -307,9 +307,9 @@ void CDocMain::ActiveLinkActionList(string fileName)
 
 		webPage.SaveInFolder("active_link");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ActiveLinkActionList"<< endl;
+		cout << "EXCEPTION ActiveLinkActionList: " << e.what() << endl;
 	}
 }
 
@@ -365,9 +365,9 @@ void CDocMain::ActiveLinkActionDetails(int nActionType)
 
 		webPage.SaveInFolder("active_link");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ActiveLinkActionDetails"<< endl;
+		cout << "EXCEPTION ActiveLinkActionDetails: " << e.what() << endl;
 	}
 }
 
@@ -423,9 +423,9 @@ void CDocMain::FilterList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("filter");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION FilterList"<< endl;
+		cout << "EXCEPTION FilterList: " << e.what() << endl;
 	}
 }
 
@@ -503,9 +503,9 @@ void CDocMain::FilterActionList(string fileName)
 
 		webPage.SaveInFolder("filter");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION FilterActionList"<< endl;
+		cout << "EXCEPTION FilterActionList: " << e.what() << endl;
 	}
 }
 
@@ -561,9 +561,9 @@ void CDocMain::FilterActionDetails(int nActionType)
 
 		webPage.SaveInFolder("filter");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION FilterActionDetails"<< endl;
+		cout << "EXCEPTION FilterActionDetails: " << e.what() << endl;
 	}
 }
 
@@ -619,9 +619,9 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("escalation");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION EscalationList"<< endl;
+		cout << "EXCEPTION EscalationList: " << e.what() << endl;
 	}
 }
 
@@ -694,9 +694,9 @@ void CDocMain::EscalationActionList(string fileName)
 
 		webPage.SaveInFolder("escalation");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION EscalationActionList"<< endl;
+		cout << "EXCEPTION EscalationActionList: " << e.what() << endl;
 	}
 }
 
@@ -753,9 +753,9 @@ void CDocMain::EscalationActionDetails(int nActionType)
 
 		webPage.SaveInFolder("escalation");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION EscalationActionDetails"<< endl;
+		cout << "EXCEPTION EscalationActionDetails: " << e.what() << endl;
 	}
 }
 
@@ -813,9 +813,9 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("menu");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION CharMenuList"<< endl;
+		cout << "EXCEPTION CharMenuList: " << e.what() << endl;
 	}
 }
 
@@ -874,9 +874,9 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 
 		webPage.SaveInFolder(CAREnum::ContainerDir(nType));
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION ContainerList"<< endl;
+		cout << "EXCEPTION ContainerList: " << e.what() << endl;
 	}
 }
 
@@ -929,9 +929,9 @@ void CDocMain::RoleList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("role");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION GroupList"<< endl;
+		cout << "EXCEPTION GroupList: " << e.what() << endl;
 	}
 }
 
@@ -984,9 +984,9 @@ void CDocMain::GroupList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("group");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION GroupList"<< endl;
+		cout << "EXCEPTION GroupList: " << e.what() << endl;
 	}
 }
 
@@ -1039,9 +1039,9 @@ void CDocMain::UserList(string fileName, string searchChar)
 
 		webPage.SaveInFolder("user");
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION UserList"<< endl;
+		cout << "EXCEPTION UserList: " << e.what() << endl;
 	}
 }
 
@@ -1139,9 +1139,9 @@ void CDocMain::GlobalFieldList()
 
 		webPage.SaveInFolder("other");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION GlobalFieldList"<< endl;
+		cout << "EXCEPTION GlobalFieldList: " << e.what() << endl;
 	}
 }
 
@@ -1306,9 +1306,9 @@ void CDocMain::MessageList()
 
 		webPage.SaveInFolder("other");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION MessageList"<< endl;
+		cout << "EXCEPTION MessageList: " << e.what() << endl;
 	}
 }
 

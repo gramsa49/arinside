@@ -215,9 +215,9 @@ void CDocSchemaDetails::Documentation()
 			pgStrm.str("");
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema details documentation: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema details documentation of '"<< this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -257,9 +257,9 @@ string CDocSchemaDetails::SchemaNavigation()
 		//Escalations
 		uList->AddItem(new CUListItem(CWebUtil::Link("Escalation", CWebUtil::DocName("form_escal_list"), "", rootLevel)));
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema navigation: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema navigation of '" << this->pSchema->name << "': " << e.what() << endl;
 	}	
 
 	return uList->ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
@@ -318,9 +318,9 @@ string CDocSchemaDetails::AllFields(string fName)
 
 		AllFieldsCsv(fName);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema all fields of '"<< this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return tbl.ToXHtml();	
@@ -366,9 +366,9 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 		CCsvPage csvPage(fName+"_fields", this->pInside->appConfig);
 		csvPage.SaveInFolder(path, tbl.ToCsv());
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields csv: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema all fields csv of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -449,9 +449,9 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 
 		AllFieldsJoinCsv(fName);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields join: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema all fields join of '"<< this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return tbl.ToXHtml();	
@@ -513,9 +513,9 @@ void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
 		CCsvPage csvPage(fName+"_fields", this->pInside->appConfig);
 		csvPage.SaveInFolder(path, tbl.ToCsv());
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields join csv: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema all fields join csv of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -647,9 +647,9 @@ void CDocSchemaDetails::WorkflowDoc()
 		webPage.AddContent(tblRef.ToXHtml());
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema workflow doc: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema workflow doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -752,9 +752,9 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		webPage.AddContent(fieldTbl.ToXHtml());	
 		webPage.SaveInFolder(this->path);	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema permission doc: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema permission doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -788,9 +788,9 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 		webPage.AddContent(tbl.ToXHtml());
 		webPage.SaveInFolder(this->path);	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION schema subadmin doc: "<< this->pSchema->name << endl;
+		cout << "EXCEPTION schema subadmin doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -864,9 +864,9 @@ void CDocSchemaDetails::IndexDoc()
 
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema index doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema index doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -936,9 +936,9 @@ void CDocSchemaDetails::ResultListDoc()
 
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema resultlist doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema resultlist doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -1011,9 +1011,9 @@ void CDocSchemaDetails::SortListDoc()
 
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema sortlist doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema sortlist doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -1060,9 +1060,9 @@ void CDocSchemaDetails::VuiListDoc()
 
 		webPage.SaveInFolder(this->path);	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema vuilist doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema vuilist doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -1110,9 +1110,9 @@ void CDocSchemaDetails::SchemaFilterDoc()
 
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema filter doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema filter doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -1160,9 +1160,9 @@ void CDocSchemaDetails::SchemaAlDoc()
 
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema active link doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema active link doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -1210,9 +1210,9 @@ void CDocSchemaDetails::SchemaEscalDoc()
 
 		webPage.SaveInFolder(this->path);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema escalation doc: " << this->pSchema->name << endl;
+		cout << "EXCEPTION creating schema escalation doc of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 }
 
@@ -1273,9 +1273,9 @@ string CDocSchemaDetails::TypeDetails()
 			break;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating regular schema type information: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating regular schema type information of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 	return strm.str();
 }
@@ -1316,9 +1316,9 @@ string CDocSchemaDetails::ContainerReferences()
 
 		delete contTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating container references in schema: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating container references in schema '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1352,9 +1352,9 @@ string CDocSchemaDetails::JoinFormReferences()
 		if(strm.str().size() == 0)
 			strm << EmptyValue;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating join form references: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating join form references of '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1399,9 +1399,9 @@ string CDocSchemaDetails::TableFieldReferences()
 		if(!bFound)
 			strm << EmptyValue;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating table references in schema: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating table references in schema '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1437,9 +1437,9 @@ string CDocSchemaDetails::SearchMenuReferences()
 
 		delete menuTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating search menu references in schema: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating search menu references in schema '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1515,9 +1515,9 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 
 		delete alTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link push fields references in schema: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating active link push fields references in schema '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1587,9 +1587,9 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 
 		delete alTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating window open references in schema: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating window open references in schema '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1665,9 +1665,9 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 
 		delete filterTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating filter push fields references in schema: " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating filter push fields references in schema '" << this->pSchema->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1705,9 +1705,9 @@ string CDocSchemaDetails::ShowProperties()
 		//strm << ShowPropertiesLeft(&propIdx);
 		strm << propIdx.UnusedPropertiesToHTML();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cerr << "EXCEPTION enumerating properties" << endl;
+		cerr << "EXCEPTION enumerating properties: " << e.what() << endl;
 	}
 	return strm.str();
 }
@@ -1797,9 +1797,9 @@ string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
 		strm << tbl.ToXHtml();
 		tbl.Clear();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating basic properties" << endl;
+		cout << "EXCEPTION enumerating basic properties: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -2025,9 +2025,9 @@ string CDocSchemaDetails::ShowArchiveProperties()
 //		strm << tbl.ToXHtml();
 //
 //	}
-//	catch(...)
+//	catch(exception& e)
 //	{
-//		cout << "EXCEPTION enumerating object properties" << endl;
+//		cout << "EXCEPTION enumerating object properties: " << e.what() << endl;
 //	}
 //
 //	return strm.str();

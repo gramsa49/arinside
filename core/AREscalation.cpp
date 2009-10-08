@@ -80,9 +80,9 @@ string CAREscalation::GetTimeCriteria()
 			return CARDayStructHelper::DayStructToHTMLString(&escalationTm.u.date);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in Escalation GetTimeCriteria" << endl; 
+		cout << "EXCEPTION in Escalation GetTimeCriteria: " << e.what() << endl; 
 	}
 
 	return strm.str();

@@ -106,9 +106,9 @@ string CARSchema::WebAlias()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating web alias" << endl;
+		cout << "EXCEPTION enumerating web alias: " << e.what() << endl;
 	}
 
 	return strm.str();

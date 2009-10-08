@@ -203,9 +203,9 @@ string CARProplistHelper::GetList(ARPropList &objPropList)
 		strm << tbl.ToXHtml();
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating object properties" << endl;
+		cout << "EXCEPTION enumerating object properties: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -272,9 +272,9 @@ string CARProplistHelper::UnusedPropertiesToHTML()
 		strm << tbl.ToXHtml();
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating unused object properties" << endl;
+		cout << "EXCEPTION enumerating unused object properties: " << e.what() << endl;
 	}
 
 	return strm.str();

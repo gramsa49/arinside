@@ -89,8 +89,8 @@ void CDocUserDetails::Documentation()
 
 		webPage.SaveInFolder("user");	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION user details documentation"<< endl;
+		cout << "EXCEPTION user details documentation: " << e.what() << endl;
 	}
 }

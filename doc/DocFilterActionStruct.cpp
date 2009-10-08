@@ -158,9 +158,9 @@ string CDocFilterActionStruct::Get(string ifElse, ARFilterActionList &actList)
 
 		strm << tblListAction.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating filter action struct: " << this->obj->name << endl;
+		cout << "EXCEPTION enumerating filter action struct of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -254,9 +254,9 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 
 		strm << tblListField.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlAllMatchingIds: " << table1 << ", " << table2 << endl;
+		cout << "EXCEPTION in AlAllMatchingIds: " << table1 << ", " << table2 << "; error: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -453,9 +453,9 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionNotify: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionNotify of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -483,9 +483,9 @@ string CDocFilterActionStruct::FilterActionMessage(ARFilterStatusStruct &action,
 			strm << "Message Text: <br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionMessage: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionMessage of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -508,9 +508,9 @@ string CDocFilterActionStruct::FilterActionLog(char* action, int nAction)
 			strm << "File Name: " << EmptyValue << endl; 
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionLog: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionLog of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -667,9 +667,9 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionSetFields: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionSetFields of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -699,9 +699,9 @@ string CDocFilterActionStruct::FilterActionProcess(char *action, int nAction)
 			strm << "No Run Process command specified." << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionProcess: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionProcess of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -779,9 +779,9 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionPushFields: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionPushFields of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -801,9 +801,9 @@ string CDocFilterActionStruct::FilterActionSql(ARSQLStruct &action, int nAction)
 		if(action.command != NULL)
 			strm << "SQL command: <br/>" << action.command << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionSql: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionSql of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -826,9 +826,9 @@ string CDocFilterActionStruct::FilterActionGotoAction(ARGotoActionStruct &action
 			strm << "FieldId or Value: " << EmptyValue << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionGotoAction: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionGotoAction of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -874,9 +874,9 @@ string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, 
 			delete refItem;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionCallGuide: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionCallGuide of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -895,9 +895,9 @@ string CDocFilterActionStruct::FilterActionExitGuide(ARExitGuideStruct &action, 
 		else
 			strm << "<input type=\"checkbox\" name=\"exitGuide\" value=\"exitGuideCloseAll\">Close all guides on exit" << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionExitGuide: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionExitGuide of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -920,9 +920,9 @@ string CDocFilterActionStruct::FilterActionGotoGuideLabel(ARGotoGuideLabelStruct
 			strm << "Guide Label: " << EmptyValue << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionGotoGuideLabel: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionGotoGuideLabel of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();

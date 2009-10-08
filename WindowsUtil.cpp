@@ -115,9 +115,9 @@ int CWindowsUtil::CreateSubDirectory(string name)
 	{
 		return CreateDirectory(strm.str().c_str(), NULL);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "Error creating directory: " << strm.str() << endl;
+		cout << "Error creating directory '" << strm.str() << "': " << e.what() << endl;
 	}
 
 	return 0;

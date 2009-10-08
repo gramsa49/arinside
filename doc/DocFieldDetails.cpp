@@ -118,9 +118,9 @@ void CDocFieldDetails::Documentation()
 
 		webPage.SaveInFolder(this->path);	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION field details: " << this->pField->name << " in form: " << this->pSchema->name << endl;
+		cout << "EXCEPTION field details: " << this->pField->name << " in form: " << this->pSchema->name << " error: " << e.what() << endl;
 	}
 }
 
@@ -172,9 +172,9 @@ string CDocFieldDetails::WorkflowReferences()
 		strm << tblRef.ToXHtml();
 		tblRef.Clear();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating workflow references for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating workflow references for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
@@ -202,9 +202,9 @@ int CDocFieldDetails::AttachmentFieldGetPool()
 			}
 		}		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION find attachment field pool: " << this->pField->name << endl;
+		cout << "EXCEPTION find attachment field pool of '" << this->pField->name << "': " << e.what() << endl;
 	}
 
 	return nFieldId;
@@ -217,7 +217,7 @@ string CDocFieldDetails::FieldLimits()
 
 	try
 	{
-		switch(this->pField->dataType)
+		switch(this->pField->limit.dataType)
 		{			
 		case AR_DATA_TYPE_CHAR:
 			{
@@ -511,9 +511,9 @@ string CDocFieldDetails::FieldLimits()
 			break;			
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION reading limits for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << endl;
+		cout << "EXCEPTION reading limits for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -592,9 +592,9 @@ string CDocFieldDetails::DefaultValue()
 			break;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating default value for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating default value for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
 	}
 	return strm.str();
 }
@@ -630,9 +630,9 @@ string CDocFieldDetails::Permisssions()
 
 		strm << tbl.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating permissions for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating permissions for field: " << this->pField->fieldId << " in schema " << this->pSchema->name << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
@@ -673,9 +673,9 @@ string CDocFieldDetails::DisplayProperties()
 			viewTmpDesc.str("");
 		}	
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating display properties for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating display properties for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
@@ -732,9 +732,9 @@ string CDocFieldDetails::JoinFormReferences()
 		if(strm.str().size() == 0)
 			strm << EmptyValue;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating permissions for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << endl;
+		cout << "EXCEPTION enumerating permissions for field: " << this->pField->fieldId << " in schema " << this->pSchema->name << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();

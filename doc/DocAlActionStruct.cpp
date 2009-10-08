@@ -179,9 +179,9 @@ string CDocAlActionStruct::Get(string ifElse, ARActiveLinkActionList &actList)
 
 		strm << tblListAction.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in CDocAlActionStruct: " << this->obj->name << endl;
+		cout << "EXCEPTION in CDocAlActionStruct of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -275,9 +275,9 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 
 		strm << tblListField.ToXHtml();
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlAllMatchingIds: " << table1 << ", " << table2 << endl;
+		cout << "EXCEPTION in AlAllMatchingIds of " << table1 << ", " << table2 << ": " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -350,9 +350,9 @@ string CDocAlActionStruct::ActionMacro(ARActiveLinkMacroStruct &action, int nAct
 			strm << "<br/>Macro Text: <br/>" << action.macroText << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionMacro: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionMacro of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -415,9 +415,9 @@ string CDocAlActionStruct::ActionSetFields(ARSetFieldsActionStruct &action, int 
 			strm << setFieldInfo << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionSetFields: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionSetFields of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -451,9 +451,9 @@ string CDocAlActionStruct::ActionProcess(char *action, int nAction)
 			strm << "No Run Process command specified." << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionProcess: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionProcess of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -484,9 +484,9 @@ string CDocAlActionStruct::ActionMessage(ARMessageStruct &action, int nAction)
 			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionMessage: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionMessage of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -674,9 +674,9 @@ string CDocAlActionStruct::ActionSetChar(ARFieldCharacteristics &action, int nAc
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionSetChar: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionSetChar of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -707,9 +707,9 @@ string CDocAlActionStruct::ActionDde(ARDDEStruct &action, int nAction)
 		if(action.command != NULL)
 			strm << "Command: " << action.command << "<br/>" << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionDde: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionDde of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -817,9 +817,9 @@ string CDocAlActionStruct::ActionPushFields(ARPushFieldsActionStruct &action, in
 			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionPushFields: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionPushFields of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -852,9 +852,9 @@ string CDocAlActionStruct::ActionSql(ARSQLStruct &action, int nAction)
 			delete refItemTmp;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionSql: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionSql of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -905,9 +905,9 @@ string CDocAlActionStruct::ActionAutomation(ARAutomationStruct &action, int nAct
 			strm << tblOleMethods.ToXHtml();
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionAutomation: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionAutomation of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1088,9 +1088,9 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionOpenDlg: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionOpenDlg of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1110,9 +1110,9 @@ string CDocAlActionStruct::ActionCommitChanges(ARCommitChangesStruct &action, in
 		strm << "The values for these fields are specified in the Open Window active link action when the Field Mapping Mode is set to On Close. ";
 		strm << "When called within a regular form or join form, this action applies the changes." << endl;		
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionCommitChanges: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionCommitChanges of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1131,9 +1131,9 @@ string CDocAlActionStruct::ActionCloseWindow(ARCloseWndStruct &action, int nActi
 		else
 			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\">Close All Windows" << endl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionCloseWindow: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionCloseWindow of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1198,9 +1198,9 @@ string CDocAlActionStruct::ActionCallGuide(ARCallGuideStruct &action, int nActio
 			delete refItem;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionCallGuide: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionCallGuide of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1223,9 +1223,9 @@ string CDocAlActionStruct::ActionExitGuide(ARExitGuideStruct &action, int nActio
 			strm << "<input type=\"checkbox\" name=\"exitGuide\" value=\"exitGuideCloseAll\">Close all guides on exit" << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionExitGuide: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionExitGuide of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1248,9 +1248,9 @@ string CDocAlActionStruct::ActionGotoGuideLabel(ARGotoGuideLabelStruct &action, 
 			strm << "Guide Label: " << EmptyValue << endl;	
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionGuideLabel: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionGuideLabel of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1273,9 +1273,9 @@ string CDocAlActionStruct::ActionWait(ARWaitStruct &action, int nAction)
 			strm << "Label for Continue Button: " << EmptyValue << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionWait: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionWait of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1298,9 +1298,9 @@ string CDocAlActionStruct::ActionGotoAction(ARGotoActionStruct &action, int nAct
 			strm << "FieldId or Value: " << EmptyValue << endl;
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlActionGotoAction: " << this->obj->name << endl;
+		cout << "EXCEPTION in AlActionGotoAction of '" << this->obj->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();

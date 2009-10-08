@@ -102,9 +102,9 @@ string CDocAlGuideDetails::AlGuideInformation()
 			tblProp.AddRow(row);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlGuideInformation" << endl; 
+		cout << "EXCEPTION in AlGuideInformation: " << e.what() << endl; 
 	}
 
 	tblProp.description = "Active Links in Guide";
@@ -168,9 +168,9 @@ string CDocAlGuideDetails::ActiveLinkActions()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in AlGuideDetailsEx" << endl; 
+		cout << "EXCEPTION in AlGuideDetailsEx: " << e.what() << endl; 
 	}
 
 	tblPropEx.description = "Active Links 'Call Guide' Action";

@@ -64,9 +64,9 @@ void CDocPacklistDetails::Documentation()
 			webPage.SaveInFolder(dir);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in PacklistDetails_Documentation" << endl; 
+		cout << "EXCEPTION in PacklistDetails_Documentation: " << e.what() << endl; 
 	}
 }
 
@@ -159,9 +159,9 @@ string CDocPacklistDetails::PackListInformation()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in PacklistDetails_BaseDocumentation" << endl; 
+		cout << "EXCEPTION in PacklistDetails_BaseDocumentation: " << e.what() << endl; 
 	}
 
 	tblProp.description = "Objects in Packing List";

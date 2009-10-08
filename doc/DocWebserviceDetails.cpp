@@ -57,9 +57,9 @@ void CDocWebserviceDetails::Documentation()
 			webPage.SaveInFolder(dir);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in WebserviceDetails_Documentation" << endl; 
+		cout << "EXCEPTION in WebserviceDetails_Documentation: " << e.what() << endl; 
 	}
 }
 
@@ -84,9 +84,9 @@ string CDocWebserviceDetails::WSInformation()
 			tblProp.AddRow(row);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in WebserviceDetails_BaseDocumentation (Label)" << endl; 
+		cout << "EXCEPTION in WebserviceDetails_BaseDocumentation (Label): " << e.what() << endl; 
 	}
 
 	//Description
@@ -103,9 +103,9 @@ string CDocWebserviceDetails::WSInformation()
 			tblProp.AddRow(row);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in WebserviceDetails_BaseDocumentation (Description)" << endl; 
+		cout << "EXCEPTION in WebserviceDetails_BaseDocumentation (Description): " << e.what() << endl; 
 	}
 
 
@@ -273,9 +273,9 @@ string CDocWebserviceDetails::WSInformation()
 		}
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in WebserviceDetails_BaseDocumentation" << endl; 
+		cout << "EXCEPTION in WebserviceDetails_BaseDocumentation: " << e.what() << endl; 
 	}
 
 	return tblProp.ToXHtml();

@@ -188,9 +188,9 @@ CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
 		delete idList.internalIdList;	
 		FreeARFieldValueList(&fieldList,  false);
 	}
-	catch(...)
+	catch(exception& e)
 	{		
-		cout << "WARNING error loading group: " << requestId << endl;
+		cout << "WARNING error loading group '" << requestId << "': " << e.what() << endl;
 	}
 
 	return *grp;
@@ -316,9 +316,9 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 		delete[] fields.fieldsList;
 		delete[] qualString;
 	}
-	catch(...)
+	catch(exception& e)
 	{		
-		throw(AppException("Error loading users.", "undefined", "DataFactory"));
+		throw(AppException(e.what(), "Error loading users.", "DataFactory"));
 	}
 }
 
@@ -418,9 +418,9 @@ CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int i
 		FreeARFieldValueList(&fieldList,  false);
 		FreeARStatusList(this->pStatus, false);
 	}
-	catch(...)
+	catch(exception& e)
 	{		
-		cout << "WARNING error loading user: " << requestId << endl;
+		cout << "WARNING error loading user '" << requestId << "': " << e.what() << endl;
 	}
 
 	return *arUser;
@@ -555,9 +555,9 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 		delete[] fields.fieldsList;
 		delete[] qualString;
 	}
-	catch(...)
+	catch(exception& e)
 	{		
-		throw(AppException("Error loading roles.", "undefined", "DataFactory"));
+		throw(AppException(e.what(), "Error loading roles.", "DataFactory"));
 	}
 }
 
@@ -661,9 +661,9 @@ CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int i
 		delete idList.internalIdList;	
 		FreeARFieldValueList(&fieldList,  false);
 	}
-	catch(...)
+	catch(exception& e)
 	{		
-		cout << "WARNING error loading role: " << requestId << endl;
+		cout << "WARNING error loading role '" << requestId << "': " << e.what() << endl;
 	}
 
 	return *role;

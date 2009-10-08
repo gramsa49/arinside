@@ -46,8 +46,8 @@ void CUserTable::AddRow(CARUser &user, int rootLevel)
 
 		this->tbl->AddRow(tblRow);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION adding user " << user.loginName << endl;
+		cout << "EXCEPTION adding user '" << user.loginName << "': " << e.what()<< endl;
 	}
 }

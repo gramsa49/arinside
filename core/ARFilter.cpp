@@ -99,9 +99,9 @@ string CARFilter::GetExecuteOn()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in Filter GetExecuteOn" << endl; 
+		cout << "EXCEPTION in Filter GetExecuteOn: " << e.what() << endl; 
 	}
 	return strm.str();
 }
@@ -157,9 +157,9 @@ string CARFilter::GetExecuteOnEx()
 			}
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in Filter GetExecuteOnEx" << endl; 
+		cout << "EXCEPTION in Filter GetExecuteOnEx: " << e.what() << endl; 
 	}
 	return strm.str();
 }

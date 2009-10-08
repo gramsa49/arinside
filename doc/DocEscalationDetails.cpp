@@ -145,9 +145,9 @@ void CDocEscalationDetails::Documentation()
 			webPage.SaveInFolder(this->path);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION escalation details common props: " << this->pEscal->name << endl;
+		cout << "EXCEPTION escalation details common props of '" << this->pEscal->name << "': " << e.what() << endl;
 	}
 }
 
@@ -184,9 +184,9 @@ string CDocEscalationDetails::ContainerReferences()
 		strm << contTable->Print();
 		delete contTable;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating escalation container references: " << this->pEscal->name << endl;
+		cout << "EXCEPTION enumerating escalation container references of '" << this->pEscal->name << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -229,9 +229,9 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 		//Else-Actions
 		pgStrm << actionStruct.Get("Else", this->pEscal->elseList);
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION escalation details specific props: " << this->pEscal->name << endl;
+		cout << "EXCEPTION escalation details specific props of '" << this->pEscal->name << "': " << e.what() << endl;
 	}
 
 	return pgStrm.str();

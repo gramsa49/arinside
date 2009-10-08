@@ -85,8 +85,9 @@ string CDocContainerHelper::BaseInfo()
 		}
 
 	}
-	catch(...)
+	catch(exception& e)
 	{
+		cout << "EXCEPTION in CDocContainerHelper::BaseInfo : " << e.what() << endl;
 	}
 
 	tblProp.description = "Base Information";
@@ -109,9 +110,9 @@ string CDocContainerHelper::SubadminList()
 		strm << grpTbl->Print();
 		delete grpTbl;
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in Container SubadminList" << endl;
+		cout << "EXCEPTION in Container SubadminList: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -148,9 +149,9 @@ string CDocContainerHelper::PermissionList()
 			tbl.AddRow(row);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ContainerPermissions" << endl; 
+		cout << "EXCEPTION in ContainerPermissions: " << e.what() << endl; 
 	}
 
 	return tbl.ToXHtml();	
@@ -171,9 +172,9 @@ string CDocContainerHelper::ContainerForms()
 			tbl.AddRow(row);
 		}
 	}
-	catch(...)
+	catch(exception& e)
 	{
-		cout << "EXCEPTION in ContainerForms" << endl; 
+		cout << "EXCEPTION in ContainerForms: " << e.what() << endl; 
 	}
 
 	tbl.description = "Owner Forms";
