@@ -581,7 +581,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			strm << "URN: " << (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 8 ? CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) : "") << "<br/>"; 
 
 			//process input mapping
-			if (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 10)
+			if (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 9)
 			{
 				stringstream input;
 				input.str("");
@@ -596,8 +596,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				TiXmlNode *element = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").Child(1).ToNode();
 
 				CTable tblInputMappingList("pushFieldsList", "TblObjectList");
-				tblInputMappingList.AddColumn(0, "Element");
-				tblInputMappingList.AddColumn(0, "Field");
+				tblInputMappingList.AddColumn(30, "Element");
+				tblInputMappingList.AddColumn(70, "Field");
 				input << processMappingXML(element, "", tblInputMappingList, form, "Input");
 				input << tblInputMappingList.ToXHtml();
 				strm << "<BR/>";
@@ -605,7 +605,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			}
 
 			//process output mapping
-			if (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 11)
+			if (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 10)
 			{
 				stringstream output;
 				output.str("");
@@ -620,8 +620,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				TiXmlNode *element = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").Child(1).ToNode();
 
 				CTable tblOutputMappingList("pushFieldsList", "TblObjectList");
-				tblOutputMappingList.AddColumn(0, "Element");
-				tblOutputMappingList.AddColumn(0, "Field");
+				tblOutputMappingList.AddColumn(30, "Element");
+				tblOutputMappingList.AddColumn(70, "Field");
 
 				output << processMappingXML(element, "", tblOutputMappingList, form, "Output");
 				output << tblOutputMappingList.ToXHtml();
