@@ -152,7 +152,7 @@ table.TblHidden {
 
 table.TblHidden td {
  border-width: 1px 1px 1px 1px;
- border-style: ridge;
+ border-style: solid;
  border-color: #c0c0c0;
  vertical-align: top;
 }
@@ -175,7 +175,7 @@ table.TblActionList th {
 
 table.TblActionList td {
  border-width: 1px 1px 1px 1px;
- border-style: ridge;
+ border-style: solid;
  border-color: #c0c0c0;
  vertical-align: top;
 }
@@ -206,7 +206,7 @@ table.TblObjectHistory th {
 
 table.TblObjectHistory td {
  border-width: 1px;
- border-style: ridge;
+ border-style: solid;
  border-color: #c0c0c0;
 }
 
@@ -229,7 +229,7 @@ table.TblNoSort th {
 
 table.TblNoSort td {
  border-width: 1px;
- border-style: ridge;
+ border-style: solid;
  border-color: #c0c0c0;
 }
 

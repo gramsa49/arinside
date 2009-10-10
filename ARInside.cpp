@@ -41,15 +41,17 @@
 #include "output/Table.h"
 #include "output/WebUtil.h"
 
-#ifdef _DEBUG
+#if defined(_DEBUG) || defined(_ARINSIDE_BETA)
 #include "svnrev.h"
 #endif
 
 /////////
 // version information block
 #define VERSION "3.0"
-#if _DEBUG
-#define VERSION_STR VERSION "r" SVN_REV_STR
+#if defined(_DEBUG)
+#define VERSION_STR VERSION "r" SVN_REV_STR " Debug"
+#elif defined(_ARINSIDE_BETA)
+#define VERSION_STR VERSION "r" SVN_REV_STR " Beta"
 #else
 #define VERSION_STR VERSION
 #endif
