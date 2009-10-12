@@ -589,16 +589,12 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				TiXmlDocument inputXML;
 				inputXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
 				TiXmlHandle inputHandle(&inputXML);
-				TiXmlElement *formElement = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").FirstChild("form").ToElement();
-				if (formElement)
-					form = formElement->Attribute("formName");
-
-				TiXmlNode *element = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").Child(1).ToNode();
+				TiXmlNode *element = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").ToNode();
 
 				CTable tblInputMappingList("pushFieldsList", "TblObjectList");
 				tblInputMappingList.AddColumn(30, "Element");
 				tblInputMappingList.AddColumn(70, "Field");
-				input << processMappingXML(element, "", tblInputMappingList, form, "Input");
+				input << processMappingXML(element, "", tblInputMappingList, "", "Input");
 				input << tblInputMappingList.ToXHtml();
 				strm << "<BR/>";
 				strm << "Input Mapping: " << input.str() << "<BR/>";
@@ -613,17 +609,13 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				TiXmlDocument outputXML;
 				outputXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
 				TiXmlHandle outputHandle(&outputXML);
-				TiXmlElement *formElement = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").FirstChild("form").ToElement();
-				if (formElement)
-					form = formElement->Attribute("formName");
-
-				TiXmlNode *element = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").Child(1).ToNode();
+				TiXmlNode *element = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").ToNode();
 
 				CTable tblOutputMappingList("pushFieldsList", "TblObjectList");
 				tblOutputMappingList.AddColumn(30, "Element");
 				tblOutputMappingList.AddColumn(70, "Field");
 
-				output << processMappingXML(element, "", tblOutputMappingList, form, "Output");
+				output << processMappingXML(element, "", tblOutputMappingList, "", "Output");
 				output << tblOutputMappingList.ToXHtml();
 				strm << "Output Mapping: " << output.str();
 			}
@@ -951,6 +943,10 @@ string CDocFilterActionStruct::processMappingXML( TiXmlNode* pParent, string sPa
 		{
 			sParent = pParent->ToElement()->Attribute("name");
 		}
+		else if (strcmp("formMapping",pParent->Value()) == 0)
+		{
+			form = pParent->FirstChild("form")->ToElement()->Attribute("formName");
+		}
 		else if (strcmp("fieldMapping",pParent->Value()) == 0)
 		{
 			int fieldID = atoi(pParent->ToElement()->Attribute("arFieldId"));
@@ -958,9 +954,10 @@ string CDocFilterActionStruct::processMappingXML( TiXmlNode* pParent, string sPa
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(sParent));
 			row.AddCell(CTableCell(arIn->LinkToField(form, fieldID, rootLevel)));
+			//row.AddCell(CTableCell(form + " - "+arIn->LinkToField(form, fieldID, rootLevel)));
 			tblFieldList.AddRow(row);	
 
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Web Service Set Fields "+type+" Mapping", fieldID, schemaInsideId);
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Web Service Set Fields "+type+" Mapping", fieldID, arIn->SchemaGetInsideId(form));
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
