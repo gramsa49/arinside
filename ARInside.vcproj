@@ -68,6 +68,7 @@
 				AdditionalLibraryDirectories="..\..\Api750\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				LargeAddressAware="2"
 				RandomizedBaseAddress="1"
 				DataExecutionPrevention="0"
 				TargetMachine="1"
