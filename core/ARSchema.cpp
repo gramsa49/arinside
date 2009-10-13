@@ -159,7 +159,7 @@ string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
 		}
 	}
 
-	return vuiLabel;
+	return "<span class=\"fieldNotFound\">" + vuiLabel + "</span>";
 }
 
 string CARSchema::VuiGetLabel(int vuiId)

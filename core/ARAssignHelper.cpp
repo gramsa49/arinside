@@ -30,7 +30,6 @@ CARAssignHelper::CARAssignHelper(CARInside &arIn, string dir, int rootLevel, str
 	this->schemaInsideId1 = this->arIn->SchemaGetInsideId(this->schemaName1);
 	this->schemaInsideId2 = this->arIn->SchemaGetInsideId(this->schemaName2);
 	this->pushFieldFlag = false;
-	this->openWindowFlag = false;
 }
 
 CARAssignHelper::~CARAssignHelper(void)
@@ -138,11 +137,13 @@ string CARAssignHelper::OpenWindowAssignment(ARFieldAssignList &action, int nAct
 		CTable tblFieldList("setFieldsList", "TblObjectList");
 		tblFieldList.AddColumn(30, "Field Name");
 		tblFieldList.AddColumn(70, "Value");
-		this->openWindowFlag = true;
 
 		for(unsigned int i=0; i< action.numItems; i++)
 		{
 			int nTargetFieldId = action.fieldAssignList[i].fieldId;
+
+			if (nTargetFieldId == AR_SET_DEFAULTS_ID)
+				continue;
 
 			//Add a reference to the target field 
 			stringstream desc;
@@ -160,7 +161,7 @@ string CARAssignHelper::OpenWindowAssignment(ARFieldAssignList &action, int nAct
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
 
 			CTableRow row("cssStdRow");
-			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
+			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
 			tblFieldList.AddRow(row);	
 		}
@@ -184,7 +185,6 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 		CTable tblFieldList("setFieldsList", "TblObjectList");
 		tblFieldList.AddColumn(30, "Field Name");
 		tblFieldList.AddColumn(70, "Value");
-		this->openWindowFlag = true;
 
 		for(unsigned int i=0; i< action.numItems; i++)
 		{
@@ -198,7 +198,7 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 			refItem->description = desc.str();
 			refItem->fromName = this->objName;	
 			refItem->fieldInsideId = nTargetFieldId;
-			refItem->schemaInsideId = this->schemaInsideId2;
+			refItem->schemaInsideId = this->schemaInsideId1;
 			arIn->AddReferenceItem(refItem);
 			delete refItem;	
 
@@ -206,7 +206,7 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
 
 			CTableRow row("cssStdRow");
-			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
+			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
 			row.AddCell(CTableCell(assignText.str()));
 			tblFieldList.AddRow(row);	
 		}
@@ -452,12 +452,6 @@ void CARAssignHelper::AssignField( string ifElse, int nAction, ARAssignFieldStru
 		{
 			nTmpActionSchemaId = schemaInsideId2;
 		}
-
-		if(schemaInsideId1 != schemaInsideId2 && this->openWindowFlag == true)
-		{
-			nTmpActionSchemaId = schemaInsideId1;
-		}
-
 
 		CFieldRefItem *refItem = new CFieldRefItem();
 		refItem->arsStructItemType = this->objType;

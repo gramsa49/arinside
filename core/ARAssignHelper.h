@@ -29,7 +29,6 @@ public:
 	~CARAssignHelper(void);
 
 	bool pushFieldFlag;
-	bool openWindowFlag;
 
 	string PushFieldsAssignment(ARPushFieldsActionStruct &action, int nAction, string ifElse);
 	string SetFieldsAssignment(ARSetFieldsActionStruct &action, int nAction, string ifElse);

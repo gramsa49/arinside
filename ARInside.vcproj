@@ -145,6 +145,7 @@
 				AdditionalLibraryDirectories="..\..\Api750\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				LargeAddressAware="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
@@ -224,6 +225,7 @@
 				AdditionalLibraryDirectories="..\..\Api750\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
+				LargeAddressAware="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				RandomizedBaseAddress="1"
@@ -567,6 +569,14 @@
 		<Filter
 			Name="Doc"
 			>
+			<File
+				RelativePath=".\doc\DocActionOpenWindowHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocActionOpenWindowHelper.h"
+				>
+			</File>
 			<File
 				RelativePath=".\Doc\DocActionSetFieldsHelper.cpp"
 				>

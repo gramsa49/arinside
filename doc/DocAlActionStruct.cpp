@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocAlActionStruct.h"
+#include "DocActionOpenWindowHelper.h"
 
 CDocAlActionStruct::CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, string dir, int rootLevel)
 {
@@ -940,151 +941,456 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 
 	try
 	{
-		if( action.serverName != NULL)
-		{
-			if(strcmp(AR_CURRENT_SERVER_TAG, action.serverName)==0)
-			{
-				strm << "Server Name: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
-			}
-			else
-			{
-				CFieldRefItem *refItemSrvName = new CFieldRefItem();
-				refItemSrvName->arsStructItemType = this->structItemType;
-				refItemSrvName->fromName = this->obj->name;						
-				refItemSrvName->schemaInsideId = arIn->SchemaGetInsideId(action.schemaName);
+		string openWindowServer;
+		string openWindowSchema;
 
+		// check if we need to get the sample data
+		if(action.serverName[0] == '$')
+		{
+			CDocActionOpenWindowHelper::GetSampleData(*obj, ifElse, nAction, openWindowServer, openWindowSchema);
+		}
+
+		// window type
+		int windowMode = CAREnum::OpenWindowModeMapped(action.windowMode);
+		strm << "<p>Window Type: " << CAREnum::OpenWindowMode(windowMode) << endl;
+
+		// display type
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY)
+		{
+			strm << "<br/>Display Type: ";
+			switch (action.windowMode)
+			{
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
+				strm << "List Only";
+				break;
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
+				strm << "Details Only";
+				break;
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
+				strm << "Split Window";
+				break;
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+				strm << "&lt;Clear&gt;";
+			}
+			strm << endl;
+		}
+
+		// target location
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT ||
+		    windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
+		{
+			strm << "<br/>Target Location: ";
+
+			if (action.targetLocation != NULL) 
+			{
+				if (action.targetLocation[0] == '$')
+				{
+					int fieldId = atoi(&action.targetLocation[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+
+					if (fieldId > 0)
+					{
+						stringstream strmTmpDesc;
+						strmTmpDesc << "Window Open Location " << ifElse << "-Action " << nAction;
+
+						CFieldRefItem *refItemLocation = new CFieldRefItem(structItemType, obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(refItemLocation);
+						delete refItemLocation;
+					}
+				}
+				else
+				{
+					strm << action.targetLocation;
+				}
+			}
+			strm << endl;
+		}
+		strm << "</p>" << endl;
+
+		// ****************************************************
+		// server
+		strm << "<p>Server Name: ";
+		if(action.serverName[0] == '$' && !openWindowServer.empty())
+		{
+			int fieldId = atoi(&action.serverName[1]);
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(fieldId) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Server: " << arIn->LinkToServerInfo(openWindowServer, rootLevel) << ")";
+
+			if (fieldId > 0)
+			{
 				stringstream strmTmpDesc;
 				strmTmpDesc << "Window Open Server Name " << ifElse << "-Action " << nAction;
-				refItemSrvName->description = strmTmpDesc.str();
-
-				strm << "Server Name: " << arIn->TextFindFields(action.serverName, "$", this->schemaInsideId , rootLevel, true, refItemSrvName) << "<br/>" << endl;
+				CFieldRefItem *refItemSrvName = new CFieldRefItem(structItemType, obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+				arIn->AddReferenceItem(refItemSrvName);
+				delete refItemSrvName;
 			}
-		}
-
-		if(action.targetLocation != NULL)
-		{
-			CFieldRefItem *refItemLocation = new CFieldRefItem();
-			refItemLocation->arsStructItemType = this->structItemType;
-			refItemLocation->fromName = this->obj->name;						
-			refItemLocation->schemaInsideId = arIn->SchemaGetInsideId(action.schemaName);
-
-			stringstream strmTmpDesc;
-			strmTmpDesc << "Window Open Location " << ifElse << "-Action " << nAction;
-			refItemLocation->description = strmTmpDesc.str();
-
-			strm << "Target Location: " << arIn->TextFindFields(action.targetLocation, "$", this->schemaInsideId, this->rootLevel, true, refItemLocation) << "<br/>" << endl;
-		}
-
-		strm << "Window Mode: " << CAREnum::OpenWindowMode(action.windowMode) << "<br/>" << endl;
-		strm << "Form Name: " << arIn->LinkToSchema(action.schemaName, rootLevel) << "<br/>" << endl;
-
-		if(action.vuiLabel == NULL || strcmp(action.vuiLabel, "")==0)
-		{
-			strm << "Form View: (Clear)<br/>" << endl; 
 		}
 		else
 		{
+			openWindowServer = action.serverName;
+			strm << arIn->LinkToServerInfo(openWindowServer, rootLevel);
+		}
 
-			list<CARSchema>::iterator schemaIter;
-			for ( schemaIter = this->arIn->schemaList.begin(); schemaIter != this->arIn->schemaList.end(); schemaIter++ )
-			{			
-				CARSchema *tmpSchema = &(*schemaIter);
-				if(strcmp(action.schemaName, tmpSchema->name.c_str())==0)
-				{					
-					strm << "Form View: " << tmpSchema->LinkToVui(action.vuiLabel, rootLevel);	
+		strm << "<br/>Form Name: ";
+		if (action.schemaName[0] == '$')
+		{
+			int fieldId = atoi(&action.schemaName[1]);
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(fieldId) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(openWindowSchema, rootLevel) << ")";
+
+			if (fieldId > 0)
+			{
+				stringstream strmTmpDesc;
+				strmTmpDesc << "Window Open Form Name " << ifElse << "-Action " << nAction;
+				CFieldRefItem *refItemSrvName = new CFieldRefItem(structItemType, obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+				arIn->AddReferenceItem(refItemSrvName);
+				delete refItemSrvName;
+			}
+		}
+		else
+		{
+			openWindowSchema = action.schemaName;
+			strm << arIn->LinkToSchema(openWindowSchema, rootLevel) << endl;
+		}
+
+		strm << "<br/>View Name: ";
+		if(action.vuiLabel[0] == '$')// == NULL || strcmp(action.vuiLabel, "")==0)
+		{
+			int fieldId = atoi(&action.vuiLabel[1]);
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(fieldId) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+
+			if (fieldId > 0)
+			{
+				stringstream strmTmpDesc;
+				strmTmpDesc << "Window Open View Name " << ifElse << "-Action " << nAction;
+				CFieldRefItem *refItemSrvName = new CFieldRefItem(structItemType, obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+				arIn->AddReferenceItem(refItemSrvName);
+				delete refItemSrvName;
+			}
+		}
+		else
+		{
+			if (action.vuiLabel[0] == 0)
+			{ 
+				strm << "(Clear)" << endl;
+			}
+			else
+			{
+				CARSchema* rSchema = arIn->FindSchema(openWindowSchema);
+				if (rSchema == NULL)
+				{
+					strm << "<span class=\"fieldNotFound\">" << action.vuiLabel << "</span>";
+				}
+				else
+				{
+					strm << rSchema->LinkToVui(action.vuiLabel, rootLevel);	
 				}
 			}
 		}
+		strm << "</p>" << endl;
 
+		// report details here
+		string *entryIDs = NULL;
+		string *queryOverride = NULL;
+		string *reportOperation = NULL;
+		string *charEncoding = NULL;
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
+		{
+			string reportType;
+			string reportLocation;
+			string reportName;
+			string reportDestination;
+			entryIDs = new string();
+			queryOverride = new string();
+			reportOperation = new string();
+			charEncoding = new string();
 
+			if (!CDocActionOpenWindowHelper::GetReportData(action.reportString, reportType, reportLocation, reportName, reportDestination, *entryIDs, *queryOverride, *reportOperation, *charEncoding))
+			{
+				strm << "<p><span class=\"fieldNotFound\">Could not load report informations!</span></p>";
+			}
+			else
+			{
+				stringstream tmpDesc;
+
+				strm << "<p>Report Type: ";
+				if (!reportType.empty() && reportType[0] == '$')
+				{
+					int fieldId = atoi(&reportType.c_str()[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+					if (fieldId > 0)
+					{
+						tmpDesc.str("");
+						tmpDesc << "Window Open Report Type " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(&refItem);
+					}
+				}
+				else
+				{
+					strm << reportType;
+				}
+				strm <<  "<br/>";
+
+				int iReportLocation = atoi(reportLocation.c_str());
+				strm << "Report Location: " << CAREnum::ReportLocation(iReportLocation);
+				
+				strm << "<br/>Report Name: ";
+				if (!reportName.empty() && reportName[0] == '$')
+				{
+					int fieldId = atoi(&reportName.c_str()[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+					if (fieldId > 0)
+					{
+						tmpDesc.str("");
+						tmpDesc << "Window Open Report Name " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(&refItem);
+					}
+				}
+				else
+				{
+					strm << reportName;
+				}
+				strm << "<br/>";
+				
+				// to-screen:
+				// to-print:
+				// to-file:
+				strm << "Report Destination: ";
+				if (!reportDestination.empty() && reportDestination[0] == '$')
+				{
+					int fieldId = atoi(&reportDestination.c_str()[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+					if (fieldId > 0)
+					{
+						tmpDesc.str("");
+						tmpDesc << "Window Open Report Destination " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(&refItem);
+					}
+				}
+				else
+				{
+					// map the string value to the displayed combobox item of dev studio
+					strm << reportDestination;
+				}
+				strm << "</p>";
+			}
+		}
+
+		// qualification
 		if(ActionOpenDlgQualifier(action.windowMode))
 		{
 			if(action.query.operation != NULL)
 			{
 				stringstream strmTmpQual;
-				strmTmpQual.str("");
+
+				strmTmpQual << "Open Window Qualification " << ifElse << "-Action " << nAction;
 
 				CFieldRefItem *refItem = new CFieldRefItem();
 				refItem->arsStructItemType = this->structItemType;
-				refItem->description = "Open Window Qualification";
+				refItem->description = strmTmpQual.str();
 				refItem->fromName = this->obj->name;
 
+				strmTmpQual.str("");
 				CARQualification arQual(*this->arIn);
-				int pFormId = this->arIn->SchemaGetInsideId(schemaName.c_str());
-				int sFormId = this->arIn->SchemaGetInsideId(action.schemaName);
+				int pFormId = schemaInsideId; // this->arIn->SchemaGetInsideId(schemaName.c_str());
+				int sFormId = this->arIn->SchemaGetInsideId(openWindowSchema);
 				arQual.CheckQuery(&action.query, *refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
 
 				delete refItem;
 
-				strm << "<br/>Qualification:<br/>" << endl;
-				strm << strmTmpQual.str();
+				strm << "<p>Qualification:<br/>" << endl;
+				strm << strmTmpQual.str() << "</p>";
 			}	
 		}
 
-		strm << "<br/>" << endl;
-
-		if(action.closeBox == TRUE)
-			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\" checked>Show Close Button in Dialog" << endl;
-		else
-			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\">Show Close Button in Dialog" << endl;
-
-		strm << "<br/>" << endl;
-
-		//Field Mapping WindowOpen
-		string setFieldInfo = "Field Mapping (On Open)";
-		for(unsigned int i= 0; i< action.inputValueFieldPairs.numItems; i++)
+		strm << "<p>";
+		// show close button
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DLG)
 		{
-			if(action.inputValueFieldPairs.fieldAssignList[i].fieldId == AR_LIKE_ID)			
-			{
-				setFieldInfo = "Field Mapping (On Open): All Matching Ids<br/>";
-			}
-
-			if(action.inputValueFieldPairs.fieldAssignList[i].fieldId == AR_SET_DEFAULTS_ID)		
-			{
-				setFieldInfo = "Field Mapping (On Open): Set Fields to Default Values<br/>";
-			}
+			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\" " << (action.closeBox ? "checked" : "") << ">Show Close Button in Dialog<br/>" << endl;
 		}
 
-		if(strcmp(setFieldInfo.c_str(), "Field Mapping (On Open)") ==  0)
+		// suppres empty list
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY)
 		{
-			strm << setFieldInfo << ":<br/>" << endl;
+			strm << "<input type=\"checkbox\" name=\"suprEmptyLst\" value=\"suprEmptyLstVal\" " << (action.suppressEmptyLst ? "checked" : "") << ">Suppress Empty List<br/>" << endl;		
+		}
 
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, action.schemaName);
+		// set fields to defaults
+		bool setToDefault = false;
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT)
+		{
+
+			for(unsigned int i= 0; i < action.inputValueFieldPairs.numItems; ++i)
+			{
+				if (action.inputValueFieldPairs.fieldAssignList[i].fieldId == AR_SET_DEFAULTS_ID)
+				{
+					setToDefault = true;
+					break;
+				}
+			}
+
+			strm << "<input type=\"checkbox\" name=\"setToDefault\" value=\"setToDefaultVal\" " << (setToDefault ? "checked" : "") << ">Set Fields To Defaults<br/>" << endl;		
+		}
+
+		// input mapping
+		if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DLG || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT) && !setToDefault)
+		{
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, openWindowSchema, schemaName);
+			//assignHelper.pushFieldFlag = true;
 			strm << assignHelper.OpenWindowAssignment(action.inputValueFieldPairs, nAction, ifElse, "Open Window");
 		}
-		else
+
+		// output mapping (dialog on close)
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DLG)
 		{
-			strm << setFieldInfo << endl;
+			strm << "On Dialog Close Action:<br/>";
+
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, openWindowSchema);
+			strm << assignHelper.CloseWindowAssignment(action.outputValueFieldPairs, nAction, ifElse, "Close Window");
 		}
+		strm << "</p>";
 
-
-		//Field Mapping WindowClose
-		if(action.outputValueFieldPairs.numItems > 0)
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 		{
-			setFieldInfo = "Field Mapping (On Close)";
-			for(unsigned int i= 0; i< action.outputValueFieldPairs.numItems; i++)
+			// message
+			strm << "<p>If No Request Match: ";
+			if (action.noMatchContinue)
 			{
-				if(action.outputValueFieldPairs.fieldAssignList[i].fieldId == AR_LIKE_ID)
+				strm << "Do not show any message";
+			}
+			else if (action.msg.messageText == NULL || action.msg.messageText[0] == 0)	// dont know, if thats the correct criteria for the default message
+			{
+				strm << "Show default message";
+			}
+			else if (action.msg.messageType > 0)
+			{
+				strm << "Show message<br/>";
+				strm << ActionMessage(action.msg, nAction);
+			}
+			strm << "</p>" << endl;
+
+			// sorting
+			if (action.sortOrderList.numItems > 0)	
+			{
+				CTable tblSortList("sortList", "TblObjectList");
+				tblSortList.AddColumn(40, "Field Name");
+				tblSortList.AddColumn(15, "Field Id");
+				tblSortList.AddColumn(15, "Field Type");
+				tblSortList.AddColumn(30, "Sort Order");
+				
+				char strFieldId[20];				
+				CARSchema* rSchema = arIn->FindSchema(openWindowSchema);
+				CARField*  rField = NULL;
+
+				for (unsigned int i = 0; i < action.sortOrderList.numItems; ++i)
 				{
-					setFieldInfo = "Field Mapping (On Close): All Matching Ids<br/>";
+					rField = arIn->FindField(rSchema, action.sortOrderList.sortList[i].fieldId);
+
+					strFieldId[0] = 0;
+					sprintf(strFieldId, "%d", action.sortOrderList.sortList[i].fieldId);
+
+					CTableRow row("cssStdRow");
+					row.AddCell(arIn->LinkToField(openWindowSchema, action.sortOrderList.sortList[i].fieldId, rootLevel));
+					row.AddCell(strFieldId);
+					row.AddCell((rField != NULL ? CAREnum::DataType(rField->dataType) : "Unknown"));
+					row.AddCell(CAREnum::SchemaSortOrder(action.sortOrderList.sortList[i].sortOrder));
+					
+					tblSortList.AddRow(row);
+
+					if (rSchema != NULL)
+					{
+						stringstream tmpDesc;
+						tmpDesc << "Open Window SortBy " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, this->obj->name, tmpDesc.str(), action.sortOrderList.sortList[i].fieldId, rSchema->insideId);
+						arIn->AddReferenceItem(&refItem);
+					}
 				}
 
-				if(action.outputValueFieldPairs.fieldAssignList[i].fieldId == AR_SET_DEFAULTS_ID)
+				strm << "<p>Sort Order" << tblSortList.ToXHtml() << "</p>";
+			}
+
+			// additional report informations
+			if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
+			{
+				stringstream tmpDesc;
+
+				strm << "<p>EntryIDs: ";
+				if (!entryIDs->empty() && entryIDs->operator[](0) == '$')
 				{
-					setFieldInfo = "Field Mapping (On Close): Set Fields to Default Values<br/>";
+					int fieldId = atoi(&entryIDs->c_str()[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+					if (fieldId > 0)
+					{
+						tmpDesc.str("");
+						tmpDesc << "Window Open EntryIDs " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(&refItem);
+					}
 				}
+				else
+				{
+					strm << *entryIDs;
+				}
+				
+				strm << "<br/>Query Override: ";
+				if (!queryOverride->empty() && queryOverride->operator[](0) == '$')
+				{
+					int fieldId = atoi(&entryIDs->c_str()[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+					if (fieldId > 0)
+					{
+						tmpDesc.str("");
+						tmpDesc << "Window Open Query Override " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(&refItem);
+					}
+				}
+				else
+				{
+					strm << *queryOverride;
+				}
+				
+				strm << "<br/>Report Operation: ";
+				int iReportOperation = atoi(reportOperation->c_str());
+				if (iReportOperation == 0) iReportOperation = 2;	// set default to Run
+				strm << CAREnum::ReportOperation(iReportOperation);
+
+				strm << "<br/>Character Encoding: ";
+				if (!charEncoding->empty() && charEncoding->operator[](0) == '$')
+				{
+					int fieldId = atoi(&charEncoding->c_str()[1]);
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+					if (fieldId > 0)
+					{
+						tmpDesc.str("");
+						tmpDesc << "Window Open Character Encoding " << ifElse << "-Action " << nAction;
+						CFieldRefItem refItem(structItemType, obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+						arIn->AddReferenceItem(&refItem);
+					}
+				}
+				else
+				{
+					strm << *charEncoding;
+				}
+				strm << "</p>" << endl;
+
+				// clean up
+				delete entryIDs;
+				delete queryOverride;
+				delete reportOperation;
+				delete charEncoding;
 			}
 
-			if(strcmp(setFieldInfo.c_str(), "Field Mapping (On Close)") ==  0)
+			// polling interval
+			if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY) && action.pollinginterval > 0)
 			{
-				strm << setFieldInfo << ":<br/>" << endl;
-
-				CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, action.schemaName, schemaName);
-				strm << assignHelper.CloseWindowAssignment(action.outputValueFieldPairs, nAction, ifElse, "Close Window");
-			}
-			else
-			{
-				strm << setFieldInfo << endl;
+				strm << "<p>Polling interval: " << action.pollinginterval << "</p>" << endl;
 			}
 		}
 	}

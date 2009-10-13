@@ -1365,6 +1365,27 @@ public:
 		}
 	}
 
+	/// This function maps the windowMode property of the api to the real window 
+	/// mode (without the displayType information fragments)
+	static int OpenWindowModeMapped(int nType)
+	{
+		switch(nType)
+		{
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
+			return AR_ACTIVE_LINK_ACTION_OPEN_MODIFY;
+
+		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
+		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
+		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
+			return AR_ACTIVE_LINK_ACTION_OPEN_DSPLY;
+
+		default:
+			return nType;
+		}
+	}
+
 	static string OpenWindowMode(int nType)
 	{
 		switch(nType)
@@ -1962,4 +1983,28 @@ public:
 		}
 	}
 #endif
+
+	static const char* ReportLocation(int nType)
+	{
+		switch (nType)
+		{
+		case AR_REPORT_LOCATION_EMBEDDED: return "Embedded";
+		case AR_REPORT_LOCATION_LOCAL: return "Local";
+		case AR_REPORT_LOCATION_REPORTING_FORM: return "Report Form";
+		//the following item is not selectable in dev studio ???
+		//case AR_REPORT_LOCATION_FIELD: return "Field";
+		default: return EnumDefault;
+		}
+	}
+
+	static const char* ReportOperation(int nType)
+	{
+		switch(nType)
+		{
+		case 1: return "Edit";
+		case 2: return "Run";
+		case 3: return "Create";
+		default: return EnumDefault;
+		}
+	}
 };
