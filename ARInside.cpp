@@ -359,7 +359,7 @@ void CARInside::Prepare(void)
 	}
 }
 
-bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, CFieldRefItem &refItem)
+bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem)
 {
 	list<CFieldRefItem>::iterator iter;
 	list<CFieldRefItem>::iterator endIt = this->listFieldRefItem.end();
@@ -2307,7 +2307,12 @@ string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 	return result;
 }
 
-string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int rootLevel)
+string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName, int rootLevel)
+{
+	return LinkToXmlObjType(arsStructItemType, objName, -1, rootLevel);
+}
+
+string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel)
 {
 	string result = EmptyValue;
 
@@ -2326,6 +2331,11 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, string objName, int ro
 	case AR_STRUCT_ITEM_XML_SCHEMA:
 		{
 			result = this->LinkToSchema(objName, rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_FIELD:
+		{
+			result = this->LinkToField(objName, subObjId, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_ESCALATION:
@@ -2455,63 +2465,61 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 				ARColumnLimitsStruct fLimit = obj.limit.u.columnLimits;
 
 				//To create a link to the datafield we first must find the target schema of the table
-				int tblTargetSchemaInsideId = schema.insideId;
+				string tableSchema;                    // the name of table source form
+				CARSchema* tableSourceSchema = NULL;   // the obj of table source form (if found)
 
-				list<CARField>::iterator fldIt = schema.fieldList.begin();
-				list<CARField>::iterator endIt = schema.fieldList.end();
-				for( ; fldIt != endIt; ++fldIt)
+				CARField* tableField = this->FindField(&schema, fLimit.parent);
+				if (tableField != NULL && tableField->dataType == AR_DATA_TYPE_TABLE && tableField->limit.dataType == AR_DATA_TYPE_TABLE)
 				{
-					CARField *field = &(*fldIt);
-					if(field->insideId == fLimit.parent) // we found the table
-					{				
-						if(field->limit.dataType == AR_DATA_TYPE_TABLE)
-						{
-							ARTableLimitsStruct tblLimits = field->limit.u.tableLimits;
+					tableSchema = tableField->limit.u.tableLimits.schema;
 
-							if(!strcmp(tblLimits.schema, AR_CURRENT_SCHEMA_TAG)==0)
-							{
-								tblTargetSchemaInsideId = SchemaGetInsideId(tblLimits.schema);
-							}
-						}
-						break; // ok, field was found .. stop searching here
+					if (!tableSchema.empty() && tableSchema[0] == '$')
+						tableSchema = tableField->limit.u.tableLimits.sampleSchema;
+
+					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						tableSchema = schema.name;
+
+					tableSourceSchema = this->FindSchema(tableSchema);
+
+					if (tableSourceSchema != NULL)
+					{
+						stringstream tmpDesc;
+						tmpDesc << "Column in Table " + LinkToField(schema.insideId, tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->insideId, rootLevel);
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.name, tmpDesc.str(), fLimit.dataField, tableSourceSchema->insideId);
+						refItem.fromFieldId = obj.fieldId;
+						this->AddReferenceItem(&refItem);
 					}
 				}
-
-				//Add a reference
-				CFieldRefItem *refItem = new CFieldRefItem();
-				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-				refItem->description = "Datasource in Table: " + LinkToField(schema.insideId, fLimit.parent, rootLevel) + " Field: " + LinkToField(schema.insideId, obj.insideId, rootLevel);
-				refItem->fromName = schema.name;
-				refItem->fieldInsideId = fLimit.dataField;
-				refItem->schemaInsideId = tblTargetSchemaInsideId;
-				AddReferenceItem(refItem);
-				delete refItem;
 			}
 			break;
 		case AR_DATA_TYPE_TABLE:
 			{
 				ARTableLimitsStruct fLimit = obj.limit.u.tableLimits;
 
-				string tmpSchema = fLimit.schema;
-				if(strcmp(fLimit.schema, AR_CURRENT_SCHEMA_TAG) == 0)
-				{
-					tmpSchema = schema.name;
-				}
+				string tableSchema;                    // the name of table source form
+				CARSchema* tableSourceSchema = NULL;   // the obj of table source form (if found)
 
-				stringstream strmQuery;
-				if(fLimit.qualifier.operation != NULL)
+				tableSchema = obj.limit.u.tableLimits.schema;
+
+				if (!tableSchema.empty() && tableSchema[0] == '$')
+					tableSchema = obj.limit.u.tableLimits.sampleSchema;
+
+				if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+					tableSchema = schema.name;
+
+				tableSourceSchema = this->FindSchema(tableSchema);
+
+				if (tableSourceSchema != NULL && fLimit.qualifier.operation != AR_COND_OP_NONE)
 				{		
-					CFieldRefItem *refItem = new CFieldRefItem();
-					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-					refItem->description = "Table Qualification: " +  obj.GetURL(rootLevel);
-					refItem->fromName = schema.name;
+					stringstream strmQuery;
+					CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.name, "Table Qualification", 0, 0);
+					refItem.fromFieldId = obj.fieldId;
 
 					CARQualification arQual(*this);
-					int pFormId = SchemaGetInsideId(schema.name);
-					int sFormId = SchemaGetInsideId(tmpSchema);
+					int pFormId = schema.insideId;
+					int sFormId = tableSourceSchema->insideId;
 
-					arQual.CheckQuery(&fLimit.qualifier, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
-					delete refItem;
+					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 				}
 			}
 			break;
@@ -3197,8 +3205,10 @@ CARField* CARInside::FindField(CARSchema* schema, int fieldId)
 {
 	if (schema == NULL) return NULL;
 
-	list<CARField>::iterator fieldIter;
-	for(fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); ++fieldIter)
+	list<CARField>::iterator fieldIter = schema->fieldList.begin();
+	list<CARField>::iterator endIt = schema->fieldList.end();
+
+	for(; fieldIter != endIt; ++fieldIter)
 	{
 		CARField *field = &(*fieldIter);
 		if(field->fieldId == fieldId)

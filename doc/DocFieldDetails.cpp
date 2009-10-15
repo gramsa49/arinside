@@ -149,7 +149,7 @@ string CDocFieldDetails::WorkflowReferences()
 				{
 					CTableRow row("cssStdRow");		
 					row.AddCell(CAREnum::XmlStructItem(item->arsStructItemType));				
-					row.AddCell(this->pInside->LinkToXmlObjType(item->arsStructItemType, item->fromName, rootLevel));
+					row.AddCell(this->pInside->LinkToXmlObjType(item->arsStructItemType, item->fromName, item->fromFieldId, rootLevel));
 
 					string tmpEnabled = this->pInside->XmlObjEnabled(item->arsStructItemType, item->fromName);
 					string tmpCssEnabled = "";
@@ -290,39 +290,32 @@ string CDocFieldDetails::FieldLimits()
 				strm << "Column in Table: " << this->pInside->LinkToField(this->pSchema->name, fLimit.parent, rootLevel) << "<br/>" << endl;
 
 				//To create a link to the datafield we first must find the target schema of the table
-				int tblTargetSchemaInsideId = this->pSchema->insideId;
+				string tableSchema;
+				CARSchema* tableSourceSchema = NULL;
+				CARField* tableField = pInside->FindField(pSchema, fLimit.parent);
+				if (tableField != NULL && tableField->dataType == AR_DATA_TYPE_TABLE && tableField->limit.dataType == AR_DATA_TYPE_TABLE)
+				{
+					tableSchema = tableField->limit.u.tableLimits.schema;
 
-				list<CARSchema>::iterator schemaIter;		
-				CARSchema *searchSchema;
-				for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
-				{			
-					searchSchema = &(*schemaIter);
+					if (!tableSchema.empty() && tableSchema[0] == '$')
+						tableSchema = tableField->limit.u.tableLimits.sampleSchema;
 
-					if(this->pSchema->insideId == searchSchema->insideId)
-					{
-						list<CARField>::iterator fieldIter;		
-						CARField *field;
-						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); fieldIter++)
-						{
-							field = &(*fieldIter);
-							if(field->insideId == fLimit.parent) // we found the table
-							{				
-								if(field->limit.dataType == AR_DATA_TYPE_TABLE)
-								{
-									ARTableLimitsStruct tblLimits = field->limit.u.tableLimits;
+					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						tableSchema = pSchema->name;
 
-									if(!strcmp(tblLimits.schema, AR_CURRENT_SCHEMA_TAG)==0)
-									{
-										tblTargetSchemaInsideId = this->pInside->SchemaGetInsideId(tblLimits.schema);
-									}
-								}
-							}
-						}
-					}
-				}            
-
-				strm << "Source Data Field: " << this->pInside->LinkToField(tblTargetSchemaInsideId, fLimit.dataField, rootLevel);
-				strm << " In Schema: " << pSchema->GetURL(rootLevel) << "<br/>" << endl;
+					tableSourceSchema = pInside->FindSchema(tableSchema);
+				}
+	
+				if (tableSourceSchema != NULL)
+				{
+					strm << "Source Data Field: " << this->pInside->LinkToField(tableSourceSchema->insideId, fLimit.dataField, rootLevel);
+					strm << " In Schema: " << tableSourceSchema->GetURL(rootLevel) << "<br/>" << endl;
+				}
+				else
+				{
+					strm << "Source Data Field: <span class=\"fieldNotFound\">" << fLimit.dataField << "</span>";
+					strm << " In Schema: " << tableSchema << "<br/>" << endl;
+				}
 			}
 			break;
 		case AR_DATA_TYPE_CURRENCY:
@@ -437,17 +430,60 @@ string CDocFieldDetails::FieldLimits()
 			break;			
 		case AR_DATA_TYPE_TABLE:
 			{
-				ARTableLimitsStruct fLimit = this->pField->limit.u.tableLimits;				
-				strm << "Server: " << this->pInside->LinkToServerInfo(fLimit.server, rootLevel) << "<br/>" << endl;
-				string tmpSchema = fLimit.schema;
-				if(strcmp(fLimit.schema, AR_CURRENT_SCHEMA_TAG) == 0)
+				ARTableLimitsStruct &fLimit = this->pField->limit.u.tableLimits;
+				string tableServer;
+				string tableSchema;
+
+				strm << "<p>Server: ";
+				if (fLimit.server[0] == '$' && fLimit.sampleServer[0] != 0)
 				{
-					tmpSchema = this->pSchema->name;
+					int fieldId = atoi(&fLimit.server[1]);
+					tableServer = fLimit.sampleServer;
+
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->insideId, fieldId, rootLevel) ) << "$ (Sample Server: " << pInside->LinkToServerInfo(tableServer, rootLevel) << ")";
+
+					if (fieldId > 0)
+					{
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->name, "Used as Server of Table Field", fieldId, pSchema->insideId);
+						pInside->AddReferenceItem(&refItem);
+					}
 				}
-				strm << "Schema: " << this->pInside->LinkToSchema(tmpSchema, rootLevel) << "<br/>" << endl;
+				else
+				{
+					strm << this->pInside->LinkToServerInfo(fLimit.server, rootLevel);
+				}
+				strm << "<br/>" << endl;
+
+				strm << "Form: ";;
+				if (fLimit.schema[0] == '$' && fLimit.sampleSchema[0] != 0)
+				{
+					int fieldId = atoi(&fLimit.schema[1]);
+					tableSchema = fLimit.sampleSchema;
+
+					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						tableSchema = pSchema->name;
+
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->insideId, fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchema, rootLevel) << ")";
+
+					if (fieldId > 0)
+					{
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->name, "Used as Schema of Table Field", fieldId, pSchema->insideId);
+						pInside->AddReferenceItem(&refItem);
+					}
+				}
+				else
+				{
+					tableSchema = fLimit.schema;
+
+					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						tableSchema = pSchema->name;
+
+					strm << "Schema: " << this->pInside->LinkToSchema(tableSchema, rootLevel);
+				}
+				strm << "<p/>" << endl;
 
 				stringstream strmQuery;
-				if(fLimit.qualifier.operation != NULL)
+				if(fLimit.qualifier.operation != AR_COND_OP_NONE)
 				{		
 					CFieldRefItem *refItem = new CFieldRefItem();
 					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_NONE;  //Dont change
@@ -456,8 +492,8 @@ string CDocFieldDetails::FieldLimits()
 
 					CARQualification arQual(*this->pInside);
 
-					int pFormId = this->pInside->SchemaGetInsideId(this->pSchema->name.c_str());
-					int sFormId = this->pInside->SchemaGetInsideId(tmpSchema.c_str());
+					int pFormId = pSchema->insideId;
+					int sFormId = this->pInside->SchemaGetInsideId(tableSchema);
 					arQual.CheckQuery(&fLimit.qualifier, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
 					delete refItem;
@@ -467,16 +503,16 @@ string CDocFieldDetails::FieldLimits()
 					strmQuery << EmptyRunIf << endl;
 				}
 
-				strm << "<br/>Qualification: <br/>" << strmQuery.str() << "<br/><br/>" << endl;
+				strm << "<p>Qualification: <br/>" << strmQuery.str() << "<p/>" << endl;
 
 
-				strm << "Max. Rows: " << fLimit.maxRetrieve << "<br/>" << endl;
-				strm << "Num. Columns: " << fLimit.numColumns << "<br/>" << endl;						
+				strm << "<p>Max. Rows: " << fLimit.maxRetrieve << "<br/>" << endl;
+				strm << "Num. Columns: " << fLimit.numColumns << "<p/>" << endl;						
 
-				strm << "Table Columns:<br/>" << endl;
+				strm << "<p>Table Columns:<br/>" << endl;
 				list<CARSchema>::iterator schemaIter;		
 				CARSchema *searchSchema;
-				for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+				for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); ++schemaIter)
 				{			
 					searchSchema = &(*schemaIter);
 
@@ -484,7 +520,7 @@ string CDocFieldDetails::FieldLimits()
 					{
 						list<CARField>::iterator fieldIter;		
 						CARField *field;
-						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); fieldIter++)
+						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); ++fieldIter)
 						{
 							field = &(*fieldIter);										
 							if(field->limit.dataType == AR_DATA_TYPE_COLUMN)
@@ -494,7 +530,7 @@ string CDocFieldDetails::FieldLimits()
 								{
 									strm << field->GetURL(rootLevel);
 
-									strm << " [ Datafield: " << this->pInside->LinkToField(fLimit.schema, colLimits.dataField, rootLevel) << " ]<br/>" << endl; 
+									strm << " [ Datafield: " << this->pInside->LinkToField(tableSchema, colLimits.dataField, rootLevel) << " ]<br/>" << endl; 
 								}
 							}						
 						}

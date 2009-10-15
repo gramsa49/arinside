@@ -18,6 +18,7 @@
 #include "FieldRefItem.h"
 
 CFieldRefItem::CFieldRefItem()
+:arsStructItemType(0), fromFieldId(0), fieldInsideId(0), schemaInsideId(0)
 {
 }
 
@@ -25,6 +26,7 @@ CFieldRefItem::CFieldRefItem(int arsStructItemType, string fromName, string desc
 {
 	this->arsStructItemType = arsStructItemType;
 	this->fromName = fromName;
+	this->fromFieldId = 0;
 	this->description = description;
 	this->fieldInsideId = fieldInsideId;
 	this->schemaInsideId = schemaInsideId;

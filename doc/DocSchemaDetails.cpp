@@ -19,6 +19,7 @@
 #include "DocFieldDetails.h"
 #include "../output/CsvPage.h"
 #include "../core/ARDayStructHelper.h"
+#include "DocActionOpenWindowHelper.h"
 
 CDocSchemaDetails::CDocSchemaDetails(CARInside &arInside, CARSchema &schema, string path, int rootLevel)
 {
@@ -1378,19 +1379,21 @@ string CDocSchemaDetails::TableFieldReferences()
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->dataType == AR_DATA_TYPE_TABLE)
+				if(field->dataType == AR_DATA_TYPE_TABLE && field->limit.dataType == AR_DATA_TYPE_TABLE)
 				{
-					ARTableLimitsStruct limit = field->limit.u.tableLimits;
+					ARTableLimitsStruct &limit = field->limit.u.tableLimits;
+					
+					char *tableSchema = limit.schema;
 
-					if(limit.schema != NULL)
+					if (limit.schema[0] == '$')
+						tableSchema = limit.sampleSchema;
+
+					if(pSchema->name.compare(tableSchema) == 0)
 					{
-						if(strcmp(limit.schema, this->pSchema->name.c_str())==0)
-						{
-							strm << "Table: " << field->GetURL(rootLevel);
-							strm << " in form: " << schema->GetURL(rootLevel) << "<br/>" << endl;
+						strm << "Table: " << field->GetURL(rootLevel);
+						strm << " in form: " << schema->GetURL(rootLevel) << "<br/>" << endl;
 
-							bFound = true;
-						}
+						bFound = true;
 					}
 				}
 			}
@@ -1466,6 +1469,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 			{
 				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 				{
+					// TODO: optimize code and add sample data support
 					ARPushFieldsActionStruct action = al->actionList.actionList[i].u.pushFields;
 					for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
 					{
@@ -1487,6 +1491,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 				{
 					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 					{
+						// TODO: optimize code and add sample data support
 						ARPushFieldsActionStruct action = al->elseList.actionList[i].u.pushFields;
 						for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
 						{
@@ -1544,13 +1549,25 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 			{
 				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 				{
-					AROpenDlgStruct action = al->actionList.actionList[i].u.openDlg;                    
-					if(action.schemaName != NULL)
+					AROpenDlgStruct &action = al->actionList.actionList[i].u.openDlg;                    
+					
+					string openWindowSchema;
+					if (action.schemaName[0] == '$' )
 					{
-						if(strcmp(action.schemaName, this->pSchema->name.c_str())==0)
-						{
-							bPushToForm = true;
-						}
+						string sampleServer;
+						CDocActionOpenWindowHelper::GetSampleData(*al, "If", i,	sampleServer, openWindowSchema);
+					}
+					else
+					{
+						openWindowSchema = action.schemaName;
+					}
+
+					if (!openWindowSchema.empty() && openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						openWindowSchema.clear();
+
+					if(!openWindowSchema.empty() && openWindowSchema.compare(pSchema->name) == 0)
+					{
+						bPushToForm = true;
 					}
 				}
 			}	
@@ -1562,13 +1579,25 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 				{
 					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 					{
-						AROpenDlgStruct action = al->elseList.actionList[i].u.openDlg;
-						if(action.schemaName != NULL)
+						AROpenDlgStruct &action = al->elseList.actionList[i].u.openDlg;
+
+						string openWindowSchema;
+						if (action.schemaName[0] == '$' )
 						{
-							if(strcmp(action.schemaName, this->pSchema->name.c_str())==0)
-							{
-								bPushToForm = true;
-							}
+							string sampleServer;
+							CDocActionOpenWindowHelper::GetSampleData(*al, "Else", i,	sampleServer, openWindowSchema);
+						}
+						else
+						{
+							openWindowSchema = action.schemaName;
+						}
+
+						if (openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+							openWindowSchema.clear();
+
+						if(!openWindowSchema.empty() && openWindowSchema.compare(pSchema->name) == 0)
+						{
+							bPushToForm = true;
 						}
 					}
 				}
@@ -1616,6 +1645,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 			{
 				if(filter->actionList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
 				{
+					// TODO: optimize function and add sample data support
 					ARPushFieldsActionStruct action = filter->actionList.actionList[i].u.pushFields;
 					for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
 					{
@@ -1637,6 +1667,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 				{
 					if(filter->elseList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
 					{
+						// TODO: optimize function and add sample data support
 						ARPushFieldsActionStruct action = filter->elseList.actionList[i].u.pushFields;
 						for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
 						{

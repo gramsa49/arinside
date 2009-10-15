@@ -25,6 +25,7 @@ public:
 
 	int arsStructItemType;
 	string fromName;
+	int fromFieldId;	// use this to create a reference between two field (e.g. a field used as column in a table); fromName should hold the schema name in this case
 	string description;
 	int fieldInsideId;
 	int schemaInsideId;

@@ -97,7 +97,8 @@ public:
 	list<CMissingMenuRefItem> listMenuNotFound;
 
 	string LinkToServerInfo(string srvName, int rootLevel);
-	string LinkToXmlObjType(int arsStructItemType, string objName, int rootLevel);
+	string LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel);
+	string LinkToXmlObjType(int arsStructItemType, const string &objName, int rootLevel);
 	string XmlObjEnabled(int arsStructItemType, string objName);
 
 	int SchemaGetInsideId(string searchObjName);
@@ -131,7 +132,7 @@ public:
 	string TextFindKeywords(string inText, string fieldSeparator);	
 	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 
-	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, CFieldRefItem &refItem);
+	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem);
 
 	string ServerObjectHistory(CARServerObject *obj, int rootLevel);
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);

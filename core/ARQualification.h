@@ -23,13 +23,13 @@ public:
 	CARQualification(CARInside &arIn);
 	~CARQualification(void);
 
-	void CheckQuery(ARQualifierStruct *query, CFieldRefItem refItem, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
+	void CheckQuery(ARQualifierStruct *query, const CFieldRefItem &refItem, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
 
 	int arsStructItemType;;
 
 private:
 	CARInside *arIn;
-	void CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRefItem refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
+	void CheckOperand(ARFieldValueOrArithStruct *operand, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
 
 	int tmpFieldId;
 	int tmpFormId;

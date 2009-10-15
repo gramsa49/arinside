@@ -30,7 +30,7 @@ CARQualification::~CARQualification(void)
 }
 
 
-void CARQualification::CheckQuery(ARQualifierStruct *query, CFieldRefItem refItem, int depth, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem& refItem, int depth, int pFormId, int sFormId, stringstream &qText, int rootLevel)
 {
 	if (query != NULL)
 	{
@@ -118,19 +118,16 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, CFieldRefItem refIte
 		case AR_COND_OP_FROM_FIELD: //A qualification located in a field on the form.
 			qText << "EXTERNAL ($" << arIn->LinkToField(pFormId, query->u.fieldId, rootLevel) << "$)";
 
-			CFieldRefItem *item = new CFieldRefItem();
-			item->arsStructItemType = refItem.arsStructItemType;
-			item->description = refItem.description;
-			item->fromName = refItem.fromName;					
-			item->fieldInsideId = query->u.fieldId;					
-			item->schemaInsideId = pFormId;
-			arIn->AddReferenceItem(item);
+			CFieldRefItem item = refItem;
+			item.fieldInsideId = query->u.fieldId;
+			item.schemaInsideId = pFormId;
+			arIn->AddReferenceItem(&item);
 			break;
 		}
 	}
 }
 
-void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRefItem refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel)
 {		
 	switch(operand->tag)
 	{
@@ -142,14 +139,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 
 		if(!arIn->FieldreferenceExists(sFormId, operand->u.fieldId, refItem))
 		{
-			CFieldRefItem *item = new CFieldRefItem();
-			item->arsStructItemType = refItem.arsStructItemType;
-			item->description = refItem.description;
-			item->fromName = refItem.fromName;					
-			item->fieldInsideId = operand->u.fieldId;					
-			item->schemaInsideId = sFormId;
-			arIn->AddReferenceItem(item);
-			delete item;
+			CFieldRefItem item = refItem;
+			item.fieldInsideId = operand->u.fieldId;
+			item.schemaInsideId = sFormId;
+			arIn->AddReferenceItem(&item);
 		}
 		break;	
 	case AR_FIELD_TRAN:
@@ -160,14 +153,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 
 		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem))
 		{
-			CFieldRefItem *item = new CFieldRefItem();
-			item->arsStructItemType = refItem.arsStructItemType;
-			item->description = refItem.description;
-			item->fromName = refItem.fromName;					
-			item->fieldInsideId = operand->u.fieldId;					
-			item->schemaInsideId = pFormId;
-			arIn->AddReferenceItem(item);
-			delete item;
+			CFieldRefItem item = refItem;
+			item.fieldInsideId = operand->u.fieldId;
+			item.schemaInsideId = pFormId;
+			arIn->AddReferenceItem(&item);
 		}
 		break;	
 	case AR_FIELD_DB:
@@ -178,14 +167,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 
 		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem))
 		{
-			CFieldRefItem *item = new CFieldRefItem();
-			item->arsStructItemType = refItem.arsStructItemType;
-			item->description = refItem.description;
-			item->fromName = refItem.fromName;					
-			item->fieldInsideId = operand->u.fieldId;					
-			item->schemaInsideId = pFormId;
-			arIn->AddReferenceItem(item);
-			delete item;
+			CFieldRefItem item = refItem;
+			item.fieldInsideId = operand->u.fieldId;
+			item.schemaInsideId = pFormId;
+			arIn->AddReferenceItem(&item);
 		}
 		break;	
 	case AR_FIELD_CURRENT:
@@ -208,14 +193,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 
 		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem) && arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU)
 		{
-			CFieldRefItem *item = new CFieldRefItem();
-			item->arsStructItemType = refItem.arsStructItemType;				
-			item->description = refItem.description;
-			item->fromName = refItem.fromName;					
-			item->fieldInsideId = operand->u.fieldId;					
-			item->schemaInsideId = pFormId;
-			arIn->AddReferenceItem(item);
-			delete item;
+			CFieldRefItem item = refItem;
+			item.fieldInsideId = operand->u.fieldId;
+			item.schemaInsideId = pFormId;
+			arIn->AddReferenceItem(&item);
 		}
 
 		break;
@@ -344,14 +325,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, CFieldRe
 
 		if(!arIn->FieldreferenceExists(pFormId, 15, refItem))
 		{
-			CFieldRefItem *item = new CFieldRefItem();
-			item->arsStructItemType = refItem.arsStructItemType;
-			item->description = refItem.description;
-			item->fromName = refItem.fromName;					
-			item->fieldInsideId = 15;					
-			item->schemaInsideId = pFormId;
-			arIn->AddReferenceItem(item);
-			delete item;
+			CFieldRefItem item = refItem;
+			item.fieldInsideId = 15;
+			item.schemaInsideId = pFormId;
+			arIn->AddReferenceItem(&item);
 		}
 
 		string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
