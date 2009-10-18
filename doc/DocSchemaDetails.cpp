@@ -1465,20 +1465,27 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < al->actionList.numItems; i++)
+			for(unsigned int i = 0; i < al->actionList.numItems; ++i)
 			{
 				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 				{
-					// TODO: optimize code and add sample data support
-					ARPushFieldsActionStruct action = al->actionList.actionList[i].u.pushFields;
-					for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
+					ARPushFieldsActionStruct &action = al->actionList.actionList[i].u.pushFields;
+					if (action.pushFieldsList.numItems > 0)
 					{
-						if(action.pushFieldsList.pushFieldsList[k].field.schema != NULL)
+						char *pushSchema;
+						if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
 						{
-							if(strcmp(action.pushFieldsList.pushFieldsList[k].field.schema, this->pSchema->name.c_str())==0)
-							{
-								bPushToForm = true;
-							}
+							pushSchema = action.sampleSchema;
+						}
+						else
+						{
+							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+						}
+
+						if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+						{
+							bPushToForm = true;
+							break;
 						}
 					}
 				}
@@ -1487,20 +1494,28 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < al->elseList.numItems; i++)
+				for(unsigned int i = 0; i < al->elseList.numItems; ++i)
 				{
 					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 					{
-						// TODO: optimize code and add sample data support
-						ARPushFieldsActionStruct action = al->elseList.actionList[i].u.pushFields;
-						for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
+						ARPushFieldsActionStruct &action = al->elseList.actionList[i].u.pushFields;
+
+						if (action.pushFieldsList.numItems > 0)
 						{
-							if(action.pushFieldsList.pushFieldsList[k].field.schema != NULL)
+							char *pushSchema;
+							if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
 							{
-								if(strcmp(action.pushFieldsList.pushFieldsList[k].field.schema, this->pSchema->name.c_str())==0)
-								{
-									bPushToForm = true;
-								}
+								pushSchema = action.sampleSchema;
+							}
+							else
+							{
+								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+							}
+
+							if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+							{
+								bPushToForm = true;
+								break;
 							}
 						}
 					}
@@ -1641,20 +1656,28 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < filter->actionList.numItems; i++)
+			for(unsigned int i = 0; i < filter->actionList.numItems; ++i)
 			{
 				if(filter->actionList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
 				{
-					// TODO: optimize function and add sample data support
-					ARPushFieldsActionStruct action = filter->actionList.actionList[i].u.pushFields;
-					for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
+					ARPushFieldsActionStruct &action = filter->actionList.actionList[i].u.pushFields;
+
+					if (action.pushFieldsList.numItems > 0)
 					{
-						if(action.pushFieldsList.pushFieldsList[k].field.schema != NULL)
+						char *pushSchema;
+						if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
 						{
-							if(strcmp(action.pushFieldsList.pushFieldsList[k].field.schema, this->pSchema->name.c_str())==0)
-							{
-								bPushToForm = true;
-							}
+							pushSchema = action.sampleSchema;
+						}
+						else
+						{
+							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+						}
+
+						if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+						{
+							bPushToForm = true;
+							break;
 						}
 					}
 				}
@@ -1667,16 +1690,24 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 				{
 					if(filter->elseList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
 					{
-						// TODO: optimize function and add sample data support
-						ARPushFieldsActionStruct action = filter->elseList.actionList[i].u.pushFields;
-						for(unsigned int k=0; k< action.pushFieldsList.numItems; k++)
+						ARPushFieldsActionStruct &action = filter->elseList.actionList[i].u.pushFields;
+
+						if (action.pushFieldsList.numItems > 0)
 						{
-							if(action.pushFieldsList.pushFieldsList[k].field.schema != NULL)
+							char *pushSchema;
+							if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
 							{
-								if(strcmp(action.pushFieldsList.pushFieldsList[k].field.schema, this->pSchema->name.c_str())==0)
-								{
-									bPushToForm = true;
-								}
+								pushSchema = action.sampleSchema;
+							}
+							else
+							{
+								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+							}
+
+							if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+							{
+								bPushToForm = true;
+								break;
 							}
 						}
 					}
