@@ -194,12 +194,11 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 
 				if(assignment.u.sql->sqlCommand[0] != 0)
 				{
-					assignQual << assignment.u.sql->sqlCommand << "<br/><br/>" << endl;
+					CFieldRefItem *refItem = new CFieldRefItem(arStructItemType, obj.name, "SQL Set Field If Qualification", -1, arIn.SchemaGetInsideId(fromSchema));
+					assignQual << arIn.TextFindFields(assignment.u.sql->sqlCommand, "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, refItem) << "<br/><br/>" << endl;
 				}
 				else
-				{
 					assignQual << EmptyValue << "<br/><br/>" << endl;
-				}
 
 				assignQual << "If No Requests Match: " << CAREnum::NoMatchRequest(assignment.u.sql->noMatchOption) << "<br/>" << endl;
 				assignQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(assignment.u.sql->multiMatchOption) << "<br/><br/>" << endl;	

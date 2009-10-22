@@ -797,7 +797,11 @@ string CDocFilterActionStruct::FilterActionSql(ARSQLStruct &action, int nAction)
 			strm << "Server: " << arIn->LinkToServerInfo(action.server, rootLevel) << "<br/>" << endl;
 
 		if(action.command != NULL)
-			strm << "SQL command: <br/>" << action.command << endl;
+		{
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Field in Direct SQL", -1, schemaInsideId);
+			strm << "SQL command: <br/>" << arIn->TextFindFields(action.command, "$", schemaInsideId, rootLevel, true, refItem) << endl;
+		}
+		
 	}
 	catch(exception& e)
 	{
