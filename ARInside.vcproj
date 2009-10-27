@@ -1527,6 +1527,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="lists"
+			>
+			<File
+				RelativePath=".\lists\ARImageList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARImageList.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ARInside.rc"
 			>

@@ -433,7 +433,22 @@ void CARInside::LoadFromFile(void)
 			unsigned int arInsideIdEscal = 0;
 			unsigned int arInsideIdCont = 0;
 			unsigned int arInsideIdMenu = 0;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+			unsigned int arInsideIdImage = 0;
 
+			unsigned int imagesCount = 0;
+			for (unsigned int i=0; i < parsedObjects.numItems; ++i)
+			{
+				switch (parsedObjects.structItemList[i].type)
+				{
+				case AR_STRUCT_ITEM_XML_IMAGE:
+					++imagesCount; 
+					break;
+				}
+			}
+
+			if (imagesCount > 0) imageList.Reserve(imagesCount);
+#endif
 			for(unsigned int i=0; i< parsedObjects.numItems; i++)
 			{
 				switch(parsedObjects.structItemList[i].type)
@@ -616,7 +631,7 @@ void CARInside::LoadFromFile(void)
 							&obj->changeDiary,
 							&obj->objPropList,
 							&obj->xmlDocVersion,
-#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750 // Version 7.5 and higher
 							NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
 #endif
 							&this->arStatus) == AR_RETURN_OK)
@@ -742,6 +757,20 @@ void CARInside::LoadFromFile(void)
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+				case AR_STRUCT_ITEM_XML_IMAGE:
+					{
+						LOG << "Loading Image: " << parsedObjects.structItemList[i].name;
+						
+						int imageInsideId = imageList.AddImageFromXML(parsedStream, parsedObjects.structItemList[i].name);
+						
+						if (imageInsideId > -1)
+						{
+							LOG << " (InsideID: " << imageInsideId << ") [OK]" << endl;
+						}
+					}
+					break;
+#endif
 #if _DEBUG
 				default:
 					cout << "Unused object type: [" << parsedObjects.structItemList[i].type << "] " << parsedObjects.structItemList[i].name << endl;
@@ -860,6 +889,16 @@ void CARInside::LoadFromServer(void)
 	cout << endl << "Start loading Menus:" << endl;
 	nResult = LoadCharMenus();
 	cout << nResult << " Menus loaded" << endl;
+
+	//Images
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	if (CompareServerVersion(7,5) >= 0)
+	{
+		cout << endl << "Start loading Images:" << endl;
+		nResult = LoadImages();
+		cout << nResult << " Images loaded" << endl;
+	}
+#endif
 
 	//Load schemas
 	int insideId = 0;
@@ -3527,3 +3566,11 @@ string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CF
 
 	return strmTmp.str();
 }
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+int CARInside::LoadImages()
+{
+	imageList.LoadFromServer();
+	return imageList.GetCount();
+}
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

@@ -34,6 +34,7 @@
 #include "util/FieldRefItem.h"
 #include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
+#include "lists/ARImageList.h"
 
 extern const string AppVersion;
 
@@ -95,6 +96,9 @@ public:
 	list<CMissingMenuRefItem> listMenuRefItem;
 	list<CFieldRefItem> listFieldNotFound;
 	list<CMissingMenuRefItem> listMenuNotFound;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	CARImageList	imageList;
+#endif
 
 	string LinkToServerInfo(string srvName, int rootLevel);
 	string LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel);
@@ -168,6 +172,9 @@ private:
 	int LoadCharMenus(void);
 	int LoadContainer(void);
 	int LoadForms(int nType, int &schemaInsideId);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	int LoadImages(void);
+#endif
 
 	void BuildReferences();
 
