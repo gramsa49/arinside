@@ -385,10 +385,10 @@ void CDocValidator::FieldReferenceValidator()
 					{
 						//Field references
 						CTable tblRef("referenceList", "TblObjectList");
-						tblRef.AddColumn(15, "Type");
-						tblRef.AddColumn(25, "Server object");
-						tblRef.AddColumn(10, "Enabled");
-						tblRef.AddColumn(50, "Description");
+						tblRef.AddColumn(10, "Type");
+						tblRef.AddColumn(45, "Server object");
+						tblRef.AddColumn(5, "Enabled");
+						tblRef.AddColumn(40, "Description");
 
 						list<CFieldRefItem>::iterator iter;
 						for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )

@@ -226,10 +226,10 @@ string CDocFilterDetails::WorkflowReferences()
 	{
 		//create table for workflow references
 		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(15, "Type");
-		tblRef.AddColumn(25, "Server object");
-		tblRef.AddColumn(10, "Enabled");
-		tblRef.AddColumn(50, "Description");
+		tblRef.AddColumn(10, "Type");
+		tblRef.AddColumn(45, "Server object");
+		tblRef.AddColumn(5, "Enabled");
+		tblRef.AddColumn(40, "Description");
 
 		// output error handler callers here
 		list<string>::iterator iter;
