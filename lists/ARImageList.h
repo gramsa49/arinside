@@ -15,10 +15,11 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "../ARApi.h"
+#include "../util/Uncopyable.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
-class CARImageList
+class CARImageList : Uncopyable
 {
 public:
 	CARImageList();
@@ -28,26 +29,46 @@ public:
 	int AddImageFromXML(ARXMLParsedStream& stream, const char* imageName);
 
 	// list functions
-	inline int GetCount() { return names.numItems; }
+	inline unsigned int GetCount() { return names.numItems; }
 	int FindImage(const char *name);
 	void Reserve(unsigned int size);
+	void Sort();
 
 	// we dont use a separate CImage object yet. This avoids additional memory 
 	// usage. the image object would need to store at least the index and
 	// optinally a reference to the CImageList (but normally we dont need more
 	// than one). The functions are inline to avoid additional strack frames.
-	inline const ARNameType& ImageGetName(unsigned int index) { _ASSERT(index < names.numItems); return names.nameList[index]; }
-	inline const char* ImageGetType(unsigned int index) { _ASSERT(index < types.numItems); return types.stringList[index]; }
-	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[index]; }
-	inline const char* ImageGetDescription(unsigned int index) { _ASSERT(index < descriptions.numItems); return descriptions.stringList[index]; }
-	inline const char* ImageGetHelptext(unsigned int index) { _ASSERT(index < helpTexts.numItems); return helpTexts.stringList[index]; }
-	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { _ASSERT(index < owners.numItems); return owners.nameList[index]; }
-	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { _ASSERT(index < changedUsers.numItems); return changedUsers.nameList[index]; }
-	inline const char* ImageGetChangeDiary(unsigned int index) { _ASSERT(index < changeDiary.numItems); return changeDiary.stringList[index]; }
-	inline const ARImageDataStruct& ImageGetData(unsigned int index) { _ASSERT(index < data.numItems); return data.imageList[index]; }
+	inline const ARNameType& ImageGetName(unsigned int index) { _ASSERT(index < names.numItems); return names.nameList[(*sortedList)[index].index]; }
+	inline char* ImageGetType(unsigned int index) { _ASSERT(index < types.numItems); return types.stringList[(*sortedList)[index].index]; }
+	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[(*sortedList)[index].index]; }
+	inline char* ImageGetDescription(unsigned int index) { _ASSERT(index < descriptions.numItems); return descriptions.stringList[(*sortedList)[index].index]; }
+	inline char* ImageGetHelptext(unsigned int index) { _ASSERT(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index].index]; }
+	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { _ASSERT(index < owners.numItems); return owners.nameList[(*sortedList)[index].index]; }
+	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { _ASSERT(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index].index]; }
+	inline char* ImageGetChangeDiary(unsigned int index) { _ASSERT(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index].index]; }
+	inline const ARImageDataStruct& ImageGetData(unsigned int index) { _ASSERT(index < data.numItems); return data.imageList[(*sortedList)[index].index]; }
+	string ImageGetURL(unsigned int index, int rootLevel);
+
 
 private:
-	int reservedSize;    // -1 = memory not initialized; -2 = structures allocated by ARAPI; greater than -1 = allocated using new []
+	// allocation state of internal structures
+	enum ImageListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
+
+	// for sorting a dummy object is used as a reference to an image (just the index in this case)
+	// its sorted ascending by name
+	class image_ref
+	{
+	public:
+		CARImageList *list;
+		unsigned int index;
+		
+		image_ref(CARImageList &list, int idx) : list(&list),index(idx) {}
+		bool operator<(const image_ref &r) { return (strcmp(list->names.nameList[index], r.list->names.nameList[r.index]) < 0); }
+		image_ref& operator=(const image_ref &r) { list = r.list; index = r.index; return *this; }
+	};
+
+private:
+	unsigned int reservedSize;
 	ARNameList names;
 	ARTextStringList types;
 	ARTimestampList changedTimes;
@@ -58,5 +79,8 @@ private:
 	ARTextStringList changeDiary;
 	ARPropListList objProps;
 	ARImageDataList data;
+	ImageListState internalListState;
+	vector<image_ref> *sortedList;
 };
+
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

@@ -30,7 +30,7 @@ CARObject::~CARObject(void)
 {
 }
 
-string CARObject::FileID()
+string CARObject::FileID(int insideId)
 {
 	char buffer[20];
 	// use sprintf instead of _itoa to make it work under linux. 
@@ -56,4 +56,10 @@ bool CARObject::NameStandardFirstChar()
 	}
 
 	return false;
+}
+
+bool CARObject::NameStandardFirstChar(char ch)
+{
+	ch = tolower(ch);
+	return (ch >= 'a' && ch <= 'z' || ch >= 0 && ch <= 9 ? true : false);
 }

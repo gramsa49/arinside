@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -15,26 +15,18 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "../ARApi.h"
+#include "../ARInside.h"
+#include "ObjectTable.h"
 
-class CARObject
+namespace OUTPUT
 {
-public:
-	CARObject(void);
-	~CARObject(void);
+	class CImageTable :
+		public CObjectTable
+	{
+	public:
+		CImageTable(CARInside &arIn);
+		~CImageTable(void);
 
-//private:
-	int insideId;
-	string name;
-
-public:
-	//virtual string GetName() = 0;
-	int GetInsideId() { return insideId; }
-	
-	virtual string FileID() { return CARObject::FileID(insideId); }	
-	virtual string GetNameFirstChar();
-	virtual bool NameStandardFirstChar();
-
-	static string FileID(int insideId);
-	static bool NameStandardFirstChar(char ch);
-};
+		void AddRow(int imageIndex, int rootLevel);
+	};
+}

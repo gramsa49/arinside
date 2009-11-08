@@ -122,8 +122,9 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 		CSchemaTable *tbl = new CSchemaTable(*this->pInside);
 
-		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		list<CARSchema>::iterator schemaIter = this->pInside->schemaList.begin();
+		list<CARSchema>::iterator endIt = this->pInside->schemaList.end();
+		for ( ; schemaIter != endIt; ++schemaIter )
 		{	
 			CARSchema *schema = &(*schemaIter);
 
@@ -935,6 +936,57 @@ void CDocMain::RoleList(string fileName, string searchChar)
 	}
 }
 
+void CDocMain::ImageList(string fileName, string searchChar)
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	if (searchChar.size() != 1) return;
+
+	try
+	{
+		int rootLevel = 1;
+		CWebPage webPage(fileName, "Image List", rootLevel, this->pInside->appConfig);
+		CImageTable imgTable(*this->pInside);
+
+		unsigned int len = this->pInside->imageList.GetCount();
+		for (unsigned int idx = 0; idx < len; ++idx)
+		{
+			bool bInsert = false;
+			
+			if (searchChar == "*") // All objects
+			{
+				bInsert = true;
+			}
+			else if (searchChar == "#")
+			{
+				if (!CARObject::NameStandardFirstChar(pInside->imageList.ImageGetName(idx)[0]))
+					bInsert = true;
+			}
+			else 
+			{
+				if (searchChar[0] == tolower(pInside->imageList.ImageGetName(idx)[0]))
+					bInsert = true;
+			}
+
+			if (bInsert)
+				imgTable.AddRow(idx, rootLevel);
+		}
+
+		stringstream strmTmp;
+		strmTmp << CWebUtil::LinkToImageIndex(imgTable.NumRows(), rootLevel);
+		strmTmp << ShortMenu(searchChar);
+		
+		imgTable.SetDescription(strmTmp.str());
+		
+		webPage.AddContent(imgTable.Print());
+		webPage.SaveInFolder("image");
+	}
+	catch (...)
+	{
+		// TODO: implement catch code
+	}
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+}
+
 void CDocMain::GroupList(string fileName, string searchChar)
 {
 	try
@@ -944,8 +996,9 @@ void CDocMain::GroupList(string fileName, string searchChar)
 
 		CGroupTable *tbl = new CGroupTable(*this->pInside);
 
-		list<CARGroup>::iterator listIter;				
-		for ( listIter = this->pInside->groupList.begin(); listIter != this->pInside->groupList.end(); listIter++ )
+		list<CARGroup>::iterator listIter;
+		list<CARGroup>::iterator endIt = this->pInside->groupList.end();
+		for (listIter = this->pInside->groupList.begin(); listIter != endIt; ++listIter)
 		{	
 			CARGroup *grp = &(*listIter);
 
@@ -999,8 +1052,9 @@ void CDocMain::UserList(string fileName, string searchChar)
 
 		CUserTable *tbl = new CUserTable(*this->pInside);
 
-		list<CARUser>::iterator listIter;		
-		for ( listIter = this->pInside->userList.begin(); listIter != this->pInside->userList.end(); listIter++ )
+		list<CARUser>::iterator listIter;
+		list<CARUser>::iterator endIt = this->pInside->userList.end();
+		for (listIter = this->pInside->userList.begin(); listIter != endIt; ++listIter)
 		{	
 			CARUser *user = &(*listIter);
 

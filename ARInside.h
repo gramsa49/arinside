@@ -120,6 +120,9 @@ public:
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
 	string LinkToFilterRef(string fltName, int rootLevel);	
 	string LinkToFilterRef(CARFilter* filter, int rootLevel);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	string LinkToImage(unsigned int imageIndex, int rootLevel);
+#endif
 	string LinkToMenu(string menuName, int rootLevel, bool* bFound = NULL);
 	string LinkToSchema(string schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);

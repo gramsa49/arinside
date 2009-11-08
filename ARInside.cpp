@@ -37,6 +37,7 @@
 #include "doc/DocValidator.h"
 #include "doc/DocRoleDetails.h"
 #include "doc/DocSummaryInfo.h"
+#include "doc/DocImageDetails.h"
 
 #include "output/Table.h"
 #include "output/WebUtil.h"
@@ -347,6 +348,7 @@ void CARInside::Prepare(void)
 		wUtil.CreateSubDirectory("filter");
 		wUtil.CreateSubDirectory("filter_guide");
 		wUtil.CreateSubDirectory("group");
+		wUtil.CreateSubDirectory("image");
 		wUtil.CreateSubDirectory("img");
 		wUtil.CreateSubDirectory("menu");
 		wUtil.CreateSubDirectory("other");
@@ -778,7 +780,10 @@ void CARInside::LoadFromFile(void)
 #endif
 				}	
 			}		
-
+			
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+			imageList.Sort();
+#endif
 		}
 		else
 		{
@@ -1739,6 +1744,26 @@ void CARInside::Documentation(void)
 
 		nTmpCnt++;
 	}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	// Image
+	docMain->ImageList("index", "*");
+	for (unsigned int i = 0; i < strValue.size(); ++i)
+	{		
+		docMain->ImageList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+	}	
+
+	// Image Details
+	unsigned int tmpCount = imageList.GetCount();
+	cout << "Starting Image Documentation" << endl;
+	for (unsigned int imgIndex = 0; imgIndex < tmpCount; ++imgIndex)
+	{
+		LOG << "Image [" << imgIndex << "-" << nTmpCnt << "] '" << imageList.ImageGetName(imgIndex) << "': ";
+
+		CDocImageDetails imgDetails(imgIndex, 2);
+		imgDetails.Documentation();
+	}
+#endif
 
 	//GlobalFieldList
 	docMain->GlobalFieldList();	
@@ -3571,6 +3596,13 @@ string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CF
 int CARInside::LoadImages()
 {
 	imageList.LoadFromServer();
+	imageList.Sort();
 	return imageList.GetCount();
 }
+
+string CARInside::LinkToImage(unsigned int imageIndex, int rootLevel)
+{
+	return imageList.ImageGetURL(imageIndex, rootLevel);
+}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+

@@ -54,7 +54,7 @@ string CUtil::DateTimeToString(ARTimestamp ts)
 	return result;
 }
 
-string CUtil::ClearSpaces(string inStr)
+string CUtil::ClearSpaces(const string &inStr)
 {
 	string result = "";
 	remove_copy_if( inStr.begin(), inStr.end(), insert_iterator<string>(result, result.begin()), bind2nd(equal_to<char>(), ' '));    

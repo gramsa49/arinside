@@ -67,6 +67,7 @@ void CResourceFiles::Load(AppConfig &appConfig)
 	LoadFromResource("EDIT", "edit.gif", strm.str());		
 	LoadFromResource("HIDDEN", "hidden.gif", strm.str());		
 	LoadFromResource("INFO", "info.gif", strm.str());
+	LoadFromResource("IMAGE", "image.gif", strm.str());
 }
 
 void CResourceFiles::LoadFromResource(string strRes, string fileName, string path)
