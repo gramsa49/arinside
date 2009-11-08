@@ -19,7 +19,7 @@
 #include "ARProplistHelper.h"
 
 class CARActiveLink :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARActiveLink(string name, int insideId);

@@ -106,7 +106,7 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 	{
 		CTableRow tblRow("");
 		tblRow.AddCell( CTableCell("Group"));
-		tblRow.AddCell( CTableCell(this->pInside->LinkToGroup(appRefName, insertGrp->insideId, rootLevel)));	
+		tblRow.AddCell( CTableCell(this->pInside->LinkToGroup(appRefName, insertGrp->GetInsideId(), rootLevel)));	
 		tblRow.AddCell( CTableCell(insertGrp->groupId));
 		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertGrp->modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertGrp->modifiedBy, rootLevel)));

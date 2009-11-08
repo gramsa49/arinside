@@ -21,8 +21,7 @@ class CARGroup :
 	public CARDataObject
 {
 public:
-	CARGroup(void);
-	CARGroup(string requestId);
+	CARGroup(int insideId, string requestId);
 	~CARGroup(void);
 
 	int groupId;

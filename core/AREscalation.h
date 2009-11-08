@@ -18,7 +18,7 @@
 #include "ARServerObject.h"
 
 class CAREscalation :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CAREscalation(string name, int insideId);

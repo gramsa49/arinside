@@ -20,10 +20,9 @@
 
 using namespace OUTPUT;
 
-CARObject::CARObject(void)
+CARObject::CARObject(int insideId)
 {
-	this->insideId = 0;
-	this->name = "";
+	this->insideId = insideId;
 }
 
 CARObject::~CARObject(void)
@@ -40,26 +39,21 @@ string CARObject::FileID(int insideId)
 	return buffer;
 }
 
-string CARObject::GetNameFirstChar()
+string CARObject::GetNameFirstChar(const std::string &str)
 {
-	return CUtil::String2Comp(std::string(1, name.at(0)));
-}
-
-
-bool CARObject::NameStandardFirstChar()
-{
-	string strValue = "abcdefghijklmnopqrstuvwxyz0123456789";
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{
-		if(this->GetNameFirstChar() == std::string(1, strValue.at(i)))
-			return true;
-	}
-
-	return false;
+	return CUtil::String2Comp(std::string(1, str.at(0)));
 }
 
 bool CARObject::NameStandardFirstChar(char ch)
 {
 	ch = tolower(ch);
-	return (ch >= 'a' && ch <= 'z' || ch >= 0 && ch <= 9 ? true : false);
+	return (ch >= 'a' && ch <= 'z' || ch >= '0' && ch <= '9' ? true : false);
+}
+
+bool CARObject::NameStandardFirstChar(const std::string &str)
+{
+	string firstChar = GetNameFirstChar(str);
+	if (!firstChar.empty()) 
+		return CARObject::NameStandardFirstChar(firstChar[0]);
+	return false;
 }

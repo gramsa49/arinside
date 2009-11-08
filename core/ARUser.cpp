@@ -17,7 +17,8 @@
 #include "stdafx.h"
 #include "ARUser.h"
 
-CARUser::CARUser(string requestId)
+CARUser::CARUser(int insideId, string requestId)
+: CARDataObject(insideId)
 {		
 	this->requestId = requestId;
 

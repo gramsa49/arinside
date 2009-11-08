@@ -602,7 +602,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )
 		{	
 			CFieldRefItem *item = &(*iter);
-			if(item->schemaInsideId == this->pSchema->insideId 
+			if(item->schemaInsideId == this->pSchema->GetInsideId() 
 				&& ( item->arsStructItemType == AR_STRUCT_ITEM_XML_FILTER
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ESCALATION))
@@ -851,8 +851,8 @@ void CDocSchemaDetails::IndexDoc()
 						string tmp = CWebUtil::Link(this->pSchema->indexList.indexList[nIndex].indexName, CWebUtil::DocName("form_index_list"), "", 2);
 						refItem->description = "Field in "+tmp;
 						refItem->fromName = this->pSchema->name;
-						refItem->fieldInsideId = field->insideId;
-						refItem->schemaInsideId = this->pSchema->insideId;
+						refItem->fieldInsideId = field->GetInsideId();
+						refItem->schemaInsideId = this->pSchema->GetInsideId();
 						this->pInside->AddReferenceItem(refItem);
 						delete refItem;
 					}
@@ -924,8 +924,8 @@ void CDocSchemaDetails::ResultListDoc()
 					refItem->description = "Field in "+tmp;
 
 					refItem->fromName = this->pSchema->name;
-					refItem->fieldInsideId = field->insideId;
-					refItem->schemaInsideId = this->pSchema->insideId;
+					refItem->fieldInsideId = field->GetInsideId();
+					refItem->schemaInsideId = this->pSchema->GetInsideId();
 					this->pInside->AddReferenceItem(refItem);
 					delete refItem;				
 				}
@@ -999,8 +999,8 @@ void CDocSchemaDetails::SortListDoc()
 					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 					refItem->description = "SortList";
 					refItem->fromName = this->pSchema->name;
-					refItem->fieldInsideId = field->insideId;
-					refItem->schemaInsideId = this->pSchema->insideId;
+					refItem->fieldInsideId = field->GetInsideId();
+					refItem->schemaInsideId = this->pSchema->GetInsideId();
 					this->pInside->AddReferenceItem(refItem);
 					delete refItem;
 				}

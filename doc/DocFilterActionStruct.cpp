@@ -160,7 +160,7 @@ string CDocFilterActionStruct::Get(string ifElse, ARFilterActionList &actList)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating filter action struct of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating filter action struct of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -215,9 +215,9 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 						//Reference field1
 						CFieldRefItem *refItemField1 = new CFieldRefItem();
 						refItemField1->arsStructItemType = this->structItemType;
-						refItemField1->fromName = this->obj->name;						
-						refItemField1->schemaInsideId = schema1->insideId;
-						refItemField1->fieldInsideId = tmpField1->insideId;
+						refItemField1->fromName = this->obj->GetName();
+						refItemField1->schemaInsideId = schema1->GetInsideId();
+						refItemField1->fieldInsideId = tmpField1->GetInsideId();
 
 						stringstream strmTmpDesc;
 						strmTmpDesc.str("");
@@ -229,9 +229,9 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 						//Reference field2
 						CFieldRefItem *refItemField2 = new CFieldRefItem();
 						refItemField2->arsStructItemType = this->structItemType;
-						refItemField2->fromName = this->obj->name;						
-						refItemField2->schemaInsideId = schema2->insideId;
-						refItemField2->fieldInsideId = tmpField2->insideId;
+						refItemField2->fromName = this->obj->GetName();
+						refItemField2->schemaInsideId = schema2->GetInsideId();
+						refItemField2->fieldInsideId = tmpField2->GetInsideId();
 
 						strmTmpDesc.str("");
 						strmTmpDesc << description << " (All Matching Ids) [Value] " << ifElse << "-Action " << nAction;
@@ -243,9 +243,9 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 						//Matching ID
 						CTableRow row("cssStdRow");		
 						row.AddCell(CTableCell(tmpField1->fieldId));
-						row.AddCell(CTableCell(arIn->LinkToField(schema1->name, tmpField1->insideId, this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema1->GetName(), tmpField1->GetInsideId(), this->rootLevel)));
 						row.AddCell(CTableCell(tmpField2->fieldId));
-						row.AddCell(CTableCell(arIn->LinkToField(schema2->name, tmpField2->insideId, this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema2->GetName(), tmpField2->GetInsideId(), this->rootLevel)));
 						tblListField.AddRow(row);
 					}
 				}
@@ -280,7 +280,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 		{
 			CFieldRefItem *refItemText = new CFieldRefItem();
 			refItemText->arsStructItemType = this->structItemType;
-			refItemText->fromName = this->obj->name;						
+			refItemText->fromName = this->obj->GetName();
 			refItemText->schemaInsideId = schemaInsideId;
 			refItemText->description = "Field in Notify Action (Text)";
 			strm << "Notify Text: " << arIn->TextFindFields(action.notifyText, "$", schemaInsideId, rootLevel, true, refItemText) << "<br/>" << endl;
@@ -294,7 +294,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 		{
 			CFieldRefItem *refItemUser = new CFieldRefItem();
 			refItemUser->arsStructItemType = this->structItemType;
-			refItemUser->fromName = this->obj->name;
+			refItemUser->fromName = this->obj->GetName();
 			refItemUser->description = "Field in Notify Action (User Name)";
 			strm << "User Name: " << arIn->TextFindFields(action.user, "$", schemaInsideId, rootLevel, true, refItemUser) << "<br/>" << endl;
 			delete refItemUser;
@@ -312,7 +312,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 			{
 				CFieldRefItem *refItemSubj = new CFieldRefItem();
 				refItemSubj->arsStructItemType = this->structItemType;
-				refItemSubj->fromName = this->obj->name;						
+				refItemSubj->fromName = this->obj->GetName();
 				refItemSubj->schemaInsideId = schemaInsideId;
 				refItemSubj->description = "Field in Notify Action (Subject)";
 				strm << "Subject: " << arIn->TextFindFields(action.subjectText, "$", schemaInsideId, rootLevel, true, refItemSubj) << "<br/>" << endl;
@@ -327,7 +327,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemNotifyTxtField = new CFieldRefItem();
 					refItemNotifyTxtField->arsStructItemType = this->structItemType;
-					refItemNotifyTxtField->fromName = this->obj->name;						
+					refItemNotifyTxtField->fromName = this->obj->GetName();
 					refItemNotifyTxtField->schemaInsideId = schemaInsideId;
 					refItemNotifyTxtField->fieldInsideId = action.fieldIdList.internalIdList[i];
 					refItemNotifyTxtField->description = "Field in Notify Action (Message Text)";
@@ -347,7 +347,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemMbName = new CFieldRefItem();
 					refItemMbName->arsStructItemType = this->structItemType;
-					refItemMbName->fromName = this->obj->name;						
+					refItemMbName->fromName = this->obj->GetName();
 					refItemMbName->schemaInsideId = schemaInsideId;
 					refItemMbName->description = "Field in Notify Action (Mailbox Name)";
 
@@ -359,7 +359,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemFrom = new CFieldRefItem();
 					refItemFrom->arsStructItemType = this->structItemType;
-					refItemFrom->fromName = this->obj->name;						
+					refItemFrom->fromName = this->obj->GetName();
 					refItemFrom->schemaInsideId = schemaInsideId;
 					refItemFrom->description = "Field in Notify Action (From)";
 
@@ -371,7 +371,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemReplTo = new CFieldRefItem();
 					refItemReplTo->arsStructItemType = this->structItemType;
-					refItemReplTo->fromName = this->obj->name;						
+					refItemReplTo->fromName = this->obj->GetName();
 					refItemReplTo->schemaInsideId = schemaInsideId;
 					refItemReplTo->description = "Field in Notify Action (Reply To)";
 
@@ -383,7 +383,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemCc = new CFieldRefItem();
 					refItemCc->arsStructItemType = this->structItemType;
-					refItemCc->fromName = this->obj->name;						
+					refItemCc->fromName = this->obj->GetName();
 					refItemCc->schemaInsideId = schemaInsideId;
 					refItemCc->description = "Field in Notify Action (CC)";
 
@@ -395,7 +395,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemBcc = new CFieldRefItem();
 					refItemBcc->arsStructItemType = this->structItemType;
-					refItemBcc->fromName = this->obj->name;						
+					refItemBcc->fromName = this->obj->GetName();
 					refItemBcc->schemaInsideId = schemaInsideId;
 					refItemBcc->description = "Field in Notify Action (BCC)";
 
@@ -407,7 +407,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemOrg = new CFieldRefItem();
 					refItemOrg->arsStructItemType = this->structItemType;
-					refItemOrg->fromName = this->obj->name;						
+					refItemOrg->fromName = this->obj->GetName();
 					refItemOrg->schemaInsideId = schemaInsideId;
 					refItemOrg->description = "Field in Notify Action (Organisation)";
 
@@ -419,7 +419,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemTmplHead = new CFieldRefItem();
 					refItemTmplHead->arsStructItemType = this->structItemType;
-					refItemTmplHead->fromName = this->obj->name;						
+					refItemTmplHead->fromName = this->obj->GetName();
 					refItemTmplHead->schemaInsideId = schemaInsideId;
 					refItemTmplHead->description = "Field in Notify Action (Header Template)";
 
@@ -431,7 +431,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemTmplCont = new CFieldRefItem();
 					refItemTmplCont->arsStructItemType = this->structItemType;
-					refItemTmplCont->fromName = this->obj->name;						
+					refItemTmplCont->fromName = this->obj->GetName();
 					refItemTmplCont->schemaInsideId = schemaInsideId;
 					refItemTmplCont->description = "Field in Notify Action (Content Template)";
 
@@ -443,7 +443,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 				{
 					CFieldRefItem *refItemTmplFooter = new CFieldRefItem();
 					refItemTmplFooter->arsStructItemType = this->structItemType;
-					refItemTmplFooter->fromName = this->obj->name;						
+					refItemTmplFooter->fromName = this->obj->GetName();
 					refItemTmplFooter->schemaInsideId = schemaInsideId;
 					refItemTmplFooter->description = "Field in Notify Action (Footer Template)";
 
@@ -455,7 +455,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionNotify of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionNotify of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -478,14 +478,14 @@ string CDocFilterActionStruct::FilterActionMessage(ARFilterStatusStruct &action,
 			CFieldRefItem *refItemTmp = new CFieldRefItem();
 			refItemTmp->arsStructItemType = this->structItemType;
 			refItemTmp->description = "Field in Message";
-			refItemTmp->fromName = this->obj->name;						
+			refItemTmp->fromName = this->obj->GetName();
 			refItemTmp->schemaInsideId = schemaInsideId;
 			strm << "Message Text: <br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionMessage of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionMessage of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -510,7 +510,7 @@ string CDocFilterActionStruct::FilterActionLog(char* action, int nAction)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionLog of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionLog of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -656,7 +656,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			{
 				strm << setFieldInfo << ":<br/>" << endl;			
 
-				CARAssignHelper assignHelper(*arIn, dir, rootLevel, obj->name, this->structItemType, schemaName, schemaName2);
+				CARAssignHelper assignHelper(*arIn, dir, rootLevel, obj->GetName(), this->structItemType, schemaName, schemaName2);
 				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 			}
 			else
@@ -667,7 +667,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionSetFields of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionSetFields of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -686,7 +686,7 @@ string CDocFilterActionStruct::FilterActionProcess(char *action, int nAction)
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = this->structItemType;
 			refItem->description = "Field in Run Process Action";
-			refItem->fromName = this->obj->name;						
+			refItem->fromName = this->obj->GetName();
 			refItem->schemaInsideId = schemaInsideId;	
 
 			strm << arIn->TextFindFields(action, "$", schemaInsideId, rootLevel, true, refItem) << endl;
@@ -699,7 +699,7 @@ string CDocFilterActionStruct::FilterActionProcess(char *action, int nAction)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionProcess of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionProcess of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -727,7 +727,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 			// create field reference
 			stringstream tmpDesc;
 			tmpDesc << "Form Name in 'Push Fields' " << ifElse << "-Action " << nAction;
-			CFieldRefItem refItem(this->structItemType, this->obj->name, tmpDesc.str(), fieldId, schemaInsideId);
+			CFieldRefItem refItem(this->structItemType, this->obj->GetName(), tmpDesc.str(), fieldId, schemaInsideId);
 			arIn->AddReferenceItem(&refItem);
 		}
 		else
@@ -741,7 +741,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		strm << "<br/>Push Field If<br/>" << endl;
 		stringstream strmTmpQual;
 
-		CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Push Field If", -1, -1);
+		CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), "Push Field If", -1, -1);
 		CARQualification arQual(*arIn);
 
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
@@ -773,13 +773,13 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		else
 		{
 			strm << "<br/>" << endl;
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, pushSchema);
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->GetName(), this->structItemType, schemaName, pushSchema);
 			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionPushFields of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionPushFields of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -798,14 +798,14 @@ string CDocFilterActionStruct::FilterActionSql(ARSQLStruct &action, int nAction)
 
 		if(action.command != NULL)
 		{
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Field in Direct SQL", -1, schemaInsideId);
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), "Field in Direct SQL", -1, schemaInsideId);
 			strm << "SQL command: <br/>" << arIn->TextFindFields(action.command, "$", schemaInsideId, rootLevel, true, refItem) << endl;
 		}
 		
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionSql of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionSql of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -830,7 +830,7 @@ string CDocFilterActionStruct::FilterActionGotoAction(ARGotoActionStruct &action
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionGotoAction of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionGotoAction of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -855,7 +855,7 @@ string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, 
 			stringstream tmpDesc;
 			tmpDesc << "Used as Guide Name in " << ifElse << "-Action " << nAction;
 
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, tmpDesc.str(), fieldId, this->schemaInsideId);
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), tmpDesc.str(), fieldId, this->schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
@@ -871,14 +871,14 @@ string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, 
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Guide Table Loop " << ifElse << "-Action " << nAction;
 
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.guideTableId, schemaInsideId);
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), action.guideTableId, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionCallGuide of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionCallGuide of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -899,7 +899,7 @@ string CDocFilterActionStruct::FilterActionExitGuide(ARExitGuideStruct &action, 
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionExitGuide of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionExitGuide of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -924,7 +924,7 @@ string CDocFilterActionStruct::FilterActionGotoGuideLabel(ARGotoGuideLabelStruct
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in FilterActionGotoGuideLabel of '" << this->obj->name << "': " << e.what() << endl;
+		cout << "EXCEPTION in FilterActionGotoGuideLabel of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -961,7 +961,7 @@ string CDocFilterActionStruct::processMappingXML( TiXmlNode* pParent, string sPa
 			//row.AddCell(CTableCell(form + " - "+arIn->LinkToField(form, fieldID, rootLevel)));
 			tblFieldList.AddRow(row);	
 
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, "Web Service Set Fields "+type+" Mapping", fieldID, arIn->SchemaGetInsideId(form));
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), "Web Service Set Fields "+type+" Mapping", fieldID, arIn->SchemaGetInsideId(form));
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
@@ -996,7 +996,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Used as Service Form in " << ifElse << "-Action " << nAction;
 
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), fieldId, schemaInsideId);
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), fieldId, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
@@ -1014,7 +1014,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Service Request-Id " << ifElse << "-Action " << nAction;
 
-			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->name, strmTmpDesc.str(), action.requestIdMap, schemaInsideId);
+			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), action.requestIdMap, schemaInsideId);
 			arIn->AddReferenceItem(refItem);
 			delete refItem;
 		}
@@ -1025,7 +1025,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		strm << "Input Mapping: "; if (action.inputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.inputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, serviceSchema, schemaName);
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->GetName(), this->structItemType, serviceSchema, schemaName);
 			strm << assignHelper.ServiceAssignment(action.inputFieldMapping, nAction, ifElse, "Service Input Mapping");
 		}
 
@@ -1033,13 +1033,13 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		strm << "Output Mapping: "; if (action.outputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.outputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->name, this->structItemType, schemaName, serviceSchema);
+			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->GetName(), this->structItemType, schemaName, serviceSchema);
 			strm << assignHelper.ServiceAssignment(action.outputFieldMapping, nAction, ifElse, "Service Output Mapping");
 		}
 	}
 	catch (...)
 	{
-		cout << "EXCEPTION in FilterActionService: " << this->obj->name << endl;
+		cout << "EXCEPTION in FilterActionService: " << this->obj->GetName() << endl;
 	}
 
 	return strm.str();

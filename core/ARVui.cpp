@@ -18,8 +18,8 @@
 #include "ARVui.h"
 
 CARVui::CARVui(int insideId)
+: CARServerObjectWithData(insideId)
 {	
-	this->insideId = insideId;
 	this->vuiType = 0;
 
 	this->objPropList.props = NULL;

@@ -17,7 +17,8 @@
 #include "stdafx.h"
 #include "ARDataObject.h"
 
-CARDataObject::CARDataObject(void)
+CARDataObject::CARDataObject(int insideId)
+: CARObject(insideId)
 {
 	requestId	= "";
 	created		= 0;

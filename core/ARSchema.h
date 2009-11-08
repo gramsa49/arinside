@@ -20,7 +20,7 @@
 #include "ARVui.h"
 
 class CARSchema :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARSchema();

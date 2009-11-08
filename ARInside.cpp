@@ -566,7 +566,7 @@ void CARInside::LoadFromFile(void)
 								//Check if this is a global field and add it to the globalfieldlist
 								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
 								{
-									CARGlobalField *globalField = new CARGlobalField(schema->insideId, field->insideId, field->fieldId);
+									CARGlobalField *globalField = new CARGlobalField(schema->GetInsideId(), field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}	
 
@@ -1076,7 +1076,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 								//Check if this is a global field and add it to the globalfieldlist
 								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
 								{
-									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->insideId, field->fieldId);
+									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}
 							}
@@ -1474,9 +1474,9 @@ void CARInside::Sort(list<CARField> &listResult)
 
 bool CARInside::SortByName(const CARServerObject& t1, const CARServerObject& t2 )
 {
-	string tmpStr1 = CUtil::String2Comp(t1.name.c_str());
-	string tmpStr2 = CUtil::String2Comp(t2.name.c_str());
-	return ( strcmp(tmpStr1.c_str(), tmpStr2.c_str()) < 0);
+	string tmpStr1 = CUtil::String2Comp(t1.GetName());
+	string tmpStr2 = CUtil::String2Comp(t2.GetName());
+	return ( tmpStr1.compare(tmpStr2) < 0 );
 }
 
 string CARInside::ObjListFilename(string firstChar)
@@ -1867,13 +1867,13 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 	{			
 		CARSchema *schema = &(*schemaIter);
 
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			list<CARField>::iterator fieldIter;					
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
+				if(field->GetInsideId() == fieldInsideId)
 				{					
 					if(field->dataType == AR_DATA_TYPE_ENUM)
 					{
@@ -1915,13 +1915,13 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			list<CARField>::iterator fieldIter;
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
+				if(field->GetInsideId() == fieldInsideId)
 				{
 					return field->GetURL(fromRootLevel);
 				}
@@ -1955,13 +1955,13 @@ string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fro
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			list<CARField>::iterator fieldIter;					
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
+				if(field->GetInsideId() == fieldInsideId)
 				{
 					tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << schemaInsideId << "/" << CWebUtil::DocName(field->FileID());
 
@@ -2005,7 +2005,7 @@ string CARInside::LinkToSchema(int insideId, int fromRootLevel)
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(insideId == schema->insideId)
+		if(insideId == schema->GetInsideId())
 		{
 			return schema->GetURL(fromRootLevel);
 		}
@@ -2036,7 +2036,7 @@ int CARInside::SchemaGetInsideId(string searchObjName)
 		CARSchema *obj = &(*iter);
 		if(obj->name.compare(searchObjName)==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2050,7 +2050,7 @@ int CARInside::AlGetInsideId(string searchObjName)
 		CARActiveLink *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2064,7 +2064,7 @@ int CARInside::FilterGetInsideId(string searchObjName)
 		CARFilter *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2078,7 +2078,7 @@ int CARInside::ContainerGetInsideId(string searchObjName)
 		CARContainer *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2092,7 +2092,7 @@ int CARInside::MenuGetInsideId(string searchObjName)
 		CARCharMenu *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2106,7 +2106,7 @@ int CARInside::EscalationGetInsideId(string searchObjName)
 		CAREscalation *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2192,7 +2192,7 @@ string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
 	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter)
 	{
 		CARActiveLink *al = &(*alIter);
-		if(al->insideId == alInsideId) 
+		if(al->GetInsideId() == alInsideId) 
 			return LinkToAlRef(al, rootLevel);
 	}
 	return EmptyValue;
@@ -2247,7 +2247,7 @@ string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
 	for ( filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter)
 	{	
 		CARFilter *filter = &(*filterIter);
-		if(filter->insideId == filterInsideId)
+		if(filter->GetInsideId() == filterInsideId)
 			return LinkToFilterRef(filter, rootLevel);
 	}
 	return EmptyValue;
@@ -2548,8 +2548,8 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					if (tableSourceSchema != NULL)
 					{
 						stringstream tmpDesc;
-						tmpDesc << "Column in Table " + LinkToField(schema.insideId, tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->insideId, rootLevel);
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.name, tmpDesc.str(), fLimit.dataField, tableSourceSchema->insideId);
+						tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->GetInsideId(), rootLevel);
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), fLimit.dataField, tableSourceSchema->GetInsideId());
 						refItem.fromFieldId = obj.fieldId;
 						this->AddReferenceItem(&refItem);
 					}
@@ -2580,8 +2580,8 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					refItem.fromFieldId = obj.fieldId;
 
 					CARQualification arQual(*this);
-					int pFormId = schema.insideId;
-					int sFormId = tableSourceSchema->insideId;
+					int pFormId = schema.GetInsideId();
+					int sFormId = tableSourceSchema->GetInsideId();
 
 					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 				}
@@ -2738,7 +2738,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 							if (fieldStatus != NULL)
 							{
 								int iEnumId = atoi(enumId);
-								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus->insideId, iEnumId) << "." << usrOrTimeStr;
+								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus->GetInsideId(), iEnumId) << "." << usrOrTimeStr;
 							}
 							else
 								strmTmp << "." << enumId << "." << usrOrTimeStr;
@@ -2994,7 +2994,7 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 		{			
 			CARSchema *schema = &(*schemaIter);
-			if(schema->insideId == schemaInsideId)
+			if(schema->GetInsideId() == schemaInsideId)
 			{
 				list<CARField>::iterator fieldIter;		
 				CARField *field;
@@ -3080,10 +3080,10 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 	try
 	{
 		list<CChangeHistoryEntry> listHistoryEntry;
-		if(obj->changeDiary != NULL)
+		if(obj->GetChangeDiary() != NULL)
 		{				
 			ARDiaryList diaryList;
-			if(ARDecodeDiary(&this->arControl, obj->changeDiary, &diaryList, &this->arStatus)==AR_RETURN_OK)
+			if(ARDecodeDiary(&this->arControl, const_cast<char*>(obj->GetChangeDiary()), &diaryList, &this->arStatus)==AR_RETURN_OK)
 			{
 				if(diaryList.diaryList != NULL)
 				{			
@@ -3121,13 +3121,13 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 		//Owner
 		CTableRow tblRow("");
-		tblRow.AddCellList(CTableCell("Owner"), CTableCell(this->LinkToUser(obj->owner, rootLevel)));
+		tblRow.AddCellList(CTableCell("Owner"), CTableCell(this->LinkToUser(obj->GetOwner(), rootLevel)));
 		tbl.AddRow(tblRow);
 
 		//Last changed		
 		stringstream strmLastChanged;
 		strmLastChanged.str("");
-		strmLastChanged << CUtil::DateTimeToHTMLString(obj->timestamp) << " " << this->LinkToUser(obj->lastChanged, rootLevel) << endl;
+		strmLastChanged << CUtil::DateTimeToHTMLString(obj->GetTimestamp()) << " " << this->LinkToUser(obj->GetLastChanged(), rootLevel) << endl;
 
 		tblRow.AddCellList(CTableCell("Last changed"), CTableCell(strmLastChanged.str()));
 		tbl.AddRow(tblRow);
@@ -3139,9 +3139,9 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 		//Helptext
 		string tmpHelptext = EmptyValue;
-		if(obj->helptext != NULL)
+		if(obj->GetHelpText() != NULL)
 		{
-			tmpHelptext = CUtil::StrReplace("\n", "<br/>", obj->helptext);
+			tmpHelptext = CUtil::StrReplace("\n", "<br/>", obj->GetHelpText());
 		}
 
 		tblRow.AddCellList(CTableCell("Helptext"), CTableCell(tmpHelptext));
@@ -3243,7 +3243,7 @@ CARSchema* CARInside::FindSchema(int schemaInsideId)
 	for (schemaIter = schemaList.begin(); schemaIter != schemaList.end(); ++schemaIter)
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			return schema;
 		}

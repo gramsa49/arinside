@@ -18,7 +18,7 @@
 #include "ARServerObject.h"
 
 class CARVui :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARVui(int insideId);

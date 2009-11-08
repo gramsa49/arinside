@@ -18,7 +18,7 @@
 #include "ARServerObject.h"
 
 class CARFilter :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARFilter(string name, int insideId);

@@ -17,11 +17,8 @@
 #include "stdafx.h"
 #include "ARGroup.h"
 
-CARGroup::CARGroup()
-{
-}
-
-CARGroup::CARGroup(string requestId)
+CARGroup::CARGroup(int insideId, string requestId)
+: CARDataObject(insideId)
 {
 	this->requestId = requestId;
 

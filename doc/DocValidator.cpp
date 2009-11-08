@@ -223,12 +223,12 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 				{
 					//field has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToField(schema.insideId, field->insideId, this->rootLevel));
+					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field->GetInsideId(), this->rootLevel));
 					tblObj.AddRow(row);					
 				}
 			}
 
-			tblObj.description = pInside->LinkToSchema(schema.insideId, this->rootLevel);
+			tblObj.description = pInside->LinkToSchema(schema.GetInsideId(), this->rootLevel);
 			webPage.AddContent(tblObj.ToXHtml());
 			tblObj.Clear();
 

@@ -482,7 +482,7 @@ void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string titl
 				}
 
 				//Create a table for every form
-				CTable schemaTbl("fieldListAll"+schema->insideId, "TblObjectList");
+				CTable schemaTbl("fieldListAll"+schema->GetInsideId(), "TblObjectList");
 				schemaTbl.description = strmFormDesc.str();
 				schemaTbl.AddColumn(80, "Field");
 				schemaTbl.AddColumn(10, "Permission");

@@ -18,9 +18,9 @@
 #include "ARActiveLink.h"
 
 CARActiveLink::CARActiveLink(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	this->name = name;
-	this->insideId = insideId;
 
 	this->order = 0;
 	this->executeMask = 0;

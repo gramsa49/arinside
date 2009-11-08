@@ -21,7 +21,7 @@ class CARRole :
 	public CARDataObject
 {
 public:
-	CARRole(string requestId);
+	CARRole(int insideId, string requestId);
 	~CARRole(void);
 
 	string GetURL(int rootLevel);

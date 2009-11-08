@@ -18,12 +18,10 @@
 #include "ARCharMenu.h"
 
 CARCharMenu::CARCharMenu(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	this->name = name;
-	this->insideId = insideId;
-
 	this->refreshCode = 0;
-
 	this->objPropList.props = NULL;
 }
 

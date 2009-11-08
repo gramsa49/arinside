@@ -19,9 +19,9 @@
 #include "ARDayStructHelper.h"
 
 CAREscalation::CAREscalation(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	this->name = name;
-	this->insideId = insideId;
 	this->enable = 0;
 
 	this->objPropList.props = NULL;

@@ -18,7 +18,7 @@
 #include "ARServerObject.h"
 
 class CARCharMenu :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARCharMenu(string name, int insideId);

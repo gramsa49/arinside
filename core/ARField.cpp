@@ -17,18 +17,9 @@
 #include "stdafx.h"
 #include "ARField.h"
 
-CARField::CARField()
-{
-	this->fieldId = 0;
-	this->dataType = 0;
-	this->option = 0;
-	this->createMode = 0;
-}
-
-
 CARField::CARField(int insideId)
+: CARServerObjectWithData(insideId)
 {	
-	this->insideId = insideId;
 	this->fieldId = 0;
 	this->dataType = 0;
 	this->option = 0;

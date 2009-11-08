@@ -91,7 +91,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 					stringstream tmpDesc;
 					tmpDesc << "Form Name in 'SetFields' " << ifElse << "-Action " << nAction;
 
-					CFieldRefItem refItem(arStructItemType, obj.name, tmpDesc.str(), fieldId, pFormId);
+					CFieldRefItem refItem(arStructItemType, obj.GetName(), tmpDesc.str(), fieldId, pFormId);
 					arIn.AddReferenceItem(&refItem);
 				}
 				else
@@ -111,7 +111,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 					stringstream tmpDesc;
 					tmpDesc << "Server Name in 'SetFields' " << ifElse << "-Action " << nAction;
 
-					CFieldRefItem refItem(arStructItemType, obj.name, tmpDesc.str(), fieldId, pFormId);
+					CFieldRefItem refItem(arStructItemType, obj.GetName(), tmpDesc.str(), fieldId, pFormId);
 					arIn.AddReferenceItem(&refItem);
 				}
 				else
@@ -125,7 +125,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 
 				assignQual << "<br/>Set Field If<br/>" << endl;
 				stringstream strmTmpQual;
-				CFieldRefItem refItem(arStructItemType, obj.name, "Set Field If Qualification", -1, -1);
+				CFieldRefItem refItem(arStructItemType, obj.GetName(), "Set Field If Qualification", -1, -1);
 
 				CARQualification arQual(arIn);
 				arQual.arsStructItemType = arStructItemType;
@@ -194,7 +194,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 
 				if(assignment.u.sql->sqlCommand[0] != 0)
 				{
-					CFieldRefItem *refItem = new CFieldRefItem(arStructItemType, obj.name, "SQL Set Field If Qualification", -1, arIn.SchemaGetInsideId(fromSchema));
+					CFieldRefItem *refItem = new CFieldRefItem(arStructItemType, obj.GetName(), "SQL Set Field If Qualification", -1, arIn.SchemaGetInsideId(fromSchema));
 					assignQual << arIn.TextFindFields(assignment.u.sql->sqlCommand, "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, refItem) << "<br/><br/>" << endl;
 				}
 				else
@@ -222,7 +222,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in CheckAssignment of '" << obj.name << "': " << e.what() << endl;
+		cout << "EXCEPTION in CheckAssignment of '" << obj.GetName() << "': " << e.what() << endl;
 	}
 	return false;
 }

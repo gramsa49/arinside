@@ -18,10 +18,9 @@
 #include "ARServerObject.h"
 
 class CARField :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
-	CARField();
 	CARField(int insideId);
 	~CARField(void);
 

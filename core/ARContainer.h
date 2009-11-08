@@ -19,7 +19,7 @@
 #include "../core/AREnum.h"
 
 class CARContainer :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARContainer(string name, int insideId);

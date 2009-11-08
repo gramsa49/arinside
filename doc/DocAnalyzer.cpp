@@ -111,7 +111,7 @@ void CDocAnalyzer::IndexAnalyzer()
 											strmTmp.str("");
 
 											strmTmp << "Inefficient index because of QBE match anywhere in Index " << endl;
-											strmTmp << this->pInside->LinkToSchemaIndex(schema->indexList.indexList[nIndex].indexName, schema->insideId, rootLevel) << endl;
+											strmTmp << this->pInside->LinkToSchemaIndex(schema->indexList.indexList[nIndex].indexName, schema->GetInsideId(), rootLevel) << endl;
 											row.AddCell(CTableCell(strmTmp.str()));
 											tbl.AddRow(row);
 										}
@@ -126,7 +126,7 @@ void CDocAnalyzer::IndexAnalyzer()
 											strmTmp.str("");
 
 											strmTmp << "Length of field is greater than 255 " << endl;
-											strmTmp << this->pInside->LinkToSchemaIndex(schema->indexList.indexList[nIndex].indexName, schema->insideId, rootLevel) << endl;
+											strmTmp << this->pInside->LinkToSchemaIndex(schema->indexList.indexList[nIndex].indexName, schema->GetInsideId(), rootLevel) << endl;
 											row.AddCell(CTableCell(strmTmp.str()));
 											tbl.AddRow(row);
 										}

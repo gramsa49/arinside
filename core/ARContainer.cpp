@@ -18,9 +18,9 @@
 #include "ARContainer.h"
 
 CARContainer::CARContainer(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	this->name = name;
-	this->insideId = insideId;	
 	this->type = 0;
 	this->label = NULL;
 	this->description = NULL;

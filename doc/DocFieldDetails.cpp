@@ -143,7 +143,7 @@ string CDocFieldDetails::WorkflowReferences()
 		for ( iter = this->pInside->listFieldRefItem.begin(); iter != endIt; ++iter )
 		{	
 			CFieldRefItem *item = &(*iter);
-			if(item->schemaInsideId == this->pSchema->insideId && item->fieldInsideId == this->pField->insideId)
+			if(item->schemaInsideId == this->pSchema->GetInsideId() && item->fieldInsideId == this->pField->GetInsideId())
 			{			
 				if(item->fromName.compare(EmptyValue)!=0)
 				{
@@ -230,7 +230,7 @@ string CDocFieldDetails::FieldLimits()
 
 					if (!menuFound)
 					{
-						CMissingMenuRefItem refItemNotFound(fLimit.charMenu, AR_STRUCT_ITEM_XML_FIELD, this->pSchema->insideId, this->pField->insideId);
+						CMissingMenuRefItem refItemNotFound(fLimit.charMenu, AR_STRUCT_ITEM_XML_FIELD, this->pSchema->GetInsideId(), this->pField->GetInsideId());
 						pInside->AddMissingMenu(refItemNotFound);
 					}
 				}
@@ -252,7 +252,7 @@ string CDocFieldDetails::FieldLimits()
 
 				if(nPoolId > 0)
 				{
-					strm << "<br/>Field in Attachment Pool: " << this->pInside->LinkToField(this->pSchema->insideId, nPoolId, rootLevel);
+					strm << "<br/>Field in Attachment Pool: " << this->pInside->LinkToField(this->pSchema->GetInsideId(), nPoolId, rootLevel);
 				}
 			}
 			break;
@@ -264,7 +264,7 @@ string CDocFieldDetails::FieldLimits()
 				{			
 					searchSchema = &(*schemaIter);
 
-					if(this->pSchema->insideId == searchSchema->insideId)
+					if(this->pSchema->GetInsideId() == searchSchema->GetInsideId())
 					{
 						list<CARField>::iterator fieldIter;		
 						CARField *attachField;
@@ -308,7 +308,7 @@ string CDocFieldDetails::FieldLimits()
 	
 				if (tableSourceSchema != NULL)
 				{
-					strm << "Source Data Field: " << this->pInside->LinkToField(tableSourceSchema->insideId, fLimit.dataField, rootLevel);
+					strm << "Source Data Field: " << this->pInside->LinkToField(tableSourceSchema->GetInsideId(), fLimit.dataField, rootLevel);
 					strm << " In Schema: " << tableSourceSchema->GetURL(rootLevel) << "<br/>" << endl;
 				}
 				else
@@ -440,11 +440,11 @@ string CDocFieldDetails::FieldLimits()
 					int fieldId = atoi(&fLimit.server[1]);
 					tableServer = fLimit.sampleServer;
 
-					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->insideId, fieldId, rootLevel) ) << "$ (Sample Server: " << pInside->LinkToServerInfo(tableServer, rootLevel) << ")";
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Server: " << pInside->LinkToServerInfo(tableServer, rootLevel) << ")";
 
 					if (fieldId > 0)
 					{
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->name, "Used as Server of Table Field", fieldId, pSchema->insideId);
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->GetName(), "Used as Server of Table Field", fieldId, pSchema->GetInsideId());
 						pInside->AddReferenceItem(&refItem);
 					}
 				}
@@ -463,11 +463,11 @@ string CDocFieldDetails::FieldLimits()
 					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
 						tableSchema = pSchema->name;
 
-					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->insideId, fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchema, rootLevel) << ")";
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchema, rootLevel) << ")";
 
 					if (fieldId > 0)
 					{
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->name, "Used as Schema of Table Field", fieldId, pSchema->insideId);
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->GetName(), "Used as Schema of Table Field", fieldId, pSchema->GetInsideId());
 						pInside->AddReferenceItem(&refItem);
 					}
 				}
@@ -492,7 +492,7 @@ string CDocFieldDetails::FieldLimits()
 
 					CARQualification arQual(*this->pInside);
 
-					int pFormId = pSchema->insideId;
+					int pFormId = pSchema->GetInsideId();
 					int sFormId = this->pInside->SchemaGetInsideId(tableSchema);
 					arQual.CheckQuery(&fLimit.qualifier, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
@@ -516,7 +516,7 @@ string CDocFieldDetails::FieldLimits()
 				{			
 					searchSchema = &(*schemaIter);
 
-					if(this->pSchema->insideId == searchSchema->insideId)
+					if(this->pSchema->GetInsideId() == searchSchema->GetInsideId())
 					{
 						list<CARField>::iterator fieldIter;		
 						CARField *field;
@@ -526,7 +526,7 @@ string CDocFieldDetails::FieldLimits()
 							if(field->limit.dataType == AR_DATA_TYPE_COLUMN)
 							{
 								ARColumnLimitsStruct colLimits = field->limit.u.columnLimits;
-								if(colLimits.parent == this->pField->insideId)
+								if(colLimits.parent == this->pField->GetInsideId())
 								{
 									strm << field->GetURL(rootLevel);
 

@@ -45,7 +45,7 @@ void CDocVuiDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->pSchema->name, CWebUtil::DocName("index"), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CWebUtil::DocName("form_vui_list"), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->pVui->name) << endl;
-		contHeadStrm << " (Id: " << this->pVui->insideId << ")" << endl;
+		contHeadStrm << " (Id: " << this->pVui->GetInsideId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Properties
@@ -89,7 +89,7 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 			CARField *field = &(*fieldIter);
 			for(unsigned int i=0; i< field->dInstanceList.numItems; i++)
 			{
-				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->insideId)
+				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->GetInsideId())
 				{
 					for(unsigned int j=0; j< field->dInstanceList.dInstanceList[i].props.numItems; j++)
 					{
@@ -154,7 +154,7 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 			CARField *field = &(*fieldIter);
 			for(unsigned int i=0; i< field->dInstanceList.numItems; i++)
 			{
-				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->insideId)
+				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->GetInsideId())
 				{
 					for(unsigned int j=0; j< field->dInstanceList.dInstanceList[i].props.numItems; j++)
 					{

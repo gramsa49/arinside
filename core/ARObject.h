@@ -20,21 +20,23 @@
 class CARObject
 {
 public:
-	CARObject(void);
+	CARObject(int insideId);
 	~CARObject(void);
 
-//private:
+private:
 	int insideId;
-	string name;
 
 public:
-	//virtual string GetName() = 0;
+	virtual string GetName() = 0;
+	virtual const string GetName() const = 0;
 	int GetInsideId() { return insideId; }
 	
-	virtual string FileID() { return CARObject::FileID(insideId); }	
-	virtual string GetNameFirstChar();
-	virtual bool NameStandardFirstChar();
+	string FileID() { return CARObject::FileID(insideId); }	
+	virtual string GetNameFirstChar() = 0;
+	virtual bool NameStandardFirstChar() = 0;
 
 	static string FileID(int insideId);
+	static string GetNameFirstChar(const string& str);
 	static bool NameStandardFirstChar(char ch);
+	static bool NameStandardFirstChar(const string &str);
 };

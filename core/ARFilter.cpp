@@ -18,12 +18,12 @@
 #include "ARFilter.h"
 
 CARFilter::CARFilter(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	this->order = 0;
 	this->opSet = 0;
 	this->enable = 0;
 	this->name = name;
-	this->insideId = insideId;
 
 	this->objPropList.props = NULL;
 }
