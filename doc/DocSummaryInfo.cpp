@@ -151,6 +151,16 @@ void CDocSummaryInfo::Documentation()
 		row.AddCell(CTableCell(CWebUtil::Link("Users", "user/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		if (pInside->CompareServerVersion(7,5) >= 0)
+		{
+			row.ClearCells();
+			row.AddCell(CTableCell(this->pInside->imageList.GetCount()));
+			row.AddCell(CTableCell(CWebUtil::Link("Images", "image/index.htm", "", 0)));
+			tblListObjectInfo.AddRow(row);
+		}
+#endif
+
 		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->containerList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->escalList.size();
@@ -160,7 +170,9 @@ void CDocSummaryInfo::Documentation()
 		nNumTotalObjects += (unsigned int)this->pInside->roleList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->schemaList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->userList.size();
-
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		nNumTotalObjects += this->pInside->imageList.GetCount();
+#endif			
 
 		int nNumTotalFields = 0;
 		list<CARSchema>::iterator schemaIter;

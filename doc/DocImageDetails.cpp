@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocImageDetails.h"
+#include "../core/ARImage.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -73,8 +74,8 @@ void CDocImageDetails::Documentation()
 		webPage.AddContent(WorkflowReferences());
 		
 		// Histoy
-		// TODO: add change history details
-		//webPage.AddContent(pInside->ServerObjectHistory(this->pGroup, this->rootLevel));
+		CARImage img(imageIndex);
+		webPage.AddContent(pInside->ServerObjectHistory(&img, this->rootLevel));
 
 		webPage.SaveInFolder(this->path);	
 	}
@@ -132,6 +133,28 @@ string CDocImageDetails::WorkflowReferences()
 		tblRef.AddColumn(40, "Description");
 
 		// TODO: add references here
+		vector<CImageRefItem>::iterator refIt = pInside->imageList.ReferenceList_begin();
+		vector<CImageRefItem>::iterator endIt = pInside->imageList.ReferenceList_end();
+		for ( ; refIt != endIt; ++refIt)
+		{
+			CImageRefItem &item = *refIt;
+			if (item.imageIndex == imageIndex)
+			{
+				CTableRow row("cssStdRow");		
+				row.AddCell(CAREnum::XmlStructItem(item.fromItem->GetServerObjectTypeXML()));				
+				row.AddCell(item.fromItem->GetURL(rootLevel));
+
+				string tmpEnabled = this->pInside->XmlObjEnabled(item.fromItem);
+				string tmpCssEnabled = "";
+
+				if(tmpEnabled.compare("Disabled")==0)
+					tmpCssEnabled = "objStatusDisabled";
+
+				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+				row.AddCell(item.description);
+				tblRef.AddRow(row);
+			}
+		}
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";

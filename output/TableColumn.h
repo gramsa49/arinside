@@ -23,8 +23,8 @@ namespace OUTPUT
 		public CWebControl
 	{
 	public:
-		CTableColumn(int width, string title);
-		CTableColumn(int width, string title, string cssClass);
+		CTableColumn(int width, const string &title);
+		CTableColumn(int width, const string &title, const string &cssClass);
 		~CTableColumn(void);
 
 		string ColToXHtml();

@@ -25,7 +25,7 @@ namespace OUTPUT
 	{
 	public:
 		CTableRow();
-		CTableRow(string cssClass);
+		CTableRow(const string &cssClass);
 		~CTableRow(void);
 
 		string ToXHtml();

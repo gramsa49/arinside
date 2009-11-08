@@ -237,4 +237,9 @@ string CARImageList::ImageGetURL(unsigned int index, int rootLevel)
 	strmTmp << CWebUtil::RootPath(rootLevel) << "image/" << index << "/" << CWebUtil::DocName("index");
 	return CWebUtil::Link(ImageGetName(index), strmTmp.str(), "image.gif", rootLevel); 
 }
+
+void CARImageList::AddReference(const CImageRefItem &referenceItem)
+{
+	referenceList.push_back(referenceItem);
+}
 #endif

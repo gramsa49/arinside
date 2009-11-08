@@ -28,7 +28,7 @@ public:
 	~CARDataObject(void);
 
 	string GetName() { return name; }
-	const string GetName() const { return name; }
+	string GetName() const { return name; }
 	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
 	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
 

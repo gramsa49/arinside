@@ -16,6 +16,7 @@
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
+#include "../util/ImageRefItem.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -25,8 +26,14 @@ public:
 	CARImageList();
 	~CARImageList();
 	
+	// loading...
 	bool LoadFromServer();
 	int AddImageFromXML(ARXMLParsedStream& stream, const char* imageName);
+
+	// referencing...
+	void AddReference(const CImageRefItem &referenceItem);
+	vector<CImageRefItem>::iterator ReferenceList_begin() { return referenceList.begin(); }
+	vector<CImageRefItem>::iterator ReferenceList_end() { return referenceList.end(); }
 
 	// list functions
 	inline unsigned int GetCount() { return names.numItems; }
@@ -49,7 +56,7 @@ public:
 	inline const ARImageDataStruct& ImageGetData(unsigned int index) { _ASSERT(index < data.numItems); return data.imageList[(*sortedList)[index].index]; }
 	string ImageGetURL(unsigned int index, int rootLevel);
 
-
+	friend class CARImage;
 private:
 	// allocation state of internal structures
 	enum ImageListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -81,6 +88,7 @@ private:
 	ARImageDataList data;
 	ImageListState internalListState;
 	vector<image_ref> *sortedList;
+	vector<CImageRefItem> referenceList;
 };
 
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

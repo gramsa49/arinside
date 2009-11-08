@@ -42,5 +42,6 @@ public:
 	// some helper methods
 	string GetExecuteOn();
 	string GetExecuteOnEx();
-	string GetURL(int rootLevel);
+	string GetURL(int rootLevel, bool showImage = true);
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FILTER; }
 };

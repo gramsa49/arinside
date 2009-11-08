@@ -462,6 +462,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARImage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\ARMessageObject.cpp"
 				>
 			</File>
@@ -1496,6 +1504,14 @@
 			</File>
 			<File
 				RelativePath=".\Util\FieldRefItem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\util\ImageRefItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\ImageRefItem.h"
 				>
 			</File>
 			<File

@@ -39,7 +39,7 @@ CARCharMenu::~CARCharMenu(void)
 	}
 }
 
-string CARCharMenu::GetURL(int rootLevel)
+string CARCharMenu::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"menu/"+this->FileID()+"/"+CWebUtil::DocName("index"), "menu.gif", rootLevel);
+	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"menu/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "menu.gif" : ""), rootLevel);
 }

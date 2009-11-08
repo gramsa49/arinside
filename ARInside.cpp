@@ -766,6 +766,12 @@ void CARInside::LoadFromFile(void)
 						
 						int imageInsideId = imageList.AddImageFromXML(parsedStream, parsedObjects.structItemList[i].name);
 						
+						// dont know why bmc has decided to remove the arDocVersion parameter from the
+						// ARGetImageFromXML api call. Now in case the xml-file contains only images we 
+						// dont have a version at all. So we set it to version 7.5 by default. if other
+						// objects are present they will overwrite this version if it is a 7.5+ version.
+						ParseVersionString(AR_XML_VERSION_750);
+
 						if (imageInsideId > -1)
 						{
 							LOG << " (InsideID: " << imageInsideId << ") [OK]" << endl;
@@ -2417,11 +2423,32 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName,
 			result = this->LinkToContainer(objName, rootLevel);
 		}
 		break;
+//#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+//	case AR_STRUCT_ITEM_XML_IMAGE:
+//		{
+//			result = this->LinkToImage(objName, rootLevel);
+//		}
+//		break;
+//#endif
 	}
 
 	return result;
 }
 
+string CARInside::XmlObjEnabled(CARServerObject *obj)
+{
+	switch(obj->GetServerObjectTypeXML())
+	{
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
+		return CAREnum::ObjectEnable(static_cast<CARActiveLink*>(obj)->enable);
+	case AR_STRUCT_ITEM_XML_FILTER:
+		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->enable);
+	case AR_STRUCT_ITEM_XML_ESCALATION:
+		return CAREnum::ObjectEnable(static_cast<CAREscalation*>(obj)->enable);
+	default:
+		return "";
+	}
+}
 
 string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 {

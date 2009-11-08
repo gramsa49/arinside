@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -18,26 +18,32 @@
 #include "ARServerObject.h"
 #include "ARProplistHelper.h"
 
-class CARActiveLink :
-	public CARServerObjectWithData
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+
+class CARImageList; // forware declaration
+
+class CARImage :
+	public CARServerObject
 {
 public:
-	CARActiveLink(string name, int insideId);
-	~CARActiveLink(void);
+	CARImage(int insideId) : CARServerObject(insideId) { }
+	~CARImage() { }
 
-	unsigned int order;
-	ARWorkflowConnectStruct schemaList;
-	ARInternalIdList groupList;
-	unsigned int executeMask;
-	ARInternalId controlField;
-	ARInternalId focusField;
-	unsigned int enable;
-	ARQualifierStruct query;
-	ARActiveLinkActionList actionList;
-	ARActiveLinkActionList elseList;		
-	ARPropList objPropList;
+	// implement function inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
 
-	string GetExecuteOn(bool singleLine=false, CARProplistHelper* props=NULL);
+	// implement function inherited from CARServerObject
+	const char* GetHelpText();
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner();
+	const ARAccessNameType& GetLastChanged();
+	const char* GetChangeDiary();
+
 	string GetURL(int rootLevel, bool showImage = true);
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_ACTIVE_LINK; }
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_IMAGE; }
 };
+
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

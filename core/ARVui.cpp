@@ -35,7 +35,7 @@ CARVui::~CARVui(void)
 	}
 }
 
-string CARVui::GetURL(int rootLevel)
+string CARVui::GetURL(int rootLevel, bool showImage)
 {
 	stringstream tmp;
 	tmp.str("");

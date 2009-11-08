@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFieldDetails.h"
+#include "../util/ImageRefItem.h"
 
 CDocFieldDetails::CDocFieldDetails(CARInside &arInside, CARSchema &schema, CARField &field, string path, int rootLevel)
 {
@@ -689,10 +690,46 @@ string CDocFieldDetails::DisplayProperties()
 			tbl.AddColumn(80, "Values");
 
 			for(unsigned int k=0; k < this->pField->dInstanceList.dInstanceList[i].props.numItems; k++)
-			{		
+			{
+				ARPropStruct &dProperty = this->pField->dInstanceList.dInstanceList[i].props.props[k];
+				
+				string value;
+
+				if ((dProperty.prop == AR_DPROP_PUSH_BUTTON_IMAGE || dProperty.prop == AR_DPROP_IMAGE) && dProperty.value.dataType == AR_DATA_TYPE_CHAR)
+				{
+					int imageIndex = pInside->imageList.FindImage(dProperty.value.u.charVal);
+					if (imageIndex >= 0)
+					{
+						stringstream tmpDesc;
+						switch (dProperty.prop)
+						{
+						case AR_DPROP_PUSH_BUTTON_IMAGE:
+							{
+								tmpDesc << "Image used on button of form " << this->pSchema->GetURL(rootLevel, true);
+								CImageRefItem refItem(imageIndex, tmpDesc.str(), pField);
+								pInside->imageList.AddReference(refItem);
+								break;
+							}
+						case AR_DPROP_IMAGE:
+							{
+								tmpDesc << "Image used on panel of form " << this->pSchema->GetURL(rootLevel, true);
+								CImageRefItem refItem(imageIndex, tmpDesc.str(), pField);
+								pInside->imageList.AddReference(refItem);
+								break;
+							}
+						}
+
+						value = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
+					}
+				}
+				if (value.empty())
+				{
+					value = CARProplistHelper::GetValue(dProperty.prop, dProperty.value);
+				}
+
 				CTableRow row("");			
-				row.AddCell( CTableCell(CARProplistHelper::GetLabel(this->pField->dInstanceList.dInstanceList[i].props.props[k].prop)));
-				row.AddCell( CTableCell(CARProplistHelper::GetValue(this->pField->dInstanceList.dInstanceList[i].props.props[k].prop, this->pField->dInstanceList.dInstanceList[i].props.props[k].value)));
+				row.AddCell( CTableCell(CARProplistHelper::GetLabel(dProperty.prop)));
+				row.AddCell( CTableCell(value));
 				tbl.AddRow(row);				
 			}	
 

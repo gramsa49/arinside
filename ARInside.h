@@ -104,6 +104,7 @@ public:
 	string LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel);
 	string LinkToXmlObjType(int arsStructItemType, const string &objName, int rootLevel);
 	string XmlObjEnabled(int arsStructItemType, string objName);
+	string XmlObjEnabled(CARServerObject *obj);
 
 	int SchemaGetInsideId(string searchObjName);
 

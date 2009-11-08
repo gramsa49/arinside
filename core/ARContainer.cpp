@@ -50,8 +50,8 @@ CARContainer::~CARContainer(void)
 	}
 }
 
-string CARContainer::GetURL(int rootLevel)
+string CARContainer::GetURL(int rootLevel, bool showImage)
 {
 	string tmp = CWebUtil::RootPath(rootLevel)+CAREnum::ContainerDir(this->type)+"/"+this->FileID()+"/"+CWebUtil::DocName("index");
-	return CWebUtil::Link(this->name, tmp, CAREnum::ContainerImage(this->type), rootLevel);
+	return CWebUtil::Link(this->name, tmp, (showImage ? CAREnum::ContainerImage(this->type) : ""), rootLevel);
 }

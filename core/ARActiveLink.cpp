@@ -32,9 +32,9 @@ CARActiveLink::CARActiveLink(string name, int insideId)
 	this->query.operation = NULL;
 }
 
-string CARActiveLink::GetURL(int rootLevel)
+string CARActiveLink::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"active_link/"+this->FileID()+"/"+CWebUtil::DocName("index"), "active_link.gif", rootLevel);
+	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"active_link/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "active_link.gif" : ""), rootLevel);
 }
 
 CARActiveLink::~CARActiveLink(void)

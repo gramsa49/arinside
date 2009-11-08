@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -14,26 +14,20 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
-#include "ARServerObject.h"
-#include "../core/AREnum.h"
+#include "stdafx.h"
+#include "ImageRefItem.h"
 
-class CARContainer :
-	public CARServerObjectWithData
+CImageRefItem::CImageRefItem(int imageIndex, const string &description, /*int arsStructItemType, int schemaInsideId, int fieldId*/ CARServerObject *fromItem)
+: fromItem(fromItem)
 {
-public:
-	CARContainer(string name, int insideId);
-	~CARContainer(void);
+	this->imageIndex = imageIndex;
+	this->description = description;
+	//this->arsStructItemType = arsStructItemType;
+	//this->schemaInsideId = schemaInsideId;
+	//this->fromFieldId = fieldId;
 
-	ARPermissionList	groupList;
-	ARInternalIdList	admingrpList;
-	ARContainerOwnerObjList	ownerObjList;
-	char	*label;
-	char	*description;
-	unsigned int	type;
-	ARReferenceList	references;
-	ARPropList	objPropList;
+}
 
-	string GetURL(int rootLevel, bool showImage = true);
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_CONTAINER; }
-};
+CImageRefItem::~CImageRefItem(void)
+{
+}

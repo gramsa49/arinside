@@ -30,6 +30,8 @@ public:
 	virtual const ARAccessNameType& GetOwner() = 0;
 	virtual const ARAccessNameType& GetLastChanged() = 0;
 	virtual const char* GetChangeDiary() = 0;
+	virtual string GetURL(int rootLevel, bool showImage = true) = 0;
+	virtual int GetServerObjectTypeXML() = 0;
 };
 
 class CARServerObjectWithData : public CARServerObject
@@ -47,7 +49,7 @@ public:
 
 	// implement function inherited from CARObject
 	string GetName() { return name; }
-	const string GetName() const { return name; }
+	string GetName() const { return name; }
 	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
 	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
 

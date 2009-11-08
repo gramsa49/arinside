@@ -40,7 +40,7 @@ CARField::~CARField(void)
 	}
 }
 
-string CARField::GetURL(int rootLevel)
+string CARField::GetURL(int rootLevel, bool showImage)
 {
 	stringstream tmp;
 	tmp.str("");

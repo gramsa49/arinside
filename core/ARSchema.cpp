@@ -62,21 +62,11 @@ CARSchema::~CARSchema(void)
 		FreeARPropList(&objPropList, false);
 }
 
-string CARSchema::GetURL(int rootLevel)
-{
-	stringstream tmp;
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("index");	
-	return CWebUtil::Link(this->name, tmp.str(), "schema.gif", rootLevel);
-}
-
 string CARSchema::GetURL(int rootLevel, bool useImage)
 {
 	stringstream tmp;
 	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("index");	
-	if (useImage)
-		return CWebUtil::Link(this->name, tmp.str(), "schema.gif", rootLevel);
-	else
-		return CWebUtil::Link(this->name, tmp.str(), "", rootLevel);
+	return CWebUtil::Link(this->name, tmp.str(), (useImage ? "schema.gif" : ""), rootLevel);
 }
 
 string CARSchema::WebAlias()
