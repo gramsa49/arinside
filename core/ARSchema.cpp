@@ -18,6 +18,7 @@
 #include "ARSchema.h"
 
 CARSchema::CARSchema()
+: CARServerObjectWithData(0)
 {	
 	this->fieldList.clear();
 	this->vuiList.clear();
@@ -30,12 +31,11 @@ CARSchema::CARSchema()
 }
 
 CARSchema::CARSchema(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	try
 	{
 		this->name = name;	
-		this->insideId = insideId;
-
 		this->alias = "";
 		this->fieldList.clear();
 		this->vuiList.clear();	
@@ -62,21 +62,11 @@ CARSchema::~CARSchema(void)
 		FreeARPropList(&objPropList, false);
 }
 
-string CARSchema::GetURL(int rootLevel)
-{
-	stringstream tmp;
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->insideId << "/" << CWebUtil::DocName("index");	
-	return CWebUtil::Link(this->name, tmp.str(), "schema.gif", rootLevel);
-}
-
 string CARSchema::GetURL(int rootLevel, bool useImage)
 {
 	stringstream tmp;
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->insideId << "/" << CWebUtil::DocName("index");	
-	if (useImage)
-		return CWebUtil::Link(this->name, tmp.str(), "schema.gif", rootLevel);
-	else
-		return CWebUtil::Link(this->name, tmp.str(), "", rootLevel);
+	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("index");	
+	return CWebUtil::Link(this->name, tmp.str(), (useImage ? "schema.gif" : ""), rootLevel);
 }
 
 string CARSchema::WebAlias()
@@ -121,7 +111,7 @@ string CARSchema::LinkToVui(int vuiId, int fromRootLevel)
 	for(vuiIter = this->vuiList.begin(); vuiIter != this->vuiList.end(); vuiIter++)
 	{
 		CARVui *vui = &(*vuiIter);
-		if(vui->insideId == vuiId)
+		if(vui->GetInsideId() == vuiId)
 		{
 			return vui->GetURL(fromRootLevel);
 		}
@@ -148,7 +138,7 @@ string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
 						if(strcmp(vuiLabel.c_str(), vui->objPropList.props[i].value.u.charVal)==0)
 						{
 							stringstream tmp;
-							tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << this->insideId << "/" << CWebUtil::DocName("vui_" + vui->FileID());
+							tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("vui_" + vui->FileID());
 
 							return CWebUtil::Link(vui->objPropList.props[i].value.u.charVal, tmp.str(), "", fromRootLevel);
 						}
@@ -173,7 +163,7 @@ string CARSchema::VuiGetLabel(int vuiId)
 	for(vuiIter = this->vuiList.begin(); vuiIter != this->vuiList.end(); vuiIter++)
 	{
 		CARVui *vui = &(*vuiIter);
-		if(vui->insideId == vuiId)
+		if(vui->GetInsideId() == vuiId)
 		{
 			return vui->Label();
 		}

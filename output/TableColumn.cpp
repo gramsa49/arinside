@@ -19,13 +19,13 @@
 
 using namespace OUTPUT;
 
-CTableColumn::CTableColumn(int width, string title)
+CTableColumn::CTableColumn(int width, const string &title)
 {
 	this->width = width;
 	this->title = title;
 }
 
-CTableColumn::CTableColumn(int width, string title, string cssClass)
+CTableColumn::CTableColumn(int width, const string &title, const string &cssClass)
 {
 	this->width = width;
 	this->title = title;

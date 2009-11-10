@@ -23,7 +23,7 @@ CTableRow::CTableRow()
 {
 }
 
-CTableRow::CTableRow(string cssClass)
+CTableRow::CTableRow(const string &cssClass)
 {
 	this->cssClass = cssClass;
 }

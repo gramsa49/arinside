@@ -24,10 +24,10 @@ namespace OUTPUT
 	{
 	public:
 		CTableCell();
-		CTableCell(string content);
+		CTableCell(const string &content);
 		CTableCell(int content);
-		CTableCell(string content, string cssClass);	
-		CTableCell(int content, string cssClass);
+		CTableCell(const string &content, const string &cssClass);	
+		CTableCell(int content, const string &cssClass);
 
 		~CTableCell(void);
 

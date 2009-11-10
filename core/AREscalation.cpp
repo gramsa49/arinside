@@ -19,9 +19,9 @@
 #include "ARDayStructHelper.h"
 
 CAREscalation::CAREscalation(string name, int insideId)
+: CARServerObjectWithData(insideId)
 {
 	this->name = name;
-	this->insideId = insideId;
 	this->enable = 0;
 
 	this->objPropList.props = NULL;
@@ -44,9 +44,9 @@ CAREscalation::~CAREscalation(void)
 	}
 }
 
-string CAREscalation::GetURL(int rootLevel)
+string CAREscalation::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"escalation/"+this->FileID()+"/"+CWebUtil::DocName("index"), "escalation.gif", rootLevel);
+	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"escalation/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "escalation.gif" : ""), rootLevel);
 }
 
 string CAREscalation::GetTimeCriteria()

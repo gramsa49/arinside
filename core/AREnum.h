@@ -905,6 +905,9 @@ public:
 		case ARREF_ACTLINK: return "Active Link";
 		case ARREF_CONTAINER: return "Container";
 		case ARREF_CHAR_MENU: return "Menu";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case ARREF_IMAGE: return "Image";
+#endif
 		case ARREF_LAST_SERVER_OBJ: return "LastServerObject";			
 		case ARREF_ICON: return "Icon";
 		case ARREF_SMALL_ICON: return "Small Icon";

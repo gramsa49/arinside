@@ -19,13 +19,17 @@
 #include "../core/ARProplistHelper.h"
 
 class CDocVuiDetails :
-	public CDocBase
+	public CDocBase, public CARProplistHelper::CARPropertyCallback
 {
 public:
 	CDocVuiDetails(CARInside &arInside, CARSchema &schema, CARVui &vui, string path, int rootLevel);
 	~CDocVuiDetails(void);
 
 	void Documentation();
+
+	// CARPropertyCallback implementation
+	bool SpecialPropertyCallback(ARULong32 propId, const ARValueStruct& value, string &displayValue);
+
 private:
 	CARSchema *pSchema;
 	CARVui *pVui;

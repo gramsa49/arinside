@@ -24,9 +24,15 @@ class CARDataObject :
 	public CARObject
 {
 public:
-	CARDataObject(void);
+	CARDataObject(int insideId);
 	~CARDataObject(void);
 
+	string GetName() { return name; }
+	string GetName() const { return name; }
+	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
+	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
+
+	string name;
 	string requestId;
 	ARTimestamp created;
 	string createdBy;

@@ -104,6 +104,7 @@ public:
 	string LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel);
 	string LinkToXmlObjType(int arsStructItemType, const string &objName, int rootLevel);
 	string XmlObjEnabled(int arsStructItemType, string objName);
+	string XmlObjEnabled(CARServerObject *obj);
 
 	int SchemaGetInsideId(string searchObjName);
 
@@ -120,6 +121,10 @@ public:
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
 	string LinkToFilterRef(string fltName, int rootLevel);	
 	string LinkToFilterRef(CARFilter* filter, int rootLevel);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	string LinkToImage(unsigned int imageIndex, int rootLevel);
+	string LinkToImage(const string &imageName, int rootLevel);
+#endif
 	string LinkToMenu(string menuName, int rootLevel, bool* bFound = NULL);
 	string LinkToSchema(string schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);

@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -15,23 +15,19 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "ARUser.h"
+#include "ImageRefItem.h"
 
-CARUser::CARUser(int insideId, string requestId)
-: CARDataObject(insideId)
-{		
-	this->requestId = requestId;
+CImageRefItem::CImageRefItem(int imageIndex, const string &description, /*int arsStructItemType, int schemaInsideId, int fieldId*/ CARServerObject *fromItem)
+: fromItem(fromItem)
+{
+	this->imageIndex = imageIndex;
+	this->description = description;
+	//this->arsStructItemType = arsStructItemType;
+	//this->schemaInsideId = schemaInsideId;
+	//this->fromFieldId = fieldId;
 
-	this->loginName = "";
-	this->fullName = "";
-	this->email = "";
-	this->licenseType = 0;
-	this->ftLicenseType = 0;
-	this->defNotify = 0;
-	this->groupList.clear();
-	this->comparableName = "";
 }
 
-CARUser::~CARUser(void)
+CImageRefItem::~CImageRefItem(void)
 {
 }

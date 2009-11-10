@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -13,31 +13,14 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-
 #pragma once
-#include "../ARApi.h"
 
-class CARObject
+class Uncopyable
 {
-public:
-	CARObject(int insideId);
-	~CARObject(void);
-
+protected:
+	Uncopyable() { }
+	~Uncopyable() { }
 private:
-	int insideId;
-
-public:
-	virtual string GetName() = 0;
-	virtual string GetName() const = 0;
-	int GetInsideId() { return insideId; }
-	int GetInsideId() const { return insideId; }
-	
-	string FileID() { return CARObject::FileID(insideId); }	
-	virtual string GetNameFirstChar() = 0;
-	virtual bool NameStandardFirstChar() = 0;
-
-	static string FileID(int insideId);
-	static string GetNameFirstChar(const string& str);
-	static bool NameStandardFirstChar(char ch);
-	static bool NameStandardFirstChar(const string &str);
+	Uncopyable(const Uncopyable&);
+	Uncopyable& operator=(const Uncopyable&);
 };

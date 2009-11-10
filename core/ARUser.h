@@ -21,7 +21,7 @@ class CARUser :
 	public CARDataObject
 {
 public:
-	CARUser(string requestId);
+	CARUser(int insideId, string requestId);
 	~CARUser(void);
 
 	string loginName;

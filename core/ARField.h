@@ -18,10 +18,9 @@
 #include "ARServerObject.h"
 
 class CARField :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
-	CARField();
 	CARField(int insideId);
 	~CARField(void);
 
@@ -37,5 +36,6 @@ public:
 	ARDisplayInstanceList dInstanceList;
 	int schemaInsideId;
 
-	string GetURL(int rootLevel);
+	string GetURL(int rootLevel, bool showImage = true);
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FIELD; }
 };

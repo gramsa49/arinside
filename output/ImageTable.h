@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -14,24 +14,19 @@
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
-#include "stdafx.h"
-#include "ARUser.h"
+#pragma once
+#include "../ARInside.h"
+#include "ObjectTable.h"
 
-CARUser::CARUser(int insideId, string requestId)
-: CARDataObject(insideId)
-{		
-	this->requestId = requestId;
-
-	this->loginName = "";
-	this->fullName = "";
-	this->email = "";
-	this->licenseType = 0;
-	this->ftLicenseType = 0;
-	this->defNotify = 0;
-	this->groupList.clear();
-	this->comparableName = "";
-}
-
-CARUser::~CARUser(void)
+namespace OUTPUT
 {
+	class CImageTable :
+		public CObjectTable
+	{
+	public:
+		CImageTable(CARInside &arIn);
+		~CImageTable(void);
+
+		void AddRow(int imageIndex, int rootLevel);
+	};
 }

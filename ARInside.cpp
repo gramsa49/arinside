@@ -37,6 +37,7 @@
 #include "doc/DocValidator.h"
 #include "doc/DocRoleDetails.h"
 #include "doc/DocSummaryInfo.h"
+#include "doc/DocImageDetails.h"
 
 #include "output/Table.h"
 #include "output/WebUtil.h"
@@ -347,6 +348,7 @@ void CARInside::Prepare(void)
 		wUtil.CreateSubDirectory("filter");
 		wUtil.CreateSubDirectory("filter_guide");
 		wUtil.CreateSubDirectory("group");
+		wUtil.CreateSubDirectory("image");
 		wUtil.CreateSubDirectory("img");
 		wUtil.CreateSubDirectory("menu");
 		wUtil.CreateSubDirectory("other");
@@ -564,7 +566,7 @@ void CARInside::LoadFromFile(void)
 								//Check if this is a global field and add it to the globalfieldlist
 								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
 								{
-									CARGlobalField *globalField = new CARGlobalField(schema->insideId, field->insideId, field->fieldId);
+									CARGlobalField *globalField = new CARGlobalField(schema->GetInsideId(), field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}	
 
@@ -764,6 +766,12 @@ void CARInside::LoadFromFile(void)
 						
 						int imageInsideId = imageList.AddImageFromXML(parsedStream, parsedObjects.structItemList[i].name);
 						
+						// dont know why bmc has decided to remove the arDocVersion parameter from the
+						// ARGetImageFromXML api call. Now in case the xml-file contains only images we 
+						// dont have a version at all. So we set it to version 7.5 by default. if other
+						// objects are present they will overwrite this version if it is a 7.5+ version.
+						ParseVersionString(AR_XML_VERSION_750);
+
 						if (imageInsideId > -1)
 						{
 							LOG << " (InsideID: " << imageInsideId << ") [OK]" << endl;
@@ -778,7 +786,10 @@ void CARInside::LoadFromFile(void)
 #endif
 				}	
 			}		
-
+			
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+			imageList.Sort();
+#endif
 		}
 		else
 		{
@@ -1071,7 +1082,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 								//Check if this is a global field and add it to the globalfieldlist
 								if(field->fieldId >= 1000000 &&  field->fieldId <= 1999999)
 								{
-									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->insideId, field->fieldId);
+									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
 								}
 							}
@@ -1469,9 +1480,9 @@ void CARInside::Sort(list<CARField> &listResult)
 
 bool CARInside::SortByName(const CARServerObject& t1, const CARServerObject& t2 )
 {
-	string tmpStr1 = CUtil::String2Comp(t1.name.c_str());
-	string tmpStr2 = CUtil::String2Comp(t2.name.c_str());
-	return ( strcmp(tmpStr1.c_str(), tmpStr2.c_str()) < 0);
+	string tmpStr1 = CUtil::String2Comp(t1.GetName());
+	string tmpStr2 = CUtil::String2Comp(t2.GetName());
+	return ( tmpStr1.compare(tmpStr2) < 0 );
 }
 
 string CARInside::ObjListFilename(string firstChar)
@@ -1740,6 +1751,26 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	// Image
+	docMain->ImageList("index", "*");
+	for (unsigned int i = 0; i < strValue.size(); ++i)
+	{		
+		docMain->ImageList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+	}	
+
+	// Image Details
+	unsigned int tmpCount = imageList.GetCount();
+	cout << "Starting Image Documentation" << endl;
+	for (unsigned int imgIndex = 0; imgIndex < tmpCount; ++imgIndex)
+	{
+		LOG << "Image [" << imgIndex << "-" << nTmpCnt << "] '" << imageList.ImageGetName(imgIndex) << "': ";
+
+		CDocImageDetails imgDetails(imgIndex, 2);
+		imgDetails.Documentation();
+	}
+#endif
+
 	//GlobalFieldList
 	docMain->GlobalFieldList();	
 
@@ -1842,13 +1873,13 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 	{			
 		CARSchema *schema = &(*schemaIter);
 
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			list<CARField>::iterator fieldIter;					
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
+				if(field->GetInsideId() == fieldInsideId)
 				{					
 					if(field->dataType == AR_DATA_TYPE_ENUM)
 					{
@@ -1890,13 +1921,13 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			list<CARField>::iterator fieldIter;
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
+				if(field->GetInsideId() == fieldInsideId)
 				{
 					return field->GetURL(fromRootLevel);
 				}
@@ -1930,13 +1961,13 @@ string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fro
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			list<CARField>::iterator fieldIter;					
 			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
 			{
 				CARField *field = &(*fieldIter);
-				if(field->insideId == fieldInsideId)
+				if(field->GetInsideId() == fieldInsideId)
 				{
 					tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << schemaInsideId << "/" << CWebUtil::DocName(field->FileID());
 
@@ -1980,7 +2011,7 @@ string CARInside::LinkToSchema(int insideId, int fromRootLevel)
 	for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(insideId == schema->insideId)
+		if(insideId == schema->GetInsideId())
 		{
 			return schema->GetURL(fromRootLevel);
 		}
@@ -2011,7 +2042,7 @@ int CARInside::SchemaGetInsideId(string searchObjName)
 		CARSchema *obj = &(*iter);
 		if(obj->name.compare(searchObjName)==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2025,7 +2056,7 @@ int CARInside::AlGetInsideId(string searchObjName)
 		CARActiveLink *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2039,7 +2070,7 @@ int CARInside::FilterGetInsideId(string searchObjName)
 		CARFilter *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2053,7 +2084,7 @@ int CARInside::ContainerGetInsideId(string searchObjName)
 		CARContainer *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2067,7 +2098,7 @@ int CARInside::MenuGetInsideId(string searchObjName)
 		CARCharMenu *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2081,7 +2112,7 @@ int CARInside::EscalationGetInsideId(string searchObjName)
 		CAREscalation *obj = &(*iter);
 		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
 		{
-			return obj->insideId;
+			return obj->GetInsideId();
 		}
 	}
 	return -1;
@@ -2167,7 +2198,7 @@ string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
 	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter)
 	{
 		CARActiveLink *al = &(*alIter);
-		if(al->insideId == alInsideId) 
+		if(al->GetInsideId() == alInsideId) 
 			return LinkToAlRef(al, rootLevel);
 	}
 	return EmptyValue;
@@ -2222,7 +2253,7 @@ string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
 	for ( filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter)
 	{	
 		CARFilter *filter = &(*filterIter);
-		if(filter->insideId == filterInsideId)
+		if(filter->GetInsideId() == filterInsideId)
 			return LinkToFilterRef(filter, rootLevel);
 	}
 	return EmptyValue;
@@ -2392,11 +2423,32 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName,
 			result = this->LinkToContainer(objName, rootLevel);
 		}
 		break;
+//#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+//	case AR_STRUCT_ITEM_XML_IMAGE:
+//		{
+//			result = this->LinkToImage(objName, rootLevel);
+//		}
+//		break;
+//#endif
 	}
 
 	return result;
 }
 
+string CARInside::XmlObjEnabled(CARServerObject *obj)
+{
+	switch(obj->GetServerObjectTypeXML())
+	{
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
+		return CAREnum::ObjectEnable(static_cast<CARActiveLink*>(obj)->enable);
+	case AR_STRUCT_ITEM_XML_FILTER:
+		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->enable);
+	case AR_STRUCT_ITEM_XML_ESCALATION:
+		return CAREnum::ObjectEnable(static_cast<CAREscalation*>(obj)->enable);
+	default:
+		return "";
+	}
+}
 
 string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 {
@@ -2523,8 +2575,8 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					if (tableSourceSchema != NULL)
 					{
 						stringstream tmpDesc;
-						tmpDesc << "Column in Table " + LinkToField(schema.insideId, tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->insideId, rootLevel);
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.name, tmpDesc.str(), fLimit.dataField, tableSourceSchema->insideId);
+						tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->GetInsideId(), rootLevel);
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), fLimit.dataField, tableSourceSchema->GetInsideId());
 						refItem.fromFieldId = obj.fieldId;
 						this->AddReferenceItem(&refItem);
 					}
@@ -2555,8 +2607,8 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					refItem.fromFieldId = obj.fieldId;
 
 					CARQualification arQual(*this);
-					int pFormId = schema.insideId;
-					int sFormId = tableSourceSchema->insideId;
+					int pFormId = schema.GetInsideId();
+					int sFormId = tableSourceSchema->GetInsideId();
 
 					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 				}
@@ -2713,7 +2765,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 							if (fieldStatus != NULL)
 							{
 								int iEnumId = atoi(enumId);
-								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus->insideId, iEnumId) << "." << usrOrTimeStr;
+								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus->GetInsideId(), iEnumId) << "." << usrOrTimeStr;
 							}
 							else
 								strmTmp << "." << enumId << "." << usrOrTimeStr;
@@ -2969,7 +3021,7 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 		for ( schemaIter = schemaList.begin(); schemaIter != schemaList.end(); schemaIter++ )
 		{			
 			CARSchema *schema = &(*schemaIter);
-			if(schema->insideId == schemaInsideId)
+			if(schema->GetInsideId() == schemaInsideId)
 			{
 				list<CARField>::iterator fieldIter;		
 				CARField *field;
@@ -3055,10 +3107,10 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 	try
 	{
 		list<CChangeHistoryEntry> listHistoryEntry;
-		if(obj->changeDiary != NULL)
+		if(obj->GetChangeDiary() != NULL)
 		{				
 			ARDiaryList diaryList;
-			if(ARDecodeDiary(&this->arControl, obj->changeDiary, &diaryList, &this->arStatus)==AR_RETURN_OK)
+			if(ARDecodeDiary(&this->arControl, const_cast<char*>(obj->GetChangeDiary()), &diaryList, &this->arStatus)==AR_RETURN_OK)
 			{
 				if(diaryList.diaryList != NULL)
 				{			
@@ -3096,13 +3148,13 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 		//Owner
 		CTableRow tblRow("");
-		tblRow.AddCellList(CTableCell("Owner"), CTableCell(this->LinkToUser(obj->owner, rootLevel)));
+		tblRow.AddCellList(CTableCell("Owner"), CTableCell(this->LinkToUser(obj->GetOwner(), rootLevel)));
 		tbl.AddRow(tblRow);
 
 		//Last changed		
 		stringstream strmLastChanged;
 		strmLastChanged.str("");
-		strmLastChanged << CUtil::DateTimeToHTMLString(obj->timestamp) << " " << this->LinkToUser(obj->lastChanged, rootLevel) << endl;
+		strmLastChanged << CUtil::DateTimeToHTMLString(obj->GetTimestamp()) << " " << this->LinkToUser(obj->GetLastChanged(), rootLevel) << endl;
 
 		tblRow.AddCellList(CTableCell("Last changed"), CTableCell(strmLastChanged.str()));
 		tbl.AddRow(tblRow);
@@ -3114,9 +3166,9 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 		//Helptext
 		string tmpHelptext = EmptyValue;
-		if(obj->helptext != NULL)
+		if(obj->GetHelpText() != NULL)
 		{
-			tmpHelptext = CUtil::StrReplace("\n", "<br/>", obj->helptext);
+			tmpHelptext = CUtil::StrReplace("\n", "<br/>", obj->GetHelpText());
 		}
 
 		tblRow.AddCellList(CTableCell("Helptext"), CTableCell(tmpHelptext));
@@ -3218,7 +3270,7 @@ CARSchema* CARInside::FindSchema(int schemaInsideId)
 	for (schemaIter = schemaList.begin(); schemaIter != schemaList.end(); ++schemaIter)
 	{			
 		CARSchema *schema = &(*schemaIter);
-		if(schema->insideId == schemaInsideId)
+		if(schema->GetInsideId() == schemaInsideId)
 		{
 			return schema;
 		}
@@ -3571,6 +3623,26 @@ string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CF
 int CARInside::LoadImages()
 {
 	imageList.LoadFromServer();
+	imageList.Sort();
 	return imageList.GetCount();
 }
+
+string CARInside::LinkToImage(unsigned int imageIndex, int rootLevel)
+{
+	return imageList.ImageGetURL(imageIndex, rootLevel);
+}
+
+string CARInside::LinkToImage(const string &imageName, int rootLevel)
+{
+	int imageIndex = imageList.FindImage(imageName.c_str());
+	if (imageIndex < 0)
+	{
+		return "<span class=\"fieldNotFound\">" + imageName + "</span>";
+	}
+	else
+	{
+		return LinkToImage(imageIndex, rootLevel);
+	}
+}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+

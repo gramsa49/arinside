@@ -101,9 +101,9 @@ string CWebUtil::ObjName(string objName)
 
 //targetMode
 //_blank, to open the link in a new window
-//_self, to open the link in the current window,
-//_parent, um bei verschachtelten Framesets das aktuelle Frameset zu sprengen,
-//_top, um bei verschachtelten Framesets alle Framesets zu sprengen.
+//_self, to open the link in the current window
+//_parent, to cleanup only the current frameset
+//_top, to cleanup all layered framesets
 string CWebUtil::Link(string caption, string linkTo, string imgName, int rootLevel)
 {
 	stringstream strm;
@@ -397,4 +397,15 @@ string CWebUtil::ChkBoxInput(std::string nameAndValue, bool checked)
 	if (checked) strmTmp << " checked";
 	strmTmp << " />";
 	return strmTmp.str();
+}
+
+string CWebUtil::LinkToImageIndex(int rootLevel)
+{
+	return LinkToImageIndex(-1, rootLevel);
+}
+
+string CWebUtil::LinkToImageIndex(int objectCount, int rootLevel)
+{
+	string name = (objectCount > 1? "Images" : "Image");
+	return LinkToHelper(name, -1, "image", "image.gif", rootLevel);
 }

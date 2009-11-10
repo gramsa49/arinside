@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -15,29 +15,22 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "../ARApi.h"
+#include "DocBase.h"
+#include "../output/ImageTable.h"
 
-class CARObject
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+class CDocImageDetails :
+	public CDocBase
 {
 public:
-	CARObject(int insideId);
-	~CARObject(void);
+	CDocImageDetails(int imageIndex, int rootLevel);
+	~CDocImageDetails(void);
 
+	void Documentation();
 private:
-	int insideId;
+	unsigned int imageIndex;
 
-public:
-	virtual string GetName() = 0;
-	virtual string GetName() const = 0;
-	int GetInsideId() { return insideId; }
-	int GetInsideId() const { return insideId; }
-	
-	string FileID() { return CARObject::FileID(insideId); }	
-	virtual string GetNameFirstChar() = 0;
-	virtual bool NameStandardFirstChar() = 0;
-
-	static string FileID(int insideId);
-	static string GetNameFirstChar(const string& str);
-	static bool NameStandardFirstChar(char ch);
-	static bool NameStandardFirstChar(const string &str);
+	void SaveImage();
+	string WorkflowReferences();
 };
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

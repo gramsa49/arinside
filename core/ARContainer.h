@@ -19,7 +19,7 @@
 #include "../core/AREnum.h"
 
 class CARContainer :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARContainer(string name, int insideId);
@@ -34,5 +34,6 @@ public:
 	ARReferenceList	references;
 	ARPropList	objPropList;
 
-	string GetURL(int rootLevel);
+	string GetURL(int rootLevel, bool showImage = true);
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_CONTAINER; }
 };

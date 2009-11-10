@@ -20,7 +20,7 @@
 #include "ARVui.h"
 
 class CARSchema :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARSchema();
@@ -44,8 +44,8 @@ public:
 	list<CARField> fieldList;
 	list<CARVui> vuiList;
 
-	string GetURL(int rootLevel);
-	string GetURL(int rootLevel, bool useImage);
+	string GetURL(int rootLevel, bool useImage = true);
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_SCHEMA; }
 
 	string LinkToVui(int vuiId, int fromRootLevel);
 	string LinkToVui(string vuiName, int fromRootLevel);

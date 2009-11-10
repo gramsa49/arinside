@@ -28,6 +28,7 @@
 #include "../output/RoleTable.h"
 #include "../output/GroupTable.h"
 #include "../output/UserTable.h"
+#include "../output/ImageTable.h"
 
 using namespace OUTPUT;
 
@@ -59,6 +60,7 @@ public:
 	void GroupList(string fileName, string searchChar);
 	void UserList(string fileName, string searchChar);
 	void RoleList(string fileName, string searchChar);
+	void ImageList(string fileName, string searchChar);
 
 private:
 	static void Sort(list<CMessageItem> &listResult);

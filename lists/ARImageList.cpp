@@ -17,17 +17,21 @@
 #include "stdafx.h"
 #include "ARImageList.h"
 #include "../ARInside.h"
+#include "../output/WebUtil.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
 CARImageList::CARImageList(void)
 {
-	reservedSize = -1;
+	internalListState = CARImageList::EMPTY;
+	reservedSize = 0;
+	names.numItems = 0;
+	sortedList = NULL;
 }
 
 CARImageList::~CARImageList()
 {
-	if (reservedSize>-1)
+	if (internalListState == CARImageList::INTERNAL_ALLOC)
 	{
 		try
 		{
@@ -46,7 +50,7 @@ CARImageList::~CARImageList()
 		{
 		}
 	}
-	else if (reservedSize == -2)
+	else if (internalListState == CARImageList::ARAPI_ALLOC)
 	{		
 		try
 		{
@@ -66,6 +70,8 @@ CARImageList::~CARImageList()
 
 		}
 	}
+	if (sortedList != NULL)
+		delete sortedList;
 }
 
 bool CARImageList::LoadFromServer()
@@ -91,7 +97,14 @@ bool CARImageList::LoadFromServer()
 		&status) == AR_RETURN_OK)
 	{
 		FreeARBooleanList(&imgExists, false);
-		reservedSize = -2;
+		internalListState = CARImageList::ARAPI_ALLOC;
+
+		sortedList = new vector<image_ref>();
+		sortedList->reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			sortedList->push_back(image_ref(*this,i));
+		}
 		return true;
 	}
 	else
@@ -103,7 +116,10 @@ bool CARImageList::LoadFromServer()
 
 void CARImageList::Reserve(unsigned int size)
 {
-	if (reservedSize != -1) throw exception("object isnt reusable!");
+	if (internalListState != CARImageList::EMPTY) throw exception("object isnt reusable!");
+
+	sortedList = new vector<image_ref>();
+	sortedList->reserve(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -136,13 +152,13 @@ void CARImageList::Reserve(unsigned int size)
 	data.imageList = new ARImageDataStruct[size];
 
 	reservedSize = size;
+	internalListState = CARImageList::INTERNAL_ALLOC;
 }
 
 int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageName)
 {
-	if (reservedSize == -1) throw exception("call Reserve() first!");
-	if (reservedSize < -1) throw exception("illegal usage!");
-	if (int(names.numItems) >= reservedSize) return -1;
+	if (internalListState != CARImageList::INTERNAL_ALLOC) throw exception("illegal usage!");
+	if (names.numItems >= reservedSize) return -1;
 	
 	CARInside* arIn = CARInside::GetInstance();
 	ARNameType appBlockName; appBlockName[0] = 0;
@@ -182,6 +198,8 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 		++objProps.numItems;
 		++data.numItems;
 
+		sortedList->push_back(image_ref(*this, index));
+
 		return index;
 	}
 	else
@@ -189,5 +207,39 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 		cerr << arIn->GetARStatusError(&status);
 		return -1;
 	}
+}
+
+int CARImageList::FindImage(const char* name)
+{
+	for (unsigned int i = 0; i < GetCount(); ++i)
+	{
+		if (strcmp(names.nameList[i], name) == 0)
+		{
+			size_t vectLen = sortedList->size();
+			for (unsigned int k = 0; k < vectLen; ++k)
+			{
+				if ((*sortedList)[k].index == i) return k;
+			}
+		}
+	}
+	return -1;
+}
+
+void CARImageList::Sort()
+{
+	if (reservedSize == -1) return; // nothing to sort in an empty list
+	std::sort(sortedList->begin(),sortedList->end());
+}
+
+string CARImageList::ImageGetURL(unsigned int index, int rootLevel)
+{
+	stringstream strmTmp;
+	strmTmp << CWebUtil::RootPath(rootLevel) << "image/" << index << "/" << CWebUtil::DocName("index");
+	return CWebUtil::Link(ImageGetName(index), strmTmp.str(), "image.gif", rootLevel); 
+}
+
+void CARImageList::AddReference(const CImageRefItem &referenceItem)
+{
+	referenceList.push_back(referenceItem);
 }
 #endif

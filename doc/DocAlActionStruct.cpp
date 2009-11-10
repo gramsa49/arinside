@@ -238,8 +238,8 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 						CFieldRefItem *refItemField1 = new CFieldRefItem();
 						refItemField1->arsStructItemType = this->structItemType;
 						refItemField1->fromName = this->obj->name;						
-						refItemField1->schemaInsideId = schema1->insideId;
-						refItemField1->fieldInsideId = tmpField1->insideId;
+						refItemField1->schemaInsideId = schema1->GetInsideId();
+						refItemField1->fieldInsideId = tmpField1->GetInsideId();
 
 						stringstream strmTmpDesc;
 						strmTmpDesc.str("");
@@ -252,8 +252,8 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 						CFieldRefItem *refItemField2 = new CFieldRefItem();
 						refItemField2->arsStructItemType = this->structItemType;
 						refItemField2->fromName = this->obj->name;						
-						refItemField2->schemaInsideId = schema2->insideId;
-						refItemField2->fieldInsideId = tmpField2->insideId;
+						refItemField2->schemaInsideId = schema2->GetInsideId();
+						refItemField2->fieldInsideId = tmpField2->GetInsideId();
 
 						strmTmpDesc.str("");
 						strmTmpDesc << description << " (All Matching Ids) [Value] " << ifElse << "-Action " << nAction;
@@ -265,9 +265,9 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 						//Matching ID
 						CTableRow row("cssStdRow");		
 						row.AddCell(CTableCell(tmpField1->fieldId));
-						row.AddCell(CTableCell(arIn->LinkToField(schema1->name, tmpField1->insideId, this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema1->name, tmpField1->GetInsideId(), this->rootLevel)));
 						row.AddCell(CTableCell(tmpField2->fieldId));
-						row.AddCell(CTableCell(arIn->LinkToField(schema2->name, tmpField2->insideId, this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema2->name, tmpField2->GetInsideId(), this->rootLevel)));
 						tblListField.AddRow(row);
 					}
 				}
@@ -1307,7 +1307,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 					{
 						stringstream tmpDesc;
 						tmpDesc << "Open Window SortBy " << ifElse << "-Action " << nAction;
-						CFieldRefItem refItem(structItemType, this->obj->name, tmpDesc.str(), action.sortOrderList.sortList[i].fieldId, rSchema->insideId);
+						CFieldRefItem refItem(structItemType, this->obj->GetName(), tmpDesc.str(), action.sortOrderList.sortList[i].fieldId, rSchema->GetInsideId());
 						arIn->AddReferenceItem(&refItem);
 					}
 				}

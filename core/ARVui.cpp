@@ -18,8 +18,8 @@
 #include "ARVui.h"
 
 CARVui::CARVui(int insideId)
+: CARServerObjectWithData(insideId)
 {	
-	this->insideId = insideId;
 	this->vuiType = 0;
 
 	this->objPropList.props = NULL;
@@ -35,7 +35,7 @@ CARVui::~CARVui(void)
 	}
 }
 
-string CARVui::GetURL(int rootLevel)
+string CARVui::GetURL(int rootLevel, bool showImage)
 {
 	stringstream tmp;
 	tmp.str("");

@@ -51,6 +51,8 @@ namespace OUTPUT
 		static string LinkToFilterGuideIndex(int objectCount, int rootLevel);
 		static string LinkToGroupIndex(int rootLevel);
 		static string LinkToGroupIndex(int objectCount, int rootLevel);
+		static string LinkToImageIndex(int rootLevel);
+		static string LinkToImageIndex(int objectCount, int rootLevel);
 		static string LinkToMenuIndex(int rootLevel);
 		static string LinkToMenuIndex(int objectCount, int rootLevel);
 		static string LinkToPackingListIndex(int rootLevel);

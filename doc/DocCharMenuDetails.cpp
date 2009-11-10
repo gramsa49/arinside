@@ -389,7 +389,7 @@ string CDocCharMenuDetails::RelatedFields()
 					{
 						CTableRow row("cssStdRow");		
 						CTableCell cellFieldName(field->GetURL(rootLevel), "");				
-						CTableCell cellFieldId(field->insideId, "");
+						CTableCell cellFieldId(field->GetInsideId(), "");
 						CTableCell cellForm(schema->GetURL(rootLevel), "");
 
 						row.AddCell(cellFieldName);

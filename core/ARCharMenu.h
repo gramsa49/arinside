@@ -18,7 +18,7 @@
 #include "ARServerObject.h"
 
 class CARCharMenu :
-	public CARServerObject
+	public CARServerObjectWithData
 {
 public:
 	CARCharMenu(string name, int insideId);
@@ -28,5 +28,6 @@ public:
 	ARCharMenuStruct menuDefn;
 	ARPropList objPropList;
 
-	string GetURL(int rootLevel);
+	string GetURL(int rootLevel, bool showImage = true);
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_CHAR_MENU; }
 };

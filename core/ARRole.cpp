@@ -17,7 +17,8 @@
 #include "stdafx.h"
 #include "ARRole.h"
 
-CARRole::CARRole(string requestId)
+CARRole::CARRole(int insideId, string requestId)
+: CARDataObject(insideId)
 {
 	this->requestId = requestId;
 }

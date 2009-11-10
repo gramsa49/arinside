@@ -32,12 +32,12 @@ CTableCell::CTableCell(int content)
 	this->content = strm.str();
 }
 
-CTableCell::CTableCell(string content)
+CTableCell::CTableCell(const string &content)
 {
 	this->content = content;
 }
 
-CTableCell::CTableCell(string content, string cssClass)
+CTableCell::CTableCell(const string& content, const string& cssClass)
 {
 	this->content = content;
 
@@ -45,7 +45,7 @@ CTableCell::CTableCell(string content, string cssClass)
 		this->cssClass = cssClass;
 }
 
-CTableCell::CTableCell(int content, string cssClass)
+CTableCell::CTableCell(int content, const string &cssClass)
 {
 	stringstream strm;
 	strm << content;

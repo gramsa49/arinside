@@ -45,11 +45,11 @@ void CDocVuiDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->pSchema->name, CWebUtil::DocName("index"), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CWebUtil::DocName("form_vui_list"), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->pVui->name) << endl;
-		contHeadStrm << " (Id: " << this->pVui->insideId << ")" << endl;
+		contHeadStrm << " (Id: " << this->pVui->GetInsideId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Properties
-		webPage.AddContent(CARProplistHelper::GetList(this->pVui->objPropList));
+		webPage.AddContent(CARProplistHelper::GetList(this->pVui->objPropList, this));
 
 		webPage.AddContent(this->FieldProperties(fName).ToXHtml());
 
@@ -89,7 +89,7 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 			CARField *field = &(*fieldIter);
 			for(unsigned int i=0; i< field->dInstanceList.numItems; i++)
 			{
-				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->insideId)
+				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->GetInsideId())
 				{
 					for(unsigned int j=0; j< field->dInstanceList.dInstanceList[i].props.numItems; j++)
 					{
@@ -154,7 +154,7 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 			CARField *field = &(*fieldIter);
 			for(unsigned int i=0; i< field->dInstanceList.numItems; i++)
 			{
-				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->insideId)
+				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->GetInsideId())
 				{
 					for(unsigned int j=0; j< field->dInstanceList.dInstanceList[i].props.numItems; j++)
 					{
@@ -194,4 +194,27 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 	}
 
 	return tbl;
+}
+
+bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStruct &value, std::string &displayValue)
+{
+	switch (propId)
+	{
+	case AR_DPROP_DETAIL_PANE_IMAGE:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		if (value.dataType == AR_DATA_TYPE_CHAR)
+		{
+			int imageIndex = pInside->imageList.FindImage(value.u.charVal);
+			if (imageIndex < 0) return false;
+
+			displayValue = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
+			
+			CImageRefItem refItem(imageIndex,"Background in VUI of Form " + this->pSchema->GetURL(rootLevel), pVui);
+			pInside->imageList.AddReference(refItem);
+			return true;
+		}
+#endif
+		break;
+	}
+	return false;
 }

@@ -81,12 +81,13 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 				{
 					if (values.entryList[row].entryValues->fieldValueList[0].value.u.charVal == NULL) continue;
 					
-					CARGroup grp(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
+					CARGroup grp(
+						values.entryList[row].entryValues->fieldValueList[2].value.u.intVal, /* Group ID */
+						values.entryList[row].entryValues->fieldValueList[0].value.u.charVal /* Requrest ID */ );
 					grp.groupName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
 					grp.name = grp.groupName;
 					grp.comparableName = CUtil::String2Comp(grp.groupName);
 					grp.groupId   = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
-					grp.insideId  = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
 					grp.groupType	= values.entryList[row].entryValues->fieldValueList[3].value.u.intVal;
 
 					if(values.entryList[row].entryValues->fieldValueList[4].value.u.charVal != NULL)
@@ -122,79 +123,79 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 }
 
 // TODO: function currently unused
-CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
-{
-	CARGroup *grp = new CARGroup(requestId);
-	try
-	{
-		ARInternalIdList idList;
-		ARFieldValueList fieldList;
-
-		idList.numItems = 9;
-		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
-		idList.internalIdList[0] = 1;		//RequestId
-		idList.internalIdList[1] = 105;		//GroupName
-		idList.internalIdList[2] = 106;		//GroupId
-		idList.internalIdList[3] = 107;		//GroupType
-		idList.internalIdList[4] = 8;		//LongGroupName
-		idList.internalIdList[5] = 2;		//CreatedBy
-		idList.internalIdList[6] = 3;		//Created
-		idList.internalIdList[7] = 5;		//ModifiedBy
-		idList.internalIdList[8] = 6;		//Modified
-
-		AREntryIdList entryId;
-		entryId.numItems=1;
-		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
-		strcpy(entryId.entryIdList[0], requestId.c_str());
-
-		if(ARGetEntry(this->pControl,
-			schemaName,
-			&entryId,
-			&idList,
-			&fieldList,
-			this->pStatus) == AR_RETURN_OK)
-		{      
-			grp->groupName = fieldList.fieldValueList[1].value.u.charVal;
-			grp->name = grp->groupName;
-
-			grp->groupId   = fieldList.fieldValueList[2].value.u.intVal;
-			grp->insideId  = fieldList.fieldValueList[2].value.u.intVal;
-			grp->groupType	= fieldList.fieldValueList[3].value.u.intVal;
-
-			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
-				grp->longGroupName = fieldList.fieldValueList[4].value.u.charVal;
-
-			if(fieldList.fieldValueList[5].value.u.charVal != NULL)
-				grp->createdBy = fieldList.fieldValueList[5].value.u.charVal;
-
-			if(fieldList.fieldValueList[6].value.u.timeVal != NULL)
-				grp->created = fieldList.fieldValueList[6].value.u.timeVal;
-
-			if(fieldList.fieldValueList[7].value.u.charVal != NULL)
-				grp->modifiedBy = fieldList.fieldValueList[7].value.u.charVal;
-
-			if(fieldList.fieldValueList[8].value.u.timeVal != NULL)
-				grp->modified = fieldList.fieldValueList[8].value.u.timeVal;
-
-			LOG << "Group '" << grp->groupName <<"' [OK]" << endl;		
-		}
-		else
-		{
-			LOG << "Group '" << requestId <<"' [ERROR]" << endl;		
-		}
-
-
-		delete[] entryId.entryIdList;
-		delete idList.internalIdList;	
-		FreeARFieldValueList(&fieldList,  false);
-	}
-	catch(exception& e)
-	{		
-		cout << "WARNING error loading group '" << requestId << "': " << e.what() << endl;
-	}
-
-	return *grp;
-}
+//CARGroup CARDataFactory::LoadGroup(ARNameType &schemaName, string requestId)
+//{
+//	CARGroup *grp = new CARGroup(requestId);
+//	try
+//	{
+//		ARInternalIdList idList;
+//		ARFieldValueList fieldList;
+//
+//		idList.numItems = 9;
+//		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
+//		idList.internalIdList[0] = 1;		//RequestId
+//		idList.internalIdList[1] = 105;		//GroupName
+//		idList.internalIdList[2] = 106;		//GroupId
+//		idList.internalIdList[3] = 107;		//GroupType
+//		idList.internalIdList[4] = 8;		//LongGroupName
+//		idList.internalIdList[5] = 2;		//CreatedBy
+//		idList.internalIdList[6] = 3;		//Created
+//		idList.internalIdList[7] = 5;		//ModifiedBy
+//		idList.internalIdList[8] = 6;		//Modified
+//
+//		AREntryIdList entryId;
+//		entryId.numItems=1;
+//		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
+//		strcpy(entryId.entryIdList[0], requestId.c_str());
+//
+//		if(ARGetEntry(this->pControl,
+//			schemaName,
+//			&entryId,
+//			&idList,
+//			&fieldList,
+//			this->pStatus) == AR_RETURN_OK)
+//		{      
+//			grp->groupName = fieldList.fieldValueList[1].value.u.charVal;
+//			grp->name = grp->groupName;
+//
+//			grp->groupId   = fieldList.fieldValueList[2].value.u.intVal;
+//			grp->insideId  = fieldList.fieldValueList[2].value.u.intVal;
+//			grp->groupType	= fieldList.fieldValueList[3].value.u.intVal;
+//
+//			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
+//				grp->longGroupName = fieldList.fieldValueList[4].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[5].value.u.charVal != NULL)
+//				grp->createdBy = fieldList.fieldValueList[5].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[6].value.u.timeVal != NULL)
+//				grp->created = fieldList.fieldValueList[6].value.u.timeVal;
+//
+//			if(fieldList.fieldValueList[7].value.u.charVal != NULL)
+//				grp->modifiedBy = fieldList.fieldValueList[7].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[8].value.u.timeVal != NULL)
+//				grp->modified = fieldList.fieldValueList[8].value.u.timeVal;
+//
+//			LOG << "Group '" << grp->groupName <<"' [OK]" << endl;		
+//		}
+//		else
+//		{
+//			LOG << "Group '" << requestId <<"' [ERROR]" << endl;		
+//		}
+//
+//
+//		delete[] entryId.entryIdList;
+//		delete idList.internalIdList;	
+//		FreeARFieldValueList(&fieldList,  false);
+//	}
+//	catch(exception& e)
+//	{		
+//		cout << "WARNING error loading group '" << requestId << "': " << e.what() << endl;
+//	}
+//
+//	return *grp;
+//}
 
 bool CARDataFactory::SortGroupsByName(const CARGroup& t1, const CARGroup& t2 )
 {
@@ -261,8 +262,7 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 				{
 					if (values.entryList[row].entryValues->fieldValueList[0].value.u.charVal == NULL) continue;
 
-					CARUser arUser(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
-					arUser.insideId = row;
+					CARUser arUser(row, values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
 
 					if(values.entryList[row].entryValues->fieldValueList[1].value.u.charVal != NULL)
 					{
@@ -323,108 +323,108 @@ void CARDataFactory::GetListUser(AppConfig &appConfig, list<CARUser> &listResult
 }
 
 // TODO: function currently unused
-CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int insideId)
-{
-	CARInside* pInside = CARInside::GetInstance();
-	CARUser *arUser = new CARUser(requestId);
-	try
-	{
-		ARInternalIdList idList;
-		ARFieldValueList fieldList;
-
-		idList.numItems = 12;
-		idList.internalIdList = (ARInternalId *) new ARInternalId[idList.numItems];
-
-		idList.internalIdList[0] = 1;		//RequestId
-		idList.internalIdList[1] = 101;		//LoginName
-		idList.internalIdList[2] = 103;		//Email
-		idList.internalIdList[3] = 104;		//GroupList
-		idList.internalIdList[4] = 8;		//FullName
-		idList.internalIdList[5] = 108;		//DefNorify
-		idList.internalIdList[6] = 109;		//LicType
-		idList.internalIdList[7] = 110;		//FtLicType
-		idList.internalIdList[8] = 2;		//CreatedBy
-		idList.internalIdList[9] = 3;		//Created
-		idList.internalIdList[10] = 5;		//ModifiedBy
-		idList.internalIdList[11] = 6;		//Modified	
-
-		AREntryIdList entryId;
-		entryId.numItems=1;
-		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
-		strcpy(entryId.entryIdList[0], requestId.c_str());
-
-		if( ARGetEntry(this->pControl,
-			schemaName,
-			&entryId,
-			&idList,
-			&fieldList,
-			this->pStatus) ==  AR_RETURN_OK)
-		{				
-			arUser->insideId = insideId;
-
-			if(fieldList.fieldValueList[1].value.u.charVal != NULL)
-			{
-				arUser->loginName = fieldList.fieldValueList[1].value.u.charVal;
-				arUser->name = arUser->loginName;
-			}
-
-			if(fieldList.fieldValueList[2].value.u.charVal != NULL)
-				arUser->email = fieldList.fieldValueList[2].value.u.charVal;
-
-			arUser->groupList.clear();
-			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
-			{
-				string tmpGroupList = fieldList.fieldValueList[3].value.u.charVal;
-				//				CUtil::SplitString(tmpGroupList, ";", arUser->groupList, false);
-
-				CUtil::SplitString(tmpGroupList, arUser->groupList);
-
-			}
-
-			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
-				arUser->fullName = fieldList.fieldValueList[4].value.u.charVal;
-
-			if(fieldList.fieldValueList[5].value.u.intVal != NULL)
-				arUser->defNotify = fieldList.fieldValueList[5].value.u.intVal;
-
-			if(fieldList.fieldValueList[6].value.u.intVal != NULL)			
-				arUser->licenseType = fieldList.fieldValueList[6].value.u.intVal;
-
-			if(fieldList.fieldValueList[7].value.u.intVal != NULL)		
-				arUser->ftLicenseType = fieldList.fieldValueList[7].value.u.intVal;
-
-			if(fieldList.fieldValueList[8].value.u.charVal != NULL)
-				arUser->createdBy = fieldList.fieldValueList[8].value.u.charVal;
-
-			if(fieldList.fieldValueList[9].value.u.timeVal != NULL)
-				arUser->created = fieldList.fieldValueList[9].value.u.timeVal;
-
-			if(fieldList.fieldValueList[10].value.u.charVal != NULL)
-				arUser->modifiedBy = fieldList.fieldValueList[10].value.u.charVal;
-
-			if(fieldList.fieldValueList[11].value.u.timeVal != NULL)
-				arUser->modified = fieldList.fieldValueList[11].value.u.timeVal;
-
-			LOG << "User '" << arUser->loginName <<"' [OK]" << endl;
-		}
-		else
-		{
-			cerr << "Retrieving User '" << requestId <<"' failed!" << endl;
-			cerr << pInside->GetARStatusError(this->pStatus);
-		}
-
-		delete[] entryId.entryIdList;
-		delete[] idList.internalIdList;	
-		FreeARFieldValueList(&fieldList,  false);
-		FreeARStatusList(this->pStatus, false);
-	}
-	catch(exception& e)
-	{		
-		cout << "WARNING error loading user '" << requestId << "': " << e.what() << endl;
-	}
-
-	return *arUser;
-}
+//CARUser CARDataFactory::LoadUser(ARNameType &schemaName, string requestId, int insideId)
+//{
+//	CARInside* pInside = CARInside::GetInstance();
+//	CARUser *arUser = new CARUser(requestId);
+//	try
+//	{
+//		ARInternalIdList idList;
+//		ARFieldValueList fieldList;
+//
+//		idList.numItems = 12;
+//		idList.internalIdList = (ARInternalId *) new ARInternalId[idList.numItems];
+//
+//		idList.internalIdList[0] = 1;		//RequestId
+//		idList.internalIdList[1] = 101;		//LoginName
+//		idList.internalIdList[2] = 103;		//Email
+//		idList.internalIdList[3] = 104;		//GroupList
+//		idList.internalIdList[4] = 8;		//FullName
+//		idList.internalIdList[5] = 108;		//DefNorify
+//		idList.internalIdList[6] = 109;		//LicType
+//		idList.internalIdList[7] = 110;		//FtLicType
+//		idList.internalIdList[8] = 2;		//CreatedBy
+//		idList.internalIdList[9] = 3;		//Created
+//		idList.internalIdList[10] = 5;		//ModifiedBy
+//		idList.internalIdList[11] = 6;		//Modified	
+//
+//		AREntryIdList entryId;
+//		entryId.numItems=1;
+//		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
+//		strcpy(entryId.entryIdList[0], requestId.c_str());
+//
+//		if( ARGetEntry(this->pControl,
+//			schemaName,
+//			&entryId,
+//			&idList,
+//			&fieldList,
+//			this->pStatus) ==  AR_RETURN_OK)
+//		{				
+//			arUser->insideId = insideId;
+//
+//			if(fieldList.fieldValueList[1].value.u.charVal != NULL)
+//			{
+//				arUser->loginName = fieldList.fieldValueList[1].value.u.charVal;
+//				arUser->name = arUser->loginName;
+//			}
+//
+//			if(fieldList.fieldValueList[2].value.u.charVal != NULL)
+//				arUser->email = fieldList.fieldValueList[2].value.u.charVal;
+//
+//			arUser->groupList.clear();
+//			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
+//			{
+//				string tmpGroupList = fieldList.fieldValueList[3].value.u.charVal;
+//				//				CUtil::SplitString(tmpGroupList, ";", arUser->groupList, false);
+//
+//				CUtil::SplitString(tmpGroupList, arUser->groupList);
+//
+//			}
+//
+//			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
+//				arUser->fullName = fieldList.fieldValueList[4].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[5].value.u.intVal != NULL)
+//				arUser->defNotify = fieldList.fieldValueList[5].value.u.intVal;
+//
+//			if(fieldList.fieldValueList[6].value.u.intVal != NULL)			
+//				arUser->licenseType = fieldList.fieldValueList[6].value.u.intVal;
+//
+//			if(fieldList.fieldValueList[7].value.u.intVal != NULL)		
+//				arUser->ftLicenseType = fieldList.fieldValueList[7].value.u.intVal;
+//
+//			if(fieldList.fieldValueList[8].value.u.charVal != NULL)
+//				arUser->createdBy = fieldList.fieldValueList[8].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[9].value.u.timeVal != NULL)
+//				arUser->created = fieldList.fieldValueList[9].value.u.timeVal;
+//
+//			if(fieldList.fieldValueList[10].value.u.charVal != NULL)
+//				arUser->modifiedBy = fieldList.fieldValueList[10].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[11].value.u.timeVal != NULL)
+//				arUser->modified = fieldList.fieldValueList[11].value.u.timeVal;
+//
+//			LOG << "User '" << arUser->loginName <<"' [OK]" << endl;
+//		}
+//		else
+//		{
+//			cerr << "Retrieving User '" << requestId <<"' failed!" << endl;
+//			cerr << pInside->GetARStatusError(this->pStatus);
+//		}
+//
+//		delete[] entryId.entryIdList;
+//		delete[] idList.internalIdList;	
+//		FreeARFieldValueList(&fieldList,  false);
+//		FreeARStatusList(this->pStatus, false);
+//	}
+//	catch(exception& e)
+//	{		
+//		cout << "WARNING error loading user '" << requestId << "': " << e.what() << endl;
+//	}
+//
+//	return *arUser;
+//}
 
 bool CARDataFactory::SortUsersByName(const CARUser& t1, const CARUser& t2 )
 {
@@ -489,8 +489,7 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 				{
 					if (values.entryList[row].entryValues->fieldValueList[0].value.u.charVal == NULL) continue;
 
-					CARRole role(values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
-					role.insideId = row;
+					CARRole role(row, values.entryList[row].entryValues->fieldValueList[0].value.u.charVal);
 
 					if(values.entryList[row].entryValues->fieldValueList[1].value.u.charVal != NULL)
 						role.applicationName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
@@ -562,112 +561,112 @@ void CARDataFactory::GetListRoles(AppConfig &appConfig, list<CARRole> &listResul
 }
 
 // TODO: function currently unused
-CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int insideId)
-{	
-	CARRole *role = new CARRole(requestId);
-
-	try
-	{
-		ARInternalIdList idList;
-		ARFieldValueList fieldList;
-
-		idList.numItems = 10;
-		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
-		idList.internalIdList[0] = 1;		//RequestId
-		idList.internalIdList[1] = 1700;	//ApplicationName
-		idList.internalIdList[2] = 1701;	//RoleName
-		idList.internalIdList[3] = 1702;	//RoleID
-		idList.internalIdList[4] = 2001;	//GroupName Test
-		idList.internalIdList[5] = 2002;	//GroupName Production
-		idList.internalIdList[6] = 2;		//CreatedBy
-		idList.internalIdList[7] = 3;		//Created
-		idList.internalIdList[8] = 5;		//ModifiedBy
-		idList.internalIdList[9] = 6;		//Modified
-
-		AREntryIdList entryId;
-		entryId.numItems=1;
-		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
-		strcpy(entryId.entryIdList[0], requestId.c_str());
-
-		if(ARGetEntry(this->pControl,
-			schemaName,
-			&entryId,
-			&idList,
-			&fieldList,
-			this->pStatus) == AR_RETURN_OK)
-		{   
-			role->insideId = insideId;
-
-			if(fieldList.fieldValueList[1].value.u.charVal != NULL)
-				role->applicationName = fieldList.fieldValueList[1].value.u.charVal;
-
-			if(fieldList.fieldValueList[2].value.u.charVal != NULL)
-			{
-				role->roleName = fieldList.fieldValueList[2].value.u.charVal;
-				role->name = role->roleName;
-				role->comparableRoleName = role->roleName;
-			}
-
-			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
-				role->roleId = fieldList.fieldValueList[3].value.u.intVal;
-
-			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
-			{
-				string tmp = fieldList.fieldValueList[4].value.u.charVal;
-
-				vector<string> tmpGroupList;
-				tmpGroupList.clear();
-
-				//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
-				CUtil::SplitString(tmp, tmpGroupList);
-
-				role->testGroupId = atoi(tmpGroupList[0].c_str());
-			}
-
-			if(fieldList.fieldValueList[5].value.u.charVal != NULL)
-			{
-				string tmp = fieldList.fieldValueList[5].value.u.charVal;
-
-				vector<string> tmpGroupList;
-				tmpGroupList.clear();
-
-				//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
-				CUtil::SplitString(tmp, tmpGroupList);
-
-
-				role->productionGroupId = atoi(tmpGroupList[0].c_str());
-			}
-
-			if(fieldList.fieldValueList[6].value.u.charVal != NULL)
-				role->createdBy = fieldList.fieldValueList[6].value.u.charVal;
-
-			if(fieldList.fieldValueList[7].value.u.timeVal != NULL)
-				role->created = fieldList.fieldValueList[7].value.u.timeVal;
-
-			if(fieldList.fieldValueList[8].value.u.charVal != NULL)
-				role->modifiedBy = fieldList.fieldValueList[8].value.u.charVal;
-
-			if(fieldList.fieldValueList[9].value.u.timeVal != NULL)
-				role->modified = fieldList.fieldValueList[9].value.u.timeVal;
-
-			LOG << "Role '" << role->roleName <<"' [OK]" << endl;		
-		}
-		else
-		{
-			LOG << "Role '" << requestId <<"' [ERROR]" << endl;		
-		}
-
-		delete[] entryId.entryIdList;
-		delete idList.internalIdList;	
-		FreeARFieldValueList(&fieldList,  false);
-	}
-	catch(exception& e)
-	{		
-		cout << "WARNING error loading role '" << requestId << "': " << e.what() << endl;
-	}
-
-	return *role;
-}
+//CARRole CARDataFactory::LoadRole(ARNameType &schemaName, string requestId, int insideId)
+//{	
+//	CARRole *role = new CARRole(requestId);
+//
+//	try
+//	{
+//		ARInternalIdList idList;
+//		ARFieldValueList fieldList;
+//
+//		idList.numItems = 10;
+//		idList.internalIdList = (ARInternalId *) malloc (sizeof(ARInternalId)* idList.numItems);			
+//		idList.internalIdList[0] = 1;		//RequestId
+//		idList.internalIdList[1] = 1700;	//ApplicationName
+//		idList.internalIdList[2] = 1701;	//RoleName
+//		idList.internalIdList[3] = 1702;	//RoleID
+//		idList.internalIdList[4] = 2001;	//GroupName Test
+//		idList.internalIdList[5] = 2002;	//GroupName Production
+//		idList.internalIdList[6] = 2;		//CreatedBy
+//		idList.internalIdList[7] = 3;		//Created
+//		idList.internalIdList[8] = 5;		//ModifiedBy
+//		idList.internalIdList[9] = 6;		//Modified
+//
+//		AREntryIdList entryId;
+//		entryId.numItems=1;
+//		entryId.entryIdList=(AREntryIdType *)malloc(sizeof(AREntryIdType));
+//		strcpy(entryId.entryIdList[0], requestId.c_str());
+//
+//		if(ARGetEntry(this->pControl,
+//			schemaName,
+//			&entryId,
+//			&idList,
+//			&fieldList,
+//			this->pStatus) == AR_RETURN_OK)
+//		{   
+//			role->insideId = insideId;
+//
+//			if(fieldList.fieldValueList[1].value.u.charVal != NULL)
+//				role->applicationName = fieldList.fieldValueList[1].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[2].value.u.charVal != NULL)
+//			{
+//				role->roleName = fieldList.fieldValueList[2].value.u.charVal;
+//				role->name = role->roleName;
+//				role->comparableRoleName = role->roleName;
+//			}
+//
+//			if(fieldList.fieldValueList[3].value.u.charVal != NULL)
+//				role->roleId = fieldList.fieldValueList[3].value.u.intVal;
+//
+//			if(fieldList.fieldValueList[4].value.u.charVal != NULL)
+//			{
+//				string tmp = fieldList.fieldValueList[4].value.u.charVal;
+//
+//				vector<string> tmpGroupList;
+//				tmpGroupList.clear();
+//
+//				//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
+//				CUtil::SplitString(tmp, tmpGroupList);
+//
+//				role->testGroupId = atoi(tmpGroupList[0].c_str());
+//			}
+//
+//			if(fieldList.fieldValueList[5].value.u.charVal != NULL)
+//			{
+//				string tmp = fieldList.fieldValueList[5].value.u.charVal;
+//
+//				vector<string> tmpGroupList;
+//				tmpGroupList.clear();
+//
+//				//				CUtil::SplitString(tmp, ";", tmpGroupList, false);
+//				CUtil::SplitString(tmp, tmpGroupList);
+//
+//
+//				role->productionGroupId = atoi(tmpGroupList[0].c_str());
+//			}
+//
+//			if(fieldList.fieldValueList[6].value.u.charVal != NULL)
+//				role->createdBy = fieldList.fieldValueList[6].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[7].value.u.timeVal != NULL)
+//				role->created = fieldList.fieldValueList[7].value.u.timeVal;
+//
+//			if(fieldList.fieldValueList[8].value.u.charVal != NULL)
+//				role->modifiedBy = fieldList.fieldValueList[8].value.u.charVal;
+//
+//			if(fieldList.fieldValueList[9].value.u.timeVal != NULL)
+//				role->modified = fieldList.fieldValueList[9].value.u.timeVal;
+//
+//			LOG << "Role '" << role->roleName <<"' [OK]" << endl;		
+//		}
+//		else
+//		{
+//			LOG << "Role '" << requestId <<"' [ERROR]" << endl;		
+//		}
+//
+//		delete[] entryId.entryIdList;
+//		delete idList.internalIdList;	
+//		FreeARFieldValueList(&fieldList,  false);
+//	}
+//	catch(exception& e)
+//	{		
+//		cout << "WARNING error loading role '" << requestId << "': " << e.what() << endl;
+//	}
+//
+//	return *role;
+//}
 
 bool CARDataFactory::SortRolesByName(const CARRole& t1, const CARRole& t2 )
 {

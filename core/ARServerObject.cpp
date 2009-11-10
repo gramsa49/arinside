@@ -17,7 +17,8 @@
 #include "stdafx.h"
 #include "ARServerObject.h"
 
-CARServerObject::CARServerObject(void)
+CARServerObjectWithData::CARServerObjectWithData(int insideId)
+: CARServerObject(insideId)
 {		
 	helptext = "";
 	timestamp = 0;	
@@ -26,6 +27,6 @@ CARServerObject::CARServerObject(void)
 	appRefName = "";
 }
 
-CARServerObject::~CARServerObject(void)
+CARServerObjectWithData::~CARServerObjectWithData(void)
 {
 }

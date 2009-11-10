@@ -20,18 +20,45 @@
 
 using namespace OUTPUT;
 
-class CARServerObject :
-	public CARObject
+class CARServerObject : public CARObject
 {
 public:
-	CARServerObject(void);
-	~CARServerObject(void);
+	CARServerObject(int insideId) : CARObject(insideId) {}
 
-	char					*helptext;
-	ARTimestamp				timestamp;
-	ARAccessNameType		owner;
-	ARAccessNameType		lastChanged;
-	char					*changeDiary;		
-	unsigned int			xmlDocVersion;
-	string					appRefName;
+	virtual const char* GetHelpText() = 0;
+	virtual ARTimestamp GetTimestamp() = 0;
+	virtual const ARAccessNameType& GetOwner() = 0;
+	virtual const ARAccessNameType& GetLastChanged() = 0;
+	virtual const char* GetChangeDiary() = 0;
+	virtual string GetURL(int rootLevel, bool showImage = true) = 0;
+	virtual int GetServerObjectTypeXML() = 0;
+};
+
+class CARServerObjectWithData : public CARServerObject
+{
+public:
+	CARServerObjectWithData(int insideId);
+	~CARServerObjectWithData();
+
+	// implement function inherited from CARServerObject
+	const char* GetHelpText() { return helptext; }
+	ARTimestamp GetTimestamp() { return timestamp; }
+	const ARAccessNameType& GetOwner() { return owner; }
+	const ARAccessNameType& GetLastChanged() { return lastChanged; }
+	const char* GetChangeDiary() { return changeDiary; }
+
+	// implement function inherited from CARObject
+	string GetName() { return name; }
+	string GetName() const { return name; }
+	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
+	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
+
+	string              name;
+	char                *helptext;
+	ARTimestamp         timestamp;
+	ARAccessNameType    owner;
+	ARAccessNameType    lastChanged;
+	char                *changeDiary;		
+	unsigned int        xmlDocVersion;
+	string              appRefName;
 };

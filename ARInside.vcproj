@@ -359,7 +359,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Core"
+			Name="core"
 			>
 			<File
 				RelativePath=".\Core\ARActiveLink.cpp"
@@ -459,6 +459,14 @@
 			</File>
 			<File
 				RelativePath=".\Core\ARGroup.h"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARImage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARImage.h"
 				>
 			</File>
 			<File
@@ -567,7 +575,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Doc"
+			Name="doc"
 			>
 			<File
 				RelativePath=".\doc\DocActionOpenWindowHelper.cpp"
@@ -698,6 +706,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocImageDetails.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocImageDetails.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocMain.cpp"
 				>
 			</File>
@@ -779,7 +795,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Output"
+			Name="output"
 			>
 			<File
 				RelativePath=".\Output\AlTable.cpp"
@@ -827,6 +843,14 @@
 			</File>
 			<File
 				RelativePath=".\Output\GroupTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\output\ImageTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\ImageTable.h"
 				>
 			</File>
 			<File
@@ -943,7 +967,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Res"
+			Name="res"
 			>
 			<File
 				RelativePath=".\Res\active_link.gif"
@@ -1368,7 +1392,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Tclap"
+			Name="tclap"
 			>
 			<File
 				RelativePath=".\Tclap\Arg.h"
@@ -1456,7 +1480,7 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="Util"
+			Name="util"
 			>
 			<File
 				RelativePath=".\Util\AppTimer.cpp"
@@ -1483,11 +1507,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\ImageRefItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\ImageRefItem.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Util\MissingMenuRefItem.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\Util\MissingMenuRefItem.h"
+				>
+			</File>
+			<File
+				RelativePath=".\util\Uncopyable.h"
 				>
 			</File>
 			<File
