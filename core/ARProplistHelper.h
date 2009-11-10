@@ -23,10 +23,31 @@ using namespace OUTPUT;
 class CARProplistHelper
 {
 public:
+	/// This is a callback interface used to customize the html output of a property list.
+	class CARPropertyCallback
+	{
+	public:
+		/** 
+		 * <summary>
+		 * the following function is called by CARProplistHelper::GetList to allow the caller
+		 * to ouput properties in a special format
+		 * </summary>
+		 * <param name="propId">contains the id of the property (AR_DPROP..., AR_OPROP..., ...)</param>
+		 * <param name="value">contains the value of the property</param>
+		 * <param name="displayValue">[out] should contain the customized html content of the property</param>
+		 * <returns>Return true if the function has customized the current property. <paramref name="displayValue"/>
+		 * should contain the output content in this case. Return false if the default output formating of the 
+		 * property should take place.</returns>
+		 */
+		virtual bool SpecialPropertyCallback(ARULong32 propId, const ARValueStruct& value, /* out */ string &displayValue) = 0;
+	};
+
+public:
 	CARProplistHelper(ARPropList* propList);
 	~CARProplistHelper(void);
 
-	static string GetList(ARPropList &objPropList);
+	/// Returns the html for a table containing all properties and their values.
+	static string GetList(ARPropList &objPropList, CARPropertyCallback* pcbObj = NULL);
 	static string GetLabel(ARULong32 nProp);
 	static string GetValue(ARULong32 nProp, ARValueStruct &arV);
 

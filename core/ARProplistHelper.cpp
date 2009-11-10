@@ -180,7 +180,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 }
 
 
-string CARProplistHelper::GetList(ARPropList &objPropList)
+string CARProplistHelper::GetList(ARPropList &objPropList, CARPropertyCallback* pcbObj)
 {
 	stringstream strm;
 	strm.str("");
@@ -192,10 +192,15 @@ string CARProplistHelper::GetList(ARPropList &objPropList)
 		tbl.AddColumn(80, "Values");
 
 		for(unsigned int i=0; i< objPropList.numItems; i++)
-		{					
+		{
+			string value;
+
+			if (pcbObj == NULL || !pcbObj->SpecialPropertyCallback(objPropList.props[i].prop, objPropList.props[i].value, value))
+				value = CARProplistHelper::GetValue(objPropList.props[i].prop, objPropList.props[i].value);
+			
 			CTableRow row("");			
-			row.AddCell(CTableCell(CARProplistHelper::GetLabel(objPropList.props[i].prop)));
-			row.AddCell(CTableCell(CARProplistHelper::GetValue(objPropList.props[i].prop, objPropList.props[i].value)));		
+			row.AddCell(CARProplistHelper::GetLabel(objPropList.props[i].prop));
+			row.AddCell(value);		
 			tbl.AddRow(row);			
 		}
 

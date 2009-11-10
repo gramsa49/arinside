@@ -695,6 +695,8 @@ string CDocFieldDetails::DisplayProperties()
 				
 				string value;
 
+				//************** check for special properties here
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				if ((dProperty.prop == AR_DPROP_PUSH_BUTTON_IMAGE || dProperty.prop == AR_DPROP_IMAGE) && dProperty.value.dataType == AR_DATA_TYPE_CHAR)
 				{
 					int imageIndex = pInside->imageList.FindImage(dProperty.value.u.charVal);
@@ -704,15 +706,9 @@ string CDocFieldDetails::DisplayProperties()
 						switch (dProperty.prop)
 						{
 						case AR_DPROP_PUSH_BUTTON_IMAGE:
-							{
-								tmpDesc << "Image used on button of form " << this->pSchema->GetURL(rootLevel, true);
-								CImageRefItem refItem(imageIndex, tmpDesc.str(), pField);
-								pInside->imageList.AddReference(refItem);
-								break;
-							}
 						case AR_DPROP_IMAGE:
 							{
-								tmpDesc << "Image used on panel of form " << this->pSchema->GetURL(rootLevel, true);
+								tmpDesc << "Image on field of form " << this->pSchema->GetURL(rootLevel, true);
 								CImageRefItem refItem(imageIndex, tmpDesc.str(), pField);
 								pInside->imageList.AddReference(refItem);
 								break;
@@ -722,6 +718,13 @@ string CDocFieldDetails::DisplayProperties()
 						value = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
 					}
 				}
+#endif
+				if (dProperty.prop == AR_DPROP_DISPLAY_PARENT && dProperty.value.u.ulongVal > 0)
+				{
+					value = pInside->LinkToField(pSchema->GetInsideId(), dProperty.value.u.ulongVal, rootLevel);
+				}
+				//************** end of special properties
+
 				if (value.empty())
 				{
 					value = CARProplistHelper::GetValue(dProperty.prop, dProperty.value);

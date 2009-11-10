@@ -123,6 +123,7 @@ public:
 	string LinkToFilterRef(CARFilter* filter, int rootLevel);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	string LinkToImage(unsigned int imageIndex, int rootLevel);
+	string LinkToImage(const string &imageName, int rootLevel);
 #endif
 	string LinkToMenu(string menuName, int rootLevel, bool* bFound = NULL);
 	string LinkToSchema(string schemaName, int fromRootLevel);

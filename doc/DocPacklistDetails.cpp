@@ -146,6 +146,25 @@ string CDocPacklistDetails::PackListInformation()
 					}
 				}
 				break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+			case ARREF_IMAGE:
+				{
+					srvType << CAREnum::ContainerRefType(this->pPackList->references.referenceList[i].type);
+
+					int imageIndex = pInside->imageList.FindImage(this->pPackList->references.referenceList[i].reference.u.name);
+					if (imageIndex < 0)
+						srvObj << this->pInside->LinkToImage(this->pPackList->references.referenceList[i].reference.u.name, rootLevel);
+					else
+						srvObj << this->pInside->LinkToImage(imageIndex, rootLevel);
+
+					if (imageIndex >= 0)
+					{
+						CImageRefItem refItem(imageIndex, "Contained in packing list", pPackList);
+						pInside->imageList.AddReference(refItem);
+					}
+				}
+				break;
+#endif
 				}
 			}
 

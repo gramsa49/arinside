@@ -49,7 +49,7 @@ void CDocVuiDetails::Documentation()
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Properties
-		webPage.AddContent(CARProplistHelper::GetList(this->pVui->objPropList));
+		webPage.AddContent(CARProplistHelper::GetList(this->pVui->objPropList, this));
 
 		webPage.AddContent(this->FieldProperties(fName).ToXHtml());
 
@@ -194,4 +194,27 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 	}
 
 	return tbl;
+}
+
+bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStruct &value, std::string &displayValue)
+{
+	switch (propId)
+	{
+	case AR_DPROP_DETAIL_PANE_IMAGE:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		if (value.dataType == AR_DATA_TYPE_CHAR)
+		{
+			int imageIndex = pInside->imageList.FindImage(value.u.charVal);
+			if (imageIndex < 0) return false;
+
+			displayValue = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
+			
+			CImageRefItem refItem(imageIndex,"Background in VUI of Form " + this->pSchema->GetURL(rootLevel), pVui);
+			pInside->imageList.AddReference(refItem);
+			return true;
+		}
+#endif
+		break;
+	}
+	return false;
 }

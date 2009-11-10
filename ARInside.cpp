@@ -3631,5 +3631,18 @@ string CARInside::LinkToImage(unsigned int imageIndex, int rootLevel)
 {
 	return imageList.ImageGetURL(imageIndex, rootLevel);
 }
+
+string CARInside::LinkToImage(const string &imageName, int rootLevel)
+{
+	int imageIndex = imageList.FindImage(imageName.c_str());
+	if (imageIndex < 0)
+	{
+		return "<span class=\"fieldNotFound\">" + imageName + "</span>";
+	}
+	else
+	{
+		return LinkToImage(imageIndex, rootLevel);
+	}
+}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
