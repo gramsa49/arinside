@@ -862,6 +862,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\NavigationPage.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\NavigationPage.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Output\ObjectTable.cpp"
 				>
 			</File>

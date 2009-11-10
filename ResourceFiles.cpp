@@ -28,8 +28,8 @@ CResourceFiles::~CResourceFiles(void)
 void CResourceFiles::Load(AppConfig &appConfig)
 {
 	stringstream strm;	
-	strm << appConfig.targetFolder << "\\" << "template" << "\\";
-	LoadFromResource("NAVIGATION_HTM", "navigation.htm", strm.str());
+	//strm << appConfig.targetFolder << "\\" << "template" << "\\";
+	//LoadFromResource("NAVIGATION_HTM", "navigation.htm", strm.str());
 
 	strm.str("");
 	strm << appConfig.targetFolder << "\\" << "img" << "\\";	

@@ -939,6 +939,9 @@ void CDocMain::RoleList(string fileName, string searchChar)
 void CDocMain::ImageList(string fileName, string searchChar)
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	// server version older than 7.5 ?? then there are no files to generate
+	if (pInside->CompareServerVersion(7,5) < 0) return;
+
 	if (searchChar.size() != 1) return;
 
 	try
@@ -980,9 +983,9 @@ void CDocMain::ImageList(string fileName, string searchChar)
 		webPage.AddContent(imgTable.Print());
 		webPage.SaveInFolder("image");
 	}
-	catch (...)
+	catch(exception& e)
 	{
-		// TODO: implement catch code
+		cout << "EXCEPTION ImageList: " << e.what() << endl;
 	}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 }

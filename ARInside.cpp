@@ -41,6 +41,7 @@
 
 #include "output/Table.h"
 #include "output/WebUtil.h"
+#include "output/NavigationPage.h"
 
 #if defined(_DEBUG) || defined(_ARINSIDE_BETA)
 #include "svnrev.h"
@@ -3256,6 +3257,9 @@ void CARInside::DoWork(int nMode)
 
 	// now load the object either from server or from file
 	LoadServerObjects(nMode);
+
+	// now create navigation page based on supported server features
+	{ CNavigationPage navPage(appConfig); navPage.Write(); }
 
 	// build needed reference tables
 	BuildReferences();
