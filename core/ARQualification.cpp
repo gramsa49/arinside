@@ -86,7 +86,7 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 			qText << ")";
 			break;
 		case AR_COND_OP_REL_OP:
-			qText << "(";
+			//qText << "(";
 			CheckOperand(&query->u.relOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
 			switch (query->u.relOp->operation) 
 			{		
@@ -113,7 +113,7 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 				break;
 			}
 			CheckOperand(&query->u.relOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			qText << ")";
+			//qText << ")";
 			break;
 		case AR_COND_OP_FROM_FIELD: //A qualification located in a field on the form.
 			qText << "EXTERNAL ($" << arIn->LinkToField(pFormId, query->u.fieldId, rootLevel) << "$)";
