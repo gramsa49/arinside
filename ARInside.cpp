@@ -117,8 +117,8 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 
 	strncpy(arControl.user, user.c_str(), AR_MAX_NAME_SIZE);
 	arControl.user[AR_MAX_NAME_SIZE]='\0';
-	strncpy(arControl.password, pw.c_str(), AR_MAX_NAME_SIZE);
-	arControl.password[AR_MAX_NAME_SIZE]='\0';
+	strncpy(arControl.password, pw.c_str(), AR_MAX_PASSWORD_SIZE);
+	arControl.password[AR_MAX_PASSWORD_SIZE]='\0';
 	strncpy(arControl.server, server.c_str(), AR_MAX_SERVER_SIZE);
 	arControl.server[AR_MAX_SERVER_SIZE]='\0';
 
@@ -138,32 +138,21 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 
 		if(nResult == AR_RETURN_OK)
 		{
-			ARNameList nameList;
-			nResult = ARGetListSchema(&this->arControl,
-				0,
-				AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT,
-				NULL,
-				NULL,
-				NULL,
-				&nameList,
-				&this->arStatus);
-
-			if(nameList.numItems == 0)
-			{							
+			ARBoolean isAdmin, isSubadmin, hasCustomize;
+			nResult = ARVerifyUser(&this->arControl, &isAdmin, &isSubadmin, &hasCustomize, &this->arStatus);
+			
+			if (nResult != AR_RETURN_OK)
+			{
 				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
 			}
-			else
-			{
-				CARServerInfo serverInfo(this->arControl, this->arStatus);
-				this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
-				this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
-				cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
-
-				LoadBlackList();
-			}
-
-			FreeARNameList(&nameList, false);
 			FreeARStatusList(&this->arStatus, false);
+
+			CARServerInfo serverInfo(this->arControl, this->arStatus);
+			this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
+			this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
+			cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
+
+			LoadBlackList();
 		}
 	}
 
