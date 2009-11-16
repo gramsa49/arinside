@@ -34,20 +34,22 @@ CARContainer::CARContainer(string name, int insideId)
 
 CARContainer::~CARContainer(void)
 {
-	try
-	{
-		FreeARReferenceList(&references, false);
-		FreeARPermissionList(&groupList, false);
-		FreeARInternalIdList(&admingrpList, false);
-		FreeARContainerOwnerObjList(&ownerObjList, false);
-		FreeARReferenceList(&references, false);
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//try
+	//{
+	//	FreeARReferenceList(&references, false);
+	//	FreeARPermissionList(&groupList, false);
+	//	FreeARInternalIdList(&admingrpList, false);
+	//	FreeARContainerOwnerObjList(&ownerObjList, false);
+	//	FreeARReferenceList(&references, false);
 
-		if(objPropList.props != NULL)
-			FreeARPropList(&objPropList, false);
-	}
-	catch(...)
-	{
-	}
+	//	if(objPropList.props != NULL)
+	//		FreeARPropList(&objPropList, false);
+	//}
+	//catch(...)
+	//{
+	//}
 }
 
 string CARContainer::GetURL(int rootLevel, bool showImage)

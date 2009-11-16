@@ -30,10 +30,12 @@ CARField::~CARField(void)
 { 
 	try
 	{
-		FreeARValueStruct (&defaultVal, false);			
-		FreeARFieldLimitStruct (&limit, false);	
-		FreeARPermissionList (&permissions, false);	
-		FreeARDisplayInstanceList (&dInstanceList, false);
+		// TODO: move ARFree calls to separate method to allow copying of the object without 
+		// copying the whole structure
+		//FreeARValueStruct (&defaultVal, false);			
+		//FreeARFieldLimitStruct (&limit, false);	
+		//FreeARPermissionList (&permissions, false);	
+		//FreeARDisplayInstanceList (&dInstanceList, false);
 	}
 	catch(...)
 	{

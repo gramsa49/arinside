@@ -30,9 +30,9 @@
 
 #include "util/Util.h"
 
-const string MenuSeparator = " -> ";
-const string EmptyRunIf = "No qualification specified";
-const string EmptyValue = "(null)";
+extern const char* MenuSeparator;
+extern const char* EmptyRunIf;
+extern const char* EmptyValue;
 
 using namespace std;
 using std::for_each;

@@ -20,15 +20,15 @@
 using namespace OUTPUT;
 
 CGroupTable::CGroupTable(CARInside &arIn)
+: CObjectTable("groupList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("groupList", "TblObjectList");
-	tbl->AddColumn(5, "Type");	
-	tbl->AddColumn(35, "Name");
-	tbl->AddColumn(10, "ID");
-	tbl->AddColumn(20, "Modified");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(5, "Type");	
+	tbl.AddColumn(35, "Name");
+	tbl.AddColumn(10, "ID");
+	tbl.AddColumn(20, "Modified");
+	tbl.AddColumn(20, "By");
 }
 
 CGroupTable::~CGroupTable(void)
@@ -68,7 +68,7 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 		tblRow.AddCell( CTableCell(insertRole->roleId));
 		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertRole->modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertRole->modifiedBy, rootLevel)));
-		this->tbl->AddRow(tblRow);
+		this->tbl.AddRow(tblRow);
 	}
 	else
 	{
@@ -85,7 +85,7 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 		tblRow.AddCell( CTableCell(strmId.str()));
 		tblRow.AddCell( CTableCell(strmTimestamp.str()));
 		tblRow.AddCell( CTableCell(strmLastchanged.str()));        
-		this->tbl->AddRow(tblRow);
+		this->tbl.AddRow(tblRow);
 	}
 }
 
@@ -110,7 +110,7 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 		tblRow.AddCell( CTableCell(insertGrp->groupId));
 		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertGrp->modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertGrp->modifiedBy, rootLevel)));
-		this->tbl->AddRow(tblRow);
+		this->tbl.AddRow(tblRow);
 	}
 	else
 	{
@@ -127,6 +127,6 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 		tblRow.AddCell( CTableCell(strmId.str()));
 		tblRow.AddCell( CTableCell(strmTimestamp.str()));
 		tblRow.AddCell( CTableCell(strmLastchanged.str()));        
-		this->tbl->AddRow(tblRow);
+		this->tbl.AddRow(tblRow);
 	}	
 }

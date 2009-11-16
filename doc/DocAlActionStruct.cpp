@@ -483,6 +483,7 @@ string CDocAlActionStruct::ActionMessage(ARMessageStruct &action, int nAction)
 			refItemTmp->fromName = this->obj->name;						
 			refItemTmp->schemaInsideId = schemaInsideId;
 			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
+			delete refItemTmp;
 		}
 	}
 	catch(exception& e)

@@ -49,17 +49,19 @@ CARSchema::CARSchema(string name, int insideId)
 
 CARSchema::~CARSchema(void)
 {
-	FreeARCompoundSchema(&schema, false);		
-	FreeARPermissionList(&groupList, false);
-	FreeARInternalIdList(&admingrpList, false);
-	FreeAREntryListFieldList(&getListFields, false);
-	FreeARSortList(&sortList, false);
-	FreeARIndexList(&indexList, false);
-	FreeARArchiveInfoStruct(&archiveInfo, false);
-	FreeARAuditInfoStruct(&auditInfo, false);	
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//FreeARCompoundSchema(&schema, false);		
+	//FreeARPermissionList(&groupList, false);
+	//FreeARInternalIdList(&admingrpList, false);
+	//FreeAREntryListFieldList(&getListFields, false);
+	//FreeARSortList(&sortList, false);
+	//FreeARIndexList(&indexList, false);
+	//FreeARArchiveInfoStruct(&archiveInfo, false);
+	//FreeARAuditInfoStruct(&auditInfo, false);	
 
-	if(objPropList.props != NULL)
-		FreeARPropList(&objPropList, false);
+	//if(objPropList.props != NULL)
+	//	FreeARPropList(&objPropList, false);
 }
 
 string CARSchema::GetURL(int rootLevel, bool useImage)

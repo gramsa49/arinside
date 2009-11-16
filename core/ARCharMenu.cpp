@@ -27,16 +27,18 @@ CARCharMenu::CARCharMenu(string name, int insideId)
 
 CARCharMenu::~CARCharMenu(void)
 {
-	try
-	{
-		FreeARCharMenuStruct(&menuDefn, false);
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//try
+	//{
+	//	FreeARCharMenuStruct(&menuDefn, false);
 
-		if(objPropList.props != NULL)
-			FreeARPropList(&objPropList, false);
-	}
-	catch(...)
-	{
-	}
+	//	if(objPropList.props != NULL)
+	//		FreeARPropList(&objPropList, false);
+	//}
+	//catch(...)
+	//{
+	//}
 }
 
 string CARCharMenu::GetURL(int rootLevel, bool showImage)

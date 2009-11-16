@@ -20,15 +20,15 @@
 using namespace OUTPUT;
 
 CMenuTable::CMenuTable(CARInside &arIn)
+: CObjectTable("charmenuList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("charmenuList", "TblObjectList");
-	tbl->AddColumn(40, "CharMenu Name");
-	tbl->AddColumn(10, "Type");
-	tbl->AddColumn(10, "Refresh On");
-	tbl->AddColumn(20, "Changed");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(40, "CharMenu Name");
+	tbl.AddColumn(10, "Type");
+	tbl.AddColumn(10, "Refresh On");
+	tbl.AddColumn(20, "Changed");
+	tbl.AddColumn(20, "By");
 }
 
 CMenuTable::~CMenuTable(void)
@@ -51,7 +51,7 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(menu.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.lastChanged, rootLevel)));
 
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 }
 
 int CMenuTable::NumRelatedFields(CARCharMenu &obj)

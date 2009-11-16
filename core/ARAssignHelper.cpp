@@ -283,7 +283,7 @@ void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAct
 					assignText << "$Status History.";
 
 					string tmp = arIn->GetFieldEnumValue(schemaInsideId2, 7, assignment.u.field->u.statHistory.enumVal);								
-					if(strcmp(tmp.c_str(), EmptyValue.c_str())!=0)
+					if(strcmp(tmp.c_str(), EmptyValue)!=0)
 						assignText << tmp;
 					else
 						assignText << assignment.u.field->u.statHistory.enumVal;

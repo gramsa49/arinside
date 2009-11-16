@@ -21,21 +21,21 @@
 using namespace OUTPUT;
 
 CEscalTable::CEscalTable(CARInside &arIn)
+: CObjectTable("escalationList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("escalationList", "TblObjectList");
-	tbl->AddColumn(30, "Escalation Name");
-	tbl->AddColumn(10, "Enabled");
+	tbl.AddColumn(30, "Escalation Name");
+	tbl.AddColumn(10, "Enabled");
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 	if (pInside->CompareServerVersion(7, 1) >= 0)
-		tbl->AddColumn(5, "Pool");
+		tbl.AddColumn(5, "Pool");
 #endif
-	tbl->AddColumn(10, "ExecuteOn");
-	tbl->AddColumn(5, "If");
-	tbl->AddColumn(5, "Else");
-	tbl->AddColumn(20, "Changed");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(10, "ExecuteOn");
+	tbl.AddColumn(5, "If");
+	tbl.AddColumn(5, "Else");
+	tbl.AddColumn(20, "Changed");
+	tbl.AddColumn(20, "By");
 }
 
 CEscalTable::~CEscalTable(void)
@@ -73,5 +73,5 @@ void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 	tblRow.AddCell( CTableCell(escal.elseList.numItems));
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(escal.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(escal.lastChanged, rootLevel)));
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 }

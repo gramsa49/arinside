@@ -1245,6 +1245,7 @@ void CDocMain::MessageList()
 					msgItem->msgType = msg.messageType;
 					msgItem->objectLink = al->GetURL(rootLevel);
 					listMsgItem.push_back(*msgItem);
+					delete msgItem;
 				}
 			}
 
@@ -1266,6 +1267,7 @@ void CDocMain::MessageList()
 					msgItem->msgType = msg.messageType;
 					msgItem->objectLink = al->GetURL(rootLevel);
 					listMsgItem.push_back(*msgItem);
+					delete msgItem;
 				}
 			}
 		}
@@ -1297,6 +1299,7 @@ void CDocMain::MessageList()
 					msgItem->msgType = msg.messageType;
 					msgItem->objectLink = filter->GetURL(rootLevel);
 					listMsgItem.push_back(*msgItem);					
+					delete msgItem;
 				}
 			}
 
@@ -1317,7 +1320,8 @@ void CDocMain::MessageList()
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
 					msgItem->objectLink = filter->GetURL(rootLevel);
-					listMsgItem.push_back(*msgItem);					
+					listMsgItem.push_back(*msgItem);
+					delete msgItem;
 				}
 			}
 		}	

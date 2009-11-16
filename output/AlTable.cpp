@@ -20,19 +20,19 @@
 using namespace OUTPUT;
 
 CAlTable::CAlTable(CARInside &arIn)
+: CObjectTable("alList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("alList", "TblObjectList");
-	tbl->AddColumn(30, "Active Link Name");	
-	tbl->AddColumn(5, "Enabled");	
-	tbl->AddColumn(5, "Groups");
-	tbl->AddColumn(5, "Order");	
-	tbl->AddColumn(15, "Execute On");
-	tbl->AddColumn(5, "If");
-	tbl->AddColumn(5, "Else");
-	tbl->AddColumn(15, "Changed");
-	tbl->AddColumn(15, "By");
+	tbl.AddColumn(30, "Active Link Name");	
+	tbl.AddColumn(5, "Enabled");	
+	tbl.AddColumn(5, "Groups");
+	tbl.AddColumn(5, "Order");	
+	tbl.AddColumn(15, "Execute On");
+	tbl.AddColumn(5, "If");
+	tbl.AddColumn(5, "Else");
+	tbl.AddColumn(15, "Changed");
+	tbl.AddColumn(15, "By");
 }
 
 CAlTable::~CAlTable(void)
@@ -59,7 +59,7 @@ void CAlTable::AddRow(CARActiveLink &al, int rootLevel)
 	tblRow.AddCell(	CTableCell(al.elseList.numItems));
 	tblRow.AddCell(	CTableCell(CUtil::DateTimeToHTMLString(al.timestamp)));
 	tblRow.AddCell(	CTableCell(this->pInside->LinkToUser(al.lastChanged, rootLevel)));
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 
 
 }

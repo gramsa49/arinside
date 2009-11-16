@@ -39,20 +39,22 @@ string CARActiveLink::GetURL(int rootLevel, bool showImage)
 
 CARActiveLink::~CARActiveLink(void)
 {
-	try
-	{
-		FreeARWorkflowConnectStruct(&schemaList, false);
-		FreeARInternalIdList(&groupList, false);
-		FreeARQualifierStruct(&query, false);
-		FreeARActiveLinkActionList(&actionList, false);
-		FreeARActiveLinkActionList(&elseList, false);
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//try
+	//{
+	//	FreeARWorkflowConnectStruct(&schemaList, false);
+	//	FreeARInternalIdList(&groupList, false);
+	//	FreeARQualifierStruct(&query, false);
+	//	FreeARActiveLinkActionList(&actionList, false);
+	//	FreeARActiveLinkActionList(&elseList, false);
 
-		if(objPropList.props != NULL)
-			FreeARPropList(&objPropList, false);
-	}
-	catch(...)
-	{
-	}
+	//	if(objPropList.props != NULL)
+	//		FreeARPropList(&objPropList, false);
+	//}
+	//catch(...)
+	//{
+	//}
 }
 
 /// Builds a ExecuteOn-string

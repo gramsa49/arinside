@@ -19,27 +19,26 @@
 
 using namespace OUTPUT;
 
-CObjectTable::CObjectTable(void)
+CObjectTable::CObjectTable(const string &htmlId, const string &cssClass)
+: tbl(htmlId, cssClass)
 {
 }
 
 CObjectTable::~CObjectTable(void)
 {	
-	tbl->Clear();
-	delete tbl;
 }
 
 void CObjectTable::SetDescription(string desc)
 {
-	this->tbl->description = desc;
+	this->tbl.description = desc;
 }
 
 int CObjectTable::NumRows()
 {
-	return tbl->NumRows();
+	return tbl.NumRows();
 }
 
 string CObjectTable::Print()
 {
-	return this->tbl->ToXHtml();
+	return this->tbl.ToXHtml();
 }

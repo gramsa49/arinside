@@ -196,6 +196,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 				{
 					CFieldRefItem *refItem = new CFieldRefItem(arStructItemType, obj.GetName(), "SQL Set Field If Qualification", -1, arIn.SchemaGetInsideId(fromSchema));
 					assignQual << arIn.TextFindFields(assignment.u.sql->sqlCommand, "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, refItem) << "<br/><br/>" << endl;
+					delete refItem;
 				}
 				else
 					assignQual << EmptyValue << "<br/><br/>" << endl;

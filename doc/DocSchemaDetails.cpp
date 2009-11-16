@@ -224,46 +224,46 @@ void CDocSchemaDetails::Documentation()
 
 string CDocSchemaDetails::SchemaNavigation()
 {	
-	CUList *uList = new CUList(this->rootLevel, "");
+	CUList uList(this->rootLevel, "");
 
 	try
 	{
 		//Permissions
-		uList->AddItem( new CUListItem(CWebUtil::Link("Permission", CWebUtil::DocName("form_permission_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CWebUtil::DocName("form_permission_list"), "", rootLevel)));
 
 		//Workflow		
-		uList->AddItem(new CUListItem(CWebUtil::Link("Workflow", CWebUtil::DocName("form_workflow"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CWebUtil::DocName("form_workflow"), "", rootLevel)));
 
 		//Indexes
-		uList->AddItem(new CUListItem(CWebUtil::Link("Indexes", CWebUtil::DocName("form_index_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CWebUtil::DocName("form_index_list"), "", rootLevel)));
 
 		//SortList
-		uList->AddItem(new CUListItem(CWebUtil::Link("Sortlist", CWebUtil::DocName("form_sort_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CWebUtil::DocName("form_sort_list"), "", rootLevel)));
 
 		//ResultList
-		uList->AddItem(new CUListItem(CWebUtil::Link("Resultlist", CWebUtil::DocName("form_result_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CWebUtil::DocName("form_result_list"), "", rootLevel)));
 
 		//Views
-		uList->AddItem(new CUListItem(CWebUtil::Link("Views", CWebUtil::DocName("form_vui_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Views", CWebUtil::DocName("form_vui_list"), "", rootLevel)));
 
 		//Subadministrator
-		uList->AddItem(new CUListItem(CWebUtil::Link("Subadministrator", CWebUtil::DocName("form_subadmin_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CWebUtil::DocName("form_subadmin_list"), "", rootLevel)));
 
 		//Active Links
-		uList->AddItem(new CUListItem(CWebUtil::Link("Active Link", CWebUtil::DocName("form_al_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Active Link", CWebUtil::DocName("form_al_list"), "", rootLevel)));
 
 		//Filters
-		uList->AddItem(new CUListItem(CWebUtil::Link("Filter", CWebUtil::DocName("form_filter_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Filter", CWebUtil::DocName("form_filter_list"), "", rootLevel)));
 
 		//Escalations
-		uList->AddItem(new CUListItem(CWebUtil::Link("Escalation", CWebUtil::DocName("form_escal_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CWebUtil::DocName("form_escal_list"), "", rootLevel)));
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION schema navigation of '" << this->pSchema->name << "': " << e.what() << endl;
 	}	
 
-	return uList->ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
+	return uList.ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
 }
 
 
@@ -607,7 +607,7 @@ void CDocSchemaDetails::WorkflowDoc()
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ESCALATION))
 			{			
-				if(strcmp(item->fromName.c_str(), EmptyValue.c_str())!=0)
+				if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
 				{
 					if(item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
 					{

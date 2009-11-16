@@ -173,10 +173,11 @@ void CARInside::LoadBlackList(void)
 	{
 		if(appConfig.blackList.size() > 0)
 		{
+			int refTypeStorage = ARREF_ALL;
 			ARReferenceTypeList		refTypes;
-			refTypes.refType = (int *) malloc(sizeof(unsigned int) * 1);
+			refTypes.refType = &refTypeStorage;
 			refTypes.numItems = 1;
-			refTypes.refType[0] = ARREF_ALL;
+			//refTypes.refType[0] = ARREF_ALL;
 
 			cout << "Loading blacklist from packinglist '" << appConfig.blackList << "'" << endl;
 
@@ -204,9 +205,9 @@ void CARInside::LoadBlackList(void)
 				{
 					//if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
 					//{
-					CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
+					CBlackListItem blackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
 
-					this->blackList.insert(blackList.end(), *blackListItem);
+					this->blackList.insert(blackList.end(), blackListItem);
 					LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
 					//}
 				}
@@ -349,6 +350,8 @@ void CARInside::Prepare(void)
 		wUtil.CreateSubDirectory("role");
 		wUtil.CreateSubDirectory("webservice");
 	}
+
+	delete docMain;
 }
 
 bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem)
@@ -484,6 +487,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -558,8 +562,10 @@ void CARInside::LoadFromFile(void)
 								{
 									CARGlobalField *globalField = new CARGlobalField(schema->GetInsideId(), field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
+									delete globalField;
 								}	
 
+								delete field;
 								LOG << " [OK]" << endl;												
 							}
 
@@ -580,6 +586,8 @@ void CARInside::LoadFromFile(void)
 								vui->xmlDocVersion = schema->xmlDocVersion;
 								vui->schemaInsideId = arInsideIdSchema;
 								schema->vuiList.insert(schema->vuiList.end(), *vui);
+
+								delete vui;
 							}
 
 							this->schemaList.insert(this->schemaList.end(), *schema);
@@ -590,6 +598,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete schema;
 						//FreeARFieldInfoList(&fieldInfoList, false);
 						//FreeARVuiInfoList(&vuiInfoList, false);
 						FreeARStatusList(&this->arStatus, false);
@@ -638,6 +647,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -671,6 +681,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -708,6 +719,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -746,6 +758,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -998,6 +1011,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 								else
 									LOG << " [ERROR]" << endl;
 
+								delete vui;
 								FreeARStatusList(&this->arStatus, false);
 							}
 						}
@@ -1074,7 +1088,9 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 								{
 									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
+									delete globalField;
 								}
+								delete field;
 							}
 
 							this->Sort(schema->fieldList);
@@ -1091,6 +1107,8 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 					}			
 					else
 						LOG << " [ERROR]" << endl;
+
+					delete schema;
 				}
 			}
 		}
@@ -1161,6 +1179,8 @@ int CARInside::LoadContainer(void)
 					}		
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1219,6 +1239,8 @@ int CARInside::LoadCharMenus(void)
 					}
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1280,6 +1302,8 @@ int CARInside::LoadEscalations(void)
 					}	
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1346,6 +1370,8 @@ int CARInside::LoadFilters(void)
 					}	
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1415,6 +1441,7 @@ int CARInside::LoadActiveLinks(void)
 					else
 						cerr << GetARStatusError();
 
+					delete obj;
 				}
 			}
 		}
@@ -1935,6 +1962,7 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 		refItemNotFound->fieldInsideId = fieldInsideId;
 		refItemNotFound->description = "Field does not exist";	
 		this->listFieldNotFound.push_back(*refItemNotFound);
+		delete refItemNotFound;
 	}
 
 	tmp << "<span class=\"fieldNotFound\">" << fieldInsideId << "</span>";

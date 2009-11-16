@@ -219,7 +219,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			{
 				string tmp = arIn->GetFieldEnumValue(tmpFormId, tmpFieldId, data->u.intVal);
 
-				if(strcmp(tmp.c_str(), EmptyValue.c_str())!=0)
+				if(strcmp(tmp.c_str(), EmptyValue)!=0)
 					qText << "\"" << tmp << "\"";
 				else
 					qText << data->u.intVal;
@@ -243,7 +243,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			{
 				string tmp = arIn->GetFieldEnumValue(tmpFormId, tmpFieldId, data->u.enumVal);
 
-				if(strcmp(tmp.c_str(), EmptyValue.c_str())!=0)
+				if(strcmp(tmp.c_str(), EmptyValue)!=0)
 					qText << "\"" << tmp << "\"";
 				else
 					qText << data->u.intVal;
@@ -332,7 +332,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 		}
 
 		string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
-		if(strcmp(tmp.c_str(), EmptyValue.c_str())!=0)
+		if(strcmp(tmp.c_str(), EmptyValue)!=0)
 			qText << tmp;
 		else
 			qText << operand->u.statHistory.enumVal;

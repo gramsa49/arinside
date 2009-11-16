@@ -20,18 +20,18 @@
 using namespace OUTPUT;
 
 CFilterTable::CFilterTable(CARInside &arIn)
+: CObjectTable("filterList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("filterList", "TblObjectList");
-	tbl->AddColumn(30, "Filter Name");
-	tbl->AddColumn(5, "Enabled");
-	tbl->AddColumn(5, "Order");
-	tbl->AddColumn(20, "Execute On");
-	tbl->AddColumn(5, "If");
-	tbl->AddColumn(5, "Else");
-	tbl->AddColumn(15, "Changed");
-	tbl->AddColumn(15, "By");
+	tbl.AddColumn(30, "Filter Name");
+	tbl.AddColumn(5, "Enabled");
+	tbl.AddColumn(5, "Order");
+	tbl.AddColumn(20, "Execute On");
+	tbl.AddColumn(5, "If");
+	tbl.AddColumn(5, "Else");
+	tbl.AddColumn(15, "Changed");
+	tbl.AddColumn(15, "By");
 }
 
 CFilterTable::~CFilterTable(void)
@@ -56,5 +56,5 @@ void CFilterTable::AddRow(CARFilter &filter, int rootLevel)
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(filter.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(filter.lastChanged, rootLevel)));
 
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 }
