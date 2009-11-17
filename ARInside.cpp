@@ -111,6 +111,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	cout << endl << "Connecting to server " << server << "..." << endl;
 
 	memset(&arControl, '\0', sizeof(arControl));
+	memset(&arStatus, '\0', sizeof(arStatus));
 
 	if(this->appConfig.bUseUtf8)
 		strcpy(arControl.localeInfo.charSet, "UTF-8");
@@ -123,6 +124,12 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	arControl.server[AR_MAX_SERVER_SIZE]='\0';
 
 	int nResult = ARInitialization(&this->arControl,&this->arStatus);
+	if (nResult != AR_RETURN_OK)
+	{
+		cout << "Initilization of ARAPI returned: " << nResult << " (" << CAREnum::ActiveLinkMessageType(nResult) << ")" << endl;
+		cout << GetARStatusError();
+		return nResult;
+	}
 
 	if(server == "" && nResult == AR_RETURN_OK) // Filemode
 	{
