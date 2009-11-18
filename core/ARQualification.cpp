@@ -34,45 +34,27 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 {
 	if (query != NULL)
 	{
-		bool subLeft = false;
-		bool subRight = false;
 		switch(query->operation)
 		{
 		case AR_COND_OP_NONE:
 			break;
 		case AR_COND_OP_AND:
-			CheckQuery(query->u.andor.operandLeft, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-
-			qText << " AND ";
-
-			CheckQuery(query->u.andor.operandRight, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-
-			break;
 		case AR_COND_OP_OR:
-			if (query->u.andor.operandLeft->operation!=AR_COND_OP_REL_OP)
-				subLeft = true;
-			if (query->u.andor.operandRight->operation!=AR_COND_OP_REL_OP)
-				subRight = true;
+			{
+				if (query->u.andor.operandLeft->operation != query->operation) qText << "(";
+				CheckQuery(query->u.andor.operandLeft, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
+				if (query->u.andor.operandLeft->operation != query->operation) qText << ")";
 
-			if (!(!subLeft && subRight))
-				qText << "(";
+				switch (query->operation)
+				{
+				case AR_COND_OP_AND: qText << " AND "; break;
+				case AR_COND_OP_OR: qText << " OR "; break;
+				}	
 
-			CheckQuery(query->u.andor.operandLeft, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-
-			if (subLeft && !subRight)
-				qText << ") OR ";
-			else if (subLeft && subRight)
-				qText << ") OR (";
-			else if (!subLeft && subRight)
-				qText << " OR (";
-			else
-				qText << " OR ";
-
-			CheckQuery(query->u.andor.operandRight, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-
-			if (!(subLeft && !subRight))
-				qText << ")";
-
+				if (query->u.andor.operandRight->operation != query->operation) qText << "(";
+				CheckQuery(query->u.andor.operandRight, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
+				if (query->u.andor.operandRight->operation != query->operation) qText << ")";
+			}
 			break;
 		case AR_COND_OP_NOT:
 			qText << "NOT (";
@@ -86,7 +68,6 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 			qText << ")";
 			break;
 		case AR_COND_OP_REL_OP:
-			//qText << "(";
 			CheckOperand(&query->u.relOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
 			switch (query->u.relOp->operation) 
 			{		
@@ -113,7 +94,6 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 				break;
 			}
 			CheckOperand(&query->u.relOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			//qText << ")";
 			break;
 		case AR_COND_OP_FROM_FIELD: //A qualification located in a field on the form.
 			qText << "EXTERNAL ($" << arIn->LinkToField(pFormId, query->u.fieldId, rootLevel) << "$)";
@@ -185,10 +165,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			qText << "$" << arIn->LinkToMenuField(pFormId, operand->u.fieldId, rootLevel) << "$";
 		else
 		{
-			if(pFormId != sFormId)
-				qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
-			else
-				qText << "'" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";
+			qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
 		}
 
 		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem) && arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU)
@@ -254,7 +231,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			}
 			break;
 		case AR_DATA_TYPE_TIME:
-			qText << CUtil::DateTimeToHTMLString(data->u.timeVal);
+			qText << "\"" << CUtil::DateTimeToHTMLString(data->u.timeVal) << "\"";
 			break;
 		case AR_DATA_TYPE_DECIMAL:
 			qText << data->u.decimalVal;
@@ -266,10 +243,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			qText << data->u.currencyVal;
 			break;
 		case AR_DATA_TYPE_DATE:
-			qText << CUtil::DateToString(data->u.dateVal);
+			qText << "\"" << CUtil::DateToString(data->u.dateVal) << "\"";
 			break;
 		case AR_DATA_TYPE_TIME_OF_DAY:
-			qText << CUtil::TimeOfDayToString(data->u.timeOfDayVal);
+			qText << "\"" << CUtil::TimeOfDayToString(data->u.timeOfDayVal) << "\"";
 			break;
 		default:
 			qText << "n/a";
