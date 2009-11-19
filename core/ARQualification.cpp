@@ -41,9 +41,9 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 		case AR_COND_OP_AND:
 		case AR_COND_OP_OR:
 			{
-				if (query->u.andor.operandLeft->operation != query->operation) qText << "(";
+				if (query->u.andor.operandLeft->operation != query->operation && query->u.andor.operandLeft->operation != AR_COND_OP_REL_OP) qText << "(";
 				CheckQuery(query->u.andor.operandLeft, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-				if (query->u.andor.operandLeft->operation != query->operation) qText << ")";
+				if (query->u.andor.operandLeft->operation != query->operation && query->u.andor.operandLeft->operation != AR_COND_OP_REL_OP) qText << ")";
 
 				switch (query->operation)
 				{
@@ -51,21 +51,19 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 				case AR_COND_OP_OR: qText << " OR "; break;
 				}	
 
-				if (query->u.andor.operandRight->operation != query->operation) qText << "(";
+				if (query->u.andor.operandRight->operation != query->operation && query->u.andor.operandRight->operation != AR_COND_OP_REL_OP) qText << "(";
 				CheckQuery(query->u.andor.operandRight, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-				if (query->u.andor.operandRight->operation != query->operation) qText << ")";
+				if (query->u.andor.operandRight->operation != query->operation && query->u.andor.operandRight->operation != AR_COND_OP_REL_OP) qText << ")";
 			}
 			break;
 		case AR_COND_OP_NOT:
-			qText << "NOT (";
-
-			if(query->u.andor.operandLeft != NULL)
-				CheckQuery(query->u.andor.operandLeft, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-
-			if(query->u.andor.operandRight != NULL)
-				CheckQuery(query->u.andor.operandRight, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-
-			qText << ")";
+			qText << "NOT ";
+			if(query->u.not != NULL)
+			{
+				if (query->u.not->operation != AR_COND_OP_REL_OP) qText << "(";
+				CheckQuery(query->u.not, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
+				if (query->u.not->operation != AR_COND_OP_REL_OP) qText << ")";
+			}
 			break;
 		case AR_COND_OP_REL_OP:
 			CheckOperand(&query->u.relOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
