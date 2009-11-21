@@ -163,10 +163,13 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			qText << "$" << arIn->LinkToMenuField(pFormId, operand->u.fieldId, rootLevel) << "$";
 		else
 		{
-			qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
+			if (pFormId != sFormId)
+				qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
+			else
+				qText << "'" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";
 		}
 
-		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem) && arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU)
+		if(arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU && !arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem))
 		{
 			CFieldRefItem item = refItem;
 			item.fieldInsideId = operand->u.fieldId;
