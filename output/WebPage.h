@@ -24,29 +24,31 @@ namespace OUTPUT
 	class CWebPage
 	{
 	public:
-		CWebPage(string fileName, string title, int dirLevel, AppConfig &appConfig);
+		CWebPage(const string &fileName, const string &title, int dirLevel, const AppConfig &appConfig);
 		~CWebPage(void);
 
-		void AddContent(string content);	
-		void AddContentHead(string description);
-		void AddNavigation(string nav);
+		void AddContent(const string &content);	
+		void AddContentHead(const string &description);
+		void SetNavigation(const string &nav);
+
 		int SaveInFolder(string path);	
 
 	private:
-		string PageHeader();
-		string ContentOpen();
-		string ContentClose();
-		stringstream bodyStrm;
-		stringstream contentStrm;
-		stringstream navStrm;
+		vector<string> bodyContent;
+		string navContent;
 		string fileName;
 		string title;
 		int rootLevel;
 
-		string GetFileContent();
-		AppConfig appConfig;
-		string DynamicHeaderText();
-		string DynamicFooterText();
+		const AppConfig &appConfig;
+		
+		void WriteContent(ofstream &strm);
+
+		void PageHeader(ofstream &strm);
+		void ContentOpen(ofstream &strm);
+		void ContentClose(ofstream &strm);
+		void DynamicHeaderText(ofstream &strm);
+		void DynamicFooterText(ofstream &strm);
 		string CurrentDateTime();
 	};
 }

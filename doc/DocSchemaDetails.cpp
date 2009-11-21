@@ -72,7 +72,7 @@ void CDocSchemaDetails::Documentation()
 			pgStrm << contHeadStrm.str();
 
 			//Add schema navigation menu	
-			webPage.AddNavigation(this->SchemaNavigation());
+			webPage.SetNavigation(this->SchemaNavigation());
 
 
 			//Schema Properties
@@ -589,7 +589,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		webPage.AddContentHead(this->FormPageHeader("Workflow"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		//Field references
@@ -666,7 +666,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		webPage.AddContentHead(this->FormPageHeader("Permissions"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CTable tbl("permissionList", "TblObjectList");
 		tbl.AddColumn(5, "Permission");
@@ -771,7 +771,7 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 		webPage.AddContentHead(this->FormPageHeader("Subadministrator Permission"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		CTable tbl("fieldListAll", "TblObjectList");
@@ -807,7 +807,7 @@ void CDocSchemaDetails::IndexDoc()
 		webPage.AddContentHead(this->FormPageHeader("Indexes"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		for(unsigned int nIndex=0; nIndex < this->pSchema->indexList.numItems; nIndex++)
 		{		
@@ -883,7 +883,7 @@ void CDocSchemaDetails::ResultListDoc()
 		webPage.AddContentHead(this->FormPageHeader("Resultlist"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		CTable tbl("fieldListIndex", "TblObjectList");
@@ -955,7 +955,7 @@ void CDocSchemaDetails::SortListDoc()
 		webPage.AddContentHead(this->FormPageHeader("Sortlist"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		CTable tbl("fieldListIndex", "TblObjectList");
@@ -1030,7 +1030,7 @@ void CDocSchemaDetails::VuiListDoc()
 		webPage.AddContentHead(this->FormPageHeader("Views"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CTable tbl("vuiList", "TblObjectList");
 		tbl.AddColumn(30, "Vui Name");
@@ -1079,7 +1079,7 @@ void CDocSchemaDetails::SchemaFilterDoc()
 		webPage.AddContentHead(this->FormPageHeader("Filter"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
@@ -1129,7 +1129,7 @@ void CDocSchemaDetails::SchemaAlDoc()
 		webPage.AddContentHead(this->FormPageHeader("Active Links"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
@@ -1179,7 +1179,7 @@ void CDocSchemaDetails::SchemaEscalDoc()
 		webPage.AddContentHead(this->FormPageHeader("Escalations"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
@@ -2057,40 +2057,3 @@ string CDocSchemaDetails::ShowArchiveProperties()
 	}
 	return strm.str();
 }
-
-//string CDocSchemaDetails::ShowPropertiesLeft(CARProplistHelper* propIndex)
-//{
-//	stringstream strm;
-//	strm.str("");
-//
-//	ARValueStruct* propVal;
-//
-//	try
-//	{
-//		CTable tbl("displayPropList", "TblObjectList");
-//		tbl.AddColumn(20, "Description");
-//		tbl.AddColumn(80, "Values");
-//
-//		
-//		for (propIter = propIndex->begin(); propIter != propIndex->end(); ++propIter)
-//		{
-//			if (propIter->second != NULL)
-//			{
-//				CTableRow row("");			
-//				row.AddCell(CTableCell(CARProplistHelper::GetLabel(propIter->first)));
-//				row.AddCell(CTableCell(CARProplistHelper::GetValue(propIter->first,*propIter->second)));		
-//				tbl.AddRow(row);
-//			}
-//		}
-//
-//		tbl.description = "Object Properties:";
-//		strm << tbl.ToXHtml();
-//
-//	}
-//	catch(exception& e)
-//	{
-//		cout << "EXCEPTION enumerating object properties: " << e.what() << endl;
-//	}
-//
-//	return strm.str();
-//}
