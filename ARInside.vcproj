@@ -105,6 +105,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
+				CommandLine="SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -121,7 +122,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include"
+				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -201,7 +202,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include"
+				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"

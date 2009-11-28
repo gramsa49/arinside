@@ -43,9 +43,10 @@
 #include "output/WebUtil.h"
 #include "output/NavigationPage.h"
 
-#if defined(_DEBUG) || defined(_ARINSIDE_BETA)
+/////////
+// the following file is generated via a pre-build step using "svnrev_template.h" as template. 
+// The $WCREV$ keyword of the template is replaced with the revision number.
 #include "svnrev.h"
-#endif
 
 /////////
 // version information block
@@ -55,7 +56,7 @@
 #elif defined(_ARINSIDE_BETA)
 #define VERSION_STR VERSION "r" SVN_REV_STR " Beta"
 #else
-#define VERSION_STR VERSION
+#define VERSION_STR VERSION "r" SVN_REV_STR
 #endif
 const string AppVersion = VERSION_STR;
 /////////
