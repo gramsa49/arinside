@@ -2600,7 +2600,7 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					if (tableSourceSchema != NULL)
 					{
 						stringstream tmpDesc;
-						tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->GetInsideId(), rootLevel);
+						tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableField->schemaInsideId, rootLevel);
 						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), fLimit.dataField, tableSourceSchema->GetInsideId());
 						refItem.fromFieldId = obj.fieldId;
 						this->AddReferenceItem(&refItem);
