@@ -26,8 +26,8 @@
 #include <string>
 #include <vector>
 
-#include <MultiArg.h>
-#include <OptionalUnlabeledTracker.h>
+#include <tclap/MultiArg.h>
+#include <tclap/OptionalUnlabeledTracker.h>
 
 namespace TCLAP {
 
@@ -270,17 +270,15 @@ bool UnlabeledMultiArg<T>::processArg(int *i, std::vector<std::string>& args)
 template<class T>
 std::string UnlabeledMultiArg<T>::shortID(const std::string& val) const
 {
-	std::string id = "<" + _typeDesc + "> ...";
-
-	return id;
+	static_cast<void>(val); // Ignore input, don't warn
+	return std::string("<") + _typeDesc + "> ...";
 }
 
 template<class T>
 std::string UnlabeledMultiArg<T>::longID(const std::string& val) const
 {
-	std::string id = "<" + _typeDesc + ">  (accepted multiple times)";
-
-	return id;
+	static_cast<void>(val); // Ignore input, don't warn
+	return std::string("<") + _typeDesc + ">  (accepted multiple times)";
 }
 
 template<class T>
