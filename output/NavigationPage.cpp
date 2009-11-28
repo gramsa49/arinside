@@ -25,7 +25,7 @@ using namespace OUTPUT;
 void CNavigationPage::Write()
 {
 	stringstream strmName;
-	strmName << this->conf.targetFolder << "\\" << CWebUtil::DocName(this->fileName);
+	strmName << this->conf.targetFolder << "/" << CWebUtil::DocName(this->fileName);
 	CARInside *pInside = CARInside::GetInstance();
 
 	try

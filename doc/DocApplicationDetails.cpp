@@ -32,7 +32,7 @@ void CDocApplicationDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_APP)+"\\"+ this->pApp->FileID();
+		string dir = CAREnum::ContainerDir(ARCON_APP)+"/"+ this->pApp->FileID();
 
 		CWindowsUtil winUtil(pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)

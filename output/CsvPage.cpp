@@ -42,9 +42,9 @@ int CCsvPage::SaveInFolder(string path, string content)
 	strm.str("");
 
 	if(!path.empty())
-		strm << this->appConfig.targetFolder << "\\" << path << "\\" << CWebUtil::CsvDocName(this->fileName);
+		strm << this->appConfig.targetFolder << "/" << path << "/" << CWebUtil::CsvDocName(this->fileName);
 	else
-		strm << this->appConfig.targetFolder << "\\" << CWebUtil::CsvDocName(this->fileName);
+		strm << this->appConfig.targetFolder << "/" << CWebUtil::CsvDocName(this->fileName);
 
 	try
 	{	

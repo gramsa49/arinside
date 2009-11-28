@@ -58,11 +58,11 @@ void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem&
 			break;
 		case AR_COND_OP_NOT:
 			qText << "NOT ";
-			if(query->u.not != NULL)
+			if(query->u.notQual != NULL)
 			{
-				if (query->u.not->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.not, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
-				if (query->u.not->operation != AR_COND_OP_REL_OP) qText << ")";
+				if (query->u.notQual->operation != AR_COND_OP_REL_OP) qText << "(";
+				CheckQuery(query->u.notQual, refItem, depth+1, pFormId, sFormId, qText, rootLevel);
+				if (query->u.notQual->operation != AR_COND_OP_REL_OP) qText << ")"; 
 			}
 			break;
 		case AR_COND_OP_REL_OP:

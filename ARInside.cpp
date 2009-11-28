@@ -290,7 +290,7 @@ int CARInside::ValidateTargetDir(string targetFolder)
 		cout << "Validating target folder: " << targetFolder << endl;
 
 		stringstream fName;
-		fName << targetFolder << "\\valid.txt";
+		fName << targetFolder << "/valid.txt";
 
 		ofstream fout( fName.str().c_str(), ios::out);
 		fout << "arinside" << endl;
@@ -1637,7 +1637,7 @@ void CARInside::Documentation(void)
 		CARActiveLink *al = &(*alIter);
 
 		LOG << "ActiveLink [" << nTmpCnt << "-" << alList.size() << "] '" << al->name << "': ";
-		CDocAlDetails *alDetails = new CDocAlDetails(*this, *al, "active_link\\"+al->FileID(), 2);
+		CDocAlDetails *alDetails = new CDocAlDetails(*this, *al, "active_link/"+al->FileID(), 2);
 		alDetails->Documentation();
 		delete alDetails;
 		nTmpCnt++;
@@ -1662,7 +1662,7 @@ void CARInside::Documentation(void)
 		CARFilter *filter = &(*filterIter);
 
 		LOG << "Filter [" << nTmpCnt << "-" << filterList.size() << "] '" << filter->name << "': ";
-		CDocFilterDetails *filterDetails = new CDocFilterDetails(*this, *filter, "filter\\"+filter->FileID(), 2);
+		CDocFilterDetails *filterDetails = new CDocFilterDetails(*this, *filter, "filter/"+filter->FileID(), 2);
 		filterDetails->Documentation();
 		delete filterDetails;
 		nTmpCnt++;
@@ -1687,7 +1687,7 @@ void CARInside::Documentation(void)
 		CAREscalation *escal = &(*escalIter);
 
 		LOG << "Escalation [" << nTmpCnt << "-" << escalList.size() << "] '" << escal->name << "': ";
-		CDocEscalationDetails *escalDetails = new CDocEscalationDetails(*this, *escal, "escalation\\"+escal->FileID(), 2);
+		CDocEscalationDetails *escalDetails = new CDocEscalationDetails(*this, *escal, "escalation/"+escal->FileID(), 2);
 		escalDetails->Documentation();
 		delete escalDetails;		
 		nTmpCnt++;
@@ -1711,7 +1711,7 @@ void CARInside::Documentation(void)
 		CARCharMenu *menu = &(*menuIter);	
 
 		LOG << "Menu [" << nTmpCnt << "-" << menuList.size() << "] '" << menu->name << "': ";
-		string path = "menu\\"+menu->FileID();
+		string path = "menu/"+menu->FileID();
 		CDocCharMenuDetails *menuDetails = new CDocCharMenuDetails(*this, *menu, path, 2);
 		menuDetails->Documentation();
 		delete menuDetails;
@@ -1741,7 +1741,7 @@ void CARInside::Documentation(void)
 		int rootLevel = 2;
 
 		CARSchema *schema = &(*schemaIter);		
-		string path="schema\\"+schema->FileID();
+		string path="schema/"+schema->FileID();
 
 		LOG << "Schema [" << nTmpCnt << "-" << schemaList.size() << "] '" << schema->name << "': ";
 		CDocSchemaDetails *schemaDetails = new CDocSchemaDetails(*this, *schema, path, rootLevel);

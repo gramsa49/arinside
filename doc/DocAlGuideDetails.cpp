@@ -30,7 +30,7 @@ CDocAlGuideDetails::~CDocAlGuideDetails(void)
 
 void CDocAlGuideDetails::Documentation()
 {
-	string dir = CAREnum::ContainerDir(ARCON_GUIDE)+"\\"+pAlGuide->FileID();
+	string dir = CAREnum::ContainerDir(ARCON_GUIDE)+"/"+pAlGuide->FileID();
 
 	CWindowsUtil winUtil(pInside->appConfig);
 	if(winUtil.CreateSubDirectory(dir)>=0)

@@ -32,7 +32,7 @@ void CDocWebserviceDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_WEBSERVICE)+"\\"+pWs->FileID();
+		string dir = CAREnum::ContainerDir(ARCON_WEBSERVICE)+"/"+pWs->FileID();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)

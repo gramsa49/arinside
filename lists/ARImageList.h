@@ -17,6 +17,7 @@
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
 #include "../util/ImageRefItem.h"
+#include <assert.h>
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -45,15 +46,15 @@ public:
 	// usage. the image object would need to store at least the index and
 	// optinally a reference to the CImageList (but normally we dont need more
 	// than one). The functions are inline to avoid additional strack frames.
-	inline const ARNameType& ImageGetName(unsigned int index) { _ASSERT(index < names.numItems); return names.nameList[(*sortedList)[index].index]; }
-	inline char* ImageGetType(unsigned int index) { _ASSERT(index < types.numItems); return types.stringList[(*sortedList)[index].index]; }
+	inline const ARNameType& ImageGetName(unsigned int index) { assert(index < names.numItems); return names.nameList[(*sortedList)[index].index]; }
+	inline char* ImageGetType(unsigned int index) { assert(index < types.numItems); return types.stringList[(*sortedList)[index].index]; }
 	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[(*sortedList)[index].index]; }
-	inline char* ImageGetDescription(unsigned int index) { _ASSERT(index < descriptions.numItems); return descriptions.stringList[(*sortedList)[index].index]; }
-	inline char* ImageGetHelptext(unsigned int index) { _ASSERT(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index].index]; }
-	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { _ASSERT(index < owners.numItems); return owners.nameList[(*sortedList)[index].index]; }
-	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { _ASSERT(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index].index]; }
-	inline char* ImageGetChangeDiary(unsigned int index) { _ASSERT(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index].index]; }
-	inline const ARImageDataStruct& ImageGetData(unsigned int index) { _ASSERT(index < data.numItems); return data.imageList[(*sortedList)[index].index]; }
+	inline char* ImageGetDescription(unsigned int index) { assert(index < descriptions.numItems); return descriptions.stringList[(*sortedList)[index].index]; }
+	inline char* ImageGetHelptext(unsigned int index) { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index].index]; }
+	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index].index]; }
+	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index].index]; }
+	inline char* ImageGetChangeDiary(unsigned int index) { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index].index]; }
+	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[(*sortedList)[index].index]; }
 	string ImageGetURL(unsigned int index, int rootLevel);
 
 	friend class CARImage;
@@ -70,7 +71,7 @@ private:
 		unsigned int index;
 		
 		image_ref(CARImageList &list, int idx) : list(&list),index(idx) {}
-		bool operator<(const image_ref &r) { return (strcmp(list->names.nameList[index], r.list->names.nameList[r.index]) < 0); }
+		bool operator<(const image_ref &r) const { return (strcmp(list->names.nameList[index], r.list->names.nameList[r.index]) < 0); }
 		image_ref& operator=(const image_ref &r) { list = r.list; index = r.index; return *this; }
 	};
 

@@ -191,9 +191,9 @@ private:
 	void ParseVersionString(int xmlVersion);
 
 	bool getPos(string inText, string findText);
-	string CARInside::processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 };

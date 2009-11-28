@@ -24,7 +24,7 @@ extern int nFilesCreated;
 
 CDocImageDetails::CDocImageDetails(int imageIndex, int rootLevel)
 {
-	this->path = "image\\" + CARObject::FileID(imageIndex);
+	this->path = "image/" + CARObject::FileID(imageIndex);
 	this->pInside = CARInside::GetInstance();
 	this->imageIndex = imageIndex;
 	this->rootLevel = rootLevel;
@@ -90,10 +90,10 @@ void CDocImageDetails::SaveImage()
 	stringstream strm;
 	
 	if (!pInside->appConfig.targetFolder.empty())
-		strm << pInside->appConfig.targetFolder << "\\";
+		strm << pInside->appConfig.targetFolder << "/";
 
 	if(!path.empty())
-		strm << path << "\\";
+		strm << path << "/";
 
 	strm << "image." << pInside->imageList.ImageGetType(imageIndex);
 

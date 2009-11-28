@@ -16,7 +16,14 @@
 
 #include "stdafx.h"
 #include "WindowsUtil.h"
-#include "windows.h"
+
+#include <sys/types.h>
+#include <sys/stat.h>
+
+#ifdef WIN32
+#include <windows.h>
+#include <direct.h>
+#endif // WIN32
 
 CWindowsUtil::CWindowsUtil(AppConfig &appConfig)
 {
@@ -30,11 +37,11 @@ CWindowsUtil::~CWindowsUtil(void)
 void CWindowsUtil::Load()
 {
 	stringstream strm;	
-	//strm << appConfig.targetFolder << "\\" << "template" << "\\";
+	//strm << appConfig.targetFolder << "/" << "template" << "/";
 	//LoadFromResource("NAVIGATION_HTM", "navigation.htm", strm.str());
 
 	strm.str("");
-	strm << appConfig.targetFolder << "\\" << "img" << "\\";	
+	strm << appConfig.targetFolder << "/" << "img" << "/";	
 	LoadFromResource("STYLE_CSS", "style.css", strm.str());
 	LoadFromResource("SCRIPT", "script.js", strm.str());
 	LoadFromResource("TABSCRIPT", "tabscript.js", strm.str());
@@ -100,21 +107,31 @@ void CWindowsUtil::LoadFromResource(string strRes, string fileName, string path)
 	CloseHandle(hfile);	
 }
 
-int CWindowsUtil::CreateAppDirectory()
-{	
-	int nResult = CreateDirectory(appConfig.targetFolder.c_str(), NULL);
+bool CWindowsUtil::CreateAppDirectory()
+{
+	int nResult = 
+#ifdef WIN32
+	_mkdir(appConfig.targetFolder.c_str());
+#else
+	mkdir(appConfig.targetFolder.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
+#endif
 	cout << "Create target directory: " << appConfig.targetFolder << " [" << nResult <<"]" << endl;	
-	return nResult;
+
+	return (nResult==0);
 }
 
 int CWindowsUtil::CreateSubDirectory(string name)
 {	
 	stringstream strm;
-	strm << appConfig.targetFolder << "\\" << name;	
+	strm << appConfig.targetFolder << "/" << name;
 
 	try
 	{
-		return CreateDirectory(strm.str().c_str(), NULL);
+#ifdef WIN32		
+		return (_mkdir(strm.str().c_str()) == 0);
+#else
+		return (mkdir(strm.str().c_str(), S_IRWXU|S_IRWXG|S_IRWXO) == 0);
+#endif
 	}
 	catch(exception& e)
 	{

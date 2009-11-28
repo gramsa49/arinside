@@ -67,6 +67,7 @@ const char* CARImage::GetChangeDiary()
 
 string CARImage::GetURL(int rootLevel, bool showImage)
 {
-	throw exception("not implemented!");
+	// TODO: add support for the showImage param
+	throw CARInside::GetInstance()->imageList.ImageGetURL(GetInsideId(), rootLevel);
 }
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

@@ -32,7 +32,7 @@ void CDocFilterGuideDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_FILTER_GUIDE)+"\\"+pFilterGuide->FileID();
+		string dir = CAREnum::ContainerDir(ARCON_FILTER_GUIDE)+"/"+pFilterGuide->FileID();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)

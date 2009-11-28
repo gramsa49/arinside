@@ -64,6 +64,7 @@ private:
 		~PropHelpData(void);
 
 		operator ARULong32() { return pId; }
+		friend bool operator<(const PropHelpData &l, const PropHelpData &r) { return l.pId < r.pId; }
 
 		ARULong32       pId;    // property id
 		ARValueStruct*  Value;  // value struct

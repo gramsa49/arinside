@@ -24,7 +24,7 @@ public:
 	~CWindowsUtil(void);
 
 	void Load();
-	int CreateAppDirectory();
+	bool CreateAppDirectory();
 	int CreateSubDirectory(string name);
 
 private:

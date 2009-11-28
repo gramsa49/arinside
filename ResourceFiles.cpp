@@ -28,11 +28,11 @@ CResourceFiles::~CResourceFiles(void)
 void CResourceFiles::Load(AppConfig &appConfig)
 {
 	stringstream strm;	
-	//strm << appConfig.targetFolder << "\\" << "template" << "\\";
+	//strm << appConfig.targetFolder << "/" << "template" << "/";
 	//LoadFromResource("NAVIGATION_HTM", "navigation.htm", strm.str());
 
 	strm.str("");
-	strm << appConfig.targetFolder << "\\" << "img" << "\\";	
+	strm << appConfig.targetFolder << "/" << "img" << "/";
 	LoadFromResource("STYLE_CSS", "style.css", strm.str());
 	LoadFromResource("SCRIPT", "script.js", strm.str());
 	LoadFromResource("TABSCRIPT", "tabscript.js", strm.str());
@@ -87,7 +87,7 @@ void CResourceFiles::LoadFromResource(string strRes, string fileName, string pat
 	}
 
 	stringstream fullFileName;
-	fullFileName << path << "\\" << fileName;
+	fullFileName << path << "/" << fileName;
 
 	if (!(hfile=CreateFile(fullFileName.str().c_str(), GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL))) 
 	{

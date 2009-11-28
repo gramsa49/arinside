@@ -116,7 +116,7 @@ bool CARImageList::LoadFromServer()
 
 void CARImageList::Reserve(unsigned int size)
 {
-	if (internalListState != CARImageList::EMPTY) throw exception("object isnt reusable!");
+	if (internalListState != CARImageList::EMPTY) throw AppException("object isnt reusable!", "ImageList");
 
 	sortedList = new vector<image_ref>();
 	sortedList->reserve(size);
@@ -157,7 +157,7 @@ void CARImageList::Reserve(unsigned int size)
 
 int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageName)
 {
-	if (internalListState != CARImageList::INTERNAL_ALLOC) throw exception("illegal usage!");
+	if (internalListState != CARImageList::INTERNAL_ALLOC) throw AppException("illegal usage!", "ImageList");
 	if (names.numItems >= reservedSize) return -1;
 	
 	CARInside* arIn = CARInside::GetInstance();

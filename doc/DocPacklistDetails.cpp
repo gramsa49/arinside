@@ -32,7 +32,7 @@ void CDocPacklistDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_PACK)+"\\"+this->pPackList->FileID();
+		string dir = CAREnum::ContainerDir(ARCON_PACK)+"/"+this->pPackList->FileID();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
