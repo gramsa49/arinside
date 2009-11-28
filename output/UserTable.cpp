@@ -20,14 +20,14 @@
 using namespace OUTPUT;
 
 CUserTable::CUserTable(CARInside &arIn)
+: CObjectTable("userList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("userList", "TblObjectList");
-	tbl->AddColumn(40, "Login Name");
-	tbl->AddColumn(20, "License");
-	tbl->AddColumn(20, "Modified");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(40, "Login Name");
+	tbl.AddColumn(20, "License");
+	tbl.AddColumn(20, "Modified");
+	tbl.AddColumn(20, "By");
 }
 
 CUserTable::~CUserTable(void)
@@ -44,7 +44,7 @@ void CUserTable::AddRow(CARUser &user, int rootLevel)
 		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.modifiedBy, rootLevel)));
 
-		this->tbl->AddRow(tblRow);
+		this->tbl.AddRow(tblRow);
 	}
 	catch(exception& e)
 	{

@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -13,26 +13,24 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-
 #pragma once
-#include <string>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <list>
-#include <map>
-#include <vector>
-#include <time.h>
-#include <stdlib.h> // JLS17_LINUX
-#if WIN32 // JLS17_LINUX
-#include <tchar.h>
-#endif
 
-#include "util/Util.h"
+#include "../AppConfig.h"
 
-extern const char* MenuSeparator;
-extern const char* EmptyRunIf;
-extern const char* EmptyValue;
+class CNavigationPage
+{
+public:
+	CNavigationPage(AppConfig &config) : conf(config) { fileName = "template/navigation"; }
+	~CNavigationPage() { }
 
-using namespace std;
-using std::for_each;
+	void Write();
+private:
+	AppConfig &conf;
+	string fileName;
+
+	void Header(ofstream &strm);
+	void Footer(ofstream &strm);
+
+	void Image(ofstream &strm, char *path, char *file, int width, int height);
+	void Link(ofstream &strm, char *href, char *content);
+};

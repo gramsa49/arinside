@@ -41,10 +41,12 @@
 
 #include "output/Table.h"
 #include "output/WebUtil.h"
+#include "output/NavigationPage.h"
 
-#if defined(_DEBUG) || defined(_ARINSIDE_BETA)
+/////////
+// the following file is generated via a pre-build step using "svnrev_template.h" as template. 
+// The $WCREV$ keyword of the template is replaced with the revision number.
 #include "svnrev.h"
-#endif
 
 /////////
 // version information block
@@ -54,7 +56,7 @@
 #elif defined(_ARINSIDE_BETA)
 #define VERSION_STR VERSION "r" SVN_REV_STR " Beta"
 #else
-#define VERSION_STR VERSION
+#define VERSION_STR VERSION "r" SVN_REV_STR
 #endif
 const string AppVersion = VERSION_STR;
 /////////
@@ -110,18 +112,25 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	cout << endl << "Connecting to server " << server << "..." << endl;
 
 	memset(&arControl, '\0', sizeof(arControl));
+	memset(&arStatus, '\0', sizeof(arStatus));
 
 	if(this->appConfig.bUseUtf8)
 		strcpy(arControl.localeInfo.charSet, "UTF-8");
 
 	strncpy(arControl.user, user.c_str(), AR_MAX_NAME_SIZE);
 	arControl.user[AR_MAX_NAME_SIZE]='\0';
-	strncpy(arControl.password, pw.c_str(), AR_MAX_NAME_SIZE);
-	arControl.password[AR_MAX_NAME_SIZE]='\0';
+	strncpy(arControl.password, pw.c_str(), AR_MAX_PASSWORD_SIZE);
+	arControl.password[AR_MAX_PASSWORD_SIZE]='\0';
 	strncpy(arControl.server, server.c_str(), AR_MAX_SERVER_SIZE);
 	arControl.server[AR_MAX_SERVER_SIZE]='\0';
 
 	int nResult = ARInitialization(&this->arControl,&this->arStatus);
+	if (nResult != AR_RETURN_OK)
+	{
+		cout << "Initilization of ARAPI returned: " << nResult << " (" << CAREnum::ActiveLinkMessageType(nResult) << ")" << endl;
+		cout << GetARStatusError();
+		return nResult;
+	}
 
 	if(server == "" && nResult == AR_RETURN_OK) // Filemode
 	{
@@ -137,32 +146,21 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 
 		if(nResult == AR_RETURN_OK)
 		{
-			ARNameList nameList;
-			nResult = ARGetListSchema(&this->arControl,
-				0,
-				AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT,
-				NULL,
-				NULL,
-				NULL,
-				&nameList,
-				&this->arStatus);
-
-			if(nameList.numItems == 0)
-			{							
+			ARBoolean isAdmin, isSubadmin, hasCustomize;
+			nResult = ARVerifyUser(&this->arControl, &isAdmin, &isSubadmin, &hasCustomize, &this->arStatus);
+			
+			if (nResult != AR_RETURN_OK)
+			{
 				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
 			}
-			else
-			{
-				CARServerInfo serverInfo(this->arControl, this->arStatus);
-				this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
-				this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
-				cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
-
-				LoadBlackList();
-			}
-
-			FreeARNameList(&nameList, false);
 			FreeARStatusList(&this->arStatus, false);
+
+			CARServerInfo serverInfo(this->arControl, this->arStatus);
+			this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
+			this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
+			cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
+
+			LoadBlackList();
 		}
 	}
 
@@ -183,10 +181,11 @@ void CARInside::LoadBlackList(void)
 	{
 		if(appConfig.blackList.size() > 0)
 		{
+			int refTypeStorage = ARREF_ALL;
 			ARReferenceTypeList		refTypes;
-			refTypes.refType = (int *) malloc(sizeof(unsigned int) * 1);
+			refTypes.refType = &refTypeStorage;
 			refTypes.numItems = 1;
-			refTypes.refType[0] = ARREF_ALL;
+			//refTypes.refType[0] = ARREF_ALL;
 
 			cout << "Loading blacklist from packinglist '" << appConfig.blackList << "'" << endl;
 
@@ -214,9 +213,9 @@ void CARInside::LoadBlackList(void)
 				{
 					//if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
 					//{
-					CBlackListItem *blackListItem = new CBlackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
+					CBlackListItem blackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
 
-					this->blackList.insert(blackList.end(), *blackListItem);
+					this->blackList.insert(blackList.end(), blackListItem);
 					LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
 					//}
 				}
@@ -359,6 +358,8 @@ void CARInside::Prepare(void)
 		wUtil.CreateSubDirectory("role");
 		wUtil.CreateSubDirectory("webservice");
 	}
+
+	delete docMain;
 }
 
 bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem)
@@ -494,6 +495,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -568,8 +570,10 @@ void CARInside::LoadFromFile(void)
 								{
 									CARGlobalField *globalField = new CARGlobalField(schema->GetInsideId(), field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
+									delete globalField;
 								}	
 
+								delete field;
 								LOG << " [OK]" << endl;												
 							}
 
@@ -590,6 +594,8 @@ void CARInside::LoadFromFile(void)
 								vui->xmlDocVersion = schema->xmlDocVersion;
 								vui->schemaInsideId = arInsideIdSchema;
 								schema->vuiList.insert(schema->vuiList.end(), *vui);
+
+								delete vui;
 							}
 
 							this->schemaList.insert(this->schemaList.end(), *schema);
@@ -600,6 +606,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete schema;
 						//FreeARFieldInfoList(&fieldInfoList, false);
 						//FreeARVuiInfoList(&vuiInfoList, false);
 						FreeARStatusList(&this->arStatus, false);
@@ -648,6 +655,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -681,6 +689,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -718,6 +727,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -756,6 +766,7 @@ void CARInside::LoadFromFile(void)
 						else
 							cerr << GetARStatusError();
 
+						delete obj;
 						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
@@ -1008,6 +1019,7 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 								else
 									LOG << " [ERROR]" << endl;
 
+								delete vui;
 								FreeARStatusList(&this->arStatus, false);
 							}
 						}
@@ -1084,7 +1096,9 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 								{
 									CARGlobalField *globalField = new CARGlobalField(schemaInsideId, field->GetInsideId(), field->fieldId);
 									this->globalFieldList.insert(this->globalFieldList.end(), *globalField);
+									delete globalField;
 								}
+								delete field;
 							}
 
 							this->Sort(schema->fieldList);
@@ -1101,6 +1115,8 @@ int CARInside::LoadForms(int nType, int &schemaInsideId)
 					}			
 					else
 						LOG << " [ERROR]" << endl;
+
+					delete schema;
 				}
 			}
 		}
@@ -1171,6 +1187,8 @@ int CARInside::LoadContainer(void)
 					}		
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1229,6 +1247,8 @@ int CARInside::LoadCharMenus(void)
 					}
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1290,6 +1310,8 @@ int CARInside::LoadEscalations(void)
 					}	
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1356,6 +1378,8 @@ int CARInside::LoadFilters(void)
 					}	
 					else
 						cerr << GetARStatusError();
+
+					delete obj;
 				}
 			}
 		}
@@ -1425,6 +1449,7 @@ int CARInside::LoadActiveLinks(void)
 					else
 						cerr << GetARStatusError();
 
+					delete obj;
 				}
 			}
 		}
@@ -1945,6 +1970,7 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 		refItemNotFound->fieldInsideId = fieldInsideId;
 		refItemNotFound->description = "Field does not exist";	
 		this->listFieldNotFound.push_back(*refItemNotFound);
+		delete refItemNotFound;
 	}
 
 	tmp << "<span class=\"fieldNotFound\">" << fieldInsideId << "</span>";
@@ -2575,7 +2601,7 @@ void CARInside::CustomFieldReferences(CARSchema &schema, CARField &obj)
 					if (tableSourceSchema != NULL)
 					{
 						stringstream tmpDesc;
-						tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableSourceSchema->GetInsideId(), rootLevel);
+						tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField->fieldId, rootLevel) << " of Form " << LinkToSchema(tableField->schemaInsideId, rootLevel);
 						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), fLimit.dataField, tableSourceSchema->GetInsideId());
 						refItem.fromFieldId = obj.fieldId;
 						this->AddReferenceItem(&refItem);
@@ -3256,6 +3282,9 @@ void CARInside::DoWork(int nMode)
 
 	// now load the object either from server or from file
 	LoadServerObjects(nMode);
+
+	// now create navigation page based on supported server features
+	{ CNavigationPage navPage(appConfig); navPage.Write(); }
 
 	// build needed reference tables
 	BuildReferences();

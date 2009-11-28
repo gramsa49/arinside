@@ -20,14 +20,14 @@
 using namespace OUTPUT;
 
 CImageTable::CImageTable(CARInside &arIn)
+: CObjectTable("imageList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("imageList", "TblObjectList");
-	tbl->AddColumn(40, "Image Name");
-	tbl->AddColumn(20, "Type");
-	tbl->AddColumn(20, "Modified");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(40, "Image Name");
+	tbl.AddColumn(20, "Type");
+	tbl.AddColumn(20, "Modified");
+	tbl.AddColumn(20, "By");
 }
 
 CImageTable::~CImageTable(void)
@@ -50,7 +50,7 @@ void CImageTable::AddRow(int imageIndex, int rootLevel)
 		//tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.modified)));
 		//tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.modifiedBy, rootLevel)));
 
-		this->tbl->AddRow(tblRow);
+		this->tbl.AddRow(tblRow);
 	}
 	catch(exception& e)
 	{

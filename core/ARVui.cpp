@@ -28,11 +28,13 @@ CARVui::CARVui(int insideId)
 
 CARVui::~CARVui(void)
 {
-	if(bARFree)
-	{
-		if(objPropList.props != NULL)
-			FreeARPropList(&objPropList, false);
-	}
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//if(bARFree)
+	//{
+	//	if(objPropList.props != NULL)
+	//		FreeARPropList(&objPropList, false);
+	//}
 }
 
 string CARVui::GetURL(int rootLevel, bool showImage)

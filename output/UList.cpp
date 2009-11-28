@@ -30,9 +30,9 @@ CUList::~CUList(void)
 	this->listItem.clear();
 }
 
-void CUList::AddItem(CUListItem *li)
+void CUList::AddItem(const CUListItem &li)
 {
-	this->listItem.insert(this->listItem.end(), *li);
+	this->listItem.insert(this->listItem.end(), li);
 }
 
 string CUList::ToXHtml(string title, bool bItemImage)

@@ -20,17 +20,17 @@
 using namespace OUTPUT;
 
 CSchemaTable::CSchemaTable(CARInside &arIn)
+: CObjectTable("schemaList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("schemaList", "TblObjectList");
-	tbl->AddColumn(30, "Form Name");
-	tbl->AddColumn(20, "Web Alias");
-	tbl->AddColumn(5, "Fields");
-	tbl->AddColumn(5, "Views");
-	tbl->AddColumn(10, "Type");
-	tbl->AddColumn(15, "Modified");
-	tbl->AddColumn(15, "By");
+	tbl.AddColumn(30, "Form Name");
+	tbl.AddColumn(20, "Web Alias");
+	tbl.AddColumn(5, "Fields");
+	tbl.AddColumn(5, "Views");
+	tbl.AddColumn(10, "Type");
+	tbl.AddColumn(15, "Modified");
+	tbl.AddColumn(15, "By");
 }
 
 CSchemaTable::~CSchemaTable(void)
@@ -49,5 +49,5 @@ void CSchemaTable::AddRow(CARSchema &schema, int rootLevel)
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(schema.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(schema.lastChanged, rootLevel)));
 
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 }

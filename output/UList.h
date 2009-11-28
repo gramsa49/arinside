@@ -29,7 +29,7 @@ namespace OUTPUT
 		~CUList(void);
 
 		string ToXHtml(string title, bool bItemImage);
-		void AddItem(CUListItem *li);
+		void AddItem(const CUListItem &li);
 
 	private:
 		int rootLevel;

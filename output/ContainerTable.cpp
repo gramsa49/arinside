@@ -20,14 +20,14 @@
 using namespace OUTPUT;
 
 CContainerTable::CContainerTable(CARInside &arIn)
+: CObjectTable("containerLIst", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("containerLIst", "TblObjectList");
-	tbl->AddColumn(40, "Container Name");
-	tbl->AddColumn(20, "Type");
-	tbl->AddColumn(20, "Modified");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(40, "Container Name");
+	tbl.AddColumn(20, "Type");
+	tbl.AddColumn(20, "Modified");
+	tbl.AddColumn(20, "By");
 }
 
 CContainerTable::~CContainerTable(void)
@@ -63,7 +63,7 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.type)));
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.timestamp)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.lastChanged, rootLevel)));
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 }
 
 int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)

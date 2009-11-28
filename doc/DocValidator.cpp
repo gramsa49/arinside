@@ -396,7 +396,7 @@ void CDocValidator::FieldReferenceValidator()
 							CFieldRefItem *item = &(*iter);
 							if(item->schemaInsideId == missingFieldItem->schemaInsideId && item->fieldInsideId == missingFieldItem->fieldInsideId)
 							{			
-								if(strcmp(item->fromName.c_str(), EmptyValue.c_str())!=0)
+								if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
 								{
 									CTableRow row("cssStdRow");		
 									row.AddCell(CTableCell(CAREnum::XmlStructItem(item->arsStructItemType)));				
@@ -504,7 +504,7 @@ int CDocValidator::NumReferences(int searchSchemaId, int searchFieldId)
 			item = &(*iter);
 			if(item->schemaInsideId == searchSchemaId  && item->fieldInsideId == searchFieldId)
 			{			
-				if(strcmp(item->fromName.c_str(), EmptyValue.c_str())!=0)
+				if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
 				{
 					nResult++;
 				}

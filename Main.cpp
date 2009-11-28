@@ -194,6 +194,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << "AppException: " << e.typeDescription() << endl << "Description: " << e.error();	
 	}
+	catch(exception &e)
+	{
+		cout << endl << "Unhandled execption in _main: " << e.what() << endl;
+	}
 
 	return result;
 }

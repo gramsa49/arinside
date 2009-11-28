@@ -23,39 +23,36 @@ using namespace OUTPUT;
 
 extern int nFilesCreated;
 
-CWebPage::CWebPage(string fileName, string title, int dirLevel, AppConfig &appConfig)
+CWebPage::CWebPage(const string &fileName, const string &title, int dirLevel, const AppConfig &appConfig)
+: appConfig(appConfig)
 {
 	this->fileName = fileName;	
-	this->appConfig = appConfig;
 	this->title = title;
 	this->rootLevel = dirLevel;
 }
 
 CWebPage::~CWebPage(void)
 {
-	bodyStrm.str("");
-	contentStrm.str("");
-	navStrm.str("");
 }
 
-void CWebPage::AddNavigation(string nav)
+void CWebPage::SetNavigation(const string &nav)
 {
-	navStrm << nav << endl;
+	navContent = nav;
 }
 
-void CWebPage::AddContent(string bodyContent)
-{	
-	bodyStrm << bodyContent << endl;
-}
-
-void CWebPage::AddContentHead(string description)
+void CWebPage::AddContent(const string &content)
 {
-	bodyStrm << description << "<br/><br/>" << endl;
+	this->bodyContent.push_back(content);
 }
 
-string CWebPage::PageHeader()
+void CWebPage::AddContentHead(const string &description)
 {
-	stringstream strm;
+	AddContent(description);
+	AddContent("<br/><br/>");
+}
+
+void CWebPage::PageHeader(ofstream &strm)
+{
 	strm << "<?xml version=\"1.0\" ?>" << endl;
 	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
 	strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << endl;
@@ -70,12 +67,10 @@ string CWebPage::PageHeader()
 	strm << "<script src=\"" << CWebUtil::RootPath(rootLevel) << "img/sortscript.js\" type=\"text/javascript\"></script>" << endl;
 	strm <<	"<script src=\"" << CWebUtil::RootPath(rootLevel) << "img/tabscript.js\" type=\"text/javascript\"></script>" << endl;
 	strm << "</head>" << endl;
-	return strm.str();
 }
 
-string CWebPage::DynamicHeaderText()
+void CWebPage::DynamicHeaderText(ofstream &strm)
 {
-	stringstream strm;
 	strm << "<table>" << endl;
 	strm << "<tr>" << endl;
 	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel)+ CWebUtil::DocName("index"), "server.gif", rootLevel) << "</td>" << endl;
@@ -84,7 +79,6 @@ string CWebPage::DynamicHeaderText()
 	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
 	strm << "</tr>" << endl;
 	strm << "</table>" << endl;	
-	return strm.str();
 }
 
 string CWebPage::CurrentDateTime()
@@ -99,44 +93,37 @@ string CWebPage::CurrentDateTime()
 	return string;
 }
 
-string CWebPage::DynamicFooterText()
+void CWebPage::DynamicFooterText(ofstream &strm)
 {
-	stringstream strm;
 	strm << "<table><tr>" << endl;
 	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel)+ CWebUtil::DocName("index"), "next.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
 	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
-	strm << "<td>(Page created "<< CurrentDateTime() <<" by <a href=\"http://arinside.org\" target=\"_blank\">ARInside v"<< AppVersion <<"</a>)</td>";
+	strm << "<td>(Page created " << CurrentDateTime() <<" by <a href=\"http://arinside.org\" target=\"_blank\">ARInside v" << AppVersion <<"</a>)</td>";
 	strm << "</tr></table>" << endl;
-	return strm.str();
 }
 
-string CWebPage::ContentOpen()
+void CWebPage::ContentOpen(ofstream &strm)
 {
-	stringstream strm;
 	strm << "<body>" << endl;
 	strm << "<a name=\"top\"></a>" << endl;
 	strm << "<table class=\"TblMain\">" << endl;
 	strm << "<tr><td class=\"TdMainHeader\" colspan=\"3\">" << endl;
-	strm << DynamicHeaderText() << endl;
+	DynamicHeaderText(strm);
 	strm << "</td></tr><tr><td class=\"TdMainMenu\">" << endl;
 	strm << "<iframe id=\"IFrameMenu\" src=\"" << CWebUtil::RootPath(rootLevel) << "template/navigation.htm\" name=\"Navigation\" frameborder=\"0\">" << endl;
 	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << endl;
-
-	return strm.str();
 }
 
-string CWebPage::ContentClose()
+void CWebPage::ContentClose(ofstream &strm)
 {
-	stringstream strm;
-
 	strm << "</td>" << endl;
 
-	if(navStrm.str().size() > 0)
+	if(!navContent.empty())
 	{
 		strm << "<td class=\"TdMainContentSmall\" style=\"width: 170px;\">" << endl;
-		strm << navStrm.str() << endl;
+		strm << navContent << endl;
 		strm << "</td>" << endl;
 	}
 	else
@@ -145,20 +132,22 @@ string CWebPage::ContentClose()
 	}
 
 	strm << "</tr><tr><td class=\"TdMainButtom\" colspan=\"3\">" << endl;
-	strm << DynamicFooterText() << endl;
-	strm << "</td></tr></table></body></html>" << endl;
-	return strm.str();
+	DynamicFooterText(strm);
+	strm << endl << "</td></tr></table></body></html>" << endl;
 }
 
 
 
-string CWebPage::GetFileContent()
+void CWebPage::WriteContent(ofstream &strm)
 {	
-	contentStrm << PageHeader() << endl;
-	contentStrm << ContentOpen() << endl;
-	contentStrm << bodyStrm.str() << endl;
-	contentStrm << ContentClose();
-	return this->contentStrm.str();
+	PageHeader(strm);
+	ContentOpen(strm);
+	
+	vector<string>::iterator curIt = bodyContent.begin();
+	vector<string>::iterator endIt = bodyContent.end();
+	for (; curIt != endIt; ++curIt)	strm << *curIt;
+
+	ContentClose(strm);
 }
 
 
@@ -177,7 +166,7 @@ int CWebPage::SaveInFolder(string path)
 		LOG << "Save file '" << strm.str();
 
 		ofstream fout( strm.str().c_str(), ios::out);
-		fout << this->GetFileContent() << endl;
+		WriteContent(fout);
 		fout.close();
 
 		LOG << "' [OK]" << endl;

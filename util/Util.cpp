@@ -146,7 +146,7 @@ string CUtil::TimeOfDayToString(ARTime time)
 
 	timeinfo = gmtime ( &rawtime );
 
-	strftime (buffer,80,"%I:%M:%S %p",timeinfo);
+	strftime (buffer,20,"%I:%M:%S %p",timeinfo);
 
 	return buffer;
 }

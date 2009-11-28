@@ -105,10 +105,9 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 					break;				
 				}
 				string infoValue = strm.str();
-				CARServerInfoItem *infoItem = new CARServerInfoItem(i+1, infoValue);
 				if(infoValue.length() > 0)
 				{			
-					listResult.push_back(*infoItem);
+					listResult.push_back(CARServerInfoItem(i+1, infoValue));
 					LOG << "Loading ServerInfo: " << CAREnum::ServerInfoApiCall(i+1) << "[OK]" << endl;
 				}
 			}
@@ -135,36 +134,39 @@ string CARServerInfo::GetValue(int apiCall)
 	ARServerInfoList serverInfo;
 
 	requestList.numItems = 1;
-	requestList.requestList = (unsigned int *) malloc (sizeof(unsigned int)*requestList.numItems);
+	requestList.requestList = new unsigned int[requestList.numItems]; // (unsigned int *) malloc (sizeof(unsigned int)*requestList.numItems);
 	requestList.requestList[0] = apiCall;
 
 	if( ARGetServerInfo(&arControl, &requestList, &serverInfo, &arStatus) == AR_RETURN_OK)
 	{
-		int datatype=serverInfo.serverInfoList->value.dataType;
-		switch (datatype)
+		if (serverInfo.numItems > 0)
 		{
-		case AR_DATA_TYPE_NULL:
+			int datatype=serverInfo.serverInfoList->value.dataType;
+			switch (datatype)
 			{
-				strm << "NULL";
-			}
-			break;
-		case AR_DATA_TYPE_CHAR:
-			{
-				if(serverInfo.serverInfoList->value.u.charVal != NULL)
+			case AR_DATA_TYPE_NULL:
 				{
-					strm << serverInfo.serverInfoList->value.u.charVal;
+					strm << "NULL";
 				}
+				break;
+			case AR_DATA_TYPE_CHAR:
+				{
+					if(serverInfo.serverInfoList->value.u.charVal != NULL)
+					{
+						strm << serverInfo.serverInfoList->value.u.charVal;
+					}
+				}
+				break;
+			case AR_DATA_TYPE_INTEGER:
+				{
+					strm << serverInfo.serverInfoList->value.u.intVal;
+				}
+				break;				
 			}
-			break;
-		case AR_DATA_TYPE_INTEGER:
-			{
-				strm << serverInfo.serverInfoList->value.u.intVal;
-			}
-			break;				
 		}
 	}
 
-	delete requestList.requestList;
+	delete[] requestList.requestList;
 	FreeARServerInfoList(&serverInfo, false);
 	FreeARStatusList(&arStatus, false);
 

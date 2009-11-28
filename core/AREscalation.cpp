@@ -29,19 +29,21 @@ CAREscalation::CAREscalation(string name, int insideId)
 
 CAREscalation::~CAREscalation(void)
 {
-	try
-	{
-		FreeARWorkflowConnectStruct (&schemaList, false);
-		FreeARQualifierStruct (&query, false);
-		FreeARFilterActionList (&actionList, false);
-		FreeARFilterActionList (&elseList, false);	
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//try
+	//{
+	//	FreeARWorkflowConnectStruct (&schemaList, false);
+	//	FreeARQualifierStruct (&query, false);
+	//	FreeARFilterActionList (&actionList, false);
+	//	FreeARFilterActionList (&elseList, false);	
 
-		if(objPropList.props != NULL)
-			FreeARPropList(&objPropList, false);
-	}
-	catch(...)
-	{
-	}
+	//	if(objPropList.props != NULL)
+	//		FreeARPropList(&objPropList, false);
+	//}
+	//catch(...)
+	//{
+	//}
 }
 
 string CAREscalation::GetURL(int rootLevel, bool showImage)

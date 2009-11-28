@@ -20,15 +20,15 @@
 using namespace OUTPUT;
 
 CRoleTable::CRoleTable(CARInside &arIn)
+: CObjectTable("roleList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl = new CTable("roleList", "TblObjectList");
-	tbl->AddColumn(25, "Role Name");
-	tbl->AddColumn(5, "RoleID");
-	tbl->AddColumn(30, "Application");	
-	tbl->AddColumn(20, "Modified");
-	tbl->AddColumn(20, "By");
+	tbl.AddColumn(25, "Role Name");
+	tbl.AddColumn(5, "RoleID");
+	tbl.AddColumn(30, "Application");	
+	tbl.AddColumn(20, "Modified");
+	tbl.AddColumn(20, "By");
 }
 
 CRoleTable::~CRoleTable(void)
@@ -43,5 +43,5 @@ void CRoleTable::AddRow(CARRole &role, int rootLevel)
 	tblRow.AddCell( CTableCell(this->pInside->LinkToContainer(role.applicationName, rootLevel)));
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(role.modified)));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(role.modifiedBy, rootLevel)));
-	this->tbl->AddRow(tblRow);
+	this->tbl.AddRow(tblRow);
 }

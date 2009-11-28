@@ -72,7 +72,7 @@ void CDocSchemaDetails::Documentation()
 			pgStrm << contHeadStrm.str();
 
 			//Add schema navigation menu	
-			webPage.AddNavigation(this->SchemaNavigation());
+			webPage.SetNavigation(this->SchemaNavigation());
 
 
 			//Schema Properties
@@ -224,46 +224,46 @@ void CDocSchemaDetails::Documentation()
 
 string CDocSchemaDetails::SchemaNavigation()
 {	
-	CUList *uList = new CUList(this->rootLevel, "");
+	CUList uList(this->rootLevel, "");
 
 	try
 	{
 		//Permissions
-		uList->AddItem( new CUListItem(CWebUtil::Link("Permission", CWebUtil::DocName("form_permission_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CWebUtil::DocName("form_permission_list"), "", rootLevel)));
 
 		//Workflow		
-		uList->AddItem(new CUListItem(CWebUtil::Link("Workflow", CWebUtil::DocName("form_workflow"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CWebUtil::DocName("form_workflow"), "", rootLevel)));
 
 		//Indexes
-		uList->AddItem(new CUListItem(CWebUtil::Link("Indexes", CWebUtil::DocName("form_index_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CWebUtil::DocName("form_index_list"), "", rootLevel)));
 
 		//SortList
-		uList->AddItem(new CUListItem(CWebUtil::Link("Sortlist", CWebUtil::DocName("form_sort_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CWebUtil::DocName("form_sort_list"), "", rootLevel)));
 
 		//ResultList
-		uList->AddItem(new CUListItem(CWebUtil::Link("Resultlist", CWebUtil::DocName("form_result_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CWebUtil::DocName("form_result_list"), "", rootLevel)));
 
 		//Views
-		uList->AddItem(new CUListItem(CWebUtil::Link("Views", CWebUtil::DocName("form_vui_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Views", CWebUtil::DocName("form_vui_list"), "", rootLevel)));
 
 		//Subadministrator
-		uList->AddItem(new CUListItem(CWebUtil::Link("Subadministrator", CWebUtil::DocName("form_subadmin_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CWebUtil::DocName("form_subadmin_list"), "", rootLevel)));
 
 		//Active Links
-		uList->AddItem(new CUListItem(CWebUtil::Link("Active Link", CWebUtil::DocName("form_al_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Active Link", CWebUtil::DocName("form_al_list"), "", rootLevel)));
 
 		//Filters
-		uList->AddItem(new CUListItem(CWebUtil::Link("Filter", CWebUtil::DocName("form_filter_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Filter", CWebUtil::DocName("form_filter_list"), "", rootLevel)));
 
 		//Escalations
-		uList->AddItem(new CUListItem(CWebUtil::Link("Escalation", CWebUtil::DocName("form_escal_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CWebUtil::DocName("form_escal_list"), "", rootLevel)));
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION schema navigation of '" << this->pSchema->name << "': " << e.what() << endl;
 	}	
 
-	return uList->ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
+	return uList.ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
 }
 
 
@@ -589,7 +589,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		webPage.AddContentHead(this->FormPageHeader("Workflow"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		//Field references
@@ -607,7 +607,7 @@ void CDocSchemaDetails::WorkflowDoc()
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ESCALATION))
 			{			
-				if(strcmp(item->fromName.c_str(), EmptyValue.c_str())!=0)
+				if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
 				{
 					if(item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
 					{
@@ -666,7 +666,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		webPage.AddContentHead(this->FormPageHeader("Permissions"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CTable tbl("permissionList", "TblObjectList");
 		tbl.AddColumn(5, "Permission");
@@ -771,7 +771,7 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 		webPage.AddContentHead(this->FormPageHeader("Subadministrator Permission"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		CTable tbl("fieldListAll", "TblObjectList");
@@ -807,7 +807,7 @@ void CDocSchemaDetails::IndexDoc()
 		webPage.AddContentHead(this->FormPageHeader("Indexes"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		for(unsigned int nIndex=0; nIndex < this->pSchema->indexList.numItems; nIndex++)
 		{		
@@ -883,7 +883,7 @@ void CDocSchemaDetails::ResultListDoc()
 		webPage.AddContentHead(this->FormPageHeader("Resultlist"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		CTable tbl("fieldListIndex", "TblObjectList");
@@ -955,7 +955,7 @@ void CDocSchemaDetails::SortListDoc()
 		webPage.AddContentHead(this->FormPageHeader("Sortlist"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 
 		CTable tbl("fieldListIndex", "TblObjectList");
@@ -1030,7 +1030,7 @@ void CDocSchemaDetails::VuiListDoc()
 		webPage.AddContentHead(this->FormPageHeader("Views"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CTable tbl("vuiList", "TblObjectList");
 		tbl.AddColumn(30, "Vui Name");
@@ -1079,7 +1079,7 @@ void CDocSchemaDetails::SchemaFilterDoc()
 		webPage.AddContentHead(this->FormPageHeader("Filter"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
@@ -1129,7 +1129,7 @@ void CDocSchemaDetails::SchemaAlDoc()
 		webPage.AddContentHead(this->FormPageHeader("Active Links"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
@@ -1179,7 +1179,7 @@ void CDocSchemaDetails::SchemaEscalDoc()
 		webPage.AddContentHead(this->FormPageHeader("Escalations"));
 
 		//Add schema navigation menu	
-		webPage.AddNavigation(this->SchemaNavigation());
+		webPage.SetNavigation(this->SchemaNavigation());
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
@@ -2057,40 +2057,3 @@ string CDocSchemaDetails::ShowArchiveProperties()
 	}
 	return strm.str();
 }
-
-//string CDocSchemaDetails::ShowPropertiesLeft(CARProplistHelper* propIndex)
-//{
-//	stringstream strm;
-//	strm.str("");
-//
-//	ARValueStruct* propVal;
-//
-//	try
-//	{
-//		CTable tbl("displayPropList", "TblObjectList");
-//		tbl.AddColumn(20, "Description");
-//		tbl.AddColumn(80, "Values");
-//
-//		
-//		for (propIter = propIndex->begin(); propIter != propIndex->end(); ++propIter)
-//		{
-//			if (propIter->second != NULL)
-//			{
-//				CTableRow row("");			
-//				row.AddCell(CTableCell(CARProplistHelper::GetLabel(propIter->first)));
-//				row.AddCell(CTableCell(CARProplistHelper::GetValue(propIter->first,*propIter->second)));		
-//				tbl.AddRow(row);
-//			}
-//		}
-//
-//		tbl.description = "Object Properties:";
-//		strm << tbl.ToXHtml();
-//
-//	}
-//	catch(exception& e)
-//	{
-//		cout << "EXCEPTION enumerating object properties: " << e.what() << endl;
-//	}
-//
-//	return strm.str();
-//}

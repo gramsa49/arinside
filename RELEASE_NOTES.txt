@@ -4,8 +4,8 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
-2009-10
-[3.0]
+2009-11
+[3.0.0]
 N - This is the first OpenSource release of ARInside
 
 E - Added support to parse 'Special Runprocess Commands' for form and field information
@@ -16,17 +16,22 @@ E - Field references in Indexes now link to the index page for the form
 E - Added full support for Date and TimeOfDay fields
 E - Optimized speed of the get server info from the server
 E - Added 'Status History' references where appropriate
-E - Added 'Error Handler' references
+E - Added 'Error Handler' support and references
 E - Added Escalation Pool to the information displayed about an Escalation
 E - Added a new 'RunNotes' section to settings.ini to allow for run documentation
 E - Enhanced performance of setfield actions
 E - Added 'Hover' and 'Template' support
 E - Added 'Tooltip' message support
 E - Added 'Service' execute on support for Filters
+E - Added 'Service' action support for Active Links and Filters
 E - Added additional 7.1 and 7.5 AL Execute on conditions
 E - Upgraded API from 7.0.1 to 7.5
 E - Added support for form settings of 'Entry Point', 'Archive', and 'Audit'
 E - Added enhanced options added with 7.1 release
+E - Added full support for Open Window actions of type Report 
+E - Added Sample Data support where available
+E - The Validator contains now a page which lists missing menus 
+E - Added support for the new Image object in ARS 7.5
 
 D - when an Exclude list was specified, the exclude list itself was processed wasting time
 D - If Field ID was > 10 characters the app crashed
@@ -40,7 +45,7 @@ D - 'Run Time' was not being calculated properly
 D - Corrected () placement in setfield if statements
 D - SQL Menu Labels were not displaying properly
 D - SQL Set Field actions from another server were displaying current server
-
+D - Active Links interval settings were not displayed properly
 
 2007-07-27
 [Version 2.07.4]

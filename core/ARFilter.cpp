@@ -30,19 +30,21 @@ CARFilter::CARFilter(string name, int insideId)
 
 CARFilter::~CARFilter(void)
 {
-	try
-	{
-		FreeARQualifierStruct(&query, false);
-		FreeARFilterActionList(&actionList, false);
-		FreeARFilterActionList(&elseList, false);
-		FreeARWorkflowConnectStruct(&schemaList, false);	
+	// TODO: move ARFree calls to separate method to allow copying of the object without 
+	// copying the whole structure
+	//try
+	//{
+	//	FreeARQualifierStruct(&query, false);
+	//	FreeARFilterActionList(&actionList, false);
+	//	FreeARFilterActionList(&elseList, false);
+	//	FreeARWorkflowConnectStruct(&schemaList, false);	
 
-		if(objPropList.props != NULL)
-			FreeARPropList(&objPropList, false);
-	}
-	catch(...)
-	{
-	}
+	//	if(objPropList.props != NULL)
+	//		FreeARPropList(&objPropList, false);
+	//}
+	//catch(...)
+	//{
+	//}
 }
 
 string CARFilter::GetURL(int rootLevel, bool showImage)

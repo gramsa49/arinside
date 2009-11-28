@@ -24,7 +24,7 @@ namespace OUTPUT
 	class CObjectTable
 	{
 	public:
-		CObjectTable(void);
+		CObjectTable(const string &htmlId, const string &cssClass);
 		~CObjectTable(void);
 
 		string Print();
@@ -33,7 +33,7 @@ namespace OUTPUT
 
 	protected:
 		CARInside *pInside;
-		CTable *tbl;
+		CTable tbl;
 
 	};
 }

@@ -227,8 +227,8 @@ int CARImageList::FindImage(const char* name)
 
 void CARImageList::Sort()
 {
-	if (reservedSize == -1) return; // nothing to sort in an empty list
-	std::sort(sortedList->begin(),sortedList->end());
+	if (GetCount() > 0)
+		std::sort(sortedList->begin(),sortedList->end());
 }
 
 string CARImageList::ImageGetURL(unsigned int index, int rootLevel)

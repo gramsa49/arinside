@@ -333,6 +333,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 					refItemNotifyTxtField->description = "Field in Notify Action (Message Text)";
 					arIn->AddReferenceItem(refItemNotifyTxtField);
 					strm << arIn->LinkToField(schemaInsideId, action.fieldIdList.internalIdList[i], rootLevel) << "<br/>" << endl;
+					delete refItemNotifyTxtField;
 				}
 			}
 
@@ -481,6 +482,7 @@ string CDocFilterActionStruct::FilterActionMessage(ARFilterStatusStruct &action,
 			refItemTmp->fromName = this->obj->GetName();
 			refItemTmp->schemaInsideId = schemaInsideId;
 			strm << "Message Text: <br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
+			delete refItemTmp;
 		}
 	}
 	catch(exception& e)
@@ -743,6 +745,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 
 		CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), "Push Field If", -1, -1);
 		CARQualification arQual(*arIn);
+		arQual.arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;
 
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
 		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
@@ -800,6 +803,7 @@ string CDocFilterActionStruct::FilterActionSql(ARSQLStruct &action, int nAction)
 		{
 			CFieldRefItem *refItem = new CFieldRefItem(this->structItemType, this->obj->GetName(), "Field in Direct SQL", -1, schemaInsideId);
 			strm << "SQL command: <br/>" << arIn->TextFindFields(action.command, "$", schemaInsideId, rootLevel, true, refItem) << endl;
+			delete refItem;
 		}
 		
 	}
