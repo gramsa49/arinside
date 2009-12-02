@@ -50,13 +50,13 @@
 
 /////////
 // version information block
-#define VERSION "3.0"
+#define VERSION "3.0.0"
 #if defined(_DEBUG)
-#define VERSION_STR VERSION "r" SVN_REV_STR " Debug"
+#define VERSION_STR VERSION "." SVN_REV_STR " Debug"
 #elif defined(_ARINSIDE_BETA)
-#define VERSION_STR VERSION "r" SVN_REV_STR " Beta"
+#define VERSION_STR VERSION "." SVN_REV_STR " Beta"
 #else
-#define VERSION_STR VERSION "r" SVN_REV_STR
+#define VERSION_STR VERSION "." SVN_REV_STR
 #endif
 const string AppVersion = VERSION_STR;
 /////////
