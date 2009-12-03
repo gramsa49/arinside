@@ -46,11 +46,22 @@ void CDocGroupDetails::Documentation()
 		tbl.AddColumn(70, "Value");
 
 		CTableRow tblRow("");
+		tblRow.AddCellList(CTableCell("Group Name"), CTableCell(this->pGroup->groupName));
+		tbl.AddRow(tblRow);
+
 		tblRow.AddCellList(CTableCell("Long Group Name"), CTableCell(this->pGroup->longGroupName));
 		tbl.AddRow(tblRow);
 
 		tblRow.AddCellList(CTableCell("Group Type"), CTableCell(CAREnum::GroupType(this->pGroup->groupType)));
 		tbl.AddRow(tblRow);
+
+		tblRow.AddCellList(CTableCell("Group Category"), CTableCell(CAREnum::GroupCategory(this->pGroup->groupCategory)));
+		tbl.AddRow(tblRow);
+
+		if (this->pGroup->groupCategory == AR_GROUP_CATEGORY_COMPUTED) {
+			tblRow.AddCellList(CTableCell("Computed Group Definition"), CTableCell(this->pGroup->groupDefinition));
+			tbl.AddRow(tblRow);
+		}
 
 		tblRow.AddCellList(CTableCell("Permissions"), this->GroupPermissions());
 		tbl.AddRow(tblRow);
