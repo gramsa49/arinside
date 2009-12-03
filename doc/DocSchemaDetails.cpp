@@ -78,8 +78,8 @@ void CDocSchemaDetails::Documentation()
 			//Schema Properties
 			stringstream strmTmp;
 			CTable tblObjProp("objProperties", "TblObjectList");
-			tblObjProp.AddColumn(30, "Property");	
-			tblObjProp.AddColumn(70, "Value");
+			tblObjProp.AddColumn(0, "Property");
+			tblObjProp.AddColumn(0, "Value");
 
 			//Schema type informations
 			CTableRow row("cssStdRow");	
@@ -1474,13 +1474,9 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 					{
 						char *pushSchema;
 						if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
-						{
 							pushSchema = action.sampleSchema;
-						}
 						else
-						{
 							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
-						}
 
 						if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
 						{
@@ -1504,13 +1500,9 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 						{
 							char *pushSchema;
 							if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
-							{
 								pushSchema = action.sampleSchema;
-							}
 							else
-							{
 								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
-							}
 
 							if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
 							{
@@ -1573,17 +1565,13 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 						CDocActionOpenWindowHelper::GetSampleData(*al, "If", i,	sampleServer, openWindowSchema);
 					}
 					else
-					{
 						openWindowSchema = action.schemaName;
-					}
 
 					if (!openWindowSchema.empty() && openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
 						openWindowSchema.clear();
 
 					if(!openWindowSchema.empty() && openWindowSchema.compare(pSchema->name) == 0)
-					{
 						bPushToForm = true;
-					}
 				}
 			}	
 
@@ -1603,17 +1591,13 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 							CDocActionOpenWindowHelper::GetSampleData(*al, "Else", i,	sampleServer, openWindowSchema);
 						}
 						else
-						{
 							openWindowSchema = action.schemaName;
-						}
 
 						if (openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
 							openWindowSchema.clear();
 
 						if(!openWindowSchema.empty() && openWindowSchema.compare(pSchema->name) == 0)
-						{
 							bPushToForm = true;
-						}
 					}
 				}
 			}
@@ -1666,13 +1650,9 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 					{
 						char *pushSchema;
 						if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
-						{
 							pushSchema = action.sampleSchema;
-						}
 						else
-						{
 							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
-						}
 
 						if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
 						{
@@ -1696,13 +1676,9 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 						{
 							char *pushSchema;
 							if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
-							{
 								pushSchema = action.sampleSchema;
-							}
 							else
-							{
 								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
-							}
 
 							if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
 							{

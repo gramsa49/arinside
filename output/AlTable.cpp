@@ -24,15 +24,15 @@ CAlTable::CAlTable(CARInside &arIn)
 {
 	this->pInside = &arIn;
 
-	tbl.AddColumn(30, "Active Link Name");	
-	tbl.AddColumn(5, "Enabled");	
-	tbl.AddColumn(5, "Groups");
-	tbl.AddColumn(5, "Order");	
-	tbl.AddColumn(15, "Execute On");
-	tbl.AddColumn(5, "If");
-	tbl.AddColumn(5, "Else");
-	tbl.AddColumn(15, "Changed");
-	tbl.AddColumn(15, "By");
+	tbl.AddColumn(0, "Active Link Name");
+	tbl.AddColumn(0, "Enabled");	
+	tbl.AddColumn(0, "Groups");
+	tbl.AddColumn(0, "Order");	
+	tbl.AddColumn(0, "Execute On");
+	tbl.AddColumn(0, "If");
+	tbl.AddColumn(0, "Else");
+	tbl.AddColumn(0, "Changed");
+	tbl.AddColumn(0, "By");
 }
 
 CAlTable::~CAlTable(void)
