@@ -48,6 +48,10 @@ AppConfig::AppConfig(void)
 	bUseUtf8 = false;
 
 	serverName = "";
+	userName = "";
+	password = "";
+	tcpPort = 0;
+	rpcPort = 0;
 	bCompactFolder = false;
 	bDeleteExistingFiles = false;
 

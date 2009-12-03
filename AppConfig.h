@@ -63,5 +63,9 @@ public:
 	bool bDeleteExistingFiles;
 
 	string serverName;
+	string userName;
+	string password;
+	int tcpPort;
+	int rpcPort;
 	string runNotes;
 };
