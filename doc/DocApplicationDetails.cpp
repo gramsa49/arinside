@@ -279,29 +279,29 @@ string CDocApplicationDetails::SearchActiveLinks(int &nResult)
 
 	try
 	{	
-		list<CARActiveLink>::iterator objIter;		
-
-		for ( objIter = pInside->alList.begin(); objIter != pInside->alList.end(); objIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{				
-			CARActiveLink *obj = &(*objIter);
+			CARActiveLink obj(alIndex);
+
 			bool bInsert = false;
 
-			for(unsigned int i=0; i< obj->schemaList.u.schemaList->numItems; i++)
+			for(unsigned int i=0; i< obj.GetSchemaList().u.schemaList->numItems; i++)
 			{
-				if(InList(obj->schemaList.u.schemaList->nameList[i], ARREF_SCHEMA))
+				if(InList(obj.GetSchemaList().u.schemaList->nameList[i], ARREF_SCHEMA))
 				{
 					bInsert = true;
 				}
 			}
 
-			if(InList(obj->name.c_str(), ARREF_ACTLINK))
+			if(InList(obj.GetName().c_str(), ARREF_ACTLINK))
 				bInsert = true;
 
 			if(bInsert)
 			{
 				nResult++;
-				strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
-				obj->appRefName = this->pApp->name;
+				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
+				obj.SetAppRefName(this->pApp->name);
 			}
 		}		
 	}

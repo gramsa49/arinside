@@ -37,7 +37,7 @@ CARAssignHelper::~CARAssignHelper(void)
 }
 
 
-string CARAssignHelper::PushFieldsAssignment(ARPushFieldsActionStruct &action, int nAction, string ifElse)
+string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, string ifElse)
 {
 	stringstream strm;
 	strm.str("");
@@ -83,7 +83,7 @@ string CARAssignHelper::PushFieldsAssignment(ARPushFieldsActionStruct &action, i
 	return strm.str();
 }
 
-string CARAssignHelper::SetFieldsAssignment(ARSetFieldsActionStruct &action, int nAction, string ifElse)
+string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, string ifElse)
 {
 	stringstream strm;
 	strm.str("");
@@ -128,7 +128,7 @@ string CARAssignHelper::SetFieldsAssignment(ARSetFieldsActionStruct &action, int
 	return strm.str();
 }
 
-string CARAssignHelper::OpenWindowAssignment(ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo)
+string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -176,7 +176,7 @@ string CARAssignHelper::OpenWindowAssignment(ARFieldAssignList &action, int nAct
 	return strm.str();
 }
 
-string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo)
+string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -221,7 +221,7 @@ string CARAssignHelper::CloseWindowAssignment(ARFieldAssignList &action, int nAc
 	return strm.str();
 }
 
-string CARAssignHelper::ServiceAssignment(ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo)
+string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo)
 {
 	stringstream strm;
 	strm.str("");

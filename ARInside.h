@@ -35,6 +35,7 @@
 #include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
 #include "lists/ARImageList.h"
+#include "lists/ARActiveLinkList.h"
 
 extern const string AppVersion;
 
@@ -68,7 +69,7 @@ public:
 	void LoadFromServer(void);
 	void LoadFromFile(void);
 
-	bool InBlacklist(int refType, string objName);
+	bool InBlacklist(int refType, const string &objName);
 	void LoadBlackList(void);	
 	void Prepare(void);		
 	void Documentation(void);
@@ -83,7 +84,7 @@ public:
 	list<CARSchema> schemaList;
 	list<CARFilter> filterList;
 	list<CAREscalation> escalList;
-	list<CARActiveLink> alList;
+	CARActiveLinkList alList;
 	list<CARContainer> containerList;
 	list<CARCharMenu> menuList;
 	list<CARUser> userList;
@@ -114,9 +115,10 @@ public:
 
 	string LinkToContainer(string containerName, int rootLevel);
 	string LinkToAl(string alName, int rootLevel);
+	string LinkToAl(int alInsideId, int rootLevel);
 	string LinkToAlRef(int alInsideId, int rootLevel);
-	string LinkToAlRef(string alName, int rootLevel);
-	string LinkToAlRef(CARActiveLink* al, int rootLevel);
+	string LinkToAlRef(const string &alName, int rootLevel);
+	string LinkToAlRef(CARActiveLink &al, int rootLevel);
 	string LinkToFilter(string filterName, int rootLevel);	
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
 	string LinkToFilterRef(string fltName, int rootLevel);	

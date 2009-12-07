@@ -40,7 +40,7 @@ bool CARImage::NameStandardFirstChar()
 	return CARObject::NameStandardFirstChar(GetNameFirstChar());
 }
 
-const char* CARImage::GetHelpText() 
+const char* CARImage::GetHelpText() const
 { 
 	return CARInside::GetInstance()->imageList.ImageGetHelptext(GetInsideId()); 
 }
@@ -50,17 +50,17 @@ ARTimestamp CARImage::GetTimestamp()
 	return CARInside::GetInstance()->imageList.ImageGetTimestamp(GetInsideId()); 
 }
 
-const ARAccessNameType& CARImage::GetOwner()
+const ARAccessNameType& CARImage::GetOwner() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetOwner(GetInsideId()); 
 }
 
-const ARAccessNameType& CARImage::GetLastChanged()
+const ARAccessNameType& CARImage::GetLastChanged() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetModifiedBy(GetInsideId()); 
 }
 
-const char* CARImage::GetChangeDiary()
+const char* CARImage::GetChangeDiary() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetChangeDiary(GetInsideId()); 
 }

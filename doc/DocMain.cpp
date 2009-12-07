@@ -181,6 +181,8 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 void CDocMain::ActiveLinkList(string fileName, string searchChar)
 {
+	if (searchChar.size() != 1) return;
+
 	try
 	{
 		int rootLevel = 1;
@@ -188,35 +190,29 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator alIter;
-		CARActiveLink *al;
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = this->pInside->alList.GetCount();
+		
+		for (unsigned int alIdx = 0; alIdx < alCount; ++alIdx)
 		{	
-			al = &(*alIter);
-
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(al->GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
-				if(!al->NameStandardFirstChar())
-				{
-					bInsert = true;		
-				}
+				if (!CARObject::NameStandardFirstChar(pInside->alList.ActiveLinkGetName(alIdx)[0]))
+					bInsert = true;
+			}
+			else
+			{
+				if (searchChar[0] == tolower(pInside->alList.ActiveLinkGetName(alIdx)[0]))
+					bInsert = true;
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*al, rootLevel);
+				tbl->AddRow(alIdx, rootLevel);
 			}
 		}
 
@@ -263,34 +259,11 @@ void CDocMain::ActiveLinkActionList(string fileName)
 			int nCountIf = 0;
 			int nCountElse = 0;
 
+			//Create a new webpage for every action
+			ActiveLinkActionDetails(nActionType, nCountIf, nCountElse);
+
 			stringstream linkto;
 			linkto << "index_action_" << nActionType;
-
-			list<CARActiveLink>::iterator alIter;
-			CARActiveLink *al;
-
-			for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
-			{	
-				al = &(*alIter);
-
-				//actionList
-				for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
-				{
-					if(al->actionList.actionList[nAction].action == nActionType)
-					{		
-						nCountIf ++;					
-					}
-				}		
-
-				//elseList
-				for(unsigned int nAction=0; nAction<al->elseList.numItems; nAction++)
-				{
-					if(al->elseList.actionList[nAction].action == nActionType)
-					{		
-						nCountElse ++;					
-					}
-				}		
-			}
 
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::ActiveLinkAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
@@ -298,9 +271,6 @@ void CDocMain::ActiveLinkActionList(string fileName)
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
 			tbl.AddRow(row);
-
-			//Create a new webpage for every action
-			ActiveLinkActionDetails(nActionType);
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -314,7 +284,7 @@ void CDocMain::ActiveLinkActionList(string fileName)
 	}
 }
 
-void CDocMain::ActiveLinkActionDetails(int nActionType)
+void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
 	try
 	{		
@@ -326,34 +296,36 @@ void CDocMain::ActiveLinkActionDetails(int nActionType)
 
 		CAlTable *tbl = new CAlTable(*this->pInside);	
 
-		list<CARActiveLink>::iterator alIter;
-		CARActiveLink *al;
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
-		{	
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex )
+		{
 			int nActionExists = 0;
-			al = &(*alIter);
+			const ARActiveLinkActionList &ifActions = pInside->alList.ActiveLinkGetIfActions(alIndex);
+			const ARActiveLinkActionList &elseActions = pInside->alList.ActiveLinkGetElseActions(alIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; nAction++)
 			{
-				if(al->actionList.actionList[nAction].action == nActionType)
+				if(ifActions.actionList[nAction].action == nActionType)
 				{
-					nActionExists++;
+					++ifCount;
+					++nActionExists;
 				}
 			}		
 
 			//elseList
-			for(unsigned int nAction=0; nAction<al->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; nAction++)
 			{
-				if(al->elseList.actionList[nAction].action == nActionType)
+				if(elseActions.actionList[nAction].action == nActionType)
 				{		
-					nActionExists++;			
+					++elseCount;			
+					++nActionExists;
 				}
 			}		
 
 			if(nActionExists > 0)
 			{
-				tbl->AddRow(*al, rootLevel);
+				tbl->AddRow(alIndex, rootLevel);
 			}
 		}
 
@@ -1222,50 +1194,51 @@ void CDocMain::MessageList()
 		listMsgItem.clear();
 
 		//Search all activelinks
-		list<CARActiveLink>::iterator alIter;		
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			CARActiveLink *al = &(*alIter);
+			const ARActiveLinkActionList &ifActions = pInside->alList.ActiveLinkGetIfActions(alIndex);
+			const ARActiveLinkActionList &elseActions = pInside->alList.ActiveLinkGetElseActions(alIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; nAction++)
 			{
-				if(al->actionList.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
+				if(ifActions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
 				{
 					stringstream strmTmp;
 					strmTmp.str("");
 					strmTmp << "If-Action "<<nAction;
 
-					ARMessageStruct &msg = al->actionList.actionList[nAction].u.message;
+					ARMessageStruct &msg = ifActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = al->GetURL(rootLevel);
+					msgItem->objectLink = pInside->alList.ActiveLinkGetURL(alIndex, rootLevel);
 					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
 			}
 
 			//elseList
-			for(unsigned int nAction=0; nAction<al->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; nAction++)
 			{
-				if(al->elseList.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
+				if(elseActions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
 				{
 					stringstream strmTmp;
 					strmTmp.str("");
 					strmTmp << "Else-Action "<<nAction;
 
-					ARMessageStruct &msg = al->elseList.actionList[nAction].u.message;
+					ARMessageStruct &msg = elseActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = al->GetURL(rootLevel);
+					msgItem->objectLink = pInside->alList.ActiveLinkGetURL(alIndex, rootLevel);
 					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}

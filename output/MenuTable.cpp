@@ -86,13 +86,13 @@ int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
 {
 	int nCnt = 0;
 
-	list<CARActiveLink>::iterator alIter;			
-	for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+	unsigned int alCount = this->pInside->alList.GetCount();
+	for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 	{			
-		CARActiveLink *al = &(*alIter);
-		for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+		CARActiveLink al(alIndex);
+		for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 		{
-			ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+			const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 			if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 			{
 				if(action.u.characteristics.charMenu != NULL)
@@ -103,11 +103,11 @@ int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
 					}
 				}
 			}
-		}		
+		}
 
-		for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+		for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 		{
-			ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+			const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 			if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 			{
 				if(action.u.characteristics.charMenu != NULL)

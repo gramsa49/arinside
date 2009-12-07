@@ -36,11 +36,11 @@ public:
 	bool NameStandardFirstChar();
 
 	// implement function inherited from CARServerObject
-	const char* GetHelpText();
+	const char* GetHelpText() const;
 	ARTimestamp GetTimestamp();
-	const ARAccessNameType& GetOwner();
-	const ARAccessNameType& GetLastChanged();
-	const char* GetChangeDiary();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
 
 	string GetURL(int rootLevel, bool showImage = true);
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_IMAGE; }

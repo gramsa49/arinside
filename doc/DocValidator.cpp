@@ -167,17 +167,16 @@ void CDocValidator::AlGroupValidator()
 			CTable tblObj("AlNoPermission", "TblObjectList");
 			tblObj.AddColumn(100, "Active Link");
 
-			list<CARActiveLink>::iterator alIter;		
-			for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+			unsigned int alCount = pInside->alList.GetCount();
+			for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 			{			
-				CARActiveLink *al = &(*alIter);
+				CARActiveLink al(alIndex);
 
-				if(al->groupList.internalIdList == NULL		//Check if the al has no access group
-					|| al->groupList.numItems == 0 )
+				if(al.GetGroupList().numItems == 0)		//Check if the al has no access group
 				{
 					//Form has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToAl(al->name, this->rootLevel));
+					row.AddCell(pInside->LinkToAl(alIndex, this->rootLevel));
 					tblObj.AddRow(row);
 				}
 			}

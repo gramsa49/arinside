@@ -30,7 +30,7 @@ CARQualification::~CARQualification(void)
 }
 
 
-void CARQualification::CheckQuery(ARQualifierStruct *query, const CFieldRefItem& refItem, int depth, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckQuery(const ARQualifierStruct *query, const CFieldRefItem& refItem, int depth, int pFormId, int sFormId, stringstream &qText, int rootLevel)
 {
 	if (query != NULL)
 	{

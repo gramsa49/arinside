@@ -25,16 +25,16 @@ class CDocAlDetails :
 	public CDocBase
 {
 public:
-	CDocAlDetails(CARInside &arInside, CARActiveLink &arActiveLink, string path, int rootLevel);
+	CDocAlDetails(int alInsideId, int rootLevel);
 	~CDocAlDetails(void);
 
 	void Documentation();
 private:
-	CARActiveLink *pAl;
+	CARActiveLink al;
 
 	string Permissions();
 	string ContainerReferences();
-	string CreateSpecific(string schemaName);
+	string CreateSpecific(const string &schemaName);
 	CARProplistHelper *props;
 
 };

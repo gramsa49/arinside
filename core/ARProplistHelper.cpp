@@ -18,7 +18,7 @@
 #include "../ARInside.h"
 #include "ARProplistHelper.h"
 
-CARProplistHelper::CARProplistHelper(ARPropList* propList)
+CARProplistHelper::CARProplistHelper(const ARPropList* propList)
 {
 	if (propList == NULL) return;
 

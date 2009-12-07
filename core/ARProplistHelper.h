@@ -43,7 +43,7 @@ public:
 	};
 
 public:
-	CARProplistHelper(ARPropList* propList);
+	CARProplistHelper(const ARPropList* propList);
 	~CARProplistHelper(void);
 
 	/// Returns the html for a table containing all properties and their values.

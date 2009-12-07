@@ -49,7 +49,7 @@ public:
 
 	void ActiveLinkList(string fileName, string searchChar);	
 	void ActiveLinkActionList(string fileName);	
-	void ActiveLinkActionDetails(int nActionType);
+	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void FilterList(string fileName, string searchChar);	
 	void FilterActionList(string fileName);
 	void FilterActionDetails(int nActionType);

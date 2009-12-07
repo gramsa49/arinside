@@ -73,7 +73,6 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->schemaList.clear();
 	this->filterList.clear();
 	this->escalList.clear();
-	this->alList.clear();
 	this->containerList.clear();
 	this->menuList.clear();
 	this->userList.clear();
@@ -230,7 +229,7 @@ void CARInside::LoadBlackList(void)
 	}
 }
 
-bool CARInside::InBlacklist(int refType, string objName)
+bool CARInside::InBlacklist(int refType, const string &objName)
 {
 	if(refType == ARREF_CONTAINER && strcmp(objName.c_str(), (char*)appConfig.blackList.c_str())==0)
 		return true;
@@ -420,6 +419,7 @@ void CARInside::LoadFromFile(void)
 
 		ARXMLParsedStream parsedStream;
 		ARStructItemList parsedObjects;
+		unsigned int xmlDocVersion = 0;
 
 		if(ARParseXMLDocument(&this->arControl, 
 			&xmlInputDoc,
@@ -436,22 +436,30 @@ void CARInside::LoadFromFile(void)
 			unsigned int arInsideIdEscal = 0;
 			unsigned int arInsideIdCont = 0;
 			unsigned int arInsideIdMenu = 0;
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			unsigned int arInsideIdImage = 0;
 
 			unsigned int imagesCount = 0;
+			unsigned int activelinkCount = 0;
 			for (unsigned int i=0; i < parsedObjects.numItems; ++i)
 			{
 				switch (parsedObjects.structItemList[i].type)
 				{
+				case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
+					++activelinkCount;
+					break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE:
 					++imagesCount; 
 					break;
+#endif
 				}
 			}
 
+			if (activelinkCount > 0) alList.Reserve(activelinkCount);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			if (imagesCount > 0) imageList.Reserve(imagesCount);
 #endif
+
 			for(unsigned int i=0; i< parsedObjects.numItems; i++)
 			{
 				switch(parsedObjects.structItemList[i].type)
@@ -616,47 +624,14 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
 					{
 						LOG << "Loading ActiveLink: " << parsedObjects.structItemList[i].name; 
-						CARActiveLink *obj = new CARActiveLink(parsedObjects.structItemList[i].name, arInsideIdAl);
 
-						if( ARGetActiveLinkFromXML(&this->arControl, 
-							&parsedStream,
-							parsedObjects.structItemList[i].name,
-							NULL, 
-							&obj->order,
-							&obj->schemaList,
-							&obj->groupList,
-							&obj->executeMask,
-							&obj->controlField,
-							&obj->focusField,
-							&obj->enable,
-							&obj->query,
-							&obj->actionList,
-							&obj->elseList,
-							NULL,
-							obj->owner,
-							obj->lastChanged,
-							&obj->timestamp,								
-							&obj->helptext,
-							&obj->changeDiary,
-							&obj->objPropList,
-							&obj->xmlDocVersion,
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750 // Version 7.5 and higher
-							NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
-#endif
-							&this->arStatus) == AR_RETURN_OK)
+						int objInsideId = alList.AddActiveLinkFromXML(parsedStream, parsedObjects.structItemList[i].name, &xmlDocVersion);
+
+						if (objInsideId > -1)
 						{
-							ParseVersionString(obj->xmlDocVersion);
-
-							this->alList.insert(this->alList.end(), *obj);
-
+							ParseVersionString(xmlDocVersion);
 							LOG << " (InsideID: " << arInsideIdAl << ") [OK]" << endl;
-							arInsideIdAl++;								
 						}
-						else
-							cerr << GetARStatusError();
-
-						delete obj;
-						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_CHAR_MENU:
@@ -1400,72 +1375,17 @@ int CARInside::LoadFilters(void)
 
 int CARInside::LoadActiveLinks(void)
 {
-	int insideId=0;
-
 	try
 	{
-		ARNameList nameList;
-
-		if(ARGetListActiveLink(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
-			this->alList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_ACTLINK, nameList.nameList[i]))
-				{
-					LOG << "Loading ActiveLink: " << nameList.nameList[i]; 
-					CARActiveLink *obj = new CARActiveLink(nameList.nameList[i], insideId);
-
-					if( ARGetActiveLink(&this->arControl, 
-						nameList.nameList[i], 
-						&obj->order,
-						&obj->schemaList,
-						&obj->groupList,
-						&obj->executeMask,
-						&obj->controlField,
-						&obj->focusField,
-						&obj->enable,
-						&obj->query,
-						&obj->actionList,
-						&obj->elseList,
-						&obj->helptext,
-						&obj->timestamp,
-						obj->owner,
-						obj->lastChanged,
-						&obj->changeDiary,
-						&obj->objPropList,
-#if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
-						NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
-#endif
-						&this->arStatus) == AR_RETURN_OK)
-					{
-						this->alList.insert(this->alList.end(), *obj);
-
-						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
-						insideId++;
-
-						FreeARStatusList(&this->arStatus, false);
-					}		
-					else
-						cerr << GetARStatusError();
-
-					delete obj;
-				}
-			}
-		}
-
-		FreeARNameList(&nameList, false);
-		FreeARStatusList(&this->arStatus, false);
-
-		this->Sort(alList);
+		alList.LoadFromServer();
+		alList.Sort();
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION loading ActiveLinks: " << e.what() << endl;
 		GetARStatusError();
 	}
-
-	return insideId;
+	return alList.GetCount();
 }
 
 void CARInside::Sort(list<CARSchema> &listResult)
@@ -1629,18 +1549,13 @@ void CARInside::Documentation(void)
 	docMain->ActiveLinkActionList("index_action");
 
 	//ActiveLink Details
-	nTmpCnt = 1;
-	list<CARActiveLink>::iterator alIter;
+	unsigned int tmpCount = alList.GetCount();
 	cout << "Starting ActiveLink Documentation" << endl;
-	for ( alIter = this->alList.begin(); alIter != this->alList.end(); alIter++ )
+	for (unsigned int actlinkIndex = 0; actlinkIndex < tmpCount; ++actlinkIndex)
 	{	
-		CARActiveLink *al = &(*alIter);
-
-		LOG << "ActiveLink [" << nTmpCnt << "-" << alList.size() << "] '" << al->name << "': ";
-		CDocAlDetails *alDetails = new CDocAlDetails(*this, *al, "active_link/"+al->FileID(), 2);
-		alDetails->Documentation();
-		delete alDetails;
-		nTmpCnt++;
+		LOG << "ActiveLink [" << actlinkIndex << "-" << nTmpCnt << "] '" << alList.ActiveLinkGetName(actlinkIndex) << "': ";
+		CDocAlDetails alDetails(actlinkIndex, 2);
+		alDetails.Documentation();
 	}
 
 
@@ -1785,7 +1700,7 @@ void CARInside::Documentation(void)
 	}	
 
 	// Image Details
-	unsigned int tmpCount = imageList.GetCount();
+	tmpCount = imageList.GetCount();
 	cout << "Starting Image Documentation" << endl;
 	for (unsigned int imgIndex = 0; imgIndex < tmpCount; ++imgIndex)
 	{
@@ -2076,16 +1991,7 @@ int CARInside::SchemaGetInsideId(string searchObjName)
 
 int CARInside::AlGetInsideId(string searchObjName)
 {
-	list<CARActiveLink>::iterator iter;			
-	for ( iter = alList.begin(); iter != alList.end(); iter++ )
-	{			
-		CARActiveLink *obj = &(*iter);
-		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
-			return obj->GetInsideId();
-		}
-	}
-	return -1;
+	return alList.Find(searchObjName.c_str());
 }
 
 int CARInside::FilterGetInsideId(string searchObjName)
@@ -2218,58 +2124,55 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 }
 
 string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
-{		
-	list<CARActiveLink>::iterator alIter;	
-	list<CARActiveLink>::iterator endIt = this->alList.end();
-	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter)
-	{
-		CARActiveLink *al = &(*alIter);
-		if(al->GetInsideId() == alInsideId) 
-			return LinkToAlRef(al, rootLevel);
-	}
-	return EmptyValue;
-}
-
-string CARInside::LinkToAlRef(string alName, int rootLevel)
 {
-	list<CARActiveLink>::iterator alIter;	
-	list<CARActiveLink>::iterator endIt = this->alList.end();
-	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter)
-	{
-		CARActiveLink *al = &(*alIter);
-		if(al->name.compare(alName)==0) 
-			return LinkToAlRef(al, rootLevel);
-	}
+	if (alInsideId < 0) return EmptyValue;
+
+	CARActiveLink al(alInsideId);
+	return LinkToAlRef(al, rootLevel);
+}
+
+string CARInside::LinkToAlRef(const string &alName, int rootLevel)
+{
+	if (alName.empty()) return EmptyValue;
+
+	int alInsideId = alList.Find(alName.c_str());
+	if (alInsideId > -1)
+		return LinkToAlRef(alInsideId, rootLevel);
+
 	return EmptyValue;
 }
 
-string CARInside::LinkToAlRef(CARActiveLink* al, int rootLevel)
+string CARInside::LinkToAlRef(CARActiveLink &al, int rootLevel)
 {
 	stringstream strmTmp;
 	strmTmp.str("");
 
-	if (al != NULL) 
-	{
-		strmTmp << al->GetURL(rootLevel) << " (" << al->order << ")";
-	}
-
+	strmTmp << al.GetURL(rootLevel) << " (" << al.GetOrder() << ")";
 	return strmTmp.str();
 }
 
 string CARInside::LinkToAl(string alName, int fromRootLevel)
 {
-	list<CARActiveLink>::iterator alIter;
-	list<CARActiveLink>::iterator endIt = this->alList.end();
-	for ( alIter = this->alList.begin(); alIter != endIt; ++alIter )
+	if (alName.empty()) return alName;
+
+	int alInsideId = alList.Find(alName.c_str());
+	if (alInsideId > -1)
 	{
-		CARActiveLink *al = &(*alIter);
-		if(strcmp(alName.c_str(), al->name.c_str())==0)
-		{
-			return al->GetURL(fromRootLevel);
-		}
+		CARActiveLink al(alInsideId);
+		return al.GetURL(fromRootLevel);
 	}
 
 	return alName;
+}
+
+string CARInside::LinkToAl(int alInsideId, int rootLevel)
+{
+	if (alInsideId > -1)
+	{
+		CARActiveLink al(alInsideId);
+		return al.GetURL(rootLevel);
+	}
+	return EmptyValue;
 }
 
 string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
@@ -2466,7 +2369,7 @@ string CARInside::XmlObjEnabled(CARServerObject *obj)
 	switch(obj->GetServerObjectTypeXML())
 	{
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
-		return CAREnum::ObjectEnable(static_cast<CARActiveLink*>(obj)->enable);
+		return CAREnum::ObjectEnable(static_cast<CARActiveLink*>(obj)->GetEnabled());
 	case AR_STRUCT_ITEM_XML_FILTER:
 		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->enable);
 	case AR_STRUCT_ITEM_XML_ESCALATION:
@@ -2484,14 +2387,10 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 	{
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
-			list<CARActiveLink>::iterator alIter;			
-			for ( alIter = this->alList.begin(); alIter != this->alList.end(); ++alIter)
-			{	
-				CARActiveLink *al = &(*alIter);
-				if(objName.compare(al->name) == 0)
-				{
-					return CAREnum::ObjectEnable(al->enable);
-				}
+			int alInsideId = alList.Find(objName.c_str());
+			if (alInsideId > -1)
+			{
+				return CAREnum::ObjectEnable(alList.ActiveLinkGetEnabled(alInsideId));
 			}
 		}
 		break;
@@ -2521,11 +2420,6 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 			}
 		}
 		break;	
-	default:
-		{
-			result = "";
-		}
-		break;
 	}
 
 	return result;

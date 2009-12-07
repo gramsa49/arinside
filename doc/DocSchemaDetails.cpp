@@ -1133,19 +1133,18 @@ void CDocSchemaDetails::SchemaAlDoc()
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator iter;			
-		CARActiveLink *enumObj;
-		for (iter = this->pInside->alList.begin(); iter != this->pInside->alList.end(); iter++)
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			enumObj = &(*iter);
+			CARActiveLink enumObj(alIndex);
 
-			if(enumObj->schemaList.u.schemaList != NULL)
+			if(enumObj.GetSchemaList().u.schemaList != NULL)
 			{
-				for(unsigned int i=0; i < enumObj->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i < enumObj.GetSchemaList().u.schemaList->numItems; i++)
 				{
-					if(enumObj->schemaList.u.schemaList->nameList[i] == this->pSchema->name)
+					if(enumObj.GetSchemaList().u.schemaList->nameList[i] == this->pSchema->name)
 					{
-						tbl->AddRow(*enumObj, rootLevel);
+						tbl->AddRow(alIndex, rootLevel);
 					}
 				}
 			}
@@ -1456,20 +1455,19 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 	{
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator listIter;		
-		CARActiveLink *al;
-		for ( listIter = this->pInside->alList.begin(); listIter != this->pInside->alList.end(); listIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < al->actionList.numItems; ++i)
+			for(unsigned int i = 0; i < al.GetIfActions().numItems; ++i)
 			{
-				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
+				if(al.GetIfActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 				{
-					ARPushFieldsActionStruct &action = al->actionList.actionList[i].u.pushFields;
+					ARPushFieldsActionStruct &action = al.GetIfActions().actionList[i].u.pushFields;
 					if (action.pushFieldsList.numItems > 0)
 					{
 						char *pushSchema;
@@ -1489,16 +1487,16 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 						}
 					}
 				}
-			}	
+			}
 
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < al->elseList.numItems; ++i)
+				for(unsigned int i = 0; i < al.GetElseActions().numItems; ++i)
 				{
-					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
+					if(al.GetElseActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 					{
-						ARPushFieldsActionStruct &action = al->elseList.actionList[i].u.pushFields;
+						ARPushFieldsActionStruct &action = al.GetElseActions().actionList[i].u.pushFields;
 
 						if (action.pushFieldsList.numItems > 0)
 						{
@@ -1524,7 +1522,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 
 			if(bPushToForm == true)
 			{
-				alTable->AddRow(*al, rootLevel);
+				alTable->AddRow(alIndex, rootLevel);
 			}
 		}
 
@@ -1551,26 +1549,25 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 	{
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator listIter;		
-		CARActiveLink *al;
-		for ( listIter = this->pInside->alList.begin(); listIter != this->pInside->alList.end(); listIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < al->actionList.numItems; i++)
+			for(unsigned int i = 0; i < al.GetIfActions().numItems; i++)
 			{
-				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
+				if(al.GetIfActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 				{
-					AROpenDlgStruct &action = al->actionList.actionList[i].u.openDlg;                    
+					AROpenDlgStruct &action = al.GetIfActions().actionList[i].u.openDlg;                    
 					
 					string openWindowSchema;
 					if (action.schemaName[0] == '$' )
 					{
 						string sampleServer;
-						CDocActionOpenWindowHelper::GetSampleData(*al, "If", i,	sampleServer, openWindowSchema);
+						CDocActionOpenWindowHelper::GetSampleData(al, "If", i,	sampleServer, openWindowSchema);
 					}
 					else
 					{
@@ -1590,17 +1587,17 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < al->elseList.numItems; i++)
+				for(unsigned int i = 0; i < al.GetElseActions().numItems; i++)
 				{
-					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
+					if(al.GetElseActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 					{
-						AROpenDlgStruct &action = al->elseList.actionList[i].u.openDlg;
+						AROpenDlgStruct &action = al.GetElseActions().actionList[i].u.openDlg;
 
 						string openWindowSchema;
 						if (action.schemaName[0] == '$' )
 						{
 							string sampleServer;
-							CDocActionOpenWindowHelper::GetSampleData(*al, "Else", i,	sampleServer, openWindowSchema);
+							CDocActionOpenWindowHelper::GetSampleData(al, "Else", i,	sampleServer, openWindowSchema);
 						}
 						else
 						{
@@ -1620,7 +1617,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 
 			if(bPushToForm == true)
 			{
-				alTable->AddRow(*al, rootLevel);
+				alTable->AddRow(alIndex, rootLevel);
 			}
 		}
 

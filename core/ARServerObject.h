@@ -25,11 +25,11 @@ class CARServerObject : public CARObject
 public:
 	CARServerObject(int insideId) : CARObject(insideId) {}
 
-	virtual const char* GetHelpText() = 0;
+	virtual const char* GetHelpText() const = 0;
 	virtual ARTimestamp GetTimestamp() = 0;
-	virtual const ARAccessNameType& GetOwner() = 0;
-	virtual const ARAccessNameType& GetLastChanged() = 0;
-	virtual const char* GetChangeDiary() = 0;
+	virtual const ARAccessNameType& GetOwner() const = 0;
+	virtual const ARAccessNameType& GetLastChanged() const = 0;
+	virtual const char* GetChangeDiary() const = 0;
 	virtual string GetURL(int rootLevel, bool showImage = true) = 0;
 	virtual int GetServerObjectTypeXML() = 0;
 };
@@ -41,11 +41,11 @@ public:
 	~CARServerObjectWithData();
 
 	// implement function inherited from CARServerObject
-	const char* GetHelpText() { return helptext; }
+	const char* GetHelpText() const { return helptext; }
 	ARTimestamp GetTimestamp() { return timestamp; }
-	const ARAccessNameType& GetOwner() { return owner; }
-	const ARAccessNameType& GetLastChanged() { return lastChanged; }
-	const char* GetChangeDiary() { return changeDiary; }
+	const ARAccessNameType& GetOwner() const { return owner; }
+	const ARAccessNameType& GetLastChanged() const { return lastChanged; }
+	const char* GetChangeDiary() const { return changeDiary; }
 
 	// implement function inherited from CARObject
 	string GetName() { return name; }

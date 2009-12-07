@@ -120,15 +120,15 @@ string CDocAlGuideDetails::ActiveLinkActions()
 
 	try
 	{
-		list<CARActiveLink>::iterator listIter;		
-		for ( listIter = pInside->alList.begin(); listIter != pInside->alList.end(); listIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			CARActiveLink *al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			//Search if-actions
-			for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, pAlGuide->name.c_str())==0)
@@ -136,20 +136,20 @@ string CDocAlGuideDetails::ActiveLinkActions()
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellActiveLink( al->GetURL(rootLevel), "");
+						CTableCell cellActiveLink(al.GetURL(rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);
 						row.AddCell(cellActiveLink);
 						tblPropEx.AddRow(row);
 					}
-				}				
+				}
 			}
 
 			//Search else-actions
-			for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, pAlGuide->name.c_str())==0)
@@ -157,14 +157,14 @@ string CDocAlGuideDetails::ActiveLinkActions()
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellActiveLink(al->GetURL(rootLevel), "");
+						CTableCell cellActiveLink(al.GetURL(rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);
 						row.AddCell(cellActiveLink);
 						tblPropEx.AddRow(row);
 					}
-				}				
+				}
 			}
 		}
 	}

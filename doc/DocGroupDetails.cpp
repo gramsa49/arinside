@@ -379,15 +379,15 @@ void CDocGroupDetails::AlPermissionDoc(string fName, int &nResult, string title)
 		//Create table with ALs the role can access
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator alIter;		
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{	
-			CARActiveLink *al = &(*alIter);
-			for(unsigned int nGrp = 0; nGrp < al->groupList.numItems; nGrp++)
+			CARActiveLink al(alIndex);
+			for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
 			{
-				if(this->pGroup->groupId == al->groupList.internalIdList[nGrp])
+				if(this->pGroup->groupId == al.GetGroupList().internalIdList[nGrp])
 				{
-					alTable->AddRow(*al, this->rootLevel);
+					alTable->AddRow(alIndex, this->rootLevel);
 					nResult++;
 				}
 			}

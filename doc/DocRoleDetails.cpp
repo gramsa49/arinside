@@ -284,17 +284,17 @@ void CDocRoleDetails::AlPermissionDoc(string fName, int &nResult, string title)
 		//Create table with ALs the role can access
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator alIter;		
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{	
-			CARActiveLink *al = &(*alIter);
-			if(strcmp(al->appRefName.c_str(), this->pRole->applicationName.c_str())==0)
+			CARActiveLink al(alIndex);
+			if(strcmp(al.GetAppRefName().c_str(), this->pRole->applicationName.c_str())==0)
 			{
-				for(unsigned int nGrp = 0; nGrp < al->groupList.numItems; nGrp++)
+				for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
 				{
-					if(this->pRole->roleId == al->groupList.internalIdList[nGrp])
+					if(this->pRole->roleId == al.GetGroupList().internalIdList[nGrp])
 					{
-						alTable->AddRow(*al, this->rootLevel);
+						alTable->AddRow(alIndex, this->rootLevel);
 						nResult++;
 					}
 				}

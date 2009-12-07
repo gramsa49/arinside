@@ -1576,6 +1576,14 @@
 			Name="lists"
 			>
 			<File
+				RelativePath=".\lists\ARActiveLinkList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARActiveLinkList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARImageList.cpp"
 				>
 			</File>

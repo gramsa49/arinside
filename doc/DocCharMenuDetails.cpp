@@ -417,24 +417,23 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 
 	try
 	{
-		list<CARActiveLink>::iterator alIter;		
-		CARActiveLink *al;
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
-		{			
-			al = &(*alIter);
-			for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
+		{
+			CARActiveLink al(alIndex);
+			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 				{
 					if(action.u.characteristics.charMenu != NULL)
 					{
 						if(strcmp(action.u.characteristics.charMenu, this->pMenu->name.c_str())==0)
 						{
-							CTableRow row("cssStdRow");				
+							CTableRow row("cssStdRow");
 
 							stringstream tmp;
-							tmp << "If-Action " << nAction << " " << al->GetURL(rootLevel);
+							tmp << "If-Action " << nAction << " " << al.GetURL(rootLevel);
 
 							CTableCell cellActiveLink(tmp.str(), "");						
 							row.AddCell(cellActiveLink);
@@ -442,28 +441,28 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 						}
 					}
 				}
-			}		
+			}
 
-			for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 				{
 					if(action.u.characteristics.charMenu != NULL)
 					{
 						if(strcmp(action.u.characteristics.charMenu, this->pMenu->name.c_str())==0)
 						{
-							CTableRow row("cssStdRow");				
+							CTableRow row("cssStdRow");
 
 							stringstream tmp;
-							tmp << "Else-Action " << nAction << " " << al->GetURL(rootLevel);
+							tmp << "Else-Action " << nAction << " " << al.GetURL(rootLevel);
 
 							row.AddCell(CTableCell(tmp.str()));
 							tbl.AddRow(row);
 						}
 					}
 				}
-			}		
+			}
 		}
 	}
 	catch(exception& e)

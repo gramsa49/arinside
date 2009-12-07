@@ -30,8 +30,8 @@ int gettimeofday(struct timeval* tv, struct timezone *tz)
 
 	if (tv != NULL)
 	{
-		tv->tv_sec  = (long) (now.lltm - 116444736000000000LL) / 10000000LL;
-		tv->tv_usec = (long) (now.lltm / 10LL) % 1000000LL;
+		tv->tv_sec  = (long)((now.lltm - 116444736000000000LL) / 10000000LL);
+		tv->tv_usec = (long)((now.lltm / 10LL) % 1000000LL);
 	}
 	
 	if (tz != NULL)

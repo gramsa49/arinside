@@ -71,15 +71,15 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 	int nResult = 0;
 	try
 	{
-		list<CARActiveLink>::iterator listIter;
-		for ( listIter = this->pInside->alList.begin(); listIter != this->pInside->alList.end(); listIter++ )
+		unsigned int alCount = this->pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex )
 		{
-			CARActiveLink *al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			//Search if-actions
-			for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
@@ -90,9 +90,9 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 			}
 
 			//Search else-actions
-			for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)

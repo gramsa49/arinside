@@ -16,25 +16,16 @@
 
 #include "stdafx.h"
 #include "ARActiveLink.h"
+#include "../ARInside.h"
 
-CARActiveLink::CARActiveLink(string name, int insideId)
-: CARServerObjectWithData(insideId)
+CARActiveLink::CARActiveLink(int insideId)
+: CARServerObject(insideId)
 {
-	this->name = name;
-
-	this->order = 0;
-	this->executeMask = 0;
-	this->controlField = 0;
-	this->focusField = 0;
-	this->enable = 0;	
-
-	this->objPropList.props = NULL;
-	this->query.operation = NULL;
 }
 
 string CARActiveLink::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"active_link/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "active_link.gif" : ""), rootLevel);
+	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"active_link/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "active_link.gif" : ""), rootLevel);
 }
 
 CARActiveLink::~CARActiveLink(void)
@@ -111,7 +102,7 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 		{
 			if (executeText[k].exec == 0) break;
 
-			if ( (executeMask & executeText[k].exec) != 0)
+			if ( (this->GetExecuteMask() & executeText[k].exec) != 0)
 			{
 				if (!singleLine && strmHasContent) strm << "<br/>";
 				if (singleLine && strmHasContent) strm << ", ";
@@ -143,4 +134,114 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 		cout << "EXCEPTION in ActiveLink GetExecuteOn: " << e.what() << endl;
 	}
 	return strm.str();
+}
+
+string CARActiveLink::GetName()
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetName(GetInsideId());
+}
+
+string CARActiveLink::GetName() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetName(GetInsideId());
+}
+
+string CARActiveLink::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->alList.ActiveLinkGetName(GetInsideId())[0]));
+}
+
+bool CARActiveLink::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+unsigned int CARActiveLink::GetOrder() const
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetOrder(GetInsideId());
+}
+
+const ARWorkflowConnectStruct& CARActiveLink::GetSchemaList() const 
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetSchemaList(GetInsideId());
+}
+
+const ARInternalIdList& CARActiveLink::GetGroupList() const 
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetGroupList(GetInsideId());
+}
+
+unsigned int CARActiveLink::GetExecuteMask() const
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetExecuteMask(GetInsideId());
+}
+
+const ARInternalId& CARActiveLink::GetControlField() const 
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetControlField(GetInsideId());
+}
+
+const ARInternalId& CARActiveLink::GetFocusField() const 
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetFocusField(GetInsideId());
+}
+
+unsigned int CARActiveLink::GetEnabled()
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetEnabled(GetInsideId());
+}
+	
+const ARQualifierStruct& CARActiveLink::GetRunIf() const 
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetRunIf(GetInsideId()); 
+}
+
+const ARActiveLinkActionList& CARActiveLink::GetIfActions() const
+{ 
+	return CARInside::GetInstance()->alList.ActiveLinkGetIfActions(GetInsideId());
+}
+
+const ARActiveLinkActionList& CARActiveLink::GetElseActions() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetElseActions(GetInsideId());
+}
+
+const ARPropList& CARActiveLink::GetPropList() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetPropList(GetInsideId());
+}
+
+const string& CARActiveLink::GetAppRefName() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetAppRefName(GetInsideId());
+}
+
+void CARActiveLink::SetAppRefName(const string &appName)
+{
+	return CARInside::GetInstance()->alList.ActiveLinkSetAppRefName(GetInsideId(), appName);
+}
+
+const char* CARActiveLink::GetHelpText() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetHelptext(GetInsideId());
+}
+
+ARTimestamp CARActiveLink::GetTimestamp()
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetTimestamp(GetInsideId());
+}
+
+const ARAccessNameType& CARActiveLink::GetOwner() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetOwner(GetInsideId());
+}
+
+const ARAccessNameType& CARActiveLink::GetLastChanged() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetModifiedBy(GetInsideId());
+}
+
+const char* CARActiveLink::GetChangeDiary() const
+{
+	return CARInside::GetInstance()->alList.ActiveLinkGetChangeDiary(GetInsideId());
 }

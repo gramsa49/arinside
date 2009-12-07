@@ -48,7 +48,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddColumn(90, "Description");
 
 		CTableRow row("cssStdRow");		
-		row.AddCell(CTableCell((int)this->pInside->alList.size()));
+		row.AddCell(CTableCell((int)this->pInside->alList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Active Links", "active_link/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -161,7 +161,7 @@ void CDocSummaryInfo::Documentation()
 		}
 #endif
 
-		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.size();
+		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->containerList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->escalList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->filterList.size();
