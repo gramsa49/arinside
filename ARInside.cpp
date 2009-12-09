@@ -80,7 +80,6 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->roleList.clear();
 	this->serverInfoList.clear();
 	this->globalFieldList.clear();
-	this->blackList.clear();
 	this->listFieldRefItem.clear();
 	this->listMenuRefItem.clear();
 	this->listFieldNotFound.clear();
@@ -159,7 +158,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
 			cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
 
-			LoadBlackList();
+			blackList.LoadFromServer(appConfig.blackList);
 		}
 	}
 
@@ -172,81 +171,6 @@ int CARInside::Terminate(void)
 	ARTermination(&this->arControl, &this->arStatus);
 	FreeARStatusList(&this->arStatus, false);
 	return 0;
-}
-
-void CARInside::LoadBlackList(void)
-{
-	try
-	{
-		if(appConfig.blackList.size() > 0)
-		{
-			int refTypeStorage = ARREF_ALL;
-			ARReferenceTypeList		refTypes;
-			refTypes.refType = &refTypeStorage;
-			refTypes.numItems = 1;
-			//refTypes.refType[0] = ARREF_ALL;
-
-			cout << "Loading blacklist from packinglist '" << appConfig.blackList << "'" << endl;
-
-			CARContainer obj(appConfig.blackList, 0);
-
-			if( ARGetContainer(&this->arControl,
-				(char*)appConfig.blackList.c_str(),
-				&refTypes,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				NULL,
-				&obj.references,
-				NULL,
-				NULL,
-				NULL,					
-				NULL,
-				NULL,
-				NULL,
-				&this->arStatus) == AR_RETURN_OK)
-			{
-				for(unsigned int i=0; i< obj.references.numItems; i ++)
-				{
-					//if(obj.references.referenceList[i].type >= 2 && obj.references.referenceList[i].type <= 6)
-					//{
-					CBlackListItem blackListItem(obj.references.referenceList[i].type, obj.references.referenceList[i].reference.u.name);
-
-					this->blackList.insert(blackList.end(), blackListItem);
-					LOG << "Added " << CAREnum::ContainerRefType(obj.references.referenceList[i].type) << ": '" << obj.references.referenceList[i].reference.u.name << "' to BlackList" << endl;
-					//}
-				}
-			}		
-			else
-				cerr << "Failed loading the blacklist: " << GetARStatusError();
-		}
-	} 
-	catch (...)
-	{ 
-		cerr << "Failed loading the blacklist." << endl; 
-	}
-}
-
-bool CARInside::InBlacklist(int refType, const string &objName)
-{
-	if(refType == ARREF_CONTAINER && strcmp(objName.c_str(), (char*)appConfig.blackList.c_str())==0)
-		return true;
-
-	list<CBlackListItem>::iterator bItemIter;
-	CBlackListItem *bItem;
-
-	for ( bItemIter = blackList.begin(); bItemIter != blackList.end(); bItemIter++ )
-	{
-		bItem = &(*bItemIter);
-
-		if(bItem->refType == refType && strcmp(objName.c_str(), bItem->name.c_str())==0)
-		{
-			return true;
-		}	
-	}
-	return false;
 }
 
 string CARInside::GetARStatusError(ARStatusList* status)
@@ -773,6 +697,7 @@ void CARInside::LoadFromFile(void)
 				}	
 			}		
 			
+			alList.Sort();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			imageList.Sort();
 #endif

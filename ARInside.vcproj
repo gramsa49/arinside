@@ -1591,6 +1591,14 @@
 				RelativePath=".\lists\ARImageList.h"
 				>
 			</File>
+			<File
+				RelativePath=".\lists\BlackList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\BlackList.h"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\ARInside.rc"

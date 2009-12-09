@@ -36,6 +36,7 @@
 #include "util/AppTimer.h"
 #include "lists/ARImageList.h"
 #include "lists/ARActiveLinkList.h"
+#include "lists/BlackList.h"
 
 extern const string AppVersion;
 
@@ -69,8 +70,7 @@ public:
 	void LoadFromServer(void);
 	void LoadFromFile(void);
 
-	bool InBlacklist(int refType, const string &objName);
-	void LoadBlackList(void);	
+	bool InBlacklist(int refType, const string &objName) { 	return blackList.Contains(refType, objName.c_str()); }
 	void Prepare(void);		
 	void Documentation(void);
 
@@ -92,7 +92,7 @@ public:
 	list<CARRole> roleList;
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
-	list<CBlackListItem> blackList;
+	CBlackList blackList;
 	list<CFieldRefItem> listFieldRefItem;
 	list<CMissingMenuRefItem> listMenuRefItem;
 	list<CFieldRefItem> listFieldNotFound;
