@@ -1981,6 +1981,7 @@ public:
 		case AR_AUDIT_NONE: return "None";
 		case AR_AUDIT_COPY: return "Form";
 		case AR_AUDIT_LOG: return "Log";
+		case AR_AUDIT_LOG_SHADOW: return "Log - Shadow";
 		default: return EnumDefault;
 		}
 	}
