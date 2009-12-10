@@ -18,6 +18,7 @@
 #include "ARActiveLinkList.h"
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
+#include "BlackList.h"
 
 CARActiveLinkList::CARActiveLinkList(void)
 {
@@ -88,16 +89,38 @@ CARActiveLinkList::~CARActiveLinkList(void)
 
 bool CARActiveLinkList::LoadFromServer()
 {
-	ARBooleanList alExists;
-	ARStatusList	status;
-	CARInside*		arIn = CARInside::GetInstance();
+	ARBooleanList   alExists;
+	ARStatusList    status;
+	CARInside*      arIn = CARInside::GetInstance();
+	ARNameList*     objectsToLoad = NULL;
+	ARNameList      objectNames;
+	unsigned int    originalObjectNameCount = 0;
+	bool            funcResult = false;
+
+	memset(&alExists, 0, sizeof(alExists));
+	memset(&status, 0, sizeof(status));
 
 	// if the blacklist contains active links, we should first load all active link names
 	// from the server and remove those that are contained in the blacklist. after that 
 	// call ARGetMultipleActiveLinks to retrieve just the needed active links.
+	if (arIn->blackList.GetCountOf(ARREF_ACTLINK) > 0)
+	{
+		memset(&objectNames, 0, sizeof(objectNames));
 
+		if (ARGetListActiveLink(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+		{
+			originalObjectNameCount = objectNames.numItems;
+			arIn->blackList.Exclude(ARREF_ACTLINK, &objectNames);
+			objectsToLoad = &objectNames;
+		}
+		else
+			cerr << arIn->GetARStatusError(&status);
+	}
+
+	// ok, now retrieve all informations of the active links we need
 	if (ARGetMultipleActiveLinks(&arIn->arControl,
-		0, NULL, 
+		0,
+		objectsToLoad,
 		&alExists,
 		&names,
 		&orders,
@@ -131,13 +154,21 @@ bool CARActiveLinkList::LoadFromServer()
 			appRefNames.push_back("");
 			sortedList->push_back(al_ref(*this,i));
 		}
-		return true;
+		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
-		return false;
 	}
+
+	// check if we have to clean up the name list
+	if (originalObjectNameCount > 0)
+	{
+		objectNames.numItems = originalObjectNameCount;
+		FreeARNameList(&objectNames, false);
+	}
+
+	return funcResult;
 }
 
 void CARActiveLinkList::Reserve(unsigned int size)

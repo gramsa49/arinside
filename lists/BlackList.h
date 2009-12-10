@@ -28,6 +28,7 @@ public:
 
 	size_t GetCountOf(unsigned int nType);
 	bool Contains(unsigned int nType, const char *objName);
+	void Exclude(unsigned int nType, ARNameList *objNames);
 
 private:
 	string blackListName;

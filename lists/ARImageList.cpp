@@ -76,12 +76,35 @@ CARImageList::~CARImageList()
 
 bool CARImageList::LoadFromServer()
 {
-	ARBooleanList imgExists;
-	ARStatusList	status;
-	CARInside*		arIn = CARInside::GetInstance();
+	ARBooleanList   imgExists;
+	ARStatusList    status;
+	CARInside*      arIn = CARInside::GetInstance();
+
+	ARNameList*     objectsToLoad = NULL;
+	ARNameList      objectNames;
+	unsigned int    originalObjectNameCount = 0;
+	bool            funcResult = false;
+
+	// if the blacklist contains images, we should first load all image names from 
+	// the server and remove those that are contained in the blacklist. after that 
+	// call ARGetMultipleImages to retrieve just the needed images.
+	if (arIn->blackList.GetCountOf(ARREF_IMAGE) > 0)
+	{
+		memset(&objectNames, 0, sizeof(objectNames));
+
+		if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+		{
+			originalObjectNameCount = objectNames.numItems;
+			arIn->blackList.Exclude(ARREF_IMAGE, &objectNames);
+			objectsToLoad = &objectNames;
+		}
+		else
+			cerr << arIn->GetARStatusError(&status);
+	}
 
 	if (ARGetMultipleImages(&arIn->arControl,
-		0, NULL, 
+		0,
+		objectsToLoad,
 		&imgExists,
 		&names,
 		&types,
@@ -105,13 +128,21 @@ bool CARImageList::LoadFromServer()
 		{
 			sortedList->push_back(image_ref(*this,i));
 		}
-		return true;
+		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
-		return false;
 	}
+
+	// check if we have to clean up the name list
+	if (originalObjectNameCount > 0)
+	{
+		objectNames.numItems = originalObjectNameCount;
+		FreeARNameList(&objectNames, false);
+	}
+
+	return funcResult;
 }
 
 void CARImageList::Reserve(unsigned int size)

@@ -18,6 +18,10 @@
 #include "BlackList.h"
 #include "../ARInside.h"
 
+// with this its easier to change container type later, if needed
+typedef vector<string> BlacklistContainer;
+typedef vector<string>::iterator BlacklistIterator;
+
 CBlackList::CBlackList(void)
 {
 }
@@ -63,12 +67,44 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 		NULL,
 		&status) == AR_RETURN_OK)
 	{
-		containers.push_back(packingListName); // we add the black list too, so its not documented at all
+		unsigned int schemaCount = 0;
+		unsigned int actlinkCount = 0;
+		unsigned int filterCount = 0;
+		unsigned int escalationCount = 0;
+		unsigned int containerCount = 1;	// start with one, bc the blacklist ifself is excluded by default
+		unsigned int menuCount = 0;
+		unsigned int imageCount = 0;
+
+		for (unsigned int i=0; i < refItems.numItems; ++i)
+		{
+			switch (refItems.referenceList[i].type)
+			{
+			case ARREF_SCHEMA: ++schemaCount; break;
+			case ARREF_ACTLINK:	++actlinkCount; break;
+			case ARREF_FILTER: ++filterCount; break;
+			case ARREF_ESCALATION: ++escalationCount; break;
+			case ARREF_CONTAINER: ++containerCount; break;
+			case ARREF_CHAR_MENU: ++menuCount; break;
+			case ARREF_IMAGE: ++imageCount; break;
+			}
+		}
+
+		// we reserve the needed size to avoid memory fragmentation
+		schemas.reserve(schemaCount);
+		actlinks.reserve(actlinkCount);
+		filters.reserve(filterCount);
+		escalations.reserve(escalationCount);
+		containers.reserve(containerCount);
+		menus.reserve(menuCount);
+		images.reserve(imageCount);
+
+		// we add the black list too, so its not documented at all
+		containers.push_back(packingListName);
 
 		// now store the blacklisted items in the corresponding lists
-		for(unsigned int i=0; i< refItems.numItems; ++i)
+		for (unsigned int i=0; i < refItems.numItems; ++i)
 		{
-			vector<string> *list = NULL;
+			BlacklistContainer *list = NULL;
 
 			switch (refItems.referenceList[i].type)
 			{
@@ -85,6 +121,7 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 			list->push_back(refItems.referenceList[i].reference.u.name);
 		}
 
+		// to use search algorithms the vectors must be sorted ascending
 		if (refItems.numItems > 0)
 		{
 			sort(schemas.begin(), schemas.end());
@@ -96,6 +133,7 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 			sort(images.begin(), images.end());
 		}
 
+		// free the memory of the api structures
 		FreeARReferenceTypeList(&refTypes, false);
 		FreeARReferenceList(&refItems, false);
 
@@ -137,7 +175,7 @@ size_t CBlackList::GetCountOf(unsigned int nType)
 // we'll remove this later again.
 bool CBlackList::Contains(unsigned int nType, const char *objName)
 {
-	vector<string> *list = NULL;
+	BlacklistContainer *list = NULL;
 
 	switch (nType)
 	{
@@ -153,11 +191,62 @@ bool CBlackList::Contains(unsigned int nType, const char *objName)
 	
 	if (list != NULL)
 	{
-		vector<string>::iterator blEndIt = list->end();
-		vector<string>::iterator blFindIt = lower_bound(list->begin(), blEndIt, objName);
+		BlacklistIterator blEndIt = list->end();
+		BlacklistIterator blFindIt = lower_bound(list->begin(), blEndIt, objName);
 		
 		if (blFindIt != blEndIt && (*blFindIt).compare(objName) == 0)
 			return true;
 	}
 	return false;
+}
+
+/// This function removes the blacklisted items from the list specified by
+/// objNames. The list is changed in place so the caller should backup
+/// numItems if necessary.
+void CBlackList::Exclude(unsigned int nType, ARNameList *objNames)
+{
+	if (objNames == NULL || objNames->numItems == 0) return;
+
+	BlacklistContainer *list = NULL;
+
+	switch (nType)
+	{
+	case ARREF_SCHEMA: list = &schemas; break;
+	case ARREF_ACTLINK:	list = &actlinks; break;
+	case ARREF_FILTER: list = &filters; break;
+	case ARREF_ESCALATION: list = &escalations; break;
+	case ARREF_CONTAINER: list = &containers; break;
+	case ARREF_CHAR_MENU: list = &menus; break;
+	case ARREF_IMAGE: list = &images; break;
+	default: return;
+	}
+
+	BlacklistIterator blEndIt = list->end();
+	BlacklistIterator blBegIt = list->begin();
+	unsigned int curObjWriteIndex = 0;
+	unsigned int curObjReadIndex = 0;
+
+	while (curObjWriteIndex < objNames->numItems)
+	{
+		string searchFor(objNames->nameList[curObjReadIndex]);
+
+		// lets see if we could find the current object name in the blacklist
+		BlacklistIterator blFindIt = lower_bound(blBegIt, blEndIt, searchFor);
+		if (blFindIt == blEndIt || (*blFindIt).compare(searchFor) != 0)
+		{
+			// not found, keep it
+			if (curObjWriteIndex != curObjReadIndex)
+			{
+				memcpy(objNames->nameList[curObjWriteIndex], objNames->nameList[curObjReadIndex], sizeof(ARNameType));
+			}
+			++curObjReadIndex;
+			++curObjWriteIndex;
+		}
+		else
+		{
+			// this object should be removed from the list
+			++curObjReadIndex;
+			--objNames->numItems;
+		}
+	}
 }
