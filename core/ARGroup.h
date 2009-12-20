@@ -26,8 +26,10 @@ public:
 
 	int groupId;
 	int groupType;
+	int groupCategory;
 	string groupName;
 	string longGroupName;
+	string groupDefinition;
 
 	string comparableName;
 };

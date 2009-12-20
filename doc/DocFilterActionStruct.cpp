@@ -193,10 +193,9 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 		}
 
 		CTable tblListField("tblListMatchingIds", "TblObjectList");
-		tblListField.AddColumn(10, "Id");		
-		tblListField.AddColumn(40, "Field Name");
-		tblListField.AddColumn(10, "Id");	
-		tblListField.AddColumn(40, "Value");
+		tblListField.AddColumn(0, "Id");
+		tblListField.AddColumn(0, "Field Name");
+		tblListField.AddColumn(0, "Value");
 
 		if(schema1 != NULL && schema2 !=NULL)
 		{
@@ -210,7 +209,7 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 				{
 					CARField *tmpField2 = &(*fieldIter2);
 
-					if(tmpField1->fieldId == tmpField2->fieldId)
+					if(tmpField1->fieldId == tmpField2->fieldId && tmpField1->dataType <= AR_MAX_STD_DATA_TYPE && tmpField2->dataType <= AR_MAX_STD_DATA_TYPE)
 					{
 						//Reference field1
 						CFieldRefItem *refItemField1 = new CFieldRefItem();
@@ -244,7 +243,6 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 						CTableRow row("cssStdRow");		
 						row.AddCell(CTableCell(tmpField1->fieldId));
 						row.AddCell(CTableCell(arIn->LinkToField(schema1->GetName(), tmpField1->GetInsideId(), this->rootLevel)));
-						row.AddCell(CTableCell(tmpField2->fieldId));
 						row.AddCell(CTableCell(arIn->LinkToField(schema2->GetName(), tmpField2->GetInsideId(), this->rootLevel)));
 						tblListField.AddRow(row);
 					}

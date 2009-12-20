@@ -1048,6 +1048,17 @@ public:
 		}
 	}
 
+	static string GroupCategory(int nType)
+	{
+		switch (nType)
+		{
+		case AR_GROUP_CATEGORY_REGULAR: return "Regular";
+		case AR_GROUP_CATEGORY_DYNAMIC: return "Dynamic";
+		case AR_GROUP_CATEGORY_COMPUTED: return "Computed";
+		default: return "None";
+		}
+	}
+
 	static string ObjectEnable(int nType)
 	{
 		switch (nType)
@@ -1970,6 +1981,7 @@ public:
 		case AR_AUDIT_NONE: return "None";
 		case AR_AUDIT_COPY: return "Form";
 		case AR_AUDIT_LOG: return "Log";
+		case AR_AUDIT_LOG_SHADOW: return "Log - Shadow";
 		default: return EnumDefault;
 		}
 	}

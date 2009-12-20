@@ -24,11 +24,12 @@ CGroupTable::CGroupTable(CARInside &arIn)
 {
 	this->pInside = &arIn;
 
-	tbl.AddColumn(5, "Type");	
-	tbl.AddColumn(35, "Name");
-	tbl.AddColumn(10, "ID");
-	tbl.AddColumn(20, "Modified");
-	tbl.AddColumn(20, "By");
+	tbl.AddColumn(0, "Name");
+	tbl.AddColumn(0, "ID");
+	tbl.AddColumn(0, "Type");
+	tbl.AddColumn(0, "Category");
+	tbl.AddColumn(0, "Modified");
+	tbl.AddColumn(0, "By");
 }
 
 CGroupTable::~CGroupTable(void)
@@ -38,13 +39,9 @@ CGroupTable::~CGroupTable(void)
 void CGroupTable::AddRow(string appRefName, int id, int rootLevel)
 {
 	if(id < 0)
-	{
 		this->AddRoleRow(appRefName, id, rootLevel);
-	}
 	else
-	{
 		this->AddGroupRow(appRefName, id, rootLevel);
-	}
 }
 
 void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
@@ -105,9 +102,10 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 	if(insertGrp != NULL)
 	{
 		CTableRow tblRow("");
-		tblRow.AddCell( CTableCell("Group"));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToGroup(appRefName, insertGrp->GetInsideId(), rootLevel)));	
 		tblRow.AddCell( CTableCell(insertGrp->groupId));
+		tblRow.AddCell( CTableCell(CAREnum::GroupType(insertGrp->groupType)));
+		tblRow.AddCell( CTableCell(CAREnum::GroupCategory(insertGrp->groupCategory)));
 		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertGrp->modified)));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertGrp->modifiedBy, rootLevel)));
 		this->tbl.AddRow(tblRow);

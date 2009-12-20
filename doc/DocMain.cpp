@@ -978,7 +978,7 @@ void CDocMain::GroupList(string fileName, string searchChar)
 			CARGroup *grp = &(*listIter);
 
 			bool bInsert = false;
-			if(searchChar == "*")  //All objecte
+			if(searchChar == "*")  //All objects
 			{
 				bInsert = true;
 			}

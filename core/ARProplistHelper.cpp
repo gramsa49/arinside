@@ -221,7 +221,7 @@ ARValueStruct* CARProplistHelper::GetAndUseValue(ARULong32 nProp)
 	vector<PropHelpData>::iterator propIter = 
 		  lower_bound(properties.begin(), properties.end(), nProp);
 
-	if (propIter != properties.end() && !(*propIter < nProp))
+	if (propIter != properties.end() && !(*propIter > nProp))
 	{
 		(*propIter).isUsed = true;
 		return (*propIter).Value;
@@ -237,7 +237,7 @@ ARValueStruct* CARProplistHelper::GetValue(ARULong32 nProp)
 	vector<PropHelpData>::iterator propIter = 
 		  lower_bound(properties.begin(), properties.end(), nProp);
 
-	if (propIter != properties.end() && !(*propIter < nProp))
+	if (propIter != properties.end() && !(*propIter > nProp))
 	{
 		return (*propIter).Value;
 	}

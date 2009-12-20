@@ -24,14 +24,14 @@ CFilterTable::CFilterTable(CARInside &arIn)
 {
 	this->pInside = &arIn;
 
-	tbl.AddColumn(30, "Filter Name");
-	tbl.AddColumn(5, "Enabled");
-	tbl.AddColumn(5, "Order");
-	tbl.AddColumn(20, "Execute On");
-	tbl.AddColumn(5, "If");
-	tbl.AddColumn(5, "Else");
-	tbl.AddColumn(15, "Changed");
-	tbl.AddColumn(15, "By");
+	tbl.AddColumn(0, "Filter Name");
+	tbl.AddColumn(0, "Enabled");
+	tbl.AddColumn(0, "Order");
+	tbl.AddColumn(0, "Execute On");
+	tbl.AddColumn(0, "If");
+	tbl.AddColumn(0, "Else");
+	tbl.AddColumn(0, "Changed");
+	tbl.AddColumn(0, "By");
 }
 
 CFilterTable::~CFilterTable(void)

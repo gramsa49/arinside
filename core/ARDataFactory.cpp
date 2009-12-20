@@ -45,7 +45,7 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 		AREntryListFieldList fields;
 		AREntryListFieldValueList values;
 
-		fields.numItems = 9;
+		fields.numItems = 11;
 		fields.fieldsList = (AREntryListFieldStruct*)new AREntryListFieldStruct[fields.numItems];
 		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
 
@@ -58,6 +58,8 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 		fields.fieldsList[6].fieldId = 3;     //Created
 		fields.fieldsList[7].fieldId = 5;     //ModifiedBy
 		fields.fieldsList[8].fieldId = 6;     //Modified
+		fields.fieldsList[9].fieldId = 120;   //Category
+		fields.fieldsList[10].fieldId = 121;   //Computed Group Definition
 
 		for (unsigned int k=0; k<fields.numItems; ++k) { fields.fieldsList[k].columnWidth=1; fields.fieldsList[k].separator[0]='|'; }
 
@@ -83,15 +85,13 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 					
 					CARGroup grp(
 						values.entryList[row].entryValues->fieldValueList[2].value.u.intVal, /* Group ID */
-						values.entryList[row].entryValues->fieldValueList[0].value.u.charVal /* Requrest ID */ );
+						values.entryList[row].entryValues->fieldValueList[0].value.u.charVal /* Request ID */ );
 					grp.groupName = values.entryList[row].entryValues->fieldValueList[1].value.u.charVal;
 					grp.name = grp.groupName;
 					grp.comparableName = CUtil::String2Comp(grp.groupName);
 					grp.groupId   = values.entryList[row].entryValues->fieldValueList[2].value.u.intVal;
 					grp.groupType	= values.entryList[row].entryValues->fieldValueList[3].value.u.intVal;
-
-					if(values.entryList[row].entryValues->fieldValueList[4].value.u.charVal != NULL)
-						grp.longGroupName = values.entryList[row].entryValues->fieldValueList[4].value.u.charVal;
+					grp.longGroupName = values.entryList[row].entryValues->fieldValueList[4].value.u.charVal;
 
 					if(values.entryList[row].entryValues->fieldValueList[5].value.u.charVal != NULL)
 						grp.createdBy = values.entryList[row].entryValues->fieldValueList[5].value.u.charVal;
@@ -104,6 +104,11 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 
 					if(values.entryList[row].entryValues->fieldValueList[8].value.u.timeVal != NULL)
 						grp.modified = values.entryList[row].entryValues->fieldValueList[8].value.u.timeVal;
+
+					grp.groupCategory = values.entryList[row].entryValues->fieldValueList[9].value.u.intVal;
+
+					if(values.entryList[row].entryValues->fieldValueList[10].value.u.timeVal != NULL)
+						grp.groupDefinition = values.entryList[row].entryValues->fieldValueList[10].value.u.charVal;
 
 					LOG << "Group '" << grp.groupName <<"' [OK]" << endl;
 
