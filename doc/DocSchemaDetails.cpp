@@ -1083,19 +1083,19 @@ void CDocSchemaDetails::SchemaFilterDoc()
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator iter;			
-		CARFilter *enumObj;
-		for (iter = this->pInside->filterList.begin(); iter != this->pInside->filterList.end(); iter++)
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
 		{
-			enumObj = &(*iter);
+			CARFilter filter(filterIndex);
 
-			if(enumObj->schemaList.u.schemaList != NULL)
+			const ARWorkflowConnectStruct &schemas = filter.GetSchemaList();
+			if (schemas.u.schemaList != NULL)
 			{
-				for(unsigned int i=0; i < enumObj->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i < schemas.u.schemaList->numItems; i++)
 				{
-					if(enumObj->schemaList.u.schemaList->nameList[i] == this->pSchema->name)
+					if(schemas.u.schemaList->nameList[i] == this->pSchema->name)
 					{
-						tbl->AddRow(*enumObj, rootLevel);
+						tbl->AddRow(filterIndex, rootLevel);
 					}
 				}
 			}
@@ -1628,21 +1628,20 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 	{
 		CFilterTable *filterTable = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator listIter;		
-		CARFilter *filter;
-		for ( listIter = this->pInside->filterList.begin(); listIter != this->pInside->filterList.end(); listIter++ )
+
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			filter = &(*listIter);
+			CARFilter filter(filterIndex);
 
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < filter->actionList.numItems; ++i)
+			for(unsigned int i = 0; i < filter.GetIfActions().numItems; ++i)
 			{
-				if(filter->actionList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
+				if(filter.GetIfActions().actionList[i].action == AR_FILTER_ACTION_FIELDP)
 				{
-					ARPushFieldsActionStruct &action = filter->actionList.actionList[i].u.pushFields;
-
+					ARPushFieldsActionStruct &action = filter.GetIfActions().actionList[i].u.pushFields;
 					if (action.pushFieldsList.numItems > 0)
 					{
 						char *pushSchema;
@@ -1663,11 +1662,11 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < filter->elseList.numItems; i++)
+				for(unsigned int i = 0; i < filter.GetElseActions().numItems; ++i)
 				{
-					if(filter->elseList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
+					if(filter.GetElseActions().actionList[i].action == AR_FILTER_ACTION_FIELDP)
 					{
-						ARPushFieldsActionStruct &action = filter->elseList.actionList[i].u.pushFields;
+						ARPushFieldsActionStruct &action = filter.GetElseActions().actionList[i].u.pushFields;
 
 						if (action.pushFieldsList.numItems > 0)
 						{
@@ -1689,7 +1688,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 
 			if(bPushToForm == true)
 			{
-				filterTable->AddRow(*filter, rootLevel);
+				filterTable->AddRow(filterIndex, rootLevel);
 			}
 		}
 

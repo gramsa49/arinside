@@ -38,5 +38,7 @@ private:
 	vector<string> escalations;
 	vector<string> containers;
 	vector<string> menus;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	vector<string> images;
+#endif
 };

@@ -122,11 +122,11 @@ bool CARImageList::LoadFromServer()
 		FreeARBooleanList(&imgExists, false);
 		internalListState = CARImageList::ARAPI_ALLOC;
 
-		sortedList = new vector<image_ref>();
+		sortedList = new vector<int>();
 		sortedList->reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
-			sortedList->push_back(image_ref(*this,i));
+			sortedList->push_back(i);
 		}
 		funcResult = true;
 	}
@@ -149,7 +149,7 @@ void CARImageList::Reserve(unsigned int size)
 {
 	if (internalListState != CARImageList::EMPTY) throw AppException("object isnt reusable!", "ImageList");
 
-	sortedList = new vector<image_ref>();
+	sortedList = new vector<int>();
 	sortedList->reserve(size);
 
 	names.numItems = 0;
@@ -229,7 +229,7 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 		++objProps.numItems;
 		++data.numItems;
 
-		sortedList->push_back(image_ref(*this, index));
+		sortedList->push_back(index);
 
 		return index;
 	}
@@ -249,7 +249,7 @@ int CARImageList::FindImage(const char* name)
 			size_t vectLen = sortedList->size();
 			for (unsigned int k = 0; k < vectLen; ++k)
 			{
-				if ((*sortedList)[k].index == i) return k;
+				if ((*sortedList)[k] == i) return k;
 			}
 		}
 	}
@@ -259,7 +259,7 @@ int CARImageList::FindImage(const char* name)
 void CARImageList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end());
+		std::sort(sortedList->begin(),sortedList->end(), SortByName<CARImageList>(*this));
 }
 
 string CARImageList::ImageGetURL(unsigned int index, int rootLevel)

@@ -34,8 +34,9 @@
 #include "util/FieldRefItem.h"
 #include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
-#include "lists/ARImageList.h"
 #include "lists/ARActiveLinkList.h"
+#include "lists/ARFilterList.h"
+#include "lists/ARImageList.h"
 #include "lists/BlackList.h"
 
 extern const string AppVersion;
@@ -82,7 +83,7 @@ public:
 	string srvHostName;
 	string srvFullHostName;
 	list<CARSchema> schemaList;
-	list<CARFilter> filterList;
+	CARFilterList filterList;
 	list<CAREscalation> escalList;
 	CARActiveLinkList alList;
 	list<CARContainer> containerList;

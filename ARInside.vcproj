@@ -1171,6 +1171,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\image.gif"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\info.gif"
 				>
 				<FileConfiguration
@@ -1584,11 +1588,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\ARFilterList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARFilterList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARImageList.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\lists\ARImageList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARListHelpers.h"
 				>
 			</File>
 			<File

@@ -52,7 +52,7 @@ public:
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void FilterList(string fileName, string searchChar);	
 	void FilterActionList(string fileName);
-	void FilterActionDetails(int nActionType);
+	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void EscalationList(string fileName, string searchChar);
 	void EscalationActionList(string fileName);
 	void EscalationActionDetails(int nActionType);

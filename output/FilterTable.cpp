@@ -38,23 +38,24 @@ CFilterTable::~CFilterTable(void)
 {
 }
 
-void CFilterTable::AddRow(CARFilter &filter, int rootLevel)
+void CFilterTable::AddRow(unsigned int filterIndex, int rootLevel)
 {
-	CTableRow tblRow("");
+	CARFilter filter(filterIndex);
 
-	tblRow.AddCell( CTableCell(filter.GetURL(rootLevel)));
+	CTableRow tblRow("");
+	tblRow.AddCell(CTableCell(filter.GetURL(rootLevel)));
 
 	string tmpCssEnabled = "";
-	if(filter.enable==0)
+	if(filter.GetEnabled()==0)
 		tmpCssEnabled = "objStatusDisabled";
-	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(filter.enable), tmpCssEnabled));
+	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(filter.GetEnabled()), tmpCssEnabled));
 
-	tblRow.AddCell( CTableCell(filter.order));
-	tblRow.AddCell( CTableCell(filter.GetExecuteOnEx()));
-	tblRow.AddCell( CTableCell(filter.actionList.numItems));
-	tblRow.AddCell( CTableCell(filter.elseList.numItems));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(filter.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(filter.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(filter.GetOrder()));
+	tblRow.AddCell( CTableCell(filter.GetExecuteOn(true)));
+	tblRow.AddCell( CTableCell(filter.GetIfActions().numItems));
+	tblRow.AddCell( CTableCell(filter.GetElseActions().numItems));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(filter.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(filter.GetLastChanged(), rootLevel)));
 
 	this->tbl.AddRow(tblRow);
 }

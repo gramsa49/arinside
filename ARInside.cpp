@@ -71,7 +71,6 @@ CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
 	this->schemaList.clear();
-	this->filterList.clear();
 	this->escalList.clear();
 	this->containerList.clear();
 	this->menuList.clear();
@@ -355,8 +354,6 @@ void CARInside::LoadFromFile(void)
 		{			
 			cout << parsedObjects.numItems << " items loaded." << endl;
 			unsigned int arInsideIdSchema = 0;
-			unsigned int arInsideIdAl = 0;
-			unsigned int arInsideIdFilter = 0;
 			unsigned int arInsideIdEscal = 0;
 			unsigned int arInsideIdCont = 0;
 			unsigned int arInsideIdMenu = 0;
@@ -364,12 +361,17 @@ void CARInside::LoadFromFile(void)
 
 			unsigned int imagesCount = 0;
 			unsigned int activelinkCount = 0;
+			unsigned int filterCount = 0;
+
 			for (unsigned int i=0; i < parsedObjects.numItems; ++i)
 			{
 				switch (parsedObjects.structItemList[i].type)
 				{
 				case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
 					++activelinkCount;
+					break;
+				case AR_STRUCT_ITEM_XML_FILTER:
+					++filterCount;
 					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE:
@@ -380,6 +382,7 @@ void CARInside::LoadFromFile(void)
 			}
 
 			if (activelinkCount > 0) alList.Reserve(activelinkCount);
+			if (filterCount > 0) filterList.Reserve(filterCount);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			if (imagesCount > 0) imageList.Reserve(imagesCount);
 #endif
@@ -391,44 +394,14 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_FILTER:
 					{
 						LOG << "Loading Filter: " << parsedObjects.structItemList[i].name; 
-						CARFilter *obj = new CARFilter(parsedObjects.structItemList[i].name, arInsideIdFilter);
 
-						if( ARGetFilterFromXML(&this->arControl, 
-							&parsedStream,
-							parsedObjects.structItemList[i].name,
-							NULL, 
-							&obj->order,
-							&obj->schemaList,								
-							&obj->opSet,
-							&obj->enable,								
-							&obj->query,
-							&obj->actionList,
-							&obj->elseList,
-							obj->owner,
-							obj->lastChanged,
-							&obj->timestamp,								
-							&obj->helptext,
-							&obj->changeDiary,
-							&obj->objPropList,
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
-							&obj->errorOptions,
-							obj->errorFilterName,
-#endif
-							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
+						int objInsideId = filterList.AddFilterFromXML(parsedStream, parsedObjects.structItemList[i].name, &xmlDocVersion);
+
+						if (objInsideId > -1)
 						{
-							ParseVersionString(obj->xmlDocVersion);
-
-							this->filterList.insert(this->filterList.end(), *obj);
-
-							LOG << " (InsideID: " << arInsideIdFilter << ") [OK]" << endl;
-							arInsideIdFilter++;
+							ParseVersionString(xmlDocVersion);
+							LOG << " (InsideID: " << objInsideId << ") [OK]" << endl;
 						}
-						else
-							cerr << GetARStatusError();
-
-						delete obj;
-						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_SCHEMA:
@@ -554,7 +527,7 @@ void CARInside::LoadFromFile(void)
 						if (objInsideId > -1)
 						{
 							ParseVersionString(xmlDocVersion);
-							LOG << " (InsideID: " << arInsideIdAl << ") [OK]" << endl;
+							LOG << " (InsideID: " << objInsideId << ") [OK]" << endl;
 						}
 					}
 					break;
@@ -1232,70 +1205,17 @@ int CARInside::LoadEscalations(void)
 
 int CARInside::LoadFilters(void)
 {
-	int insideId=0;
-
 	try
 	{
-		ARNameList nameList;
-
-		if(ARGetListFilter(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
-			this->filterList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_FILTER, nameList.nameList[i]))
-				{
-					LOG << "Loading Filter: " << nameList.nameList[i]; 
-					CARFilter *obj = new CARFilter(nameList.nameList[i], insideId);
-
-					if( ARGetFilter(&this->arControl, 
-						nameList.nameList[i], 
-						&obj->order,
-						&obj->schemaList,
-						&obj->opSet,
-						&obj->enable,
-						&obj->query,
-						&obj->actionList,
-						&obj->elseList,
-						&obj->helptext,
-						&obj->timestamp,
-						obj->owner,
-						obj->lastChanged,
-						&obj->changeDiary,
-						&obj->objPropList,
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
-						&obj->errorOptions,
-						obj->errorFilterName,
-#endif
-						&this->arStatus) == AR_RETURN_OK)
-					{
-						this->filterList.insert(this->filterList.end(), *obj);
-
-						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
-						insideId++;
-
-						FreeARStatusList(&this->arStatus, false);
-					}	
-					else
-						cerr << GetARStatusError();
-
-					delete obj;
-				}
-			}
-		}
-
-		FreeARNameList(&nameList, false);
-		FreeARStatusList(&this->arStatus, false);
-
-		this->Sort(filterList);
+		filterList.LoadFromServer();
+		filterList.Sort();
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION loading Filters: " << e.what() << endl;
-		GetARStatusError();
 	}
 
-	return insideId;
+	return filterList.GetCount();
 }
 
 int CARInside::LoadActiveLinks(void)
@@ -1308,7 +1228,6 @@ int CARInside::LoadActiveLinks(void)
 	catch(exception& e)
 	{
 		cout << "EXCEPTION loading ActiveLinks: " << e.what() << endl;
-		GetARStatusError();
 	}
 	return alList.GetCount();
 }
@@ -1494,18 +1413,13 @@ void CARInside::Documentation(void)
 	docMain->FilterActionList("index_action");
 
 	//Filter Details
-	nTmpCnt=1;
-	list<CARFilter>::iterator filterIter;
+	tmpCount = filterList.GetCount();
 	cout << "Starting Filter Documentation" << endl;
-	for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); filterIter++)
+	for (unsigned int filterIndex = 0; filterIndex < tmpCount; ++filterIndex)
 	{
-		CARFilter *filter = &(*filterIter);
-
-		LOG << "Filter [" << nTmpCnt << "-" << filterList.size() << "] '" << filter->name << "': ";
-		CDocFilterDetails *filterDetails = new CDocFilterDetails(*this, *filter, "filter/"+filter->FileID(), 2);
-		filterDetails->Documentation();
-		delete filterDetails;
-		nTmpCnt++;
+		LOG << "Filter [" << filterIndex << "-" << tmpCount << "] '" << filterList.FilterGetName(filterIndex) << "': ";
+		CDocFilterDetails filterDetails(filterIndex, 2);
+		filterDetails.Documentation();
 	}
 
 
@@ -1921,16 +1835,7 @@ int CARInside::AlGetInsideId(string searchObjName)
 
 int CARInside::FilterGetInsideId(string searchObjName)
 {
-	list<CARFilter>::iterator iter;			
-	for ( iter = filterList.begin(); iter != filterList.end(); iter++ )
-	{			
-		CARFilter *obj = &(*iter);
-		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
-			return obj->GetInsideId();
-		}
-	}
-	return -1;
+	return filterList.Find(searchObjName.c_str());
 }
 
 int CARInside::ContainerGetInsideId(string searchObjName)
@@ -2102,28 +2007,25 @@ string CARInside::LinkToAl(int alInsideId, int rootLevel)
 
 string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
 {	
-	list<CARFilter>::iterator filterIter;
-	list<CARFilter>::iterator endIt = this->filterList.end();
-	for ( filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter)
-	{	
-		CARFilter *filter = &(*filterIter);
-		if(filter->GetInsideId() == filterInsideId)
-			return LinkToFilterRef(filter, rootLevel);
+	if (filterInsideId > -1)
+	{
+		CARFilter flt(filterInsideId);
+		return LinkToFilterRef(&flt, rootLevel);
 	}
 	return EmptyValue;
 }
 
 string CARInside::LinkToFilterRef(string fltName, int rootLevel)
-{	
-	list<CARFilter>::iterator filterIter;
-	list<CARFilter>::iterator endIt = this->filterList.end();
-	for (filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter)
-	{	
-		CARFilter *filter = &(*filterIter);
-		if(filter->name.compare(fltName)==0)
-			return LinkToFilterRef(filter, rootLevel);
+{
+	if (fltName.empty()) return fltName;
+
+	int fltInsideId = filterList.Find(fltName.c_str());
+	if (fltInsideId > -1)
+	{
+		CARFilter flt(fltInsideId);
+		return LinkToFilterRef(&flt, rootLevel);
 	}
-	return EmptyValue;
+	return fltName;
 }
 
 string CARInside::LinkToFilterRef(CARFilter* filter, int rootLevel)
@@ -2132,22 +2034,20 @@ string CARInside::LinkToFilterRef(CARFilter* filter, int rootLevel)
 	strmTmp.str("");
 
 	if (filter != NULL)
-		strmTmp << filter->GetURL(rootLevel) << " (" << filter->order << ")";
+		strmTmp << filter->GetURL(rootLevel) << " (" << filter->GetOrder() << ")";
 
 	return strmTmp.str();
 }
 
 string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 {
-	list<CARFilter>::iterator filterIter;
-	list<CARFilter>::iterator endIt = this->filterList.end();
-	for ( filterIter = this->filterList.begin(); filterIter != endIt; ++filterIter )
-	{	
-		CARFilter *filter = &(*filterIter);
-		if(strcmp(filterName.c_str(), filter->name.c_str())==0)
-		{
-			return filter->GetURL(fromRootLevel);
-		}
+	if (filterName.empty()) return filterName;
+
+	int fltInsideId = filterList.Find(filterName.c_str());
+	if (fltInsideId > -1)
+	{
+		CARFilter flt(fltInsideId);
+		return flt.GetURL(fromRootLevel);
 	}
 	return filterName;
 }
@@ -2296,7 +2196,7 @@ string CARInside::XmlObjEnabled(CARServerObject *obj)
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		return CAREnum::ObjectEnable(static_cast<CARActiveLink*>(obj)->GetEnabled());
 	case AR_STRUCT_ITEM_XML_FILTER:
-		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->enable);
+		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->GetEnabled());
 	case AR_STRUCT_ITEM_XML_ESCALATION:
 		return CAREnum::ObjectEnable(static_cast<CAREscalation*>(obj)->enable);
 	default:
@@ -2321,14 +2221,10 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 		break;
 	case AR_STRUCT_ITEM_XML_FILTER:
 		{
-			list<CARFilter>::iterator filterIter;			
-			for ( filterIter = this->filterList.begin(); filterIter != this->filterList.end(); ++filterIter)
-			{	
-				CARFilter *filter = &(*filterIter);
-				if(objName.compare(filter->name) == 0)
-				{
-					return CAREnum::ObjectEnable(filter->enable);
-				}
+			int fltInsideId = filterList.Find(objName.c_str());
+			if (fltInsideId > -1)
+			{
+				return CAREnum::ObjectEnable(filterList.FilterGetEnabled(fltInsideId));
 			}
 		}
 		break;		
@@ -3047,37 +2943,42 @@ void CARInside::SearchFilterReferences()
 	{
 		cout << "Checking filter references";
 
-		list<CARFilter>::iterator filterIter;
-		for ( filterIter = filterList.begin(); filterIter != filterList.end(); filterIter++)
+		unsigned int filterCount = filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; filterIndex++)
 		{
-			CARFilter *filter = &(*filterIter);
-			if (filter->errorOptions == AR_FILTER_ERRHANDLER_ENABLE)
+			CARFilter filter(filterIndex);
+			if (filter.GetErrorOption() == AR_FILTER_ERRHANDLER_ENABLE)
 			{
-				ErrorCallMap::iterator item = errorCalls.find(filter->errorFilterName);
+				ErrorCallMap::iterator item = errorCalls.find(filter.GetErrorHandler());
 				if (item == errorCalls.end())
 				{
-					ErrCallPair newItem(filter->errorFilterName, list<string>());
-					newItem.second.insert(newItem.second.end(), filter->name);
+					ErrCallPair newItem(filter.GetErrorHandler(), list<string>());
+					newItem.second.insert(newItem.second.end(), filter.GetName());
 					errorCalls.insert(newItem);
 				}
 				else
 				{
-					item->second.insert(item->second.end(), filter->name);
+					item->second.insert(item->second.end(), filter.GetName());
 				}
 			}
 		}
 
 		if (errorCalls.size() > 0)
 		{
-			for ( filterIter = filterList.begin(); filterIter != filterList.end(); filterIter++)
+			for (unsigned int filterIndex = 0; filterIndex < filterCount; filterIndex++)
 			{
-				CARFilter *filter = &(*filterIter);
-				ErrorCallMap::iterator item = errorCalls.find(filter->name);
+				CARFilter filter(filterIndex);
+				ErrorCallMap::iterator item = errorCalls.find(filter.GetName());
 				if (item != errorCalls.end())
 				{
-					for ( list<string>::iterator caller = item->second.begin(); caller != item->second.end(); caller++)
+					if (!item->second.empty())
 					{
-						filter->errorCallers.insert(filter->errorCallers.end(), *caller);
+						filter.ErrorCallers().reserve(item->second.size());
+						list<string>::iterator callerEnd = item->second.end();
+						for (list<string>::iterator caller = item->second.begin(); caller != callerEnd; ++caller)
+						{
+							filter.ErrorCallers().push_back(*caller);
+						}
 					}
 				}
 			}
@@ -3085,9 +2986,9 @@ void CARInside::SearchFilterReferences()
 
 		cout << endl;
 	}
-	catch (...)
+	catch (exception &e)
 	{
-		cerr << "EXCEPTION SearchFilterReferences" << endl;
+		cerr << "EXCEPTION SearchFilterReferences: " << e.what() << endl;
 	}
 }
 

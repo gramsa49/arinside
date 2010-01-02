@@ -116,18 +116,18 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 	int nResult = 0;
 	try
 	{
-		list<CARFilter>::iterator listIter;
-		for ( listIter = this->pInside->filterList.begin(); listIter != this->pInside->filterList.end(); listIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			CARFilter *filter = &(*listIter);
+			CARFilter filter(filterIndex);
 
 			//Search if-actions
-			for(unsigned int nAction = 0; nAction < filter->actionList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < filter.GetIfActions().numItems; nAction++)
 			{
-				ARFilterActionStruct action = filter->actionList.actionList[nAction];
+				ARFilterActionStruct &action = filter.GetIfActions().actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(obj.name.compare(action.u.callGuide.guideName)==0)
 					{
 						nResult++;
 					}
@@ -135,9 +135,9 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 			}
 
 			//Search else-actions
-			for(unsigned int nAction = 0; nAction < filter->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < filter.GetElseActions().numItems; nAction++)
 			{
-				ARFilterActionStruct action = filter->elseList.actionList[nAction];
+				ARFilterActionStruct action = filter.GetElseActions().actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)

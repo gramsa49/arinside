@@ -322,30 +322,31 @@ string CDocApplicationDetails::SearchFilters(int &nResult)
 
 	try
 	{
-		list<CARFilter>::iterator objIter;
-		for ( objIter = pInside->filterList.begin(); objIter != pInside->filterList.end(); objIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{	
-			CARFilter *obj = &(*objIter);
+			CARFilter obj(filterIndex);
 			bool bInsert = false;
 
-			for(unsigned int i=0; i< obj->schemaList.u.schemaList->numItems; i++)
+			unsigned int schemaCount = obj.GetSchemaList().u.schemaList->numItems;
+			for(unsigned int i=0; i < schemaCount; ++i)
 			{
-				if(InList(obj->schemaList.u.schemaList->nameList[i], ARREF_SCHEMA))
+				if(InList(obj.GetSchemaList().u.schemaList->nameList[i], ARREF_SCHEMA))
 				{
 					bInsert = true;
 				}
 			}
 
-			if(InList(obj->name.c_str(), ARREF_FILTER))
+			if(InList(obj.GetName(), ARREF_FILTER))
 				bInsert = true;
 
 			if(bInsert)
 			{
 				nResult++;
-				strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
-				obj->appRefName = this->pApp->name;
+				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
+				obj.SetAppRefName(this->pApp->name);
 			}
-		}		
+		}
 	}
 	catch(exception& e)
 	{

@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2009 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -13,20 +13,14 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
-
 #pragma once
-#include "../ARInside.h"
-#include "ObjectTable.h"
 
-namespace OUTPUT
+template<class CARListObject>
+class SortByName
 {
-	class CFilterTable:
-		public CObjectTable
-	{
-	public:
-		CFilterTable(CARInside &arIn);
-		~CFilterTable(void);
-
-		void AddRow(unsigned int filterIndex, int rootLevel);
-	};
-}
+public:
+	SortByName(const CARListObject &p) { list = &p; }
+	bool operator()(int l, int r) { return (strcmp(list->names.nameList[l], list->names.nameList[r]) < 0); }
+private:
+	const CARListObject* list;
+};

@@ -34,7 +34,7 @@ CDocFilterActionStruct::~CDocFilterActionStruct(void)
 }
 
 
-string CDocFilterActionStruct::Get(string ifElse, ARFilterActionList &actList)
+string CDocFilterActionStruct::Get(string ifElse, const ARFilterActionList &actList)
 {
 	stringstream strm;
 	strm.str("");

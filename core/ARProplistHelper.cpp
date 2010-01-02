@@ -180,7 +180,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 }
 
 
-string CARProplistHelper::GetList(ARPropList &objPropList, CARPropertyCallback* pcbObj)
+string CARProplistHelper::GetList(const ARPropList &objPropList, CARPropertyCallback* pcbObj)
 {
 	stringstream strm;
 	strm.str("");

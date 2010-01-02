@@ -354,35 +354,29 @@ void CDocMain::FilterList(string fileName, string searchChar)
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator filterIter;	
-		CARFilter *filter;
-		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
-		{	
-			filter = &(*filterIter);
+		unsigned int filterCount = this->pInside->filterList.GetCount();
 
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
+		{	
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(filter->GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
-				if(!filter->NameStandardFirstChar())
-				{
+				if(CARObject::NameStandardFirstChar(pInside->filterList.FilterGetName(filterIndex)[0]))
 					bInsert = true;		
-				}
+			}
+			else
+			{
+				if(searchChar[0] == tolower(pInside->filterList.FilterGetName(filterIndex)[0]))
+					bInsert = true;
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*filter, rootLevel);
+				tbl->AddRow(filterIndex, rootLevel);
 			}
 		}
 
@@ -432,33 +426,8 @@ void CDocMain::FilterActionList(string fileName)
 			stringstream linkto;
 			linkto << "index_action_" << nActionType;
 
-			//Search all filters
-			list<CARFilter>::iterator filterIter = this->pInside->filterList.begin();
-			list<CARFilter>::iterator endIt = this->pInside->filterList.end();
-			CARFilter *filter;
-
-			for ( ; filterIter != endIt; ++filterIter )
-			{	
-				filter = &(*filterIter);
-
-				//actionList
-				for(unsigned int nAction=0; nAction < filter->actionList.numItems; nAction++)
-				{
-					if(filter->actionList.actionList[nAction].action == nActionType)
-					{		
-						nCountIf ++;					
-					}
-				}		
-
-				//elseList
-				for(unsigned int nAction=0; nAction < filter->elseList.numItems; nAction++)
-				{
-					if(filter->elseList.actionList[nAction].action == nActionType)
-					{		
-						nCountElse ++;					
-					}
-				}		
-			}
+			// Create a new webpage for every action
+			FilterActionDetails(nActionType, nCountIf, nCountElse);
 
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
@@ -466,9 +435,6 @@ void CDocMain::FilterActionList(string fileName)
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));		
 			tbl.AddRow(row);	
-
-			//Create a new webpage for every action
-			FilterActionDetails(nActionType);
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -482,7 +448,7 @@ void CDocMain::FilterActionList(string fileName)
 	}
 }
 
-void CDocMain::FilterActionDetails(int nActionType)
+void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
 	try
 	{
@@ -494,34 +460,36 @@ void CDocMain::FilterActionDetails(int nActionType)
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator filterIter;
-		CARFilter *filter;
-		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{	
 			int nActionExists = 0;
-			filter = &(*filterIter);
+			const ARFilterActionList &ifActions = pInside->filterList.FilterGetIfActions(filterIndex);
+			const ARFilterActionList &elseActions = pInside->filterList.FilterGetElseActions(filterIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<filter->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
 			{
-				if(filter->actionList.actionList[nAction].action == nActionType)
+				if (ifActions.actionList[nAction].action == nActionType)
 				{		
+					++ifCount;
 					nActionExists++;
 				}
-			}		
+			}
 
 			//elseList
-			for(unsigned int nAction=0; nAction < filter->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
 			{
-				if(filter->elseList.actionList[nAction].action == nActionType)
-				{		
+				if (elseActions.actionList[nAction].action == nActionType)
+				{
+					++elseCount;
 					nActionExists++;
 				}
-			}		
+			}
 
 			if(nActionExists > 0)
 			{
-				tbl->AddRow(*filter, rootLevel);
+				tbl->AddRow(filterIndex, rootLevel);
 			}
 		}
 
@@ -1247,57 +1215,56 @@ void CDocMain::MessageList()
 
 
 		//Search all filter
-		list<CARFilter>::iterator filterIter;	
-		CARFilter *filter;
-		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			filter = &(*filterIter);
+			const ARFilterActionList &ifActions = pInside->filterList.FilterGetIfActions(filterIndex);
+			const ARFilterActionList &elseActions = pInside->filterList.FilterGetElseActions(filterIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<filter->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
 			{
-				if(filter->actionList.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
+				if(ifActions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
 				{
-
 					stringstream strmTmp;
 					strmTmp.str("");
-					strmTmp << "If-Action "<<nAction;
+					strmTmp << "If-Action " << nAction;
 
-					ARFilterStatusStruct &msg = filter->actionList.actionList[nAction].u.message;
+					const ARFilterStatusStruct &msg = ifActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = filter->GetURL(rootLevel);
-					listMsgItem.push_back(*msgItem);					
+					msgItem->objectLink = pInside->filterList.FilterGetURL(filterIndex, rootLevel);
+					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
 			}
 
 			//elseList
-			for(unsigned int nAction=0; nAction<filter->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
 			{
-				if(filter->elseList.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
+				if(elseActions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
 				{
 					stringstream strmTmp;
 					strmTmp.str("");
 					strmTmp << "Else-Action "<<nAction;
 
-					ARFilterStatusStruct &msg = filter->elseList.actionList[nAction].u.message;
+					const ARFilterStatusStruct &msg = elseActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = filter->GetURL(rootLevel);
+					msgItem->objectLink = pInside->filterList.FilterGetURL(filterIndex, rootLevel);
 					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
 			}
-		}	
+		}
 
 
 		CWebPage webPage("message_list", "Messages", rootLevel, this->pInside->appConfig);

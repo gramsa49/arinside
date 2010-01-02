@@ -46,6 +46,7 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 	
 	memset(&status, 0, sizeof(ARStatusList));
 	memset(&refItems, 0, sizeof(ARStatusList));
+	memset(&refTypes, 0, sizeof(ARReferenceTypeList));
 
 	cout << "Loading blacklist from packinglist '" << packingListName << "'" << endl;
 
@@ -85,7 +86,9 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 			case ARREF_ESCALATION: ++escalationCount; break;
 			case ARREF_CONTAINER: ++containerCount; break;
 			case ARREF_CHAR_MENU: ++menuCount; break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			case ARREF_IMAGE: ++imageCount; break;
+#endif
 			}
 		}
 
@@ -96,7 +99,9 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 		escalations.reserve(escalationCount);
 		containers.reserve(containerCount);
 		menus.reserve(menuCount);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		images.reserve(imageCount);
+#endif
 
 		// we add the black list too, so its not documented at all
 		containers.push_back(packingListName);
@@ -114,7 +119,9 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 			case ARREF_ESCALATION: list = &escalations; break;
 			case ARREF_CONTAINER: list = &containers; break;
 			case ARREF_CHAR_MENU: list = &menus; break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			case ARREF_IMAGE: list = &images; break;
+#endif
 			default: continue;
 			}
 			
@@ -130,7 +137,9 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 			sort(escalations.begin(), escalations.end());
 			sort(containers.begin(), containers.end());
 			sort(menus.begin(), menus.end());
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			sort(images.begin(), images.end());
+#endif
 		}
 
 		// free the memory of the api structures
@@ -155,7 +164,9 @@ size_t CBlackList::GetCountOf(unsigned int nType)
 	case ARREF_ESCALATION: return escalations.size();
 	case ARREF_CONTAINER: return containers.size();
 	case ARREF_CHAR_MENU: return menus.size();
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	case ARREF_IMAGE: return images.size();
+#endif
 	case ARREF_ALL:
 		{
 			size_t totalCount = schemas.size();
@@ -164,7 +175,9 @@ size_t CBlackList::GetCountOf(unsigned int nType)
 			totalCount += escalations.size();
 			totalCount += containers.size();
 			totalCount += menus.size();
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			totalCount += images.size();
+#endif
 			return totalCount;
 		}		
 	default: return 0;
@@ -185,7 +198,9 @@ bool CBlackList::Contains(unsigned int nType, const char *objName)
 	case ARREF_ESCALATION: list = &escalations; break;
 	case ARREF_CONTAINER: list = &containers; break;
 	case ARREF_CHAR_MENU: list = &menus; break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	case ARREF_IMAGE: list = &images; break;
+#endif
 	default: return false;
 	}
 	
@@ -217,7 +232,9 @@ void CBlackList::Exclude(unsigned int nType, ARNameList *objNames)
 	case ARREF_ESCALATION: list = &escalations; break;
 	case ARREF_CONTAINER: list = &containers; break;
 	case ARREF_CHAR_MENU: list = &menus; break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	case ARREF_IMAGE: list = &images; break;
+#endif
 	default: return;
 	}
 

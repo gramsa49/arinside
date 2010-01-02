@@ -29,7 +29,7 @@ public:
 	~CDocFilterActionStruct(void);
 
 public:
-	string Get(string ifElse, ARFilterActionList &actList);	
+	string Get(string ifElse, const ARFilterActionList &actList);
 
 private:
 	CARInside *arIn;

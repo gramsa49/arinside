@@ -127,16 +127,16 @@ string CDocFilterGuideDetails::FilterActions()
 
 	try
 	{
-		list<CARFilter>::iterator listIter;
-
-		for ( listIter = pInside->filterList.begin(); listIter != pInside->filterList.end(); listIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			CARFilter *filter = &(*listIter);
+			CARFilter filter(filterIndex);
 
 			//Search if-actions
-			for(unsigned int nAction = 0; nAction < filter->actionList.numItems; nAction++)
+			const ARFilterActionList& IfActions =	filter.GetIfActions();
+			for(unsigned int nAction = 0; nAction < IfActions.numItems; ++nAction)
 			{
-				ARFilterActionStruct action = filter->actionList.actionList[nAction];
+				const ARFilterActionStruct& action = IfActions.actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, pFilterGuide->name.c_str())==0)
@@ -144,7 +144,7 @@ string CDocFilterGuideDetails::FilterActions()
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellFilter(filter->GetURL(this->rootLevel), "");
+						CTableCell cellFilter(filter.GetURL(this->rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);
@@ -155,9 +155,10 @@ string CDocFilterGuideDetails::FilterActions()
 			}
 
 			//Search else-actions
-			for(unsigned int nAction = 0; nAction < filter->elseList.numItems; nAction++)
+			const ARFilterActionList& ElseActions =	filter.GetElseActions();
+			for(unsigned int nAction = 0; nAction < ElseActions.numItems; nAction++)
 			{
-				ARFilterActionStruct action = filter->elseList.actionList[nAction];
+				ARFilterActionStruct action = ElseActions.actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
 					if(strcmp(action.u.callGuide.guideName, pFilterGuide->name.c_str())==0)
@@ -165,7 +166,7 @@ string CDocFilterGuideDetails::FilterActions()
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellFilter(filter->GetURL(this->rootLevel), "");
+						CTableCell cellFilter(filter.GetURL(this->rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);

@@ -15,68 +15,66 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "ARActiveLinkList.h"
+#include "ARFilterList.h"
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
 
-CARActiveLinkList::CARActiveLinkList(void)
+CARFilterList::CARFilterList(void)
 {
-	internalListState = CARActiveLinkList::EMPTY;
+	internalListState = CARFilterList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
 	sortedList = NULL;
 }
 
-CARActiveLinkList::~CARActiveLinkList(void)
+CARFilterList::~CARFilterList(void)
 {
-	if (internalListState == CARActiveLinkList::INTERNAL_ALLOC)
+	if (internalListState == CARFilterList::INTERNAL_ALLOC)
 	{
 		try
 		{
 			delete[] names.nameList;
 			delete[] orders.intList;
 			delete[] schemas.workflowConnectList;
-			delete[] groups.internalIdListList;
-			delete[] execMasks.intList;
-			delete[] controlFields.internalIdList;
-			delete[] focusFields.internalIdList;
+			delete[] operationSets.intList;
 			delete[] enabledObjects.intList;
 			delete[] queries.qualifierList;
 			delete[] ifActions.actionListList;
 			delete[] elseActions.actionListList;
-			delete[] changedTimes.timestampList;
 			delete[] helpTexts.stringList;
+			delete[] changedTimes.timestampList;
 			delete[] owners.nameList;
 			delete[] changedUsers.nameList;
 			delete[] changeDiary.stringList;
 			delete[] objProps.propsList;
+			delete[] errorOptions.intList;
+			delete[] errorHandlers.nameList;
 		}
 		catch (...)
 		{
 		}
 	}
-	else if (internalListState == CARActiveLinkList::ARAPI_ALLOC)
+	else if (internalListState == CARFilterList::ARAPI_ALLOC)
 	{		
 		try
 		{
 			FreeARNameList(&names,false);
 			FreeARUnsignedIntList(&orders,false);
 			FreeARWorkflowConnectList(&schemas,false);
-			FreeARInternalIdListList(&groups,false);
-			FreeARUnsignedIntList(&execMasks,false);
-			FreeARInternalIdList(&controlFields,false);
-			FreeARInternalIdList(&focusFields,false);
+			FreeARUnsignedIntList(&operationSets,false);
 			FreeARUnsignedIntList(&enabledObjects,false);
 			FreeARQualifierList(&queries,false);
-			FreeARActiveLinkActionListList(&ifActions,false);
-			FreeARActiveLinkActionListList(&elseActions,false);
+			FreeARFilterActionListList(&ifActions,false);
+			FreeARFilterActionListList(&elseActions,false);
 			FreeARTextStringList(&helpTexts,false);
 			FreeARTimestampList(&changedTimes,false);
 			FreeARAccessNameList(&owners,false);
 			FreeARAccessNameList(&changedUsers,false);
 			FreeARTextStringList(&changeDiary,false);
 			FreeARPropListList(&objProps,false);
+			FreeARUnsignedIntList(&errorOptions,false);
+			FreeARNameList(&errorHandlers,false);
 		}
 		catch (...)
 		{
@@ -87,9 +85,9 @@ CARActiveLinkList::~CARActiveLinkList(void)
 		delete sortedList;
 }
 
-bool CARActiveLinkList::LoadFromServer()
+bool CARFilterList::LoadFromServer()
 {
-	ARBooleanList   alExists;
+	ARBooleanList   fltExists;
 	ARStatusList    status;
 	CARInside*      arIn = CARInside::GetInstance();
 	ARNameList*     objectsToLoad = NULL;
@@ -97,38 +95,35 @@ bool CARActiveLinkList::LoadFromServer()
 	unsigned int    originalObjectNameCount = 0;
 	bool            funcResult = false;
 
-	memset(&alExists, 0, sizeof(alExists));
+	memset(&fltExists, 0, sizeof(fltExists));
 	memset(&status, 0, sizeof(status));
 
-	// if the blacklist contains active links, we should first load all active link names
-	// from the server and remove those that are contained in the blacklist. after that 
-	// call ARGetMultipleActiveLinks to retrieve just the needed active links.
-	if (arIn->blackList.GetCountOf(ARREF_ACTLINK) > 0)
+	// if the blacklist contains filters, we should first load all filter names from the
+	// server and remove those that are contained in the blacklist. after that call
+	// ARGetMultipleFilters to retrieve just the needed objects.
+	if (arIn->blackList.GetCountOf(ARREF_FILTER) > 0)
 	{
 		memset(&objectNames, 0, sizeof(objectNames));
 
-		if (ARGetListActiveLink(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+		if (ARGetListFilter(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
 		{
 			originalObjectNameCount = objectNames.numItems;
-			arIn->blackList.Exclude(ARREF_ACTLINK, &objectNames);
+			arIn->blackList.Exclude(ARREF_FILTER, &objectNames);
 			objectsToLoad = &objectNames;
 		}
 		else
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-	// ok, now retrieve all informations of the active links we need
-	if (ARGetMultipleActiveLinks(&arIn->arControl,
+	// ok, now retrieve all informations of the filters we need
+	if (ARGetMultipleFilters(&arIn->arControl,
 		0,
 		objectsToLoad,
-		&alExists,
+		&fltExists,
 		&names,
 		&orders,
 		&schemas,
-		&groups,
-		&execMasks,
-		&controlFields,
-		&focusFields,
+		&operationSets,
 		&enabledObjects,
 		&queries,
 		&ifActions,
@@ -139,19 +134,21 @@ bool CARActiveLinkList::LoadFromServer()
 		&changedUsers,
 		&changeDiary,
 		&objProps,
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750 // Version 7.5 and higher
-		NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+		&errorOptions,
+		&errorHandlers,
 #endif
 		&status) == AR_RETURN_OK)
 	{
-		FreeARBooleanList(&alExists, false);
-		internalListState = CARActiveLinkList::ARAPI_ALLOC;
+		FreeARBooleanList(&fltExists, false);
+		internalListState = CARFilterList::ARAPI_ALLOC;
 
 		sortedList = new vector<int>();
 		sortedList->reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
+			errorCallers.push_back(vector<string>());
 			sortedList->push_back(i);
 		}
 		funcResult = true;
@@ -171,9 +168,9 @@ bool CARActiveLinkList::LoadFromServer()
 	return funcResult;
 }
 
-void CARActiveLinkList::Reserve(unsigned int size)
+void CARFilterList::Reserve(unsigned int size)
 {
-	if (internalListState != CARActiveLinkList::EMPTY) throw AppException("object isnt reusable!", "ActiveLinkList");
+	if (internalListState != CARFilterList::EMPTY) throw AppException("object isnt reusable!", "FilterList");
 
 	sortedList = new vector<int>();
 	sortedList->reserve(size);
@@ -187,17 +184,8 @@ void CARActiveLinkList::Reserve(unsigned int size)
 	schemas.numItems = 0;
 	schemas.workflowConnectList = new ARWorkflowConnectStruct[size];
 
-	groups.numItems = 0;
-	groups.internalIdListList = new ARInternalIdList[size];
-
-	execMasks.numItems = 0;
-	execMasks.intList = new unsigned int[size];
-
-	controlFields.numItems = 0;
-	controlFields.internalIdList = new ARInternalId[size];
-
-	focusFields.numItems = 0;
-	focusFields.internalIdList= new ARInternalId[size];
+	operationSets.numItems = 0;
+	operationSets.intList = new unsigned int[size];
 
 	enabledObjects.numItems = 0;
 	enabledObjects.intList = new unsigned int[size];
@@ -206,10 +194,10 @@ void CARActiveLinkList::Reserve(unsigned int size)
 	queries.qualifierList = new ARQualifierStruct[size];
 
 	ifActions.numItems = 0;
-	ifActions.actionListList = new ARActiveLinkActionList[size];
+	ifActions.actionListList = new ARFilterActionList[size];
 
 	elseActions.numItems = 0;
-	elseActions.actionListList = new ARActiveLinkActionList[size];
+	elseActions.actionListList = new ARFilterActionList[size];
 
 	helpTexts.numItems = 0;
 	helpTexts.stringList = new char*[size];
@@ -228,16 +216,23 @@ void CARActiveLinkList::Reserve(unsigned int size)
 
 	objProps.numItems = 0;
 	objProps.propsList = new ARPropList[size];
+	
+	errorOptions.numItems = 0;
+	errorOptions.intList = new unsigned int[size];
+
+	errorHandlers.numItems = 0;
+	errorHandlers.nameList = new ARNameType[size];
 
 	appRefNames.reserve(size);
+	errorCallers.reserve(size);
 
 	reservedSize = size;
-	internalListState = CARActiveLinkList::INTERNAL_ALLOC;
+	internalListState = CARFilterList::INTERNAL_ALLOC;
 }
 
-int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const char* actlinkName, unsigned int *outDocVersion)
+int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filterName, unsigned int *outDocVersion)
 {
-	if (internalListState != CARActiveLinkList::INTERNAL_ALLOC) throw AppException("illegal usage!", "ActiveLinkList");
+	if (internalListState != CARFilterList::INTERNAL_ALLOC) throw AppException("illegal usage!", "FilterList");
 	if (names.numItems >= reservedSize) return -1;
 	if (outDocVersion != NULL) *outDocVersion = 0;
 	
@@ -247,32 +242,29 @@ int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const cha
 
 	unsigned int arDocVersion = 0;
 	unsigned int index = names.numItems;
-	strncpy(names.nameList[index], actlinkName, 254);	// copy name over
+	strncpy(names.nameList[index], filterName, 254);	// copy name over
 	names.nameList[index][254] = 0;
 
-	if (ARGetActiveLinkFromXML(&arIn->arControl,
+	if (ARGetFilterFromXML(&arIn->arControl,
 		&stream,
 		names.nameList[index],
 		appBlockName,
 		&orders.intList[index],
 		&schemas.workflowConnectList[index],
-		&groups.internalIdListList[index],
-		&execMasks.intList[index],
-		&controlFields.internalIdList[index],
-		&focusFields.internalIdList[index],
+		&operationSets.intList[index],
 		&enabledObjects.intList[index],
 		&queries.qualifierList[index],
 		&ifActions.actionListList[index],
 		&elseActions.actionListList[index],
-		NULL, // what is support file info for?
 		owners.nameList[index],
 		changedUsers.nameList[index],
 		&changedTimes.timestampList[index],
 		&helpTexts.stringList[index],
 		&changeDiary.stringList[index],
 		&objProps.propsList[index],
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750 // Version 7.5 and higher
-		NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+		&errorOptions.intList[index],
+		errorHandlers.nameList[index],
 #endif
 		&arDocVersion,
 		&status) == AR_RETURN_OK)
@@ -280,10 +272,7 @@ int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const cha
 		++names.numItems;
 		++orders.numItems;
 		++schemas.numItems;
-		++groups.numItems;
-		++execMasks.numItems;
-		++controlFields.numItems;
-		++focusFields.numItems;
+		++operationSets.numItems;
 		++enabledObjects.numItems;
 		++queries.numItems;
 		++ifActions.numItems;
@@ -294,9 +283,12 @@ int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const cha
 		++changedUsers.numItems;
 		++changeDiary.numItems;
 		++objProps.numItems;
+		++errorOptions.numItems;
+		++errorHandlers.numItems;
 
 		sortedList->push_back(index);
 		appRefNames.push_back("");
+		errorCallers.push_back(vector<string>());
 
 		if (outDocVersion != NULL) *outDocVersion = arDocVersion;
 
@@ -309,37 +301,32 @@ int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const cha
 	}
 }
 
-int CARActiveLinkList::Find(const char* name)
+int CARFilterList::Find(const char* name)
 {
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		if (strcmp(names.nameList[i], name) == 0)
+		int result = strcmp(names.nameList[(*sortedList)[i]], name);
+		if (result == 0)
 		{
-			size_t vectLen = sortedList->size();
-			for (unsigned int k = 0; k < vectLen; ++k)
-			{
-				if ((*sortedList)[k] == i) return k;
-			}
+			return i;
 		}
+		else if (result > 0)	
+			// the current string in the sorted list is greater as the string we are looking for.
+			// stop searching here.
+			break;
 	}
 	return -1;
 }
 
-
-void CARActiveLinkList::Sort()
+void CARFilterList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARActiveLinkList>(*this));
+		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARFilterList>(*this));
 }
 
-string CARActiveLinkList::ActiveLinkGetURL(unsigned int index, int rootLevel)
+string CARFilterList::FilterGetURL(unsigned int index, int rootLevel)
 {
 	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "active_link/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(ActiveLinkGetName(index), strmTmp.str(), "active_link.gif", rootLevel); 
+	strmTmp << CWebUtil::RootPath(rootLevel) << "filter/" << index << "/" << CWebUtil::DocName("index");
+	return CWebUtil::Link(FilterGetName(index), strmTmp.str(), "filter.gif", rootLevel); 
 }
-
-//void CARActiveLinkList::AddReference(const CImageRefItem &referenceItem)
-//{
-//	referenceList.push_back(referenceItem);
-//}

@@ -47,7 +47,7 @@ public:
 	~CARProplistHelper(void);
 
 	/// Returns the html for a table containing all properties and their values.
-	static string GetList(ARPropList &objPropList, CARPropertyCallback* pcbObj = NULL);
+	static string GetList(const ARPropList &objPropList, CARPropertyCallback* pcbObj = NULL);
 	static string GetLabel(ARULong32 nProp);
 	static string GetValue(ARULong32 nProp, ARValueStruct &arV);
 

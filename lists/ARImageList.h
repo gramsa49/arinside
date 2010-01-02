@@ -17,6 +17,7 @@
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
 #include "../util/ImageRefItem.h"
+#include "ARListHelpers.h"
 #include <assert.h>
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -42,38 +43,24 @@ public:
 	void Reserve(unsigned int size);
 	void Sort();
 
-	// we dont use a separate CImage object yet. This avoids additional memory 
-	// usage. the image object would need to store at least the index and
-	// optinally a reference to the CImageList (but normally we dont need more
-	// than one). The functions are inline to avoid additional strack frames.
-	inline const ARNameType& ImageGetName(unsigned int index) { assert(index < names.numItems); return names.nameList[(*sortedList)[index].index]; }
-	inline char* ImageGetType(unsigned int index) { assert(index < types.numItems); return types.stringList[(*sortedList)[index].index]; }
-	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[(*sortedList)[index].index]; }
-	inline char* ImageGetDescription(unsigned int index) { assert(index < descriptions.numItems); return descriptions.stringList[(*sortedList)[index].index]; }
-	inline char* ImageGetHelptext(unsigned int index) { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index].index]; }
-	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index].index]; }
-	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index].index]; }
-	inline char* ImageGetChangeDiary(unsigned int index) { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index].index]; }
-	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[(*sortedList)[index].index]; }
+	// The following functions give access to the data. But in most cases its easier
+	// to use the CARImage object.
+	inline const ARNameType& ImageGetName(unsigned int index) { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
+	inline char* ImageGetType(unsigned int index) { assert(index < types.numItems); return types.stringList[(*sortedList)[index]]; }
+	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[(*sortedList)[index]]; }
+	inline char* ImageGetDescription(unsigned int index) { assert(index < descriptions.numItems); return descriptions.stringList[(*sortedList)[index]]; }
+	inline char* ImageGetHelptext(unsigned int index) { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }
+	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index]]; }
+	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
+	inline char* ImageGetChangeDiary(unsigned int index) { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
+	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[(*sortedList)[index]]; }
 	string ImageGetURL(unsigned int index, int rootLevel);
 
-	friend class CARImage;
+	// the sort class needs access the the "names" member variable
+	friend class SortByName<CARImageList>;
 private:
 	// allocation state of internal structures
 	enum ImageListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
-
-	// for sorting a dummy object is used as a reference to an image (just the index in this case)
-	// its sorted ascending by name
-	class image_ref
-	{
-	public:
-		CARImageList *list;
-		unsigned int index;
-		
-		image_ref(CARImageList &list, int idx) : list(&list),index(idx) {}
-		bool operator<(const image_ref &r) const { return (strcmp(list->names.nameList[index], r.list->names.nameList[r.index]) < 0); }
-		image_ref& operator=(const image_ref &r) { list = r.list; index = r.index; return *this; }
-	};
 
 private:
 	unsigned int reservedSize;
@@ -88,7 +75,7 @@ private:
 	ARPropListList objProps;
 	ARImageDataList data;
 	ImageListState internalListState;
-	vector<image_ref> *sortedList;
+	vector<int> *sortedList;
 	vector<CImageRefItem> referenceList;
 };
 
