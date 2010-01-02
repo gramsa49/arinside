@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "resource.h"
 #include "WindowsUtil.h"
 
 #include <sys/types.h>
@@ -42,69 +43,95 @@ void CWindowsUtil::Load()
 
 	strm.str("");
 	strm << appConfig.targetFolder << "/" << "img" << "/";	
-	LoadFromResource("STYLE_CSS", "style.css", strm.str());
-	LoadFromResource("SCRIPT", "script.js", strm.str());
-	LoadFromResource("TABSCRIPT", "tabscript.js", strm.str());
-	LoadFromResource("SORTSCRIPT", "sortscript.js", strm.str());
-	LoadFromResource("SERVER", "server.gif", strm.str());
-	LoadFromResource("ACTIVE_LINK", "active_link.gif", strm.str());
-	LoadFromResource("AL_GUIDE", "al_guide.gif", strm.str());
-	LoadFromResource("APPLICATION", "application.gif", strm.str());
-	LoadFromResource("ARS_EDIT", "ars_edit.gif", strm.str());
-	LoadFromResource("DISABLED", "disabled.gif", strm.str());
-	LoadFromResource("DOC", "doc.gif", strm.str());
-	LoadFromResource("DOWN", "down.gif", strm.str());
-	LoadFromResource("USER", "user.gif", strm.str());
-	LoadFromResource("EMPTY_LIST", "empty_list.gif", strm.str());
-	LoadFromResource("ESCALATION", "escalation.gif", strm.str());
-	LoadFromResource("FILTER", "filter.gif", strm.str());
-	LoadFromResource("FILTER_GUIDE", "filter_guide.gif", strm.str());
-	LoadFromResource("FOLDER", "folder.gif", strm.str());
-	LoadFromResource("GROUP", "group.gif", strm.str());
-	LoadFromResource("CHAPTER", "chapter.gif", strm.str());
-	LoadFromResource("MENU", "menu.gif", strm.str());
-	LoadFromResource("NEXT", "next.gif", strm.str());
-	LoadFromResource("PACKING_LIST", "packing_list.gif", strm.str());
-	LoadFromResource("PREV", "prev.gif", strm.str());
-	LoadFromResource("SCHEMA", "schema.gif", strm.str());
-	LoadFromResource("SEARCH", "search.gif", strm.str());
-	LoadFromResource("UP", "up.gif", strm.str());
-	LoadFromResource("WEBSERVICE", "webservice.gif", strm.str());		
-	LoadFromResource("SORT_DESC", "sort_desc.gif", strm.str());		
-	LoadFromResource("SORT_ASC", "sort_asc.gif", strm.str());		
-	LoadFromResource("VISIBLE", "visible.gif", strm.str());		
-	LoadFromResource("EDIT", "edit.gif", strm.str());		
-	LoadFromResource("HIDDEN", "hidden.gif", strm.str());		
-	LoadFromResource("INFO", "info.gif", strm.str());
-	LoadFromResource("IMAGE", "image.gif", strm.str());
+	LoadFromResource(ID_STYLE_CSS, "style.css", strm.str());
+	LoadFromResource(ID_SCRIPT, "script.js", strm.str());
+	LoadFromResource(ID_TABSCRIPT, "tabscript.js", strm.str());
+	LoadFromResource(ID_SORTSCRIPT, "sortscript.js", strm.str());
+	LoadFromResource(ID_SERVER, "server.gif", strm.str());
+	LoadFromResource(ID_ACTIVE_LINK, "active_link.gif", strm.str());
+	LoadFromResource(ID_AL_GUIDE, "al_guide.gif", strm.str());
+	LoadFromResource(ID_APPLICATION, "application.gif", strm.str());
+	LoadFromResource(ID_ARS_EDIT, "ars_edit.gif", strm.str());
+	LoadFromResource(ID_DISABLED, "disabled.gif", strm.str());
+	LoadFromResource(ID_DOC, "doc.gif", strm.str());
+	LoadFromResource(ID_DOWN, "down.gif", strm.str());
+	LoadFromResource(ID_USER, "user.gif", strm.str());
+	LoadFromResource(ID_EMPTY_LIST, "empty_list.gif", strm.str());
+	LoadFromResource(ID_ESCALATION, "escalation.gif", strm.str());
+	LoadFromResource(ID_FILTER, "filter.gif", strm.str());
+	LoadFromResource(ID_FILTER_GUIDE, "filter_guide.gif", strm.str());
+	LoadFromResource(ID_FOLDER, "folder.gif", strm.str());
+	LoadFromResource(ID_GROUP, "group.gif", strm.str());
+	LoadFromResource(ID_CHAPTER, "chapter.gif", strm.str());
+	LoadFromResource(ID_MENU, "menu.gif", strm.str());
+	LoadFromResource(ID_NEXT, "next.gif", strm.str());
+	LoadFromResource(ID_PACKING_LIST, "packing_list.gif", strm.str());
+	LoadFromResource(ID_PREV, "prev.gif", strm.str());
+	LoadFromResource(ID_SCHEMA, "schema.gif", strm.str());
+	LoadFromResource(ID_SEARCH, "search.gif", strm.str());
+	LoadFromResource(ID_UP, "up.gif", strm.str());
+	LoadFromResource(ID_WEBSERVICE, "webservice.gif", strm.str());
+	LoadFromResource(ID_SORT_DESC, "sort_desc.gif", strm.str());
+	LoadFromResource(ID_SORT_ASC, "sort_asc.gif", strm.str());
+	LoadFromResource(ID_VISIBLE, "visible.gif", strm.str());
+	LoadFromResource(ID_EDIT, "edit.gif", strm.str());
+	LoadFromResource(ID_HIDDEN, "hidden.gif", strm.str());
+	LoadFromResource(ID_INFO, "info.gif", strm.str());
+	LoadFromResource(ID_IMAGE, "image.gif", strm.str());
 }
 
-void CWindowsUtil::LoadFromResource(string strRes, string fileName, string path)
+void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string path)
 {
 	LPVOID  data;
-	HANDLE hfile;
-	DWORD len,c;
+	//HANDLE hfile;
+	DWORD len;
 	HRSRC	hres;
 	HGLOBAL hres1;
 
-	if (!(hres=FindResource(GetModuleHandle(NULL),strRes.c_str(),RT_RCDATA))
+#ifdef WIN32
+	if (!(hres=FindResource(GetModuleHandle(NULL),MAKEINTRESOURCE(res),RT_RCDATA))
 		|| !(len=SizeofResource(NULL,hres))
 		|| !(hres1=LoadResource(NULL,hres))
 		|| !(data=LockResource(hres1))) 
 	{
 		ExitProcess(0);
 	}
+#else
+	// TODO: implement loading of resources for *nix-systems. Use objcopy and
+	// a table to find out the mem-address of the id given via res-parameter.
+#endif
 
 	stringstream fullFileName;
 	fullFileName << path << "\\" << fileName;
 
-	if (!(hfile=CreateFile(fullFileName.str().c_str(), GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL))) 
+	try
 	{
-		ExitProcess(0);
-	}
+		ofstream fout(fullFileName.str().c_str(), ios::binary);
 
-	WriteFile(hfile,data,len,&c,NULL);
-	CloseHandle(hfile);	
+		try
+		{
+			fout.write((const char*)data, len);
+		}
+		catch (exception &e)
+		{
+			stringstream erStrm;
+			erStrm << "Error saving file '" << fullFileName.str() << "' to disk. Error: " << e.what();
+		}
+		fout.close();
+
+		//if (!(hfile=CreateFile(fullFileName.str().c_str(), GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL))) 
+		//{
+		//	ExitProcess(0);
+		//}
+
+		//WriteFile(hfile,data,len,&c,NULL);
+		//CloseHandle(hfile);	
+	}
+	catch (exception e)
+	{
+		stringstream erStrm;
+		erStrm << "Error saving file '" << fullFileName.str() << "' to disk. Error: " << e.what();
+	}
 }
 
 bool CWindowsUtil::CreateAppDirectory()

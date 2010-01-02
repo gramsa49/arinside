@@ -28,6 +28,6 @@ public:
 	int CreateSubDirectory(string name);
 
 private:
-	void LoadFromResource(string strRes, string fileName, string path);
+	void LoadFromResource(unsigned int res, string fileName, string path);
 	AppConfig appConfig;
 };
