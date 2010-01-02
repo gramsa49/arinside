@@ -108,12 +108,12 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 					}	
 
 					CTableRow row("");
-					row.AddCell(CTableCell( field->GetURL(2)));
+					row.AddCell(CTableCell( field->GetURL(rootLevel)));
 					row.AddCell(CTableCell(field->fieldId));
 					row.AddCell(CTableCell(tmpLabel.str()));				
 					row.AddCell(CTableCell(CAREnum::DataType(field->dataType)));				
 					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-					row.AddCell(CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
+					row.AddCell(CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
 					tbl.AddRow(row);
 				}
 			}
