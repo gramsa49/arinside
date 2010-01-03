@@ -365,28 +365,28 @@ string CDocApplicationDetails::SearchEscalations(int &nResult)
 
 	try
 	{
-		list<CAREscalation>::iterator objIter;		
-		for ( objIter = pInside->escalList.begin(); objIter != pInside->escalList.end(); objIter++ )
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex )
 		{	
-			CAREscalation *obj = &(*objIter);
+			CAREscalation escalation(escalIndex);
 			bool bInsert = false;
 
-			for(unsigned int i=0; i< obj->schemaList.u.schemaList->numItems; i++)
+			for(unsigned int i=0; i< escalation.GetSchemaList().u.schemaList->numItems; ++i)
 			{
-				if(InList(obj->schemaList.u.schemaList->nameList[i], ARREF_SCHEMA))
+				if(InList(escalation.GetSchemaList().u.schemaList->nameList[i], ARREF_SCHEMA))
 				{
 					bInsert = true;
 				}
 			}
 
-			if(InList(obj->name.c_str(), ARREF_ESCALATION))
+			if(InList(escalation.GetName().c_str(), ARREF_ESCALATION))
 				bInsert = true;
 
 			if(bInsert)
 			{
 				nResult++;
-				strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
-				obj->appRefName = this->pApp->name;
+				strmResult << escalation.GetURL(rootLevel) << "<br/>" << endl;
+				escalation.SetAppRefName(this->pApp->name);
 			}
 		}		
 	}

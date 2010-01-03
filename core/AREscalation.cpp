@@ -15,40 +15,22 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "../ARInside.h"
 #include "AREscalation.h"
 #include "ARDayStructHelper.h"
 
-CAREscalation::CAREscalation(string name, int insideId)
-: CARServerObjectWithData(insideId)
+CAREscalation::CAREscalation(int insideId)
+: CARServerObject(insideId)
 {
-	this->name = name;
-	this->enable = 0;
-
-	this->objPropList.props = NULL;
 }
 
 CAREscalation::~CAREscalation(void)
 {
-	// TODO: move ARFree calls to separate method to allow copying of the object without 
-	// copying the whole structure
-	//try
-	//{
-	//	FreeARWorkflowConnectStruct (&schemaList, false);
-	//	FreeARQualifierStruct (&query, false);
-	//	FreeARFilterActionList (&actionList, false);
-	//	FreeARFilterActionList (&elseList, false);	
-
-	//	if(objPropList.props != NULL)
-	//		FreeARPropList(&objPropList, false);
-	//}
-	//catch(...)
-	//{
-	//}
 }
 
 string CAREscalation::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"escalation/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "escalation.gif" : ""), rootLevel);
+	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"escalation/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "escalation.gif" : ""), rootLevel);
 }
 
 string CAREscalation::GetTimeCriteria()
@@ -58,6 +40,7 @@ string CAREscalation::GetTimeCriteria()
 
 	try
 	{
+		const AREscalationTmStruct& escalationTm = this->GetTimeStruct();
 		if(escalationTm.escalationTmType == NULL)
 		{
 			return "Unknown Escalation type";
@@ -92,11 +75,98 @@ string CAREscalation::GetTimeCriteria()
 
 string CAREscalation::GetExecuteOn()
 {
-	if(escalationTm.escalationTmType != NULL
-		&& escalationTm.escalationTmType == AR_ESCALATION_TYPE_INTERVAL)
-	{
+	if(GetTimeStruct().escalationTmType == AR_ESCALATION_TYPE_INTERVAL)
 		return "Interval";
-	}
+	else
+		return "Time";
+}
 
-	return "Time";
+string CAREscalation::GetName()
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetName(GetInsideId());
+}
+
+string CAREscalation::GetName() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetName(GetInsideId());
+}
+
+string CAREscalation::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->escalationList.EscalationGetName(GetInsideId())[0]));
+}
+
+bool CAREscalation::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const AREscalationTmStruct& CAREscalation::GetTimeStruct() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetTime(GetInsideId());
+}
+
+const ARWorkflowConnectStruct& CAREscalation::GetSchemaList() const 
+{ 
+	return CARInside::GetInstance()->escalationList.EscalationGetSchemaList(GetInsideId());
+}
+
+unsigned int CAREscalation::GetEnabled()
+{ 
+	return CARInside::GetInstance()->escalationList.EscalationGetEnabled(GetInsideId());
+}
+	
+const ARQualifierStruct& CAREscalation::GetRunIf() const 
+{ 
+	return CARInside::GetInstance()->escalationList.EscalationGetRunIf(GetInsideId()); 
+}
+
+const ARFilterActionList& CAREscalation::GetIfActions() const
+{ 
+	return CARInside::GetInstance()->escalationList.EscalationGetIfActions(GetInsideId());
+}
+
+const ARFilterActionList& CAREscalation::GetElseActions() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetElseActions(GetInsideId());
+}
+
+const ARPropList& CAREscalation::GetPropList() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetPropList(GetInsideId());
+}
+
+const string& CAREscalation::GetAppRefName() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetAppRefName(GetInsideId());
+}
+
+void CAREscalation::SetAppRefName(const string &appName)
+{
+	return CARInside::GetInstance()->escalationList.EscalationSetAppRefName(GetInsideId(), appName);
+}
+
+const char* CAREscalation::GetHelpText() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetHelptext(GetInsideId());
+}
+
+ARTimestamp CAREscalation::GetTimestamp()
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetTimestamp(GetInsideId());
+}
+
+const ARAccessNameType& CAREscalation::GetOwner() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetOwner(GetInsideId());
+}
+
+const ARAccessNameType& CAREscalation::GetLastChanged() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetModifiedBy(GetInsideId());
+}
+
+const char* CAREscalation::GetChangeDiary() const
+{
+	return CARInside::GetInstance()->escalationList.EscalationGetChangeDiary(GetInsideId());
 }

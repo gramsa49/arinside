@@ -1588,6 +1588,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\AREscalationList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\AREscalationList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARFilterList.cpp"
 				>
 			</File>

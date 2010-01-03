@@ -12,7 +12,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
@@ -44,7 +44,6 @@ public:
 	unsigned int FilterGetOperation(unsigned int index) { assert(index < operationSets.numItems); return operationSets.intList[(*sortedList)[index]]; }
 	unsigned int FilterGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[(*sortedList)[index]]; }
 	const ARQualifierStruct& FilterGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[(*sortedList)[index]]; }
-	const ARQualifierStruct& FilterLinkGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[(*sortedList)[index]]; }
 	const ARFilterActionList& FilterGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[(*sortedList)[index]]; }
 	const ARFilterActionList& FilterGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[(*sortedList)[index]]; }
 	char* FilterGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }

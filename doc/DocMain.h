@@ -55,7 +55,7 @@ public:
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void EscalationList(string fileName, string searchChar);
 	void EscalationActionList(string fileName);
-	void EscalationActionDetails(int nActionType);
+	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 
 	void GroupList(string fileName, string searchChar);
 	void UserList(string fileName, string searchChar);

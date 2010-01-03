@@ -36,6 +36,7 @@
 #include "util/AppTimer.h"
 #include "lists/ARActiveLinkList.h"
 #include "lists/ARFilterList.h"
+#include "lists/AREscalationList.h"
 #include "lists/ARImageList.h"
 #include "lists/BlackList.h"
 
@@ -84,7 +85,7 @@ public:
 	string srvFullHostName;
 	list<CARSchema> schemaList;
 	CARFilterList filterList;
-	list<CAREscalation> escalList;
+	CAREscalationList escalationList;
 	CARActiveLinkList alList;
 	list<CARContainer> containerList;
 	list<CARCharMenu> menuList;

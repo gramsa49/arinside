@@ -71,7 +71,6 @@ CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
 	this->schemaList.clear();
-	this->escalList.clear();
 	this->containerList.clear();
 	this->menuList.clear();
 	this->userList.clear();
@@ -354,7 +353,6 @@ void CARInside::LoadFromFile(void)
 		{			
 			cout << parsedObjects.numItems << " items loaded." << endl;
 			unsigned int arInsideIdSchema = 0;
-			unsigned int arInsideIdEscal = 0;
 			unsigned int arInsideIdCont = 0;
 			unsigned int arInsideIdMenu = 0;
 			unsigned int arInsideIdImage = 0;
@@ -362,6 +360,7 @@ void CARInside::LoadFromFile(void)
 			unsigned int imagesCount = 0;
 			unsigned int activelinkCount = 0;
 			unsigned int filterCount = 0;
+			unsigned int escalationCount = 0;
 
 			for (unsigned int i=0; i < parsedObjects.numItems; ++i)
 			{
@@ -373,6 +372,9 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_FILTER:
 					++filterCount;
 					break;
+				case AR_STRUCT_ITEM_XML_ESCALATION:
+					++escalationCount;
+					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE:
 					++imagesCount; 
@@ -383,6 +385,7 @@ void CARInside::LoadFromFile(void)
 
 			if (activelinkCount > 0) alList.Reserve(activelinkCount);
 			if (filterCount > 0) filterList.Reserve(filterCount);
+			if (escalationCount > 0) escalationList.Reserve(escalationCount);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			if (imagesCount > 0) imageList.Reserve(imagesCount);
 #endif
@@ -568,39 +571,14 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_ESCALATION:
 					{
 						LOG << "Loading Escalation: " << parsedObjects.structItemList[i].name; 
-						CAREscalation *obj = new CAREscalation(parsedObjects.structItemList[i].name, arInsideIdEscal);
 
-						if( ARGetEscalationFromXML(&this->arControl, 
-							&parsedStream,
-							parsedObjects.structItemList[i].name,
-							NULL,							
-							&obj->escalationTm,
-							&obj->schemaList,								
-							&obj->enable,                               								
-							&obj->query,								
-							&obj->actionList,
-							&obj->elseList,
-							obj->owner,
-							obj->lastChanged,
-							&obj->timestamp,								
-							&obj->helptext,
-							&obj->changeDiary,
-							&obj->objPropList,
-							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
+						int objInsideId = escalationList.AddEscalationFromXML(parsedStream, parsedObjects.structItemList[i].name, &xmlDocVersion);
+
+						if (objInsideId > -1)
 						{
-							ParseVersionString(obj->xmlDocVersion);
-
-							this->escalList.insert(this->escalList.end(), *obj);
-
-							LOG << " (InsideID: " << arInsideIdEscal << ") [OK]" << endl;
-							arInsideIdEscal++;								
+							ParseVersionString(xmlDocVersion);
+							LOG << " (InsideID: " << objInsideId << ") [OK]" << endl;
 						}
-						else
-							cerr << GetARStatusError();
-
-						delete obj;
-						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_CONTAINER:
@@ -1142,65 +1120,17 @@ int CARInside::LoadCharMenus(void)
 
 int CARInside::LoadEscalations(void)
 {
-	int insideId=0;
-
 	try
 	{
-		ARNameList nameList;
-
-		if(ARGetListEscalation(&this->arControl, NULL, 0, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
-			this->escalList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_ESCALATION, nameList.nameList[i]))
-				{
-					LOG << "Loading Escalation: " << nameList.nameList[i]; 
-					CAREscalation *obj = new CAREscalation(nameList.nameList[i], insideId);
-
-					if( ARGetEscalation(&this->arControl, 
-						nameList.nameList[i], 
-						&obj->escalationTm,
-						&obj->schemaList,
-						&obj->enable,
-						&obj->query,
-						&obj->actionList,
-						&obj->elseList,
-						&obj->helptext,
-						&obj->timestamp,
-						obj->owner,
-						obj->lastChanged,
-						&obj->changeDiary,
-						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
-						this->escalList.insert(this->escalList.end(), *obj);
-
-						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
-						insideId++;
-
-						FreeARStatusList(&this->arStatus, false);
-					}	
-					else
-						cerr << GetARStatusError();
-
-					delete obj;
-				}
-			}
-		}
-
-		FreeARNameList(&nameList, false);
-		FreeARStatusList(&this->arStatus, false);
-
-		this->Sort(escalList);
+		escalationList.LoadFromServer();
+		escalationList.Sort();
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION loading Escalations: " << e.what() << endl;
-		GetARStatusError();
 	}
 
-	return insideId;
+	return escalationList.GetCount();
 }
 
 int CARInside::LoadFilters(void)
@@ -1433,18 +1363,13 @@ void CARInside::Documentation(void)
 	docMain->EscalationActionList("index_action");
 
 	//Escalation Details
-	nTmpCnt=1;
-	list<CAREscalation>::iterator escalIter;
+	tmpCount = escalationList.GetCount();
 	cout << "Starting Escalation Documentation" << endl;
-	for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); escalIter++)
+	for (unsigned int escalIndex = 0; escalIndex < tmpCount; ++escalIndex)
 	{
-		CAREscalation *escal = &(*escalIter);
-
-		LOG << "Escalation [" << nTmpCnt << "-" << escalList.size() << "] '" << escal->name << "': ";
-		CDocEscalationDetails *escalDetails = new CDocEscalationDetails(*this, *escal, "escalation/"+escal->FileID(), 2);
-		escalDetails->Documentation();
-		delete escalDetails;		
-		nTmpCnt++;
+		LOG << "Escalation [" << escalIndex << "-" << tmpCount << "] '" << escalationList.EscalationGetName(escalIndex) << "': ";
+		CDocEscalationDetails escalDetails(escalIndex, 2);
+		escalDetails.Documentation();
 	}
 
 
@@ -1868,16 +1793,7 @@ int CARInside::MenuGetInsideId(string searchObjName)
 
 int CARInside::EscalationGetInsideId(string searchObjName)
 {
-	list<CAREscalation>::iterator iter;
-	for ( iter = escalList.begin(); iter != escalList.end(); iter++ )
-	{			
-		CAREscalation *obj = &(*iter);
-		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
-			return obj->GetInsideId();
-		}
-	}
-	return -1;
+	return escalationList.Find(searchObjName.c_str());
 }
 
 string CARInside::LinkToUser(string loginName, int rootLevel)
@@ -2082,15 +1998,12 @@ string CARInside::LinkToMenu(string menuName, int fromRootLevel, bool* bFound)
 
 string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
 {
-	list<CAREscalation>::iterator escalIter;
-	list<CAREscalation>::iterator endIt = this->escalList.end();
-	for ( escalIter = this->escalList.begin(); escalIter != endIt; ++escalIter )
-	{	
-		CAREscalation *escal = &(*escalIter);
-		if(escalationName.compare(escal->name) == 0)
-		{
-			return escal->GetURL(fromRootLevel);			
-		}
+	int objInsideId = escalationList.Find(escalationName.c_str());
+
+	if (objInsideId > -1)
+	{
+		CAREscalation escal(objInsideId);
+		return escal.GetURL(fromRootLevel);
 	}
 	return escalationName;
 }
@@ -2198,7 +2111,7 @@ string CARInside::XmlObjEnabled(CARServerObject *obj)
 	case AR_STRUCT_ITEM_XML_FILTER:
 		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->GetEnabled());
 	case AR_STRUCT_ITEM_XML_ESCALATION:
-		return CAREnum::ObjectEnable(static_cast<CAREscalation*>(obj)->enable);
+		return CAREnum::ObjectEnable(static_cast<CAREscalation*>(obj)->GetEnabled());
 	default:
 		return "";
 	}
@@ -2230,14 +2143,10 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 		break;		
 	case AR_STRUCT_ITEM_XML_ESCALATION:
 		{
-			list<CAREscalation>::iterator escalIter;			
-			for ( escalIter = this->escalList.begin(); escalIter != this->escalList.end(); ++escalIter)
-			{	
-				CAREscalation *escal = &(*escalIter);
-				if(objName.compare(escal->name)==0)
-				{
-					return CAREnum::ObjectEnable(escal->enable);
-				}
+			int escInsideId = escalationList.Find(objName.c_str());
+			if (escInsideId > -1)
+			{
+				return CAREnum::ObjectEnable(escalationList.EscalationGetEnabled(escInsideId));
 			}
 		}
 		break;	

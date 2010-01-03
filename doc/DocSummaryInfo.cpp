@@ -117,7 +117,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->escalList.size()));
+		row.AddCell(CTableCell((int)this->pInside->escalationList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Escalations", "escalation/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -163,7 +163,7 @@ void CDocSummaryInfo::Documentation()
 
 		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->containerList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->escalList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->escalationList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->filterList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->menuList.size();

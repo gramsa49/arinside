@@ -1182,19 +1182,19 @@ void CDocSchemaDetails::SchemaEscalDoc()
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		list<CAREscalation>::iterator iter;			
-		CAREscalation *enumObj;
-		for (iter = this->pInside->escalList.begin(); iter != this->pInside->escalList.end(); iter++)
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{
-			enumObj = &(*iter);
+			CAREscalation escalation(escalIndex);
 
-			if(enumObj->schemaList.u.schemaList != NULL)
+			const ARWorkflowConnectStruct &schemas = escalation.GetSchemaList();
+			if(schemas.u.schemaList != NULL)
 			{
-				for(unsigned int i=0; i < enumObj->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i < schemas.u.schemaList->numItems; i++)
 				{
-					if(enumObj->schemaList.u.schemaList->nameList[i] == this->pSchema->name)
+					if(schemas.u.schemaList->nameList[i] == this->pSchema->name)
 					{
-						tbl->AddRow(*enumObj, rootLevel);
+						tbl->AddRow(escalIndex, rootLevel);
 					}
 				}
 			}

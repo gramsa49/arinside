@@ -517,36 +517,28 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		list<CAREscalation>::iterator escalIter;
-		CAREscalation *escal;
-
-		for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{	
-			escal = &(*escalIter);
-
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(escal->GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
-				if(!escal->NameStandardFirstChar())
-				{
+				if(!CARObject::NameStandardFirstChar(pInside->escalationList.EscalationGetName(escalIndex)[0]))
 					bInsert = true;		
-				}
+			}
+			else
+			{
+				if(searchChar[0] == tolower(pInside->escalationList.EscalationGetName(escalIndex)[0]))
+					bInsert = true;
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*escal, rootLevel);			
+				tbl->AddRow(escalIndex, rootLevel);			
 			}
 		}
 
@@ -588,35 +580,11 @@ void CDocMain::EscalationActionList(string fileName)
 			int nCountIf = 0;
 			int nCountElse = 0;
 
+			//Create a new webpage for every action
+			EscalationActionDetails(nActionType, nCountIf, nCountElse);
+
 			stringstream linkto;
 			linkto << "index_action_" << nActionType;
-
-			//Search all escalation
-			list<CAREscalation>::iterator escalIter;		
-			CAREscalation *escal;
-
-			for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
-			{	
-				escal = &(*escalIter);
-
-				//actionList
-				for(unsigned int nAction=0; nAction < escal->actionList.numItems; nAction++)
-				{
-					if(escal->actionList.actionList[nAction].action == nActionType)
-					{		
-						nCountIf ++;					
-					}
-				}		
-
-				//elseList
-				for(unsigned int nAction=0; nAction < escal->elseList.numItems; nAction++)
-				{
-					if(escal->elseList.actionList[nAction].action == nActionType)
-					{		
-						nCountElse ++;					
-					}
-				}		
-			}
 
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
@@ -625,9 +593,6 @@ void CDocMain::EscalationActionList(string fileName)
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
 			tbl.AddRow(row);
-
-			//Create a new webpage for every action
-			EscalationActionDetails(nActionType);
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -642,7 +607,7 @@ void CDocMain::EscalationActionList(string fileName)
 }
 
 
-void CDocMain::EscalationActionDetails(int nActionType)
+void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
 	try
 	{
@@ -654,34 +619,36 @@ void CDocMain::EscalationActionDetails(int nActionType)
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		list<CAREscalation>::iterator escalIter;
-		CAREscalation *escal;
-		for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{	
 			int nActionExists = 0;
-			escal = &(*escalIter);
+			const ARFilterActionList &ifActions = pInside->escalationList.EscalationGetIfActions(escalIndex);
+			const ARFilterActionList &elseActions = pInside->escalationList.EscalationGetElseActions(escalIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<escal->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
 			{
-				if(escal->actionList.actionList[nAction].action == nActionType)
-				{		
-					nActionExists++;
+				if(ifActions.actionList[nAction].action == nActionType)
+				{
+					++ifCount;
+					++nActionExists;
 				}
 			}		
 
 			//elseList
-			for(unsigned int nAction=0; nAction < escal->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
 			{
-				if(escal->elseList.actionList[nAction].action == nActionType)
-				{		
+				if(elseActions.actionList[nAction].action == nActionType)
+				{
+					++elseCount;
 					nActionExists++;
 				}
 			}		
 
 			if(nActionExists > 0)
 			{
-				tbl->AddRow(*escal, rootLevel);
+				tbl->AddRow(escalIndex, rootLevel);
 			}
 		}
 

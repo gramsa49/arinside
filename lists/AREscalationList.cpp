@@ -1,4 +1,4 @@
-//Copyright (C) 2009 John Luthgers | jls17
+//Copyright (C) 2010 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -15,29 +15,28 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "ARFilterList.h"
+#include "AREscalationList.h"
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
 
-CARFilterList::CARFilterList(void)
+CAREscalationList::CAREscalationList(void)
 {
-	internalListState = CARFilterList::EMPTY;
+	internalListState = CAREscalationList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
 	sortedList = NULL;
 }
 
-CARFilterList::~CARFilterList(void)
+CAREscalationList::~CAREscalationList(void)
 {
-	if (internalListState == CARFilterList::INTERNAL_ALLOC)
+	if (internalListState == CAREscalationList::INTERNAL_ALLOC)
 	{
 		try
 		{
 			delete[] names.nameList;
-			delete[] orders.intList;
+			delete[] times.escalationTmList;
 			delete[] schemas.workflowConnectList;
-			delete[] operationSets.intList;
 			delete[] enabledObjects.intList;
 			delete[] queries.qualifierList;
 			delete[] ifActions.actionListList;
@@ -48,21 +47,18 @@ CARFilterList::~CARFilterList(void)
 			delete[] changedUsers.nameList;
 			delete[] changeDiary.stringList;
 			delete[] objProps.propsList;
-			delete[] errorOptions.intList;
-			delete[] errorHandlers.nameList;
 		}
 		catch (...)
 		{
 		}
 	}
-	else if (internalListState == CARFilterList::ARAPI_ALLOC)
+	else if (internalListState == CAREscalationList::ARAPI_ALLOC)
 	{		
 		try
 		{
 			FreeARNameList(&names,false);
-			FreeARUnsignedIntList(&orders,false);
+			//FreeAREscalationTmList(&times,false); // hell, there is no free function for this struct?
 			FreeARWorkflowConnectList(&schemas,false);
-			FreeARUnsignedIntList(&operationSets,false);
 			FreeARUnsignedIntList(&enabledObjects,false);
 			FreeARQualifierList(&queries,false);
 			FreeARFilterActionListList(&ifActions,false);
@@ -73,8 +69,6 @@ CARFilterList::~CARFilterList(void)
 			FreeARAccessNameList(&changedUsers,false);
 			FreeARTextStringList(&changeDiary,false);
 			FreeARPropListList(&objProps,false);
-			FreeARUnsignedIntList(&errorOptions,false);
-			FreeARNameList(&errorHandlers,false);
 		}
 		catch (...)
 		{
@@ -85,9 +79,9 @@ CARFilterList::~CARFilterList(void)
 		delete sortedList;
 }
 
-bool CARFilterList::LoadFromServer()
+bool CAREscalationList::LoadFromServer()
 {
-	ARBooleanList   fltExists;
+	ARBooleanList   escExists;
 	ARStatusList    status;
 	CARInside*      arIn = CARInside::GetInstance();
 	ARNameList*     objectsToLoad = NULL;
@@ -95,35 +89,34 @@ bool CARFilterList::LoadFromServer()
 	unsigned int    originalObjectNameCount = 0;
 	bool            funcResult = false;
 
-	memset(&fltExists, 0, sizeof(fltExists));
+	memset(&escExists, 0, sizeof(escExists));
 	memset(&status, 0, sizeof(status));
 
-	// if the blacklist contains filters, we should first load all filter names from the
+	// if the blacklist contains escalations, we should first load all names from the
 	// server and remove those that are contained in the blacklist. after that call
-	// ARGetMultipleFilters to retrieve just the needed objects.
-	if (arIn->blackList.GetCountOf(ARREF_FILTER) > 0)
+	// ARGetMultipleEscalations to retrieve just the needed objects.
+	if (arIn->blackList.GetCountOf(ARREF_ESCALATION) > 0)
 	{
 		memset(&objectNames, 0, sizeof(objectNames));
 
-		if (ARGetListFilter(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+		if (ARGetListEscalation(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
 		{
 			originalObjectNameCount = objectNames.numItems;
-			arIn->blackList.Exclude(ARREF_FILTER, &objectNames);
+			arIn->blackList.Exclude(ARREF_ESCALATION, &objectNames);
 			objectsToLoad = &objectNames;
 		}
 		else
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-	// ok, now retrieve all informations of the filters we need
-	if (ARGetMultipleFilters(&arIn->arControl,
+	// ok, now retrieve all informations of the escalations we need
+	if (ARGetMultipleEscalations(&arIn->arControl,
 		0,
 		objectsToLoad,
-		&fltExists,
+		&escExists,
 		&names,
-		&orders,
+		&times,
 		&schemas,
-		&operationSets,
 		&enabledObjects,
 		&queries,
 		&ifActions,
@@ -134,21 +127,16 @@ bool CARFilterList::LoadFromServer()
 		&changedUsers,
 		&changeDiary,
 		&objProps,
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
-		&errorOptions,
-		&errorHandlers,
-#endif
 		&status) == AR_RETURN_OK)
 	{
-		FreeARBooleanList(&fltExists, false);
-		internalListState = CARFilterList::ARAPI_ALLOC;
+		FreeARBooleanList(&escExists, false);
+		internalListState = CAREscalationList::ARAPI_ALLOC;
 
 		sortedList = new vector<int>();
 		sortedList->reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
-			errorCallers.push_back(vector<string>());
 			sortedList->push_back(i);
 		}
 		funcResult = true;
@@ -168,9 +156,9 @@ bool CARFilterList::LoadFromServer()
 	return funcResult;
 }
 
-void CARFilterList::Reserve(unsigned int size)
+void CAREscalationList::Reserve(unsigned int size)
 {
-	if (internalListState != CARFilterList::EMPTY) throw AppException("object isnt reusable!", "FilterList");
+	if (internalListState != CAREscalationList::EMPTY) throw AppException("object isnt reusable!", "FilterList");
 
 	sortedList = new vector<int>();
 	sortedList->reserve(size);
@@ -178,14 +166,11 @@ void CARFilterList::Reserve(unsigned int size)
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
 
-	orders.numItems = 0;
-	orders.intList = new unsigned int[size];
+	times.numItems = 0;
+	times.escalationTmList = new AREscalationTmStruct[size];
 
 	schemas.numItems = 0;
 	schemas.workflowConnectList = new ARWorkflowConnectStruct[size];
-
-	operationSets.numItems = 0;
-	operationSets.intList = new unsigned int[size];
 
 	enabledObjects.numItems = 0;
 	enabledObjects.intList = new unsigned int[size];
@@ -217,22 +202,15 @@ void CARFilterList::Reserve(unsigned int size)
 	objProps.numItems = 0;
 	objProps.propsList = new ARPropList[size];
 	
-	errorOptions.numItems = 0;
-	errorOptions.intList = new unsigned int[size];
-
-	errorHandlers.numItems = 0;
-	errorHandlers.nameList = new ARNameType[size];
-
 	appRefNames.reserve(size);
-	errorCallers.reserve(size);
 
 	reservedSize = size;
-	internalListState = CARFilterList::INTERNAL_ALLOC;
+	internalListState = CAREscalationList::INTERNAL_ALLOC;
 }
 
-int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filterName, unsigned int *outDocVersion)
+int CAREscalationList::AddEscalationFromXML(ARXMLParsedStream &stream, const char* escalationName, unsigned int *outDocVersion)
 {
-	if (internalListState != CARFilterList::INTERNAL_ALLOC) throw AppException("illegal usage!", "FilterList");
+	if (internalListState != CAREscalationList::INTERNAL_ALLOC) throw AppException("illegal usage!", "EscalationList");
 	if (names.numItems >= reservedSize) return -1;
 	if (outDocVersion != NULL) *outDocVersion = 0;
 	
@@ -242,16 +220,15 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 
 	unsigned int arDocVersion = 0;
 	unsigned int index = names.numItems;
-	strncpy(names.nameList[index], filterName, 254);	// copy name over
-	names.nameList[index][254] = 0;
+	strncpy(names.nameList[index], escalationName, AR_MAX_NAME_SIZE);	// copy name over
+	names.nameList[index][AR_MAX_NAME_SIZE] = 0;
 
-	if (ARGetFilterFromXML(&arIn->arControl,
+	if (ARGetEscalationFromXML(&arIn->arControl,
 		&stream,
 		names.nameList[index],
 		appBlockName,
-		&orders.intList[index],
+		&times.escalationTmList[index],
 		&schemas.workflowConnectList[index],
-		&operationSets.intList[index],
 		&enabledObjects.intList[index],
 		&queries.qualifierList[index],
 		&ifActions.actionListList[index],
@@ -262,17 +239,12 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 		&helpTexts.stringList[index],
 		&changeDiary.stringList[index],
 		&objProps.propsList[index],
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
-		&errorOptions.intList[index],
-		errorHandlers.nameList[index],
-#endif
 		&arDocVersion,
 		&status) == AR_RETURN_OK)
 	{
 		++names.numItems;
-		++orders.numItems;
+		++times.numItems;
 		++schemas.numItems;
-		++operationSets.numItems;
 		++enabledObjects.numItems;
 		++queries.numItems;
 		++ifActions.numItems;
@@ -283,12 +255,9 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 		++changedUsers.numItems;
 		++changeDiary.numItems;
 		++objProps.numItems;
-		++errorOptions.numItems;
-		++errorHandlers.numItems;
 
 		sortedList->push_back(index);
 		appRefNames.push_back("");
-		errorCallers.push_back(vector<string>());
 
 		if (outDocVersion != NULL) *outDocVersion = arDocVersion;
 
@@ -301,7 +270,7 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 	}
 }
 
-int CARFilterList::Find(const char* name)
+int CAREscalationList::Find(const char* name)
 {
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
@@ -318,15 +287,15 @@ int CARFilterList::Find(const char* name)
 	return -1;
 }
 
-void CARFilterList::Sort()
+void CAREscalationList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARFilterList>(*this));
+		std::sort(sortedList->begin(),sortedList->end(),SortByName<CAREscalationList>(*this));
 }
 
-string CARFilterList::FilterGetURL(unsigned int index, int rootLevel)
+string CAREscalationList::EscalationGetURL(unsigned int index, int rootLevel)
 {
 	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "filter/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(FilterGetName(index), strmTmp.str(), "filter.gif", rootLevel); 
+	strmTmp << CWebUtil::RootPath(rootLevel) << "escalation/" << index << "/" << CWebUtil::DocName("index");
+	return CWebUtil::Link(EscalationGetName(index), strmTmp.str(), "escalation.gif", rootLevel); 
 }

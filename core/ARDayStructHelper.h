@@ -20,5 +20,5 @@
 class CARDayStructHelper
 {
 public:
-	static string DayStructToHTMLString(ARDayStruct* dayStruct);
+	static string DayStructToHTMLString(const ARDayStruct* dayStruct);
 };

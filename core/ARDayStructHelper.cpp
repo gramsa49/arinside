@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "ARDayStructHelper.h"
 
-string CARDayStructHelper::DayStructToHTMLString(ARDayStruct* dayStruct)
+string CARDayStructHelper::DayStructToHTMLString(const ARDayStruct* dayStruct)
 {
 	stringstream strm; strm.str("");
 	try
