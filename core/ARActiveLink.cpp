@@ -22,14 +22,18 @@ CARActiveLink::CARActiveLink(string name, int insideId)
 {
 	this->name = name;
 
+	ARZeroMemory(&schemaList);
+	ARZeroMemory(&groupList);
+	ARZeroMemory(&query);
+	ARZeroMemory(&actionList);
+	ARZeroMemory(&elseList);
+	ARZeroMemory(&objPropList);
+
 	this->order = 0;
 	this->executeMask = 0;
 	this->controlField = 0;
 	this->focusField = 0;
 	this->enable = 0;	
-
-	this->objPropList.props = NULL;
-	this->query.operation = NULL;
 }
 
 string CARActiveLink::GetURL(int rootLevel, bool showImage)

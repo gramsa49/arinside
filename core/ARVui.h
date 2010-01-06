@@ -31,7 +31,6 @@ public:
 	ARPropList	objPropList;
 	string Label();
 	string webAlias();
-	bool bARFree;
 
 	string GetURL(int rootLevel, bool showImage = true);
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_VUI; }

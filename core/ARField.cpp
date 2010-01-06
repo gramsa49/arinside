@@ -24,6 +24,13 @@ CARField::CARField(int insideId)
 	this->dataType = 0;
 	this->option = 0;
 	this->createMode = 0;
+
+	ARZeroMemory(&fieldName);
+	ARZeroMemory(&fieldMap);
+	ARZeroMemory(&defaultVal);
+	ARZeroMemory(&permissions);
+	ARZeroMemory(&limit);
+	ARZeroMemory(&dInstanceList);
 }
 
 CARField::~CARField(void)

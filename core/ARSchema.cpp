@@ -27,7 +27,16 @@ CARSchema::CARSchema()
 	this->fieldList.clear();
 	this->vuiList.clear();	
 
-	this->objPropList.props = NULL;
+	ARZeroMemory(&schema);
+	ARZeroMemory(&groupList);
+	ARZeroMemory(&admingrpList);
+	ARZeroMemory(&getListFields);
+	ARZeroMemory(&sortList);
+	ARZeroMemory(&indexList);
+	ARZeroMemory(&archiveInfo);
+	ARZeroMemory(&auditInfo);
+	ARZeroMemory(&defaultVui);
+	ARZeroMemory(&objPropList);
 }
 
 CARSchema::CARSchema(string name, int insideId)

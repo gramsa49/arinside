@@ -25,6 +25,8 @@ CARServerObjectWithData::CARServerObjectWithData(int insideId)
 	changeDiary = "";
 	xmlDocVersion = 0;
 	appRefName = "";
+	ARZeroMemory(&owner);
+	ARZeroMemory(&lastChanged);
 }
 
 CARServerObjectWithData::~CARServerObjectWithData(void)

@@ -25,11 +25,11 @@ CARContainer::CARContainer(string name, int insideId)
 	this->label = NULL;
 	this->description = NULL;
 
-	memset(&groupList,0,sizeof(ARPermissionList));
-	memset(&admingrpList,0,sizeof(ARInternalIdList));
-	memset(&ownerObjList,0,sizeof(ARContainerOwnerObjList));
-	memset(&references,0,sizeof(ARReferenceList));
-	memset(&objPropList,0,sizeof(ARPropList));
+	ARZeroMemory(&groupList);
+	ARZeroMemory(&admingrpList);
+	ARZeroMemory(&ownerObjList);
+	ARZeroMemory(&references);
+	ARZeroMemory(&objPropList);
 }
 
 CARContainer::~CARContainer(void)

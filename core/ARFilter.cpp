@@ -25,7 +25,12 @@ CARFilter::CARFilter(string name, int insideId)
 	this->enable = 0;
 	this->name = name;
 
-	this->objPropList.props = NULL;
+	ARZeroMemory(&errorFilterName);
+	ARZeroMemory(&query);
+	ARZeroMemory(&actionList);
+	ARZeroMemory(&elseList);
+	ARZeroMemory(&schemaList);
+	ARZeroMemory(&objPropList);
 }
 
 CARFilter::~CARFilter(void)

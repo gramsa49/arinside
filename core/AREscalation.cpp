@@ -24,7 +24,12 @@ CAREscalation::CAREscalation(string name, int insideId)
 	this->name = name;
 	this->enable = 0;
 
-	this->objPropList.props = NULL;
+	ARZeroMemory(&escalationTm);
+	ARZeroMemory(&schemaList);
+	ARZeroMemory(&query);
+	ARZeroMemory(&actionList);
+	ARZeroMemory(&elseList);
+	ARZeroMemory(&objPropList);
 }
 
 CAREscalation::~CAREscalation(void)

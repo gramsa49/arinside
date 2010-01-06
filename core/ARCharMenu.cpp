@@ -22,7 +22,8 @@ CARCharMenu::CARCharMenu(string name, int insideId)
 {
 	this->name = name;
 	this->refreshCode = 0;
-	this->objPropList.props = NULL;
+	ARZeroMemory(&menuDefn);
+	ARZeroMemory(&objPropList);
 }
 
 CARCharMenu::~CARCharMenu(void)
