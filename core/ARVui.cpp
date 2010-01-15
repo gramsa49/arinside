@@ -22,8 +22,9 @@ CARVui::CARVui(int insideId)
 {	
 	this->vuiType = 0;
 
-	this->objPropList.props = NULL;
-	bARFree = true;
+	ARZeroMemory(&vuiName);
+	ARZeroMemory(&locale);
+	ARZeroMemory(&objPropList);
 }
 
 CARVui::~CARVui(void)

@@ -47,3 +47,7 @@
 #define AR_XML_VERSION_700 9
 #define AR_XML_VERSION_710 10
 #define AR_XML_VERSION_750 11
+
+// template for clearing memory of AR structs
+template<class T>
+void ARZeroMemory(T* obj) { memset(obj, 0, sizeof(T)); }

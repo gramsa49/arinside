@@ -431,7 +431,7 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 
 			CTableCell cellFieldRealId(strmTmp.str(), "");
 			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field->timestamp), "");
-			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, 1), "");
+			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, rootLevel), "");
 
 			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
@@ -837,11 +837,11 @@ void CDocSchemaDetails::IndexDoc()
 					if(field->fieldId == this->pSchema->indexList.indexList[nIndex].fieldIds[nField])
 					{
 						CTableRow row("");
-						row.AddCell( CTableCell(field->GetURL(2)));
+						row.AddCell( CTableCell(field->GetURL(rootLevel)));
 						row.AddCell( CTableCell(field->fieldId));
 						row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));
 						row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-						row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
+						row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
 						tbl.AddRow(row);
 
 						//Add a reference
@@ -907,13 +907,13 @@ void CDocSchemaDetails::ResultListDoc()
 				if(field->fieldId == fList.fieldId)
 				{
 					CTableRow row("");
-					row.AddCell( CTableCell( field->GetURL(2)));
+					row.AddCell( CTableCell( field->GetURL(rootLevel)));
 					row.AddCell( CTableCell(field->fieldId));
 					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));
 					row.AddCell( CTableCell(fList.columnWidth));
 					row.AddCell( CTableCell(fList.separator));
 					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
+					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
 					tbl.AddRow(row);
 
 					//Add a reference
@@ -986,11 +986,11 @@ void CDocSchemaDetails::SortListDoc()
 						sortImage = CWebUtil::ImageTag("sort_desc.gif", rootLevel);
 
 					row.AddCell( CTableCell(sortImage));
-					row.AddCell( CTableCell(field->GetURL(2)));
+					row.AddCell( CTableCell(field->GetURL(rootLevel)));
 					row.AddCell( CTableCell(field->fieldId));
 					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));				
 					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, 1)));
+					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
 
 					tbl.AddRow(row);
 
@@ -1052,7 +1052,7 @@ void CDocSchemaDetails::VuiListDoc()
 			row.AddCell( CTableCell(vui->webAlias()));
 			row.AddCell( CTableCell(CAREnum::VuiType(vui->vuiType)));
 			row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(vui->timestamp)));
-			row.AddCell( CTableCell(this->pInside->LinkToUser(vui->lastChanged, 1)));
+			row.AddCell( CTableCell(this->pInside->LinkToUser(vui->lastChanged, rootLevel)));
 			tbl.AddRow(row);
 		}
 
