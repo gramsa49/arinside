@@ -58,21 +58,19 @@ int CMenuTable::NumRelatedFields(CARCharMenu &obj)
 {	
 	int nCnt = 0;
 
-	list<CARSchema>::iterator schemaIter;	
-	for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+	unsigned int schemaCount = this->pInside->schemaList.GetCount();
+	for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 	{			
-		CARSchema *schema = &(*schemaIter);
-
-		list<CARField>::iterator fieldIter;		
-		CARField *field;
-
-		for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+		CARSchema schema(schemaIndex);
+		
+		unsigned int fieldCount = schema.GetFields()->GetCount();		
+		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			field = &(*fieldIter);
+			CARField field(schemaIndex, 0, fieldIndex);
 
-			if(field->dataType == AR_DATA_TYPE_CHAR)
+			if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 			{
-				if(strcmp(field->limit.u.charLimits.charMenu, obj.name.c_str())==0)
+				if (field.GetLimits().u.charLimits.charMenu == obj.name)
 				{
 					nCnt++;
 				}

@@ -204,46 +204,49 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 		subadminTbl.AddColumn(20, "Modified");
 		subadminTbl.AddColumn(20, "By");
 
-		list<CARSchema>::iterator schemaIter;		
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{	
-			CARSchema *schema = &(*schemaIter);
-			if(strcmp(schema->appRefName.c_str(), this->pRole->applicationName.c_str())==0)
+			CARSchema schema(schemaIndex);
+
+			if(schema.GetAppRefName() == this->pRole->applicationName)
 			{
-				for(unsigned int nGrp = 0; nGrp < schema->groupList.numItems; nGrp++)
+				const ARPermissionList& groupList = schema.GetPermissions();
+				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pRole->roleId == schema->groupList.permissionList[nGrp].groupId)
+					if(this->pRole->roleId == groupList.permissionList[nGrp].groupId)
 					{
-						string visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
-						if( schema->groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
-						{
+						string visibleInfo;
+						if(groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
 							visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
-						}
+						else
+							visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
 
 						CTableRow row("");
 						row.AddCell(CTableCell(visibleInfo));
-						row.AddCell(CTableCell(schema->GetURL(rootLevel)));						
-						row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
-						row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
-						row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
-						row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
+						row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+						row.AddCell(CTableCell(schema.GetFields()->GetCount()));
+						row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
+						row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
+						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
+						row.AddCell(CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
 						schemaTbl.AddRow(row);
 						nResult++;
 					}
 				}
 
-				for(unsigned int nGrp = 0; nGrp < schema->admingrpList.numItems; nGrp++)
+				const ARInternalIdList& admingrpList = schema.GetSubadmins();
+				for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 				{
-					if(this->pRole->roleId == schema->admingrpList.internalIdList[nGrp])
+					if(this->pRole->roleId == admingrpList.internalIdList[nGrp])
 					{
 						CTableRow row("");
-						row.AddCell(CTableCell(schema->GetURL(rootLevel)));						
-						row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
-						row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
-						row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
-						row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
+						row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+						row.AddCell(CTableCell(schema.GetFields()->GetCount()));
+						row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
+						row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
+						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
+						row.AddCell(CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
 						subadminTbl.AddRow(row);
 						nResult++;
 					}
@@ -393,29 +396,21 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 	}
 }
 
-int CDocRoleDetails::NumAllowedFields(string schemaName)
+int CDocRoleDetails::NumAllowedFields(CARSchema& schema)
 {
 	int nResult = 0;
 	try
 	{
-		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
-		{			
-			CARSchema *schema = &(*schemaIter);
-			if(strcmp(schema->name.c_str(), schemaName.c_str())==0
-				&& strcmp(schema->appRefName.c_str(), this->pRole->applicationName.c_str())==0)
+		unsigned int fieldCount = schema.GetFields()->GetCount();
+		for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
+		{
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
+			const ARPermissionList& permissions = field.GetPermissions();
+			for(unsigned int i = 0; i< permissions.numItems; i++)
 			{
-				list<CARField>::iterator fieldIter;						
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				if(permissions.permissionList[i].groupId == this->pRole->roleId)
 				{
-					CARField *field = &(*fieldIter);
-					for(unsigned int i = 0; i< field->permissions.numItems; i++)
-					{
-						if(field->permissions.permissionList[i].groupId == this->pRole->roleId)
-						{
-							nResult++;
-						}
-					}
+					nResult++;
 				}
 			}
 		}
@@ -442,21 +437,23 @@ void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string titl
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
 
-
-		list<CARSchema>::iterator schemaIter;		
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
-			CARSchema *schema = &(*schemaIter);
-			if(NumAllowedFields(schema->name) > 0)
+			CARSchema schema(schemaIndex);
+			if(NumAllowedFields(schema) > 0)
 			{
+				const ARPermissionList& groupList = schema.GetPermissions();
+
 				//Check if the current group has access to the form
 				bool bVisiblePermission = false;		
 				bool bInsert = false;
-				for(unsigned int nGrp= 0; nGrp < schema->groupList.numItems; nGrp++)
+				
+				for(unsigned int nGrp= 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pRole->roleId == schema->groupList.permissionList[nGrp].groupId)
+					if(this->pRole->roleId == groupList.permissionList[nGrp].groupId)
 					{
-						if( schema->groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
+						if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
 						{
 							bVisiblePermission = true;
 						}
@@ -474,39 +471,41 @@ void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string titl
 						visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
 					}				
 
-					strmFormDesc << visibleInfo << schema->GetURL(rootLevel) << endl;
+					strmFormDesc << visibleInfo << schema.GetURL(rootLevel) << endl;
 				}
 				else
 				{
-					strmFormDesc << schema->GetURL(rootLevel) << endl;
+					strmFormDesc << schema.GetURL(rootLevel) << endl;
 				}
 
 				//Create a table for every form
-				CTable schemaTbl("fieldListAll"+schema->GetInsideId(), "TblObjectList");
+				CTable schemaTbl("fieldListAll"+schema.GetInsideId(), "TblObjectList");
 				schemaTbl.description = strmFormDesc.str();
 				schemaTbl.AddColumn(80, "Field");
 				schemaTbl.AddColumn(10, "Permission");
 				schemaTbl.AddColumn(10, "Description");
 
-				list<CARField>::iterator fieldIter;		
-				CARField *field;
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 				{
-					field = &(*fieldIter);
-					for(unsigned int i = 0; i< field->permissions.numItems; i++)
+					CARField field(schemaIndex, 0, fieldIndex);
+					const ARPermissionList& permissions = field.GetPermissions();
+					for(unsigned int i = 0; i< permissions.numItems; i++)
 					{
-						if(field->permissions.permissionList[i].groupId == this->pRole->roleId)
+						if(permissions.permissionList[i].groupId == this->pRole->roleId)
 						{
 							//We found a field that this group is allowed to access
 
-							string img = CWebUtil::ImageTag("visible.gif", rootLevel);
-							if(field->permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
+							string img;
+							if(permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
 								img = CWebUtil::ImageTag("edit.gif", rootLevel);
+							else
+								img = CWebUtil::ImageTag("visible.gif", rootLevel);
 
 							CTableRow row("");			
-							row.AddCell(CTableCell(field->GetURL(rootLevel)));
+							row.AddCell(CTableCell(field.GetURL(rootLevel)));
 							row.AddCell(CTableCell(img));
-							row.AddCell(CTableCell(CAREnum::FieldPermission(field->permissions.permissionList[i].permissions)));
+							row.AddCell(CTableCell(CAREnum::FieldPermission(permissions.permissionList[i].permissions)));
 							schemaTbl.AddRow(row);
 
 							nResult++;

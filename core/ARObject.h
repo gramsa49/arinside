@@ -23,7 +23,7 @@ public:
 	CARObject(int insideId);
 	~CARObject(void);
 
-private:
+protected:
 	int insideId;
 
 public:

@@ -43,11 +43,11 @@ void CSchemaTable::AddRow(CARSchema &schema, int rootLevel)
 
 	tblRow.AddCell( CTableCell(schema.GetURL(rootLevel)));
 	tblRow.AddCell( CTableCell(schema.WebAlias()));
-	tblRow.AddCell( CTableCell((unsigned int)schema.fieldList.size()));
-	tblRow.AddCell( CTableCell((unsigned int)schema.vuiList.size()));
-	tblRow.AddCell( CTableCell(CAREnum::SchemaType(schema.schema.schemaType)));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(schema.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(schema.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(schema.GetFields()->GetCount()));
+	tblRow.AddCell( CTableCell(schema.GetVUIs()->GetCount()));
+	tblRow.AddCell( CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
 
 	this->tbl.AddRow(tblRow);
 }

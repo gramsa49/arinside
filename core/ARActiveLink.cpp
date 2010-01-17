@@ -23,6 +23,16 @@ CARActiveLink::CARActiveLink(int insideId)
 {
 }
 
+bool CARActiveLink::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARActiveLink::Clone()
+{
+	return new CARActiveLink(*this);
+}
+
 string CARActiveLink::GetURL(int rootLevel, bool showImage)
 {
 	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"active_link/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "active_link.gif" : ""), rootLevel);

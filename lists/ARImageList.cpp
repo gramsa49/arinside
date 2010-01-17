@@ -244,14 +244,15 @@ int CARImageList::FindImage(const char* name)
 {
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		if (strcmp(names.nameList[i], name) == 0)
+		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		if (result == 0)
 		{
-			size_t vectLen = sortedList->size();
-			for (unsigned int k = 0; k < vectLen; ++k)
-			{
-				if ((*sortedList)[k] == i) return k;
-			}
+			return i;
 		}
+		else if (result > 0)	
+			// the current string in the sorted list is greater as the string we are looking for.
+			// stop searching here.
+			break;
 	}
 	return -1;
 }

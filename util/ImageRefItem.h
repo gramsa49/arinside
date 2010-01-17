@@ -19,13 +19,11 @@
 class CImageRefItem
 {
 public:
+	CImageRefItem(const CImageRefItem& from);
 	CImageRefItem(int imageIndex, const string &description, CARServerObject *fromItem);
 	~CImageRefItem(void);
 
 	int imageIndex;
 	string description;
-	//int arsStructItemType;
-	//int schemaInsideId;
-	//int fromFieldId;
 	CARServerObject *fromItem;
 };

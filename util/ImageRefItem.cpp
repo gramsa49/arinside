@@ -17,17 +17,34 @@
 #include "stdafx.h"
 #include "ImageRefItem.h"
 
+// storing a pointer of CARServerObject isnt working anymore, because such objects are created and destroyed dynamically at runtime.
+// implement a virtual "Clone" method in CARServerObject and in each derived class that copies a object via new and returns a ptr.
+// or find another solution...
+
+CImageRefItem::CImageRefItem(const CImageRefItem& from)
+{
+	this->imageIndex = from.imageIndex;
+	this->description = from.description;
+
+	if (from.fromItem != NULL)
+		this->fromItem = from.fromItem->Clone();
+	else
+		this->fromItem = NULL;
+}
+
 CImageRefItem::CImageRefItem(int imageIndex, const string &description, /*int arsStructItemType, int schemaInsideId, int fieldId*/ CARServerObject *fromItem)
-: fromItem(fromItem)
 {
 	this->imageIndex = imageIndex;
 	this->description = description;
-	//this->arsStructItemType = arsStructItemType;
-	//this->schemaInsideId = schemaInsideId;
-	//this->fromFieldId = fieldId;
 
+	if (fromItem != NULL)
+		this->fromItem = fromItem->Clone();
+	else
+		this->fromItem = NULL;
 }
 
 CImageRefItem::~CImageRefItem(void)
 {
+	if (this->fromItem != NULL && this->fromItem->IsClonable())
+		delete fromItem;
 }

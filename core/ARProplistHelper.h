@@ -49,7 +49,9 @@ public:
 	/// Returns the html for a table containing all properties and their values.
 	static string GetList(const ARPropList &objPropList, CARPropertyCallback* pcbObj = NULL);
 	static string GetLabel(ARULong32 nProp);
-	static string GetValue(ARULong32 nProp, ARValueStruct &arV);
+	static string GetValue(ARULong32 nProp, const ARValueStruct &arV);
+	
+	static ARValueStruct* Find(const ARPropList &objPropList, ARULong32 nProp);
 
 	ARValueStruct* GetAndUseValue(ARULong32 nProp);
 	ARValueStruct* GetValue(ARULong32 nProp);

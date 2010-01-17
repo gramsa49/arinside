@@ -32,6 +32,9 @@ public:
 	virtual const char* GetChangeDiary() const = 0;
 	virtual string GetURL(int rootLevel, bool showImage = true) = 0;
 	virtual int GetServerObjectTypeXML() = 0;
+
+	virtual CARServerObject* Clone() = 0;
+	virtual bool IsClonable() = 0;
 };
 
 class CARServerObjectWithData : public CARServerObject
@@ -52,6 +55,10 @@ public:
 	string GetName() const { return name; }
 	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
 	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
+
+	// server objects with data aren't clonable, but their pointers are valid during the whole run
+	CARServerObject* Clone() { return this; }
+	bool IsClonable() { return false; }
 
 	string              name;
 	char                *helptext;

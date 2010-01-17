@@ -16,68 +16,46 @@
 
 #include "stdafx.h"
 #include "ARSchema.h"
+#include "../lists/ARSchemaList.h"
+#include "ARField.h"
+#include "ARVui.h"
+#include "../ARInside.h"
 
-CARSchema::CARSchema()
-: CARServerObjectWithData(0)
+CARSchema::CARSchema(int insideId)
+: CARServerObject(insideId)
 {	
-	this->fieldList.clear();
-	this->vuiList.clear();
-
-	this->alias = "";
-	this->fieldList.clear();
-	this->vuiList.clear();	
-
-	ARZeroMemory(&schema);
-	ARZeroMemory(&groupList);
-	ARZeroMemory(&admingrpList);
-	ARZeroMemory(&getListFields);
-	ARZeroMemory(&sortList);
-	ARZeroMemory(&indexList);
-	ARZeroMemory(&archiveInfo);
-	ARZeroMemory(&auditInfo);
-	ARZeroMemory(&defaultVui);
-	ARZeroMemory(&objPropList);
 }
 
-CARSchema::CARSchema(string name, int insideId)
-: CARServerObjectWithData(insideId)
+CARSchema::CARSchema(const string& schemaName)
+: CARServerObject(-1)
 {
-	try
-	{
-		this->name = name;	
-		this->alias = "";
-		this->fieldList.clear();
-		this->vuiList.clear();	
-
-		this->objPropList.props = NULL;
-	}
-	catch(...)
-	{
-	}
+	insideId = CARInside::GetInstance()->schemaList.Find(schemaName.c_str());
 }
 
 CARSchema::~CARSchema(void)
 {
-	// TODO: move ARFree calls to separate method to allow copying of the object without 
-	// copying the whole structure
-	//FreeARCompoundSchema(&schema, false);		
-	//FreeARPermissionList(&groupList, false);
-	//FreeARInternalIdList(&admingrpList, false);
-	//FreeAREntryListFieldList(&getListFields, false);
-	//FreeARSortList(&sortList, false);
-	//FreeARIndexList(&indexList, false);
-	//FreeARArchiveInfoStruct(&archiveInfo, false);
-	//FreeARAuditInfoStruct(&auditInfo, false);	
+}
 
-	//if(objPropList.props != NULL)
-	//	FreeARPropList(&objPropList, false);
+bool CARSchema::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->schemaList.GetCount());
+}
+
+bool CARSchema::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARSchema::Clone()
+{
+	return new CARSchema(*this);
 }
 
 string CARSchema::GetURL(int rootLevel, bool useImage)
 {
 	stringstream tmp;
 	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("index");	
-	return CWebUtil::Link(this->name, tmp.str(), (useImage ? "schema.gif" : ""), rootLevel);
+	return CWebUtil::Link(this->GetName(), tmp.str(), (useImage ? "schema.gif" : ""), rootLevel);
 }
 
 string CARSchema::WebAlias()
@@ -87,23 +65,16 @@ string CARSchema::WebAlias()
 
 	try
 	{
-		if(objPropList.props != NULL)
+		const ARPropList& propList = this->GetProps();
+		for(unsigned int i=0; i < propList.numItems; ++i)
 		{
-			for(unsigned int i=0; i< this->objPropList.numItems; i++)
+			if (propList.props[i].prop == AR_OPROP_FORM_NAME_WEB_ALIAS)
 			{
-				switch(this->objPropList.props[i].prop)
+				if(propList.props[i].value.dataType == AR_DATA_TYPE_CHAR && propList.props[i].value.u.charVal != NULL)
 				{
-				case AR_OPROP_FORM_NAME_WEB_ALIAS:
-					{
-						strm.str("");
-						if(this->objPropList.props[i].value.u.charVal != NULL)
-						{
-							strm.str("");
-							strm << this->objPropList.props[i].value.u.charVal;
-						}
-					}
+					strm << propList.props[i].value.u.charVal;
 					break;
-				}				
+				}
 			}
 		}
 	}
@@ -118,13 +89,12 @@ string CARSchema::WebAlias()
 
 string CARSchema::LinkToVui(int vuiId, int fromRootLevel)
 {	
-	list<CARVui>::iterator vuiIter;			
-	for(vuiIter = this->vuiList.begin(); vuiIter != this->vuiList.end(); vuiIter++)
+	if (vuiId >= 0)
 	{
-		CARVui *vui = &(*vuiIter);
-		if(vui->GetInsideId() == vuiId)
+		CARVui vui(this->GetInsideId(), vuiId);
+		if (vui.Exists())
 		{
-			return vui->GetURL(fromRootLevel);
+			return vui.GetURL(fromRootLevel);
 		}
 	}
 	return EmptyValue;
@@ -133,27 +103,23 @@ string CARSchema::LinkToVui(int vuiId, int fromRootLevel)
 
 string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
 {	
-	list<CARVui>::iterator vuiIter;				
-	for(vuiIter = this->vuiList.begin(); vuiIter != this->vuiList.end(); vuiIter++)
+	CARVUIList* vuiList = this->GetVUIs();
+	unsigned int vuiCount = vuiList->GetCount();
+	for (unsigned int vuiIndex = 0; vuiIndex < vuiCount; ++vuiIndex)
 	{
-		CARVui *vui = &(*vuiIter);
+		CARVui vui(GetInsideId(), 0, vuiIndex);
+		const ARPropList& propList = vui.GetProps();
 
-		for(unsigned int i=0; i<vui->objPropList.numItems; i++)
+		for(unsigned int i=0; i < propList.numItems; ++i)
 		{
-			switch(vui->objPropList.props[i].prop)
+			if (propList.props[i].prop == AR_DPROP_LABEL && propList.props[i].value.dataType == AR_DATA_TYPE_CHAR)
 			{
-			case AR_DPROP_LABEL:
+				if(vuiLabel.compare(propList.props[i].value.u.charVal) == 0)
 				{
-					if(vui->objPropList.props[i].value.u.charVal != NULL)
-					{
-						if(strcmp(vuiLabel.c_str(), vui->objPropList.props[i].value.u.charVal)==0)
-						{
-							stringstream tmp;
-							tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("vui_" + vui->FileID());
+					stringstream tmp;
+					tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("vui_" + vui.FileID());
 
-							return CWebUtil::Link(vui->objPropList.props[i].value.u.charVal, tmp.str(), "", fromRootLevel);
-						}
-					}
+					return CWebUtil::Link(propList.props[i].value.u.charVal, tmp.str(), "", fromRootLevel);
 				}
 				break;
 			}
@@ -165,20 +131,137 @@ string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
 
 string CARSchema::VuiGetLabel(int vuiId)
 {
-	stringstream strmTmp;
-	strmTmp.str("");
-
-	strmTmp << vuiId;    
-
-	list<CARVui>::iterator vuiIter;			
-	for(vuiIter = this->vuiList.begin(); vuiIter != this->vuiList.end(); vuiIter++)
+	unsigned int vuiCount = this->GetVUIs()->GetCount();
+	for(unsigned int vuiIndex = 0; vuiIndex < vuiCount; ++vuiIndex)
 	{
-		CARVui *vui = &(*vuiIter);
-		if(vui->GetInsideId() == vuiId)
+		CARVui vui(GetInsideId(), 0, vuiIndex);
+		if(vui.GetId() == vuiId)
 		{
-			return vui->Label();
+			return vui.Label();
 		}
 	}
 
+	stringstream strmTmp;
+	strmTmp << vuiId;    
 	return strmTmp.str();
+}
+
+string CARSchema::GetName()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId());
+}
+
+string CARSchema::GetName() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId());
+}
+
+string CARSchema::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId())[0]));
+}
+
+bool CARSchema::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const char* CARSchema::GetHelpText() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetHelptext(GetInsideId());
+}
+
+ARTimestamp CARSchema::GetTimestamp()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetTimestamp(GetInsideId());
+}
+
+const ARAccessNameType& CARSchema::GetOwner() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetOwner(GetInsideId());
+}
+
+const ARAccessNameType& CARSchema::GetLastChanged() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetModifiedBy(GetInsideId());
+}
+
+const char* CARSchema::GetChangeDiary() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetChangeDiary(GetInsideId());
+}
+
+const ARNameType& CARSchema::GetARName() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId());
+}
+
+const ARCompoundSchema& CARSchema::GetCompound() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetCompound(GetInsideId());
+}
+
+const ARPermissionList& CARSchema::GetPermissions() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetPermissions(GetInsideId());
+}
+
+const ARInternalIdList& CARSchema::GetSubadmins() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetSubadmins(GetInsideId());
+}
+
+const AREntryListFieldList& CARSchema::GetResultFields() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetResultFields(GetInsideId());
+}
+
+const ARSortList& CARSchema::GetSortList() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetSortList(GetInsideId());
+}
+
+const ARIndexList& CARSchema::GetIndexList() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetIndexList(GetInsideId());
+}
+
+const ARArchiveInfoStruct& CARSchema::GetArchiveInfo() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetArchiveInfo(GetInsideId());
+}
+
+const ARAuditInfoStruct& CARSchema::GetAuditInfo() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetAuditInfo(GetInsideId());
+}
+
+const ARNameType& CARSchema::GetDefaultVUI() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetDefaultVUI(GetInsideId());
+}
+
+const ARPropList& CARSchema::GetProps() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetPropList(GetInsideId());
+}
+
+const string& CARSchema::GetAppRefName() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetAppRefName(GetInsideId());
+}
+
+void CARSchema::SetAppRefName(const string& appName)
+{
+	return CARInside::GetInstance()->schemaList.SchemaSetAppRefName(GetInsideId(), appName);
+}
+
+CARFieldList* CARSchema::GetFields()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetFields(GetInsideId());
+}
+
+CARVUIList* CARSchema::GetVUIs()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetVUIs(GetInsideId());
 }

@@ -43,7 +43,11 @@ public:
 	const char* GetChangeDiary() const;
 
 	string GetURL(int rootLevel, bool showImage = true);
+	
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_IMAGE; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };
 
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

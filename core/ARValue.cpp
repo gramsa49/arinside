@@ -26,7 +26,7 @@ CARValue::~CARValue(void)
 {
 }
 
-string CARValue::ValueToString(ARValueStruct &value)
+string CARValue::ValueToString(const ARValueStruct &value)
 {
 	switch(value.dataType)
 	{

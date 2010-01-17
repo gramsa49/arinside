@@ -16,44 +16,149 @@
 
 #include "stdafx.h"
 #include "ARField.h"
+#include "../lists/ARFieldList.h"
 
-CARField::CARField(int insideId)
-: CARServerObjectWithData(insideId)
+CARField::CARField(unsigned int SchemaInsideId, unsigned int fieldId, int SchemaFieldIndex)
+: CARServerObject(fieldId), schema(SchemaInsideId)
 {	
-	this->fieldId = 0;
-	this->dataType = 0;
-	this->option = 0;
-	this->createMode = 0;
+	if (!schema.Exists())
+	{
+		insideId = -1;
+		fieldIndex = -1;
+		return;
+	}
 
-	ARZeroMemory(&fieldName);
-	ARZeroMemory(&fieldMap);
-	ARZeroMemory(&defaultVal);
-	ARZeroMemory(&permissions);
-	ARZeroMemory(&limit);
-	ARZeroMemory(&dInstanceList);
+	// look up and store the field index for faster access
+	fieldList = schema.GetFields();
+
+	if (fieldId == 0 && SchemaFieldIndex >= 0 && (unsigned int)SchemaFieldIndex < fieldList->GetCount())
+	{
+		fieldIndex = SchemaFieldIndex;
+		insideId = GetFieldId();
+	}
+	else if (fieldId > 0)
+	{
+		fieldIndex = fieldList->Find(fieldId);
+	}
+	else
+	{
+		fieldIndex = SchemaFieldIndex;
+	}
 }
 
-CARField::~CARField(void)
-{ 
-	try
-	{
-		// TODO: move ARFree calls to separate method to allow copying of the object without 
-		// copying the whole structure
-		//FreeARValueStruct (&defaultVal, false);			
-		//FreeARFieldLimitStruct (&limit, false);	
-		//FreeARPermissionList (&permissions, false);	
-		//FreeARDisplayInstanceList (&dInstanceList, false);
-	}
-	catch(...)
-	{
-	}
+bool CARField::Exists()
+{
+	return (fieldIndex >= 0 && (unsigned int)fieldIndex < fieldList->GetCount());
+}
+
+bool CARField::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARField::Clone()
+{
+	return new CARField(*this);
 }
 
 string CARField::GetURL(int rootLevel, bool showImage)
 {
 	stringstream tmp;
-	tmp.str("");
+	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << schema.GetInsideId() << "/" << CWebUtil::DocName(this->FileID());
+	return CWebUtil::Link(GetName(), tmp.str(), "", rootLevel);
+}
 
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->schemaInsideId << "/" << CWebUtil::DocName(this->FileID());
-	return CWebUtil::Link(this->name, tmp.str(), "", rootLevel);
+string CARField::GetName()
+{
+	return fieldList->FieldGetName(fieldIndex);
+}
+
+string CARField::GetName() const
+{
+	return fieldList->FieldGetName(fieldIndex);
+}
+
+string CARField::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, fieldList->FieldGetName(fieldIndex)[0]));
+}
+
+bool CARField::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const char* CARField::GetHelpText() const
+{
+	return fieldList->FieldGetHelptext(fieldIndex);
+}
+
+ARTimestamp CARField::GetTimestamp()
+{
+	return fieldList->FieldGetTimestamp(fieldIndex);
+}
+
+const ARAccessNameType& CARField::GetOwner() const
+{
+	return fieldList->FieldGetOwner(fieldIndex);
+}
+
+const ARAccessNameType& CARField::GetLastChanged() const
+{
+	return fieldList->FieldGetModifiedBy(fieldIndex);
+}
+
+const char* CARField::GetChangeDiary() const
+{
+	return fieldList->FieldGetChangeDiary(fieldIndex);
+}
+
+ARInternalId CARField::GetFieldId() const
+{
+	return fieldList->FieldGetFieldId(fieldIndex); 
+}
+
+const ARFieldMappingStruct& CARField::GetMapping() const
+{ 
+	return fieldList->FieldGetMapping(fieldIndex);
+}
+
+unsigned int CARField::GetDataType() const
+{
+	return fieldList->FieldGetDataType(fieldIndex);
+}
+
+unsigned int CARField::GetOption() const
+{
+	return fieldList->FieldGetOption(fieldIndex);
+}
+
+unsigned int CARField::GetCreateMode() const
+{
+	return fieldList->FieldGetCreateMode(fieldIndex);
+}
+
+unsigned int CARField::GetFieldOption() const
+{
+	return fieldList->FieldGetOption(fieldIndex);
+}
+
+const ARValueStruct& CARField::GetDefaultValue() const
+{
+	return fieldList->FieldGetDefaultValue(fieldIndex);
+}
+
+const ARPermissionList& CARField::GetPermissions() const
+{
+	return fieldList->FieldGetPermissions(fieldIndex);
+}
+
+const ARFieldLimitStruct& CARField::GetLimits() const
+{
+	return fieldList->FieldGetLimits(fieldIndex);
+}
+
+const ARDisplayInstanceList& CARField::GetDisplayInstances() const
+{
+	return fieldList->FieldGetDisplayInstances(fieldIndex);
 }

@@ -373,24 +373,24 @@ string CDocCharMenuDetails::RelatedFields()
 
 	try
 	{
-		list<CARSchema>::iterator schemaIter;				
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
-			CARSchema *schema = &(*schemaIter);
+			CARSchema schema(schemaIndex);
 
-			list<CARField>::iterator fieldIter;
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+			unsigned int fieldCount = schema.GetFields()->GetCount();
+			for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
 			{
-				CARField *field = &(*fieldIter);
+				CARField field(schemaIndex, 0, fieldIndex);
 
-				if(field->dataType == AR_DATA_TYPE_CHAR)
+				if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 				{
-					if(strcmp(field->limit.u.charLimits.charMenu, this->pMenu->name.c_str())==0)
+					if(field.GetLimits().u.charLimits.charMenu == this->pMenu->name)
 					{
 						CTableRow row("cssStdRow");		
-						CTableCell cellFieldName(field->GetURL(rootLevel), "");				
-						CTableCell cellFieldId(field->GetInsideId(), "");
-						CTableCell cellForm(schema->GetURL(rootLevel), "");
+						CTableCell cellFieldName(field.GetURL(rootLevel), "");				
+						CTableCell cellFieldId(field.GetInsideId(), "");
+						CTableCell cellForm(schema.GetURL(rootLevel), "");
 
 						row.AddCell(cellFieldName);
 						row.AddCell(cellFieldId);

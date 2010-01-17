@@ -28,6 +28,16 @@ CAREscalation::~CAREscalation(void)
 {
 }
 
+bool CAREscalation::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CAREscalation::Clone()
+{
+	return new CAREscalation(*this);
+}
+
 string CAREscalation::GetURL(int rootLevel, bool showImage)
 {
 	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"escalation/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "escalation.gif" : ""), rootLevel);

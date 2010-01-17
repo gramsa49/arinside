@@ -22,11 +22,12 @@
 #include "core/ARCharMenu.h"
 #include "core/ARContainer.h"
 #include "core/ARSchema.h"
+#include "core/ARField.h"
+#include "core/ARVui.h"
 #include "core/AREnum.h"
 #include "core/ARDataFactory.h"
 #include "core/ARServerInfo.h"
 #include "core/ARGlobalField.h"
-#include "core/ChangeHistoryEntry.h"
 #include "output/WebPage.h"
 #include "util/BlackListItem.h"
 #include "WindowsUtil.h"
@@ -34,6 +35,7 @@
 #include "util/FieldRefItem.h"
 #include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
+#include "lists/ARSchemaList.h"
 #include "lists/ARActiveLinkList.h"
 #include "lists/ARFilterList.h"
 #include "lists/AREscalationList.h"
@@ -77,13 +79,13 @@ public:
 	void Documentation(void);
 
 
-	CARSchema* FindSchema(int schemaInsideId);
-	CARSchema* FindSchema(string schemaName);	
-	CARField* FindField(CARSchema* schema, int fieldId);
+	//CARSchema* FindSchema(int schemaInsideId);
+	//CARSchema* FindSchema(string schemaName);	
+	//CARField* FindField(CARSchema* schema, int fieldId);
 
 	string srvHostName;
 	string srvFullHostName;
-	list<CARSchema> schemaList;
+	CARSchemaList schemaList;
 	CARFilterList filterList;
 	CAREscalationList escalationList;
 	CARActiveLinkList alList;
@@ -95,7 +97,7 @@ public:
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
 	CBlackList blackList;
-	list<CFieldRefItem> listFieldRefItem;
+	list<CFieldRefItem> listFieldRefItem; // TODO: maybe move field references over to the field itself; avoids scaning the whole list on inserts (to avoid duplicates) and output (just extract items for a special field)
 	list<CMissingMenuRefItem> listMenuRefItem;
 	list<CFieldRefItem> listFieldNotFound;
 	list<CMissingMenuRefItem> listMenuNotFound;
@@ -112,7 +114,7 @@ public:
 	int SchemaGetInsideId(string searchObjName);
 
 	string LinkToField(string schemaName, int fieldInsideId, int fromRootLevel);	
-	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
+	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel, bool needValidField = true);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);	
 
 	string LinkToContainer(string containerName, int rootLevel);
@@ -149,7 +151,7 @@ public:
 
 	string ServerObjectHistory(CARServerObject *obj, int rootLevel);
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);
-	bool ValidateGroup(string appRefName, int permissionId);
+	bool ValidateGroup(const string& appRefName, int permissionId);
 	int CompareServerVersion(int major, int minor = -1, int revision = -1);
 
 	float nDurationLoad;
@@ -167,20 +169,15 @@ private:
 	int EscalationGetInsideId(string searchObjName);	
 	int MenuGetInsideId(string searchObjName);	
 
-	void Sort(list<CARSchema> &listResult);
-	void Sort(list<CARFilter> &listResult);
-	void Sort(list<CAREscalation> &listResult);
-	void Sort(list<CARActiveLink> &listResult);
 	void Sort(list<CARContainer> &listResult);
 	void Sort(list<CARCharMenu> &listResult);
-	void Sort(list<CARField> &listResult);
 
 	int LoadActiveLinks(void);
 	int LoadFilters(void);
 	int LoadEscalations(void);
 	int LoadCharMenus(void);
 	int LoadContainer(void);
-	int LoadForms(int nType, int &schemaInsideId);
+	int LoadForms(void);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	int LoadImages(void);
 #endif
@@ -189,7 +186,7 @@ private:
 
 	void SearchCustomFieldReferences();
 	void SearchFilterReferences();
-	void CustomFieldReferences(CARSchema &schema, CARField &obj);
+	void CustomFieldReferences(const CARSchema &schema, const CARField &obj);
 
 	void ParseVersionString(string version);
 	void ParseVersionString(int xmlVersion);

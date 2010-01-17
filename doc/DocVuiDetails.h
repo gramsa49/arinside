@@ -17,12 +17,13 @@
 #pragma once
 #include "DocBase.h"
 #include "../core/ARProplistHelper.h"
+#include "../core/ARVui.h"
 
 class CDocVuiDetails :
 	public CDocBase, public CARProplistHelper::CARPropertyCallback
 {
 public:
-	CDocVuiDetails(CARInside &arInside, CARSchema &schema, CARVui &vui, string path, int rootLevel);
+	CDocVuiDetails(unsigned int SchemaInsideId, const CARVui& vuiObj, int rootLevel);
 	~CDocVuiDetails(void);
 
 	void Documentation();
@@ -31,8 +32,8 @@ public:
 	bool SpecialPropertyCallback(ARULong32 propId, const ARValueStruct& value, string &displayValue);
 
 private:
-	CARSchema *pSchema;
-	CARVui *pVui;
+	CARSchema schema;
+	CARVui vui;
 
 	CTable FieldProperties(string fName);
 	CTable FieldPropertiesCsv(string fName);

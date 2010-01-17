@@ -55,5 +55,9 @@ public:
 	string GetTimeCriteria();
 	string GetExecuteOn();
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_ESCALATION; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

@@ -305,7 +305,7 @@ int CARFilterList::Find(const char* name)
 {
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		int result = strcmp(names.nameList[(*sortedList)[i]], name);
+		int result = strcoll(names.nameList[(*sortedList)[i]], name);
 		if (result == 0)
 		{
 			return i;

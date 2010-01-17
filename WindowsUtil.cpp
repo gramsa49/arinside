@@ -82,13 +82,13 @@ void CWindowsUtil::Load()
 
 void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string path)
 {
-	LPVOID  data;
+	void* data;
 	//HANDLE hfile;
-	DWORD len;
+	unsigned int len;
+#ifdef WIN32
 	HRSRC	hres;
 	HGLOBAL hres1;
 
-#ifdef WIN32
 	if (!(hres=FindResource(GetModuleHandle(NULL),MAKEINTRESOURCE(res),RT_RCDATA))
 		|| !(len=SizeofResource(NULL,hres))
 		|| !(hres1=LoadResource(NULL,hres))

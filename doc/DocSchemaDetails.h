@@ -30,12 +30,12 @@ class CDocSchemaDetails :
 	public CDocBase
 {
 public:
-	CDocSchemaDetails(CARInside &arInside, CARSchema &schema, string path, int rootLevel);
+	CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel);
 	~CDocSchemaDetails(void);
 
 	void Documentation();
 private:
-	CARSchema *pSchema;
+	CARSchema schema;
 
 	void IndexDoc();
 	void ResultListDoc();

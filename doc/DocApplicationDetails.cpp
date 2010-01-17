@@ -242,23 +242,16 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 	try
 	{
 		//Update the schema informations
-		list<CARSchema>::iterator schemaIter;				
-		for ( schemaIter = pInside->schemaList.begin(); schemaIter != pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{	
-			CARSchema *schema = &(*schemaIter);
-			if(this->InList(schema->name.c_str(), ARREF_SCHEMA))
+			CARSchema schema(schemaIndex);
+			if(this->InList(schema.GetName(), ARREF_SCHEMA))
 			{
 				nResult++;	
-				strmResult << schema->GetURL(this->rootLevel) << "<br/>" << endl;
+				strmResult << schema.GetURL(this->rootLevel) << "<br/>" << endl;
 
-				schema->appRefName = this->pApp->name;
-
-				list<CARField>::iterator fieldIter;
-				for(fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
-				{
-					CARField *field = &(*fieldIter);
-					field->appRefName = schema->appRefName;
-				}
+				schema.SetAppRefName(this->pApp->name);
 			}
 		}	
 	}
@@ -466,27 +459,29 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 			bool bInsert = false;
 			CARCharMenu *obj = &(*objIter);	
 
-			list<CARSchema>::iterator schemaIter;				
-			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+			unsigned int schemaCount = this->pInside->schemaList.GetCount();
+			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 			{			
-				CARSchema *schema = &(*schemaIter);
+				CARSchema schema(schemaIndex);
 
-				if(InList(schema->name, ARREF_SCHEMA))
+				if(InList(schema.GetName(), ARREF_SCHEMA))
 				{
-					list<CARField>::iterator fieldIter;
-					for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+					unsigned int fieldCount = schema.GetFields()->GetCount();
+					for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
 					{
-						CARField *field = &(*fieldIter);
-						if(field->dataType == AR_DATA_TYPE_CHAR)
+						CARField field(schemaIndex, 0, fieldIndex);
+						if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 						{
-							if(strcmp(field->limit.u.charLimits.charMenu, obj->name.c_str())==0)
+							if(field.GetLimits().u.charLimits.charMenu == obj->name)
 							{
 								bInsert = true;
+								goto schemaScanEnd;
 							}
 						}
 					}
 				}
 			}
+schemaScanEnd:
 
 			if(InList(obj->name.c_str(), ARREF_CHAR_MENU))
 				bInsert = true;

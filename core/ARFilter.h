@@ -57,5 +57,9 @@ public:
 	// some helpers
 	string GetExecuteOn(bool singleLine=false);
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FILTER; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

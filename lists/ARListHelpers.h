@@ -20,7 +20,13 @@ class SortByName
 {
 public:
 	SortByName(const CARListObject &p) { list = &p; }
-	bool operator()(int l, int r) { return (strcmp(list->names.nameList[l], list->names.nameList[r]) < 0); }
+	bool operator()(int l, int r) { return (strcoll(list->names.nameList[l], list->names.nameList[r]) < 0); }
 private:
 	const CARListObject* list;
+};
+
+template<class C>
+struct DeletePointer : unary_function<C*, void>
+{
+	void operator()(C* p) { delete p; }
 };

@@ -142,7 +142,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->schemaList.size()));
+		row.AddCell(CTableCell((int)this->pInside->schemaList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Forms", "schema/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -168,18 +168,18 @@ void CDocSummaryInfo::Documentation()
 		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->menuList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->roleList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->schemaList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->schemaList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->userList.size();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		nNumTotalObjects += this->pInside->imageList.GetCount();
 #endif			
 
-		int nNumTotalFields = 0;
-		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int nNumTotalFields = 0;
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
-			CARSchema *schema = &(*schemaIter);
-			nNumTotalFields += (int)schema->fieldList.size();
+			CARSchema schema(schemaIndex);
+			nNumTotalFields += schema.GetFields()->GetCount();
 		}
 
 		webPage.AddContent(tblListObjectInfo.ToXHtml());

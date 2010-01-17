@@ -1596,6 +1596,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\ARFieldList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARFieldList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARFilterList.cpp"
 				>
 			</File>
@@ -1613,6 +1621,22 @@
 			</File>
 			<File
 				RelativePath=".\lists\ARListHelpers.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARSchemaList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARSchemaList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARVUIList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARVUIList.h"
 				>
 			</File>
 			<File

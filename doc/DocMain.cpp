@@ -122,30 +122,29 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 		CSchemaTable *tbl = new CSchemaTable(*this->pInside);
 
-		list<CARSchema>::iterator schemaIter = this->pInside->schemaList.begin();
-		list<CARSchema>::iterator endIt = this->pInside->schemaList.end();
-		for ( ; schemaIter != endIt; ++schemaIter )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{	
-			CARSchema *schema = &(*schemaIter);
+			CARSchema schema(schemaIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
-				if(nType == AR_SCHEMA_NONE || nType == schema->schema.schemaType)  //Only check type
+				if(nType == AR_SCHEMA_NONE || nType == schema.GetCompound().schemaType)  //Only check type
 				{
 					bInsert = true;
 				}
 			}		
 			else if(searchChar != "#" && searchChar != "*")
 			{
-				if(schema->GetNameFirstChar() == searchChar)
+				if(schema.GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
 			}
 			else if(searchChar == "#")
 			{
-				if(!schema->NameStandardFirstChar())
+				if(!schema.NameStandardFirstChar())
 				{
 					bInsert = true;		
 				}
@@ -154,7 +153,7 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 			if(bInsert)
 			{
-				tbl->AddRow(*schema, rootLevel);
+				tbl->AddRow(schema, rootLevel);
 			}
 		}
 

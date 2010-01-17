@@ -23,13 +23,13 @@ class CDocFieldDetails :
 	public CDocBase
 {
 public:
-	CDocFieldDetails(CARInside &arInside, CARSchema &schema, CARField &field, string path, int rootLevel);
+	CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel);
 	~CDocFieldDetails(void);
 
 	void Documentation();
 private:
-	CARSchema *pSchema;
-	CARField *pField;
+	CARSchema schema;
+	CARField field;
 
 	string DefaultValue();
 	string FieldLimits();
@@ -37,5 +37,5 @@ private:
 	string DisplayProperties();
 	string JoinFormReferences();
 	string WorkflowReferences();
-	int AttachmentFieldGetPool();
+	int AttachmentFieldGetPool(const CARField& fldObj);
 };

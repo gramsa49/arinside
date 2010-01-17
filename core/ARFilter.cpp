@@ -27,6 +27,16 @@ CARFilter::~CARFilter(void)
 {
 }
 
+bool CARFilter::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARFilter::Clone()
+{
+	return new CARFilter(*this);
+}
+
 string CARFilter::GetURL(int rootLevel, bool showImage)
 {
 	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"filter/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "filter.gif" : ""), rootLevel);

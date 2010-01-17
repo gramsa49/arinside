@@ -20,6 +20,16 @@
 #include "ARImage.h"
 #include "../ARInside.h"
 
+bool CARImage::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARImage::Clone()
+{
+	return new CARImage(*this);
+}
+
 string CARImage::GetName()
 {
 	return CARInside::GetInstance()->imageList.ImageGetName(GetInsideId());

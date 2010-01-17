@@ -212,17 +212,16 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 			CTable tblObj("FieldsNoPermission", "TblObjectList");
 			tblObj.AddColumn(100, "Field Name");
 
-			list<CARField>::iterator fieldIter;			
-			for( fieldIter = schema.fieldList.begin(); fieldIter != schema.fieldList.end(); fieldIter++)
+			unsigned int fieldCount = schema.GetFields()->GetCount();
+			for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 			{
-				CARField *field = &(*fieldIter);
+				CARField field(schema.GetInsideId(), 0, fieldIndex);
 
-				if(field->permissions.permissionList== NULL  //First check if the field has any access group
-					|| field->permissions.numItems == 0)
+				if(field.GetPermissions().numItems == 0)      //First check if the field has any access group
 				{
 					//field has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field->GetInsideId(), this->rootLevel));
+					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field.GetInsideId(), this->rootLevel));
 					tblObj.AddRow(row);					
 				}
 			}
@@ -261,34 +260,35 @@ void CDocValidator::FieldGroupValidator()
 			tblObj.AddColumn(10, "Num. Fields");
 			tblObj.AddColumn(90, "Form Name");
 
-			list<CARSchema>::iterator schemaIter;		
-			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+			// TODO: maybe move the following code to FieldGroupValidatorDetails, because the code is already there, but not the counting!
+			unsigned int schemaCount = this->pInside->schemaList.GetCount();
+			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 			{			
-				CARSchema *schema = &(*schemaIter);
+				CARSchema schema(schemaIndex);
 
 				int nEmptyFields = 0;
-				list<CARField>::iterator fieldIter;			
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 				{
-					CARField *field = &(*fieldIter);
+					CARField field(schemaIndex, 0, fieldIndex);
 
-					if(field->permissions.permissionList== NULL  //First check if the field has any access group
-						|| field->permissions.numItems == 0)
+					if(field.GetPermissions().numItems == 0)      //First check if the field has any access group
 					{
-						nEmptyFields++;					
+						nEmptyFields++;
+						break;
 					}
 				}
 
 				if(nEmptyFields > 0)
 				{
-					string fName = "validation_group_field_"+schema->FileID();
+					string fName = "validation_group_field_"+schema.FileID();
 
 					CTableRow row("");		
 					row.AddCell(nEmptyFields);
-					row.AddCell(CWebUtil::Link(schema->name, CWebUtil::DocName(fName), "", 0));
+					row.AddCell(CWebUtil::Link(schema.GetName(), CWebUtil::DocName(fName), "", 0));
 					tblObj.AddRow(row);			
 
-					FieldGroupValidatorDetails(*schema, fName);
+					FieldGroupValidatorDetails(schema, fName);
 				}
 			}
 
@@ -322,17 +322,16 @@ void CDocValidator::FormGroupValidator()
 			CTable tblForms("FormNoPermission", "TblObjectList");
 			tblForms.AddColumn(100, "Form Name");
 
-			list<CARSchema>::iterator schemaIter;		
-			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+			unsigned int schemaCount = this->pInside->schemaList.GetCount();
+			for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 			{			
-				CARSchema *schema = &(*schemaIter);
+				CARSchema schema(schemaIndex);
 
-				if(schema->groupList.permissionList == NULL		//Check if the form has no access group
-					|| schema->groupList.numItems == 0 )
+				if(schema.GetPermissions().numItems == 0)      //Check if the form has no access group
 				{
 					//Form has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToSchema(schema->name, this->rootLevel));
+					row.AddCell(pInside->LinkToSchema(schema.GetName(), this->rootLevel));
 					tblForms.AddRow(row);
 				}
 			}

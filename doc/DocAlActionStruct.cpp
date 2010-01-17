@@ -196,49 +196,33 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 
 	try
 	{		
-		CARSchema *schema1 = NULL;
-		CARSchema *schema2 = NULL;
-
-		list<CARSchema>::iterator schemaIter;			
-		for ( schemaIter = arIn->schemaList.begin(); schemaIter != arIn->schemaList.end(); schemaIter++ )
-		{			
-			CARSchema *tmpSchema = &(*schemaIter);
-			if(strcmp(tmpSchema->name.c_str(), table1.c_str())==0)
-			{
-				schema1=tmpSchema;
-			}
-
-			if(strcmp(tmpSchema->name.c_str(), table2.c_str())==0)
-			{
-				schema2=tmpSchema;
-			}
-		}
+		CARSchema schema1(table1);
+		CARSchema schema2(table2);
 
 		CTable tblListField("tblListMatchingIds", "TblObjectList");
 		tblListField.AddColumn(0, "Id");
 		tblListField.AddColumn(0, "Field Name");
 		tblListField.AddColumn(0, "Value");
 
-		if(schema1 != NULL && schema2 !=NULL)
+		if(schema1.Exists() && schema2.Exists())
 		{
-			list<CARField>::iterator fieldIter1;
-			for( fieldIter1 = schema1->fieldList.begin(); fieldIter1 != schema1->fieldList.end(); fieldIter1++)
+			unsigned int fieldCount1 = schema1.GetFields()->GetCount();
+			for(unsigned int fieldIndex1 = 0; fieldIndex1 < fieldCount1; ++fieldIndex1)
 			{
-				CARField *tmpField1 = &(*fieldIter1);
+				CARField tmpField1(schema1.GetInsideId(), 0, fieldIndex1);
 
-				list<CARField>::iterator fieldIter2;
-				for( fieldIter2 = schema2->fieldList.begin(); fieldIter2 != schema2->fieldList.end(); fieldIter2++)
+				if (tmpField1.GetDataType() <= AR_MAX_STD_DATA_TYPE)
 				{
-					CARField *tmpField2 = &(*fieldIter2);
+					CARField tmpField2(schema2.GetInsideId(), tmpField1.GetFieldId());
 
-					if(tmpField1->fieldId == tmpField2->fieldId && tmpField1->dataType <= AR_MAX_STD_DATA_TYPE && tmpField2->dataType <= AR_MAX_STD_DATA_TYPE)
+					if(tmpField2.Exists() && tmpField2.GetDataType() <= AR_MAX_STD_DATA_TYPE)
 					{
 						//Reference field1
 						CFieldRefItem *refItemField1 = new CFieldRefItem();
 						refItemField1->arsStructItemType = this->structItemType;
 						refItemField1->fromName = this->obj->GetName();
-						refItemField1->schemaInsideId = schema1->GetInsideId();
-						refItemField1->fieldInsideId = tmpField1->GetInsideId();
+						refItemField1->schemaInsideId = schema1.GetInsideId();
+						refItemField1->fieldInsideId = tmpField1.GetInsideId();
 
 						stringstream strmTmpDesc;
 						strmTmpDesc.str("");
@@ -251,8 +235,8 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 						CFieldRefItem *refItemField2 = new CFieldRefItem();
 						refItemField2->arsStructItemType = this->structItemType;
 						refItemField2->fromName = this->obj->GetName();
-						refItemField2->schemaInsideId = schema2->GetInsideId();
-						refItemField2->fieldInsideId = tmpField2->GetInsideId();
+						refItemField2->schemaInsideId = schema2.GetInsideId();
+						refItemField2->fieldInsideId = tmpField2.GetInsideId();
 
 						strmTmpDesc.str("");
 						strmTmpDesc << description << " (All Matching Ids) [Value] " << ifElse << "-Action " << nAction;
@@ -263,9 +247,9 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 
 						//Matching ID
 						CTableRow row("cssStdRow");		
-						row.AddCell(CTableCell(tmpField1->fieldId));
-						row.AddCell(CTableCell(arIn->LinkToField(schema1->name, tmpField1->GetInsideId(), this->rootLevel)));
-						row.AddCell(CTableCell(arIn->LinkToField(schema2->name, tmpField2->GetInsideId(), this->rootLevel)));
+						row.AddCell(CTableCell(tmpField1.GetFieldId()));
+						row.AddCell(CTableCell(arIn->LinkToField(schema1.GetARName(), tmpField1.GetInsideId(), this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema2.GetARName(), tmpField2.GetInsideId(), this->rootLevel)));
 						tblListField.AddRow(row);
 					}
 				}
@@ -1077,14 +1061,14 @@ string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAct
 			}
 			else
 			{
-				CARSchema* rSchema = arIn->FindSchema(openWindowSchema);
-				if (rSchema == NULL)
+				CARSchema rSchema(openWindowSchema);
+				if (!rSchema.Exists())
 				{
 					strm << "<span class=\"fieldNotFound\">" << action.vuiLabel << "</span>";
 				}
 				else
 				{
-					strm << rSchema->LinkToVui(action.vuiLabel, rootLevel);	
+					strm << rSchema.LinkToVui(action.vuiLabel, rootLevel);	
 				}
 			}
 		}
@@ -1284,12 +1268,11 @@ string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAct
 				tblSortList.AddColumn(30, "Sort Order");
 				
 				char strFieldId[20];				
-				CARSchema* rSchema = arIn->FindSchema(openWindowSchema);
-				CARField*  rField = NULL;
+				CARSchema rSchema(openWindowSchema);
 
 				for (unsigned int i = 0; i < action.sortOrderList.numItems; ++i)
 				{
-					rField = arIn->FindField(rSchema, action.sortOrderList.sortList[i].fieldId);
+					CARField rField(rSchema.GetInsideId(), action.sortOrderList.sortList[i].fieldId);
 
 					strFieldId[0] = 0;
 					sprintf(strFieldId, "%d", action.sortOrderList.sortList[i].fieldId);
@@ -1297,16 +1280,16 @@ string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAct
 					CTableRow row("cssStdRow");
 					row.AddCell(arIn->LinkToField(openWindowSchema, action.sortOrderList.sortList[i].fieldId, rootLevel));
 					row.AddCell(strFieldId);
-					row.AddCell((rField != NULL ? CAREnum::DataType(rField->dataType) : "Unknown"));
+					row.AddCell((rField.Exists() ? CAREnum::DataType(rField.GetDataType()) : "Unknown"));
 					row.AddCell(CAREnum::SchemaSortOrder(action.sortOrderList.sortList[i].sortOrder));
 					
 					tblSortList.AddRow(row);
 
-					if (rSchema != NULL)
+					if (rSchema.Exists())
 					{
 						stringstream tmpDesc;
 						tmpDesc << "Open Window SortBy " << ifElse << "-Action " << nAction;
-						CFieldRefItem refItem(structItemType, this->obj->GetName(), tmpDesc.str(), action.sortOrderList.sortList[i].fieldId, rSchema->GetInsideId());
+						CFieldRefItem refItem(structItemType, this->obj->GetName(), tmpDesc.str(), action.sortOrderList.sortList[i].fieldId, rSchema.GetInsideId());
 						arIn->AddReferenceItem(&refItem);
 					}
 				}

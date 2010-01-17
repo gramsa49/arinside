@@ -18,12 +18,11 @@
 #include "DocFieldDetails.h"
 #include "../util/ImageRefItem.h"
 
-CDocFieldDetails::CDocFieldDetails(CARInside &arInside, CARSchema &schema, CARField &field, string path, int rootLevel)
+CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
+: schema(SchemaInsideId), field(fieldObj)
 {
-	this->pInside = &arInside;
-	this->pSchema = &schema;
-	this->pField = &field;
-	this->path = path;
+	this->pInside = CARInside::GetInstance();
+	this->path = "schema/" + schema.FileID();
 	this->rootLevel = rootLevel;
 }
 
@@ -35,16 +34,16 @@ void CDocFieldDetails::Documentation()
 {
 	try
 	{
-		CWebPage webPage(this->pField->FileID(), this->pField->name, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(this->field.FileID(), this->field.GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->pSchema->schema.schemaType, rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->pSchema->name, CWebUtil::DocName("index"), "", rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CAREnum::DataType(this->pField->dataType) << " " << CWebUtil::Link("Field", CWebUtil::DocName("index"), "", rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->pField->name) << endl;
-		contHeadStrm << " (Id: " << this->pField->fieldId << ")" << endl;
+		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CWebUtil::DocName("index"), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field", CWebUtil::DocName("index"), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->field.GetName()) << endl;
+		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Field property table
@@ -54,17 +53,17 @@ void CDocFieldDetails::Documentation()
 
 		//Create Mode
 		CTableRow row("cssStdRow");		
-		row.AddCellList("CreateMode", CAREnum::FieldCreateMode(this->pField->createMode));
+		row.AddCellList("CreateMode", CAREnum::FieldCreateMode(this->field.GetCreateMode()));
 		tblFieldprops.AddRow(row);
 
 		//Option
-		row.AddCellList("Option", CAREnum::FieldOption(this->pField->option));
+		row.AddCellList("Option", CAREnum::FieldOption(this->field.GetOption()));
 		tblFieldprops.AddRow(row);
 
 
 		//Default value		
 		string tmp = this->DefaultValue();
-		if(tmp.size() == 0)
+		if(tmp.empty())
 			tmp = EmptyValue;
 
 		row.AddCellList("Default Value", tmp);
@@ -73,7 +72,7 @@ void CDocFieldDetails::Documentation()
 
 		//Permissions
 		tmp = this->Permisssions();
-		if(tmp.size() == 0)
+		if(tmp.empty())
 			tmp = EmptyValue;
 
 		row.AddCellList("Permissions", tmp);
@@ -82,7 +81,7 @@ void CDocFieldDetails::Documentation()
 
 		//Display Properties
 		tmp = this->DisplayProperties();
-		if(tmp.size() == 0)
+		if(tmp.empty())
 			tmp = EmptyValue;
 
 		row.AddCellList("Display Properties", tmp);
@@ -91,7 +90,7 @@ void CDocFieldDetails::Documentation()
 
 		//Fieldlimits		
 		tmp = this->FieldLimits();
-		if(tmp.size() == 0)
+		if(tmp.empty())
 			tmp = EmptyValue;
 
 		row.AddCellList("Field Limits", tmp);
@@ -99,10 +98,10 @@ void CDocFieldDetails::Documentation()
 
 
 		//Join Form References
-		if(this->pSchema->schema.schemaType != AR_SCHEMA_DIALOG)
+		if(this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
 		{
 			tmp = this->JoinFormReferences();
-			if(tmp.size() == 0)
+			if(tmp.empty())
 				tmp = EmptyValue;
 
 			row.AddCellList("References to Join-Forms", tmp);
@@ -115,13 +114,13 @@ void CDocFieldDetails::Documentation()
 		webPage.AddContent(this->WorkflowReferences());
 
 		//History
-		webPage.AddContent(this->pInside->ServerObjectHistory(this->pField, this->rootLevel));
+		webPage.AddContent(this->pInside->ServerObjectHistory(&this->field, this->rootLevel));
 
 		webPage.SaveInFolder(this->path);	
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION field details: " << this->pField->name << " in form: " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION field details: " << this->field.GetName() << " in form: " << this->schema.GetName() << " error: " << e.what() << endl;
 	}
 }
 
@@ -144,7 +143,7 @@ string CDocFieldDetails::WorkflowReferences()
 		for ( iter = this->pInside->listFieldRefItem.begin(); iter != endIt; ++iter )
 		{	
 			CFieldRefItem *item = &(*iter);
-			if(item->schemaInsideId == this->pSchema->GetInsideId() && item->fieldInsideId == this->pField->GetInsideId())
+			if(item->schemaInsideId == this->schema.GetInsideId() && item->fieldInsideId == this->field.GetInsideId())
 			{			
 				if(item->fromName.compare(EmptyValue)!=0)
 				{
@@ -175,7 +174,7 @@ string CDocFieldDetails::WorkflowReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating workflow references for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION enumerating workflow references for field: " << this->field.GetFieldId() <<" in schema " << this->schema.GetName() << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
@@ -183,32 +182,25 @@ string CDocFieldDetails::WorkflowReferences()
 
 
 
-int CDocFieldDetails::AttachmentFieldGetPool()
+int CDocFieldDetails::AttachmentFieldGetPool(const CARField& fldObj)
 {
-	int nFieldId = 0;
 	try
 	{
-		for(unsigned int i=0; i< this->pField->dInstanceList.numItems; i++)
+		const ARDisplayInstanceList& dispList = fldObj.GetDisplayInstances();
+		for(unsigned int i=0; i< dispList.numItems; i++)
 		{
-			for(unsigned int k=0; k < this->pField->dInstanceList.dInstanceList[i].props.numItems; k++)
+			ARValueStruct* dParent = CARProplistHelper::Find(dispList.dInstanceList[i].props, AR_DPROP_DISPLAY_PARENT);
+			if (dParent != NULL && (dParent->dataType == AR_DATA_TYPE_ULONG || dParent->dataType == AR_DATA_TYPE_INTEGER))
 			{
-				switch(this->pField->dInstanceList.dInstanceList[i].props.props[k].prop)
-				{
-				case AR_DPROP_DISPLAY_PARENT:
-					{								
-						nFieldId = this->pField->dInstanceList.dInstanceList[i].props.props[k].value.u.intVal;
-					}
-					break;
-				}
+				return dParent->u.intVal;
 			}
 		}		
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION find attachment field pool of '" << this->pField->name << "': " << e.what() << endl;
+		cout << "EXCEPTION find attachment field pool of '" << this->field.GetName() << "': " << e.what() << endl;
 	}
-
-	return nFieldId;
+	return 0;
 }
 
 string CDocFieldDetails::FieldLimits()
@@ -218,11 +210,11 @@ string CDocFieldDetails::FieldLimits()
 
 	try
 	{
-		switch(this->pField->limit.dataType)
+		switch(this->field.GetDataType())
 		{			
 		case AR_DATA_TYPE_CHAR:
 			{
-				ARCharLimitsStruct fLimit = this->pField->limit.u.charLimits;
+				const ARCharLimitsStruct& fLimit = this->field.GetLimits().u.charLimits;
 
 				if(fLimit.charMenu[0] != 0)
 				{
@@ -231,7 +223,7 @@ string CDocFieldDetails::FieldLimits()
 
 					if (!menuFound)
 					{
-						CMissingMenuRefItem refItemNotFound(fLimit.charMenu, AR_STRUCT_ITEM_XML_FIELD, this->pSchema->GetInsideId(), this->pField->GetInsideId());
+						CMissingMenuRefItem refItemNotFound(fLimit.charMenu, AR_STRUCT_ITEM_XML_FIELD, this->schema.GetInsideId(), this->field.GetInsideId());
 						pInside->AddMissingMenu(refItemNotFound);
 					}
 				}
@@ -246,82 +238,74 @@ string CDocFieldDetails::FieldLimits()
 			break;
 		case AR_DATA_TYPE_ATTACH:
 			{
-				ARAttachLimitsStruct fLimit = this->pField->limit.u.attachLimits;
+				const ARAttachLimitsStruct& fLimit = this->field.GetLimits().u.attachLimits;
 				strm << "Max. Size: " << fLimit.maxSize;
 
-				int nPoolId = AttachmentFieldGetPool();
+				int nPoolId = AttachmentFieldGetPool(field);
 
 				if(nPoolId > 0)
 				{
-					strm << "<br/>Field in Attachment Pool: " << this->pInside->LinkToField(this->pSchema->GetInsideId(), nPoolId, rootLevel);
+					strm << "<br/>Field in Attachment Pool: " << this->pInside->LinkToField(this->schema.GetInsideId(), nPoolId, rootLevel);
 				}
 			}
 			break;
 		case AR_DATA_TYPE_ATTACH_POOL:
 			{				
-				list<CARSchema>::iterator schemaIter;		
-				CARSchema *searchSchema;
-				for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
-				{			
-					searchSchema = &(*schemaIter);
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
+				{
+					CARField attachField(schema.GetInsideId(), 0, fieldIndex);
 
-					if(this->pSchema->GetInsideId() == searchSchema->GetInsideId())
+					if (attachField.GetDataType() == AR_DATA_TYPE_ATTACH)
 					{
-						list<CARField>::iterator fieldIter;		
-						CARField *attachField;
-						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); fieldIter++)
+						if (AttachmentFieldGetPool(attachField) == field.GetInsideId())
 						{
-							attachField = &(*fieldIter);
-
-							int nTmpPoolId = this->AttachmentFieldGetPool();
-							if(nTmpPoolId == this->pField->fieldId)
-							{
-								strm << "Attachment Field: " << attachField->GetURL(rootLevel) << "<br/>" << endl;
-							}
+							strm << "Attachment Field: " << attachField.GetURL(rootLevel) << "<br/>" << endl;
 						}
 					}
-				}            
-
+				}
 			}
 			break;
 		case AR_DATA_TYPE_COLUMN:
 			{
-				ARColumnLimitsStruct fLimit = this->pField->limit.u.columnLimits;
+				const ARColumnLimitsStruct& fLimit = this->field.GetLimits().u.columnLimits;
 				strm << "Length: " << fLimit.colLength << "<br/>" << endl;
-				strm << "Column in Table: " << this->pInside->LinkToField(this->pSchema->name, fLimit.parent, rootLevel) << "<br/>" << endl;
+				strm << "Column in Table: " << this->pInside->LinkToField(this->schema.GetName(), fLimit.parent, rootLevel) << "<br/>" << endl;
 
 				//To create a link to the datafield we first must find the target schema of the table
 				string tableSchema;
-				CARSchema* tableSourceSchema = NULL;
-				CARField* tableField = pInside->FindField(pSchema, fLimit.parent);
-				if (tableField != NULL && tableField->dataType == AR_DATA_TYPE_TABLE && tableField->limit.dataType == AR_DATA_TYPE_TABLE)
+				CARField tableField(schema.GetInsideId(), fLimit.parent);
+				if (tableField.Exists() && tableField.GetDataType() == AR_DATA_TYPE_TABLE && tableField.GetLimits().dataType == AR_DATA_TYPE_TABLE)
 				{
-					tableSchema = tableField->limit.u.tableLimits.schema;
+					const ARFieldLimitStruct& limits = tableField.GetLimits();
+					tableSchema = limits.u.tableLimits.schema;
 
 					if (!tableSchema.empty() && tableSchema[0] == '$')
-						tableSchema = tableField->limit.u.tableLimits.sampleSchema;
+						tableSchema = limits.u.tableLimits.sampleSchema;
 
 					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						tableSchema = pSchema->name;
+						tableSchema = schema.GetARName();
+				}
 
-					tableSourceSchema = pInside->FindSchema(tableSchema);
-				}
-	
-				if (tableSourceSchema != NULL)
+				if (!tableSchema.empty())
 				{
-					strm << "Source Data Field: " << this->pInside->LinkToField(tableSourceSchema->GetInsideId(), fLimit.dataField, rootLevel);
-					strm << " In Schema: " << tableSourceSchema->GetURL(rootLevel) << "<br/>" << endl;
-				}
-				else
-				{
-					strm << "Source Data Field: <span class=\"fieldNotFound\">" << fLimit.dataField << "</span>";
-					strm << " In Schema: " << tableSchema << "<br/>" << endl;
+					CARSchema tableSourceSchema(tableSchema);
+					if (tableSourceSchema.Exists())
+					{
+						strm << "Source Data Field: " << this->pInside->LinkToField(tableSourceSchema.GetInsideId(), fLimit.dataField, rootLevel);
+						strm << " In Schema: " << tableSourceSchema.GetURL(rootLevel) << "<br/>" << endl;
+					}
+					else
+					{
+						strm << "Source Data Field: <span class=\"fieldNotFound\">" << fLimit.dataField << "</span>";
+						strm << " In Schema: " << tableSchema << "<br/>" << endl;
+					}
 				}
 			}
 			break;
 		case AR_DATA_TYPE_CURRENCY:
 			{
-				ARCurrencyLimitsStruct fLimit = this->pField->limit.u.currencyLimits;
+				const ARCurrencyLimitsStruct& fLimit = this->field.GetLimits().u.currencyLimits;
 
 				strm << "Min: " << fLimit.rangeLow << " Max: " << fLimit.rangeHigh;
 				strm << " Precision: " << fLimit.precision << "<br/>" << endl;			
@@ -349,13 +333,13 @@ string CDocFieldDetails::FieldLimits()
 			break;
 		case AR_DATA_TYPE_DATE:
 			{
-				ARDateLimitsStruct fLimit = this->pField->limit.u.dateLimits;
+				const ARDateLimitsStruct& fLimit = this->field.GetLimits().u.dateLimits;
 				strm << "Max. " << fLimit.maxDate << " Min. " << fLimit.minDate << "<br/>" << endl;
 			}
 			break;
 		case AR_DATA_TYPE_DECIMAL:
 			{
-				ARDecimalLimitsStruct fLimit = this->pField->limit.u.decimalLimits;
+				const ARDecimalLimitsStruct& fLimit = this->field.GetLimits().u.decimalLimits;
 
 				strm << "Min: " << fLimit.rangeLow << " Max: " << fLimit.rangeHigh;
 				strm << " Precision: " << fLimit.precision << "<br/>" << endl;			
@@ -363,19 +347,19 @@ string CDocFieldDetails::FieldLimits()
 			break;
 		case AR_DATA_TYPE_DIARY:
 			{
-				ARDiaryLimitsStruct fLimit = this->pField->limit.u.diaryLimits;
+				const ARDiaryLimitsStruct& fLimit = this->field.GetLimits().u.diaryLimits;
 				strm << "Index For FTS: " << CAREnum::FieldFTOption(fLimit.fullTextOptions) << "<br/>" << endl;			
 			}
 			break;
 		case AR_DATA_TYPE_DISPLAY:
 			{
-				ARDisplayLimits fLimit = this->pField->limit.u.displayLimits;
+				const ARDisplayLimits& fLimit = this->field.GetLimits().u.displayLimits;
 				strm << "Max. Length: " << fLimit.maxLength << "<br/>" << endl;	
 			}
 			break;		
 		case AR_DATA_TYPE_ENUM:
 			{
-				AREnumLimitsStruct fLimit = this->pField->limit.u.enumLimits;
+				const AREnumLimitsStruct& fLimit = this->field.GetLimits().u.enumLimits;
 
 				strm << "List Style: " << CAREnum::EnumStyle(fLimit.listStyle) << "<br/>" << endl;						
 				switch(fLimit.listStyle)
@@ -409,20 +393,20 @@ string CDocFieldDetails::FieldLimits()
 			break;
 		case AR_DATA_TYPE_INTEGER:
 			{
-				ARIntegerLimitsStruct fLimit = this->pField->limit.u.intLimits;
+				const ARIntegerLimitsStruct& fLimit = this->field.GetLimits().u.intLimits;
 				strm << "Min: " << fLimit.rangeLow << " Max: " << fLimit.rangeHigh << "<br/>" << endl;
 			}
 			break;
 		case AR_DATA_TYPE_BITMASK:
 			{
-				AREnumLimitsStruct fLimit = this->pField->limit.u.maskLimits;
+				const AREnumLimitsStruct& fLimit = this->field.GetLimits().u.maskLimits;
 				strm << "BitmaskLimit" << "<br/>" << endl;
 
 			}
 			break;
 		case AR_DATA_TYPE_REAL:
 			{
-				ARRealLimitsStruct fLimit = this->pField->limit.u.realLimits;
+				const ARRealLimitsStruct& fLimit = this->field.GetLimits().u.realLimits;
 
 				strm << "Min: " << fLimit.rangeLow << " Max: " << fLimit.rangeHigh;
 				strm << " Precision: " << fLimit.precision << "<br/>" << endl;
@@ -431,7 +415,7 @@ string CDocFieldDetails::FieldLimits()
 			break;			
 		case AR_DATA_TYPE_TABLE:
 			{
-				ARTableLimitsStruct &fLimit = this->pField->limit.u.tableLimits;
+				const ARTableLimitsStruct& fLimit = this->field.GetLimits().u.tableLimits;
 				string tableServer;
 				string tableSchema;
 
@@ -441,11 +425,11 @@ string CDocFieldDetails::FieldLimits()
 					int fieldId = atoi(&fLimit.server[1]);
 					tableServer = fLimit.sampleServer;
 
-					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Server: " << pInside->LinkToServerInfo(tableServer, rootLevel) << ")";
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(schema.GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Server: " << pInside->LinkToServerInfo(tableServer, rootLevel) << ")";
 
 					if (fieldId > 0)
 					{
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->GetName(), "Used as Server of Table Field", fieldId, pSchema->GetInsideId());
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), "Used as Server of Table Field", fieldId, schema.GetInsideId());
 						pInside->AddReferenceItem(&refItem);
 					}
 				}
@@ -462,13 +446,13 @@ string CDocFieldDetails::FieldLimits()
 					tableSchema = fLimit.sampleSchema;
 
 					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						tableSchema = pSchema->name;
+						tableSchema = schema.GetARName();
 
-					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(pSchema->GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchema, rootLevel) << ")";
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(schema.GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchema, rootLevel) << ")";
 
 					if (fieldId > 0)
 					{
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, pSchema->GetName(), "Used as Schema of Table Field", fieldId, pSchema->GetInsideId());
+						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), "Used as Schema of Table Field", fieldId, schema.GetInsideId());
 						pInside->AddReferenceItem(&refItem);
 					}
 				}
@@ -477,7 +461,7 @@ string CDocFieldDetails::FieldLimits()
 					tableSchema = fLimit.schema;
 
 					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						tableSchema = pSchema->name;
+						tableSchema = schema.GetARName();
 
 					strm << "Schema: " << this->pInside->LinkToSchema(tableSchema, rootLevel);
 				}
@@ -489,11 +473,11 @@ string CDocFieldDetails::FieldLimits()
 					CFieldRefItem *refItem = new CFieldRefItem();
 					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_NONE;  //Dont change
 					refItem->description = "";
-					refItem->fromName = this->pField->name;
+					refItem->fromName = this->field.GetName();
 
 					CARQualification arQual(*this->pInside);
 
-					int pFormId = pSchema->GetInsideId();
+					int pFormId = schema.GetInsideId();
 					int sFormId = this->pInside->SchemaGetInsideId(tableSchema);
 					arQual.CheckQuery(&fLimit.qualifier, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
@@ -511,37 +495,28 @@ string CDocFieldDetails::FieldLimits()
 				strm << "Num. Columns: " << fLimit.numColumns << "<p/>" << endl;						
 
 				strm << "<p>Table Columns:<br/>" << endl;
-				list<CARSchema>::iterator schemaIter;		
-				CARSchema *searchSchema;
-				for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); ++schemaIter)
-				{			
-					searchSchema = &(*schemaIter);
 
-					if(this->pSchema->GetInsideId() == searchSchema->GetInsideId())
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
+				{
+					CARField columnField(schema.GetInsideId(), 0, fieldIndex);
+					
+					if(columnField.GetDataType() == AR_DATA_TYPE_COLUMN)
 					{
-						list<CARField>::iterator fieldIter;		
-						CARField *field;
-						for( fieldIter = searchSchema->fieldList.begin(); fieldIter != searchSchema->fieldList.end(); ++fieldIter)
+						const ARColumnLimitsStruct& colLimits = columnField.GetLimits().u.columnLimits;
+						if(colLimits.parent == this->field.GetInsideId())
 						{
-							field = &(*fieldIter);										
-							if(field->limit.dataType == AR_DATA_TYPE_COLUMN)
-							{
-								ARColumnLimitsStruct colLimits = field->limit.u.columnLimits;
-								if(colLimits.parent == this->pField->GetInsideId())
-								{
-									strm << field->GetURL(rootLevel);
+							strm << columnField.GetURL(rootLevel);
 
-									strm << " [ Datafield: " << this->pInside->LinkToField(tableSchema, colLimits.dataField, rootLevel) << " ]<br/>" << endl; 
-								}
-							}						
+							strm << " [ Datafield: " << this->pInside->LinkToField(tableSchema, colLimits.dataField, rootLevel) << " ]<br/>" << endl; 
 						}
 					}
-				}                
+				}
 			}
 			break;
 		case AR_DATA_TYPE_VIEW:
 			{
-				ARViewLimits fLimit = this->pField->limit.u.viewLimits;
+				const ARViewLimits& fLimit = this->field.GetLimits().u.viewLimits;
 
 				strm << "Max. Length: " << fLimit.maxLength << "<br/>" << endl;
 			}
@@ -550,7 +525,7 @@ string CDocFieldDetails::FieldLimits()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION reading limits for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION reading limits for field: " << this->field.GetFieldId() <<" in schema " << this->schema.GetName() << " error: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -563,75 +538,75 @@ string CDocFieldDetails::DefaultValue()
 
 	try
 	{
-		switch(this->pField->dataType)
+		switch(this->field.GetDefaultValue().dataType)
 		{
 		case AR_DATA_TYPE_INTEGER:
 			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		case AR_DATA_TYPE_REAL:
 			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		case AR_DATA_TYPE_CHAR:
 			{
-				if(this->pField->defaultVal.u.charVal != NULL)
+				if(this->field.GetDefaultValue().u.charVal != NULL)
 				{
-					strm << "\"" << CARValue::ValueToString(this->pField->defaultVal) << "\"" << endl;
+					strm << "\"" << CARValue::ValueToString(this->field.GetDefaultValue()) << "\"" << endl;
 				}
 			}
 			break;
 		case AR_DATA_TYPE_DIARY:
 			{
-				if(this->pField->defaultVal.u.diaryVal != NULL)
+				if(this->field.GetDefaultValue().u.diaryVal != NULL)
 				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+					strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 				}
 			}
 			break;	
 		case AR_DATA_TYPE_ENUM:
 			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		case AR_DATA_TYPE_TIME:
 			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		case AR_DATA_TYPE_DECIMAL:
 			{
-				if(this->pField->defaultVal.u.decimalVal != NULL)
+				if(this->field.GetDefaultValue().u.decimalVal != NULL)
 				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+					strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 				}
 			}
 			break;
 		case AR_DATA_TYPE_CURRENCY:
 			{
-				if(this->pField->defaultVal.u.currencyVal->currencyCode != NULL)
+				if(this->field.GetDefaultValue().u.currencyVal->currencyCode != NULL)
 				{
-					strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+					strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 				}
 			}
 			break;
 		case AR_DATA_TYPE_DATE:
 			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		case AR_DATA_TYPE_TIME_OF_DAY:
 			{
-				strm << CARValue::ValueToString(this->pField->defaultVal) << endl;
+				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating default value for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION enumerating default value for field: " << this->field.GetFieldId() <<" in schema " << this->schema.GetName() << " error: " << e.what() << endl;
 	}
 	return strm.str();
 }
@@ -650,17 +625,20 @@ string CDocFieldDetails::Permisssions()
 		tbl.AddColumn(75, "Group Name");
 		tbl.AddColumn(10, "Group Id");
 
-		for(unsigned int i=0; i<this->pField->permissions.numItems; i++)
+		const ARPermissionList& perms = field.GetPermissions();
+		for(unsigned int i=0; i < perms.numItems; i++)
 		{
-			string img = CWebUtil::ImageTag("visible.gif", rootLevel);
-			if(this->pField->permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
+			string img;
+			if(perms.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
 				img = CWebUtil::ImageTag("edit.gif", rootLevel);
+			else
+				img = CWebUtil::ImageTag("visible.gif", rootLevel);
 
 			CTableRow row("");
 			row.AddCell( CTableCell(img));
-			row.AddCell( CTableCell(CAREnum::FieldPermission(this->pField->permissions.permissionList[i].permissions)));
-			row.AddCell( CTableCell(this->pInside->LinkToGroup(this->pField->appRefName, this->pField->permissions.permissionList[i].groupId, rootLevel)));
-			row.AddCell( CTableCell(this->pField->permissions.permissionList[i].groupId));
+			row.AddCell( CTableCell(CAREnum::FieldPermission(perms.permissionList[i].permissions)));
+			row.AddCell( CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId, rootLevel)));
+			row.AddCell( CTableCell(perms.permissionList[i].groupId));
 			tbl.AddRow(row);
 			row.ClearCells();
 		}
@@ -669,7 +647,7 @@ string CDocFieldDetails::Permisssions()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating permissions for field: " << this->pField->fieldId << " in schema " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION enumerating permissions for field: " << this->field.GetFieldId() << " in schema " << this->schema.GetName() << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
@@ -682,16 +660,17 @@ string CDocFieldDetails::DisplayProperties()
 	strm.str("");
 
 	try
-	{	
-		for(unsigned int i=0; i<this->pField->dInstanceList.numItems; i++)
+	{
+		const ARDisplayInstanceList& dispList = field.GetDisplayInstances();
+		for(unsigned int i=0; i < dispList.numItems; i++)
 		{
 			CTable tbl("displayPropList", "TblObjectList");
 			tbl.AddColumn(20, "Description");
 			tbl.AddColumn(80, "Values");
 
-			for(unsigned int k=0; k < this->pField->dInstanceList.dInstanceList[i].props.numItems; k++)
+			for(unsigned int k=0; k < dispList.dInstanceList[i].props.numItems; k++)
 			{
-				ARPropStruct &dProperty = this->pField->dInstanceList.dInstanceList[i].props.props[k];
+				const ARPropStruct &dProperty = dispList.dInstanceList[i].props.props[k];
 				
 				string value;
 
@@ -708,8 +687,8 @@ string CDocFieldDetails::DisplayProperties()
 						case AR_DPROP_PUSH_BUTTON_IMAGE:
 						case AR_DPROP_IMAGE:
 							{
-								tmpDesc << "Image on field of form " << this->pSchema->GetURL(rootLevel, true);
-								CImageRefItem refItem(imageIndex, tmpDesc.str(), pField);
+								tmpDesc << "Image on field of form " << this->schema.GetURL(rootLevel, true);
+								CImageRefItem refItem(imageIndex, tmpDesc.str(), &field);
 								pInside->imageList.AddReference(refItem);
 								break;
 							}
@@ -721,7 +700,7 @@ string CDocFieldDetails::DisplayProperties()
 #endif
 				if (dProperty.prop == AR_DPROP_DISPLAY_PARENT && dProperty.value.u.ulongVal > 0)
 				{
-					value = pInside->LinkToField(pSchema->GetInsideId(), dProperty.value.u.ulongVal, rootLevel);
+					value = pInside->LinkToField(schema.GetInsideId(), dProperty.value.u.ulongVal, rootLevel);
 				}
 				//************** end of special properties
 
@@ -739,8 +718,8 @@ string CDocFieldDetails::DisplayProperties()
 			stringstream viewTmpDesc;
 			viewTmpDesc.str("");
 			viewTmpDesc << "Display Properties in " << CWebUtil::Link("Schema","index."+CWebUtil::WebPageSuffix(), "", rootLevel) << ", View: " << endl;					
-			viewTmpDesc << this->pSchema->LinkToVui(this->pField->dInstanceList.dInstanceList[i].vui, rootLevel);
-			viewTmpDesc << " (Id: " << this->pField->dInstanceList.dInstanceList[i].vui << ", Label: " << this->pSchema->VuiGetLabel(this->pField->dInstanceList.dInstanceList[i].vui) << ")" << endl;
+			viewTmpDesc << this->schema.LinkToVui(dispList.dInstanceList[i].vui, rootLevel);
+			viewTmpDesc << " (Id: " << dispList.dInstanceList[i].vui << ", Label: " << this->schema.VuiGetLabel(dispList.dInstanceList[i].vui) << ")" << endl;
 
 
 			tbl.description = viewTmpDesc.str();
@@ -751,7 +730,7 @@ string CDocFieldDetails::DisplayProperties()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating display properties for field: " << this->pField->fieldId <<" in schema " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION enumerating display properties for field: " << this->field.GetFieldId() <<" in schema " << this->schema.GetName() << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
@@ -764,41 +743,40 @@ string CDocFieldDetails::JoinFormReferences()
 
 	try
 	{
-		list<CARSchema>::iterator schemaIter;		
-		CARSchema *tmpSchema;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{			
-			tmpSchema = &(*schemaIter);
-			if(tmpSchema->schema.schemaType == AR_SCHEMA_JOIN)
+			CARSchema tmpSchema(schemaIndex);
+
+			const ARCompoundSchema& comp = tmpSchema.GetCompound();
+			if(comp.schemaType == AR_SCHEMA_JOIN)
 			{
 				//Primary Join Form referes to this schema
-				if(strcmp(tmpSchema->schema.u.join.memberA, this->pSchema->name.c_str())==0)					
+				if(strcmp(comp.u.join.memberA, this->schema.GetARName())==0)					
 				{
-					list<CARField>::iterator fieldListIter;			
-					CARField *tmpField;
-					for ( fieldListIter = tmpSchema->fieldList.begin(); fieldListIter != tmpSchema->fieldList.end(); fieldListIter++ )
+					unsigned int fieldCount = tmpSchema.GetFields()->GetCount();
+					for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 					{
-						tmpField = &(*fieldListIter);
-						if(tmpField->fieldMap.u.join.realId == this->pField->fieldId && tmpField->fieldMap.u.join.schemaIndex == 0)
+						CARField tmpField(schemaIndex, 0, fieldIndex);
+						if(tmpField.GetMapping().u.join.realId == this->field.GetFieldId() && tmpField.GetMapping().u.join.schemaIndex == 0)
 						{
-							strm << tmpField->GetURL(rootLevel) << " in Join-Form: ";
-							strm << tmpSchema->GetURL(rootLevel) << "<br/>" << endl;
+							strm << tmpField.GetURL(rootLevel) << " in Join-Form: ";
+							strm << tmpSchema.GetURL(rootLevel) << "<br/>" << endl;
 						}
 					}
 				}
 
 				//Secondary Join Form refers to this schema
-				if(strcmp(tmpSchema->schema.u.join.memberB, this->pSchema->name.c_str())==0)					
+				if(strcmp(comp.u.join.memberB, this->schema.GetARName())==0)					
 				{
-					list<CARField>::iterator fieldListIter;			
-					CARField *tmpField;
-					for ( fieldListIter = tmpSchema->fieldList.begin(); fieldListIter != tmpSchema->fieldList.end(); fieldListIter++ )
+					unsigned int fieldCount = tmpSchema.GetFields()->GetCount();
+					for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 					{
-						tmpField = &(*fieldListIter);
-						if(tmpField->fieldMap.u.join.realId == this->pField->fieldId && tmpField->fieldMap.u.join.schemaIndex == 1)
+						CARField tmpField(schemaIndex, 0, fieldIndex);
+						if(tmpField.GetMapping().u.join.realId == this->field.GetFieldId() && tmpField.GetMapping().u.join.schemaIndex == 1)
 						{
-							strm << tmpField->GetURL(rootLevel) << " in Join-Form: ";
-							strm << tmpSchema->GetURL(rootLevel) << "<br/>" << endl;
+							strm << tmpField.GetURL(rootLevel) << " in Join-Form: ";
+							strm << tmpSchema.GetURL(rootLevel) << "<br/>" << endl;
 						}
 					}
 				}
@@ -810,7 +788,7 @@ string CDocFieldDetails::JoinFormReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating permissions for field: " << this->pField->fieldId << " in schema " << this->pSchema->name << " error: " << e.what() << endl;
+		cout << "EXCEPTION enumerating permissions for field: " << this->field.GetFieldId() << " in schema " << this->schema.GetName() << " error: " << e.what() << endl;
 	}	
 
 	return strm.str();
