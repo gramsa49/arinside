@@ -54,7 +54,6 @@ public:
 	const ARAccessNameType& SchemaGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
 	const char* SchemaGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
 	const ARPropList& SchemaGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
-	string SchemaGetURL(unsigned int index, int rootLevel);
 
 	const string& SchemaGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
 	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }

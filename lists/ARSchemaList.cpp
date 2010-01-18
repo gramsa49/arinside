@@ -369,7 +369,7 @@ int CARSchemaList::Find(const char* name)
 		int result = strcoll(names.nameList[(*sortedList)[i]], name);
 		if (result == 0)
 		{
-			return result;
+			return i;
 		}
 		else if (result > 0)	
 			// the current string in the sorted list is greater as the string we are looking for.
@@ -383,11 +383,4 @@ void CARSchemaList::Sort()
 {
 	if (GetCount() > 0)
 		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARSchemaList>(*this));
-}
-
-string CARSchemaList::SchemaGetURL(unsigned int index, int rootLevel)
-{
-	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "escalation/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(SchemaGetName(index), strmTmp.str(), "escalation.gif", rootLevel); 
 }

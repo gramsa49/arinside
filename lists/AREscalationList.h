@@ -49,7 +49,6 @@ public:
 	const ARAccessNameType& EscalationGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
 	const char* EscalationGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
 	const ARPropList& EscalationGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
-	string EscalationGetURL(unsigned int index, int rootLevel);
 
 	const string& EscalationGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
 	void EscalationSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }

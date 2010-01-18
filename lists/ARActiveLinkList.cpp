@@ -317,7 +317,7 @@ int CARActiveLinkList::Find(const char* name)
 		int result = strcoll(names.nameList[(*sortedList)[i]], name);
 		if (result == 0)
 		{
-			return result;
+			return i;
 		}
 		else if (result > 0)	
 			// the current string in the sorted list is greater as the string we are looking for.

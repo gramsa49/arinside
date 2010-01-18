@@ -292,10 +292,3 @@ void CAREscalationList::Sort()
 	if (GetCount() > 0)
 		std::sort(sortedList->begin(),sortedList->end(),SortByName<CAREscalationList>(*this));
 }
-
-string CAREscalationList::EscalationGetURL(unsigned int index, int rootLevel)
-{
-	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "escalation/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(EscalationGetName(index), strmTmp.str(), "escalation.gif", rootLevel); 
-}
