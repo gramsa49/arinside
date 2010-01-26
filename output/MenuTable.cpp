@@ -46,10 +46,10 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 	}
 
 	tblRow.AddCell( CTableCell(cellNameValue));		
-	tblRow.AddCell( CTableCell(CAREnum::MenuType(menu.menuDefn.menuType)));
-	tblRow.AddCell( CTableCell(CAREnum::MenuRefresh(menu.refreshCode)));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(menu.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(CAREnum::MenuType(menu.GetDefinition().menuType)));
+	tblRow.AddCell( CTableCell(CAREnum::MenuRefresh(menu.GetRefreshCode())));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(menu.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.GetLastChanged(), rootLevel)));
 
 	this->tbl.AddRow(tblRow);
 }
@@ -70,7 +70,7 @@ int CMenuTable::NumRelatedFields(CARCharMenu &obj)
 
 			if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 			{
-				if (field.GetLimits().u.charLimits.charMenu == obj.name)
+				if (strcmp(field.GetLimits().u.charLimits.charMenu, obj.GetARName()) == 0)
 				{
 					nCnt++;
 				}
@@ -95,7 +95,7 @@ int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
 			{
 				if(action.u.characteristics.charMenu != NULL)
 				{
-					if(strcmp(action.u.characteristics.charMenu, obj.name.c_str())==0)
+					if(strcmp(action.u.characteristics.charMenu, obj.GetARName())==0)
 					{
 						nCnt++;
 					}
@@ -110,7 +110,7 @@ int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
 			{
 				if(action.u.characteristics.charMenu != NULL)
 				{
-					if(strcmp(action.u.characteristics.charMenu, obj.name.c_str())==0)
+					if(strcmp(action.u.characteristics.charMenu, obj.GetARName())==0)
 					{
 						nCnt++;
 					}

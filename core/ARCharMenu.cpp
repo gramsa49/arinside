@@ -16,33 +16,114 @@
 
 #include "stdafx.h"
 #include "ARCharMenu.h"
+#include "../ARInside.h"
 
-CARCharMenu::CARCharMenu(string name, int insideId)
-: CARServerObjectWithData(insideId)
+CARCharMenu::CARCharMenu(int insideId)
+: CARServerObject(insideId)
 {
-	this->name = name;
-	this->refreshCode = 0;
-	ARZeroMemory(&menuDefn);
-	ARZeroMemory(&objPropList);
+}
+
+CARCharMenu::CARCharMenu(const string& name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->menuList.Find(name.c_str());
 }
 
 CARCharMenu::~CARCharMenu(void)
 {
-	// TODO: move ARFree calls to separate method to allow copying of the object without 
-	// copying the whole structure
-	//try
-	//{
-	//	FreeARCharMenuStruct(&menuDefn, false);
+}
 
-	//	if(objPropList.props != NULL)
-	//		FreeARPropList(&objPropList, false);
-	//}
-	//catch(...)
-	//{
-	//}
+bool CARCharMenu::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->menuList.GetCount());
+}
+
+bool CARCharMenu::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARCharMenu::Clone()
+{
+	return new CARCharMenu(*this);
 }
 
 string CARCharMenu::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"menu/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "menu.gif" : ""), rootLevel);
+	return CWebUtil::Link(GetARName(), CWebUtil::RootPath(rootLevel)+"menu/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "menu.gif" : ""), rootLevel);
+}
+
+string CARCharMenu::GetName()
+{
+	return CARInside::GetInstance()->menuList.MenuGetName(GetInsideId());
+}
+
+string CARCharMenu::GetName() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetName(GetInsideId());
+}
+
+string CARCharMenu::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->menuList.MenuGetName(GetInsideId())[0]));
+}
+
+bool CARCharMenu::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const char* CARCharMenu::GetHelpText() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetHelptext(GetInsideId());
+}
+
+ARTimestamp CARCharMenu::GetTimestamp()
+{
+	return CARInside::GetInstance()->menuList.MenuGetTimestamp(GetInsideId());
+}
+
+const ARAccessNameType& CARCharMenu::GetOwner() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetOwner(GetInsideId());
+}
+
+const ARAccessNameType& CARCharMenu::GetLastChanged() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetModifiedBy(GetInsideId());
+}
+
+const char* CARCharMenu::GetChangeDiary() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetChangeDiary(GetInsideId());
+}
+
+const ARNameType& CARCharMenu::GetARName() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetName(GetInsideId());
+}
+
+const ARPropList& CARCharMenu::GetProps() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetPropList(GetInsideId());
+}
+
+const string& CARCharMenu::GetAppRefName() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetAppRefName(GetInsideId());
+}
+
+void CARCharMenu::SetAppRefName(const string& appName)
+{
+	return CARInside::GetInstance()->menuList.MenuSetAppRefName(GetInsideId(), appName);
+}
+
+unsigned int CARCharMenu::GetRefreshCode() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetRefreshCode(GetInsideId());
+}
+
+const ARCharMenuStruct& CARCharMenu::GetDefinition() const
+{
+	return CARInside::GetInstance()->menuList.MenuGetDefinition(GetInsideId());
 }

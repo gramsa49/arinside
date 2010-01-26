@@ -364,7 +364,7 @@ void CDocMain::FilterList(string fileName, string searchChar)
 			}
 			else if(searchChar == "#")
 			{
-				if(CARObject::NameStandardFirstChar(pInside->filterList.FilterGetName(filterIndex)[0]))
+				if(!CARObject::NameStandardFirstChar(pInside->filterList.FilterGetName(filterIndex)[0]))
 					bInsert = true;		
 			}
 			else
@@ -676,35 +676,34 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 
 		CMenuTable *tbl = new CMenuTable(*this->pInside);
 
-		list<CARCharMenu>::iterator menuIter;
-		CARCharMenu *menu;
-		for ( menuIter = this->pInside->menuList.begin(); menuIter != this->pInside->menuList.end(); menuIter++ )
+		unsigned int menuCount = this->pInside->menuList.GetCount();
+		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{	
-			menu = &(*menuIter);
+			CARCharMenu menu(menuIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
+			else if(searchChar == "#")
 			{
-				if(menu->GetNameFirstChar() == searchChar)
+				if(!menu.NameStandardFirstChar())
 				{
 					bInsert = true;
 				}
 			}
-			else if(searchChar == "#")
+			else
 			{
-				if(!menu->NameStandardFirstChar())
+				if(menu.GetNameFirstChar() == searchChar)
 				{
-					bInsert = true;		
+					bInsert = true;
 				}
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*menu, rootLevel);
+				tbl->AddRow(menu, rootLevel);
 			}
 		}
 

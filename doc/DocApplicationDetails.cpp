@@ -453,11 +453,11 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 
 	try
 	{
-		list<CARCharMenu>::iterator objIter;				
-		for ( objIter = pInside->menuList.begin(); objIter != pInside->menuList.end(); objIter++ )
+		unsigned int menuCount = pInside->menuList.GetCount();
+		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{	
 			bool bInsert = false;
-			CARCharMenu *obj = &(*objIter);	
+			CARCharMenu obj(menuIndex);
 
 			unsigned int schemaCount = this->pInside->schemaList.GetCount();
 			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
@@ -472,7 +472,7 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 						CARField field(schemaIndex, 0, fieldIndex);
 						if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 						{
-							if(field.GetLimits().u.charLimits.charMenu == obj->name)
+							if(strcmp(field.GetLimits().u.charLimits.charMenu, obj.GetARName()) == 0)
 							{
 								bInsert = true;
 								goto schemaScanEnd;
@@ -483,15 +483,18 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 			}
 schemaScanEnd:
 
-			if(InList(obj->name.c_str(), ARREF_CHAR_MENU))
+			// TODO: check this whole function
+			// if the menu is in the list, why do we scan for schemas using this menu at all?
+			// and if the menu is never in the list (just the schema), then there is no need to call InList for the menu!
+			if(InList(obj.GetARName(), ARREF_CHAR_MENU))
 				bInsert = true;
 
 			if(bInsert)
 			{
 				nResult++;
-				strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
+				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
 
-				obj->appRefName = this->pApp->name;
+				obj.SetAppRefName(this->pApp->name);
 			}
 		}
 	}

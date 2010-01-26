@@ -18,16 +18,42 @@
 #include "ARServerObject.h"
 
 class CARCharMenu :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CARCharMenu(string name, int insideId);
+	CARCharMenu(int insideId);
+	CARCharMenu(const string& name);
 	~CARCharMenu(void);
 
-	unsigned int refreshCode;
-	ARCharMenuStruct menuDefn;
-	ARPropList objPropList;
+	bool Exists();
 
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
+
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// other data retrieval functions
+	const ARNameType& GetARName() const;
+	unsigned int GetRefreshCode() const;
+	const ARCharMenuStruct& GetDefinition() const;
+	const ARPropList& GetProps() const;
+
+	const string& GetAppRefName() const;
+	void SetAppRefName(const string& appName);
+
+	// helpers
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_CHAR_MENU; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

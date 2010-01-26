@@ -1427,17 +1427,17 @@ string CDocSchemaDetails::SearchMenuReferences()
 	{
 		CMenuTable *menuTable = new CMenuTable(*this->pInside);
 
-		list<CARCharMenu>::iterator listMenuIter;		
-		CARCharMenu *menu;
-		for ( listMenuIter = this->pInside->menuList.begin();  listMenuIter != this->pInside->menuList.end(); listMenuIter++ )
+		unsigned int menuCount = this->pInside->menuList.GetCount();
+		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{
-			menu = &(*listMenuIter);
-			if(menu->menuDefn.menuType == AR_CHAR_MENU_QUERY)
+			CARCharMenu menu(menuIndex);
+			const ARCharMenuStruct& menuDefn = menu.GetDefinition();
+			if(menuDefn.menuType == AR_CHAR_MENU_QUERY)
 			{
-				if(strcmp(menu->menuDefn.u.menuQuery.schema, schema.GetARName()) == 0 && 
-				   strcmp(menu->menuDefn.u.menuQuery.server, AR_CURRENT_SERVER_TAG)==0)
+				if(strcmp(menuDefn.u.menuQuery.schema, schema.GetARName()) == 0 && 
+				   strcmp(menuDefn.u.menuQuery.server, AR_CURRENT_SERVER_TAG)==0)
 				{
-					menuTable->AddRow(*menu, rootLevel);
+					menuTable->AddRow(menu, rootLevel);
 				}
 			}
 		}		

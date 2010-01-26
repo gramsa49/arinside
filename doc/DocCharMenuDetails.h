@@ -22,12 +22,12 @@ class CDocCharMenuDetails :
 	public CDocBase
 {
 public:
-	CDocCharMenuDetails(CARInside &arInside, CARCharMenu &arCharMenu, string path, int rootLevel);
+	CDocCharMenuDetails(unsigned int menuInsideId, int rootLevel);
 	~CDocCharMenuDetails(void);
 
 	void Documentation();
 private:
-	CARCharMenu *pMenu;
+	CARCharMenu menu;
 
 	string CharMenuDetails();
 	string SearchMenuDetails();
@@ -38,5 +38,5 @@ private:
 	string RelatedFields();
 	string RelatedActiveLinks();
 
-	string GetSQLLabelList(ARCharMenuSQLStruct* sqlMenu);
+	string GetSQLLabelList(const ARCharMenuSQLStruct* sqlMenu);
 };

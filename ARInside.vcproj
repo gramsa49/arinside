@@ -1624,6 +1624,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\ARMenuList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARMenuList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARSchemaList.cpp"
 				>
 			</File>

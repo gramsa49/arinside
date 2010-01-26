@@ -73,7 +73,6 @@ CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
 	this->containerList.clear();
-	this->menuList.clear();
 	this->userList.clear();
 	this->groupList.clear();
 	this->roleList.clear();
@@ -347,7 +346,6 @@ void CARInside::LoadFromFile(void)
 			cout << parsedObjects.numItems << " items loaded." << endl;
 			unsigned int arInsideIdSchema = 0; // TODO: this vars aren't needed if all new lists are finish
 			unsigned int arInsideIdCont = 0;
-			unsigned int arInsideIdMenu = 0;
 			unsigned int arInsideIdImage = 0;
 
 			unsigned int schemaCount = 0;
@@ -355,6 +353,7 @@ void CARInside::LoadFromFile(void)
 			unsigned int activelinkCount = 0;
 			unsigned int filterCount = 0;
 			unsigned int escalationCount = 0;
+			unsigned int menuCount = 0;
 
 			for (unsigned int i=0; i < parsedObjects.numItems; ++i)
 			{
@@ -372,6 +371,9 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_ESCALATION:
 					++escalationCount;
 					break;
+				case AR_STRUCT_ITEM_XML_CHAR_MENU:
+					++menuCount;
+					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE:
 					++imagesCount; 
@@ -384,6 +386,7 @@ void CARInside::LoadFromFile(void)
 			if (activelinkCount > 0) alList.Reserve(activelinkCount);
 			if (filterCount > 0) filterList.Reserve(filterCount);
 			if (escalationCount > 0) escalationList.Reserve(escalationCount);
+			if (menuCount > 0) menuList.Reserve(menuCount);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			if (imagesCount > 0) imageList.Reserve(imagesCount);
 #endif
@@ -434,35 +437,14 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_CHAR_MENU:
 					{
 						LOG << "Loading CharMenu: " << parsedObjects.structItemList[i].name; 
-						CARCharMenu *obj = new CARCharMenu(parsedObjects.structItemList[i].name, arInsideIdMenu);
 
-						if( ARGetMenuFromXML(&this->arControl, 
-							&parsedStream,
-							parsedObjects.structItemList[i].name,
-							NULL,							
-							&obj->refreshCode,
-							&obj->menuDefn,
-							obj->owner,
-							obj->lastChanged,
-							&obj->timestamp,								
-							&obj->helptext,
-							&obj->changeDiary,
-							&obj->objPropList,
-							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
+						int objInsideId = menuList.AddMenuFromXML(parsedStream, parsedObjects.structItemList[i].name, &xmlDocVersion);
+
+						if (objInsideId > -1)
 						{
-							ParseVersionString(obj->xmlDocVersion);
-
-							this->menuList.insert(this->menuList.end(), *obj);
-
-							LOG << " (InsideID: " << arInsideIdMenu << ") [OK]" << endl;
-							arInsideIdMenu++;								
+							ParseVersionString(xmlDocVersion);
+							LOG << " (InsideID: " << objInsideId << ") [OK]" << endl;
 						}
-						else
-							cerr << GetARStatusError();
-
-						delete obj;
-						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 				case AR_STRUCT_ITEM_XML_ESCALATION:
@@ -549,6 +531,7 @@ void CARInside::LoadFromFile(void)
 			alList.Sort();
 			filterList.Sort();
 			escalationList.Sort();
+			menuList.Sort();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			imageList.Sort();
 #endif
@@ -790,53 +773,10 @@ int CARInside::LoadContainer(void)
 
 int CARInside::LoadCharMenus(void)
 {
-	int insideId=0;
-
 	try
 	{
-		ARNameList nameList;
-
-		if(ARGetListCharMenu(&this->arControl, 0, NULL, NULL, NULL, &nameList, &this->arStatus) == AR_RETURN_OK)
-		{
-			this->menuList.clear();	
-			for(unsigned int i=0; i< nameList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_CHAR_MENU, nameList.nameList[i]))
-				{
-					LOG << "Loading Menu: " << nameList.nameList[i]; 
-					CARCharMenu *obj = new CARCharMenu(nameList.nameList[i], insideId);
-
-					if( ARGetCharMenu(&this->arControl, 
-						nameList.nameList[i], 
-						&obj->refreshCode,
-						&obj->menuDefn,
-						&obj->helptext,
-						&obj->timestamp,
-						obj->owner,
-						obj->lastChanged,
-						&obj->changeDiary,
-						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
-						this->menuList.insert(this->menuList.end(), *obj);
-
-						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
-						insideId++;
-
-						FreeARStatusList(&this->arStatus, false);
-					}
-					else
-						cerr << GetARStatusError();
-
-					delete obj;
-				}
-			}
-		}
-
-		FreeARNameList(&nameList, false);
-		FreeARStatusList(&this->arStatus, false);
-
-		this->Sort(menuList);		
+		menuList.LoadFromServer();
+		menuList.Sort();
 	}
 	catch(exception& e)
 	{
@@ -844,7 +784,7 @@ int CARInside::LoadCharMenus(void)
 		GetARStatusError();
 	}
 
-	return insideId;
+	return menuList.GetCount();
 }
 
 int CARInside::LoadEscalations(void)
@@ -1086,19 +1026,13 @@ void CARInside::Documentation(void)
 	}	
 
 	// Char Menu Details
-	nTmpCnt = 1;
-	list<CARCharMenu>::iterator menuIter;	
+	tmpCount = menuList.GetCount();
 	cout << "Starting Menu Documentation" << endl;
-	for ( menuIter = this->menuList.begin(); menuIter != this->menuList.end(); menuIter++ )
+	for (unsigned int menuIndex = 0; menuIndex < tmpCount; ++menuIndex)
 	{
-		CARCharMenu *menu = &(*menuIter);	
-
-		LOG << "Menu [" << nTmpCnt << "-" << menuList.size() << "] '" << menu->name << "': ";
-		string path = "menu/"+menu->FileID();
-		CDocCharMenuDetails *menuDetails = new CDocCharMenuDetails(*this, *menu, path, 2);
-		menuDetails->Documentation();
-		delete menuDetails;
-		nTmpCnt++;
+		LOG << "Menu [" << menuIndex << "-" << tmpCount << "] '" << menuList.MenuGetName(menuIndex) << "': ";
+		CDocCharMenuDetails menuDetails(menuIndex, 2);
+		menuDetails.Documentation();
 	}
 
 
@@ -1122,9 +1056,7 @@ void CARInside::Documentation(void)
 	for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 	{
 		int rootLevel = 2;
-
 		CARSchema schema(schemaIndex);
-		string path="schema/"+schema.FileID(); // TODO: should be left unused at the end
 
 		LOG << "Schema [" << (schemaIndex + 1) << "-" << schemaCount << "] '" << schema.GetName() << "': ";
 		CDocSchemaDetails *schemaDetails = new CDocSchemaDetails(schemaIndex, rootLevel);
@@ -1421,18 +1353,10 @@ int CARInside::ContainerGetInsideId(string searchObjName)
 	return -1;
 }
 
+// TODO: the CARInside::...GetInsideId function should be removed .... use the objects instead, e.g. CARCharMenu
 int CARInside::MenuGetInsideId(string searchObjName)
 {
-	list<CARCharMenu>::iterator iter;			
-	for ( iter = menuList.begin(); iter != menuList.end(); iter++ )
-	{			
-		CARCharMenu *obj = &(*iter);
-		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
-			return obj->GetInsideId();
-		}
-	}
-	return -1;
+	return menuList.Find(searchObjName.c_str());
 }
 
 int CARInside::EscalationGetInsideId(string searchObjName)
@@ -1620,16 +1544,11 @@ string CARInside::LinkToMenu(string menuName, int fromRootLevel, bool* bFound)
 		return menuName;
 	}
 
-	list<CARCharMenu>::iterator menuIter;
-	list<CARCharMenu>::iterator endIt = this->menuList.end();
-	for ( menuIter = this->menuList.begin(); menuIter != endIt; ++menuIter )
-	{	
-		CARCharMenu *menu = &(*menuIter);
-		if(menuName.compare(menu->name) == 0)
-		{
-			if (bFound) { *bFound = true; }
-			return menu->GetURL(fromRootLevel);
-		}
+	CARCharMenu menu(menuName);
+	if (menu.Exists())
+	{
+		if (bFound) { *bFound = true; }
+		return menu.GetURL(fromRootLevel);
 	}
 
 	//Menu has not been found

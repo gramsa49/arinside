@@ -132,7 +132,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->menuList.size()));
+		row.AddCell(CTableCell((int)this->pInside->menuList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Menus", "menu/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -166,7 +166,7 @@ void CDocSummaryInfo::Documentation()
 		nNumTotalObjects += (unsigned int)this->pInside->escalationList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->filterList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->menuList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->menuList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->roleList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->schemaList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->userList.size();
