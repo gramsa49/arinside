@@ -161,21 +161,22 @@ string CDocEscalationDetails::ContainerReferences()
 	{
 		CContainerTable *contTable = new CContainerTable(*this->pInside);
 
-		list<CARContainer>::iterator listContIter;		
-		CARContainer *cont;
-		for ( listContIter = this->pInside->containerList.begin();  listContIter != this->pInside->containerList.end(); listContIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			cont = &(*listContIter);
-			for(unsigned int nCnt = 0; nCnt < cont->references.numItems; nCnt++)
+			CARContainer cont(cntIndex);
+			
+			if(cont.GetType() != ARCON_APP)
 			{
-				if(cont->type != ARCON_APP)
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
-					if(cont->references.referenceList[nCnt].reference.u.name != NULL)
+					if(refs.referenceList[nCnt].type == ARREF_ESCALATION)
 					{
-						if(this->escalation.GetName().compare(cont->references.referenceList[nCnt].reference.u.name)==0
-							&& cont->references.referenceList[nCnt].type == ARREF_ESCALATION)
+						if(refs.referenceList[nCnt].reference.u.name != NULL && 
+							 this->escalation.GetName() == refs.referenceList[nCnt].reference.u.name)
 						{
-							contTable->AddRow(*cont, rootLevel);
+							contTable->AddRow(cont, rootLevel);
 						}
 					}
 				}

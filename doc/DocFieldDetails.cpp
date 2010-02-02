@@ -21,7 +21,6 @@
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)
 {
-	this->pInside = CARInside::GetInstance();
 	this->path = "schema/" + schema.FileID();
 	this->rootLevel = rootLevel;
 }

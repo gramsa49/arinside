@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocAnalyzer.h"
 
-CDocAnalyzer::CDocAnalyzer(CARInside &arIn, string path)
+CDocAnalyzer::CDocAnalyzer(string path)
 {
-	this->pInside = &arIn;
 	this->path = path;
 	this->rootLevel = 1;
 }

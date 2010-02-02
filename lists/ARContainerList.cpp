@@ -15,27 +15,45 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "ARMenuList.h"
+#include "ARContainerList.h"
 #include "../ARInside.h"
-#include "../output/WebUtil.h"
 #include "BlackList.h"
 
-CARMenuList::CARMenuList(void)
+CARContainerList::CARContainerList(void)
 {
-	internalListState = CARMenuList::EMPTY;
+	internalListState = EMPTY;
 	reservedSize = 0;
-	names.numItems = 0;
+	
+	ARZeroMemory(&names);
+	ARZeroMemory(&permissions);
+	ARZeroMemory(&subadmins);
+	ARZeroMemory(&ownerObjects);
+	ARZeroMemory(&labels);
+	ARZeroMemory(&descriptions);
+	ARZeroMemory(&types);
+	ARZeroMemory(&references);
+	ARZeroMemory(&helpTexts);
+	ARZeroMemory(&changedTimes);
+	ARZeroMemory(&owners);
+	ARZeroMemory(&changedUsers);
+	ARZeroMemory(&changeDiary);
+	ARZeroMemory(&objProps);
 }
 
-CARMenuList::~CARMenuList(void)
+CARContainerList::~CARContainerList(void)
 {
 	if (internalListState == INTERNAL_ALLOC)
 	{
 		try
 		{
 			delete[] names.nameList;
-			delete[] refreshCodes.intList;
-			delete[] definitions.list;
+			delete[] permissions.permissionList;
+			delete[] subadmins.internalIdListList;
+			delete[] ownerObjects.ownerObjListList;
+			delete[] labels.stringList;
+			delete[] descriptions.stringList;
+			delete[] types.intList;
+			delete[] references.referenceListList;
 			delete[] changedTimes.timestampList;
 			delete[] helpTexts.stringList;
 			delete[] owners.nameList;
@@ -52,8 +70,13 @@ CARMenuList::~CARMenuList(void)
 		try
 		{
 			FreeARNameList(&names,false);
-			FreeARUnsignedIntList(&refreshCodes,false);
-			FreeARCharMenuStructList(&definitions,false);
+			FreeARPermissionListList(&permissions,false);
+			FreeARInternalIdListList(&subadmins,false);
+			FreeARContainerOwnerObjListList(&ownerObjects,false);
+			FreeARTextStringList(&labels,false);
+			FreeARTextStringList(&descriptions,false);
+			FreeARUnsignedIntList(&types,false);
+			FreeARReferenceListList(&references,false);
 			FreeARTextStringList(&helpTexts,false);
 			FreeARTimestampList(&changedTimes,false);
 			FreeARAccessNameList(&owners,false);
@@ -63,59 +86,88 @@ CARMenuList::~CARMenuList(void)
 		}
 		catch (...)
 		{
-
 		}
 	}
 }
 
-bool CARMenuList::LoadFromServer()
+bool CARContainerList::LoadFromServer()
 {
-	ARBooleanList   mnuExists;
+	ARBooleanList   cntExists;
 	ARStatusList    status;
 	CARInside*      arIn = CARInside::GetInstance();
 	ARNameList*     objectsToLoad = NULL;
 	ARNameList      objectNames;
 	unsigned int    originalObjectNameCount = 0;
 	bool            funcResult = false;
+	ARContainerTypeList cntTypes;	int cntType = ARCON_ALL;
+	ARReferenceTypeList refTypes;	int refType = ARREF_ALL;
 
-	memset(&mnuExists, 0, sizeof(mnuExists));
-	memset(&status, 0, sizeof(status));
+	ARZeroMemory(&cntExists);
+	ARZeroMemory(&status);
+	
+	cntTypes.numItems = 1;
+	cntTypes.type = &cntType;
 
-	// if the blacklist contains menus, we should first load all menu names
+	refTypes.numItems = 1;
+	refTypes.refType = &refType;
+
+	objectNames.numItems = 0;
+
+	// if the blacklist contains containers, we should first load all names
 	// from the server and remove those that are contained in the blacklist.
 	// after that call ARGetMultiple... to retrieve just the needed objects.
-	if (arIn->blackList.GetCountOf(ARREF_CHAR_MENU) > 0)
+	if (arIn->blackList.GetCountOf(ARREF_CONTAINER) > 0)
 	{
-		memset(&objectNames, 0, sizeof(objectNames));
-
-		if (ARGetListCharMenu(&arIn->arControl, NULL, 0, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+		ARContainerInfoList cntInfoList;
+		ARZeroMemory(&objectNames);
+		ARZeroMemory(&cntInfoList);
+		if (ARGetListContainer(&arIn->arControl, 0, NULL, AR_HIDDEN_INCREMENT, NULL, NULL, &cntInfoList, &status) == AR_RETURN_OK)
 		{
+			// create a temporate ARNameList
+			objectNames.numItems = cntInfoList.numItems;
+			objectNames.nameList = new ARNameType[cntInfoList.numItems];
+			for (unsigned int index = 0; index < cntInfoList.numItems; ++index)
+				memcpy(&objectNames.nameList[index], cntInfoList.conInfoList[index].name, sizeof(ARNameType));
+
+			// clean up the structs we dont need anymore
+			FreeARContainerInfoList(&cntInfoList, false);
+
+			// backup count and exclude all name contained in the blacklist
 			originalObjectNameCount = objectNames.numItems;
-			arIn->blackList.Exclude(ARREF_CHAR_MENU, &objectNames);
+			arIn->blackList.Exclude(ARREF_CONTAINER, &objectNames);
 			objectsToLoad = &objectNames;
 		}
 		else
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-	// ok, now retrieve all informations of the menus we need
-	if (ARGetMultipleCharMenus(&arIn->arControl,
+	// ok, now retrieve all informations of the containers we need
+	if (ARGetMultipleContainers(&arIn->arControl,
 		0,
 		objectsToLoad,
-		&mnuExists,
+		&cntTypes,
+		AR_HIDDEN_INCREMENT,
+		NULL, // owners list
+		&refTypes,
+		&cntExists,
 		&names,
-		&refreshCodes,
-		&definitions,
+		&permissions,
+		&subadmins,
+		&ownerObjects,
+		&labels,
+		&descriptions,
+		&types,
+		&references,
 		&helpTexts,
-		&changedTimes,
 		&owners,
+		&changedTimes,
 		&changedUsers,
 		&changeDiary,
 		&objProps,
 		&status) == AR_RETURN_OK)
 	{
-		FreeARBooleanList(&mnuExists, false);
-		internalListState = CARMenuList::ARAPI_ALLOC;
+		FreeARBooleanList(&cntExists, false);
+		internalListState = ARAPI_ALLOC;
 
 		sortedList.reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
@@ -134,15 +186,15 @@ bool CARMenuList::LoadFromServer()
 	if (originalObjectNameCount > 0)
 	{
 		objectNames.numItems = originalObjectNameCount;
-		FreeARNameList(&objectNames, false);
+		delete[] objectNames.nameList;
 	}
 
 	return funcResult;
 }
 
-void CARMenuList::Reserve(unsigned int size)
+void CARContainerList::Reserve(unsigned int size)
 {
-	if (internalListState != CARMenuList::EMPTY) throw AppException("object isnt reusable!", "MenuList");
+	if (internalListState != EMPTY) throw AppException("object isnt reusable!", "ContainerList");
 
 	sortedList.reserve(size);
 	appRefNames.reserve(size);
@@ -150,11 +202,26 @@ void CARMenuList::Reserve(unsigned int size)
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
 
-	refreshCodes.numItems = 0;
-	refreshCodes.intList = new unsigned int[size];
+	permissions.numItems = 0;
+	permissions.permissionList = new ARPermissionList[size];
 
-	definitions.numItems = 0;
-	definitions.list = new ARCharMenuStruct[size];
+	subadmins.numItems = 0;
+	subadmins.internalIdListList = new ARInternalIdList[size];
+
+	ownerObjects.numItems = 0;
+	ownerObjects.ownerObjListList = new ARContainerOwnerObjList[size];
+
+	labels.numItems = 0;
+	labels.stringList = new char*[size];
+
+	descriptions.numItems = 0;
+	descriptions.stringList = new char*[size];
+
+	types.numItems = 0;
+	types.intList = new unsigned int[size];
+
+	references.numItems = 0;
+	references.referenceListList = new ARReferenceList[size];
 
 	helpTexts.numItems = 0;
 	helpTexts.stringList = new char*[size];
@@ -175,12 +242,12 @@ void CARMenuList::Reserve(unsigned int size)
 	objProps.propsList = new ARPropList[size];
 
 	reservedSize = size;
-	internalListState = CARMenuList::INTERNAL_ALLOC;
+	internalListState = INTERNAL_ALLOC;
 }
 
-int CARMenuList::AddMenuFromXML(ARXMLParsedStream &stream, const char* menuName, unsigned int *outDocVersion)
+int CARContainerList::AddContainerFromXML(ARXMLParsedStream &stream, const char* containerName, unsigned int *outDocVersion)
 {
-	if (internalListState != CARMenuList::INTERNAL_ALLOC) throw AppException("illegal usage!", "MenuList");
+	if (internalListState != INTERNAL_ALLOC) throw AppException("illegal usage!", "ContainerList");
 	if (names.numItems >= reservedSize) return -1;
 	if (outDocVersion != NULL) *outDocVersion = 0;
 	
@@ -190,15 +257,20 @@ int CARMenuList::AddMenuFromXML(ARXMLParsedStream &stream, const char* menuName,
 
 	unsigned int arDocVersion = 0;
 	unsigned int index = names.numItems;
-	strncpy(names.nameList[index], menuName, 254);	// copy name over
+	strncpy(names.nameList[index], containerName, 254);	// copy name over
 	names.nameList[index][254] = 0;
 
-	if (ARGetMenuFromXML(&arIn->arControl,
+	if (ARGetContainerFromXML(&arIn->arControl,
 		&stream,
 		names.nameList[index],
 		appBlockName,
-		&refreshCodes.intList[index],
-		&definitions.list[index],
+		&permissions.permissionList[index],
+		&subadmins.internalIdListList[index],
+		&ownerObjects.ownerObjListList[index],
+		&labels.stringList[index],
+		&descriptions.stringList[index],
+		&types.intList[index],
+		&references.referenceListList[index],
 		owners.nameList[index],
 		changedUsers.nameList[index],
 		&changedTimes.timestampList[index],
@@ -209,8 +281,13 @@ int CARMenuList::AddMenuFromXML(ARXMLParsedStream &stream, const char* menuName,
 		&status) == AR_RETURN_OK)
 	{
 		++names.numItems;
-		++refreshCodes.numItems;
-		++definitions.numItems;
+		++permissions.numItems;
+		++subadmins.numItems;
+		++ownerObjects.numItems;
+		++labels.numItems;
+		++descriptions.numItems;
+		++types.numItems;
+		++references.numItems;
 		++helpTexts.numItems;
 		++changedTimes.numItems;
 		++owners.numItems;
@@ -232,7 +309,7 @@ int CARMenuList::AddMenuFromXML(ARXMLParsedStream &stream, const char* menuName,
 	}
 }
 
-int CARMenuList::Find(const char* name)
+int CARContainerList::Find(const char* name)
 {
 	unsigned int count = GetCount();
 	for (unsigned int i = 0; i < count; ++i)
@@ -250,9 +327,9 @@ int CARMenuList::Find(const char* name)
 	return -1;
 }
 
-void CARMenuList::Sort()
+void CARContainerList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARMenuList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARContainerList>(*this));
 }
 

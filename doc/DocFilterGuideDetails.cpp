@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocFilterGuideDetails.h"
 
-CDocFilterGuideDetails::CDocFilterGuideDetails(CARInside &arIn, CARContainer &filterGuide)
+CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &filterGuide)
 {
-	this->pInside = &arIn;
 	this->pFilterGuide = &filterGuide;
 	this->rootLevel = 2;
 }
@@ -37,20 +36,20 @@ void CDocFilterGuideDetails::Documentation()
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage("index", pFilterGuide->name, rootLevel, this->pInside->appConfig);
+			CWebPage webPage("index", pFilterGuide->GetName(), rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pFilterGuide->name);
-			if(this->pFilterGuide->appRefName.c_str() != NULL && this->pFilterGuide->appRefName.size() > 0)
-				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pFilterGuide->appRefName, this->rootLevel);
+			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pFilterGuide->GetName());
+			if(!this->pFilterGuide->GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pFilterGuide->GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
 
 			//Container Base Informations
-			CDocContainerHelper *contHelper = new CDocContainerHelper(*this->pInside, *this->pFilterGuide, this->rootLevel);
+			CDocContainerHelper *contHelper = new CDocContainerHelper(*this->pFilterGuide, this->rootLevel);
 			webPage.AddContent(contHelper->BaseInfo());
 			delete contHelper;
 
@@ -80,22 +79,23 @@ string CDocFilterGuideDetails::FilterGuideInformation()
 
 	try
 	{
-		for(unsigned int i=0; i< pFilterGuide->references.numItems; i++)
+		const ARReferenceList& refs = pFilterGuide->GetReferences();
+		for(unsigned int i=0; i< refs.numItems; i++)
 		{
 			stringstream label, filter;
 			label.str("");
 			filter.str("");
 
-			switch(pFilterGuide->references.referenceList[i].type)
+			switch(refs.referenceList[i].type)
 			{
 			case ARREF_FILTER:
 				{
-					filter << pInside->LinkToFilter(pFilterGuide->references.referenceList[i].reference.u.name, rootLevel);
+					filter << pInside->LinkToFilter(refs.referenceList[i].reference.u.name, rootLevel);
 				}
 				break;
 			case ARREF_NULL_STRING:
 				{
-					label << pFilterGuide->references.referenceList[i].label;
+					label << refs.referenceList[i].label;
 				}
 				break;			
 			}
@@ -139,7 +139,7 @@ string CDocFilterGuideDetails::FilterActions()
 				const ARFilterActionStruct& action = IfActions.actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, pFilterGuide->name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, pFilterGuide->GetName().c_str())==0)
 					{
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
@@ -161,7 +161,7 @@ string CDocFilterGuideDetails::FilterActions()
 				ARFilterActionStruct action = ElseActions.actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, pFilterGuide->name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, pFilterGuide->GetName().c_str())==0)
 					{
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;

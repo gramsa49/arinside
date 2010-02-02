@@ -17,10 +17,9 @@
 #include "stdafx.h"
 #include "DocApplicationDetails.h"
 
-CDocApplicationDetails::CDocApplicationDetails(CARInside &arIn, CARContainer &application)
+CDocApplicationDetails::CDocApplicationDetails(CARContainer &application)
+: pApp(application)
 {
-	this->pInside = &arIn;
-	this->pApp = &application;
 	this->rootLevel = 2;
 }
 
@@ -32,18 +31,18 @@ void CDocApplicationDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_APP)+"/"+ this->pApp->FileID();
+		string dir = CAREnum::ContainerDir(ARCON_APP)+"/"+ this->pApp.FileID();
 
 		CWindowsUtil winUtil(pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage("index", this->pApp->name, rootLevel, pInside->appConfig);
+			CWebPage webPage("index", this->pApp.GetName(), rootLevel, pInside->appConfig);
 
 			//ContentHead informations
-			webPage.AddContentHead(CWebUtil::LinkToApplicationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pApp->name));
+			webPage.AddContentHead(CWebUtil::LinkToApplicationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pApp.GetName()));
 
 			//Container Base Informations
-			CDocContainerHelper *contHelper = new CDocContainerHelper(*this->pInside, *this->pApp, this->rootLevel);
+			CDocContainerHelper *contHelper = new CDocContainerHelper(this->pApp, this->rootLevel);
 			webPage.AddContent(contHelper->BaseInfo());
 			delete contHelper;
 
@@ -51,7 +50,7 @@ void CDocApplicationDetails::Documentation()
 			webPage.AddContent(ApplicationInformation());
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pApp, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->pApp, this->rootLevel));
 
 			//Save File
 			webPage.SaveInFolder(dir);
@@ -69,18 +68,13 @@ string CDocApplicationDetails::GetPrimaryForm()
 {
 	try
 	{
-		for(unsigned int i=0; i< this->pApp->references.numItems; i++)
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; i++)
 		{
-			switch(this->pApp->references.referenceList[i].type)
+			switch(refs.referenceList[i].type)
 			{						
-				//case ARREF_APPLICATION_PRIMARY_FORM:
 			case ARREF_SCHEMA:
-				{
-					if(InList(this->pApp->references.referenceList[i].reference.u.name, ARREF_SCHEMA))
-					{
-						return this->pApp->references.referenceList[i].reference.u.name;
-					}
-				}
+				return refs.referenceList[i].reference.u.name;
 			}
 		}
 	}
@@ -92,15 +86,17 @@ string CDocApplicationDetails::GetPrimaryForm()
 	return EmptyValue;
 }
 
+// TODO: check all calls to this function for code/loop optimizations
 bool CDocApplicationDetails::InList(string searchName, int nType)
 {
 	try
 	{
-		for(unsigned int i=0; i< this->pApp->references.numItems; i++)
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; i++)
 		{
-			if(this->pApp->references.referenceList[i].type == nType)
+			if(refs.referenceList[i].type == nType)
 			{	
-				if(strcmp(this->pApp->references.referenceList[i].reference.u.name, searchName.c_str())==0)
+				if(searchName == refs.referenceList[i].reference.u.name)
 				{
 					return true;
 				}
@@ -242,18 +238,20 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 	try
 	{
 		//Update the schema informations
-		unsigned int schemaCount = pInside->schemaList.GetCount();
-		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
-		{	
-			CARSchema schema(schemaIndex);
-			if(this->InList(schema.GetName(), ARREF_SCHEMA))
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for ( unsigned int refIndex = 0; refIndex < refs.numItems; ++refIndex )
+		{
+			if (refs.referenceList[refIndex].type == ARREF_SCHEMA)
 			{
-				nResult++;	
-				strmResult << schema.GetURL(this->rootLevel) << "<br/>" << endl;
-
-				schema.SetAppRefName(this->pApp->name);
-			}
-		}	
+				CARSchema schema(refs.referenceList[refIndex].reference.u.name);
+				if (schema.Exists())
+				{
+					nResult++;
+					strmResult << schema.GetURL(this->rootLevel) << "<br/>" << endl;
+					schema.SetAppRefName(this->pApp.GetName());
+				}
+			};
+		}
 	}
 	catch(exception& e)
 	{
@@ -294,7 +292,7 @@ string CDocApplicationDetails::SearchActiveLinks(int &nResult)
 			{
 				nResult++;
 				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
-				obj.SetAppRefName(this->pApp->name);
+				obj.SetAppRefName(this->pApp.GetName());
 			}
 		}		
 	}
@@ -337,7 +335,7 @@ string CDocApplicationDetails::SearchFilters(int &nResult)
 			{
 				nResult++;
 				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
-				obj.SetAppRefName(this->pApp->name);
+				obj.SetAppRefName(this->pApp.GetName());
 			}
 		}
 	}
@@ -379,7 +377,7 @@ string CDocApplicationDetails::SearchEscalations(int &nResult)
 			{
 				nResult++;
 				strmResult << escalation.GetURL(rootLevel) << "<br/>" << endl;
-				escalation.SetAppRefName(this->pApp->name);
+				escalation.SetAppRefName(this->pApp.GetName());
 			}
 		}		
 	}
@@ -401,27 +399,29 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 
 	try
 	{
-		list<CARContainer>::iterator objIter;				
-		for ( objIter = pInside->containerList.begin(); objIter != pInside->containerList.end(); objIter++ )
+		unsigned int cntCount = pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
 			bool bInsert = false;
-			CARContainer *obj = &(*objIter);	
+			CARContainer obj(cntIndex);
 
-			if(obj->type == nType)
-			{	
-				if(this->InList(obj->name, ARREF_CONTAINER))
+			if(obj.GetType() == nType)
+			{
+				// first check, if the container is contained in the application
+				if(this->InList(obj.GetName(), ARREF_CONTAINER))
 				{
 					bInsert = true;
 				}
-
-				CARContainer *obj = &(*objIter);			
-				if(obj->type == nType)
+				else
 				{
-					for(unsigned int i=0; i< obj->ownerObjList.numItems; i++)
+					// if the container is not contained in the application, check if there is a schema, that is part of the app
+					const ARContainerOwnerObjList& ownerObjList = obj.GetOwnerObjects();
+					for(unsigned int i=0; i< ownerObjList.numItems; i++)
 					{
-						if(this->InList(obj->ownerObjList.ownerObjList[i].ownerName, ARREF_SCHEMA))
+						if(this->InList(ownerObjList.ownerObjList[i].ownerName, ARREF_SCHEMA))
 						{
 							bInsert = true;
+							break;	// stop here, one is enough
 						}
 					}
 				}
@@ -429,9 +429,9 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 				if(bInsert)
 				{
 					nResult++;
-					strmResult << obj->GetURL(rootLevel) << "<br/>" << endl;
+					strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
 
-					obj->appRefName = this->pApp->name;
+					obj.SetAppRefName(this->pApp.GetName());
 				}
 			}
 		}	
@@ -494,7 +494,7 @@ schemaScanEnd:
 				nResult++;
 				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
 
-				obj.SetAppRefName(this->pApp->name);
+				obj.SetAppRefName(this->pApp.GetName());
 			}
 		}
 	}

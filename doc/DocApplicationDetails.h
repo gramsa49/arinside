@@ -22,13 +22,13 @@ class CDocApplicationDetails :
 	public CDocBase
 {
 public:
-	CDocApplicationDetails(CARInside &arIn, CARContainer &application);
+	CDocApplicationDetails(CARContainer &application);
 	~CDocApplicationDetails(void);
 
 	void Documentation();
 
 private:
-	CARContainer *pApp;
+	CARContainer &pApp;
 
 	string GetPrimaryForm();
 	string ApplicationInformation();

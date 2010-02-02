@@ -21,7 +21,6 @@ extern int nFilesCreated;
 
 CDocSummaryInfo::CDocSummaryInfo(CARInside &arIn, string path)
 {
-	this->pInside = &arIn;
 	this->path = path;
 	this->rootLevel = 0;
 }
@@ -57,11 +56,13 @@ void CDocSummaryInfo::Documentation()
 		unsigned int nFilterGuide = 0;
 		unsigned int nPacklist = 0;
 		unsigned int nApplication = 0;
-		list<CARContainer>::iterator contIter;
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			CARContainer *cont = &(*contIter);
-			switch(cont->type)
+			CARContainer cont(cntIndex);
+
+			switch(cont.GetType())
 			{
 			case ARCON_WEBSERVICE:
 				{
@@ -162,7 +163,7 @@ void CDocSummaryInfo::Documentation()
 #endif
 
 		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.GetCount();
-		nNumTotalObjects += (unsigned int)this->pInside->containerList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->containerList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->escalationList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->filterList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();

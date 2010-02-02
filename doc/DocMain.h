@@ -36,7 +36,7 @@ class CDocMain :
 	public CDocBase
 {
 public:
-	CDocMain(CARInside &arIn);
+	CDocMain();
 	~CDocMain(void);
 
 	int Index();

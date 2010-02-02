@@ -20,7 +20,6 @@
 CDocCharMenuDetails::CDocCharMenuDetails(unsigned int menuInsideId, int rootLevel)
 : menu(menuInsideId)
 {
-	this->pInside = CARInside::GetInstance();
 	this->path = "menu/" + menu.FileID();
 	this->rootLevel = rootLevel;
 }

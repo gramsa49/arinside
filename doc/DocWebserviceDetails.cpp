@@ -17,10 +17,9 @@
 #include "stdafx.h"
 #include "DocWebserviceDetails.h"
 
-CDocWebserviceDetails::CDocWebserviceDetails(CARInside &arIn, CARContainer &obj)
+CDocWebserviceDetails::CDocWebserviceDetails(CARContainer &obj)
+: ws(obj)
 {
-	this->pInside = &arIn;
-	this->pWs = &obj;
 	this->rootLevel = 2;
 }
 
@@ -32,18 +31,18 @@ void CDocWebserviceDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_WEBSERVICE)+"/"+pWs->FileID();
+		string dir = CAREnum::ContainerDir(ARCON_WEBSERVICE)+"/" + ws.FileID();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage("index", pWs->name, rootLevel, pInside->appConfig);
+			CWebPage webPage("index", ws.GetName(), rootLevel, pInside->appConfig);
 
 			//ContentHead informations
-			webPage.AddContentHead(CWebUtil::LinkToWebServiceIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pWs->name) + " (Common Properties)");
+			webPage.AddContentHead(CWebUtil::LinkToWebServiceIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->ws.GetName()) + " (Common Properties)");
 
 			//Container Base Informations
-			CDocContainerHelper *contHelper = new CDocContainerHelper(*this->pInside, *this->pWs, this->rootLevel);
+			CDocContainerHelper *contHelper = new CDocContainerHelper(this->ws, this->rootLevel);
 			webPage.AddContent(contHelper->BaseInfo());
 			delete contHelper;
 
@@ -51,7 +50,7 @@ void CDocWebserviceDetails::Documentation()
 			webPage.AddContent(WSInformation());
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pWs, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->ws, this->rootLevel));
 
 			//Save File
 			webPage.SaveInFolder(dir);
@@ -73,10 +72,10 @@ string CDocWebserviceDetails::WSInformation()
 	//Label
 	try
 	{
-		if(pWs->label != NULL)
+		if(ws.GetLabel() != NULL)
 		{
 			CTableCell cellWsDesc("Label", "");
-			CTableCell cellWsValue(pWs->label, "");
+			CTableCell cellWsValue(ws.GetLabel(), "");
 
 			CTableRow row("");
 			row.AddCell(cellWsDesc);
@@ -92,10 +91,10 @@ string CDocWebserviceDetails::WSInformation()
 	//Description
 	try
 	{
-		if(pWs->description != NULL)
+		if(ws.GetDescription() != NULL)
 		{
 			CTableCell cellWsDesc("Description", "");
-			CTableCell cellWsValue(pWs->description, "");
+			CTableCell cellWsValue(ws.GetDescription(), "");
 
 			CTableRow row("");
 			row.AddCell(cellWsDesc);
@@ -112,166 +111,164 @@ string CDocWebserviceDetails::WSInformation()
 	//Properties
 	try
 	{
-		if(pWs->references.referenceList != NULL)
+		const ARReferenceList& refs = this->ws.GetReferences();
+
+		for(unsigned int i=0; i< refs.numItems; i++)
 		{
-			for(unsigned int i=0; i< pWs->references.numItems; i++)
+			stringstream strmWsDesc, strmWsValue;
+			strmWsDesc.str("");
+			strmWsValue.str("");
+
+			const ARReferenceStruct& ref = refs.referenceList[i];
+			switch(ref.type)
 			{
-				stringstream strmWsDesc, strmWsValue;
-				strmWsDesc.str("");
-				strmWsValue.str("");
-
-				ARReferenceStruct ref = pWs->references.referenceList[i];
-				switch(ref.type)
+			case ARREF_WS_PROPERTIES:
 				{
-				case ARREF_WS_PROPERTIES:
+					strmWsDesc << "Property";
+					switch(ref.reference.u.extRef.value.dataType)
 					{
-						strmWsDesc << "Property";                    
-						switch(ref.reference.u.extRef.value.dataType)
+					case AR_DATA_TYPE_CHAR:
 						{
-						case AR_DATA_TYPE_CHAR:
+
+							try
 							{
+								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
-								try
-								{				
-									int schemaId = pInside->SchemaGetInsideId(pWs->ownerObjList.ownerObjList[0].ownerName);
+								CFieldRefItem *refItemMap = new CFieldRefItem();
+								refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
+								refItemMap->fromName = ws.GetName();
+								refItemMap->schemaInsideId = schemaId;
+								refItemMap->description = "Webservice Property";
 
-									CFieldRefItem *refItemMap = new CFieldRefItem();
-									refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
-									refItemMap->fromName = pWs->name;						
-									refItemMap->schemaInsideId = schemaId;
-									refItemMap->description = "Webservice Property";
+								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";
 
-									string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);							
-									strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-
-									delete refItemMap;
-								}
-								catch(...)
-								{
-								}								
-
+								delete refItemMap;
 							}
-							break;
-						}
-					}
-					break;
-				case ARREF_WS_OPERATION:
-					{
-						strmWsDesc << "Operation";
-						switch(ref.reference.u.extRef.value.dataType)
-						{
-						case AR_DATA_TYPE_CHAR:
+							catch(...)
 							{
-								try
-								{				
-									int schemaId = pInside->SchemaGetInsideId(pWs->ownerObjList.ownerObjList[0].ownerName);
-
-									CFieldRefItem *refItemMap = new CFieldRefItem();
-									refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
-									refItemMap->fromName = pWs->name;						
-									refItemMap->schemaInsideId = schemaId;
-									refItemMap->description = "Webservice Operation";
-
-									string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);							
-									strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-
-									delete refItemMap;
-								}
-								catch(...)
-								{
-								}
 							}
-							break;
-						}
-					}
-					break;
-				case ARREF_WS_ARXML_MAPPING:
-					{
-						strmWsDesc << "Mapping";
-						switch(ref.reference.u.extRef.value.dataType)
-						{
-						case AR_DATA_TYPE_CHAR:
-							{
-								try
-								{				
-									int schemaId = pInside->SchemaGetInsideId(pWs->ownerObjList.ownerObjList[0].ownerName);
 
-									CFieldRefItem *refItemMap = new CFieldRefItem();
-									refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
-									refItemMap->fromName = pWs->name;						
-									refItemMap->schemaInsideId = schemaId;
-									refItemMap->description = "Webservice Field Mapping";
-
-									string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);							
-									strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-
-									delete refItemMap;
-								}
-								catch(...)
-								{
-								}
-							}
-							break;
 						}
+						break;
 					}
-					break;
-				case ARREF_WS_WSDL:
-					{
-						strmWsDesc << "WSDL";
-						switch(ref.reference.u.extRef.value.dataType)
-						{
-						case AR_DATA_TYPE_CHAR:
-							{																
-								if(ref.reference.u.extRef.value.u.charVal != NULL)
-								{
-									strmWsValue << "<pre class=\"preWsInfo\">" << CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal) << "</pre>";								
-								}
-							}
-							break;
-						}
-					}
-					break;
-				case ARREF_WS_PUBLISHING_LOC:
-					{
-						strmWsDesc << "Publishing Location";
-						switch(ref.reference.u.extRef.value.dataType)
-						{
-						case AR_DATA_TYPE_CHAR:
-							{
-								if(ref.reference.u.extRef.value.u.charVal != NULL)
-								{								
-									strmWsValue << "<pre class=\"preWsInfo\">" << CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal) << "</pre>";								
-								}
-							}
-							break;
-						}
-					}
-					break;
-				case ARREF_WS_XML_SCHEMA_LOC:
-					{
-						strmWsDesc << "XML Schema";
-						switch(ref.reference.u.extRef.value.dataType)
-						{
-						case AR_DATA_TYPE_CHAR:
-							{
-								if(ref.reference.u.extRef.value.u.charVal != NULL)
-								{								
-									strmWsValue << "<pre class=\"preWsInfo\">" << CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal) << "</pre>";								
-								}
-							}
-							break;
-						}
-					}
-					break;
 				}
+				break;
+			case ARREF_WS_OPERATION:
+				{
+					strmWsDesc << "Operation";
+					switch(ref.reference.u.extRef.value.dataType)
+					{
+					case AR_DATA_TYPE_CHAR:
+						{
+							try
+							{
+								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
-				CTableRow row("");
-				row.AddCell(CTableCell(strmWsDesc.str()));
-				row.AddCell(CTableCell(strmWsValue.str()));
-				tblProp.AddRow(row);
+								CFieldRefItem *refItemMap = new CFieldRefItem();
+								refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
+								refItemMap->fromName = ws.GetName();
+								refItemMap->schemaInsideId = schemaId;
+								refItemMap->description = "Webservice Operation";
+
+								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
+
+								delete refItemMap;
+							}
+							catch(...)
+							{
+							}
+						}
+						break;
+					}
+				}
+				break;
+			case ARREF_WS_ARXML_MAPPING:
+				{
+					strmWsDesc << "Mapping";
+					switch(ref.reference.u.extRef.value.dataType)
+					{
+					case AR_DATA_TYPE_CHAR:
+						{
+							try
+							{
+								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
+
+								CFieldRefItem *refItemMap = new CFieldRefItem();
+								refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
+								refItemMap->fromName = ws.GetName();
+								refItemMap->schemaInsideId = schemaId;
+								refItemMap->description = "Webservice Field Mapping";
+
+								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";
+
+								delete refItemMap;
+							}
+							catch(...)
+							{
+							}
+						}
+						break;
+					}
+				}
+				break;
+			case ARREF_WS_WSDL:
+				{
+					strmWsDesc << "WSDL";
+					switch(ref.reference.u.extRef.value.dataType)
+					{
+					case AR_DATA_TYPE_CHAR:
+						{
+							if(ref.reference.u.extRef.value.u.charVal != NULL)
+							{
+								strmWsValue << "<pre class=\"preWsInfo\">" << CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal) << "</pre>";
+							}
+						}
+						break;
+					}
+				}
+				break;
+			case ARREF_WS_PUBLISHING_LOC:
+				{
+					strmWsDesc << "Publishing Location";
+					switch(ref.reference.u.extRef.value.dataType)
+					{
+					case AR_DATA_TYPE_CHAR:
+						{
+							if(ref.reference.u.extRef.value.u.charVal != NULL)
+							{
+								strmWsValue << "<pre class=\"preWsInfo\">" << CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal) << "</pre>";
+							}
+						}
+						break;
+					}
+				}
+				break;
+			case ARREF_WS_XML_SCHEMA_LOC:
+				{
+					strmWsDesc << "XML Schema";
+					switch(ref.reference.u.extRef.value.dataType)
+					{
+					case AR_DATA_TYPE_CHAR:
+						{
+							if(ref.reference.u.extRef.value.u.charVal != NULL)
+							{
+								strmWsValue << "<pre class=\"preWsInfo\">" << CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal) << "</pre>";
+							}
+						}
+						break;
+					}
+				}
+				break;
 			}
-		}
 
+			CTableRow row("");
+			row.AddCell(CTableCell(strmWsDesc.str()));
+			row.AddCell(CTableCell(strmWsValue.str()));
+			tblProp.AddRow(row);
+		}
 	}
 	catch(exception& e)
 	{

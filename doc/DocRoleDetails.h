@@ -23,7 +23,7 @@ class CDocRoleDetails :
 	public CDocBase
 {
 public:
-	CDocRoleDetails(CARInside &arIn, CARRole &arRole);
+	CDocRoleDetails(CARRole &arRole);
 	~CDocRoleDetails(void);
 
 	void Documentation();

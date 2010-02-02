@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocMain.h"
 
-CDocMain::CDocMain(CARInside &arIn)
+CDocMain::CDocMain()
 {
-	this->pInside = &arIn;
 }
 
 CDocMain::~CDocMain(void)
@@ -734,37 +733,37 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 
 		CContainerTable *tbl = new CContainerTable(*this->pInside);
 
-		list<CARContainer>::iterator contIter;		
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
-			CARContainer *cont = &(*contIter);
+			CARContainer cont(cntIndex);
 
-			bool bInsert = false;
-			if(searchChar == "*")  //All objecte
+			if (cont.GetType() == nType)	// the type must match
 			{
-				if(nType == cont->type)  //Only check type
+				bool bInsert = false;
+				if(searchChar == "*")  //All objecte
 				{
 					bInsert = true;
 				}
-			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(nType == cont->type && cont->GetNameFirstChar() == searchChar)
+				else if(searchChar == "#")
 				{
-					bInsert = true;
+					if(!cont.NameStandardFirstChar())
+					{
+						bInsert = true;
+					}
 				}
-			}
-			else if(searchChar == "#")
-			{
-				if(nType == cont->type && !cont->NameStandardFirstChar())
+				else
 				{
-					bInsert = true;		
+					if(cont.GetNameFirstChar() == searchChar)
+					{
+						bInsert = true;
+					}
 				}
-			}
 
-			if(bInsert)
-			{
-				tbl->AddRow(*cont, rootLevel);
+				if(bInsert)
+				{
+					tbl->AddRow(cont, rootLevel);
+				}
 			}
 		}
 

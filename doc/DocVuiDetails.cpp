@@ -21,7 +21,6 @@
 CDocVuiDetails::CDocVuiDetails(unsigned int SchemaInsideId, const CARVui& vuiObj, int rootLevel)
 : schema(SchemaInsideId), vui(vuiObj)
 {
-	this->pInside = CARInside::GetInstance();
 	this->path = "schema/" + schema.FileID();;
 	this->rootLevel = rootLevel;
 }

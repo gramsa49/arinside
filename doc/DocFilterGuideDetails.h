@@ -22,7 +22,7 @@ class CDocFilterGuideDetails :
 	public CDocBase
 {
 public:
-	CDocFilterGuideDetails(CARInside &arIn, CARContainer &filterGuide);
+	CDocFilterGuideDetails(CARContainer &filterGuide);
 	~CDocFilterGuideDetails(void);
 
 	void Documentation();

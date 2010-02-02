@@ -20,7 +20,6 @@
 CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId, int rootLevel)
 : filter(filterInsideId)
 {	
-	this->pInside = CARInside::GetInstance();
 	this->path = "filter/" + filter.FileID();
 	this->rootLevel = rootLevel;
 }
@@ -142,21 +141,22 @@ string CDocFilterDetails::ContainerReferences()
 	{
 		CContainerTable contTable(*this->pInside);
 
-		list<CARContainer>::iterator listContIter = this->pInside->containerList.begin();		
-		list<CARContainer>::iterator listContEnd = this->pInside->containerList.end();
-		for ( ; listContIter != listContEnd; ++listContIter )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			CARContainer *cont = &(*listContIter);
-			for(unsigned int nCnt = 0; nCnt < cont->references.numItems; nCnt++)
+			CARContainer cont(cntIndex);
+			
+			if(cont.GetType() != ARCON_APP)
 			{
-				if(cont->type != ARCON_APP)
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
-					if(cont->references.referenceList[nCnt].reference.u.name[0] != 0)
+					if(refs.referenceList[nCnt].type == ARREF_FILTER)
 					{
-						if(strcmp(cont->references.referenceList[nCnt].reference.u.name, filter.GetName().c_str())==0
-							&& cont->references.referenceList[nCnt].type == ARREF_FILTER)
+						if(refs.referenceList[nCnt].reference.u.name != NULL && 
+							 refs.referenceList[nCnt].reference.u.name == filter.GetName())
 						{
-							contTable.AddRow(*cont, rootLevel);
+							contTable.AddRow(cont, rootLevel);
 						}
 					}
 				}

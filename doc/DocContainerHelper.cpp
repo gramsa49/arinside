@@ -17,10 +17,9 @@
 #include "stdafx.h"
 #include "DocContainerHelper.h"
 
-CDocContainerHelper::CDocContainerHelper(CARInside &arIn, CARContainer &container, int rootLevel)
+CDocContainerHelper::CDocContainerHelper(CARContainer &contObj, int rootLevel)
+: container(contObj)
 {
-	this->pInside = &arIn;
-	this->pContainer = &container;
 	this->rootLevel = rootLevel;
 }
 
@@ -40,24 +39,24 @@ string CDocContainerHelper::BaseInfo()
 		CTableRow row("");		
 
 		//Label
-		if(this->pContainer->label != NULL)
+		if(this->container.GetLabel() != NULL)
 		{
-			row.AddCellList(CTableCell("Label"), CTableCell(this->pContainer->label));			
+			row.AddCellList(CTableCell("Label"), CTableCell(this->container.GetLabel()));
 		}
 		else
 		{
-			row.AddCellList(CTableCell("Label"), CTableCell(EmptyValue));		
+			row.AddCellList(CTableCell("Label"), CTableCell(EmptyValue));
 		}
 		tblProp.AddRow(row);
 
 		//Description
-		if(this->pContainer->description != NULL)
+		if(this->container.GetDescription() != NULL)
 		{
-			row.AddCellList(CTableCell("Description"), CTableCell(this->pContainer->description));			
+			row.AddCellList(CTableCell("Description"), CTableCell(this->container.GetDescription()));
 		}
 		else
 		{
-			row.AddCellList(CTableCell("Description"), CTableCell(EmptyValue));		
+			row.AddCellList(CTableCell("Description"), CTableCell(EmptyValue));	
 		}
 		tblProp.AddRow(row);
 
@@ -66,19 +65,19 @@ string CDocContainerHelper::BaseInfo()
 		tblProp.AddRow(row);	
 
 		//SubAdminList
-		if(this->pContainer->type == ARCON_PACK
-			|| this->pContainer->type == ARCON_GUIDE
-			|| this->pContainer->type == ARCON_APP
+		unsigned int type = this->container.GetType();
+		if(type == ARCON_PACK
+			|| type == ARCON_GUIDE
+			|| type == ARCON_APP
 			)
 		{
-			row.AddCellList(CTableCell("Subadministrator Permissions"), CTableCell(this->SubadminList()));	
+			row.AddCellList(CTableCell("Subadministrator Permissions"), CTableCell(this->SubadminList()));
 			tblProp.AddRow(row);	
 		}
 
 
 		//Forms
-		if(this->pContainer->type == ARCON_GUIDE
-			|| this->pContainer->type == ARCON_FILTER_GUIDE)
+		if(type == ARCON_GUIDE || type == ARCON_FILTER_GUIDE)
 		{
 			row.AddCellList(CTableCell("Owner Object List"), CTableCell(this->ContainerForms()));	
 			tblProp.AddRow(row);	
@@ -102,9 +101,11 @@ string CDocContainerHelper::SubadminList()
 	try
 	{
 		CGroupTable *grpTbl = new CGroupTable(*this->pInside);
-		for(unsigned int i=0; i< this->pContainer->admingrpList.numItems; i++)
+
+		const ARInternalIdList& admingrpList = this->container.GetSubadmins();
+		for(unsigned int i=0; i< admingrpList.numItems; i++)
 		{			
-			grpTbl->AddRow(this->pContainer->appRefName, this->pContainer->admingrpList.internalIdList[i], this->rootLevel);
+			grpTbl->AddRow(this->container.GetAppRefName(), admingrpList.internalIdList[i], this->rootLevel);
 		}
 
 		strm << grpTbl->Print();
@@ -129,23 +130,27 @@ string CDocContainerHelper::PermissionList()
 		tbl.AddColumn(75, "Name");
 		tbl.AddColumn(10, "Id");
 
-		for(unsigned int i=0; i< this->pContainer->groupList.numItems; i++)
+		const ARPermissionList& groupList = this->container.GetPermissions();
+		for(unsigned int i=0; i< groupList.numItems; i++)
 		{			
 			CTableRow row("");			
-			string img = CWebUtil::ImageTag("visible.gif", rootLevel);
+			string img;
 
-			if(this->pContainer->groupList.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
+			if(groupList.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
 				img = CWebUtil::ImageTag("hidden.gif", rootLevel);
+			else
+				img = CWebUtil::ImageTag("visible.gif", rootLevel);
 
-			string appRefName = this->pContainer->appRefName;
-			if(strcmp(appRefName.c_str(), "")==0)
-				appRefName = this->pContainer->name;
-
+			string appRefName;
+			if(this->container.GetAppRefName().empty())
+				appRefName = this->container.GetName();
+			else
+				appRefName = this->container.GetAppRefName();
 
 			row.AddCell(CTableCell(img));
-			row.AddCell(CTableCell(CAREnum::ObjectPermission(this->pContainer->groupList.permissionList[i].permissions)));
-			row.AddCell(CTableCell(this->pInside->LinkToGroup(appRefName, this->pContainer->groupList.permissionList[i].groupId, rootLevel)));
-			row.AddCell(CTableCell(this->pContainer->groupList.permissionList[i].groupId));			
+			row.AddCell(CTableCell(CAREnum::ObjectPermission(groupList.permissionList[i].permissions)));
+			row.AddCell(CTableCell(this->pInside->LinkToGroup(appRefName, groupList.permissionList[i].groupId, rootLevel)));
+			row.AddCell(CTableCell(groupList.permissionList[i].groupId));			
 			tbl.AddRow(row);
 		}
 	}
@@ -164,11 +169,12 @@ string CDocContainerHelper::ContainerForms()
 	tbl.AddColumn(100, "Form Name");
 
 	try
-	{	
-		for(unsigned int i=0; i< this->pContainer->ownerObjList.numItems; i++)
+	{
+		const ARContainerOwnerObjList& objList = this->container.GetOwnerObjects();
+		for(unsigned int i=0; i< objList.numItems; i++)
 		{
 			CTableRow row("");            
-			row.AddCell(CTableCell(this->pInside->LinkToSchema(this->pContainer->ownerObjList.ownerObjList[i].ownerName, rootLevel)));
+			row.AddCell(CTableCell(this->pInside->LinkToSchema(objList.ownerObjList[i].ownerName, rootLevel)));
 			tbl.AddRow(row);
 		}
 	}

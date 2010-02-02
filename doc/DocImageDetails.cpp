@@ -25,7 +25,6 @@ extern int nFilesCreated;
 CDocImageDetails::CDocImageDetails(int imageIndex, int rootLevel)
 {
 	this->path = "image/" + CARObject::FileID(imageIndex);
-	this->pInside = CARInside::GetInstance();
 	this->imageIndex = imageIndex;
 	this->rootLevel = rootLevel;
 }

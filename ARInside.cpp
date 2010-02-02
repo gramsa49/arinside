@@ -72,7 +72,6 @@ CARInside* CARInside::pInsideInstance = NULL;
 CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
-	this->containerList.clear();
 	this->userList.clear();
 	this->groupList.clear();
 	this->roleList.clear();
@@ -257,7 +256,7 @@ void CARInside::Prepare(void)
 {	
 	CWindowsUtil wUtil(this->appConfig);
 
-	CDocMain *docMain = new CDocMain(*this);
+	CDocMain *docMain = new CDocMain();
 
 	if( docMain->Index() == 1)
 	{
@@ -344,15 +343,13 @@ void CARInside::LoadFromFile(void)
 			&this->arStatus) == AR_RETURN_OK)
 		{			
 			cout << parsedObjects.numItems << " items loaded." << endl;
-			unsigned int arInsideIdSchema = 0; // TODO: this vars aren't needed if all new lists are finish
-			unsigned int arInsideIdCont = 0;
-			unsigned int arInsideIdImage = 0;
 
 			unsigned int schemaCount = 0;
 			unsigned int imagesCount = 0;
 			unsigned int activelinkCount = 0;
 			unsigned int filterCount = 0;
 			unsigned int escalationCount = 0;
+			unsigned int containerCount = 0;
 			unsigned int menuCount = 0;
 
 			for (unsigned int i=0; i < parsedObjects.numItems; ++i)
@@ -371,6 +368,9 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_ESCALATION:
 					++escalationCount;
 					break;
+				case AR_STRUCT_ITEM_XML_CONTAINER:
+					++containerCount;
+					break;
 				case AR_STRUCT_ITEM_XML_CHAR_MENU:
 					++menuCount;
 					break;
@@ -386,6 +386,7 @@ void CARInside::LoadFromFile(void)
 			if (activelinkCount > 0) alList.Reserve(activelinkCount);
 			if (filterCount > 0) filterList.Reserve(filterCount);
 			if (escalationCount > 0) escalationList.Reserve(escalationCount);
+			if (containerCount > 0) containerList.Reserve(containerCount);
 			if (menuCount > 0) menuList.Reserve(menuCount);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			if (imagesCount > 0) imageList.Reserve(imagesCount);
@@ -463,40 +464,14 @@ void CARInside::LoadFromFile(void)
 				case AR_STRUCT_ITEM_XML_CONTAINER:
 					{
 						LOG << "Loading Container: " << parsedObjects.structItemList[i].name; 
-						CARContainer *obj = new CARContainer(parsedObjects.structItemList[i].name, arInsideIdCont);
 
-						if( ARGetContainerFromXML(&this->arControl, 
-							&parsedStream,
-							parsedObjects.structItemList[i].name,
-							NULL,							
-							&obj->groupList,
-							&obj->admingrpList,
-							&obj->ownerObjList,
-							&obj->label,
-							&obj->description,
-							&obj->type,
-							&obj->references,
-							obj->owner,
-							obj->lastChanged,
-							&obj->timestamp,								
-							&obj->helptext,
-							&obj->changeDiary,
-							&obj->objPropList,
-							&obj->xmlDocVersion,
-							&this->arStatus) == AR_RETURN_OK)
+						int objInsideId = containerList.AddContainerFromXML(parsedStream, parsedObjects.structItemList[i].name, &xmlDocVersion);
+
+						if (objInsideId > -1)
 						{
-							ParseVersionString(obj->xmlDocVersion);
-
-							this->containerList.insert(this->containerList.end(), *obj);
-
-							LOG << " (InsideID: " << arInsideIdCont << ") [OK]" << endl;
-							arInsideIdCont++;								
+							ParseVersionString(xmlDocVersion);
+							LOG << " (InsideID: " << objInsideId << ") [OK]" << endl;
 						}
-						else
-							cerr << GetARStatusError();
-
-						delete obj;
-						FreeARStatusList(&this->arStatus, false);
 					}
 					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -531,6 +506,7 @@ void CARInside::LoadFromFile(void)
 			alList.Sort();
 			filterList.Sort();
 			escalationList.Sort();
+			containerList.Sort();
 			menuList.Sort();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 			imageList.Sort();
@@ -702,65 +678,10 @@ int CARInside::LoadForms()
 
 int CARInside::LoadContainer(void)
 {
-	int insideId=0;
-
 	try
 	{
-		ARContainerInfoList conList;
-
-		ARReferenceTypeList		refTypes;
-		refTypes.refType = (int *) malloc(sizeof(unsigned int) * 1);
-		refTypes.numItems = 1;
-		refTypes.refType[0] = ARREF_ALL;
-
-		if(ARGetListContainer(&this->arControl, 0, ARCON_ALL, AR_HIDDEN_INCREMENT, NULL, NULL, &conList, &this->arStatus) == AR_RETURN_OK)
-		{
-			this->containerList.clear();	
-			for(unsigned int i=0; i< conList.numItems; i++)
-			{
-				if(!this->InBlacklist(ARREF_CONTAINER, conList.conInfoList[i].name))
-				{
-					LOG << "Loading " << CAREnum::ContainerType(conList.conInfoList[i].type) << ": " << conList.conInfoList[i].name; 
-					CARContainer *obj = new CARContainer(conList.conInfoList[i].name, insideId);
-
-					if( ARGetContainer(&this->arControl,
-						conList.conInfoList[i].name,
-						&refTypes,
-						&obj->groupList,
-						&obj->admingrpList,
-						&obj->ownerObjList,
-						&obj->label,
-						&obj->description,
-						&obj->type,
-						&obj->references,
-						&obj->helptext,
-						obj->owner,
-						&obj->timestamp,						
-						obj->lastChanged,
-						&obj->changeDiary,
-						&obj->objPropList,
-						&this->arStatus) == AR_RETURN_OK)
-					{
-						this->containerList.insert(this->containerList.end(), *obj);
-
-						LOG << " (InsideID: " << insideId << ") [OK]" << endl;						
-						insideId++;
-
-						FreeARStatusList(&this->arStatus, false);
-					}		
-					else
-						cerr << GetARStatusError();
-
-					delete obj;
-				}
-			}
-		}
-
-		delete (refTypes.refType);
-		FreeARContainerInfoList(&conList, false);
-		FreeARStatusList(&this->arStatus, false);
-
-		this->Sort(containerList);		
+		containerList.LoadFromServer();
+		containerList.Sort();		
 	}
 	catch(exception& e)
 	{
@@ -768,7 +689,7 @@ int CARInside::LoadContainer(void)
 		GetARStatusError();
 	}
 
-	return insideId;
+	return containerList.GetCount();
 }
 
 int CARInside::LoadCharMenus(void)
@@ -865,7 +786,7 @@ void CARInside::Documentation(void)
 	mTimer.StartTimer();
 
 	string strValue = "abcdefghijklmnopqrstuvwxyz0123456789#";
-	CDocMain *docMain = new CDocMain(*this);
+	CDocMain *docMain = new CDocMain();
 
 	//Server information
 	docMain->ServerInfoList();
@@ -887,25 +808,27 @@ void CARInside::Documentation(void)
 
 	//Application Details
 	int nTmpCnt = 1;
-	//Create documentation here to fill objects applicationName reference information	
-	list<CARContainer>::iterator listIter;	
-	cout << "Starting Container Documentation" << endl;
-	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ )
-	{
-		CARContainer *cont = &(*listIter);
 
-		switch(cont->type)
+	//Create documentation here to fill objects applicationName reference information	
+	cout << "Starting Container Documentation" << endl;
+
+	unsigned int cntCount = this->containerList.GetCount();
+	for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
+	{
+		CARContainer cont(cntIndex);
+
+		switch(cont.GetType())
 		{
 		case ARCON_APP:
 			{
-				LOG << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
-				CDocApplicationDetails appDetails(*this, *cont);
+				LOG << "Application [" << (cntIndex + 1) << "-" << cntCount << "] '" << cont.GetName() << "': ";
+				CDocApplicationDetails appDetails(cont);
 				appDetails.Documentation();
 			}
 			break;
 		default:
 			{
-				LOG << "Container [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
+				LOG << "Container [" << (cntIndex + 1) << "-" << cntCount << "] '" << cont.GetName() << "' [OK]" << endl;
 			}
 			break;
 		}
@@ -913,43 +836,43 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
-	nTmpCnt = 1;
-	for ( listIter = this->containerList.begin(); listIter != this->containerList.end(); listIter++ )
+	unsigned int tmpCount = this->containerList.GetCount();
+	for ( unsigned int cntIndex = 0; cntIndex < tmpCount; ++cntIndex )
 	{
-		CARContainer *cont = &(*listIter);
-		switch(cont->type)
+		CARContainer cont(cntIndex);
+		switch(cont.GetType())
 		{
 		case ARCON_WEBSERVICE:
 			{
-				LOG << "Webservice [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
-				CDocWebserviceDetails wsDetails(*this, *cont);
+				LOG << "Webservice [" << (cntIndex + 1) << "-" << tmpCount << "] '" << cont.GetName() << "': ";
+				CDocWebserviceDetails wsDetails(cont);
 				wsDetails.Documentation();
 			}
 			break;
 		case ARCON_GUIDE:
 			{
-				LOG << "ActiveLinkGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
-				CDocAlGuideDetails guideDetails(*this, *cont);
+				LOG << "ActiveLinkGuide [" << (cntIndex + 1) << "-" << tmpCount << "] '" << cont.GetName() << "': ";
+				CDocAlGuideDetails guideDetails(cont);
 				guideDetails.Documentation();
 			}
 			break;
 		case ARCON_FILTER_GUIDE:
 			{
-				LOG << "FilterGuide [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
-				CDocFilterGuideDetails fltGuideDetails(*this, *cont);
+				LOG << "FilterGuide [" << (cntIndex + 1) << "-" << tmpCount << "] '" << cont.GetName() << "': ";
+				CDocFilterGuideDetails fltGuideDetails(cont);
 				fltGuideDetails.Documentation();
 			}
 			break;
 		case ARCON_PACK:
 			{
-				LOG << "PackingList [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "': ";
-				CDocPacklistDetails packDetails(*this, *cont);
+				LOG << "PackingList [" << (cntIndex + 1) << "-" << tmpCount << "] '" << cont.GetName() << "': ";
+				CDocPacklistDetails packDetails(cont);
 				packDetails.Documentation();
 			}
 			break;
 		case ARCON_APP:
 			{
-				LOG << "Application [" << nTmpCnt << "-" << containerList.size() << "] '" << cont->name << "' [OK]" << endl;
+				LOG << "Application [" << (cntIndex + 1) << "-" << tmpCount << "] '" << cont.GetName() << "' [OK]" << endl;
 			}
 			break;
 		}
@@ -967,7 +890,7 @@ void CARInside::Documentation(void)
 	docMain->ActiveLinkActionList("index_action");
 
 	//ActiveLink Details
-	unsigned int tmpCount = alList.GetCount();
+	tmpCount = alList.GetCount();
 	cout << "Starting ActiveLink Documentation" << endl;
 	for (unsigned int actlinkIndex = 0; actlinkIndex < tmpCount; ++actlinkIndex)
 	{	
@@ -1118,12 +1041,12 @@ void CARInside::Documentation(void)
 	docMain->MessageList();	
 
 	//Analyzer
-	CDocAnalyzer *analyzer = new CDocAnalyzer(*this, "other");
+	CDocAnalyzer *analyzer = new CDocAnalyzer("other");
 	analyzer->Documentation();
 	delete analyzer;
 
 	//Validation
-	CDocValidator *validator = new CDocValidator(*this, "other");
+	CDocValidator *validator = new CDocValidator("other");
 	validator->Main();
 	delete validator;
 
@@ -1144,7 +1067,7 @@ void CARInside::Documentation(void)
 		CARGroup *grp = &(*groupIter);
 
 		LOG << "Group [" << nTmpCnt << "-" << groupList.size() << "] '" << grp->name << "': ";
-		CDocGroupDetails *grpDetails = new CDocGroupDetails(*this, *grp);
+		CDocGroupDetails *grpDetails = new CDocGroupDetails(*grp);
 		grpDetails->Documentation();
 		delete grpDetails;
 		nTmpCnt++;
@@ -1167,7 +1090,7 @@ void CARInside::Documentation(void)
 		CARRole *role = &(*roleIter);
 
 		LOG << "Role [" << nTmpCnt << "-" << roleList.size() << "] '" << role->name << "': ";
-		CDocRoleDetails *roleDetails = new CDocRoleDetails(*this, *role);
+		CDocRoleDetails *roleDetails = new CDocRoleDetails(*role);
 		roleDetails->Documentation();
 		delete roleDetails;
 		nTmpCnt++;
@@ -1190,7 +1113,7 @@ void CARInside::Documentation(void)
 		CARUser *user = &(*userIter);
 
 		LOG << "User [" << nTmpCnt << "-" << userList.size() << "] '" << user->loginName << "': ";
-		CDocUserDetails *userDetails = new CDocUserDetails(*this, *user);
+		CDocUserDetails *userDetails = new CDocUserDetails(*user);
 		userDetails->Documentation();
 		delete userDetails;
 		nTmpCnt++;
@@ -1339,18 +1262,10 @@ int CARInside::FilterGetInsideId(string searchObjName)
 	return filterList.Find(searchObjName.c_str());
 }
 
+// TODO: the CARInside::...GetInsideId function should be removed .... use the objects instead, e.g. CARContainer
 int CARInside::ContainerGetInsideId(string searchObjName)
 {
-	list<CARContainer>::iterator iter;			
-	for ( iter = containerList.begin(); iter != containerList.end(); iter++ )
-	{			
-		CARContainer *obj = &(*iter);
-		if(strcmp(obj->name.c_str(), searchObjName.c_str())==0)
-		{
-			return obj->GetInsideId();
-		}
-	}
-	return -1;
+	return containerList.Find(searchObjName.c_str());
 }
 
 // TODO: the CARInside::...GetInsideId function should be removed .... use the objects instead, e.g. CARCharMenu
@@ -1573,15 +1488,10 @@ string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
 
 string CARInside::LinkToContainer(string containerName, int fromRootLevel)
 {
-	list<CARContainer>::iterator contIter;
-	list<CARContainer>::iterator endIt = this->containerList.end();
-	for ( contIter = this->containerList.begin(); contIter != endIt; ++contIter )
-	{	
-		CARContainer *container = &(*contIter);
-		if(containerName.compare(container->name) == 0)
-		{			
-			return container->GetURL(fromRootLevel);
-		}
+	CARContainer cnt(containerName);
+	if (cnt.Exists())
+	{
+		return cnt.GetURL(fromRootLevel);
 	}
 	return containerName;
 }

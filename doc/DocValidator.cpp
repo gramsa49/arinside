@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocValidator.h"
 
-CDocValidator::CDocValidator(CARInside &arIn, string path)
+CDocValidator::CDocValidator(string path)
 {
-	this->pInside = &arIn;
 	this->path = path;
 	this->rootLevel = 1;
 	uniqueMissingFieldList.clear();
@@ -114,22 +113,20 @@ void CDocValidator::ContainerGroupValidator()
 			tblObj.AddColumn(10, "Type");
 			tblObj.AddColumn(90, "Container");
 
-			list<CARContainer>::iterator contIter;		
-			for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+			unsigned int cntCount = this->pInside->containerList.GetCount();
+			for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 			{			
-				CARContainer *cont = &(*contIter);
+				CARContainer cont(cntIndex);
 
-				if(cont->type == ARCON_WEBSERVICE
-					|| cont->type == ARCON_GUIDE
-					|| cont->type == ARCON_APP)
+				unsigned int type = cont.GetType();
+				if(type == ARCON_WEBSERVICE || type == ARCON_GUIDE || type == ARCON_APP)
 				{
-					if(cont->groupList.permissionList == NULL		//Check if the container has no access group
-						|| cont->groupList.numItems == 0 )
+					if(cont.GetPermissions().numItems == 0)		//Check if the container has no access group
 					{
 						//Container has no access group
 						CTableRow row("");	
-						row.AddCell(CAREnum::ContainerType(cont->type));
-						row.AddCell(pInside->LinkToContainer(cont->name, this->rootLevel));
+						row.AddCell(CAREnum::ContainerType(type));
+						row.AddCell(pInside->LinkToContainer(cont.GetName(), this->rootLevel));
 						tblObj.AddRow(row);
 					}
 				}

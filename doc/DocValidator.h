@@ -21,7 +21,7 @@ class CDocValidator :
 	public CDocBase
 {
 public:
-	CDocValidator(CARInside &arIn, string path);
+	CDocValidator(string path);
 	~CDocValidator(void);
 
 	void Main();

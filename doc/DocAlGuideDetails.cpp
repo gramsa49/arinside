@@ -17,10 +17,9 @@
 #include "stdafx.h"
 #include "DocAlGuideDetails.h"
 
-CDocAlGuideDetails::CDocAlGuideDetails(CARInside &arIn, CARContainer &alGuide)
+CDocAlGuideDetails::CDocAlGuideDetails(CARContainer &container)
+: alGuide(container)
 {
-	this->pInside = &arIn;
-	this->pAlGuide = &alGuide;
 	this->rootLevel = 2;
 }
 
@@ -30,25 +29,25 @@ CDocAlGuideDetails::~CDocAlGuideDetails(void)
 
 void CDocAlGuideDetails::Documentation()
 {
-	string dir = CAREnum::ContainerDir(ARCON_GUIDE)+"/"+pAlGuide->FileID();
+	string dir = CAREnum::ContainerDir(ARCON_GUIDE)+"/"+alGuide.FileID();
 
 	CWindowsUtil winUtil(pInside->appConfig);
 	if(winUtil.CreateSubDirectory(dir)>=0)
 	{
-		CWebPage webPage("index", pAlGuide->name, rootLevel, pInside->appConfig);
+		CWebPage webPage("index", alGuide.GetName(), rootLevel, pInside->appConfig);
 
 		//ContentHead informations
 		stringstream strmHead;
 		strmHead.str("");
 
-		strmHead << CWebUtil::LinkToActiveLinkGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pAlGuide->name);
-		if(this->pAlGuide->appRefName.c_str() != NULL && this->pAlGuide->appRefName.size() > 0)
-			strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pAlGuide->appRefName, this->rootLevel);
+		strmHead << CWebUtil::LinkToActiveLinkGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->alGuide.GetName());
+		if(!this->alGuide.GetAppRefName().empty())
+			strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
 
 		webPage.AddContentHead(strmHead.str());
 
 		//Container Base Informations
-		CDocContainerHelper *contHelper = new CDocContainerHelper(*this->pInside, *this->pAlGuide, this->rootLevel);
+		CDocContainerHelper *contHelper = new CDocContainerHelper(this->alGuide, this->rootLevel);
 		webPage.AddContent(contHelper->BaseInfo());
 		delete contHelper;
 
@@ -57,7 +56,7 @@ void CDocAlGuideDetails::Documentation()
 		webPage.AddContent(ActiveLinkActions());
 
 		//History
-		webPage.AddContent(this->pInside->ServerObjectHistory(this->pAlGuide, this->rootLevel));
+		webPage.AddContent(this->pInside->ServerObjectHistory(&this->alGuide, this->rootLevel));
 
 		//Save File
 		webPage.SaveInFolder(dir);
@@ -73,22 +72,23 @@ string CDocAlGuideDetails::AlGuideInformation()
 
 	try
 	{
-		for(unsigned int i=0; i< pAlGuide->references.numItems; i++)
+		const ARReferenceList& refs = this->alGuide.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; i++)
 		{
 			stringstream label, actLink;
 			label.str("");
 			actLink.str("");
 
-			switch(pAlGuide->references.referenceList[i].type)
+			switch(refs.referenceList[i].type)
 			{
 			case ARREF_ACTLINK:
 				{
-					actLink << pInside->LinkToAl(pAlGuide->references.referenceList[i].reference.u.name, rootLevel);
+					actLink << pInside->LinkToAl(refs.referenceList[i].reference.u.name, rootLevel);
 				}
 				break;
 			case ARREF_NULL_STRING:
 				{
-					label << pAlGuide->references.referenceList[i].label;
+					label << refs.referenceList[i].label;
 				}
 				break;			
 			}
@@ -131,7 +131,7 @@ string CDocAlGuideDetails::ActiveLinkActions()
 				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, pAlGuide->name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, alGuide.GetName().c_str())==0)
 					{
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
@@ -152,7 +152,7 @@ string CDocAlGuideDetails::ActiveLinkActions()
 				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, pAlGuide->name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, alGuide.GetName().c_str())==0)
 					{
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;

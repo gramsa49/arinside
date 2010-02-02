@@ -23,12 +23,12 @@ class CDocContainerHelper :
 	public CDocBase
 {
 public:
-	CDocContainerHelper(CARInside &arIn, CARContainer &container, int rootLevel);
+	CDocContainerHelper(CARContainer &contObj, int rootLevel);
 	~CDocContainerHelper(void);
 
 	string BaseInfo();
 private:
-	CARContainer *pContainer;
+	CARContainer &container;
 	int rootLevel;
 
 	string PermissionList();	

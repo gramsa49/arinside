@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocGroupDetails.h"
 
-CDocGroupDetails::CDocGroupDetails(CARInside &arIn, CARGroup &arGroup)
+CDocGroupDetails::CDocGroupDetails(CARGroup &arGroup)
 {
-	this->pInside = &arIn;
 	this->pGroup = &arGroup;
 	this->rootLevel = 1;
 }
@@ -437,22 +436,42 @@ void CDocGroupDetails::ContainerPermissionDoc(string fName, int &nResult, string
 
 		//Create table with forms the role can access
 		CContainerTable *contTbl = new CContainerTable(*this->pInside);
+		CContainerTable *subadminTbl = (containerType == ARCON_PACK ? new CContainerTable(*this->pInside) : NULL);
+
 		contTbl->SetDescription("Container Permission");
 
-		list<CARContainer>::iterator contIter;		
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
-			CARContainer *cont = &(*contIter);
-			if(cont->type == containerType)
+			CARContainer cont(cntIndex);
+			if(cont.GetType() == containerType)
 			{
-				for(unsigned int nGrp = 0; nGrp < cont->groupList.numItems; nGrp++)
+				const ARPermissionList& groupList = cont.GetPermissions();
+				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pGroup->groupId == cont->groupList.permissionList[nGrp].groupId)
+					if(this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
 					{
-						contTbl->AddRow(*cont, this->rootLevel);						
+						contTbl->AddRow(cont, this->rootLevel);
 						nResult++;
 					}
 				}
+			}
+
+			if(containerType == ARCON_PACK)
+			{
+				//Create table with forms for role subadmin permission
+				subadminTbl->SetDescription("Subadministrator Permission");
+				
+				const ARInternalIdList& admingrpList = cont.GetSubadmins();
+				for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
+				{
+					if(this->pGroup->groupId == admingrpList.internalIdList[nGrp])
+					{
+						subadminTbl->AddRow(cont, this->rootLevel);
+						nResult++;
+					}
+				}
+
 			}
 		}
 
@@ -460,31 +479,11 @@ void CDocGroupDetails::ContainerPermissionDoc(string fName, int &nResult, string
 		webPage.AddContent(contTbl->Print());
 		delete contTbl;
 
-
-		if(containerType == ARCON_PACK)
-		{						
-			//Create table with forms for role subadmin permission
-			CContainerTable *subadminTbl = new CContainerTable(*this->pInside);
-			subadminTbl->SetDescription("Subadministrator Permission");		
-
-			list<CARContainer>::iterator contIter;		
-			for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
-			{	
-				CARContainer *cont = &(*contIter);
-				for(unsigned int nGrp = 0; nGrp < cont->admingrpList.numItems; nGrp++)
-				{
-					if(this->pGroup->groupId == cont->admingrpList.internalIdList[nGrp])
-					{
-						subadminTbl->AddRow(*cont, this->rootLevel);						
-						nResult++;
-					}
-				}
-			}
-
+		if (subadminTbl != NULL)
+		{
 			webPage.AddContent(subadminTbl->Print());
 			delete subadminTbl;
 		}
-
 
 		webPage.SaveInFolder("group");
 	}

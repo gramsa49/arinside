@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocRoleDetails.h"
 
-CDocRoleDetails::CDocRoleDetails(CARInside &arIn, CARRole &arRole)
+CDocRoleDetails::CDocRoleDetails(CARRole &arRole)
 {
-	this->pInside = &arIn;
 	this->pRole = &arRole;
 	this->rootLevel = 1;
 }
@@ -335,19 +334,20 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 		CContainerTable *contTbl = new CContainerTable(*this->pInside);
 		contTbl->SetDescription("Container Permission");
 
-		list<CARContainer>::iterator contIter;		
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
-			CARContainer *cont = &(*contIter);
-			if(cont->type == containerType)
+			CARContainer cont(cntIndex);
+			if(cont.GetType() == containerType)
 			{
-				if(strcmp(cont->appRefName.c_str(), this->pRole->applicationName.c_str())==0)
+				if(cont.GetAppRefName() == this->pRole->applicationName)
 				{
-					for(unsigned int nGrp = 0; nGrp < cont->groupList.numItems; nGrp++)
+					const ARPermissionList& groupList = cont.GetPermissions();
+					for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 					{
-						if(this->pRole->roleId == cont->groupList.permissionList[nGrp].groupId)
+						if(this->pRole->roleId == groupList.permissionList[nGrp].groupId)
 						{
-							contTbl->AddRow(*cont, this->rootLevel);						
+							contTbl->AddRow(cont, this->rootLevel);
 							nResult++;
 						}
 					}
@@ -366,17 +366,18 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 			CContainerTable *subadminTbl = new CContainerTable(*this->pInside);
 			subadminTbl->SetDescription("Subadministrator Permission");		
 
-			list<CARContainer>::iterator contIter;		
-			for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+			unsigned int cntCount = this->pInside->containerList.GetCount();
+			for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 			{	
-				CARContainer *cont = &(*contIter);
-				if(strcmp(cont->appRefName.c_str(), this->pRole->applicationName.c_str())==0)
+				CARContainer cont(cntIndex);
+				if(cont.GetAppRefName() == this->pRole->applicationName)
 				{
-					for(unsigned int nGrp = 0; nGrp < cont->admingrpList.numItems; nGrp++)
+					const ARInternalIdList& admingrpList = cont.GetSubadmins();
+					for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 					{
-						if(this->pRole->roleId == cont->admingrpList.internalIdList[nGrp])
+						if(this->pRole->roleId == admingrpList.internalIdList[nGrp])
 						{
-							subadminTbl->AddRow(*cont, this->rootLevel);						
+							subadminTbl->AddRow(cont, this->rootLevel);
 							nResult++;
 						}
 					}

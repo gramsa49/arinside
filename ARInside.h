@@ -39,6 +39,7 @@
 #include "lists/ARActiveLinkList.h"
 #include "lists/ARFilterList.h"
 #include "lists/AREscalationList.h"
+#include "lists/ARContainerList.h"
 #include "lists/ARMenuList.h"
 #include "lists/ARImageList.h"
 #include "lists/BlackList.h"
@@ -90,7 +91,7 @@ public:
 	CARFilterList filterList;
 	CAREscalationList escalationList;
 	CARActiveLinkList alList;
-	list<CARContainer> containerList;
+	CARContainerList containerList;
 	CARMenuList menuList;
 	list<CARUser> userList;
 	list<CARGroup> groupList;

@@ -39,7 +39,7 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	CTableRow tblRow("");
 	string cellNameValue = cont.GetURL(rootLevel);
 
-	switch(cont.type)
+	switch(cont.GetType())
 	{
 	case ARCON_FILTER_GUIDE:
 		{
@@ -60,9 +60,9 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	}
 
 	tblRow.AddCell( CTableCell(cellNameValue));
-	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.type)));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.GetType())));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
 }
 
@@ -82,7 +82,7 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -95,7 +95,7 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -105,7 +105,7 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating NumRelatedActiveLinks() in container '" << obj.name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating NumRelatedActiveLinks() in container '" << obj.GetName() << "': " << e.what() << endl;
 	}
 
 	return nResult;
@@ -127,7 +127,7 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 				ARFilterActionStruct &action = filter.GetIfActions().actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(obj.name.compare(action.u.callGuide.guideName)==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -140,7 +140,7 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 				ARFilterActionStruct action = filter.GetElseActions().actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -150,7 +150,7 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating NumRelatedFilters() in container '" << obj.name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating NumRelatedFilters() in container '" << obj.GetName() << "': " << e.what() << endl;
 	}
 
 	return nResult;
