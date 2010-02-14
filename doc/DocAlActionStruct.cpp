@@ -1016,7 +1016,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 		if(action.serverName[0] == '$' && !openWindowServer.empty())
 		{
 			int fieldId = atoi(&action.serverName[1]);
-			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(fieldId) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Server: " << arIn->LinkToServerInfo(openWindowServer, rootLevel) << ")";
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Server: " << arIn->LinkToServerInfo(openWindowServer, rootLevel) << ")";
 
 			if (fieldId > 0)
 			{
@@ -1037,7 +1037,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 		if (action.schemaName[0] == '$')
 		{
 			int fieldId = atoi(&action.schemaName[1]);
-			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(fieldId) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(openWindowSchema, rootLevel) << ")";
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(openWindowSchema, rootLevel) << ")";
 
 			if (fieldId > 0)
 			{
@@ -1058,7 +1058,7 @@ string CDocAlActionStruct::ActionOpenDlg(AROpenDlgStruct &action, int nAction)
 		if(action.vuiLabel[0] == '$')// == NULL || strcmp(action.vuiLabel, "")==0)
 		{
 			int fieldId = atoi(&action.vuiLabel[1]);
-			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(fieldId) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$";
 
 			if (fieldId > 0)
 			{

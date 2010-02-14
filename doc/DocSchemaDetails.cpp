@@ -562,6 +562,21 @@ bool CDocSchemaDetails::InEscalList(string objName)
 	return false;
 }
 
+bool CDocSchemaDetails::IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct& wfCS)
+{
+	if (wfCS.type == AR_WORKFLOW_CONN_SCHEMA_LIST && wfCS.u.schemaList != NULL)
+	{
+		for (unsigned int connectIndex = 0; connectIndex < wfCS.u.schemaList->numItems; ++connectIndex)
+		{
+			if (pSchema->name.compare(wfCS.u.schemaList->nameList[connectIndex]) == 0)
+			{
+				return true;
+			}
+		}
+	}
+	return false;
+}
+
 CTableRow CDocSchemaDetails::UniqueTblRow(string listItemName, int itemType)
 {			
 	CTableRow row("cssStdRow");		
@@ -1478,7 +1493,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 						else
 							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-						if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(al->schemaList)) || pSchema->name.compare(pushSchema) == 0)
 						{
 							bPushToForm = true;
 							break;
@@ -1504,7 +1519,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 							else
 								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-							if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(al->schemaList)) || pSchema->name.compare(pushSchema) == 0)
 							{
 								bPushToForm = true;
 								break;
@@ -1567,11 +1582,12 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 					else
 						openWindowSchema = action.schemaName;
 
-					if (!openWindowSchema.empty() && openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						openWindowSchema.clear();
-
-					if(!openWindowSchema.empty() && openWindowSchema.compare(pSchema->name) == 0)
+					if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 /*&& IsSchemaInWFConnectStruct(al->schemaList)*/) ||
+						openWindowSchema.compare(pSchema->name) == 0)
+					{
 						bPushToForm = true;
+						break;
+					}
 				}
 			}	
 
@@ -1593,11 +1609,12 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 						else
 							openWindowSchema = action.schemaName;
 
-						if (openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-							openWindowSchema.clear();
-
-						if(!openWindowSchema.empty() && openWindowSchema.compare(pSchema->name) == 0)
+						if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 /*&& IsSchemaInWFConnectStruct(al->schemaList)*/) ||
+						openWindowSchema.compare(pSchema->name) == 0)
+						{
 							bPushToForm = true;
+							break;
+						}
 					}
 				}
 			}
@@ -1654,7 +1671,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 						else
 							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-						if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(filter->schemaList)) || pSchema->name.compare(pushSchema) == 0)
 						{
 							bPushToForm = true;
 							break;
@@ -1680,7 +1697,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 							else
 								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-							if (pushSchema[0] == '@' || pSchema->name.compare(pushSchema) == 0)
+							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(filter->schemaList)) || pSchema->name.compare(pushSchema) == 0)
 							{
 								bPushToForm = true;
 								break;
