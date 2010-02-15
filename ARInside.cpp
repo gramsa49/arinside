@@ -137,6 +137,10 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 		if(port>0)
 		{
 			nResult = ARSetServerPort(&this->arControl, this->arControl.server, port, rpc, &this->arStatus);
+			if (nResult != AR_RETURN_OK)
+			{
+				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
+			}
 		}
 
 		if(nResult == AR_RETURN_OK)

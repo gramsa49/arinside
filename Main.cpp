@@ -89,15 +89,7 @@ int main(int argc, char* argv[])
 		rpc = rpcArg.getValue();
 		settingsIni = iniArg.getValue();
 		AppConfig::verboseMode = verboseArg.getValue();
-	} 
-	catch (ArgException &e)
-	{ 
-		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
-		return AR_RETURN_ERROR;
-	}
 
-	try
-	{
 		std::ifstream in(settingsIni.c_str());		
 		if(!in)
 		{
@@ -128,6 +120,35 @@ int main(int argc, char* argv[])
 
 		if (rpc > 0)
 			appConfig.rpcPort = rpc;
+
+		// special checks for server mode
+		if (!appConfig.fileMode) 
+		{
+			string missingArgs;
+			unsigned int missingCount = 0;
+
+			if (appConfig.serverName.empty())
+			{
+				missingCount++;
+				missingArgs = "server / ServerName";
+			}
+			if (appConfig.userName.empty())
+			{
+				missingCount++;
+				if (!missingArgs.empty()) missingArgs += ", ";
+				missingArgs += "login / Username";
+			}
+
+			if (!missingArgs.empty())
+			{
+				string msg;
+				StdOutput _output;
+				msg = "Required argument(s) missing: " + missingArgs;
+				
+				cout << endl;
+				_output.failure(cmd,CmdLineParseException(msg));
+			}
+		}
 
 		CWindowsUtil winUtil(appConfig);		
 		CARInside arInside(appConfig);;
@@ -178,7 +199,7 @@ int main(int argc, char* argv[])
 					}
 					else
 					{
-						cout << "Couldt not find file '" << appConfig.objListXML << "'" << endl;
+						cout << "Could not find file '" << appConfig.objListXML << "'" << endl;
 						result = AR_RETURN_ERROR;
 					}
 				}
@@ -216,6 +237,15 @@ int main(int argc, char* argv[])
 	catch(AppException &e)
 	{
 		cout << endl << "AppException: " << e.typeDescription() << endl << "Description: " << e.error();	
+	}
+	catch (ArgException &e)
+	{ 
+		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
+		return AR_RETURN_ERROR;
+	}
+	catch (ExitException &ee) 
+	{
+		exit(ee.getExitStatus());
 	}
 	catch(exception &e)
 	{
