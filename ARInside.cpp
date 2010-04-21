@@ -202,7 +202,6 @@ string CARInside::GetARStatusError(ARStatusList* status)
 string CARInside::GetARStatusError()
 {
 	string errorText = GetARStatusError(&this->arStatus);
-	FreeARStatusList(&this->arStatus, false);
 	return errorText;
 }
 
