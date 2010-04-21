@@ -74,6 +74,7 @@ private:
 	bool InAlList(string objName);
 	bool InFilterList(string objName);
 	bool InEscalList(string objName);
+	bool IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct& wfCS);
 	list<string> uniqueAlList;
 	list<string> uniqueFilterList;
 	list<string> uniqueEscalList;

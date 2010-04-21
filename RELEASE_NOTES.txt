@@ -4,7 +4,7 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
-2009-11
+2010-03-01
 [3.0.0]
 N - This is the first OpenSource release of ARInside
 
@@ -32,6 +32,9 @@ E - Added full support for Open Window actions of type Report
 E - Added Sample Data support where available
 E - The Validator contains now a page which lists missing menus 
 E - Added support for the new Image object in ARS 7.5
+E - Added Large Memory Support (uses up to 3GB now)
+E - Simplified qualification parsing to only add parens when required
+E - Added 'Group Category' and 'Computed Definition' to the group details
 
 D - when an Exclude list was specified, the exclude list itself was processed wasting time
 D - If Field ID was > 10 characters the app crashed
@@ -46,6 +49,8 @@ D - Corrected () placement in setfield if statements
 D - SQL Menu Labels were not displaying properly
 D - SQL Set Field actions from another server were displaying current server
 D - Active Links interval settings were not displayed properly
+D - Fixed invalid HTML-links between Schema/VUI and the user (Last Modified By)
+D - Some uninitialized memory could cause cashes
 
 2007-07-27
 [Version 2.07.4]
