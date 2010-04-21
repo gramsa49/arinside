@@ -17,11 +17,10 @@
 #include "stdafx.h"
 #include "DocCharMenuDetails.h"
 
-CDocCharMenuDetails::CDocCharMenuDetails(CARInside &arInside, CARCharMenu &arCharMenu, string path, int rootLevel)
+CDocCharMenuDetails::CDocCharMenuDetails(unsigned int menuInsideId, int rootLevel)
+: menu(menuInsideId)
 {
-	this->pInside = &arInside;
-	this->pMenu = &arCharMenu;
-	this->path = path;
+	this->path = "menu/" + menu.FileID();
 	this->rootLevel = rootLevel;
 }
 
@@ -36,15 +35,16 @@ void CDocCharMenuDetails::Documentation()
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
-			CWebPage webPage("index", this->pMenu->name, this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage("index", this->menu.GetName(), this->rootLevel, this->pInside->appConfig);
 
+			const ARCharMenuStruct& menuDef = menu.GetDefinition();
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pMenu->name) + " (" + CAREnum::MenuType(this->pMenu->menuDefn.menuType) + ")";
-			if(this->pMenu->appRefName.c_str() != NULL && this->pMenu->appRefName.size() > 0)
-				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pMenu->appRefName, this->rootLevel);
+			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->menu.GetName()) + " (" + CAREnum::MenuType(menuDef.menuType) + ")";
+			if(!this->menu.GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->menu.GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
 
@@ -57,7 +57,7 @@ void CDocCharMenuDetails::Documentation()
 			//Status
 			CTableRow row("cssStdRow");		
 			CTableCell cellProp("Refresh", "");				
-			CTableCell cellPropValue(CAREnum::MenuRefresh(this->pMenu->refreshCode), "");    
+			CTableCell cellPropValue(CAREnum::MenuRefresh(this->menu.GetRefreshCode()), "");
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
@@ -66,7 +66,7 @@ void CDocCharMenuDetails::Documentation()
 			row.ClearCells();
 			cellProp.content = "Menu Definition";
 			cellPropValue.content = "";
-			switch (this->pMenu->menuDefn.menuType)
+			switch (menuDef.menuType)
 			{		
 			case AR_CHAR_MENU_LIST: 
 				cellPropValue.content = CharMenuDetails(); 
@@ -109,17 +109,17 @@ void CDocCharMenuDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(this->pMenu->objPropList));
+			webPage.AddContent(CARProplistHelper::GetList(this->menu.GetProps()));
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pMenu, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&menu, this->rootLevel));
 
 			webPage.SaveInFolder(this->path);
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION Menu doc of '" << this->pMenu->name << "': " << e.what() << endl;
+		cout << "EXCEPTION Menu doc of '" << this->menu.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -135,7 +135,7 @@ string CDocCharMenuDetails::CharMenuDetails()
 		tbl.AddColumn(40, "Label");
 		tbl.AddColumn(40, "Value");
 
-		ARCharMenuList menu = this->pMenu->menuDefn.u.menuList;
+		const ARCharMenuList& menu = this->menu.GetDefinition().u.menuList;
 		for(unsigned int i=0; i< menu.numItems; i++)
 		{
 			CTableRow row("cssStdRow");		
@@ -157,7 +157,7 @@ string CDocCharMenuDetails::CharMenuDetails()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION Menu details doc of '" << this->pMenu->name << "': " << e.what() << endl;
+		cout << "EXCEPTION Menu details doc of '" << this->menu.GetName() << "': " << e.what() << endl;
 	}
 
 
@@ -171,7 +171,7 @@ string CDocCharMenuDetails::FileMenuDetails()
 
 	try
 	{
-		ARCharMenuFileStruct menu = this->pMenu->menuDefn.u.menuFile;
+		const ARCharMenuFileStruct& menu = this->menu.GetDefinition().u.menuFile;
 		strm << "File Name: " << menu.filename << " (" << CAREnum::MenuFileLocation(menu.fileLocation) << ")" << endl;
 	}
 	catch(exception& e)
@@ -189,12 +189,12 @@ string CDocCharMenuDetails::SqlMenuDetails()
 
 	try
 	{
-		ARCharMenuSQLStruct *menu = &this->pMenu->menuDefn.u.menuSQL;
+		const ARCharMenuSQLStruct& menu = this->menu.GetDefinition().u.menuSQL;
 
-		strm << "Server: " << this->pInside->LinkToServerInfo(menu->server, rootLevel) << "<br/>" << endl;
-		strm << "Label Index List: " << GetSQLLabelList(menu) << "<br/>" << endl;
-		strm << "Value Index: " << menu->valueIndex << "<br/><br/>" << endl;
-		strm << "SQL Command: " << menu->sqlCommand << endl;
+		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
+		strm << "Label Index List: " << GetSQLLabelList(&menu) << "<br/>" << endl;
+		strm << "Value Index: " << menu.valueIndex << "<br/><br/>" << endl;
+		strm << "SQL Command: " << menu.sqlCommand << endl;
 	}
 	catch(exception& e)
 	{
@@ -236,7 +236,7 @@ string CDocCharMenuDetails::DataDictMenuDetails()
 
 	try
 	{
-		ARCharMenuDDStruct menu = this->pMenu->menuDefn.u.menuDD;
+		const ARCharMenuDDStruct& menu = this->menu.GetDefinition().u.menuDD;
 
 		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
 		strm << "Label Format: " << CAREnum::MenuDDLabelFormat(menu.nameType) << "<br/>" << endl;
@@ -285,7 +285,7 @@ string CDocCharMenuDetails::SearchMenuDetails()
 
 	try
 	{
-		ARCharMenuQueryStruct menu = this->pMenu->menuDefn.u.menuQuery;
+		const ARCharMenuQueryStruct& menu = this->menu.GetDefinition().u.menuQuery;
 		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
 		strm << "Schema: " << this->pInside->LinkToSchema(menu.schema, rootLevel) << "<br/>" << endl;	
 
@@ -300,7 +300,7 @@ string CDocCharMenuDetails::SearchMenuDetails()
 				CFieldRefItem *refItem = new CFieldRefItem();
 				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
 				refItem->description = "Menu Label Field";
-				refItem->fromName = this->pMenu->name;
+				refItem->fromName = this->menu.GetARName();
 				refItem->fieldInsideId = menu.labelField[i];
 				refItem->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
 				this->pInside->AddReferenceItem(refItem);
@@ -320,7 +320,7 @@ string CDocCharMenuDetails::SearchMenuDetails()
 		CFieldRefItem *refItem = new CFieldRefItem();
 		refItem->arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
 		refItem->description = "Menu Value Field";
-		refItem->fromName = this->pMenu->name;
+		refItem->fromName = this->menu.GetARName();
 		refItem->fieldInsideId = menu.valueField;
 		refItem->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
 		this->pInside->AddReferenceItem(refItem);
@@ -335,7 +335,7 @@ string CDocCharMenuDetails::SearchMenuDetails()
 		CFieldRefItem *refItemQuery = new CFieldRefItem();
 		refItemQuery->arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
 		refItemQuery->description = "Search Menu Qualification";
-		refItemQuery->fromName = this->pMenu->name;
+		refItemQuery->fromName = this->menu.GetARName();
 		refItemQuery->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
 
 
@@ -373,24 +373,24 @@ string CDocCharMenuDetails::RelatedFields()
 
 	try
 	{
-		list<CARSchema>::iterator schemaIter;				
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
-			CARSchema *schema = &(*schemaIter);
+			CARSchema schema(schemaIndex);
 
-			list<CARField>::iterator fieldIter;
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+			unsigned int fieldCount = schema.GetFields()->GetCount();
+			for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
 			{
-				CARField *field = &(*fieldIter);
+				CARField field(schemaIndex, 0, fieldIndex);
 
-				if(field->dataType == AR_DATA_TYPE_CHAR)
+				if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 				{
-					if(strcmp(field->limit.u.charLimits.charMenu, this->pMenu->name.c_str())==0)
+					if(strcmp(field.GetLimits().u.charLimits.charMenu, this->menu.GetARName()) == 0)
 					{
 						CTableRow row("cssStdRow");		
-						CTableCell cellFieldName(field->GetURL(rootLevel), "");				
-						CTableCell cellFieldId(field->GetInsideId(), "");
-						CTableCell cellForm(schema->GetURL(rootLevel), "");
+						CTableCell cellFieldName(field.GetURL(rootLevel), "");				
+						CTableCell cellFieldId(field.GetInsideId(), "");
+						CTableCell cellForm(schema.GetURL(rootLevel), "");
 
 						row.AddCell(cellFieldName);
 						row.AddCell(cellFieldId);
@@ -417,24 +417,23 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 
 	try
 	{
-		list<CARActiveLink>::iterator alIter;		
-		CARActiveLink *al;
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
-		{			
-			al = &(*alIter);
-			for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
+		{
+			CARActiveLink al(alIndex);
+			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 				{
 					if(action.u.characteristics.charMenu != NULL)
 					{
-						if(strcmp(action.u.characteristics.charMenu, this->pMenu->name.c_str())==0)
+						if(strcmp(action.u.characteristics.charMenu, this->menu.GetARName())==0)
 						{
-							CTableRow row("cssStdRow");				
+							CTableRow row("cssStdRow");
 
 							stringstream tmp;
-							tmp << "If-Action " << nAction << " " << al->GetURL(rootLevel);
+							tmp << "If-Action " << nAction << " " << al.GetURL(rootLevel);
 
 							CTableCell cellActiveLink(tmp.str(), "");						
 							row.AddCell(cellActiveLink);
@@ -442,28 +441,28 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 						}
 					}
 				}
-			}		
+			}
 
-			for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 				{
 					if(action.u.characteristics.charMenu != NULL)
 					{
-						if(strcmp(action.u.characteristics.charMenu, this->pMenu->name.c_str())==0)
+						if(strcmp(action.u.characteristics.charMenu, this->menu.GetARName())==0)
 						{
-							CTableRow row("cssStdRow");				
+							CTableRow row("cssStdRow");
 
 							stringstream tmp;
-							tmp << "Else-Action " << nAction << " " << al->GetURL(rootLevel);
+							tmp << "Else-Action " << nAction << " " << al.GetURL(rootLevel);
 
 							row.AddCell(CTableCell(tmp.str()));
 							tbl.AddRow(row);
 						}
 					}
 				}
-			}		
+			}
 		}
 	}
 	catch(exception& e)
@@ -474,7 +473,7 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 	return tbl.ToXHtml();
 }
 
-string CDocCharMenuDetails::GetSQLLabelList(ARCharMenuSQLStruct *sqlMenu)
+string CDocCharMenuDetails::GetSQLLabelList(const ARCharMenuSQLStruct *sqlMenu)
 {
 	stringstream strm;
 	char buffer[16];

@@ -16,38 +16,62 @@
 
 #pragma once
 #include "ARServerObject.h"
-#include "ARField.h"
-#include "ARVui.h"
+
+class CARFieldList;
+class CARVUIList;
 
 class CARSchema :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CARSchema();
-	CARSchema(string name, int insideId);
-public:
+	CARSchema(int insideId);
+	CARSchema(const string& schemaName);
 	~CARSchema(void);
 
-	string alias;
-	ARCompoundSchema  schema;
-	ARPermissionList	groupList;
-	ARInternalIdList	admingrpList;
-	AREntryListFieldList getListFields;
-	ARSortList	sortList;
-	ARIndexList	indexList;
-	ARArchiveInfoStruct	archiveInfo;
-	ARAuditInfoStruct auditInfo;
-	ARNameType defaultVui;
-	ARPropList objPropList;
+	bool Exists();
+
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
+
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// other schema data access functions
+	const ARNameType& GetARName() const;
+	const ARCompoundSchema& GetCompound() const;
+	const ARPermissionList& GetPermissions() const;
+	const ARInternalIdList& GetSubadmins() const;
+	const AREntryListFieldList& GetResultFields() const;
+	const ARSortList& GetSortList() const;
+	const ARIndexList& GetIndexList() const;
+	const ARArchiveInfoStruct& GetArchiveInfo() const;
+	const ARAuditInfoStruct& GetAuditInfo() const;
+	const ARNameType& GetDefaultVUI() const;
+	const ARPropList& GetProps() const;
+
+	const string& GetAppRefName() const;
+	void SetAppRefName(const string& appName);
+
+	CARFieldList* GetFields();
+	CARVUIList* GetVUIs();
+
+	// some helpers
 	string WebAlias();
-
-	list<CARField> fieldList;
-	list<CARVui> vuiList;
-
 	string GetURL(int rootLevel, bool useImage = true);
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_SCHEMA; }
 
 	string LinkToVui(int vuiId, int fromRootLevel);
 	string LinkToVui(string vuiName, int fromRootLevel);
 	string VuiGetLabel(int vuiId);
+
+	// class type support
+	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_SCHEMA; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

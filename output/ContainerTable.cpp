@@ -39,7 +39,7 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	CTableRow tblRow("");
 	string cellNameValue = cont.GetURL(rootLevel);
 
-	switch(cont.type)
+	switch(cont.GetType())
 	{
 	case ARCON_FILTER_GUIDE:
 		{
@@ -60,9 +60,9 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	}
 
 	tblRow.AddCell( CTableCell(cellNameValue));
-	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.type)));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.GetType())));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
 }
 
@@ -71,18 +71,18 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 	int nResult = 0;
 	try
 	{
-		list<CARActiveLink>::iterator listIter;
-		for ( listIter = this->pInside->alList.begin(); listIter != this->pInside->alList.end(); listIter++ )
+		unsigned int alCount = this->pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex )
 		{
-			CARActiveLink *al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			//Search if-actions
-			for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -90,12 +90,12 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 			}
 
 			//Search else-actions
-			for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 			{
-				ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 				if(action.action == AR_ACTIVE_LINK_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -105,7 +105,7 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating NumRelatedActiveLinks() in container '" << obj.name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating NumRelatedActiveLinks() in container '" << obj.GetName() << "': " << e.what() << endl;
 	}
 
 	return nResult;
@@ -116,18 +116,18 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 	int nResult = 0;
 	try
 	{
-		list<CARFilter>::iterator listIter;
-		for ( listIter = this->pInside->filterList.begin(); listIter != this->pInside->filterList.end(); listIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			CARFilter *filter = &(*listIter);
+			CARFilter filter(filterIndex);
 
 			//Search if-actions
-			for(unsigned int nAction = 0; nAction < filter->actionList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < filter.GetIfActions().numItems; nAction++)
 			{
-				ARFilterActionStruct action = filter->actionList.actionList[nAction];
+				ARFilterActionStruct &action = filter.GetIfActions().actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -135,12 +135,12 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 			}
 
 			//Search else-actions
-			for(unsigned int nAction = 0; nAction < filter->elseList.numItems; nAction++)
+			for(unsigned int nAction = 0; nAction < filter.GetElseActions().numItems; nAction++)
 			{
-				ARFilterActionStruct action = filter->elseList.actionList[nAction];
+				ARFilterActionStruct action = filter.GetElseActions().actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, obj.name.c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, obj.GetARName())==0)
 					{
 						nResult++;
 					}
@@ -150,7 +150,7 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating NumRelatedFilters() in container '" << obj.name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating NumRelatedFilters() in container '" << obj.GetName() << "': " << e.what() << endl;
 	}
 
 	return nResult;

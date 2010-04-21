@@ -19,6 +19,7 @@
 
 CDocBase::CDocBase(void)
 {
+	this->pInside = CARInside::GetInstance();
 }
 
 CDocBase::~CDocBase(void)

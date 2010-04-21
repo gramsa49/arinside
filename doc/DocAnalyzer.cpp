@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocAnalyzer.h"
 
-CDocAnalyzer::CDocAnalyzer(CARInside &arIn, string path)
+CDocAnalyzer::CDocAnalyzer(string path)
 {
-	this->pInside = &arIn;
 	this->path = path;
 	this->rootLevel = 1;
 }
@@ -77,61 +76,49 @@ void CDocAnalyzer::IndexAnalyzer()
 			tbl.AddColumn(60, "Comment");
 
 
-			list<CARSchema>::iterator schemaIter;		
-			CARSchema *schema;
-			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+			unsigned int schemaCount = this->pInside->schemaList.GetCount();
+			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 			{			
-				schema = &(*schemaIter);
+				CARSchema schema(schemaIndex);
+				const ARIndexList& indexes = schema.GetIndexList();
 
-				if(schema->indexList.numItems > 0)
+				for(unsigned int nIndex = 0; nIndex < indexes.numItems; nIndex++)
 				{
-					for(unsigned int nIndex = 0; nIndex < schema->indexList.numItems; nIndex++)
+					for (unsigned int nField = 0; nField < indexes.indexList[nIndex].numFields; ++nField)
 					{
-						for(unsigned int nField=0; nField < schema->indexList.indexList[nIndex].numFields; nField++)
+						CARField field(schemaIndex, indexes.indexList[nIndex].fieldIds[nField]);
+
+						if(field.Exists() && field.GetDataType() == AR_DATA_TYPE_CHAR)
 						{
-							list<CARField>::iterator listIter;			
-							CARField *field;
-							for ( listIter = schema->fieldList.begin(); listIter != schema->fieldList.end(); listIter++ )
+							const ARCharLimitsStruct& fLimit = field.GetLimits().u.charLimits;
+							if(fLimit.qbeMatchOperation == AR_QBE_MATCH_ANYWHERE)
 							{
-								field = &(*listIter);
+								CTableRow row("");
+								row.AddCell(CTableCell(field.GetURL(rootLevel)));
+								row.AddCell(CTableCell(schema.GetURL(rootLevel)));
 
-								if(schema->indexList.indexList[nIndex].fieldIds[nField] == field->fieldId)
-								{
+								stringstream strmTmp;
+								strmTmp.str("");
 
-									if(field->dataType == AR_DATA_TYPE_CHAR)
-									{
-										ARCharLimitsStruct fLimit = field->limit.u.charLimits;
-										if(fLimit.qbeMatchOperation == AR_QBE_MATCH_ANYWHERE)
-										{
-											CTableRow row("");
-											row.AddCell(CTableCell(field->GetURL(rootLevel)));
-											row.AddCell(CTableCell(schema->GetURL(rootLevel)));
+								strmTmp << "Inefficient index because of QBE match anywhere in Index " << endl;
+								strmTmp << this->pInside->LinkToSchemaIndex(indexes.indexList[nIndex].indexName, schema.GetInsideId(), rootLevel) << endl;
+								row.AddCell(CTableCell(strmTmp.str()));
+								tbl.AddRow(row);
+							}
 
-											stringstream strmTmp;
-											strmTmp.str("");
+							if(fLimit.maxLength > 255)
+							{
+								CTableRow row("");
+								row.AddCell(CTableCell(field.GetURL(rootLevel)));
+								row.AddCell(CTableCell(schema.GetURL(rootLevel)));
 
-											strmTmp << "Inefficient index because of QBE match anywhere in Index " << endl;
-											strmTmp << this->pInside->LinkToSchemaIndex(schema->indexList.indexList[nIndex].indexName, schema->GetInsideId(), rootLevel) << endl;
-											row.AddCell(CTableCell(strmTmp.str()));
-											tbl.AddRow(row);
-										}
+								stringstream strmTmp;
+								strmTmp.str("");
 
-										if(fLimit.maxLength > 255)
-										{
-											CTableRow row("");
-											row.AddCell(CTableCell(field->GetURL(rootLevel)));
-											row.AddCell(CTableCell(schema->GetURL(rootLevel)));
-
-											stringstream strmTmp;
-											strmTmp.str("");
-
-											strmTmp << "Length of field is greater than 255 " << endl;
-											strmTmp << this->pInside->LinkToSchemaIndex(schema->indexList.indexList[nIndex].indexName, schema->GetInsideId(), rootLevel) << endl;
-											row.AddCell(CTableCell(strmTmp.str()));
-											tbl.AddRow(row);
-										}
-									}
-								}
+								strmTmp << "Length of field is greater than 255 " << endl;
+								strmTmp << this->pInside->LinkToSchemaIndex(indexes.indexList[nIndex].indexName, schema.GetInsideId(), rootLevel) << endl;
+								row.AddCell(CTableCell(strmTmp.str()));
+								tbl.AddRow(row);
 							}
 						}
 					}

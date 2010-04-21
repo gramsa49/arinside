@@ -16,44 +16,142 @@
 
 #include "stdafx.h"
 #include "ARContainer.h"
+#include "../ARInside.h"
 
-CARContainer::CARContainer(string name, int insideId)
-: CARServerObjectWithData(insideId)
+CARContainer::CARContainer(int insideId)
+: CARServerObject(insideId)
 {
-	this->name = name;
-	this->type = 0;
-	this->label = NULL;
-	this->description = NULL;
+}
 
-	ARZeroMemory(&groupList);
-	ARZeroMemory(&admingrpList);
-	ARZeroMemory(&ownerObjList);
-	ARZeroMemory(&references);
-	ARZeroMemory(&objPropList);
+CARContainer::CARContainer(const string& name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->containerList.Find(name.c_str());
+}
+
+CARContainer::CARContainer(const char* name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->containerList.Find(name);
+}
+
+bool CARContainer::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->containerList.GetCount());
 }
 
 CARContainer::~CARContainer(void)
 {
-	// TODO: move ARFree calls to separate method to allow copying of the object without 
-	// copying the whole structure
-	//try
-	//{
-	//	FreeARReferenceList(&references, false);
-	//	FreeARPermissionList(&groupList, false);
-	//	FreeARInternalIdList(&admingrpList, false);
-	//	FreeARContainerOwnerObjList(&ownerObjList, false);
-	//	FreeARReferenceList(&references, false);
+}
 
-	//	if(objPropList.props != NULL)
-	//		FreeARPropList(&objPropList, false);
-	//}
-	//catch(...)
-	//{
-	//}
+bool CARContainer::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARContainer::Clone()
+{
+	return new CARContainer(*this);
 }
 
 string CARContainer::GetURL(int rootLevel, bool showImage)
 {
-	string tmp = CWebUtil::RootPath(rootLevel)+CAREnum::ContainerDir(this->type)+"/"+this->FileID()+"/"+CWebUtil::DocName("index");
-	return CWebUtil::Link(this->name, tmp, (showImage ? CAREnum::ContainerImage(this->type) : ""), rootLevel);
+	unsigned int type = GetType();
+	string tmp = CWebUtil::RootPath(rootLevel)+CAREnum::ContainerDir(type)+"/"+this->FileID()+"/"+CWebUtil::DocName("index");
+	return CWebUtil::Link(GetName(), tmp, (showImage ? CAREnum::ContainerImage(type) : ""), rootLevel);
+}
+
+string CARContainer::GetName()
+{
+	return CARInside::GetInstance()->containerList.ContainerGetName(GetInsideId());
+}
+
+string CARContainer::GetName() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetName(GetInsideId());
+}
+
+string CARContainer::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->containerList.ContainerGetName(GetInsideId())[0]));
+}
+
+bool CARContainer::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const string& CARContainer::GetAppRefName() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetAppRefName(GetInsideId());
+}
+
+void CARContainer::SetAppRefName(const string &appName)
+{
+	return CARInside::GetInstance()->containerList.ContainerSetAppRefName(GetInsideId(), appName);
+}
+
+const char* CARContainer::GetHelpText() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetHelptext(GetInsideId());
+}
+
+ARTimestamp CARContainer::GetTimestamp()
+{
+	return CARInside::GetInstance()->containerList.ContainerGetTimestamp(GetInsideId());
+}
+
+const ARAccessNameType& CARContainer::GetOwner() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetOwner(GetInsideId());
+}
+
+const ARAccessNameType& CARContainer::GetLastChanged() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetModifiedBy(GetInsideId());
+}
+
+const char* CARContainer::GetChangeDiary() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetChangeDiary(GetInsideId());
+}
+
+const ARNameType& CARContainer::GetARName() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetName(GetInsideId());
+}
+
+const ARPermissionList& CARContainer::GetPermissions() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetPermissions(GetInsideId());
+}
+
+const ARInternalIdList& CARContainer::GetSubadmins() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetSubadmins(GetInsideId());
+}
+
+const ARContainerOwnerObjList& CARContainer::GetOwnerObjects() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetOwnerObjects(GetInsideId());
+}
+
+char* CARContainer::GetLabel() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetLabel(GetInsideId());
+}
+
+char* CARContainer::GetDescription() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetDescription(GetInsideId());
+}
+
+unsigned int CARContainer::GetType() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetType(GetInsideId());
+}
+
+const ARReferenceList& CARContainer::GetReferences() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetReferences(GetInsideId());
 }

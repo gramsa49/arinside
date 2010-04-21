@@ -18,12 +18,10 @@
 #include "DocVuiDetails.h"
 #include "../output/CsvPage.h"
 
-CDocVuiDetails::CDocVuiDetails(CARInside &arInside, CARSchema &schema, CARVui &vui, string path, int rootLevel)
+CDocVuiDetails::CDocVuiDetails(unsigned int SchemaInsideId, const CARVui& vuiObj, int rootLevel)
+: schema(SchemaInsideId), vui(vuiObj)
 {
-	this->pInside = &arInside;
-	this->pSchema = &schema;
-	this->pVui = &vui;
-	this->path = path;
+	this->path = "schema/" + schema.FileID();;
 	this->rootLevel = rootLevel;
 }
 
@@ -35,29 +33,29 @@ void CDocVuiDetails::Documentation()
 {
 	try
 	{
-		string fName = "vui_"+this->pVui->FileID();
-		CWebPage webPage(fName, this->pVui->name, this->rootLevel, this->pInside->appConfig);
+		string fName = "vui_"+this->vui.FileID();
+		CWebPage webPage(fName, this->vui.GetName(), this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->pSchema->schema.schemaType, this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->pSchema->name, CWebUtil::DocName("index"), "", rootLevel);
+		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, this->rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CWebUtil::DocName("index"), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CWebUtil::DocName("form_vui_list"), "", rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->pVui->name) << endl;
-		contHeadStrm << " (Id: " << this->pVui->GetInsideId() << ")" << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->vui.GetName()) << endl;
+		contHeadStrm << " (Id: " << this->vui.GetInsideId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Properties
-		webPage.AddContent(CARProplistHelper::GetList(this->pVui->objPropList, this));
+		webPage.AddContent(CARProplistHelper::GetList(this->vui.GetProps(), this));
 
 		webPage.AddContent(this->FieldProperties(fName).ToXHtml());
 
-		webPage.AddContent(this->pInside->ServerObjectHistory(this->pVui, this->rootLevel));
+		webPage.AddContent(this->pInside->ServerObjectHistory(&this->vui, this->rootLevel));
 		webPage.SaveInFolder(path);	
 
 		//Save field information to ccs
-		CCsvPage csvPage("vui_"+this->pVui->FileID(), this->pInside->appConfig);
+		CCsvPage csvPage("vui_"+this->vui.FileID(), this->pInside->appConfig);
 		csvPage.SaveInFolder(path, this->FieldPropertiesCsv(fName).ToCsv());
 
 	}
@@ -79,42 +77,45 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 
 	try
 	{
-		list<CARField>::iterator fieldIter;				
-		for( fieldIter = this->pSchema->fieldList.begin(); fieldIter != this->pSchema->fieldList.end(); fieldIter++)
+		unsigned int fieldCount = schema.GetFields()->GetCount();
+		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
 			bool bInView = false;
 			stringstream tmpLabel;
-			tmpLabel.str("");
 
-			CARField *field = &(*fieldIter);
-			for(unsigned int i=0; i< field->dInstanceList.numItems; i++)
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
+			const ARDisplayInstanceList& dispList = field.GetDisplayInstances();
+			for(unsigned int i=0; i< dispList.numItems; ++i)
 			{
-				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->GetInsideId())
+				if(dispList.dInstanceList[i].vui == this->vui.GetInsideId())
 				{
-					for(unsigned int j=0; j< field->dInstanceList.dInstanceList[i].props.numItems; j++)
+					for(unsigned int j=0; j< dispList.dInstanceList[i].props.numItems; ++j)
 					{
-						switch (field->dInstanceList.dInstanceList[i].props.props[j].prop)
+						switch (dispList.dInstanceList[i].props.props[j].prop)
 						{	
 						case AR_DPROP_BUTTON_TEXT:
 						case AR_DPROP_LABEL:
 							{
-								if(field->dInstanceList.dInstanceList[i].props.props[j].value.u.charVal != NULL)
+								if(dispList.dInstanceList[i].props.props[j].value.dataType == AR_DATA_TYPE_CHAR &&
+								   dispList.dInstanceList[i].props.props[j].value.u.charVal != NULL)
 								{
-									tmpLabel << field->dInstanceList.dInstanceList[i].props.props[j].value.u.charVal;	
+									tmpLabel << dispList.dInstanceList[i].props.props[j].value.u.charVal;	
 								}
+								j = dispList.dInstanceList[i].props.numItems;
 							}
 							break;												
 						}
 					}	
 
 					CTableRow row("");
-					row.AddCell(CTableCell( field->GetURL(rootLevel)));
-					row.AddCell(CTableCell(field->fieldId));
+					row.AddCell(CTableCell(field.GetURL(rootLevel)));
+					row.AddCell(CTableCell(field.GetFieldId()));
 					row.AddCell(CTableCell(tmpLabel.str()));				
-					row.AddCell(CTableCell(CAREnum::DataType(field->dataType)));				
-					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-					row.AddCell(CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
+					row.AddCell(CTableCell(CAREnum::DataType(field.GetDataType())));				
+					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(field.GetTimestamp())));
+					row.AddCell(CTableCell(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel)));
 					tbl.AddRow(row);
+					break; // exit for(i) loop
 				}
 			}
 		}
@@ -125,7 +126,7 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating field properties in view '" << this->pVui->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating field properties in view '" << this->vui.GetName() << "': " << e.what() << endl;
 	}
 
 	return tbl;
@@ -144,41 +145,44 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 
 	try
 	{
-		list<CARField>::iterator fieldIter;				
-		for( fieldIter = this->pSchema->fieldList.begin(); fieldIter != this->pSchema->fieldList.end(); fieldIter++)
+		unsigned int fieldCount = schema.GetFields()->GetCount();
+		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
 			bool bInView = false;
 			stringstream tmpLabel;
 			tmpLabel.str("");
 
-			CARField *field = &(*fieldIter);
-			for(unsigned int i=0; i< field->dInstanceList.numItems; i++)
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
+			const ARDisplayInstanceList& dispList = field.GetDisplayInstances();
+			for(unsigned int i=0; i < dispList.numItems; ++i)
 			{
-				if(field->dInstanceList.dInstanceList[i].vui == this->pVui->GetInsideId())
+				if(dispList.dInstanceList[i].vui == this->vui.GetInsideId())
 				{
-					for(unsigned int j=0; j< field->dInstanceList.dInstanceList[i].props.numItems; j++)
+					for(unsigned int j=0; j< dispList.dInstanceList[i].props.numItems; ++j)
 					{
-						switch (field->dInstanceList.dInstanceList[i].props.props[j].prop)
+						switch (dispList.dInstanceList[i].props.props[j].prop)
 						{	
 						case AR_DPROP_BUTTON_TEXT:
 						case AR_DPROP_LABEL:
 							{
-								if(field->dInstanceList.dInstanceList[i].props.props[j].value.u.charVal != NULL)
+								if(dispList.dInstanceList[i].props.props[j].value.dataType == AR_DATA_TYPE_CHAR &&
+								   dispList.dInstanceList[i].props.props[j].value.u.charVal != NULL)
 								{
-									tmpLabel << field->dInstanceList.dInstanceList[i].props.props[j].value.u.charVal;	
+									tmpLabel << dispList.dInstanceList[i].props.props[j].value.u.charVal;	
 								}
+								j = dispList.dInstanceList[i].props.numItems;
 							}
 							break;												
 						}
 					}	
 
 					CTableRow row("");
-					row.AddCell(CTableCell(field->name));
-					row.AddCell(CTableCell(field->fieldId));
+					row.AddCell(CTableCell(field.GetName()));
+					row.AddCell(CTableCell(field.GetFieldId()));
 					row.AddCell(CTableCell(tmpLabel.str()));				
-					row.AddCell(CTableCell(CAREnum::DataType(field->dataType)));				
-					row.AddCell(CTableCell(CUtil::DateTimeToString(field->timestamp)));
-					row.AddCell(CTableCell(field->lastChanged));
+					row.AddCell(CTableCell(CAREnum::DataType(field.GetDataType())));				
+					row.AddCell(CTableCell(CUtil::DateTimeToString(field.GetTimestamp())));
+					row.AddCell(CTableCell(field.GetLastChanged()));
 					tbl.AddRow(row);
 				}
 			}
@@ -190,7 +194,7 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating field properties in view '" << this->pVui->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating field properties in view '" << this->vui.GetName() << "': " << e.what() << endl;
 	}
 
 	return tbl;
@@ -209,7 +213,7 @@ bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStru
 
 			displayValue = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
 			
-			CImageRefItem refItem(imageIndex,"Background in VUI of Form " + this->pSchema->GetURL(rootLevel), pVui);
+			CImageRefItem refItem(imageIndex,"Background in VUI of Form " + this->schema.GetURL(rootLevel), &vui);
 			pInside->imageList.AddReference(refItem);
 			return true;
 		}

@@ -36,14 +36,18 @@ public:
 	bool NameStandardFirstChar();
 
 	// implement function inherited from CARServerObject
-	const char* GetHelpText();
+	const char* GetHelpText() const;
 	ARTimestamp GetTimestamp();
-	const ARAccessNameType& GetOwner();
-	const ARAccessNameType& GetLastChanged();
-	const char* GetChangeDiary();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
 
 	string GetURL(int rootLevel, bool showImage = true);
+	
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_IMAGE; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };
 
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

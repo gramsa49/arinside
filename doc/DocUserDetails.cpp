@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocUserDetails.h"
 
-CDocUserDetails::CDocUserDetails(CARInside &arIn, CARUser &arUser)
+CDocUserDetails::CDocUserDetails(CARUser &arUser)
 {
-	this->pInside = &arIn;
 	this->pUser = &arUser;
 	this->rootLevel = 1;
 }

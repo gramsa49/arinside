@@ -39,16 +39,11 @@ void CImageTable::AddRow(int imageIndex, int rootLevel)
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	try
 	{
-		// TODO: add rows to table
 		CTableRow tblRow("");
 		tblRow.AddCell(this->pInside->LinkToImage(imageIndex, rootLevel));
 		tblRow.AddCell(this->pInside->imageList.ImageGetType(imageIndex));
 		tblRow.AddCell(CUtil::DateTimeToHTMLString(this->pInside->imageList.ImageGetTimestamp(imageIndex)));
 		tblRow.AddCell(this->pInside->imageList.ImageGetModifiedBy(imageIndex));
-		//tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.loginName, rootLevel)));
-		//tblRow.AddCell( CTableCell(CAREnum::UserGetLicType(user.licenseType)));
-		//tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.modified)));
-		//tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.modifiedBy, rootLevel)));
 
 		this->tbl.AddRow(tblRow);
 	}

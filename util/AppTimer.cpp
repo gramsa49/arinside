@@ -17,9 +17,38 @@
 #include "stdafx.h"
 #include "AppTimer.h"
 
+#if defined(_MSC_VER) || defined(_WINDOWS_)
+int gettimeofday(struct timeval* tv, struct timezone *tz) 
+{
+	static int tzInitializied;
+	union {
+		 FILETIME ft;
+		 long long lltm;
+	} now;
+ 
+	GetSystemTimeAsFileTime (&now.ft);
+
+	if (tv != NULL)
+	{
+		tv->tv_sec  = (long)((now.lltm - 116444736000000000LL) / 10000000LL);
+		tv->tv_usec = (long)((now.lltm / 10LL) % 1000000LL);
+	}
+	
+	if (tz != NULL)
+	{
+		if (!tzInitializied) { _tzset(); ++tzInitializied; }
+		tz->tz_minuteswest = _timezone / 60;
+		tz->tz_dsttime     = _daylight;
+	}
+
+	return 0;
+}
+#endif
+
 CAppTimer::CAppTimer(void)
 {
-	dTimeElapsed=0;
+	memset(&startTime, 0, sizeof(timeval));
+	memset(&endTime, 0, sizeof(timeval));
 }
 
 CAppTimer::~CAppTimer(void)
@@ -28,15 +57,15 @@ CAppTimer::~CAppTimer(void)
 
 void CAppTimer::StartTimer()
 {
-	start = clock();		
+	gettimeofday(&startTime, NULL);
 }
 
 void CAppTimer::EndTimer()
 {
-	end = clock();		
+	gettimeofday(&endTime, NULL);
 }
 
 float CAppTimer::GetDuration()
 {
-	return (float)(end - start) / (float)CLOCKS_PER_SEC;
+	return (float)(endTime.tv_sec - startTime.tv_sec);
 }

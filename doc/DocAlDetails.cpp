@@ -17,11 +17,10 @@
 #include "stdafx.h"
 #include "DocAlDetails.h"
 
-CDocAlDetails::CDocAlDetails(CARInside &arInside, CARActiveLink &arActiveLink, string path, int rootLevel)
+CDocAlDetails::CDocAlDetails(int alInsideId, int rootLevel)
+: al(alInsideId)
 {
-	this->pInside = &arInside;
-	this->pAl = &arActiveLink;
-	this->path = path;
+	this->path = "active_link/" + CARObject::FileID(alInsideId);
 	this->rootLevel = rootLevel;
 	this->props = NULL;
 }
@@ -38,18 +37,18 @@ void CDocAlDetails::Documentation()
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("index", this->pAl->name, this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage("index", this->al.GetName(), this->rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 
 			// temp list to output only infos that arent already displayed
-			props = new CARProplistHelper(&pAl->objPropList);
+			props = new CARProplistHelper(&this->al.GetPropList());
 
-			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pAl->name);
-			if(this->pAl->appRefName.c_str() != NULL && this->pAl->appRefName.size() > 0)
-				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pAl->appRefName, this->rootLevel);
+			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->al.GetName());
+			if(!this->al.GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
 
@@ -62,14 +61,14 @@ void CDocAlDetails::Documentation()
 			//Status
 			CTableRow row("cssStdRow");		
 			CTableCell cellProp("Status", "");				
-			CTableCell cellPropValue(CAREnum::ObjectEnable(this->pAl->enable), "");    
+			CTableCell cellPropValue(CAREnum::ObjectEnable(this->al.GetEnabled()), "");
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
 
 			//Execution Order
 			row.ClearCells();
-			strmTmp << this->pAl->order;
+			strmTmp << this->al.GetOrder();
 
 			cellProp.content = "Execution Order";
 			cellPropValue.content = strmTmp.str();
@@ -80,27 +79,28 @@ void CDocAlDetails::Documentation()
 			//Execute On
 			row.ClearCells();
 			cellProp.content = "Execute On";
-			cellPropValue.content = pAl->GetExecuteOn(false, props);
+			cellPropValue.content = this->al.GetExecuteOn(false, props);
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
 
 			//Workflow	
-			if(this->pAl->schemaList.u.schemaList->numItems > 0)
+			if(this->al.GetSchemaList().u.schemaList->numItems > 0)
 			{		
-				for(unsigned int i=0; i< this->pAl->schemaList.u.schemaList->numItems; i++)
+				const ARWorkflowConnectStruct &formList = this->al.GetSchemaList();
+
+				for(unsigned int i=0; i< formList.u.schemaList->numItems; i++)
 				{
 					//Workflowlink to each page	
 					strmTmp.str("");
 					row.ClearCells();
-					cellProp.content = this->pInside->LinkToSchema(this->pAl->schemaList.u.schemaList->nameList[i], rootLevel);
+					cellProp.content = this->pInside->LinkToSchema(formList.u.schemaList->nameList[i], rootLevel);
 
-					cellPropValue.content = this->CreateSpecific(this->pAl->schemaList.u.schemaList->nameList[i]);
+					cellPropValue.content = this->CreateSpecific(formList.u.schemaList->nameList[i]);
 					row.AddCell(cellProp);
 					row.AddCell(cellPropValue);
 					tblObjProp.AddRow(row);	
 				}
-
 			}
 			else // AL is not related to any form
 			{
@@ -144,7 +144,7 @@ void CDocAlDetails::Documentation()
 			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pAl->objPropList));
 
 			//History		
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pAl, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->al, this->rootLevel));
 
 			webPage.SaveInFolder(path);
 
@@ -153,7 +153,7 @@ void CDocAlDetails::Documentation()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating common active link informations of '" << this->pAl->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating common active link informations of '" << this->al.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -164,9 +164,9 @@ string CDocAlDetails::Permissions()
 	try
 	{
 		CGroupTable *grpTbl = new CGroupTable(*this->pInside);
-		for(unsigned int i=0; i< this->pAl->groupList.numItems; i++)
+		for(unsigned int i=0; i< this->al.GetGroupList().numItems; i++)
 		{			
-			grpTbl->AddRow(this->pAl->appRefName, this->pAl->groupList.internalIdList[i], this->rootLevel);
+			grpTbl->AddRow(this->al.GetAppRefName(), this->al.GetGroupList().internalIdList[i], this->rootLevel);
 		}
 
 		strm << grpTbl->Print();
@@ -175,7 +175,7 @@ string CDocAlDetails::Permissions()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link permissions of '" << this->pAl->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating active link permissions of '" << this->al.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -188,42 +188,45 @@ string CDocAlDetails::ContainerReferences()
 	try
 	{
 		CContainerTable *contTable = new CContainerTable(*this->pInside);
-		list<CARContainer>::iterator listContIter;		
-		for ( listContIter = this->pInside->containerList.begin();  listContIter != this->pInside->containerList.end(); listContIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			CARContainer *cont = &(*listContIter);
-			for(unsigned int nCnt = 0; nCnt < cont->references.numItems; nCnt++)
+			CARContainer cont(cntIndex);
+
+			if(cont.GetType() != ARCON_APP)
 			{
-				if(cont->type != ARCON_APP)
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
-					if(cont->references.referenceList[nCnt].reference.u.name != NULL)
+					if(refs.referenceList[nCnt].type == ARREF_ACTLINK)
 					{
-						if(strcmp(cont->references.referenceList[nCnt].reference.u.name, this->pAl->name.c_str())==0
-							&& cont->references.referenceList[nCnt].type == ARREF_ACTLINK)
+						if(refs.referenceList[nCnt].reference.u.name != NULL &&
+						   this->al.GetName() == refs.referenceList[nCnt].reference.u.name)
 						{
-							contTable->AddRow(*cont, rootLevel);
+							contTable->AddRow(cont, rootLevel);
 						}
 					}
 				}
 			}
-		}		
+		}
 
 		strm << contTable->Print();
 		delete contTable;
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link container references of '" << this->pAl->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating active link container references of '" << this->al.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
 }
 
 
-string CDocAlDetails::CreateSpecific(string schemaName)
+string CDocAlDetails::CreateSpecific(const string &schemaName)
 {
 	stringstream pgStrm;
 	pgStrm.str("");
+	int schemaInsideId = -2;
 
 	try
 	{	
@@ -231,46 +234,55 @@ string CDocAlDetails::CreateSpecific(string schemaName)
 		stringstream strmTmp;
 		strmTmp.str("");
 
-		if(this->pAl->controlField > 0)
+		if(this->al.GetControlField() > 0)
 		{
+			if (schemaInsideId == -2)
+				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
+
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ACTIVE_LINK;
 			refItem->description = "Control Field";
-			refItem->fromName = this->pAl->name;	
-			refItem->fieldInsideId = this->pAl->controlField;
-			refItem->schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
-			pgStrm << "Control Field: " << this->pInside->LinkToField(schemaName, this->pAl->controlField, rootLevel) << "<br/><br/>" << endl; 
+			refItem->fromName = this->al.GetName();	
+			refItem->fieldInsideId = this->al.GetControlField();
+			refItem->schemaInsideId = schemaInsideId;
+			pgStrm << "Control Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetControlField(), rootLevel) << "<br/><br/>" << endl; 
 			this->pInside->AddReferenceItem(refItem);
 			delete refItem;
 		}
 
 
-		if(this->pAl->focusField > 0)
+		if(this->al.GetFocusField() > 0)
 		{
+			if (schemaInsideId == -2)
+				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
+
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ACTIVE_LINK;
 			refItem->description = "Focus Field";
-			refItem->fromName = this->pAl->name;	
-			refItem->fieldInsideId = this->pAl->focusField;
-			refItem->schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
-			pgStrm << "Focus Field: " << this->pInside->LinkToField(schemaName, this->pAl->focusField, rootLevel) << "<br/><br/>" << endl;
+			refItem->fromName = this->al.GetName();	
+			refItem->fieldInsideId = this->al.GetFocusField();
+			refItem->schemaInsideId = schemaInsideId;
+			pgStrm << "Focus Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetFocusField(), rootLevel) << "<br/><br/>" << endl;
 			this->pInside->AddReferenceItem(refItem);
 			delete refItem;
 		}
 
 		//Query
 		strmTmp.str("");
-		if(this->pAl->query.operation != NULL)
+		if(this->al.GetRunIf().operation != NULL)
 		{		
+			if (schemaInsideId == -2)
+				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
+
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ACTIVE_LINK;
 			refItem->description = "Run If";
-			refItem->fromName = this->pAl->name;
+			refItem->fromName = this->al.GetName();
 
 			CARQualification arQual(*this->pInside);
-			int pFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
-			int sFormId = pFormId;
-			arQual.CheckQuery(&this->pAl->query, *refItem, 0, pFormId, sFormId, strmTmp, rootLevel);
+			int pFormId = schemaInsideId;
+			int sFormId = schemaInsideId;
+			arQual.CheckQuery(&this->al.GetRunIf(), *refItem, 0, pFormId, sFormId, strmTmp, rootLevel);
 
 			delete refItem;
 		}
@@ -282,15 +294,15 @@ string CDocAlDetails::CreateSpecific(string schemaName)
 		pgStrm << "Run If Qualification: <br/>" << strmTmp.str();
 
 		//If-Actions		
-		CDocAlActionStruct actionStruct(*this->pInside, *this->pAl, schemaName, this->path, this->rootLevel);
-		pgStrm << actionStruct.Get("If", this->pAl->actionList);
+		CDocAlActionStruct actionStruct(*this->pInside, this->al, schemaName, this->path, this->rootLevel);
+		pgStrm << actionStruct.Get("If", this->al.GetIfActions());
 
 		//Else-Actions
-		pgStrm << actionStruct.Get("Else", this->pAl->elseList);
+		pgStrm << actionStruct.Get("Else", this->al.GetElseActions());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link details of '" << this->pAl->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating active link details of '" << this->al.GetName() << "': " << e.what() << endl;
 	}
 
 	return pgStrm.str();

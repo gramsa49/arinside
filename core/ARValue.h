@@ -23,5 +23,5 @@ public:
 	CARValue();
 	~CARValue();
 
-	static string ValueToString(ARValueStruct &value);
+	static string ValueToString(const ARValueStruct &value);
 };

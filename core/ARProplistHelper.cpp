@@ -18,7 +18,7 @@
 #include "../ARInside.h"
 #include "ARProplistHelper.h"
 
-CARProplistHelper::CARProplistHelper(ARPropList* propList)
+CARProplistHelper::CARProplistHelper(const ARPropList* propList)
 {
 	if (propList == NULL) return;
 
@@ -46,7 +46,7 @@ string CARProplistHelper::GetLabel(ARULong32 nProp)
 	return CAREnum::FieldPropertiesLabel(nProp);
 }
 
-string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
+string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 {
 	stringstream strmValue;
 	strmValue.str("");
@@ -180,7 +180,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, ARValueStruct &arV)
 }
 
 
-string CARProplistHelper::GetList(ARPropList &objPropList, CARPropertyCallback* pcbObj)
+string CARProplistHelper::GetList(const ARPropList &objPropList, CARPropertyCallback* pcbObj)
 {
 	stringstream strm;
 	strm.str("");
@@ -214,6 +214,16 @@ string CARProplistHelper::GetList(ARPropList &objPropList, CARPropertyCallback* 
 	}
 
 	return strm.str();
+}
+
+ARValueStruct* CARProplistHelper::Find(const ARPropList &objPropList, ARULong32 nProp)
+{
+	for (unsigned int idx = 0; idx < objPropList.numItems; ++idx)
+	{
+		if (objPropList.props[idx].prop == nProp)
+			return &objPropList.props[idx].value;
+	}
+	return NULL;
 }
 
 ARValueStruct* CARProplistHelper::GetAndUseValue(ARULong32 nProp)

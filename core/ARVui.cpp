@@ -16,26 +16,57 @@
 
 #include "stdafx.h"
 #include "ARVui.h"
+#include "../lists/ARVUIList.h"
 
-CARVui::CARVui(int insideId)
-: CARServerObjectWithData(insideId)
-{	
-	this->vuiType = 0;
+CARVui::CARVui(unsigned int SchemaInsideId, unsigned int vuiId, int SchemaVuiIndex)
+: CARServerObject(vuiId), schema(SchemaInsideId)
+{
+	if (!schema.Exists())
+	{
+		insideId = -1;
+		vuiIndex = -1;
+		vuiList = NULL;
+		return;
+	}
 
-	ARZeroMemory(&vuiName);
-	ARZeroMemory(&locale);
-	ARZeroMemory(&objPropList);
+	// look up and store the vui index for faster access	
+	vuiList = schema.GetVUIs();
+
+	// if the vui is accessed via SchemaVuiIndex (and has a valid range) .. use it
+	if (vuiId == 0 && SchemaVuiIndex >= 0 && (unsigned int)SchemaVuiIndex < vuiList->GetCount())
+	{
+		vuiIndex = SchemaVuiIndex;
+		insideId = GetId();
+	}
+	// ok ... accessing by vuiId ... look up the index
+	else if (vuiId > 0)
+	{
+		vuiIndex = vuiList->Find(vuiId);
+	}
+	// default .. this could be a out of bounds. the caller should know what to do!
+	else
+	{
+		vuiIndex = SchemaVuiIndex;
+	}
 }
 
 CARVui::~CARVui(void)
 {
-	// TODO: move ARFree calls to separate method to allow copying of the object without 
-	// copying the whole structure
-	//if(bARFree)
-	//{
-	//	if(objPropList.props != NULL)
-	//		FreeARPropList(&objPropList, false);
-	//}
+}
+
+bool CARVui::Exists()
+{
+	return (vuiIndex >= 0 && (unsigned int)vuiIndex < vuiList->GetCount());
+}
+
+bool CARVui::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARVui::Clone()
+{
+	return new CARVui(*this);
 }
 
 string CARVui::GetURL(int rootLevel, bool showImage)
@@ -43,34 +74,22 @@ string CARVui::GetURL(int rootLevel, bool showImage)
 	stringstream tmp;
 	tmp.str("");
 
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->schemaInsideId << "/" << CWebUtil::DocName("vui_" + this->FileID());	
-	return CWebUtil::Link(this->name, tmp.str(), "", rootLevel);
+	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << schema.GetInsideId() << "/" << CWebUtil::DocName("vui_" + this->FileID());	
+	return CWebUtil::Link(this->GetName(), tmp.str(), "", rootLevel);
 }
 
 string CARVui::webAlias()
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
-		if(objPropList.props != NULL)
+		const ARPropList& propList = GetProps();
+
+		for(unsigned int i=0; i< propList.numItems; ++i)
 		{
-			for(unsigned int i=0; i< this->objPropList.numItems; i++)
+			if (propList.props[i].prop == AR_OPROP_VIEW_LABEL_WEB_ALIAS &&
+			    propList.props[i].value.dataType == AR_DATA_TYPE_CHAR)
 			{
-				switch(this->objPropList.props[i].prop)
-				{
-					case AR_OPROP_VIEW_LABEL_WEB_ALIAS:
-					{
-						strm.str("");
-						if(this->objPropList.props[i].value.u.charVal != NULL)
-						{
-							strm.str("");
-							strm << this->objPropList.props[i].value.u.charVal;
-						}
-					}
-					break;
-				}				
+				return propList.props[i].value.u.charVal;
 			}
 		}
 	}
@@ -78,8 +97,7 @@ string CARVui::webAlias()
 	{
 		cout << "EXCEPTION enumerating view web alias: " << e.what() << endl;
 	}
-
-	return strm.str();
+	return "";
 }
 
 
@@ -90,23 +108,14 @@ string CARVui::Label()
 
 	try
 	{
-		if(objPropList.props != NULL)
+		const ARPropList& propList = GetProps();
+
+		for(unsigned int i=0; i< propList.numItems; ++i)
 		{
-			for(unsigned int i=0; i< this->objPropList.numItems; i++)
+			if (propList.props[i].prop == AR_DPROP_LABEL &&
+			    propList.props[i].value.dataType == AR_DATA_TYPE_CHAR)
 			{
-				switch(this->objPropList.props[i].prop)
-				{
-					case AR_DPROP_LABEL:
-					{
-						strm.str("");
-						if(this->objPropList.props[i].value.u.charVal != NULL)
-						{
-							strm.str("");
-							strm << this->objPropList.props[i].value.u.charVal;
-						}
-					}
-					break;
-				}				
+				return propList.props[i].value.u.charVal;
 			}
 		}
 	}
@@ -116,4 +125,69 @@ string CARVui::Label()
 	}
 
 	return strm.str();
+}
+
+string CARVui::GetName()
+{
+	return vuiList->VUIGetName(vuiIndex);
+}
+
+string CARVui::GetName() const
+{
+	return vuiList->VUIGetName(vuiIndex);
+}
+
+string CARVui::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, vuiList->VUIGetName(vuiIndex)[0]));
+}
+
+bool CARVui::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const char* CARVui::GetHelpText() const
+{
+	return vuiList->VUIGetHelptext(vuiIndex);
+}
+
+ARTimestamp CARVui::GetTimestamp()
+{
+	return vuiList->VUIGetTimestamp(vuiIndex);
+}
+
+const ARAccessNameType& CARVui::GetOwner() const
+{
+	return vuiList->VUIGetOwner(vuiIndex);
+}
+
+const ARAccessNameType& CARVui::GetLastChanged() const
+{
+	return vuiList->VUIGetModifiedBy(vuiIndex);
+}
+
+const char* CARVui::GetChangeDiary() const
+{
+	return vuiList->VUIGetChangeDiary(vuiIndex);
+}
+
+ARInternalId CARVui::GetId()
+{
+	return vuiList->VUIGetId(vuiIndex);
+}
+
+const ARLocaleType& CARVui::GetLocale() const
+{
+	return vuiList->VUIGetLocale(vuiIndex);
+}
+
+int CARVui::GetType()
+{
+	return vuiList->VUIGetType(vuiIndex);
+}
+
+const ARPropList& CARVui::GetProps() const
+{
+	return vuiList->VUIGetProps(vuiIndex);
 }

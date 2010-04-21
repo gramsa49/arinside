@@ -16,24 +16,48 @@
 
 #pragma once
 #include "ARServerObject.h"
-#include "../core/AREnum.h"
 
 class CARContainer :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CARContainer(string name, int insideId);
+	CARContainer(int insideId);
+	CARContainer(const char* name);
+	CARContainer(const string& name);
 	~CARContainer(void);
 
-	ARPermissionList	groupList;
-	ARInternalIdList	admingrpList;
-	ARContainerOwnerObjList	ownerObjList;
-	char	*label;
-	char	*description;
-	unsigned int	type;
-	ARReferenceList	references;
-	ARPropList	objPropList;
+	bool Exists();
+
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
+
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	const ARNameType& GetARName() const;
+	const ARPermissionList& GetPermissions() const;
+	const ARInternalIdList& GetSubadmins() const;
+	const ARContainerOwnerObjList& GetOwnerObjects() const;
+	char* GetLabel() const;
+	char* GetDescription() const;
+	unsigned int GetType() const;
+	const ARReferenceList& GetReferences() const;
+	const ARPropList& GetProps() const;
+
+	const string& GetAppRefName() const;
+	void SetAppRefName(const string& appName);
 
 	string GetURL(int rootLevel, bool showImage = true);
+
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_CONTAINER; }
+	bool IsClonable();
+	CARServerObject* Clone();
+private:
 };

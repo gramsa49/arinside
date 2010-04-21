@@ -17,6 +17,17 @@
 #pragma once
 #include <ctime>
 
+#if defined(_MSC_VER) || defined(_WINDOWS_)
+#include <windows.h>
+struct timezone
+{
+	int  tz_minuteswest;
+	int  tz_dsttime;
+};
+#else
+#include <sys/time.h>
+#endif
+
 class CAppTimer
 {
 public:
@@ -28,6 +39,8 @@ public:
 	float GetDuration();
 
 private:
-	float dTimeElapsed;
-	clock_t start, end;
+	//float dTimeElapsed;
+	//clock_t start, end;
+	timeval startTime, endTime;
 };
+

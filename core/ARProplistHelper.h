@@ -43,13 +43,15 @@ public:
 	};
 
 public:
-	CARProplistHelper(ARPropList* propList);
+	CARProplistHelper(const ARPropList* propList);
 	~CARProplistHelper(void);
 
 	/// Returns the html for a table containing all properties and their values.
-	static string GetList(ARPropList &objPropList, CARPropertyCallback* pcbObj = NULL);
+	static string GetList(const ARPropList &objPropList, CARPropertyCallback* pcbObj = NULL);
 	static string GetLabel(ARULong32 nProp);
-	static string GetValue(ARULong32 nProp, ARValueStruct &arV);
+	static string GetValue(ARULong32 nProp, const ARValueStruct &arV);
+	
+	static ARValueStruct* Find(const ARPropList &objPropList, ARULong32 nProp);
 
 	ARValueStruct* GetAndUseValue(ARULong32 nProp);
 	ARValueStruct* GetValue(ARULong32 nProp);
@@ -64,6 +66,7 @@ private:
 		~PropHelpData(void);
 
 		operator ARULong32() { return pId; }
+		friend bool operator<(const PropHelpData &l, const PropHelpData &r) { return l.pId < r.pId; }
 
 		ARULong32       pId;    // property id
 		ARValueStruct*  Value;  // value struct

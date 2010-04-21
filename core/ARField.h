@@ -16,26 +16,55 @@
 
 #pragma once
 #include "ARServerObject.h"
+#include "ARSchema.h"
 
 class CARField :
-	public CARServerObjectWithData
+	public CARServerObject
 {
+private:
+
 public:
-	CARField(int insideId);
-	~CARField(void);
+	CARField(unsigned int SchemaInsideId, unsigned int fieldId, int SchemaFieldIndex = -1);
+	~CARField(void) {}
 
-	ARInternalId fieldId;
-	ARNameType fieldName;
-	ARFieldMappingStruct fieldMap;
-	unsigned int dataType;
-	unsigned int option;
-	unsigned int createMode;
-	ARValueStruct defaultVal;
-	ARPermissionList permissions;
-	ARFieldLimitStruct limit;
-	ARDisplayInstanceList dInstanceList;
-	int schemaInsideId;
+	// use this function after calling the constructor with just a fieldId and no index specified.
+	bool Exists();
 
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
+
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// other data access functions
+	ARInternalId GetFieldId() const;
+	const ARFieldMappingStruct& GetMapping() const;
+	unsigned int GetDataType() const;
+	unsigned int GetOption() const;
+	unsigned int GetCreateMode() const;
+	unsigned int GetFieldOption() const;
+	const ARValueStruct& GetDefaultValue() const;
+	const ARPermissionList& GetPermissions() const;
+	const ARFieldLimitStruct& GetLimits() const;
+	const ARDisplayInstanceList& GetDisplayInstances() const;
+
+	// helpers
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FIELD; }
+	bool IsClonable();
+	CARServerObject* Clone();
+
+private:
+	CARSchema schema;
+	CARFieldList *fieldList;
+	int fieldIndex;
 };

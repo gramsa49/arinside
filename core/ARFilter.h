@@ -18,30 +18,48 @@
 #include "ARServerObject.h"
 
 class CARFilter :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CARFilter(string name, int insideId);
+	CARFilter(int insideId);
 	~CARFilter(void);
 
-	// filter base informations from api
-	unsigned int order;
-	unsigned int opSet;
-	unsigned int enable;
-	unsigned int errorOptions;
-	ARNameType errorFilterName;
-	ARQualifierStruct query;
-	ARFilterActionList actionList;
-	ARFilterActionList elseList;
-	ARWorkflowConnectStruct schemaList;
-	ARPropList objPropList;
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
 
-	// filter enhanced informations
-	list<string> errorCallers;
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
 
-	// some helper methods
-	string GetExecuteOn();
-	string GetExecuteOnEx();
+	// other filter data access functions
+	unsigned int GetOrder() const;
+	const ARWorkflowConnectStruct& GetSchemaList() const;
+	unsigned int GetOperation();
+	unsigned int GetEnabled();
+	const ARQualifierStruct& GetRunIf() const;
+	const ARFilterActionList& GetIfActions() const;
+	const ARFilterActionList& GetElseActions() const;
+	const ARPropList& GetPropList() const;
+	unsigned int GetErrorOption();
+	const ARNameType& GetErrorHandler() const;
+
+	const string& GetAppRefName() const;
+	void SetAppRefName(const string& appName);
+
+	vector<string>& ErrorCallers();
+
+	// some helpers
+	string GetExecuteOn(bool singleLine=false);
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FILTER; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

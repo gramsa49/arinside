@@ -21,7 +21,7 @@ class CDocUserDetails :
 	public CDocBase
 {
 public:
-	CDocUserDetails(CARInside &arIn, CARUser &arUser);
+	CDocUserDetails(CARUser &arUser);
 	~CDocUserDetails(void);
 
 	void Documentation();

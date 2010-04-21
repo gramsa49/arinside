@@ -20,6 +20,16 @@
 #include "ARImage.h"
 #include "../ARInside.h"
 
+bool CARImage::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARImage::Clone()
+{
+	return new CARImage(*this);
+}
+
 string CARImage::GetName()
 {
 	return CARInside::GetInstance()->imageList.ImageGetName(GetInsideId());
@@ -40,7 +50,7 @@ bool CARImage::NameStandardFirstChar()
 	return CARObject::NameStandardFirstChar(GetNameFirstChar());
 }
 
-const char* CARImage::GetHelpText() 
+const char* CARImage::GetHelpText() const
 { 
 	return CARInside::GetInstance()->imageList.ImageGetHelptext(GetInsideId()); 
 }
@@ -50,23 +60,24 @@ ARTimestamp CARImage::GetTimestamp()
 	return CARInside::GetInstance()->imageList.ImageGetTimestamp(GetInsideId()); 
 }
 
-const ARAccessNameType& CARImage::GetOwner()
+const ARAccessNameType& CARImage::GetOwner() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetOwner(GetInsideId()); 
 }
 
-const ARAccessNameType& CARImage::GetLastChanged()
+const ARAccessNameType& CARImage::GetLastChanged() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetModifiedBy(GetInsideId()); 
 }
 
-const char* CARImage::GetChangeDiary()
+const char* CARImage::GetChangeDiary() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetChangeDiary(GetInsideId()); 
 }
 
 string CARImage::GetURL(int rootLevel, bool showImage)
 {
-	throw exception("not implemented!");
+	// TODO: add support for the showImage param
+	throw CARInside::GetInstance()->imageList.ImageGetURL(GetInsideId(), rootLevel);
 }
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

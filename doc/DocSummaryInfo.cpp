@@ -21,7 +21,6 @@ extern int nFilesCreated;
 
 CDocSummaryInfo::CDocSummaryInfo(CARInside &arIn, string path)
 {
-	this->pInside = &arIn;
 	this->path = path;
 	this->rootLevel = 0;
 }
@@ -48,7 +47,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddColumn(90, "Description");
 
 		CTableRow row("cssStdRow");		
-		row.AddCell(CTableCell((int)this->pInside->alList.size()));
+		row.AddCell(CTableCell((int)this->pInside->alList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Active Links", "active_link/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -57,11 +56,13 @@ void CDocSummaryInfo::Documentation()
 		unsigned int nFilterGuide = 0;
 		unsigned int nPacklist = 0;
 		unsigned int nApplication = 0;
-		list<CARContainer>::iterator contIter;
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			CARContainer *cont = &(*contIter);
-			switch(cont->type)
+			CARContainer cont(cntIndex);
+
+			switch(cont.GetType())
 			{
 			case ARCON_WEBSERVICE:
 				{
@@ -117,12 +118,12 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->escalList.size()));
+		row.AddCell(CTableCell((int)this->pInside->escalationList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Escalations", "escalation/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->filterList.size()));
+		row.AddCell(CTableCell((int)this->pInside->filterList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Filters", "filter/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -132,7 +133,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->menuList.size()));
+		row.AddCell(CTableCell((int)this->pInside->menuList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Menus", "menu/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -142,7 +143,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->schemaList.size()));
+		row.AddCell(CTableCell((int)this->pInside->schemaList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Forms", "schema/index.htm", "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -161,25 +162,25 @@ void CDocSummaryInfo::Documentation()
 		}
 #endif
 
-		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->containerList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->escalList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->filterList.size();
+		unsigned int nNumTotalObjects = (unsigned int)this->pInside->alList.GetCount();
+		nNumTotalObjects += (unsigned int)this->pInside->containerList.GetCount();
+		nNumTotalObjects += (unsigned int)this->pInside->escalationList.GetCount();
+		nNumTotalObjects += (unsigned int)this->pInside->filterList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->menuList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->menuList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->roleList.size();
-		nNumTotalObjects += (unsigned int)this->pInside->schemaList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->schemaList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->userList.size();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		nNumTotalObjects += this->pInside->imageList.GetCount();
 #endif			
 
-		int nNumTotalFields = 0;
-		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int nNumTotalFields = 0;
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
-			CARSchema *schema = &(*schemaIter);
-			nNumTotalFields += (int)schema->fieldList.size();
+			CARSchema schema(schemaIndex);
+			nNumTotalFields += schema.GetFields()->GetCount();
 		}
 
 		webPage.AddContent(tblListObjectInfo.ToXHtml());

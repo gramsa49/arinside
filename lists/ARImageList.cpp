@@ -76,12 +76,35 @@ CARImageList::~CARImageList()
 
 bool CARImageList::LoadFromServer()
 {
-	ARBooleanList imgExists;
-	ARStatusList	status;
-	CARInside*		arIn = CARInside::GetInstance();
+	ARBooleanList   imgExists;
+	ARStatusList    status;
+	CARInside*      arIn = CARInside::GetInstance();
+
+	ARNameList*     objectsToLoad = NULL;
+	ARNameList      objectNames;
+	unsigned int    originalObjectNameCount = 0;
+	bool            funcResult = false;
+
+	// if the blacklist contains images, we should first load all image names from 
+	// the server and remove those that are contained in the blacklist. after that 
+	// call ARGetMultipleImages to retrieve just the needed images.
+	if (arIn->blackList.GetCountOf(ARREF_IMAGE) > 0)
+	{
+		memset(&objectNames, 0, sizeof(objectNames));
+
+		if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+		{
+			originalObjectNameCount = objectNames.numItems;
+			arIn->blackList.Exclude(ARREF_IMAGE, &objectNames);
+			objectsToLoad = &objectNames;
+		}
+		else
+			cerr << arIn->GetARStatusError(&status);
+	}
 
 	if (ARGetMultipleImages(&arIn->arControl,
-		0, NULL, 
+		0,
+		objectsToLoad,
 		&imgExists,
 		&names,
 		&types,
@@ -99,26 +122,34 @@ bool CARImageList::LoadFromServer()
 		FreeARBooleanList(&imgExists, false);
 		internalListState = CARImageList::ARAPI_ALLOC;
 
-		sortedList = new vector<image_ref>();
+		sortedList = new vector<int>();
 		sortedList->reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
-			sortedList->push_back(image_ref(*this,i));
+			sortedList->push_back(i);
 		}
-		return true;
+		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
-		return false;
 	}
+
+	// check if we have to clean up the name list
+	if (originalObjectNameCount > 0)
+	{
+		objectNames.numItems = originalObjectNameCount;
+		FreeARNameList(&objectNames, false);
+	}
+
+	return funcResult;
 }
 
 void CARImageList::Reserve(unsigned int size)
 {
-	if (internalListState != CARImageList::EMPTY) throw exception("object isnt reusable!");
+	if (internalListState != CARImageList::EMPTY) throw AppException("object isnt reusable!", "ImageList");
 
-	sortedList = new vector<image_ref>();
+	sortedList = new vector<int>();
 	sortedList->reserve(size);
 
 	names.numItems = 0;
@@ -157,7 +188,7 @@ void CARImageList::Reserve(unsigned int size)
 
 int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageName)
 {
-	if (internalListState != CARImageList::INTERNAL_ALLOC) throw exception("illegal usage!");
+	if (internalListState != CARImageList::INTERNAL_ALLOC) throw AppException("illegal usage!", "ImageList");
 	if (names.numItems >= reservedSize) return -1;
 	
 	CARInside* arIn = CARInside::GetInstance();
@@ -198,7 +229,7 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 		++objProps.numItems;
 		++data.numItems;
 
-		sortedList->push_back(image_ref(*this, index));
+		sortedList->push_back(index);
 
 		return index;
 	}
@@ -213,14 +244,15 @@ int CARImageList::FindImage(const char* name)
 {
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		if (strcmp(names.nameList[i], name) == 0)
+		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		if (result == 0)
 		{
-			size_t vectLen = sortedList->size();
-			for (unsigned int k = 0; k < vectLen; ++k)
-			{
-				if ((*sortedList)[k].index == i) return k;
-			}
+			return i;
 		}
+		else if (result > 0)	
+			// the current string in the sorted list is greater as the string we are looking for.
+			// stop searching here.
+			break;
 	}
 	return -1;
 }
@@ -228,7 +260,7 @@ int CARImageList::FindImage(const char* name)
 void CARImageList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end());
+		std::sort(sortedList->begin(),sortedList->end(), SortByName<CARImageList>(*this));
 }
 
 string CARImageList::ImageGetURL(unsigned int index, int rootLevel)

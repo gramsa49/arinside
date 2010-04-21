@@ -17,11 +17,10 @@
 #include "stdafx.h"
 #include "DocFilterDetails.h"
 
-CDocFilterDetails::CDocFilterDetails(CARInside &arInside, CARFilter &arFilter, string path, int rootLevel)
+CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId, int rootLevel)
+: filter(filterInsideId)
 {	
-	this->pInside = &arInside;
-	this->pFilter = &arFilter;
-	this->path = path;
+	this->path = "filter/" + filter.FileID();
 	this->rootLevel = rootLevel;
 }
 
@@ -37,15 +36,15 @@ void CDocFilterDetails::Documentation()
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("index", this->pFilter->name, this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage("index", filter.GetName(), this->rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pFilter->name);
-			if(this->pFilter->appRefName.c_str() != NULL && this->pFilter->appRefName.size() > 0)
-				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pFilter->appRefName, this->rootLevel);
+			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(filter.GetName());
+			if(!filter.GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(filter.GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
 
@@ -57,24 +56,23 @@ void CDocFilterDetails::Documentation()
 
 			//Status
 			CTableRow tblRow("");
-			tblRow.AddCellList(CTableCell("Status"), CTableCell(CAREnum::ObjectEnable(this->pFilter->enable)));
+			tblRow.AddCellList(CTableCell("Status"), CTableCell(CAREnum::ObjectEnable(filter.GetEnabled())));
 			tblObjProp.AddRow(tblRow);
 
 			//Execution Order		
-			strmTmp << this->pFilter->order;
-
+			strmTmp << filter.GetOrder();
 			tblRow.AddCellList(CTableCell("Execution Order"), CTableCell(strmTmp.str()));
 			tblObjProp.AddRow(tblRow);
 
 			//Execute On
-			tblRow.AddCellList(CTableCell("Execute On"), CTableCell(this->pFilter->GetExecuteOn()));
+			tblRow.AddCellList(CTableCell("Execute On"), CTableCell(filter.GetExecuteOn()));
 			tblObjProp.AddRow(tblRow);
 
 			// Error Handler
 			strmTmp.str("");
-			if (this->pFilter->errorOptions == AR_FILTER_ERRHANDLER_ENABLE)
+			if (filter.GetErrorOption() == AR_FILTER_ERRHANDLER_ENABLE)
 			{
-				strmTmp << pInside->LinkToFilter(this->pFilter->errorFilterName, rootLevel);
+				strmTmp << pInside->LinkToFilter(filter.GetErrorHandler(), rootLevel);
 			}
 			else 
 			{
@@ -83,16 +81,20 @@ void CDocFilterDetails::Documentation()
 			tblRow.AddCellList(CTableCell("Error Handler"), strmTmp.str());
 			tblObjProp.AddRow(tblRow);
 
-			//Workflow	
-			if(this->pFilter->schemaList.u.schemaList->numItems > 0)
+			//Workflow
+			const ARWorkflowConnectStruct &schemas = filter.GetSchemaList();
+
+			if(schemas.u.schemaList->numItems > 0)
 			{		
-				for(unsigned int i=0; i< this->pFilter->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i< schemas.u.schemaList->numItems; i++)
 				{
 					//Workflowlink to each page	
-					tblRow.AddCellList(CTableCell(this->pInside->LinkToSchema(this->pFilter->schemaList.u.schemaList->nameList[i], rootLevel)), 
-						CTableCell(this->CreateSpecific(this->pFilter->schemaList.u.schemaList->nameList[i])));
+					tblRow.AddCellList(
+						CTableCell(this->pInside->LinkToSchema(schemas.u.schemaList->nameList[i], rootLevel)), 
+						CTableCell(this->CreateSpecific(schemas.u.schemaList->nameList[i]))
+					);
+					
 					tblObjProp.AddRow(tblRow);
-
 				}
 			}
 			else // Filter is not related to any form
@@ -115,19 +117,19 @@ void CDocFilterDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(this->pFilter->objPropList));
+			webPage.AddContent(CARProplistHelper::GetList(filter.GetPropList()));
 
 			// Workflow References
 			webPage.AddContent(this->WorkflowReferences());
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pFilter, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->filter, this->rootLevel));
 			webPage.SaveInFolder(this->path);
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION filter details common props of '" << this->pFilter->name << "': " << e.what() << endl;
+		cout << "EXCEPTION filter details common props of '" << filter.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -137,34 +139,35 @@ string CDocFilterDetails::ContainerReferences()
 	strm.str("");
 	try
 	{
-		CContainerTable *contTable = new CContainerTable(*this->pInside);
+		CContainerTable contTable(*this->pInside);
 
-		list<CARContainer>::iterator listContIter;		
-		for ( listContIter = this->pInside->containerList.begin();  listContIter != this->pInside->containerList.end(); listContIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			CARContainer *cont = &(*listContIter);
-			for(unsigned int nCnt = 0; nCnt < cont->references.numItems; nCnt++)
+			CARContainer cont(cntIndex);
+			
+			if(cont.GetType() != ARCON_APP)
 			{
-				if(cont->type != ARCON_APP)
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
-					if(cont->references.referenceList[nCnt].reference.u.name != NULL)
+					if(refs.referenceList[nCnt].type == ARREF_FILTER)
 					{
-						if(strcmp(cont->references.referenceList[nCnt].reference.u.name, this->pFilter->name.c_str())==0
-							&& cont->references.referenceList[nCnt].type == ARREF_FILTER)
+						if(refs.referenceList[nCnt].reference.u.name != NULL && 
+							 refs.referenceList[nCnt].reference.u.name == filter.GetName())
 						{
-							contTable->AddRow(*cont, rootLevel);
+							contTable.AddRow(cont, rootLevel);
 						}
 					}
 				}
 			}
 		}		
 
-		strm << contTable->Print();
-		delete contTable;
+		strm << contTable.Print();
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating filter container references of '" << this->pFilter->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating filter container references of '" << this->filter.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -179,18 +182,18 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 	{
 		//Query
 		stringstream strmQuery;
-		if(this->pFilter->query.operation != NULL)
+		if(this->filter.GetOperation() != 0)
 		{		
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;
 			refItem->description = "Run If";
-			refItem->fromName = this->pFilter->name;
+			refItem->fromName = this->filter.GetName();
 
 			CARQualification arQual(*this->pInside);
 
 			int pFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
 			int sFormId = pFormId;
-			arQual.CheckQuery(&this->pFilter->query, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
+			arQual.CheckQuery(&this->filter.GetRunIf(), *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
 			delete refItem;
 		}
@@ -202,15 +205,15 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 		pgStrm << "Run If Qualification: <br/>" << strmQuery.str();
 
 		//If-Actions		
-		CDocFilterActionStruct actionStruct(*this->pInside, *this->pFilter, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_FILTER);
-		pgStrm << actionStruct.Get("If", this->pFilter->actionList);
+		CDocFilterActionStruct actionStruct(*this->pInside, this->filter, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_FILTER);
+		pgStrm << actionStruct.Get("If", this->filter.GetIfActions());
 
 		//Else-Actions
-		pgStrm << actionStruct.Get("Else", this->pFilter->elseList);
+		pgStrm << actionStruct.Get("Else", this->filter.GetElseActions());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION filter specific props of '" << this->pFilter->name << "': " << e.what() << endl;
+		cout << "EXCEPTION filter specific props of '" << this->filter.GetName() << "': " << e.what() << endl;
 	}
 
 	return pgStrm.str();
@@ -232,8 +235,9 @@ string CDocFilterDetails::WorkflowReferences()
 		tblRef.AddColumn(40, "Description");
 
 		// output error handler callers here
-		list<string>::iterator iter;
-		for ( iter = this->pFilter->errorCallers.begin(); iter != this->pFilter->errorCallers.end(); iter++)
+		vector<string>::const_iterator iter = this->filter.ErrorCallers().begin();
+		vector<string>::const_iterator endIt = this->filter.ErrorCallers().end();
+		for ( ; iter != endIt; ++iter)
 		{		
 			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FILTER));
@@ -265,7 +269,7 @@ string CDocFilterDetails::WorkflowReferences()
 	}
 	catch (...)
 	{
-		cout << "EXCEPTION enumerating workflow references for filter: " << this->pFilter->name << endl;
+		cout << "EXCEPTION enumerating workflow references for filter: " << this->filter.GetName() << endl;
 	}
 
 	return strm.str();

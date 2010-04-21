@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocGroupDetails.h"
 
-CDocGroupDetails::CDocGroupDetails(CARInside &arIn, CARGroup &arGroup)
+CDocGroupDetails::CDocGroupDetails(CARGroup &arGroup)
 {
-	this->pInside = &arIn;
 	this->pGroup = &arGroup;
 	this->rootLevel = 1;
 }
@@ -255,9 +254,9 @@ void CDocGroupDetails::UserDoc(string fName, int &nResult, string title)
 					if(grpId == pGroup->groupId)
 					{
 						CTableRow row("");
-						row.AddCell(CTableCell(CWebUtil::Link(user->loginName, CWebUtil::DocName(user->FileID()),"", 1 )));			
+						row.AddCell(CTableCell(CWebUtil::Link(user->loginName, CWebUtil::DocName(user->FileID()),"", rootLevel)));
 						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user->modified)));
-						row.AddCell(CTableCell(this->pInside->LinkToUser(user->modifiedBy, 1)));
+						row.AddCell(CTableCell(this->pInside->LinkToUser(user->modifiedBy, rootLevel)));
 						tbl.AddRow(row);
 
 						nResult++;
@@ -313,44 +312,48 @@ void CDocGroupDetails::FormsDoc(string fName, int &nResult, string title)
 		subadminTbl.AddColumn(20, "Modified");
 		subadminTbl.AddColumn(20, "By");
 
-		list<CARSchema>::iterator schemaIter;		
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{	
-			CARSchema *schema = &(*schemaIter);			
-			for(unsigned int nGrp = 0; nGrp < schema->groupList.numItems; nGrp++)
+			CARSchema schema(schemaIndex);
+			const ARPermissionList& groupList = schema.GetPermissions();
+
+			for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 			{
-				if(this->pGroup->groupId == schema->groupList.permissionList[nGrp].groupId)
+				if (this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
 				{
-					string visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
-					if( schema->groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
-					{
+					string visibleInfo;
+					if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
 						visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
-					}
+					else
+						visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
 
 					CTableRow row("");
 					row.AddCell(CTableCell(visibleInfo));
-					row.AddCell(CTableCell(schema->GetURL(rootLevel)));						
-					row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
-					row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
-					row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
-					row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
+					row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+					row.AddCell(CTableCell(schema.GetFields()->GetCount()));
+					row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
+					row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
+					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
+					row.AddCell(CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
 					schemaTbl.AddRow(row);
 					nResult++;
 				}
 			}
 
-			for(unsigned int nGrp = 0; nGrp < schema->admingrpList.numItems; nGrp++)
+			const ARInternalIdList& admingrpList = schema.GetSubadmins();
+
+			for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 			{
-				if(this->pGroup->groupId == schema->admingrpList.internalIdList[nGrp])
+				if(this->pGroup->groupId == admingrpList.internalIdList[nGrp])
 				{
 					CTableRow row("");
-					row.AddCell(CTableCell(schema->GetURL(rootLevel)));						
-					row.AddCell(CTableCell((unsigned int)schema->fieldList.size()));
-					row.AddCell(CTableCell((unsigned int)schema->vuiList.size()));
-					row.AddCell(CTableCell(CAREnum::SchemaType(schema->schema.schemaType)));
-					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema->timestamp)));
-					row.AddCell(CTableCell(this->pInside->LinkToUser(schema->lastChanged, 1)));
+					row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+					row.AddCell(CTableCell(schema.GetFields()->GetCount()));
+					row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
+					row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
+					row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
+					row.AddCell(CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
 					subadminTbl.AddRow(row);
 					nResult++;
 				}
@@ -390,15 +393,15 @@ void CDocGroupDetails::AlPermissionDoc(string fName, int &nResult, string title)
 		//Create table with ALs the role can access
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator alIter;		
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{	
-			CARActiveLink *al = &(*alIter);
-			for(unsigned int nGrp = 0; nGrp < al->groupList.numItems; nGrp++)
+			CARActiveLink al(alIndex);
+			for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
 			{
-				if(this->pGroup->groupId == al->groupList.internalIdList[nGrp])
+				if(this->pGroup->groupId == al.GetGroupList().internalIdList[nGrp])
 				{
-					alTable->AddRow(*al, this->rootLevel);
+					alTable->AddRow(alIndex, this->rootLevel);
 					nResult++;
 				}
 			}
@@ -433,22 +436,42 @@ void CDocGroupDetails::ContainerPermissionDoc(string fName, int &nResult, string
 
 		//Create table with forms the role can access
 		CContainerTable *contTbl = new CContainerTable(*this->pInside);
+		CContainerTable *subadminTbl = (containerType == ARCON_PACK ? new CContainerTable(*this->pInside) : NULL);
+
 		contTbl->SetDescription("Container Permission");
 
-		list<CARContainer>::iterator contIter;		
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
-			CARContainer *cont = &(*contIter);
-			if(cont->type == containerType)
+			CARContainer cont(cntIndex);
+			if(cont.GetType() == containerType)
 			{
-				for(unsigned int nGrp = 0; nGrp < cont->groupList.numItems; nGrp++)
+				const ARPermissionList& groupList = cont.GetPermissions();
+				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pGroup->groupId == cont->groupList.permissionList[nGrp].groupId)
+					if(this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
 					{
-						contTbl->AddRow(*cont, this->rootLevel);						
+						contTbl->AddRow(cont, this->rootLevel);
 						nResult++;
 					}
 				}
+			}
+
+			if(containerType == ARCON_PACK)
+			{
+				//Create table with forms for role subadmin permission
+				subadminTbl->SetDescription("Subadministrator Permission");
+				
+				const ARInternalIdList& admingrpList = cont.GetSubadmins();
+				for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
+				{
+					if(this->pGroup->groupId == admingrpList.internalIdList[nGrp])
+					{
+						subadminTbl->AddRow(cont, this->rootLevel);
+						nResult++;
+					}
+				}
+
 			}
 		}
 
@@ -456,31 +479,11 @@ void CDocGroupDetails::ContainerPermissionDoc(string fName, int &nResult, string
 		webPage.AddContent(contTbl->Print());
 		delete contTbl;
 
-
-		if(containerType == ARCON_PACK)
-		{						
-			//Create table with forms for role subadmin permission
-			CContainerTable *subadminTbl = new CContainerTable(*this->pInside);
-			subadminTbl->SetDescription("Subadministrator Permission");		
-
-			list<CARContainer>::iterator contIter;		
-			for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
-			{	
-				CARContainer *cont = &(*contIter);
-				for(unsigned int nGrp = 0; nGrp < cont->admingrpList.numItems; nGrp++)
-				{
-					if(this->pGroup->groupId == cont->admingrpList.internalIdList[nGrp])
-					{
-						subadminTbl->AddRow(*cont, this->rootLevel);						
-						nResult++;
-					}
-				}
-			}
-
+		if (subadminTbl != NULL)
+		{
 			webPage.AddContent(subadminTbl->Print());
 			delete subadminTbl;
 		}
-
 
 		webPage.SaveInFolder("group");
 	}
@@ -490,28 +493,21 @@ void CDocGroupDetails::ContainerPermissionDoc(string fName, int &nResult, string
 	}
 }
 
-int CDocGroupDetails::NumAllowedFields(string schemaName)
+int CDocGroupDetails::NumAllowedFields(CARSchema& schema)
 {
 	int nResult = 0;
 	try
 	{
-		list<CARSchema>::iterator schemaIter;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
-		{			
-			CARSchema *schema = &(*schemaIter);
-			if(strcmp(schema->name.c_str(), schemaName.c_str())==0)
+		unsigned int fieldCount = schema.GetFields()->GetCount();
+		for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
+		{
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
+			const ARPermissionList& permissions = field.GetPermissions();
+			for(unsigned int i = 0; i< permissions.numItems; i++)
 			{
-				list<CARField>::iterator fieldIter;						
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				if(permissions.permissionList[i].groupId == this->pGroup->groupId)
 				{
-					CARField *field = &(*fieldIter);
-					for(unsigned int i = 0; i< field->permissions.numItems; i++)
-					{
-						if(field->permissions.permissionList[i].groupId == this->pGroup->groupId)
-						{
-							nResult++;
-						}
-					}
+					nResult++;
 				}
 			}
 		}
@@ -538,25 +534,28 @@ void CDocGroupDetails::FieldPermissionDoc(string fName, int &nResult, string tit
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
 
-
-		list<CARSchema>::iterator schemaIter;		
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
-			CARSchema *schema = &(*schemaIter);
-			if(NumAllowedFields(schema->name) > 0)
+			CARSchema schema(schemaIndex);
+			if(NumAllowedFields(schema) > 0)
 			{
+				const ARPermissionList& groupList = schema.GetPermissions();
+
 				//Check if the current group has access to the form
 				bool bVisiblePermission = false;		
 				bool bInsert = false;
-				for(unsigned int nGrp= 0; nGrp < schema->groupList.numItems; nGrp++)
+
+				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pGroup->groupId == schema->groupList.permissionList[nGrp].groupId)
+					if(this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
 					{
-						if( schema->groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
+						if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
 						{
 							bVisiblePermission = true;
 						}
 						bInsert = true;
+						break;
 					}
 				}	
 
@@ -564,45 +563,47 @@ void CDocGroupDetails::FieldPermissionDoc(string fName, int &nResult, string tit
 				strmFormDesc.str("");
 				if(bInsert)
 				{
-					string visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
+					string visibleInfo;
 					if(bVisiblePermission)
-					{
 						visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
-					}				
+					else
+						visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
 
-					strmFormDesc << visibleInfo << schema->GetURL(rootLevel) << endl;
+					strmFormDesc << visibleInfo << schema.GetURL(rootLevel) << endl;
 				}
 				else
 				{
-					strmFormDesc << schema->GetURL(rootLevel) << endl;
+					strmFormDesc << schema.GetURL(rootLevel) << endl;
 				}
 
 				//Create a table for every form
-				CTable schemaTbl("fieldListAll"+schema->GetInsideId(), "TblObjectList");
+				CTable schemaTbl("fieldListAll"+schema.GetInsideId(), "TblObjectList");
 				schemaTbl.description = strmFormDesc.str();
 				schemaTbl.AddColumn(80, "Field");
 				schemaTbl.AddColumn(10, "Permission");
 				schemaTbl.AddColumn(10, "Description");
 
-				list<CARField>::iterator fieldIter;		
-				CARField *field;
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 				{
-					field = &(*fieldIter);
-					for(unsigned int i = 0; i< field->permissions.numItems; i++)
+					CARField field(schemaIndex, 0, fieldIndex);
+					const ARPermissionList& permissions = field.GetPermissions();
+					for(unsigned int i = 0; i < permissions.numItems; i++)
 					{
-						if(field->permissions.permissionList[i].groupId == this->pGroup->groupId)
+						if(permissions.permissionList[i].groupId == this->pGroup->groupId)
 						{
 							//We found a field that this group is allowed to access
 
-							string img = CWebUtil::ImageTag("visible.gif", rootLevel);
-							if(field->permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
+							string img;
+							if(permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
 								img = CWebUtil::ImageTag("edit.gif", rootLevel);
+							else
+								img = CWebUtil::ImageTag("visible.gif", rootLevel);
 
 							CTableRow row("");			
-							row.AddCell(CTableCell(field->GetURL(rootLevel)));
+							row.AddCell(CTableCell(field.GetURL(rootLevel)));
 							row.AddCell(CTableCell(img));
-							row.AddCell(CTableCell(CAREnum::FieldPermission(field->permissions.permissionList[i].permissions)));
+							row.AddCell(CTableCell(CAREnum::FieldPermission(permissions.permissionList[i].permissions)));
 							schemaTbl.AddRow(row);
 
 							nResult++;

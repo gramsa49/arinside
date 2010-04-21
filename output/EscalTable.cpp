@@ -51,7 +51,7 @@ void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 	string escalPool;
 	if (pInside->CompareServerVersion(7, 1) >= 0)
 	{
-		CARProplistHelper props(&escal.objPropList);
+		CARProplistHelper props(&escal.GetPropList());
 		ARValueStruct* val = props.GetValue(AR_OPROP_POOL_NUMBER);
 		if (val != NULL)
 			escalPool = CARValue::ValueToString(*val);
@@ -61,17 +61,17 @@ void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 #endif
 
 	string tmpCssEnabled = "";
-	if(escal.enable==0)
+	if(escal.GetEnabled()==0)
 		tmpCssEnabled = "objStatusDisabled";
-	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(escal.enable), tmpCssEnabled));
+	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(escal.GetEnabled()), tmpCssEnabled));
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 	if (pInside->CompareServerVersion(7, 1) >= 0)
 		tblRow.AddCell( CTableCell(escalPool));
 #endif
 	tblRow.AddCell( CTableCell(escal.GetExecuteOn()));
-	tblRow.AddCell( CTableCell(escal.actionList.numItems));
-	tblRow.AddCell( CTableCell(escal.elseList.numItems));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(escal.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(escal.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(escal.GetIfActions().numItems));
+	tblRow.AddCell( CTableCell(escal.GetElseActions().numItems));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(escal.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(escal.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
 }

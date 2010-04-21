@@ -107,8 +107,8 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 				string infoValue = strm.str();
 				if(infoValue.length() > 0)
 				{			
-					listResult.push_back(CARServerInfoItem(i+1, infoValue));
-					LOG << "Loading ServerInfo: " << CAREnum::ServerInfoApiCall(i+1) << "[OK]" << endl;
+					listResult.push_back(CARServerInfoItem(info.operation, infoValue));
+					LOG << "Loading ServerInfo: " << CAREnum::ServerInfoApiCall(info.operation) << "[OK]" << endl;
 				}
 			}
 		}

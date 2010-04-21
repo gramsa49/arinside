@@ -23,7 +23,7 @@ class CDocRoleDetails :
 	public CDocBase
 {
 public:
-	CDocRoleDetails(CARInside &arIn, CARRole &arRole);
+	CDocRoleDetails(CARRole &arRole);
 	~CDocRoleDetails(void);
 
 	void Documentation();
@@ -35,5 +35,5 @@ private:
 	void AlPermissionDoc(string fName, int &nResult, string title);
 	void ContainerPermissionDoc(string fName, int &nResult, string title, int containerType);
 	void FieldPermissionDoc(string fName, int &nResult, string title);
-	int NumAllowedFields(string schemaName);
+	int NumAllowedFields(CARSchema& schema);
 };

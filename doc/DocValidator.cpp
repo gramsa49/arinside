@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocValidator.h"
 
-CDocValidator::CDocValidator(CARInside &arIn, string path)
+CDocValidator::CDocValidator(string path)
 {
-	this->pInside = &arIn;
 	this->path = path;
 	this->rootLevel = 1;
 	uniqueMissingFieldList.clear();
@@ -114,22 +113,20 @@ void CDocValidator::ContainerGroupValidator()
 			tblObj.AddColumn(10, "Type");
 			tblObj.AddColumn(90, "Container");
 
-			list<CARContainer>::iterator contIter;		
-			for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+			unsigned int cntCount = this->pInside->containerList.GetCount();
+			for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 			{			
-				CARContainer *cont = &(*contIter);
+				CARContainer cont(cntIndex);
 
-				if(cont->type == ARCON_WEBSERVICE
-					|| cont->type == ARCON_GUIDE
-					|| cont->type == ARCON_APP)
+				unsigned int type = cont.GetType();
+				if(type == ARCON_WEBSERVICE || type == ARCON_GUIDE || type == ARCON_APP)
 				{
-					if(cont->groupList.permissionList == NULL		//Check if the container has no access group
-						|| cont->groupList.numItems == 0 )
+					if(cont.GetPermissions().numItems == 0)		//Check if the container has no access group
 					{
 						//Container has no access group
 						CTableRow row("");	
-						row.AddCell(CAREnum::ContainerType(cont->type));
-						row.AddCell(pInside->LinkToContainer(cont->name, this->rootLevel));
+						row.AddCell(CAREnum::ContainerType(type));
+						row.AddCell(pInside->LinkToContainer(cont.GetName(), this->rootLevel));
 						tblObj.AddRow(row);
 					}
 				}
@@ -167,17 +164,16 @@ void CDocValidator::AlGroupValidator()
 			CTable tblObj("AlNoPermission", "TblObjectList");
 			tblObj.AddColumn(100, "Active Link");
 
-			list<CARActiveLink>::iterator alIter;		
-			for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+			unsigned int alCount = pInside->alList.GetCount();
+			for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 			{			
-				CARActiveLink *al = &(*alIter);
+				CARActiveLink al(alIndex);
 
-				if(al->groupList.internalIdList == NULL		//Check if the al has no access group
-					|| al->groupList.numItems == 0 )
+				if(al.GetGroupList().numItems == 0)		//Check if the al has no access group
 				{
 					//Form has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToAl(al->name, this->rootLevel));
+					row.AddCell(pInside->LinkToAl(alIndex, this->rootLevel));
 					tblObj.AddRow(row);
 				}
 			}
@@ -213,17 +209,16 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 			CTable tblObj("FieldsNoPermission", "TblObjectList");
 			tblObj.AddColumn(100, "Field Name");
 
-			list<CARField>::iterator fieldIter;			
-			for( fieldIter = schema.fieldList.begin(); fieldIter != schema.fieldList.end(); fieldIter++)
+			unsigned int fieldCount = schema.GetFields()->GetCount();
+			for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 			{
-				CARField *field = &(*fieldIter);
+				CARField field(schema.GetInsideId(), 0, fieldIndex);
 
-				if(field->permissions.permissionList== NULL  //First check if the field has any access group
-					|| field->permissions.numItems == 0)
+				if(field.GetPermissions().numItems == 0)      //First check if the field has any access group
 				{
 					//field has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field->GetInsideId(), this->rootLevel));
+					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field.GetInsideId(), this->rootLevel));
 					tblObj.AddRow(row);					
 				}
 			}
@@ -262,34 +257,35 @@ void CDocValidator::FieldGroupValidator()
 			tblObj.AddColumn(10, "Num. Fields");
 			tblObj.AddColumn(90, "Form Name");
 
-			list<CARSchema>::iterator schemaIter;		
-			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+			// TODO: maybe move the following code to FieldGroupValidatorDetails, because the code is already there, but not the counting!
+			unsigned int schemaCount = this->pInside->schemaList.GetCount();
+			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 			{			
-				CARSchema *schema = &(*schemaIter);
+				CARSchema schema(schemaIndex);
 
 				int nEmptyFields = 0;
-				list<CARField>::iterator fieldIter;			
-				for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 				{
-					CARField *field = &(*fieldIter);
+					CARField field(schemaIndex, 0, fieldIndex);
 
-					if(field->permissions.permissionList== NULL  //First check if the field has any access group
-						|| field->permissions.numItems == 0)
+					if(field.GetPermissions().numItems == 0)      //First check if the field has any access group
 					{
-						nEmptyFields++;					
+						nEmptyFields++;
+						break;
 					}
 				}
 
 				if(nEmptyFields > 0)
 				{
-					string fName = "validation_group_field_"+schema->FileID();
+					string fName = "validation_group_field_"+schema.FileID();
 
 					CTableRow row("");		
 					row.AddCell(nEmptyFields);
-					row.AddCell(CWebUtil::Link(schema->name, CWebUtil::DocName(fName), "", 0));
+					row.AddCell(CWebUtil::Link(schema.GetName(), CWebUtil::DocName(fName), "", 0));
 					tblObj.AddRow(row);			
 
-					FieldGroupValidatorDetails(*schema, fName);
+					FieldGroupValidatorDetails(schema, fName);
 				}
 			}
 
@@ -323,17 +319,16 @@ void CDocValidator::FormGroupValidator()
 			CTable tblForms("FormNoPermission", "TblObjectList");
 			tblForms.AddColumn(100, "Form Name");
 
-			list<CARSchema>::iterator schemaIter;		
-			for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+			unsigned int schemaCount = this->pInside->schemaList.GetCount();
+			for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 			{			
-				CARSchema *schema = &(*schemaIter);
+				CARSchema schema(schemaIndex);
 
-				if(schema->groupList.permissionList == NULL		//Check if the form has no access group
-					|| schema->groupList.numItems == 0 )
+				if(schema.GetPermissions().numItems == 0)      //Check if the form has no access group
 				{
 					//Form has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToSchema(schema->name, this->rootLevel));
+					row.AddCell(pInside->LinkToSchema(schema.GetName(), this->rootLevel));
 					tblForms.AddRow(row);
 				}
 			}

@@ -17,27 +17,50 @@
 #pragma once
 #include "ARServerObject.h"
 #include "ARProplistHelper.h"
+#include "../lists/ARActiveLinkList.h"
+
+class CARInside;
 
 class CARActiveLink :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CARActiveLink(string name, int insideId);
+	CARActiveLink(int insideId);
 	~CARActiveLink(void);
 
-	unsigned int order;
-	ARWorkflowConnectStruct schemaList;
-	ARInternalIdList groupList;
-	unsigned int executeMask;
-	ARInternalId controlField;
-	ARInternalId focusField;
-	unsigned int enable;
-	ARQualifierStruct query;
-	ARActiveLinkActionList actionList;
-	ARActiveLinkActionList elseList;		
-	ARPropList objPropList;
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
+
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// implement access functions for active link data
+	unsigned int GetOrder() const;
+	const ARWorkflowConnectStruct& GetSchemaList() const;
+	const ARInternalIdList& GetGroupList() const;
+	unsigned int GetExecuteMask() const;
+	const ARInternalId& GetControlField() const;
+	const ARInternalId& GetFocusField() const;
+	unsigned int GetEnabled();
+	const ARQualifierStruct& GetRunIf() const;
+	const ARActiveLinkActionList& GetIfActions() const;
+	const ARActiveLinkActionList& GetElseActions() const;
+	const ARPropList& GetPropList() const;
+
+	const string& GetAppRefName() const;
+	void SetAppRefName(const string& appName);
 
 	string GetExecuteOn(bool singleLine=false, CARProplistHelper* props=NULL);
 	string GetURL(int rootLevel, bool showImage = true);
+
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_ACTIVE_LINK; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

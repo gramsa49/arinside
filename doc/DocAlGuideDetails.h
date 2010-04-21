@@ -22,13 +22,13 @@ class CDocAlGuideDetails :
 	public CDocBase
 {
 public:
-	CDocAlGuideDetails(CARInside &arIn, CARContainer &alGuide);
+	CDocAlGuideDetails(CARContainer &container);
 	~CDocAlGuideDetails(void);
 
 	void Documentation();
 
 private:
-	CARContainer *pAlGuide;
+	CARContainer& alGuide;
 	string AlGuideInformation();
 	string ActiveLinkActions();
 };

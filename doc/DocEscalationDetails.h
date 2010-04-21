@@ -25,12 +25,12 @@ class CDocEscalationDetails :
 	public CDocBase
 {
 public:
-	CDocEscalationDetails(CARInside &arInside, CAREscalation &arEscalation, string path, int rootLevel);
+	CDocEscalationDetails(unsigned int escalInsideId, int rootLevel);
 	~CDocEscalationDetails(void);
 
 	void Documentation();
 private:
-	CAREscalation *pEscal;
+	CAREscalation escalation;
 
 	string CreateSpecific(string schemaName);
 	string ContainerReferences();

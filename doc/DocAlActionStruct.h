@@ -28,7 +28,7 @@ public:
 	~CDocAlActionStruct(void);
 
 public:
-	string Get(string ifElse, ARActiveLinkActionList &actList);	
+	string Get(const string &ifElse, const ARActiveLinkActionList &actList);	
 
 private:
 	CARInside *arIn;
@@ -47,59 +47,59 @@ private:
 	string ActionNone(int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_MACRO
-	string ActionMacro(ARActiveLinkMacroStruct &action, int nAction);
+	string ActionMacro(const ARActiveLinkMacroStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_FIELDS
-	string ActionSetFields(ARSetFieldsActionStruct &action, int nAction);
+	string ActionSetFields(const ARSetFieldsActionStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_PROCESS
-	string ActionProcess(char *action, int nAction);
+	string ActionProcess(const char *action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_MESSAGE
-	string ActionMessage(ARMessageStruct &action, int nAction);
+	string ActionMessage(const ARMessageStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_SET_CHAR
-	string ActionSetChar(ARFieldCharacteristics &action, int nAction);
+	string ActionSetChar(const ARFieldCharacteristics &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_DDE
-	string ActionDde(ARDDEStruct &action, int nAction);
+	string ActionDde(const ARDDEStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_FIELDP
-	string ActionPushFields(ARPushFieldsActionStruct &action, int nAction);
+	string ActionPushFields(const ARPushFieldsActionStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_SQL
-	string ActionSql(ARSQLStruct &action, int nAction);
+	string ActionSql(const ARSQLStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_AUTO
-	string ActionAutomation(ARAutomationStruct &action, int nAction);
+	string ActionAutomation(const ARAutomationStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_OPENDLG
-	string ActionOpenDlg(AROpenDlgStruct &action, int nAction);
+	string ActionOpenDlg(const AROpenDlgStruct &action, int nAction);
 	bool ActionOpenDlgQualifier(int nWindowType);
 
 	// AR_ACTIVE_LINK_ACTION_COMMITC
-	string ActionCommitChanges(ARCommitChangesStruct &action, int nAction);
+	string ActionCommitChanges(const ARCommitChangesStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_CLOSEWND
-	string ActionCloseWindow(ARCloseWndStruct &action, int nAction);
+	string ActionCloseWindow(const ARCloseWndStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_CALLGUIDE
-	string ActionCallGuide(ARCallGuideStruct &action, int nAction);
+	string ActionCallGuide(const ARCallGuideStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_EXITGUIDE
-	string ActionExitGuide(ARExitGuideStruct &action, int nAction);
+	string ActionExitGuide(const ARExitGuideStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL
-	string ActionGotoGuideLabel(ARGotoGuideLabelStruct &action, int nAction);
+	string ActionGotoGuideLabel(const ARGotoGuideLabelStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_WAIT
-	string ActionWait(ARWaitStruct &action, int nAction);
+	string ActionWait(const ARWaitStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_GOTOACTION
-	string ActionGotoAction(ARGotoActionStruct &action, int nAction);
+	string ActionGotoAction(const ARGotoActionStruct &action, int nAction);
 
 #if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 	// AR_ACTIVE_LINK_ACTION_SERVICE
-	string ActionService(ARActiveLinkSvcActionStruct &action, int nAction);
+	string ActionService(const ARActiveLinkSvcActionStruct &action, int nAction);
 #endif
 };

@@ -22,12 +22,12 @@ class CDocPacklistDetails :
 	public CDocBase
 {
 public:
-	CDocPacklistDetails(CARInside &arIn, CARContainer &packList);
+	CDocPacklistDetails(CARContainer &packList);
 	~CDocPacklistDetails(void);
 
 	void Documentation();
 
 private:
-	CARContainer *pPackList;
+	CARContainer& pPackList;
 	string PackListInformation();
 };

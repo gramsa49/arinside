@@ -157,9 +157,9 @@ int CWebPage::SaveInFolder(string path)
 
 	stringstream strm;
 	if(!path.empty())
-		strm << this->appConfig.targetFolder << "\\" << path << "\\" << CWebUtil::DocName(this->fileName);
+		strm << this->appConfig.targetFolder << "/" << path << "/" << CWebUtil::DocName(this->fileName);
 	else
-		strm << this->appConfig.targetFolder << "\\" << CWebUtil::DocName(this->fileName);
+		strm << this->appConfig.targetFolder << "/" << CWebUtil::DocName(this->fileName);
 
 	try
 	{	

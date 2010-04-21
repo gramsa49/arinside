@@ -34,6 +34,8 @@ bool CDocActionOpenWindowHelper::GetSampleData(CARActiveLink& actLink, const str
 	// there is no ARDecode*** function. So we need to implement our
 	// own decode routine.
 
+	const ARPropList &propList = actLink.GetPropList();
+
 	// first, decide which property we are looking for
 	unsigned int PropID = AR_OPROP_WINDOW_OPEN_IF_SAMPLE_SERVER_SCHEMA;
 	if (ifElse.compare("If") != 0)
@@ -41,19 +43,19 @@ bool CDocActionOpenWindowHelper::GetSampleData(CARActiveLink& actLink, const str
 
 	// now find the index of the object property
 	int propIndex = -1;
-	for (unsigned int k=0; k < actLink.objPropList.numItems; ++k)
+	for (unsigned int k=0; k < propList.numItems; ++k)
 	{
-		if (actLink.objPropList.props[k].prop == PropID)
+		if (propList.props[k].prop == PropID)
 		{
 			propIndex = k;
 			break;
 		}
 	}
 
-	if (propIndex > -1 && actLink.objPropList.props[propIndex].value.dataType == AR_DATA_TYPE_CHAR)
+	if (propIndex > -1 && propList.props[propIndex].value.dataType == AR_DATA_TYPE_CHAR)
 	{
 		// the property is found and has correct data type
-		char* propData = actLink.objPropList.props[propIndex].value.u.charVal;
+		char* propData = propList.props[propIndex].value.u.charVal;
 		unsigned int chrIndex = 0;	// this holds the current position within propData
 		
 		int listCount = atoi(propData);	// retrieve lists item count
@@ -155,7 +157,7 @@ bool CDocActionOpenWindowHelper::GetReportData(char *reportStr, std::string &rep
 
 		const char* pos = strchr(report,'\1');
 		if (pos == NULL) return found;
-		unsigned int len = pos - report;
+		size_t len = (size_t)(pos - report);
 
 		if (value != NULL)
 		{

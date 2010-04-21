@@ -18,22 +18,46 @@
 #include "ARServerObject.h"
 
 class CAREscalation :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CAREscalation(string name, int insideId);
+	CAREscalation(int insideId);
 	~CAREscalation(void);
 
-	AREscalationTmStruct escalationTm;
-	ARWorkflowConnectStruct schemaList;
-	unsigned int enable;
-	ARQualifierStruct query;
-	ARFilterActionList actionList;
-	ARFilterActionList elseList;
-	ARPropList objPropList;
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
 
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// other filter data access functions
+	unsigned int GetOrder() const;
+	const AREscalationTmStruct& GetTimeStruct() const;
+	const ARWorkflowConnectStruct& GetSchemaList() const;
+	unsigned int GetOperation();
+	unsigned int GetEnabled();
+	const ARQualifierStruct& GetRunIf() const;
+	const ARFilterActionList& GetIfActions() const;
+	const ARFilterActionList& GetElseActions() const;
+	const ARPropList& GetPropList() const;
+
+	const string& GetAppRefName() const;
+	void SetAppRefName(const string& appName);
+
+	// some helpers
 	string GetTimeCriteria();
 	string GetExecuteOn();
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_ESCALATION; }
+	bool IsClonable();
+	CARServerObject* Clone();
 };

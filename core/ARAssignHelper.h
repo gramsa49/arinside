@@ -30,11 +30,11 @@ public:
 
 	bool pushFieldFlag;
 
-	string PushFieldsAssignment(ARPushFieldsActionStruct &action, int nAction, string ifElse);
-	string SetFieldsAssignment(ARSetFieldsActionStruct &action, int nAction, string ifElse);
-	string OpenWindowAssignment(ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
-	string CloseWindowAssignment(ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
-	string ServiceAssignment(ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo);
+	string PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, string ifElse);
+	string SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, string ifElse);
+	string OpenWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
+	string CloseWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
+	string ServiceAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo);
 	void CheckAssignment(int targetFieldId, string ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, string refItemDesc);
 
 	void AssignValue(int targetFieldId, string ifElse, ARValueStruct &v, stringstream &assignText, string refItemDesc);	

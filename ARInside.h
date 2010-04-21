@@ -22,11 +22,12 @@
 #include "core/ARCharMenu.h"
 #include "core/ARContainer.h"
 #include "core/ARSchema.h"
+#include "core/ARField.h"
+#include "core/ARVui.h"
 #include "core/AREnum.h"
 #include "core/ARDataFactory.h"
 #include "core/ARServerInfo.h"
 #include "core/ARGlobalField.h"
-#include "core/ChangeHistoryEntry.h"
 #include "output/WebPage.h"
 #include "util/BlackListItem.h"
 #include "WindowsUtil.h"
@@ -34,7 +35,14 @@
 #include "util/FieldRefItem.h"
 #include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
+#include "lists/ARSchemaList.h"
+#include "lists/ARActiveLinkList.h"
+#include "lists/ARFilterList.h"
+#include "lists/AREscalationList.h"
+#include "lists/ARContainerList.h"
+#include "lists/ARMenuList.h"
 #include "lists/ARImageList.h"
+#include "lists/BlackList.h"
 
 extern const string AppVersion;
 
@@ -68,31 +76,30 @@ public:
 	void LoadFromServer(void);
 	void LoadFromFile(void);
 
-	bool InBlacklist(int refType, string objName);
-	void LoadBlackList(void);	
+	bool InBlacklist(int refType, const string &objName) { 	return blackList.Contains(refType, objName.c_str()); }
 	void Prepare(void);		
 	void Documentation(void);
 
 
-	CARSchema* FindSchema(int schemaInsideId);
-	CARSchema* FindSchema(string schemaName);	
-	CARField* FindField(CARSchema* schema, int fieldId);
+	//CARSchema* FindSchema(int schemaInsideId);
+	//CARSchema* FindSchema(string schemaName);	
+	//CARField* FindField(CARSchema* schema, int fieldId);
 
 	string srvHostName;
 	string srvFullHostName;
-	list<CARSchema> schemaList;
-	list<CARFilter> filterList;
-	list<CAREscalation> escalList;
-	list<CARActiveLink> alList;
-	list<CARContainer> containerList;
-	list<CARCharMenu> menuList;
+	CARSchemaList schemaList;
+	CARFilterList filterList;
+	CAREscalationList escalationList;
+	CARActiveLinkList alList;
+	CARContainerList containerList;
+	CARMenuList menuList;
 	list<CARUser> userList;
 	list<CARGroup> groupList;
 	list<CARRole> roleList;
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
-	list<CBlackListItem> blackList;
-	list<CFieldRefItem> listFieldRefItem;
+	CBlackList blackList;
+	list<CFieldRefItem> listFieldRefItem; // TODO: maybe move field references over to the field itself; avoids scaning the whole list on inserts (to avoid duplicates) and output (just extract items for a special field)
 	list<CMissingMenuRefItem> listMenuRefItem;
 	list<CFieldRefItem> listFieldNotFound;
 	list<CMissingMenuRefItem> listMenuNotFound;
@@ -109,14 +116,15 @@ public:
 	int SchemaGetInsideId(string searchObjName);
 
 	string LinkToField(string schemaName, int fieldInsideId, int fromRootLevel);	
-	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
+	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel, bool needValidField = true);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);	
 
 	string LinkToContainer(string containerName, int rootLevel);
 	string LinkToAl(string alName, int rootLevel);
+	string LinkToAl(int alInsideId, int rootLevel);
 	string LinkToAlRef(int alInsideId, int rootLevel);
-	string LinkToAlRef(string alName, int rootLevel);
-	string LinkToAlRef(CARActiveLink* al, int rootLevel);
+	string LinkToAlRef(const string &alName, int rootLevel);
+	string LinkToAlRef(CARActiveLink &al, int rootLevel);
 	string LinkToFilter(string filterName, int rootLevel);	
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
 	string LinkToFilterRef(string fltName, int rootLevel);	
@@ -145,7 +153,7 @@ public:
 
 	string ServerObjectHistory(CARServerObject *obj, int rootLevel);
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);
-	bool ValidateGroup(string appRefName, int permissionId);
+	bool ValidateGroup(const string& appRefName, int permissionId);
 	int CompareServerVersion(int major, int minor = -1, int revision = -1);
 
 	float nDurationLoad;
@@ -163,20 +171,15 @@ private:
 	int EscalationGetInsideId(string searchObjName);	
 	int MenuGetInsideId(string searchObjName);	
 
-	void Sort(list<CARSchema> &listResult);
-	void Sort(list<CARFilter> &listResult);
-	void Sort(list<CAREscalation> &listResult);
-	void Sort(list<CARActiveLink> &listResult);
 	void Sort(list<CARContainer> &listResult);
 	void Sort(list<CARCharMenu> &listResult);
-	void Sort(list<CARField> &listResult);
 
 	int LoadActiveLinks(void);
 	int LoadFilters(void);
 	int LoadEscalations(void);
 	int LoadCharMenus(void);
 	int LoadContainer(void);
-	int LoadForms(int nType, int &schemaInsideId);
+	int LoadForms(void);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	int LoadImages(void);
 #endif
@@ -185,15 +188,15 @@ private:
 
 	void SearchCustomFieldReferences();
 	void SearchFilterReferences();
-	void CustomFieldReferences(CARSchema &schema, CARField &obj);
+	void CustomFieldReferences(const CARSchema &schema, const CARField &obj);
 
 	void ParseVersionString(string version);
 	void ParseVersionString(int xmlVersion);
 
 	bool getPos(string inText, string findText);
-	string CARInside::processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string CARInside::refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 };

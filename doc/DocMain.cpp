@@ -17,9 +17,8 @@
 #include "stdafx.h"
 #include "DocMain.h"
 
-CDocMain::CDocMain(CARInside &arIn)
+CDocMain::CDocMain()
 {
-	this->pInside = &arIn;
 }
 
 CDocMain::~CDocMain(void)
@@ -122,30 +121,29 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 		CSchemaTable *tbl = new CSchemaTable(*this->pInside);
 
-		list<CARSchema>::iterator schemaIter = this->pInside->schemaList.begin();
-		list<CARSchema>::iterator endIt = this->pInside->schemaList.end();
-		for ( ; schemaIter != endIt; ++schemaIter )
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{	
-			CARSchema *schema = &(*schemaIter);
+			CARSchema schema(schemaIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
-				if(nType == AR_SCHEMA_NONE || nType == schema->schema.schemaType)  //Only check type
+				if(nType == AR_SCHEMA_NONE || nType == schema.GetCompound().schemaType)  //Only check type
 				{
 					bInsert = true;
 				}
 			}		
 			else if(searchChar != "#" && searchChar != "*")
 			{
-				if(schema->GetNameFirstChar() == searchChar)
+				if(schema.GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
 			}
 			else if(searchChar == "#")
 			{
-				if(!schema->NameStandardFirstChar())
+				if(!schema.NameStandardFirstChar())
 				{
 					bInsert = true;		
 				}
@@ -154,7 +152,7 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 			if(bInsert)
 			{
-				tbl->AddRow(*schema, rootLevel);
+				tbl->AddRow(schema, rootLevel);
 			}
 		}
 
@@ -181,6 +179,8 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 
 void CDocMain::ActiveLinkList(string fileName, string searchChar)
 {
+	if (searchChar.size() != 1) return;
+
 	try
 	{
 		int rootLevel = 1;
@@ -188,35 +188,29 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator alIter;
-		CARActiveLink *al;
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = this->pInside->alList.GetCount();
+		
+		for (unsigned int alIdx = 0; alIdx < alCount; ++alIdx)
 		{	
-			al = &(*alIter);
-
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(al->GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
-				if(!al->NameStandardFirstChar())
-				{
-					bInsert = true;		
-				}
+				if (!CARObject::NameStandardFirstChar(pInside->alList.ActiveLinkGetName(alIdx)[0]))
+					bInsert = true;
+			}
+			else
+			{
+				if (searchChar[0] == tolower(pInside->alList.ActiveLinkGetName(alIdx)[0]))
+					bInsert = true;
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*al, rootLevel);
+				tbl->AddRow(alIdx, rootLevel);
 			}
 		}
 
@@ -263,34 +257,11 @@ void CDocMain::ActiveLinkActionList(string fileName)
 			int nCountIf = 0;
 			int nCountElse = 0;
 
+			//Create a new webpage for every action
+			ActiveLinkActionDetails(nActionType, nCountIf, nCountElse);
+
 			stringstream linkto;
 			linkto << "index_action_" << nActionType;
-
-			list<CARActiveLink>::iterator alIter;
-			CARActiveLink *al;
-
-			for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
-			{	
-				al = &(*alIter);
-
-				//actionList
-				for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
-				{
-					if(al->actionList.actionList[nAction].action == nActionType)
-					{		
-						nCountIf ++;					
-					}
-				}		
-
-				//elseList
-				for(unsigned int nAction=0; nAction<al->elseList.numItems; nAction++)
-				{
-					if(al->elseList.actionList[nAction].action == nActionType)
-					{		
-						nCountElse ++;					
-					}
-				}		
-			}
 
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::ActiveLinkAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
@@ -298,9 +269,6 @@ void CDocMain::ActiveLinkActionList(string fileName)
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
 			tbl.AddRow(row);
-
-			//Create a new webpage for every action
-			ActiveLinkActionDetails(nActionType);
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -314,7 +282,7 @@ void CDocMain::ActiveLinkActionList(string fileName)
 	}
 }
 
-void CDocMain::ActiveLinkActionDetails(int nActionType)
+void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
 	try
 	{		
@@ -326,34 +294,36 @@ void CDocMain::ActiveLinkActionDetails(int nActionType)
 
 		CAlTable *tbl = new CAlTable(*this->pInside);	
 
-		list<CARActiveLink>::iterator alIter;
-		CARActiveLink *al;
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
-		{	
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex )
+		{
 			int nActionExists = 0;
-			al = &(*alIter);
+			const ARActiveLinkActionList &ifActions = pInside->alList.ActiveLinkGetIfActions(alIndex);
+			const ARActiveLinkActionList &elseActions = pInside->alList.ActiveLinkGetElseActions(alIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; nAction++)
 			{
-				if(al->actionList.actionList[nAction].action == nActionType)
+				if(ifActions.actionList[nAction].action == nActionType)
 				{
-					nActionExists++;
+					++ifCount;
+					++nActionExists;
 				}
 			}		
 
 			//elseList
-			for(unsigned int nAction=0; nAction<al->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; nAction++)
 			{
-				if(al->elseList.actionList[nAction].action == nActionType)
+				if(elseActions.actionList[nAction].action == nActionType)
 				{		
-					nActionExists++;			
+					++elseCount;			
+					++nActionExists;
 				}
 			}		
 
 			if(nActionExists > 0)
 			{
-				tbl->AddRow(*al, rootLevel);
+				tbl->AddRow(alIndex, rootLevel);
 			}
 		}
 
@@ -382,35 +352,29 @@ void CDocMain::FilterList(string fileName, string searchChar)
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator filterIter;	
-		CARFilter *filter;
-		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
-		{	
-			filter = &(*filterIter);
+		unsigned int filterCount = this->pInside->filterList.GetCount();
 
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
+		{	
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(filter->GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
-				if(!filter->NameStandardFirstChar())
-				{
+				if(!CARObject::NameStandardFirstChar(pInside->filterList.FilterGetName(filterIndex)[0]))
 					bInsert = true;		
-				}
+			}
+			else
+			{
+				if(searchChar[0] == tolower(pInside->filterList.FilterGetName(filterIndex)[0]))
+					bInsert = true;
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*filter, rootLevel);
+				tbl->AddRow(filterIndex, rootLevel);
 			}
 		}
 
@@ -460,33 +424,8 @@ void CDocMain::FilterActionList(string fileName)
 			stringstream linkto;
 			linkto << "index_action_" << nActionType;
 
-			//Search all filters
-			list<CARFilter>::iterator filterIter = this->pInside->filterList.begin();
-			list<CARFilter>::iterator endIt = this->pInside->filterList.end();
-			CARFilter *filter;
-
-			for ( ; filterIter != endIt; ++filterIter )
-			{	
-				filter = &(*filterIter);
-
-				//actionList
-				for(unsigned int nAction=0; nAction < filter->actionList.numItems; nAction++)
-				{
-					if(filter->actionList.actionList[nAction].action == nActionType)
-					{		
-						nCountIf ++;					
-					}
-				}		
-
-				//elseList
-				for(unsigned int nAction=0; nAction < filter->elseList.numItems; nAction++)
-				{
-					if(filter->elseList.actionList[nAction].action == nActionType)
-					{		
-						nCountElse ++;					
-					}
-				}		
-			}
+			// Create a new webpage for every action
+			FilterActionDetails(nActionType, nCountIf, nCountElse);
 
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
@@ -494,9 +433,6 @@ void CDocMain::FilterActionList(string fileName)
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));		
 			tbl.AddRow(row);	
-
-			//Create a new webpage for every action
-			FilterActionDetails(nActionType);
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -510,7 +446,7 @@ void CDocMain::FilterActionList(string fileName)
 	}
 }
 
-void CDocMain::FilterActionDetails(int nActionType)
+void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
 	try
 	{
@@ -522,34 +458,36 @@ void CDocMain::FilterActionDetails(int nActionType)
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator filterIter;
-		CARFilter *filter;
-		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{	
 			int nActionExists = 0;
-			filter = &(*filterIter);
+			const ARFilterActionList &ifActions = pInside->filterList.FilterGetIfActions(filterIndex);
+			const ARFilterActionList &elseActions = pInside->filterList.FilterGetElseActions(filterIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<filter->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
 			{
-				if(filter->actionList.actionList[nAction].action == nActionType)
+				if (ifActions.actionList[nAction].action == nActionType)
 				{		
+					++ifCount;
 					nActionExists++;
 				}
-			}		
+			}
 
 			//elseList
-			for(unsigned int nAction=0; nAction < filter->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
 			{
-				if(filter->elseList.actionList[nAction].action == nActionType)
-				{		
+				if (elseActions.actionList[nAction].action == nActionType)
+				{
+					++elseCount;
 					nActionExists++;
 				}
-			}		
+			}
 
 			if(nActionExists > 0)
 			{
-				tbl->AddRow(*filter, rootLevel);
+				tbl->AddRow(filterIndex, rootLevel);
 			}
 		}
 
@@ -577,36 +515,28 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		list<CAREscalation>::iterator escalIter;
-		CAREscalation *escal;
-
-		for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{	
-			escal = &(*escalIter);
-
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(escal->GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
-				if(!escal->NameStandardFirstChar())
-				{
+				if(!CARObject::NameStandardFirstChar(pInside->escalationList.EscalationGetName(escalIndex)[0]))
 					bInsert = true;		
-				}
+			}
+			else
+			{
+				if(searchChar[0] == tolower(pInside->escalationList.EscalationGetName(escalIndex)[0]))
+					bInsert = true;
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*escal, rootLevel);			
+				tbl->AddRow(escalIndex, rootLevel);			
 			}
 		}
 
@@ -648,35 +578,11 @@ void CDocMain::EscalationActionList(string fileName)
 			int nCountIf = 0;
 			int nCountElse = 0;
 
+			//Create a new webpage for every action
+			EscalationActionDetails(nActionType, nCountIf, nCountElse);
+
 			stringstream linkto;
 			linkto << "index_action_" << nActionType;
-
-			//Search all escalation
-			list<CAREscalation>::iterator escalIter;		
-			CAREscalation *escal;
-
-			for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
-			{	
-				escal = &(*escalIter);
-
-				//actionList
-				for(unsigned int nAction=0; nAction < escal->actionList.numItems; nAction++)
-				{
-					if(escal->actionList.actionList[nAction].action == nActionType)
-					{		
-						nCountIf ++;					
-					}
-				}		
-
-				//elseList
-				for(unsigned int nAction=0; nAction < escal->elseList.numItems; nAction++)
-				{
-					if(escal->elseList.actionList[nAction].action == nActionType)
-					{		
-						nCountElse ++;					
-					}
-				}		
-			}
 
 			strmTmp.str("");
 			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
@@ -685,9 +591,6 @@ void CDocMain::EscalationActionList(string fileName)
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
 			tbl.AddRow(row);
-
-			//Create a new webpage for every action
-			EscalationActionDetails(nActionType);
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -702,7 +605,7 @@ void CDocMain::EscalationActionList(string fileName)
 }
 
 
-void CDocMain::EscalationActionDetails(int nActionType)
+void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
 	try
 	{
@@ -714,34 +617,36 @@ void CDocMain::EscalationActionDetails(int nActionType)
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		list<CAREscalation>::iterator escalIter;
-		CAREscalation *escal;
-		for ( escalIter = this->pInside->escalList.begin(); escalIter != this->pInside->escalList.end(); escalIter++ )
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{	
 			int nActionExists = 0;
-			escal = &(*escalIter);
+			const ARFilterActionList &ifActions = pInside->escalationList.EscalationGetIfActions(escalIndex);
+			const ARFilterActionList &elseActions = pInside->escalationList.EscalationGetElseActions(escalIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<escal->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
 			{
-				if(escal->actionList.actionList[nAction].action == nActionType)
-				{		
-					nActionExists++;
+				if(ifActions.actionList[nAction].action == nActionType)
+				{
+					++ifCount;
+					++nActionExists;
 				}
 			}		
 
 			//elseList
-			for(unsigned int nAction=0; nAction < escal->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
 			{
-				if(escal->elseList.actionList[nAction].action == nActionType)
-				{		
+				if(elseActions.actionList[nAction].action == nActionType)
+				{
+					++elseCount;
 					nActionExists++;
 				}
 			}		
 
 			if(nActionExists > 0)
 			{
-				tbl->AddRow(*escal, rootLevel);
+				tbl->AddRow(escalIndex, rootLevel);
 			}
 		}
 
@@ -770,35 +675,34 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 
 		CMenuTable *tbl = new CMenuTable(*this->pInside);
 
-		list<CARCharMenu>::iterator menuIter;
-		CARCharMenu *menu;
-		for ( menuIter = this->pInside->menuList.begin(); menuIter != this->pInside->menuList.end(); menuIter++ )
+		unsigned int menuCount = this->pInside->menuList.GetCount();
+		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{	
-			menu = &(*menuIter);
+			CARCharMenu menu(menuIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
+			else if(searchChar == "#")
 			{
-				if(menu->GetNameFirstChar() == searchChar)
+				if(!menu.NameStandardFirstChar())
 				{
 					bInsert = true;
 				}
 			}
-			else if(searchChar == "#")
+			else
 			{
-				if(!menu->NameStandardFirstChar())
+				if(menu.GetNameFirstChar() == searchChar)
 				{
-					bInsert = true;		
+					bInsert = true;
 				}
 			}
 
 			if(bInsert)
 			{
-				tbl->AddRow(*menu, rootLevel);
+				tbl->AddRow(menu, rootLevel);
 			}
 		}
 
@@ -829,37 +733,37 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 
 		CContainerTable *tbl = new CContainerTable(*this->pInside);
 
-		list<CARContainer>::iterator contIter;		
-		for ( contIter = this->pInside->containerList.begin(); contIter != this->pInside->containerList.end(); contIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
-			CARContainer *cont = &(*contIter);
+			CARContainer cont(cntIndex);
 
-			bool bInsert = false;
-			if(searchChar == "*")  //All objecte
+			if (cont.GetType() == nType)	// the type must match
 			{
-				if(nType == cont->type)  //Only check type
+				bool bInsert = false;
+				if(searchChar == "*")  //All objecte
 				{
 					bInsert = true;
 				}
-			}
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(nType == cont->type && cont->GetNameFirstChar() == searchChar)
+				else if(searchChar == "#")
 				{
-					bInsert = true;
+					if(!cont.NameStandardFirstChar())
+					{
+						bInsert = true;
+					}
 				}
-			}
-			else if(searchChar == "#")
-			{
-				if(nType == cont->type && !cont->NameStandardFirstChar())
+				else
 				{
-					bInsert = true;		
+					if(cont.GetNameFirstChar() == searchChar)
+					{
+						bInsert = true;
+					}
 				}
-			}
 
-			if(bInsert)
-			{
-				tbl->AddRow(*cont, rootLevel);
+				if(bInsert)
+				{
+					tbl->AddRow(cont, rootLevel);
+				}
 			}
 		}
 
@@ -1222,50 +1126,51 @@ void CDocMain::MessageList()
 		listMsgItem.clear();
 
 		//Search all activelinks
-		list<CARActiveLink>::iterator alIter;		
-		for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			CARActiveLink *al = &(*alIter);
+			const ARActiveLinkActionList &ifActions = pInside->alList.ActiveLinkGetIfActions(alIndex);
+			const ARActiveLinkActionList &elseActions = pInside->alList.ActiveLinkGetElseActions(alIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<al->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; nAction++)
 			{
-				if(al->actionList.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
+				if(ifActions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
 				{
 					stringstream strmTmp;
 					strmTmp.str("");
 					strmTmp << "If-Action "<<nAction;
 
-					ARMessageStruct &msg = al->actionList.actionList[nAction].u.message;
+					ARMessageStruct &msg = ifActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = al->GetURL(rootLevel);
+					msgItem->objectLink = pInside->alList.ActiveLinkGetURL(alIndex, rootLevel);
 					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
 			}
 
 			//elseList
-			for(unsigned int nAction=0; nAction<al->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; nAction++)
 			{
-				if(al->elseList.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
+				if(elseActions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
 				{
 					stringstream strmTmp;
 					strmTmp.str("");
 					strmTmp << "Else-Action "<<nAction;
 
-					ARMessageStruct &msg = al->elseList.actionList[nAction].u.message;
+					ARMessageStruct &msg = elseActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = al->GetURL(rootLevel);
+					msgItem->objectLink = pInside->alList.ActiveLinkGetURL(alIndex, rootLevel);
 					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
@@ -1274,57 +1179,56 @@ void CDocMain::MessageList()
 
 
 		//Search all filter
-		list<CARFilter>::iterator filterIter;	
-		CARFilter *filter;
-		for ( filterIter = this->pInside->filterList.begin(); filterIter != this->pInside->filterList.end(); filterIter++ )
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			filter = &(*filterIter);
+			const ARFilterActionList &ifActions = pInside->filterList.FilterGetIfActions(filterIndex);
+			const ARFilterActionList &elseActions = pInside->filterList.FilterGetElseActions(filterIndex);
 
 			//actionList
-			for(unsigned int nAction=0; nAction<filter->actionList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
 			{
-				if(filter->actionList.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
+				if(ifActions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
 				{
-
 					stringstream strmTmp;
 					strmTmp.str("");
-					strmTmp << "If-Action "<<nAction;
+					strmTmp << "If-Action " << nAction;
 
-					ARFilterStatusStruct &msg = filter->actionList.actionList[nAction].u.message;
+					const ARFilterStatusStruct &msg = ifActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = filter->GetURL(rootLevel);
-					listMsgItem.push_back(*msgItem);					
+					msgItem->objectLink = pInside->filterList.FilterGetURL(filterIndex, rootLevel);
+					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
 			}
 
 			//elseList
-			for(unsigned int nAction=0; nAction<filter->elseList.numItems; nAction++)
+			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
 			{
-				if(filter->elseList.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
+				if(elseActions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
 				{
 					stringstream strmTmp;
 					strmTmp.str("");
 					strmTmp << "Else-Action "<<nAction;
 
-					ARFilterStatusStruct &msg = filter->elseList.actionList[nAction].u.message;
+					const ARFilterStatusStruct &msg = elseActions.actionList[nAction].u.message;
 
 					CMessageItem *msgItem = new CMessageItem();
 					msgItem->msgDetails = strmTmp.str();
 					msgItem->msgNumber = msg.messageNum;
 					msgItem->msgText = msg.messageText;
 					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = filter->GetURL(rootLevel);
+					msgItem->objectLink = pInside->filterList.FilterGetURL(filterIndex, rootLevel);
 					listMsgItem.push_back(*msgItem);
 					delete msgItem;
 				}
 			}
-		}	
+		}
 
 
 		CWebPage webPage("message_list", "Messages", rootLevel, this->pInside->appConfig);

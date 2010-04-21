@@ -21,7 +21,7 @@ class CDocAnalyzer :
 	public CDocBase
 {
 public:
-	CDocAnalyzer(CARInside &arIn, string path);
+	CDocAnalyzer(string path);
 	~CDocAnalyzer(void);
 
 	void Documentation();

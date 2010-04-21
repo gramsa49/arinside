@@ -27,6 +27,6 @@ namespace OUTPUT
 		CFilterTable(CARInside &arIn);
 		~CFilterTable(void);
 
-		void AddRow(CARFilter &filter, int rootLevel);
+		void AddRow(unsigned int filterIndex, int rootLevel);
 	};
 }

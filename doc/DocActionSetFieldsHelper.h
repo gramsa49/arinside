@@ -21,7 +21,7 @@
 class CDocActionSetFieldsHelper
 {
 public:
-	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, ARSetFieldsActionStruct& sFieldStruct, int structItemType, string& ifElse, int numAction);
+	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, string& ifElse, int numAction);
 	~CDocActionSetFieldsHelper(void);
 
 	void SetFieldsGetSecondaryForm(const string& fromSchema, int rootLevel, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
@@ -29,7 +29,7 @@ public:
 private:
 	CARInside& arIn;
 	CARServerObject& obj;
-	ARSetFieldsActionStruct& setFieldsStruct;
+	const ARSetFieldsActionStruct& setFieldsStruct;
 	int arStructItemType;
 	string& ifElse;
 	int nAction;

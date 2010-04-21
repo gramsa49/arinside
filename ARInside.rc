@@ -33,10 +33,45 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
-
+ID_ACTIVE_LINK          RCDATA                  "res/active_link.gif"
+ID_STYLE_CSS            RCDATA                  "res/style.css"
+ID_SCRIPT               RCDATA                  "res/script.js"
+ID_TABSCRIPT            RCDATA                  "res/tabscript.js"
+ID_SORTSCRIPT           RCDATA                  "res/sortscript.js"
+ID_SERVER               RCDATA                  "res/server.gif"
+ID_AL_GUIDE             RCDATA                  "res/al_guide.gif"
+ID_APPLICATION          RCDATA                  "res/application.gif"
+ID_ARS_EDIT             RCDATA                  "res/ars_edit.gif"
+ID_DISABLED             RCDATA                  "res/disabled.gif"
+ID_DOC                  RCDATA                  "res/doc.gif"
+ID_DOWN                 RCDATA                  "res/down.gif"
+ID_USER                 RCDATA                  "res/user.gif"
+ID_EMPTY_LIST           RCDATA                  "res/empty_list.gif"
+ID_ESCALATION           RCDATA                  "res/escalation.gif"
+ID_FILTER               RCDATA                  "res/filter.gif"
+ID_FILTER_GUIDE         RCDATA                  "res/filter_guide.gif"
+ID_FOLDER               RCDATA                  "res/folder.gif"
+ID_GROUP                RCDATA                  "res/group.gif"
+ID_CHAPTER              RCDATA                  "res/chapter.gif"
+ID_MENU                 RCDATA                  "res/menu.gif"
+ID_NEXT                 RCDATA                  "res/next.gif"
+ID_PACKING_LIST         RCDATA                  "res/packing_list.gif"
+ID_PREV                 RCDATA                  "res/prev.gif"
+ID_SCHEMA               RCDATA                  "res/schema.gif"
+ID_SEARCH               RCDATA                  "res/search.gif"
+ID_UP                   RCDATA                  "res/up.gif"
+ID_WEBSERVICE           RCDATA                  "res/webservice.gif"
+ID_SORT_DESC            RCDATA                  "res/sort_desc.gif"
+ID_SORT_ASC             RCDATA                  "res/sort_asc.gif"
+ID_VISIBLE              RCDATA                  "res/visible.gif"
+ID_EDIT                 RCDATA                  "res/edit.gif"
+ID_HIDDEN               RCDATA                  "res/hidden.gif"
+ID_INFO                 RCDATA                  "res/info.gif"
+ID_IMAGE                RCDATA                  "res/image.gif"
+/////////////////////////////////////////////////////////////////////////////
+#endif    // English (U.S.) resources
 
 #ifndef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -44,48 +79,7 @@ END
 // Generated from the TEXTINCLUDE 3 resource.
 //
 
-
+–
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Data
-//
-
-STYLE_CSS           	Rcdata DISCARDABLE      "Res/style.css"
-SCRIPT	            	Rcdata DISCARDABLE      "Res/script.js"
-TABSCRIPT            	Rcdata DISCARDABLE      "Res/tabscript.js"
-SORTSCRIPT            	Rcdata DISCARDABLE      "Res/sortscript.js"
-SERVER			Rcdata DISCARDABLE      "Res/server.gif"
-ACTIVE_LINK		Rcdata DISCARDABLE      "Res/active_link.gif"
-AL_GUIDE		Rcdata DISCARDABLE      "Res/al_guide.gif"
-APPLICATION		Rcdata DISCARDABLE      "Res/application.gif"
-ARS_EDIT		Rcdata DISCARDABLE      "Res/ars_edit.gif"
-DISABLED		Rcdata DISCARDABLE      "Res/disabled.gif"
-DOC			Rcdata DISCARDABLE      "Res/doc.gif"
-DOWN			Rcdata DISCARDABLE      "Res/down.gif"
-USER			Rcdata DISCARDABLE      "Res/user.gif"
-EMPTY_LIST		Rcdata DISCARDABLE      "Res/empty_list.gif"
-ESCALATION		Rcdata DISCARDABLE      "Res/escalation.gif"
-FILTER			Rcdata DISCARDABLE      "Res/filter.gif"
-FILTER_GUIDE		Rcdata DISCARDABLE      "Res/filter_guide.gif"
-FOLDER			Rcdata DISCARDABLE      "Res/folder.gif"
-GROUP			Rcdata DISCARDABLE      "Res/group.gif"
-CHAPTER			Rcdata DISCARDABLE      "Res/chapter.gif"
-MENU			Rcdata DISCARDABLE      "Res/menu.gif"
-NEXT			Rcdata DISCARDABLE      "Res/next.gif"
-PACKING_LIST		Rcdata DISCARDABLE      "Res/packing_list.gif"
-PREV			Rcdata DISCARDABLE      "Res/prev.gif"
-SCHEMA			Rcdata DISCARDABLE      "Res/schema.gif"
-SEARCH			Rcdata DISCARDABLE      "Res/search.gif"
-UP			Rcdata DISCARDABLE      "Res/up.gif"
-WEBSERVICE		Rcdata DISCARDABLE      "Res/webservice.gif"
-SORT_DESC		Rcdata DISCARDABLE      "Res/sort_desc.gif"
-SORT_ASC		Rcdata DISCARDABLE      "Res/sort_asc.gif"
-VISIBLE			Rcdata DISCARDABLE      "Res/visible.gif"
-EDIT			Rcdata DISCARDABLE      "Res/edit.gif"
-HIDDEN			Rcdata DISCARDABLE      "Res/hidden.gif"
-INFO			Rcdata DISCARDABLE      "Res/info.gif"
-IMAGE			Rcdata DISCARDABLE      "Res/image.gif"

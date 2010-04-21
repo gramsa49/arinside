@@ -29,6 +29,7 @@ namespace OUTPUT
 		CEscalTable(CARInside &arIn);
 		~CEscalTable(void);
 
+		void AddRow(unsigned int escalationInsideId, int rootLevel) { CAREscalation esc(escalationInsideId); AddRow(esc, rootLevel); }
 		void AddRow(CAREscalation &escal, int rootLevel);
 	};
 }

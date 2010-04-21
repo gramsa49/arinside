@@ -22,13 +22,13 @@ class CDocWebserviceDetails :
 	public CDocBase
 {
 public:
-	CDocWebserviceDetails(CARInside &arIn, CARContainer &obj);
+	CDocWebserviceDetails(CARContainer &obj);
 	~CDocWebserviceDetails(void);
 
 	void Documentation();
 
 private:
-	CARContainer *pWs;
+	CARContainer& ws;
 
 	string WSInformation();
 };

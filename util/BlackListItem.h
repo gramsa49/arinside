@@ -16,8 +16,6 @@
 
 #pragma once
 
-enum ArsActionType { IfAction, ElseAction };
-
 class CBlackListItem
 {
 public:

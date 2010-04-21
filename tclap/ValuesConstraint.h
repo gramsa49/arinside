@@ -25,7 +25,7 @@
 
 #include <string>
 #include <vector>
-#include <Constraint.h>
+#include <tclap/Constraint.h>
 
 #ifdef HAVE_CONFIG_H
 #include <config.h>
@@ -103,7 +103,7 @@ ValuesConstraint<T>::ValuesConstraint(std::vector<T>& allowed)
     {
 
 #if defined(HAVE_SSTREAM)
-        std::stringstream os;
+        std::ostringstream os;
 #elif defined(HAVE_STRSTREAM)
         std::ostrstream os;
 #else

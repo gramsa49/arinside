@@ -39,27 +39,27 @@ CAlTable::~CAlTable(void)
 {	
 }
 
-void CAlTable::AddRow(CARActiveLink &al, int rootLevel)
+void CAlTable::AddRow(int alInsideId, int rootLevel)
 {
-	CARProplistHelper props(&al.objPropList);
+	CARActiveLink al(alInsideId);
+
+	CARProplistHelper props(&al.GetPropList());
 	CTableRow tblRow("");
 	tblRow.AddCell( CTableCell(al.GetURL(rootLevel)));
 
 	string tmpCssEnabled = "";
-	if(al.enable==0)
+	if(al.GetEnabled()==0)
 		tmpCssEnabled = "objStatusDisabled";
-	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(al.enable), tmpCssEnabled));
+	tblRow.AddCell( CTableCell(CAREnum::ObjectEnable(al.GetEnabled()), tmpCssEnabled));
 
 	stringstream strmNumGroup;
-	strmNumGroup << al.groupList.numItems;
+	strmNumGroup << al.GetGroupList().numItems;
 	tblRow.AddCell(	CTableCell(strmNumGroup.str(), ""));
-	tblRow.AddCell(	CTableCell(al.order));
+	tblRow.AddCell(	CTableCell(al.GetOrder()));
 	tblRow.AddCell(	CTableCell(al.GetExecuteOn(true,&props)));
-	tblRow.AddCell(	CTableCell(al.actionList.numItems));
-	tblRow.AddCell(	CTableCell(al.elseList.numItems));
-	tblRow.AddCell(	CTableCell(CUtil::DateTimeToHTMLString(al.timestamp)));
-	tblRow.AddCell(	CTableCell(this->pInside->LinkToUser(al.lastChanged, rootLevel)));
+	tblRow.AddCell(	CTableCell(al.GetIfActions().numItems));
+	tblRow.AddCell(	CTableCell(al.GetElseActions().numItems));
+	tblRow.AddCell(	CTableCell(CUtil::DateTimeToHTMLString(al.GetTimestamp())));
+	tblRow.AddCell(	CTableCell(this->pInside->LinkToUser(al.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
-
-
 }

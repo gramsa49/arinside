@@ -36,7 +36,7 @@ class CDocMain :
 	public CDocBase
 {
 public:
-	CDocMain(CARInside &arIn);
+	CDocMain();
 	~CDocMain(void);
 
 	int Index();
@@ -49,13 +49,13 @@ public:
 
 	void ActiveLinkList(string fileName, string searchChar);	
 	void ActiveLinkActionList(string fileName);	
-	void ActiveLinkActionDetails(int nActionType);
+	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void FilterList(string fileName, string searchChar);	
 	void FilterActionList(string fileName);
-	void FilterActionDetails(int nActionType);
+	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void EscalationList(string fileName, string searchChar);
 	void EscalationActionList(string fileName);
-	void EscalationActionDetails(int nActionType);
+	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 
 	void GroupList(string fileName, string searchChar);
 	void UserList(string fileName, string searchChar);

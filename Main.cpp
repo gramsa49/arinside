@@ -17,15 +17,20 @@
 #include "stdafx.h"
 #ifdef WIN32 // JLS17 LINUX
 #include <windows.h>
-#endif
+#include <io.h>
+#include <direct.h>
+#else // WIN32
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
+#endif // WIN32
+
 #include "ARInside.h"
 #include "ConfigFile.h"
 #include "tclap/CmdLine.h"
 #include "AppException.h"
 #include "WindowsUtil.h"
-#ifdef WIN32 // JLS17 LINUX
-#include <io.h>
-#endif
+
 #include <sys/stat.h>
 
 using namespace TCLAP;
@@ -35,65 +40,56 @@ void LoadConfigFile(string fileName, AppConfig &cfg);
 string LoadFromFile(string fileName);
 int nFilesCreated;
 
-BOOL IsDots(const TCHAR* str);
-BOOL DeleteDirectory(const TCHAR* sPath);
+bool IsDots(const char* str);
+bool DeleteDirectory(const char* sPath);
 
 
-int _tmain(int argc, _TCHAR* argv[])
+int main(int argc, char* argv[])
 {
 	CAppTimer mTimer;
 	mTimer.StartTimer();
 	int result = AR_RETURN_ERROR;
 
-	string server, login, pwd, settingsIni;
+	string server, login, pwd, settingsIni, output;
 	int tcp = 0;
 	int rpc = 0;
 
+	cout << "ARInside Version " << AppVersion << endl;
+	cout << "Copyright (c) 2009 Stefan Nerlich" << endl << endl;
+
+	CmdLine cmd("ARInside -- http://arinside.org", ' ', AppVersion);
+
+	ValueArg<string> iniArg("i", "ini", "Application settings filename", true, "settings.ini", "string");
+	ValueArg<string> serverArg("s","server","ARSystem server",false,"","string");
+	ValueArg<string> loginArg("l", "login", "Login name", false, "", "string");
+	ValueArg<string> pwdArg("p", "pwd", "Password", false, "", "string");
+	ValueArg<int> tcpArg("t", "tcp", "Tcp port", false, 0, "int");
+	ValueArg<int> rpcArg("r", "rcp", "Rcp port", false, 0, "int");
+	ValueArg<string> outputFolder("o", "output", "Output folder", false, "", "string");
+	SwitchArg verboseArg("v","verbose","Verbose Output",false);
+	
 	try 
 	{  
-		cout << "ARInside Version " << AppVersion << endl;
-		cout << "Copyright (c) 2009 Stefan Nerlich" << endl << endl;
-
-		CmdLine cmd("ARInside command arguments", ' ', AppVersion);
-
-		ValueArg<string> serverArg("s","server","ARSystem server",true,"servername","string");
-		cmd.add(serverArg);
-
-		ValueArg<string> loginArg("l", "login", "Login name", true, "Demo", "string");
-		cmd.add(loginArg);
-
-		ValueArg<string> pwdArg("p", "pwd", "Password", false, "", "string");
-		cmd.add(pwdArg);
-
-		ValueArg<string> iniArg("i", "ini", "Application settings filename", true, "settings.ini", "string");
-		cmd.add(iniArg);
-
-		ValueArg<int> tcpArg("t", "tcp", "Tcp port", false, 0, "int");
-		cmd.add(tcpArg);
-
-		ValueArg<int> rpcArg("r", "rcp", "Rcp port", false, 0, "int");
-		cmd.add(rpcArg);
-
-		SwitchArg verboseArg("v","verbose","Verbose Output",false);
+		// add it in reverse order. the "--help" output lists the arguments from the last to the first added.
 		cmd.add(verboseArg);
-
+		cmd.add(rpcArg);
+		cmd.add(tcpArg);
+		cmd.add(pwdArg);
+		cmd.add(loginArg);
+		cmd.add(outputFolder);
+		cmd.add(serverArg);
+		cmd.add(iniArg);
 		cmd.parse( argc, argv );
+
 		server = serverArg.getValue();
+		output = outputFolder.getValue();
 		login = loginArg.getValue();
 		pwd = pwdArg.getValue();
 		tcp = tcpArg.getValue();
 		rpc = rpcArg.getValue();
 		settingsIni = iniArg.getValue();
 		AppConfig::verboseMode = verboseArg.getValue();
-	} 
-	catch (ArgException &e)
-	{ 
-		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
-		return AR_RETURN_ERROR;
-	}
 
-	try
-	{
 		std::ifstream in(settingsIni.c_str());		
 		if(!in)
 		{
@@ -106,7 +102,53 @@ int _tmain(int argc, _TCHAR* argv[])
 		AppConfig appConfig;
 		LoadConfigFile(settingsIni, appConfig);
 
-		appConfig.serverName = server;
+		// override settings with values specified by the command line 
+		if (!server.empty() || appConfig.serverName.empty())
+			appConfig.serverName = server;
+
+		if (!output.empty() || appConfig.targetFolder.empty())
+			appConfig.targetFolder = output;
+
+		if (!login.empty() || appConfig.userName.empty())
+			appConfig.userName = login;
+
+		if (!pwd.empty() || appConfig.password.empty())
+			appConfig.password = pwd;
+
+		if (tcp > 0)
+			appConfig.tcpPort = tcp;
+
+		if (rpc > 0)
+			appConfig.rpcPort = rpc;
+
+		// special checks for server mode
+		if (!appConfig.fileMode) 
+		{
+			string missingArgs;
+			unsigned int missingCount = 0;
+
+			if (appConfig.serverName.empty())
+			{
+				missingCount++;
+				missingArgs = "server / ServerName";
+			}
+			if (appConfig.userName.empty())
+			{
+				missingCount++;
+				if (!missingArgs.empty()) missingArgs += ", ";
+				missingArgs += "login / Username";
+			}
+
+			if (!missingArgs.empty())
+			{
+				string msg;
+				StdOutput _output;
+				msg = "Required argument(s) missing: " + missingArgs;
+				
+				cout << endl;
+				_output.failure(cmd,CmdLineParseException(msg));
+			}
+		}
 
 		CWindowsUtil winUtil(appConfig);		
 		CARInside arInside(appConfig);;
@@ -127,15 +169,17 @@ int _tmain(int argc, _TCHAR* argv[])
 
 			if(appConfig.bCompactFolder) // Compact folder
 			{
+#ifdef WIN32
 				string compactCmd = "compact /C /I /Q /S:" + appConfig.targetFolder;
 				WinExec(compactCmd.c_str(), SW_SHOWNORMAL);
-
-				//ShellExecute(NULL, compactCmd.c_str(), "", "", "", SW_SHOWNORMAL);
+#else
+				cout << "[WARN] CompactFolder is only supported on windows platform!" << endl;
+#endif
 			}
 
 			if(!appConfig.fileMode)	//ServerMode
 			{
-				if(arInside.Init(login, pwd, server, tcp, rpc) == AR_RETURN_OK)
+				if(arInside.Init(appConfig.userName, appConfig.password, appConfig.serverName, appConfig.tcpPort, appConfig.rpcPort) == AR_RETURN_OK)
 				{
 					arInside.DoWork(0);
 					result = AR_RETURN_OK;
@@ -143,7 +187,7 @@ int _tmain(int argc, _TCHAR* argv[])
 			}
 			else //FileMode
 			{
-				if(appConfig.objListXML.length() > 0)
+				if(!appConfig.objListXML.empty())
 				{		
 					if(arInside.FileExists(appConfig.objListXML) == true)
 					{
@@ -155,7 +199,7 @@ int _tmain(int argc, _TCHAR* argv[])
 					}
 					else
 					{
-						cout << "Couldt not find file '" << appConfig.objListXML << "'" << endl;
+						cout << "Could not find file '" << appConfig.objListXML << "'" << endl;
 						result = AR_RETURN_ERROR;
 					}
 				}
@@ -194,6 +238,15 @@ int _tmain(int argc, _TCHAR* argv[])
 	{
 		cout << endl << "AppException: " << e.typeDescription() << endl << "Description: " << e.error();	
 	}
+	catch (ArgException &e)
+	{ 
+		cerr << "error: " << e.error() << " for arg " << e.argId() << endl;
+		return AR_RETURN_ERROR;
+	}
+	catch (ExitException &ee) 
+	{
+		exit(ee.getExitStatus());
+	}
 	catch(exception &e)
 	{
 		cout << endl << "Unhandled execption in _main: " << e.what() << endl;
@@ -208,27 +261,32 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 	{
 		cout << endl << "Load application configuration settings: '" << fileName << "' ";
 		ConfigFile config(fileName);
-		config.readInto(cfg.userForm, "UserForm");
-		config.readInto(cfg.userQuery, "UserQuery");
-		config.readInto(cfg.groupForm, "GroupForm");
-		config.readInto(cfg.groupQuery, "GroupQuery");
-		config.readInto(cfg.roleForm, "RoleForm");
-		config.readInto(cfg.roleQuery, "RoleQuery");
-		config.readInto(cfg.maxRetrieve, "MaxRetrieve");
-		config.readInto(cfg.companyName, "CompanyName");
-		config.readInto(cfg.companyUrl, "CompanyUrl");
-		config.readInto(cfg.targetFolder, "TargetFolder");
-		config.readInto(cfg.fileMode, "FileMode");
-		config.readInto(cfg.objListXML, "ObjListXML");
-		config.readInto(cfg.blackList, "BlackList");
-		config.readInto(cfg.bLoadServerInfoList, "LoadServerInfoList");
-		config.readInto(cfg.bLoadUserList, "LoadUserList");
-		config.readInto(cfg.bLoadGroupList, "LoadGroupList");
-		config.readInto(cfg.bLoadRoleList, "LoadRoleList");
-		config.readInto(cfg.bUseUtf8, "Utf-8");
-		config.readInto(cfg.bCompactFolder, "CompactFolder");
-		config.readInto(cfg.bDeleteExistingFiles, "DeleteExistingFiles");
-		config.readInto(cfg.runNotes, "RunNotes");
+		config.readInto<string>(cfg.userForm, "UserForm", "User");
+		config.readInto<string>(cfg.userQuery, "UserQuery", "1=1");
+		config.readInto<string>(cfg.groupForm, "GroupForm", "Group");
+		config.readInto<string>(cfg.groupQuery, "GroupQuery", "1=1");
+		config.readInto<string>(cfg.roleForm, "RoleForm", "Roles");
+		config.readInto<string>(cfg.roleQuery, "RoleQuery", "1=1");
+		config.readInto<int>(cfg.maxRetrieve, "MaxRetrieve", 0);
+		config.readInto<string>(cfg.companyName, "CompanyName", "");
+		config.readInto<string>(cfg.companyUrl, "CompanyUrl", "");
+		config.readInto<string>(cfg.targetFolder, "TargetFolder", "DefaultOutputFolder");
+		config.readInto<bool>(cfg.fileMode, "FileMode", false);
+		config.readInto<string>(cfg.objListXML, "ObjListXML", "");
+		config.readInto<string>(cfg.blackList, "BlackList", "");
+		config.readInto<bool>(cfg.bLoadServerInfoList, "LoadServerInfoList", true);
+		config.readInto<bool>(cfg.bLoadUserList, "LoadUserList", true);
+		config.readInto<bool>(cfg.bLoadGroupList, "LoadGroupList", true);
+		config.readInto<bool>(cfg.bLoadRoleList, "LoadRoleList", true);
+		config.readInto<bool>(cfg.bUseUtf8, "Utf-8", false);
+		config.readInto<bool>(cfg.bCompactFolder, "CompactFolder", false);
+		config.readInto<bool>(cfg.bDeleteExistingFiles, "DeleteExistingFiles", false);
+		config.readInto<string>(cfg.runNotes, "RunNotes", "");
+		config.readInto<string>(cfg.serverName, "ServerName", "");
+		config.readInto<int>(cfg.tcpPort, "TCPPort", 0);
+		config.readInto<int>(cfg.rpcPort, "RPCPort", 0);
+		config.readInto<string>(cfg.userName, "Username", "");
+		config.readInto<string>(cfg.password, "Password", "");
 		cout << endl;
 
 		LOG << "UserForm: " << cfg.userForm << endl;		
@@ -292,36 +350,40 @@ string LoadFromFile(string fileName)
 	return result;
 }
 
-BOOL IsDots(const TCHAR* str) 
+bool IsDots(const char* str) 
 {
-	if(_tcscmp(str,".") && _tcscmp(str,"..")) return FALSE;
-	return TRUE;
+	if(strcmp(str,".") && strcmp(str,"..")) return false;
+	return true;
 }
 
-BOOL DeleteDirectory(const TCHAR* sPath)
+bool DeleteDirectory(const char* sPath)
 {
+#ifdef WIN32
 	try
 	{
 		HANDLE hFind; // file handle
 		WIN32_FIND_DATA FindFileData;
 
-		TCHAR DirPath[MAX_PATH];
-		TCHAR FileName[MAX_PATH];
+		char DirPath[MAX_PATH];
+		char FileName[MAX_PATH];
 
-		_tcscpy(DirPath,sPath);
-		_tcscat(DirPath,_T("\\"));
-		_tcscpy(FileName,sPath);
-		_tcscat(FileName,_T("\\*")); // searching all files
+		strncpy(DirPath, sPath, MAX_PATH);
+		strncat(DirPath, "/", MAX_PATH);
+		DirPath[MAX_PATH] = 0;
+
+		strncpy(FileName, sPath, MAX_PATH);
+		strncat(FileName, "/*", MAX_PATH); // searching all files
+		FileName[MAX_PATH] = 0;
 
 		hFind = FindFirstFile(FileName, &FindFileData); // find the first file
-		if( hFind != INVALID_HANDLE_VALUE )
+		if (hFind != INVALID_HANDLE_VALUE)
 		{
 			do
 			{
-				if( IsDots(FindFileData.cFileName))
+				if (IsDots(FindFileData.cFileName))
 					continue;
 
-				_tcscpy(FileName + _tcslen(DirPath), FindFileData.cFileName);
+				strcpy(FileName + strlen(DirPath), FindFileData.cFileName);
 				if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 				{
 					// we have found a directory, recurse
@@ -351,5 +413,44 @@ BOOL DeleteDirectory(const TCHAR* sPath)
 		cout << "EXCEPTION in DeleteDirectory: " << e.what() << endl; 
 	}	
 
-	return RemoveDirectory(sPath); // remove the empty (maybe not) directory
+	return (_rmdir(sPath)==0 ? true : false); // remove the empty (maybe not) directory
+#else
+	if (strlen(sPath) == 0) return false;
+
+	// first off, we need to create a pointer to a directory
+	DIR *pdir;
+	pdir = opendir(sPath);
+	
+	struct dirent *pent = NULL;
+	if (pdir == NULL)
+		return false; // return false to say "we couldn't do it"
+
+	string file;
+	struct stat stats;
+
+	while (pent = readdir(pdir)) { // while there is still something in the directory to list
+		if (!IsDots(pent->d_name))
+		{
+			file = sPath;
+			char lastChar = file.at(file.length()-1);
+		  if (lastChar != '/' || lastChar != '\\') file += "/";
+			file += pent->d_name;		
+
+			if (stat(file.c_str(), &stats) != 0)
+				return false;
+
+			LOG << "Delete " << file << endl;
+
+			if (S_ISDIR(stats.st_mode))
+				DeleteDirectory(file.c_str());
+		else
+				remove(file.c_str());
+		}
+	}
+
+	// finally, let's clean up
+	closedir(pdir); // close the directory
+	if (!rmdir(sPath)) return false; // delete the directory
+	return true;
+#endif
 }

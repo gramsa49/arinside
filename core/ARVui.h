@@ -16,22 +16,49 @@
 
 #pragma once
 #include "ARServerObject.h"
+#include "ARSchema.h"
 
 class CARVui :
-	public CARServerObjectWithData
+	public CARServerObject
 {
 public:
-	CARVui(int insideId);
+	CARVui(unsigned int schemaInsideId, unsigned int vuiId, int SchemaVuiIndex = -1);
 	~CARVui(void);
 
-	int schemaInsideId;
-	ARNameType vuiName;
-	ARLocaleType	locale;
-	unsigned int vuiType;
-	ARPropList	objPropList;
+	bool Exists();
+
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
+
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// other data access functions
+	ARInternalId GetId();
+	const ARLocaleType& GetLocale() const;
+	int GetType();
+	const ARPropList& GetProps() const;
+
+	// some helpers
 	string Label();
 	string webAlias();
 
 	string GetURL(int rootLevel, bool showImage = true);
+
+	// class type support
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_VUI; }
+	bool IsClonable();
+	CARServerObject* Clone();
+
+private:
+	CARSchema schema;
+	CARVUIList *vuiList;
+	int vuiIndex;
 };

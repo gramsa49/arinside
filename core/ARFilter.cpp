@@ -16,94 +16,75 @@
 
 #include "stdafx.h"
 #include "ARFilter.h"
+#include "../ARInside.h"
 
-CARFilter::CARFilter(string name, int insideId)
-: CARServerObjectWithData(insideId)
+CARFilter::CARFilter(int insideId)
+: CARServerObject(insideId)
 {
-	this->order = 0;
-	this->opSet = 0;
-	this->enable = 0;
-	this->name = name;
-
-	ARZeroMemory(&errorFilterName);
-	ARZeroMemory(&query);
-	ARZeroMemory(&actionList);
-	ARZeroMemory(&elseList);
-	ARZeroMemory(&schemaList);
-	ARZeroMemory(&objPropList);
 }
 
 CARFilter::~CARFilter(void)
 {
-	// TODO: move ARFree calls to separate method to allow copying of the object without 
-	// copying the whole structure
-	//try
-	//{
-	//	FreeARQualifierStruct(&query, false);
-	//	FreeARFilterActionList(&actionList, false);
-	//	FreeARFilterActionList(&elseList, false);
-	//	FreeARWorkflowConnectStruct(&schemaList, false);	
+}
 
-	//	if(objPropList.props != NULL)
-	//		FreeARPropList(&objPropList, false);
-	//}
-	//catch(...)
-	//{
-	//}
+bool CARFilter::IsClonable()
+{
+	return true;
+}
+
+CARServerObject* CARFilter::Clone()
+{
+	return new CARFilter(*this);
 }
 
 string CARFilter::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->name, CWebUtil::RootPath(rootLevel)+"filter/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "filter.gif" : ""), rootLevel);
+	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"filter/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "filter.gif" : ""), rootLevel);
 }
 
-string CARFilter::GetExecuteOn()
+string CARFilter::GetExecuteOn(bool singleLine)
 {		
 	stringstream strm;
 	strm.str("");
+	bool strmHasContent = false; // use a local var to avoid use of 'strm.str().empty', because this make a copy of the string buffer evrytime
 
 	try
 	{
-		if(opSet == AR_OPERATION_NONE)
-		{
-			return "None";
-		}
-		else
-		{
-			const unsigned int opCount = 6;
-			unsigned int bitmask[opCount] = { 
-				AR_OPERATION_GET, 
-				AR_OPERATION_SET, 
-				AR_OPERATION_CREATE, 
-				AR_OPERATION_DELETE, 
-				AR_OPERATION_MERGE, 
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
-				AR_OPERATION_SERVICE 
-#endif
-			};
-			char executeText[opCount][30] = { 
-				"Get Entry", 
-				"Modify", 
-				"Submit", 
-				"Delete", 
-				"Merge", 
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
-				"Service"
-#endif
-			};
+		typedef	struct ARInsideExecOnStruct {
+			unsigned int exec;
+			char        *text;
+		} ARInsideExecOnStruct;
 
-			for (unsigned int k= 0; k < opCount; k++)
-			{
-				if ( (opSet & bitmask[k]) != 0)
-				{
-					strm << executeText[k] << "<br/>";
-				}
-			}	
+		const ARInsideExecOnStruct executeText[] = {
+			AR_OPERATION_GET, "Get Entry",
+			AR_OPERATION_SET, "Modify",
+			AR_OPERATION_CREATE, "Submit",
+			AR_OPERATION_DELETE, "Delete",
+			AR_OPERATION_MERGE, "Merge",
+			//AR_OPERATION_GUIDE, "???"			// maybe used before containers exists
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710 // Version 7.1 and higher
+			AR_OPERATION_SERVICE, "Service",
+#endif
+			0, NULL
+		};
 
-			if(strm.str().size() > 5)
+		unsigned int opSet = this->GetOperation();
+		for (unsigned int k = 0; true; ++k)
+		{
+			if (executeText[k].exec == 0) break;
+
+			if ( (opSet & executeText[k].exec) != 0)
 			{
-				CUtil::CleanUpStream(strm, 5);
+				if (!singleLine && strmHasContent) strm << "<br/>";
+				if (singleLine && strmHasContent) strm << ", ";
+				strm << executeText[k].text;
+				strmHasContent = true;
 			}
+		}	
+
+		if(!strmHasContent)
+		{
+			strm << "None";
 		}
 	}
 	catch(exception& e)
@@ -113,60 +94,112 @@ string CARFilter::GetExecuteOn()
 	return strm.str();
 }
 
-string CARFilter::GetExecuteOnEx()
-{		
-	stringstream strm;
-	strm.str("");
+string CARFilter::GetName()
+{
+	return CARInside::GetInstance()->filterList.FilterGetName(GetInsideId());
+}
 
-	try
-	{
-		if(opSet==NULL)
-		{
-			return "None";
-		}
-		else
-		{
-			const unsigned int opCount = 6;
-			unsigned int bitmask[opCount] = 
-			{ 
-				AR_OPERATION_GET, 
-				AR_OPERATION_SET, 
-				AR_OPERATION_CREATE, 
-				AR_OPERATION_DELETE, 
-				AR_OPERATION_MERGE, 
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
-				AR_OPERATION_SERVICE 
-#endif
-			};
-			char executeText[opCount][30] = 
-			{ 
-				"Get Entry", 
-				"Modify", 
-				"Submit", 
-				"Delete", 
-				"Merge", 
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
-				"Service"
-#endif
-			};
+string CARFilter::GetName() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetName(GetInsideId());
+}
 
-			for (unsigned int k= 0; k < opCount; k++)
-			{
-				if ( (opSet & bitmask[k]) != 0)
-				{				
-					strm << executeText[k] << ", ";
-				}
-			}
+string CARFilter::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->filterList.FilterGetName(GetInsideId())[0]));
+}
 
-			if(strm.str().size() > 2)
-			{
-				CUtil::CleanUpStream(strm, 2);
-			}
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in Filter GetExecuteOnEx: " << e.what() << endl; 
-	}
-	return strm.str();
+bool CARFilter::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+unsigned int CARFilter::GetOrder() const
+{ 
+	return CARInside::GetInstance()->filterList.FilterGetOrder(GetInsideId());
+}
+
+const ARWorkflowConnectStruct& CARFilter::GetSchemaList() const 
+{ 
+	return CARInside::GetInstance()->filterList.FilterGetSchemaList(GetInsideId());
+}
+
+unsigned int CARFilter::GetOperation()
+{
+	return CARInside::GetInstance()->filterList.FilterGetOperation(GetInsideId());
+}
+
+unsigned int CARFilter::GetEnabled()
+{ 
+	return CARInside::GetInstance()->filterList.FilterGetEnabled(GetInsideId());
+}
+	
+const ARQualifierStruct& CARFilter::GetRunIf() const 
+{ 
+	return CARInside::GetInstance()->filterList.FilterGetRunIf(GetInsideId()); 
+}
+
+const ARFilterActionList& CARFilter::GetIfActions() const
+{ 
+	return CARInside::GetInstance()->filterList.FilterGetIfActions(GetInsideId());
+}
+
+const ARFilterActionList& CARFilter::GetElseActions() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetElseActions(GetInsideId());
+}
+
+const ARPropList& CARFilter::GetPropList() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetPropList(GetInsideId());
+}
+
+const string& CARFilter::GetAppRefName() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetAppRefName(GetInsideId());
+}
+
+void CARFilter::SetAppRefName(const string &appName)
+{
+	return CARInside::GetInstance()->filterList.FilterSetAppRefName(GetInsideId(), appName);
+}
+
+const char* CARFilter::GetHelpText() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetHelptext(GetInsideId());
+}
+
+ARTimestamp CARFilter::GetTimestamp()
+{
+	return CARInside::GetInstance()->filterList.FilterGetTimestamp(GetInsideId());
+}
+
+const ARAccessNameType& CARFilter::GetOwner() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetOwner(GetInsideId());
+}
+
+const ARAccessNameType& CARFilter::GetLastChanged() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetModifiedBy(GetInsideId());
+}
+
+const char* CARFilter::GetChangeDiary() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetChangeDiary(GetInsideId());
+}
+
+unsigned int CARFilter::GetErrorOption()
+{
+	return CARInside::GetInstance()->filterList.FilterGetErrorOption(GetInsideId());
+}
+
+const ARNameType& CARFilter::GetErrorHandler() const
+{
+	return CARInside::GetInstance()->filterList.FilterGetErrorHandler(GetInsideId());
+}
+
+vector<string>& CARFilter::ErrorCallers()
+{
+	return CARInside::GetInstance()->filterList.FilterErrorCallers(GetInsideId());
 }

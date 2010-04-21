@@ -28,6 +28,6 @@ namespace OUTPUT
 		CAlTable(CARInside &arIn);
 		~CAlTable(void);
 
-		void AddRow(CARActiveLink &al, int rootLevel);
+		void AddRow(int alInsideId, int rootLevel);
 	};
 }

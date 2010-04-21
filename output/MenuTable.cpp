@@ -46,10 +46,10 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 	}
 
 	tblRow.AddCell( CTableCell(cellNameValue));		
-	tblRow.AddCell( CTableCell(CAREnum::MenuType(menu.menuDefn.menuType)));
-	tblRow.AddCell( CTableCell(CAREnum::MenuRefresh(menu.refreshCode)));
-	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(menu.timestamp)));
-	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.lastChanged, rootLevel)));
+	tblRow.AddCell( CTableCell(CAREnum::MenuType(menu.GetDefinition().menuType)));
+	tblRow.AddCell( CTableCell(CAREnum::MenuRefresh(menu.GetRefreshCode())));
+	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(menu.GetTimestamp())));
+	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.GetLastChanged(), rootLevel)));
 
 	this->tbl.AddRow(tblRow);
 }
@@ -58,21 +58,19 @@ int CMenuTable::NumRelatedFields(CARCharMenu &obj)
 {	
 	int nCnt = 0;
 
-	list<CARSchema>::iterator schemaIter;	
-	for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+	unsigned int schemaCount = this->pInside->schemaList.GetCount();
+	for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 	{			
-		CARSchema *schema = &(*schemaIter);
-
-		list<CARField>::iterator fieldIter;		
-		CARField *field;
-
-		for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+		CARSchema schema(schemaIndex);
+		
+		unsigned int fieldCount = schema.GetFields()->GetCount();		
+		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			field = &(*fieldIter);
+			CARField field(schemaIndex, 0, fieldIndex);
 
-			if(field->dataType == AR_DATA_TYPE_CHAR)
+			if(field.GetDataType() == AR_DATA_TYPE_CHAR)
 			{
-				if(strcmp(field->limit.u.charLimits.charMenu, obj.name.c_str())==0)
+				if (strcmp(field.GetLimits().u.charLimits.charMenu, obj.GetARName()) == 0)
 				{
 					nCnt++;
 				}
@@ -86,33 +84,33 @@ int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
 {
 	int nCnt = 0;
 
-	list<CARActiveLink>::iterator alIter;			
-	for ( alIter = this->pInside->alList.begin(); alIter != this->pInside->alList.end(); alIter++ )
+	unsigned int alCount = this->pInside->alList.GetCount();
+	for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 	{			
-		CARActiveLink *al = &(*alIter);
-		for(unsigned int nAction = 0; nAction < al->actionList.numItems; nAction++)
+		CARActiveLink al(alIndex);
+		for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 		{
-			ARActiveLinkActionStruct action = al->actionList.actionList[nAction];
+			const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
 			if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 			{
 				if(action.u.characteristics.charMenu != NULL)
 				{
-					if(strcmp(action.u.characteristics.charMenu, obj.name.c_str())==0)
+					if(strcmp(action.u.characteristics.charMenu, obj.GetARName())==0)
 					{
 						nCnt++;
 					}
 				}
 			}
-		}		
+		}
 
-		for(unsigned int nAction = 0; nAction < al->elseList.numItems; nAction++)
+		for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
 		{
-			ARActiveLinkActionStruct action = al->elseList.actionList[nAction];
+			const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
 			if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
 			{
 				if(action.u.characteristics.charMenu != NULL)
 				{
-					if(strcmp(action.u.characteristics.charMenu, obj.name.c_str())==0)
+					if(strcmp(action.u.characteristics.charMenu, obj.GetARName())==0)
 					{
 						nCnt++;
 					}

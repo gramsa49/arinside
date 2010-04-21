@@ -16,6 +16,7 @@
 
 #pragma once
 #include <string>
+#include <string.h>
 #include <iostream>
 #include <fstream>
 #include <sstream>
@@ -24,9 +25,6 @@
 #include <vector>
 #include <time.h>
 #include <stdlib.h> // JLS17_LINUX
-#if WIN32 // JLS17_LINUX
-#include <tchar.h>
-#endif
 
 #include "util/Util.h"
 

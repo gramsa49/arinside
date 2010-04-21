@@ -21,11 +21,10 @@
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
 
-CDocSchemaDetails::CDocSchemaDetails(CARInside &arInside, CARSchema &schema, string path, int rootLevel)
+CDocSchemaDetails::CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel)
+: schema(schemaInsideId)
 {
-	this->pInside = &arInside;
-	this->pSchema = &schema;
-	this->path = path;
+	this->path = "schema/" + schema.FileID();
 	this->rootLevel = rootLevel;
 
 	this->uniqueAlList.clear();
@@ -43,8 +42,8 @@ string CDocSchemaDetails::FormPageHeader(string description)
 	stringstream contHeadStrm;
 	contHeadStrm.str("");
 	contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-	contHeadStrm << MenuSeparator <<this->pInside->LinkToSchemaTypeList(this->pSchema->schema.schemaType, rootLevel) << endl;
-	contHeadStrm << MenuSeparator << CWebUtil::Link(this->pSchema->name, CWebUtil::DocName("index"), "", rootLevel);
+	contHeadStrm << MenuSeparator <<this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
+	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CWebUtil::DocName("index"), "", rootLevel);
 	contHeadStrm << MenuSeparator << CWebUtil::ObjName(description) << endl;
 	return contHeadStrm.str();
 }
@@ -58,16 +57,18 @@ void CDocSchemaDetails::Documentation()
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStrm;	
-			CWebPage webPage("index", this->pSchema->name, rootLevel, this->pInside->appConfig);
+			CWebPage webPage("index", this->schema.GetName(), rootLevel, this->pInside->appConfig);
+			
+			const ARCompoundSchema& compSchema = this->schema.GetCompound();
 
 			//ContentHead informations
 			stringstream contHeadStrm;
 			contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->pSchema->schema.schemaType, rootLevel) << endl;
-			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->pSchema->name) << endl;
+			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
+			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->schema.GetName()) << endl;
 
-			if(this->pSchema->appRefName.c_str() != NULL && this->pSchema->appRefName.size() > 0)
-				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pSchema->appRefName, this->rootLevel);
+			if(!this->schema.GetAppRefName().empty())
+				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), this->rootLevel);
 
 			pgStrm << contHeadStrm.str();
 
@@ -87,9 +88,9 @@ void CDocSchemaDetails::Documentation()
 			CTableCell cellPropValue("");    
 
 
-			if(this->pSchema->schema.schemaType == AR_SCHEMA_JOIN
-				|| this->pSchema->schema.schemaType == AR_SCHEMA_VIEW
-				|| this->pSchema->schema.schemaType == AR_SCHEMA_VENDOR)
+			if(compSchema.schemaType == AR_SCHEMA_JOIN
+				|| compSchema.schemaType == AR_SCHEMA_VIEW
+				|| compSchema.schemaType == AR_SCHEMA_VENDOR)
 			{
 				cellProp.content = "Schema Type Details";				
 				cellPropValue.content = this->TypeDetails();    
@@ -159,13 +160,13 @@ void CDocSchemaDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Fields
-			switch(this->pSchema->schema.schemaType)
+			switch(compSchema.schemaType)
 			{
 			case AR_SCHEMA_JOIN:
-				pgStrm << this->AllFieldsJoin(this->pSchema->FileID());
+				pgStrm << this->AllFieldsJoin(this->schema.FileID());
 				break;
 			default:	
-				pgStrm << this->AllFields(this->pSchema->FileID());
+				pgStrm << this->AllFields(this->schema.FileID());
 				break;
 			}
 
@@ -210,7 +211,7 @@ void CDocSchemaDetails::Documentation()
 			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pSchema, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, this->rootLevel));
 
 			webPage.SaveInFolder(this->path);
 			pgStrm.str("");
@@ -218,7 +219,7 @@ void CDocSchemaDetails::Documentation()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema details documentation of '"<< this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema details documentation of '"<< this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -260,7 +261,7 @@ string CDocSchemaDetails::SchemaNavigation()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema navigation of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema navigation of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}	
 
 	return uList.ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
@@ -280,30 +281,29 @@ string CDocSchemaDetails::AllFields(string fName)
 
 	try
 	{
-		list<CARField>::iterator listIter;
-		CARField *field;
-		for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+		CARFieldList* fields = schema.GetFields();
+		unsigned int fieldCount = fields->GetCount();
+		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			field = &(*listIter);
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
 
 			CTableRow row("");
 
-
-			CTableCell cellName(field->GetURL(rootLevel), "");
-			CTableCell cellFieldId(field->fieldId, "");
-			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");
+			CTableCell cellName(field.GetURL(rootLevel), "");
+			CTableCell cellFieldId(field.GetFieldId(), "");
+			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");
 
 			stringstream strmTmp;
-			if(field->dInstanceList.numItems == 0 && field->fieldId != 15)				
-				strmTmp << "<span class=\"fieldInNoView\">" << field->dInstanceList.numItems << "</span" << endl;
+			if(field.GetDisplayInstances().numItems == 0 && field.GetFieldId() != 15)				
+				strmTmp << "<span class=\"fieldInNoView\">" << field.GetDisplayInstances().numItems << "</span" << endl;
 			else
-				strmTmp << field->dInstanceList.numItems;			
+				strmTmp << field.GetDisplayInstances().numItems;			
 			CTableCell cellNumViews(strmTmp.str(), "");			
 
-			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field->timestamp), "");
-			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, 2), "");
+			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field.GetTimestamp()), "");
+			CTableCell cellLastChanged(this->pInside->LinkToUser(field.GetLastChanged(), 2), "");
 
-			row.AddCell(cellName);		
+			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
 			row.AddCell(cellDataType);
 			row.AddCell(cellNumViews);
@@ -321,7 +321,7 @@ string CDocSchemaDetails::AllFields(string fName)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields of '"<< this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema all fields of '"<< this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return tbl.ToXHtml();	
@@ -339,19 +339,19 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 
 	try
 	{
-		list<CARField>::iterator listIter;
-		CARField *field;
-		for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+		CARFieldList* fields = schema.GetFields();
+		unsigned int fieldCount = fields->GetCount();
+		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			field = &(*listIter);
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
 
 			CTableRow row("");
-			CTableCell cellName(field->name, "");
-			CTableCell cellFieldId(field->fieldId, "");
-			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");			
-			CTableCell cellNumViews(field->dInstanceList.numItems, "");	
-			CTableCell cellTimestamp(CUtil::DateTimeToString(field->timestamp), "");
-			CTableCell cellLastChanged(field->lastChanged, "");
+			CTableCell cellName(field.GetName(), "");
+			CTableCell cellFieldId(field.GetFieldId(), "");
+			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");			
+			CTableCell cellNumViews(field.GetDisplayInstances().numItems, "");	
+			CTableCell cellTimestamp(CUtil::DateTimeToString(field.GetTimestamp()), "");
+			CTableCell cellLastChanged(field.GetLastChanged(), "");
 
 			row.AddCell(cellName);		
 			row.AddCell(cellFieldId);
@@ -369,7 +369,7 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields csv of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema all fields csv of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -388,50 +388,52 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 
 	try
 	{
-		list<CARField>::iterator listIter;		
-		for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+		CARFieldList* fields = schema.GetFields();
+		unsigned int fieldCount = fields->GetCount();
+		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			CARField *field = &(*listIter);
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
 
 			CTableRow row("");
-			CTableCell cellName(field->GetURL(rootLevel), "");
-			CTableCell cellFieldId(field->fieldId, "");
+			CTableCell cellName(field.GetURL(rootLevel), "");
+			CTableCell cellFieldId(field.GetFieldId(), "");
 
 			stringstream strmTmp;
-			if(field->dInstanceList.numItems == 0 && field->fieldId != 15)				
-				strmTmp << "<span class=\"fieldInNoView\">" << field->dInstanceList.numItems << "</span" << endl;
+			if(field.GetDisplayInstances().numItems == 0 && field.GetFieldId() != 15)				
+				strmTmp << "<span class=\"fieldInNoView\">" << field.GetDisplayInstances().numItems << "</span" << endl;
 			else
-				strmTmp << field->dInstanceList.numItems;			
+				strmTmp << field.GetDisplayInstances().numItems;			
+			
 			CTableCell cellNumViews(strmTmp.str(), "");	
-
-			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");
+			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");
 
 			strmTmp.str("");			
-			if(field->fieldId == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+			if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
 			{
+				const ARCompoundSchema& compSchema = this->schema.GetCompound();
 				strmTmp.str("");
-				strmTmp << this->pInside->LinkToField(this->pSchema->schema.u.join.memberA, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(this->pSchema->schema.u.join.memberA, rootLevel);
+				strmTmp << this->pInside->LinkToField(compSchema.u.join.memberA, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel);
 				strmTmp << "<br/>" << endl;
-				strmTmp << this->pInside->LinkToField(this->pSchema->schema.u.join.memberB, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(this->pSchema->schema.u.join.memberB, rootLevel);
+				strmTmp << this->pInside->LinkToField(compSchema.u.join.memberB, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel);
 			}
 			else
 			{
 				strmTmp.str("");
-				if(field->fieldMap.u.join.realId > 0)
-				{			
-					string tmpBaseSchema = this->pSchema->schema.u.join.memberA;
-					if(field->fieldMap.u.join.schemaIndex > 0)
-						tmpBaseSchema = this->pSchema->schema.u.join.memberB;
+				if(field.GetMapping().u.join.realId > 0)
+				{
+					string tmpBaseSchema = this->schema.GetCompound().u.join.memberA;
+					if(field.GetMapping().u.join.schemaIndex > 0)
+						tmpBaseSchema = this->schema.GetCompound().u.join.memberB;
 
-					strmTmp << this->pInside->LinkToField(tmpBaseSchema, field->fieldMap.u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
+					strmTmp << this->pInside->LinkToField(tmpBaseSchema, field.GetMapping().u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
 				}
 				else
 					strmTmp << "&nbsp;";
 			}			
 
 			CTableCell cellFieldRealId(strmTmp.str(), "");
-			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field->timestamp), "");
-			CTableCell cellLastChanged(this->pInside->LinkToUser(field->lastChanged, rootLevel), "");
+			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field.GetTimestamp()), "");
+			CTableCell cellLastChanged(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel), "");
 
 			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
@@ -452,7 +454,7 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields join of '"<< this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema all fields join of '"<< this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return tbl.ToXHtml();	
@@ -471,33 +473,34 @@ void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
 
 	try
 	{
-		list<CARField>::iterator listIter;		
-		for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+		CARFieldList* fields = schema.GetFields();
+		unsigned int fieldCount = fields->GetCount();
+		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			CARField *field = &(*listIter);
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
 
 			CTableRow row("");
-			CTableCell cellName(field->name, "");
-			CTableCell cellFieldId(field->fieldId, "");
-			CTableCell cellNumViews(field->dInstanceList.numItems, "");
-			CTableCell cellDataType(CAREnum::DataType(field->dataType), "");
+			CTableCell cellName(field.GetName(), "");
+			CTableCell cellFieldId(field.GetFieldId(), "");
+			CTableCell cellNumViews(field.GetDisplayInstances().numItems, "");
+			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");
 
 			int nFieldRealId = 0;		
-			if(field->fieldId == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+			if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
 			{
 				nFieldRealId = 1;
 			}
 			else
 			{
-				if(field->fieldMap.u.join.realId > 0)
+				if(field.GetMapping().u.join.realId > 0)
 				{			
-					nFieldRealId = field->fieldMap.u.join.realId;
+					nFieldRealId = field.GetMapping().u.join.realId;
 				}
 			}			
 
 			CTableCell cellFieldRealId(nFieldRealId, "");
-			CTableCell cellTimestamp(CUtil::DateTimeToString(field->timestamp), "");
-			CTableCell cellLastChanged(field->lastChanged, "");
+			CTableCell cellTimestamp(CUtil::DateTimeToString(field.GetTimestamp()), "");
+			CTableCell cellLastChanged(field.GetLastChanged(), "");
 
 			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
@@ -516,7 +519,7 @@ void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema all fields join csv of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema all fields join csv of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -568,7 +571,7 @@ bool CDocSchemaDetails::IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct&
 	{
 		for (unsigned int connectIndex = 0; connectIndex < wfCS.u.schemaList->numItems; ++connectIndex)
 		{
-			if (pSchema->name.compare(wfCS.u.schemaList->nameList[connectIndex]) == 0)
+			if (schema.GetName() == wfCS.u.schemaList->nameList[connectIndex])
 			{
 				return true;
 			}
@@ -597,7 +600,7 @@ void CDocSchemaDetails::WorkflowDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Workflow)";
+		string title = "Schema " + this->schema.GetName() + " (Workflow)";
 		CWebPage webPage("form_workflow", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations		
@@ -617,7 +620,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )
 		{	
 			CFieldRefItem *item = &(*iter);
-			if(item->schemaInsideId == this->pSchema->GetInsideId() 
+			if(item->schemaInsideId == this->schema.GetInsideId() 
 				&& ( item->arsStructItemType == AR_STRUCT_ITEM_XML_FILTER
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK
 				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ESCALATION))
@@ -665,7 +668,7 @@ void CDocSchemaDetails::WorkflowDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema workflow doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema workflow doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -674,7 +677,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Indexes)";
+		string title = "Schema " +this->schema.GetName() +" (Indexes)";
 		CWebPage webPage("form_permission_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -689,21 +692,24 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		tbl.AddColumn(75, "Group Name");
 		tbl.AddColumn(10, "Group Id");
 
-		for(unsigned int i=0; i< this->pSchema->groupList.numItems; i++)
+		const ARPermissionList& perms = this->schema.GetPermissions();
+		for(unsigned int i = 0; i < perms.numItems; ++i)
 		{
-			if(this->pInside->ValidateGroup(this->pSchema->appRefName, this->pSchema->groupList.permissionList[i].groupId))
+			if(this->pInside->ValidateGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId))
 			{
 				CTableRow row("");
 
-				string img = CWebUtil::ImageTag("visible.gif", rootLevel);
+				string img;
 
-				if(this->pSchema->groupList.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
+				if(perms.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
 					img = CWebUtil::ImageTag("hidden.gif", rootLevel);
+				else
+					img = CWebUtil::ImageTag("visible.gif", rootLevel);
 
 				row.AddCell(CTableCell(img));
-				row.AddCell(CTableCell(CAREnum::ObjectPermission(this->pSchema->groupList.permissionList[i].permissions)));
-				row.AddCell(CTableCell(this->pInside->LinkToGroup(this->pSchema->appRefName, this->pSchema->groupList.permissionList[i].groupId, rootLevel)));
-				row.AddCell(CTableCell(this->pSchema->groupList.permissionList[i].groupId));
+				row.AddCell(CTableCell(CAREnum::ObjectPermission(perms.permissionList[i].permissions)));
+				row.AddCell(CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId, rootLevel)));
+				row.AddCell(CTableCell(perms.permissionList[i].groupId));
 				tbl.AddRow(row);
 			}
 		}	    
@@ -719,33 +725,37 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		fieldTbl.AddColumn(40, "Permissions");
 
 
-		list<CARField>::iterator listIter;
-		CARField *field;
-		for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+		CARFieldList* fields = schema.GetFields();
+		unsigned int fieldCount = fields->GetCount();
+		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			field = &(*listIter);
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
 
 			//Field Permissions
 			stringstream strmFieldPermissions;
 			strmFieldPermissions.str("");
 
-			if(field->permissions.numItems > 0)
+			const ARPermissionList& fldPerms = field.GetPermissions();
+			if(fldPerms.numItems > 0)
 			{
 				CTable tblFieldPermissionDetails("PermissionFieldList", "TblHidden");
 				tblFieldPermissionDetails.AddColumn(5, "Permission");
 				tblFieldPermissionDetails.AddColumn(20, "Description");
 				tblFieldPermissionDetails.AddColumn(75, "Group Name");
 
-				for(unsigned int i=0; i<field->permissions.numItems; i++)
+				for(unsigned int i = 0; i < fldPerms.numItems; ++i)
 				{
-					string img = CWebUtil::ImageTag("visible.gif", rootLevel);
-					if(field->permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
+					string img;
+					
+					if(fldPerms.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
 						img = CWebUtil::ImageTag("edit.gif", rootLevel);
+					else
+						img = CWebUtil::ImageTag("visible.gif", rootLevel);
 
 					CTableRow row("");
 					row.AddCell(CTableCell(img));
-					row.AddCell(CTableCell(CAREnum::FieldPermission(field->permissions.permissionList[i].permissions)));
-					row.AddCell(CTableCell(this->pInside->LinkToGroup(field->appRefName, field->permissions.permissionList[i].groupId, rootLevel)));
+					row.AddCell(CTableCell(CAREnum::FieldPermission(fldPerms.permissionList[i].permissions)));
+					row.AddCell(CTableCell(this->pInside->LinkToGroup(schema.GetAppRefName(), fldPerms.permissionList[i].groupId, rootLevel)));
 					tblFieldPermissionDetails.AddRow(row);
 				}
 
@@ -758,9 +768,9 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 
 
 			CTableRow row("");			
-			row.AddCell(CTableCell(field->GetURL(rootLevel)));
-			row.AddCell(CTableCell(field->fieldId));
-			row.AddCell(CTableCell(CAREnum::DataType(field->dataType)));
+			row.AddCell(CTableCell(field.GetURL(rootLevel)));
+			row.AddCell(CTableCell(field.GetFieldId()));
+			row.AddCell(CTableCell(CAREnum::DataType(field.GetDataType())));
 			row.AddCell(CTableCell(strmFieldPermissions.str()));
 			fieldTbl.AddRow(row);
 		}
@@ -770,7 +780,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema permission doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema permission doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -779,7 +789,7 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Indexes)";
+		string title = "Schema " +this->schema.GetName() +" (Indexes)";
 		CWebPage webPage("form_subadmin_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -793,11 +803,12 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 		tbl.AddColumn(10, "Group Id");
 		tbl.AddColumn(90, "Group Name");
 
-		for(unsigned int i=0; i< this->pSchema->admingrpList.numItems; i++)
+		const ARInternalIdList& subAdmins = schema.GetSubadmins();
+		for(unsigned int i = 0; i < subAdmins.numItems; ++i)
 		{
 			CTableRow row("");					
-			row.AddCell(CTableCell(this->pSchema->admingrpList.internalIdList[i]));
-			row.AddCell(CTableCell(this->pInside->LinkToGroup(this->pSchema->appRefName, this->pSchema->admingrpList.internalIdList[i], rootLevel)));		
+			row.AddCell(CTableCell(subAdmins.internalIdList[i]));
+			row.AddCell(CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), subAdmins.internalIdList[i], rootLevel)));		
 			tbl.AddRow(row);
 		}
 
@@ -806,7 +817,7 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION schema subadmin doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION schema subadmin doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -815,7 +826,7 @@ void CDocSchemaDetails::IndexDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Indexes)";
+		string title = "Schema " +this->schema.GetName() +" (Indexes)";
 		CWebPage webPage("form_index_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -824,7 +835,8 @@ void CDocSchemaDetails::IndexDoc()
 		//Add schema navigation menu	
 		webPage.SetNavigation(this->SchemaNavigation());
 
-		for(unsigned int nIndex=0; nIndex < this->pSchema->indexList.numItems; nIndex++)
+		const ARIndexList& indexList = this->schema.GetIndexList();
+		for(unsigned int nIndex=0; nIndex < indexList.numItems; ++nIndex)
 		{		
 			CTable tbl("fieldListAll", "TblObjectList");
 			tbl.AddColumn(0, "Field Name");
@@ -834,43 +846,38 @@ void CDocSchemaDetails::IndexDoc()
 			tbl.AddColumn(0, "By");
 
 			stringstream tblDesc;
-			if(this->pSchema->indexList.indexList[nIndex].unique)
-				tblDesc << "Unique Index :" <<  CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
+			if(indexList.indexList[nIndex].unique)
+				tblDesc << "Unique Index :" << CWebUtil::ObjName(indexList.indexList[nIndex].indexName);
 			else
-				tblDesc << "Index: " << CWebUtil::ObjName(this->pSchema->indexList.indexList[nIndex].indexName);
+				tblDesc << "Index: " << CWebUtil::ObjName(indexList.indexList[nIndex].indexName);
 
 			tbl.description = tblDesc.str();
 
-			for(unsigned int nField=0; nField < this->pSchema->indexList.indexList[nIndex].numFields; nField++)
+			for(unsigned int nField=0; nField < indexList.indexList[nIndex].numFields; ++nField)
 			{
-				list<CARField>::iterator listIter;			
-				CARField *field;
-				for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+				CARField field(schema.GetInsideId(), indexList.indexList[nIndex].fieldIds[nField]);
+
+				if (field.Exists())
 				{
-					field = &(*listIter);
+					CTableRow row("");
+					row.AddCell( CTableCell(field.GetURL(rootLevel)));
+					row.AddCell( CTableCell(field.GetFieldId()));
+					row.AddCell( CTableCell(CAREnum::DataType(field.GetDataType())));
+					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field.GetDataType())));
+					row.AddCell( CTableCell(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel)));
+					tbl.AddRow(row);
 
-					if(field->fieldId == this->pSchema->indexList.indexList[nIndex].fieldIds[nField])
-					{
-						CTableRow row("");
-						row.AddCell( CTableCell(field->GetURL(rootLevel)));
-						row.AddCell( CTableCell(field->fieldId));
-						row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));
-						row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-						row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
-						tbl.AddRow(row);
+					//Add a reference
+					CFieldRefItem *refItem = new CFieldRefItem();
+					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 
-						//Add a reference
-						CFieldRefItem *refItem = new CFieldRefItem();
-						refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-
-						string tmp = CWebUtil::Link(this->pSchema->indexList.indexList[nIndex].indexName, CWebUtil::DocName("form_index_list"), "", 2);
-						refItem->description = "Field in "+tmp;
-						refItem->fromName = this->pSchema->name;
-						refItem->fieldInsideId = field->GetInsideId();
-						refItem->schemaInsideId = this->pSchema->GetInsideId();
-						this->pInside->AddReferenceItem(refItem);
-						delete refItem;
-					}
+					string tmp = CWebUtil::Link(indexList.indexList[nIndex].indexName, CWebUtil::DocName("form_index_list"), "", 2);
+					refItem->description = "Field in "+tmp;
+					refItem->fromName = this->schema.GetName();
+					refItem->fieldInsideId = field.GetInsideId();
+					refItem->schemaInsideId = this->schema.GetInsideId();
+					this->pInside->AddReferenceItem(refItem);
+					delete refItem;
 				}
 			}
 
@@ -882,7 +889,7 @@ void CDocSchemaDetails::IndexDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema index doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema index doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -891,7 +898,7 @@ void CDocSchemaDetails::ResultListDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Results Lists Fields)";
+		string title = "Schema " +this->schema.GetName() +" (Results Lists Fields)";
 		CWebPage webPage("form_result_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -910,40 +917,35 @@ void CDocSchemaDetails::ResultListDoc()
 		tbl.AddColumn(20, "Modified");
 		tbl.AddColumn(20, "By");
 
-		for(unsigned int i=0; i< this->pSchema->getListFields.numItems; i++)
+		const AREntryListFieldList& resultFields = schema.GetResultFields();
+		for(unsigned int i = 0; i < resultFields.numItems; ++i)
 		{
-			AREntryListFieldStruct fList = this->pSchema->getListFields.fieldsList[i];
+			CARField field(schema.GetInsideId(), resultFields.fieldsList[i].fieldId);
 
-			list<CARField>::iterator listIter;						
-			for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+			if (field.Exists())
 			{
-				CARField *field = &(*listIter);
+				CTableRow row("");
+				row.AddCell( CTableCell(field.GetURL(rootLevel)));
+				row.AddCell( CTableCell(field.GetFieldId()));
+				row.AddCell( CTableCell(CAREnum::DataType(field.GetDataType())));
+				row.AddCell( CTableCell(resultFields.fieldsList[i].columnWidth));
+				row.AddCell( CTableCell(resultFields.fieldsList[i].separator));
+				row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field.GetTimestamp())));
+				row.AddCell( CTableCell(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel)));
+				tbl.AddRow(row);
 
-				if(field->fieldId == fList.fieldId)
-				{
-					CTableRow row("");
-					row.AddCell( CTableCell( field->GetURL(rootLevel)));
-					row.AddCell( CTableCell(field->fieldId));
-					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));
-					row.AddCell( CTableCell(fList.columnWidth));
-					row.AddCell( CTableCell(fList.separator));
-					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
-					tbl.AddRow(row);
+				//Add a reference
+				CFieldRefItem *refItem = new CFieldRefItem();
+				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 
-					//Add a reference
-					CFieldRefItem *refItem = new CFieldRefItem();
-					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
+				string tmp = CWebUtil::Link("ResultList", CWebUtil::DocName("form_result_list"), "", 2);
+				refItem->description = "Field in "+tmp;
 
-					string tmp = CWebUtil::Link("ResultList", CWebUtil::DocName("form_result_list"), "", 2);
-					refItem->description = "Field in "+tmp;
-
-					refItem->fromName = this->pSchema->name;
-					refItem->fieldInsideId = field->GetInsideId();
-					refItem->schemaInsideId = this->pSchema->GetInsideId();
-					this->pInside->AddReferenceItem(refItem);
-					delete refItem;				
-				}
+				refItem->fromName = this->schema.GetName();
+				refItem->fieldInsideId = field.GetInsideId();
+				refItem->schemaInsideId = this->schema.GetInsideId();
+				this->pInside->AddReferenceItem(refItem);
+				delete refItem;				
 			}
 		}
 
@@ -954,7 +956,7 @@ void CDocSchemaDetails::ResultListDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema resultlist doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema resultlist doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -963,7 +965,7 @@ void CDocSchemaDetails::SortListDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Results Lists Fields)";
+		string title = "Schema " +this->schema.GetName() +" (Results Lists Fields)";
 		CWebPage webPage("form_sort_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -982,43 +984,39 @@ void CDocSchemaDetails::SortListDoc()
 		tbl.AddColumn(20, "By");
 
 
-		for(unsigned int i=0; i< this->pSchema->sortList.numItems; i++)
+		const ARSortList& sorting = schema.GetSortList();
+		for(unsigned int i = 0; i < sorting.numItems; ++i)
 		{
-			ARSortStruct sList = this->pSchema->sortList.sortList[i];
+			CARField field(schema.GetInsideId(), sorting.sortList[i].fieldId);
 
-			list<CARField>::iterator listIter;			
-			CARField *field;
-			for ( listIter = this->pSchema->fieldList.begin(); listIter != this->pSchema->fieldList.end(); listIter++ )
+			if (field.Exists())
 			{
-				field = &(*listIter);
+				CTableRow row("");
 
-				if(field->fieldId == sList.fieldId)
-				{
-					CTableRow row("");
+				string sortImage;
+				if(sorting.sortList[i].sortOrder == AR_SORT_DESCENDING)
+					sortImage = CWebUtil::ImageTag("sort_desc.gif", rootLevel);
+				else
+					sortImage = CWebUtil::ImageTag("sort_asc.gif", rootLevel);
 
-					string sortImage = CWebUtil::ImageTag("sort_asc.gif", rootLevel);
-					if(sList.sortOrder == AR_SORT_DESCENDING)
-						sortImage = CWebUtil::ImageTag("sort_desc.gif", rootLevel);
+				row.AddCell( CTableCell(sortImage));
+				row.AddCell( CTableCell(field.GetURL(rootLevel)));
+				row.AddCell( CTableCell(field.GetFieldId()));
+				row.AddCell( CTableCell(CAREnum::DataType(field.GetDataType())));				
+				row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field.GetTimestamp())));
+				row.AddCell( CTableCell(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel)));
 
-					row.AddCell( CTableCell(sortImage));
-					row.AddCell( CTableCell(field->GetURL(rootLevel)));
-					row.AddCell( CTableCell(field->fieldId));
-					row.AddCell( CTableCell(CAREnum::DataType(field->dataType)));				
-					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field->timestamp)));
-					row.AddCell( CTableCell(this->pInside->LinkToUser(field->lastChanged, rootLevel)));
+				tbl.AddRow(row);
 
-					tbl.AddRow(row);
-
-					//Add a reference
-					CFieldRefItem *refItem = new CFieldRefItem();
-					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-					refItem->description = "SortList";
-					refItem->fromName = this->pSchema->name;
-					refItem->fieldInsideId = field->GetInsideId();
-					refItem->schemaInsideId = this->pSchema->GetInsideId();
-					this->pInside->AddReferenceItem(refItem);
-					delete refItem;
-				}
+				//Add a reference
+				CFieldRefItem *refItem = new CFieldRefItem();
+				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
+				refItem->description = "SortList";
+				refItem->fromName = this->schema.GetName();
+				refItem->fieldInsideId = field.GetInsideId();
+				refItem->schemaInsideId = this->schema.GetInsideId();
+				this->pInside->AddReferenceItem(refItem);
+				delete refItem;
 			}
 		}
 
@@ -1029,7 +1027,7 @@ void CDocSchemaDetails::SortListDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema sortlist doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema sortlist doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -1038,7 +1036,7 @@ void CDocSchemaDetails::VuiListDoc()
 {	
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Views)";
+		string title = "Schema " +this->schema.GetName() +" (Views)";
 		CWebPage webPage("form_vui_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -1055,19 +1053,18 @@ void CDocSchemaDetails::VuiListDoc()
 		tbl.AddColumn(15, "Modified");
 		tbl.AddColumn(15, "By");
 
-		list<CARVui>::iterator vuiIter;			
-		CARVui *vui;
-		for ( vuiIter = this->pSchema->vuiList.begin(); vuiIter != this->pSchema->vuiList.end(); vuiIter++ )
+		unsigned int vuiCount = schema.GetVUIs()->GetCount();
+		for (unsigned int vuiIndex = 0; vuiIndex < vuiCount; ++vuiIndex)
 		{
-			vui = &(*vuiIter);
+			CARVui vui(schema.GetInsideId(), 0, vuiIndex);
 
 			CTableRow row("");			
-			row.AddCell( CTableCell(vui->GetURL(rootLevel)));
-			row.AddCell( CTableCell(vui->Label()));
-			row.AddCell( CTableCell(vui->webAlias()));
-			row.AddCell( CTableCell(CAREnum::VuiType(vui->vuiType)));
-			row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(vui->timestamp)));
-			row.AddCell( CTableCell(this->pInside->LinkToUser(vui->lastChanged, rootLevel)));
+			row.AddCell( CTableCell(vui.GetURL(rootLevel)));
+			row.AddCell( CTableCell(vui.Label()));
+			row.AddCell( CTableCell(vui.webAlias()));
+			row.AddCell( CTableCell(CAREnum::VuiType(vui.GetType())));
+			row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(vui.GetTimestamp())));
+			row.AddCell( CTableCell(this->pInside->LinkToUser(vui.GetLastChanged(), rootLevel)));
 			tbl.AddRow(row);
 		}
 
@@ -1078,7 +1075,7 @@ void CDocSchemaDetails::VuiListDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema vuilist doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema vuilist doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -1087,7 +1084,7 @@ void CDocSchemaDetails::SchemaFilterDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Filter)";
+		string title = "Schema " +this->schema.GetName() +" (Filter)";
 		CWebPage webPage("form_filter_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -1098,19 +1095,20 @@ void CDocSchemaDetails::SchemaFilterDoc()
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator iter;			
-		CARFilter *enumObj;
-		for (iter = this->pInside->filterList.begin(); iter != this->pInside->filterList.end(); iter++)
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
 		{
-			enumObj = &(*iter);
+			CARFilter filter(filterIndex);
 
-			if(enumObj->schemaList.u.schemaList != NULL)
+			const ARWorkflowConnectStruct &schemas = filter.GetSchemaList();
+			if (schemas.u.schemaList != NULL)
 			{
-				for(unsigned int i=0; i < enumObj->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i < schemas.u.schemaList->numItems; i++)
 				{
-					if(enumObj->schemaList.u.schemaList->nameList[i] == this->pSchema->name)
+					// using schemaList.SchemaGetName instead of schema.GetName() avoids converting ARNameType to string object
+					if(strcmp(schemas.u.schemaList->nameList[i], this->pInside->schemaList.SchemaGetName(schema.GetInsideId())) == 0)
 					{
-						tbl->AddRow(*enumObj, rootLevel);
+						tbl->AddRow(filterIndex, rootLevel);
 					}
 				}
 			}
@@ -1128,7 +1126,7 @@ void CDocSchemaDetails::SchemaFilterDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema filter doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema filter doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -1137,7 +1135,7 @@ void CDocSchemaDetails::SchemaAlDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (ActiveLinks)";
+		string title = "Schema " + this->schema.GetName() +" (ActiveLinks)";
 		CWebPage webPage("form_al_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -1148,19 +1146,20 @@ void CDocSchemaDetails::SchemaAlDoc()
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator iter;			
-		CARActiveLink *enumObj;
-		for (iter = this->pInside->alList.begin(); iter != this->pInside->alList.end(); iter++)
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			enumObj = &(*iter);
+			CARActiveLink enumObj(alIndex);
+			
+			ARNameList* alSchemas = enumObj.GetSchemaList().u.schemaList;
 
-			if(enumObj->schemaList.u.schemaList != NULL)
+			if(alSchemas != NULL)
 			{
-				for(unsigned int i=0; i < enumObj->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i < alSchemas->numItems; i++)
 				{
-					if(enumObj->schemaList.u.schemaList->nameList[i] == this->pSchema->name)
+					if(strcmp(alSchemas->nameList[i], this->pInside->schemaList.SchemaGetName(schema.GetInsideId())) == 0)
 					{
-						tbl->AddRow(*enumObj, rootLevel);
+						tbl->AddRow(alIndex, rootLevel);
 					}
 				}
 			}
@@ -1178,7 +1177,7 @@ void CDocSchemaDetails::SchemaAlDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema active link doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema active link doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -1187,7 +1186,7 @@ void CDocSchemaDetails::SchemaEscalDoc()
 {
 	try
 	{
-		string title = "Schema " +this->pSchema->name +" (Escalations)";
+		string title = "Schema " +this->schema.GetName() +" (Escalations)";
 		CWebPage webPage("form_escal_list", title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
@@ -1198,19 +1197,19 @@ void CDocSchemaDetails::SchemaEscalDoc()
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		list<CAREscalation>::iterator iter;			
-		CAREscalation *enumObj;
-		for (iter = this->pInside->escalList.begin(); iter != this->pInside->escalList.end(); iter++)
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{
-			enumObj = &(*iter);
+			CAREscalation escalation(escalIndex);
 
-			if(enumObj->schemaList.u.schemaList != NULL)
+			const ARWorkflowConnectStruct &schemas = escalation.GetSchemaList();
+			if(schemas.u.schemaList != NULL)
 			{
-				for(unsigned int i=0; i < enumObj->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i < schemas.u.schemaList->numItems; i++)
 				{
-					if(enumObj->schemaList.u.schemaList->nameList[i] == this->pSchema->name)
+					if(strcmp(schemas.u.schemaList->nameList[i], this->pInside->schemaList.SchemaGetName(schema.GetInsideId())) == 0)
 					{
-						tbl->AddRow(*enumObj, rootLevel);
+						tbl->AddRow(escalIndex, rootLevel);
 					}
 				}
 			}
@@ -1228,7 +1227,7 @@ void CDocSchemaDetails::SchemaEscalDoc()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION creating schema escalation doc of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION creating schema escalation doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -1239,31 +1238,32 @@ string CDocSchemaDetails::TypeDetails()
 
 	try
 	{
-		switch(this->pSchema->schema.schemaType)
+		const ARCompoundSchema& compSchema = schema.GetCompound();
+		switch(compSchema.schemaType)
 		{
 		case AR_SCHEMA_JOIN:
 			{
-				strm << "Primary Form: " << this->pInside->LinkToSchema(this->pSchema->schema.u.join.memberA, rootLevel) << " <-> Secondary Form: " << this->pInside->LinkToSchema(this->pSchema->schema.u.join.memberB, rootLevel) << "<br/>";
+				strm << "Primary Form: " << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel) << " <-> Secondary Form: " << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel) << "<br/>";
 
-				if(this->pSchema->schema.u.join.option == 0)
+				if(compSchema.u.join.option == 0)
 					strm << "Join Type: Inner" << "<br/>" << endl;
 				else
 					strm << "Join Type: Outer" << "<br/>" << endl;
 
-				if(this->pSchema->schema.u.join.joinQual.operation != NULL)
+				if(compSchema.u.join.joinQual.operation != NULL)
 				{
 					CFieldRefItem *refItem = new CFieldRefItem();
 					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 					refItem->description = "Join Qualification";
-					refItem->fromName = this->pSchema->name;
+					refItem->fromName = this->schema.GetName();
 
-					stringstream strmQuery;		
+					stringstream strmQuery;
 
 					CARQualification arQual(*this->pInside);
 
-					int pFormId = this->pInside->SchemaGetInsideId(this->pSchema->schema.u.join.memberA);
-					int sFormId = this->pInside->SchemaGetInsideId(this->pSchema->schema.u.join.memberB);
-					arQual.CheckQuery(&this->pSchema->schema.u.join.joinQual, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
+					int pFormId = this->pInside->SchemaGetInsideId(compSchema.u.join.memberA);
+					int sFormId = this->pInside->SchemaGetInsideId(compSchema.u.join.memberB);
+					arQual.CheckQuery(&compSchema.u.join.joinQual, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
 					strm << "Join Qualification: " << strmQuery.str();
 					delete refItem;
@@ -1272,14 +1272,14 @@ string CDocSchemaDetails::TypeDetails()
 			break;
 		case AR_SCHEMA_VIEW:
 			{
-				strm << "Table Name: " << this->pSchema->schema.u.view.tableName << "<br/>" << endl;
-				strm << "Key Field: " << this->pSchema->schema.u.view.keyField << "<br/>" << endl;
+				strm << "Table Name: " << compSchema.u.view.tableName << "<br/>" << endl;
+				strm << "Key Field: " << compSchema.u.view.keyField << "<br/>" << endl;
 			}
 			break;			
 		case AR_SCHEMA_VENDOR:
 			{
-				strm << "Vendor Name: " << this->pSchema->schema.u.vendor.vendorName << "<br/>";
-				strm << "Table Name: " << this->pSchema->schema.u.vendor.tableName << "<br/>" << endl;
+				strm << "Vendor Name: " << compSchema.u.vendor.vendorName << "<br/>";
+				strm << "Table Name: " << compSchema.u.vendor.tableName << "<br/>" << endl;
 			}
 			break;
 		default:
@@ -1291,7 +1291,7 @@ string CDocSchemaDetails::TypeDetails()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating regular schema type information of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating regular schema type information of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 	return strm.str();
 }
@@ -1302,22 +1302,25 @@ string CDocSchemaDetails::ContainerReferences()
 	strm.str("");
 	try
 	{
+		string schemaName = schema.GetName();
 		CContainerTable *contTable = new CContainerTable(*this->pInside);
 
-		list<CARContainer>::iterator listContIter;		
-		for ( listContIter = this->pInside->containerList.begin();  listContIter != this->pInside->containerList.end(); listContIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			CARContainer *cont = &(*listContIter);
-			for(unsigned int nCnt = 0; nCnt < cont->references.numItems; nCnt++)
+			CARContainer cont(cntIndex);
+
+			if (cont.GetType() != ARCON_APP)
 			{
-				if(cont->type != ARCON_APP)
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
-					if(cont->references.referenceList[nCnt].reference.u.name != NULL)
+					if(refs.referenceList[nCnt].reference.u.name != NULL)
 					{
-						if(strcmp(cont->references.referenceList[nCnt].reference.u.name, this->pSchema->name.c_str())==0
-							&& cont->references.referenceList[nCnt].type == ARREF_SCHEMA)
+						if(refs.referenceList[nCnt].type == ARREF_SCHEMA &&
+						   schemaName == refs.referenceList[nCnt].reference.u.name)
 						{
-							contTable->AddRow(*cont, rootLevel);
+							contTable->AddRow(cont, rootLevel);
 						}
 					}
 				}
@@ -1334,7 +1337,7 @@ string CDocSchemaDetails::ContainerReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating container references in schema '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating container references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1346,21 +1349,24 @@ string CDocSchemaDetails::JoinFormReferences()
 	strm.str("");
 	try
 	{
-		list<CARSchema>::iterator schemaIter;		
-		CARSchema *schema;
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
-		{			
-			schema = &(*schemaIter);
-			if(schema->schema.schemaType == AR_SCHEMA_JOIN)
+		unsigned int schemaCount = this->pInside->schemaList.GetCount();
+		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
+		{
+			CARSchema schema(schemaIndex);
+			const ARCompoundSchema& compSchema = schema.GetCompound();
+
+			if(compSchema.schemaType == AR_SCHEMA_JOIN)
 			{
-				if(strcmp(schema->schema.u.join.memberA, this->pSchema->name.c_str())==0)					
+				const ARNameType& schemaName = this->pInside->schemaList.SchemaGetName(schemaIndex);
+
+				if(strcmp(schemaName, compSchema.u.join.memberA) == 0)
 				{
-					strm << "Primary Form in: " << schema->GetURL(rootLevel) << "<br/>" << endl;
+					strm << "Primary Form in: " << schema.GetURL(rootLevel) << "<br/>" << endl;
 				}
 
-				if(strcmp(schema->schema.u.join.memberB, this->pSchema->name.c_str())==0)					
+				if(strcmp(schemaName, compSchema.u.join.memberB)==0)					
 				{
-					strm << "Secondary Form in: " << schema->GetURL(rootLevel) << "<br/>" << endl;
+					strm << "Secondary Form in: " << schema.GetURL(rootLevel) << "<br/>" << endl;
 				}
 			}
 		}
@@ -1370,7 +1376,7 @@ string CDocSchemaDetails::JoinFormReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating join form references of '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating join form references of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1383,30 +1389,34 @@ string CDocSchemaDetails::TableFieldReferences()
 	strm.str("");
 	try
 	{
+		// TODO: there is a function that checks for field references between table-field and column-field
+		// before the documentation starts. Move this function over to this scanning routing and store
+		// "table field to form" references in a list within the CARSchemaList
+		// ===> move scaning over to CARInside::CustomFieldReferences
 		bool bFound = false;
 
-		list<CARSchema>::iterator schemaIter;		
-		for ( schemaIter = this->pInside->schemaList.begin(); schemaIter != this->pInside->schemaList.end(); schemaIter++ )
+		unsigned int schemaCount = pInside->schemaList.GetCount();
+		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{			
-			CARSchema *schema = &(*schemaIter);
-
-			list<CARField>::iterator fieldIter;		
-			for( fieldIter = schema->fieldList.begin(); fieldIter != schema->fieldList.end(); fieldIter++)
+			CARSchema schema(schemaIndex);
+			
+			unsigned int fieldCount = schema.GetFields()->GetCount();
+			for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 			{
-				CARField *field = &(*fieldIter);
-				if(field->dataType == AR_DATA_TYPE_TABLE && field->limit.dataType == AR_DATA_TYPE_TABLE)
+				CARField field(schemaIndex, 0, fieldIndex);
+				
+				if(field.GetDataType() == AR_DATA_TYPE_TABLE && field.GetLimits().dataType == AR_DATA_TYPE_TABLE)
 				{
-					ARTableLimitsStruct &limit = field->limit.u.tableLimits;
-					
-					char *tableSchema = limit.schema;
+					const ARTableLimitsStruct &limit = field.GetLimits().u.tableLimits;					
+					const char *tableSchema = limit.schema;
 
 					if (limit.schema[0] == '$')
 						tableSchema = limit.sampleSchema;
 
-					if(pSchema->name.compare(tableSchema) == 0)
+					if(schema.GetName().compare(tableSchema) == 0)
 					{
-						strm << "Table: " << field->GetURL(rootLevel);
-						strm << " in form: " << schema->GetURL(rootLevel) << "<br/>" << endl;
+						strm << "Table: " << field.GetURL(rootLevel);
+						strm << " in form: " << schema.GetURL(rootLevel) << "<br/>" << endl;
 
 						bFound = true;
 					}
@@ -1419,7 +1429,7 @@ string CDocSchemaDetails::TableFieldReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating table references in schema '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating table references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1433,16 +1443,17 @@ string CDocSchemaDetails::SearchMenuReferences()
 	{
 		CMenuTable *menuTable = new CMenuTable(*this->pInside);
 
-		list<CARCharMenu>::iterator listMenuIter;		
-		CARCharMenu *menu;
-		for ( listMenuIter = this->pInside->menuList.begin();  listMenuIter != this->pInside->menuList.end(); listMenuIter++ )
+		unsigned int menuCount = this->pInside->menuList.GetCount();
+		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{
-			menu = &(*listMenuIter);
-			if(menu->menuDefn.menuType == AR_CHAR_MENU_QUERY)
+			CARCharMenu menu(menuIndex);
+			const ARCharMenuStruct& menuDefn = menu.GetDefinition();
+			if(menuDefn.menuType == AR_CHAR_MENU_QUERY)
 			{
-				if(strcmp(menu->menuDefn.u.menuQuery.schema, this->pSchema->name.c_str())==0 && strcmp(menu->menuDefn.u.menuQuery.server ,AR_CURRENT_SERVER_TAG)==0)
+				if(strcmp(menuDefn.u.menuQuery.schema, schema.GetARName()) == 0 && 
+				   strcmp(menuDefn.u.menuQuery.server, AR_CURRENT_SERVER_TAG)==0)
 				{
-					menuTable->AddRow(*menu, rootLevel);
+					menuTable->AddRow(menu, rootLevel);
 				}
 			}
 		}		
@@ -1457,7 +1468,7 @@ string CDocSchemaDetails::SearchMenuReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating search menu references in schema '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating search menu references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1471,20 +1482,19 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 	{
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator listIter;		
-		CARActiveLink *al;
-		for ( listIter = this->pInside->alList.begin(); listIter != this->pInside->alList.end(); listIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < al->actionList.numItems; ++i)
+			for(unsigned int i = 0; i < al.GetIfActions().numItems; ++i)
 			{
-				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
+				if(al.GetIfActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 				{
-					ARPushFieldsActionStruct &action = al->actionList.actionList[i].u.pushFields;
+					ARPushFieldsActionStruct &action = al.GetIfActions().actionList[i].u.pushFields;
 					if (action.pushFieldsList.numItems > 0)
 					{
 						char *pushSchema;
@@ -1493,23 +1503,23 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 						else
 							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(al->schemaList)) || pSchema->name.compare(pushSchema) == 0)
+						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(al.GetSchemaList())) || strcmp(schema.GetARName(),pushSchema) == 0)
 						{
 							bPushToForm = true;
 							break;
 						}
 					}
 				}
-			}	
+			}
 
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < al->elseList.numItems; ++i)
+				for(unsigned int i = 0; i < al.GetElseActions().numItems; ++i)
 				{
-					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
+					if(al.GetElseActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_FIELDP)
 					{
-						ARPushFieldsActionStruct &action = al->elseList.actionList[i].u.pushFields;
+						ARPushFieldsActionStruct &action = al.GetElseActions().actionList[i].u.pushFields;
 
 						if (action.pushFieldsList.numItems > 0)
 						{
@@ -1519,7 +1529,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 							else
 								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(al->schemaList)) || pSchema->name.compare(pushSchema) == 0)
+							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(al.GetSchemaList())) || strcmp(schema.GetARName(),pushSchema) == 0)
 							{
 								bPushToForm = true;
 								break;
@@ -1531,7 +1541,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 
 			if(bPushToForm == true)
 			{
-				alTable->AddRow(*al, rootLevel);
+				alTable->AddRow(alIndex, rootLevel);
 			}
 		}
 
@@ -1544,7 +1554,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating active link push fields references in schema '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating active link push fields references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1558,70 +1568,71 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 	{
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		list<CARActiveLink>::iterator listIter;		
-		CARActiveLink *al;
-		for ( listIter = this->pInside->alList.begin(); listIter != this->pInside->alList.end(); listIter++ )
+		unsigned int alCount = pInside->alList.GetCount();
+		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			al = &(*listIter);
+			CARActiveLink al(alIndex);
 
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < al->actionList.numItems; i++)
+			for(unsigned int i = 0; i < al.GetIfActions().numItems; i++)
 			{
-				if(al->actionList.actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
+				if(al.GetIfActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 				{
-					AROpenDlgStruct &action = al->actionList.actionList[i].u.openDlg;                    
+					AROpenDlgStruct &action = al.GetIfActions().actionList[i].u.openDlg;                    
 					
 					string openWindowSchema;
 					if (action.schemaName[0] == '$' )
 					{
 						string sampleServer;
-						CDocActionOpenWindowHelper::GetSampleData(*al, "If", i,	sampleServer, openWindowSchema);
+						CDocActionOpenWindowHelper::GetSampleData(al, "If", i,	sampleServer, openWindowSchema);
 					}
 					else
 						openWindowSchema = action.schemaName;
 
 					if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 /*&& IsSchemaInWFConnectStruct(al->schemaList)*/) ||
-						openWindowSchema.compare(pSchema->name) == 0)
+						openWindowSchema.compare(schema.GetARName()) == 0)
 					{
 						bPushToForm = true;
 						break;
 					}
+
 				}
 			}	
 
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < al->elseList.numItems; i++)
+				for(unsigned int i = 0; i < al.GetElseActions().numItems; i++)
 				{
-					if(al->elseList.actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
+					if(al.GetElseActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 					{
-						AROpenDlgStruct &action = al->elseList.actionList[i].u.openDlg;
+						AROpenDlgStruct &action = al.GetElseActions().actionList[i].u.openDlg;
 
 						string openWindowSchema;
 						if (action.schemaName[0] == '$' )
 						{
 							string sampleServer;
-							CDocActionOpenWindowHelper::GetSampleData(*al, "Else", i,	sampleServer, openWindowSchema);
+							CDocActionOpenWindowHelper::GetSampleData(al, "Else", i,	sampleServer, openWindowSchema);
 						}
 						else
 							openWindowSchema = action.schemaName;
 
 						if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 /*&& IsSchemaInWFConnectStruct(al->schemaList)*/) ||
-						openWindowSchema.compare(pSchema->name) == 0)
+						openWindowSchema.compare(schema.GetARName()) == 0)
 						{
 							bPushToForm = true;
 							break;
 						}
+
 					}
 				}
 			}
 
 			if(bPushToForm == true)
 			{
-				alTable->AddRow(*al, rootLevel);
+				alTable->AddRow(alIndex, rootLevel);
 			}
 		}
 
@@ -1634,7 +1645,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating window open references in schema '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating window open references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1648,21 +1659,20 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 	{
 		CFilterTable *filterTable = new CFilterTable(*this->pInside);
 
-		list<CARFilter>::iterator listIter;		
-		CARFilter *filter;
-		for ( listIter = this->pInside->filterList.begin(); listIter != this->pInside->filterList.end(); listIter++ )
+
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			filter = &(*listIter);
+			CARFilter filter(filterIndex);
 
 			bool bPushToForm = false;
 
 			//If-Actions
-			for(unsigned int i = 0; i < filter->actionList.numItems; ++i)
+			for(unsigned int i = 0; i < filter.GetIfActions().numItems; ++i)
 			{
-				if(filter->actionList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
+				if(filter.GetIfActions().actionList[i].action == AR_FILTER_ACTION_FIELDP)
 				{
-					ARPushFieldsActionStruct &action = filter->actionList.actionList[i].u.pushFields;
-
+					ARPushFieldsActionStruct &action = filter.GetIfActions().actionList[i].u.pushFields;
 					if (action.pushFieldsList.numItems > 0)
 					{
 						char *pushSchema;
@@ -1671,7 +1681,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 						else
 							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(filter->schemaList)) || pSchema->name.compare(pushSchema) == 0)
+						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(filter.GetSchemaList())) || strcmp(schema.GetARName(), pushSchema) == 0)
 						{
 							bPushToForm = true;
 							break;
@@ -1683,11 +1693,11 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 			//Else Actions
 			if(bPushToForm == false) // Only search the else actions if the al is still false
 			{
-				for(unsigned int i = 0; i < filter->elseList.numItems; i++)
+				for(unsigned int i = 0; i < filter.GetElseActions().numItems; ++i)
 				{
-					if(filter->elseList.actionList[i].action == AR_FILTER_ACTION_FIELDP)
+					if(filter.GetElseActions().actionList[i].action == AR_FILTER_ACTION_FIELDP)
 					{
-						ARPushFieldsActionStruct &action = filter->elseList.actionList[i].u.pushFields;
+						ARPushFieldsActionStruct &action = filter.GetElseActions().actionList[i].u.pushFields;
 
 						if (action.pushFieldsList.numItems > 0)
 						{
@@ -1697,7 +1707,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 							else
 								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
 
-							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(filter->schemaList)) || pSchema->name.compare(pushSchema) == 0)
+							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(filter.GetSchemaList())) || strcmp(schema.GetARName(), pushSchema) == 0)
 							{
 								bPushToForm = true;
 								break;
@@ -1709,7 +1719,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 
 			if(bPushToForm == true)
 			{
-				filterTable->AddRow(*filter, rootLevel);
+				filterTable->AddRow(filterIndex, rootLevel);
 			}
 		}
 
@@ -1722,7 +1732,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating filter push fields references in schema '" << this->pSchema->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating filter push fields references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -1736,8 +1746,8 @@ string CDocSchemaDetails::ShowProperties()
 
 	try
 	{
-		ARPropList* propList = &this->pSchema->objPropList;
-		CARProplistHelper propIdx(propList);
+		const ARPropList& propList = this->schema.GetProps();
+		CARProplistHelper propIdx(&propList);
 
 		//for (unsigned int i=0; i < propList->numItems; ++i)
 		//{
@@ -1747,7 +1757,7 @@ string CDocSchemaDetails::ShowProperties()
 		// doc basic properties
 		strm << ShowBasicProperties(&propIdx);
 
-		if (this->pSchema->schema.schemaType != AR_SCHEMA_DIALOG)
+		if (this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
 		{
 			// doc archive properties
 			strm << ShowArchiveProperties();
@@ -1866,36 +1876,37 @@ string CDocSchemaDetails::ShowAuditProperties()
 
 	try
 	{
+		const ARAuditInfoStruct& audit = this->schema.GetAuditInfo();
 		CTable tbl("displayPropList", "TblObjectList");
 		tbl.AddColumn(20, "Description");
 		tbl.AddColumn(80, "Values");
 
 		CTableRow row("");
 		row.AddCell("Audit Style");
-		row.AddCell(CAREnum::AuditStyle(this->pSchema->auditInfo.style));
+		row.AddCell(CAREnum::AuditStyle(audit.style));
 		tbl.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell("Audit Enabled");
-		row.AddCell((this->pSchema->auditInfo.enable==0?"No":"Yes"));
+		row.AddCell((audit.enable==0?"No":"Yes"));
 		tbl.AddRow(row);
 
 #if AR_CURRENT_API_VERSION > 13 // Version 7.5 and higher
 		row.ClearCells();
 		row.AddCell("Audit Only Changed Fields");
-		row.AddCell(CAREnum::AuditChangedFields(this->pSchema->auditInfo.auditMask));
+		row.AddCell(CAREnum::AuditChangedFields(audit.auditMask));
 		tbl.AddRow(row);
 #endif
 
 		row.ClearCells();
-		switch (this->pSchema->auditInfo.style)
+		switch (audit.style)
 		{
 			case AR_AUDIT_NONE:
 				{
-					if (this->pSchema->auditInfo.formName[0] != NULL)
+					if (audit.formName[0] != NULL)
 					{
 						row.AddCell("Audited From Form");
-						row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(this->pSchema->auditInfo.formName),rootLevel));
+						row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
 						tbl.AddRow(row);
 					}
 				}
@@ -1903,14 +1914,14 @@ string CDocSchemaDetails::ShowAuditProperties()
 			case AR_AUDIT_COPY:
 				{
 					row.AddCell("Audit Form");
-					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(this->pSchema->auditInfo.formName),rootLevel));
+					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
 					tbl.AddRow(row);
 				}
 				break;
 			case AR_AUDIT_LOG:
 				{
 					row.AddCell("Audit Log Form");
-					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(this->pSchema->auditInfo.formName),rootLevel));
+					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
 					tbl.AddRow(row);
 				}
 				break;
@@ -1918,14 +1929,14 @@ string CDocSchemaDetails::ShowAuditProperties()
 
 		// audit qualification
 		stringstream qualStrm; qualStrm.str("");
-		int pFormId = this->pInside->SchemaGetInsideId(this->pSchema->name);
+		int pFormId = this->pInside->SchemaGetInsideId(this->schema.GetARName());
 
-		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->pSchema->name, "Audit Qualification", 0, 0);
+		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->schema.GetARName(), "Audit Qualification", 0, 0);
 
-		if (this->pSchema->auditInfo.query.operation != AR_COND_OP_NONE)
+		if (audit.query.operation != AR_COND_OP_NONE)
 		{
 			CARQualification arQual(*this->pInside);
-			arQual.CheckQuery(&this->pSchema->auditInfo.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
+			arQual.CheckQuery(&audit.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
 		}
 		else
 		{
@@ -1954,12 +1965,13 @@ string CDocSchemaDetails::ShowArchiveProperties()
 
 	try
 	{
-		bool archiveToForm = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_FORM)>0;
-		bool deleteSource = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_DELETE)>0;
-		bool archiveToFile = (pSchema->archiveInfo.archiveType & (AR_ARCHIVE_FILE_ARX | AR_ARCHIVE_FILE_XML))>0;
-		unsigned int fileFormat = (pSchema->archiveInfo.archiveType & (AR_ARCHIVE_FILE_ARX | AR_ARCHIVE_FILE_XML)) << 2;
-		bool noAttachments = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_NO_ATTACHMENTS)>0;
-		bool noDiary = (pSchema->archiveInfo.archiveType & AR_ARCHIVE_NO_DIARY)>0;
+		const ARArchiveInfoStruct& archive = this->schema.GetArchiveInfo();
+		bool archiveToForm = (archive.archiveType & AR_ARCHIVE_FORM)>0;
+		bool deleteSource = (archive.archiveType & AR_ARCHIVE_DELETE)>0;
+		bool archiveToFile = (archive.archiveType & (AR_ARCHIVE_FILE_ARX | AR_ARCHIVE_FILE_XML))>0;
+		unsigned int fileFormat = (archive.archiveType & (AR_ARCHIVE_FILE_ARX | AR_ARCHIVE_FILE_XML)) << 2;
+		bool noAttachments = (archive.archiveType & AR_ARCHIVE_NO_ATTACHMENTS)>0;
+		bool noDiary = (archive.archiveType & AR_ARCHIVE_NO_DIARY)>0;
 
 		CTable tbl("displayPropList", "TblObjectList");
 		tbl.AddColumn(20, "Description");
@@ -1985,7 +1997,7 @@ string CDocSchemaDetails::ShowArchiveProperties()
 
 		row.ClearCells();
 		row.AddCell("Archive State");
-		row.AddCell((this->pSchema->archiveInfo.enable==0?"Disabled":"Enabled"));
+		row.AddCell((archive.enable==0?"Disabled":"Enabled"));
 		tbl.AddRow(row);		
 
 		row.ClearCells();
@@ -1993,13 +2005,13 @@ string CDocSchemaDetails::ShowArchiveProperties()
 		{
 			// archive to file is not supported by admin/developer tool; but maybe some day...
 			row.AddCell("Archive to File");
-			row.AddCell(pSchema->archiveInfo.u.dirPath);
+			row.AddCell(archive.u.dirPath);
 			tbl.AddRow(row);
 		}
 		else if (archiveToForm)
 		{
 			stringstream tmpStrm; tmpStrm.str("");
-			tmpStrm << this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(pSchema->archiveInfo.u.formName),rootLevel) << "<br/>" << endl;
+			tmpStrm << this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(archive.u.formName),rootLevel) << "<br/>" << endl;
 			tmpStrm << CWebUtil::ChkBoxInput("noAttachments",noAttachments) << "No Attachments&nbsp;&nbsp;";
 			tmpStrm << CWebUtil::ChkBoxInput("noDiary",noDiary) << "No Diary" << endl;
 
@@ -2008,22 +2020,22 @@ string CDocSchemaDetails::ShowArchiveProperties()
 			tbl.AddRow(row);
 		}
 
-		if (pSchema->archiveInfo.archiveFrom[0] != NULL)
+		if (archive.archiveFrom[0] != NULL)
 		{
 			row.ClearCells();
 			row.AddCell("Archive From Form");
-			row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(pSchema->archiveInfo.archiveFrom), rootLevel));
+			row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(archive.archiveFrom), rootLevel));
 			tbl.AddRow(row);
 		}
 
 		stringstream qualStrm; qualStrm.str("");
-		int pFormId = this->pInside->SchemaGetInsideId(this->pSchema->name);
-		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->pSchema->name, "Archive Qualification", 0, 0);
+		int pFormId = this->pInside->SchemaGetInsideId(this->schema.GetARName());
+		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->schema.GetARName(), "Archive Qualification", 0, 0);
 
-		if (this->pSchema->archiveInfo.query.operation != AR_COND_OP_NONE)
+		if (archive.query.operation != AR_COND_OP_NONE)
 		{
 			CARQualification arQual(*this->pInside);
-			arQual.CheckQuery(&this->pSchema->archiveInfo.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
+			arQual.CheckQuery(&archive.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
 		}
 		else
 		{
@@ -2032,7 +2044,7 @@ string CDocSchemaDetails::ShowArchiveProperties()
 
 		row.ClearCells();
 		row.AddCell("Times");
-		row.AddCell(CARDayStructHelper::DayStructToHTMLString(&pSchema->archiveInfo.archiveTime));
+		row.AddCell(CARDayStructHelper::DayStructToHTMLString(&archive.archiveTime));
 		tbl.AddRow(row);
 
 		row.ClearCells();

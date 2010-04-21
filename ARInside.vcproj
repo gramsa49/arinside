@@ -43,7 +43,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories=".\Tclap;..\..\Api750\include;.\;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -123,7 +123,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -203,7 +203,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA;AR_STRICT_ANSI"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
 				WarningLevel="3"
@@ -1171,6 +1171,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\image.gif"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\info.gif"
 				>
 				<FileConfiguration
@@ -1576,11 +1580,87 @@
 			Name="lists"
 			>
 			<File
+				RelativePath=".\lists\ARActiveLinkList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARActiveLinkList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARContainerList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARContainerList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\AREscalationList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\AREscalationList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARFieldList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARFieldList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARFilterList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARFilterList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARImageList.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\lists\ARImageList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARListHelpers.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARMenuList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARMenuList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARSchemaList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARSchemaList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARVUIList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARVUIList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\BlackList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\BlackList.h"
 				>
 			</File>
 		</Filter>

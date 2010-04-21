@@ -24,12 +24,12 @@ class CDocFilterDetails :
 	public CDocBase
 {
 public:
-	CDocFilterDetails(CARInside &arInside, CARFilter &arFilter, string path, int rootLevel);
+	CDocFilterDetails(unsigned int filterInsideId, int rootLevel);
 	~CDocFilterDetails(void);
 
 	void Documentation();
 private:
-	CARFilter *pFilter;
+	CARFilter filter;
 
 	void CreateCommon();
 	string CreateSpecific(string schemaName);

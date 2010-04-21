@@ -17,11 +17,11 @@
 #include "stdafx.h"
 #include "DocEscalationDetails.h"
 
-CDocEscalationDetails::CDocEscalationDetails(CARInside &arInside, CAREscalation &arEscalation, string path, int rootLevel)
+CDocEscalationDetails::CDocEscalationDetails(unsigned int escalInsideId, int rootLevel)
+: escalation(escalInsideId)
 {
-	this->pInside = &arInside;
-	this->pEscal = &arEscalation;
-	this->path = path;
+	this->pInside = CARInside::GetInstance();
+	this->path = "escalation/" + escalation.FileID();
 	this->rootLevel = rootLevel;
 }
 
@@ -37,16 +37,16 @@ void CDocEscalationDetails::Documentation()
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("index", this->pEscal->name, this->rootLevel, this->pInside->appConfig);
-			CARProplistHelper props(&this->pEscal->objPropList);
+			CWebPage webPage("index", this->escalation.GetName(), this->rootLevel, this->pInside->appConfig);
+			CARProplistHelper props(&this->escalation.GetPropList());
 
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pEscal->name);
-			if(this->pEscal->appRefName.c_str() != NULL && this->pEscal->appRefName.size() > 0)
-				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pEscal->appRefName, this->rootLevel);
+			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->escalation.GetName());
+			if(!this->escalation.GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
 
@@ -60,7 +60,7 @@ void CDocEscalationDetails::Documentation()
 			//Status
 			CTableRow row("cssStdRow");		
 			CTableCell cellProp("Status", "");				
-			CTableCell cellPropValue(CAREnum::ObjectEnable(this->pEscal->enable), "");    
+			CTableCell cellPropValue(CAREnum::ObjectEnable(this->escalation.GetEnabled()), "");    
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);
@@ -86,22 +86,23 @@ void CDocEscalationDetails::Documentation()
 			//Time criteria
 			row.ClearCells();
 			cellProp.content = "Time Criteria";
-			cellPropValue.content = this->pEscal->GetTimeCriteria();    
+			cellPropValue.content = this->escalation.GetTimeCriteria();
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
+			tblObjProp.AddRow(row);
 
-			//Workflow	
-			if(this->pEscal->schemaList.u.schemaList->numItems > 0)
+			//Workflow
+			const ARWorkflowConnectStruct& schemas = this->escalation.GetSchemaList();
+			if(schemas.u.schemaList->numItems > 0)
 			{		
-				for(unsigned int i=0; i< this->pEscal->schemaList.u.schemaList->numItems; i++)
+				for(unsigned int i=0; i< schemas.u.schemaList->numItems; i++)
 				{
 					//Workflowlink to each page	
 					strmTmp.str("");
 					row.ClearCells();
-					cellProp.content = this->pInside->LinkToSchema(this->pEscal->schemaList.u.schemaList->nameList[i], rootLevel);
+					cellProp.content = this->pInside->LinkToSchema(schemas.u.schemaList->nameList[i], rootLevel);
 
-					cellPropValue.content = this->CreateSpecific(this->pEscal->schemaList.u.schemaList->nameList[i]);
+					cellPropValue.content = this->CreateSpecific(schemas.u.schemaList->nameList[i]);
 					row.AddCell(cellProp);
 					row.AddCell(cellPropValue);
 					tblObjProp.AddRow(row);	
@@ -140,14 +141,14 @@ void CDocEscalationDetails::Documentation()
 			webPage.AddContent(props.UnusedPropertiesToHTML());
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pEscal, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->escalation, this->rootLevel));
 
 			webPage.SaveInFolder(this->path);
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION escalation details common props of '" << this->pEscal->name << "': " << e.what() << endl;
+		cout << "EXCEPTION escalation details common props of '" << this->escalation.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -160,21 +161,22 @@ string CDocEscalationDetails::ContainerReferences()
 	{
 		CContainerTable *contTable = new CContainerTable(*this->pInside);
 
-		list<CARContainer>::iterator listContIter;		
-		CARContainer *cont;
-		for ( listContIter = this->pInside->containerList.begin();  listContIter != this->pInside->containerList.end(); listContIter++ )
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
-			cont = &(*listContIter);
-			for(unsigned int nCnt = 0; nCnt < cont->references.numItems; nCnt++)
+			CARContainer cont(cntIndex);
+			
+			if(cont.GetType() != ARCON_APP)
 			{
-				if(cont->type != ARCON_APP)
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
-					if(cont->references.referenceList[nCnt].reference.u.name != NULL)
+					if(refs.referenceList[nCnt].type == ARREF_ESCALATION)
 					{
-						if(strcmp(cont->references.referenceList[nCnt].reference.u.name, this->pEscal->name.c_str())==0
-							&& cont->references.referenceList[nCnt].type == ARREF_ESCALATION)
+						if(refs.referenceList[nCnt].reference.u.name != NULL && 
+							 this->escalation.GetName() == refs.referenceList[nCnt].reference.u.name)
 						{
-							contTable->AddRow(*cont, rootLevel);
+							contTable->AddRow(cont, rootLevel);
 						}
 					}
 				}
@@ -186,7 +188,7 @@ string CDocEscalationDetails::ContainerReferences()
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION enumerating escalation container references of '" << this->pEscal->name << "': " << e.what() << endl;
+		cout << "EXCEPTION enumerating escalation container references of '" << this->escalation.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -201,19 +203,14 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 	{
 		//Query
 		stringstream strmQuery;
-		if(this->pEscal->query.operation != NULL)
+		if(this->escalation.GetRunIf().operation != AR_COND_OP_NONE)
 		{		
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ESCALATION;
-			refItem->description = "Run If";
-			refItem->fromName = this->pEscal->name;
+			CFieldRefItem refItem(AR_STRUCT_ITEM_XML_ESCALATION, this->escalation.GetName(), "Run If", -1, -1);
 
 			CARQualification arQual(*this->pInside);
-			int pFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
-			int sFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
-			arQual.CheckQuery(&this->pEscal->query, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
-
-			delete refItem;
+			int pFormId = this->pInside->SchemaGetInsideId(schemaName);
+			int sFormId = pFormId;
+			arQual.CheckQuery(&this->escalation.GetRunIf(), refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 		}
 		else
 		{
@@ -223,15 +220,15 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 		pgStrm << "Run If Qualification: <br/>" << strmQuery.str();
 
 		//If-Actions		
-		CDocFilterActionStruct actionStruct(*this->pInside, *this->pEscal, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_ESCALATION);
-		pgStrm << actionStruct.Get("If", this->pEscal->actionList);
+		CDocFilterActionStruct actionStruct(*this->pInside, this->escalation, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_ESCALATION);
+		pgStrm << actionStruct.Get("If", this->escalation.GetIfActions());
 
 		//Else-Actions
-		pgStrm << actionStruct.Get("Else", this->pEscal->elseList);
+		pgStrm << actionStruct.Get("Else", this->escalation.GetElseActions());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION escalation details specific props of '" << this->pEscal->name << "': " << e.what() << endl;
+		cout << "EXCEPTION escalation details specific props of '" << this->escalation.GetName() << "': " << e.what() << endl;
 	}
 
 	return pgStrm.str();
