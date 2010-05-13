@@ -20,7 +20,6 @@
 CARQualification::CARQualification(CARInside &arIn)
 {
 	this->arIn = &arIn;
-	this->tmpFieldId = 0;
 	this->tmpFormId = 0;
 	arsStructItemType = AR_STRUCT_ITEM_XML_NONE;
 }
@@ -32,6 +31,8 @@ CARQualification::~CARQualification(void)
 
 void CARQualification::CheckQuery(const ARQualifierStruct *query, const CFieldRefItem& refItem, int depth, int pFormId, int sFormId, stringstream &qText, int rootLevel)
 {
+	qualLevels.push_back(query);
+	
 	if (query != NULL)
 	{
 		switch(query->operation)
@@ -103,6 +104,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, const CFieldRe
 			break;
 		}
 	}
+	qualLevels.pop_back();
 }
 
 void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel)
@@ -110,7 +112,6 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 	switch(operand->tag)
 	{
 	case AR_FIELD: //Foreign field id
-		tmpFieldId = operand->u.fieldId;								
 		tmpFormId = sFormId;
 
 		qText << "'" << arIn->LinkToField(sFormId, operand->u.fieldId, rootLevel) << "'";				
@@ -124,7 +125,6 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 		}
 		break;	
 	case AR_FIELD_TRAN:
-		tmpFieldId = operand->u.fieldId;								
 		tmpFormId = pFormId;
 
 		qText << "'TR." << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";		
@@ -138,7 +138,6 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 		}
 		break;	
 	case AR_FIELD_DB:
-		tmpFieldId = operand->u.fieldId;								
 		tmpFormId = pFormId;
 
 		qText << "'DB." << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";				
@@ -152,7 +151,6 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 		}
 		break;	
 	case AR_FIELD_CURRENT:
-		tmpFieldId = operand->u.fieldId;								
 		tmpFormId = pFormId;
 
 		if(arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK && pFormId == sFormId)
@@ -193,11 +191,13 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			qText << "$" << CAREnum::Keyword(data->u.keyNum) << "$";
 			break;
 		case AR_DATA_TYPE_INTEGER:
+		case AR_DATA_TYPE_ENUM:
 			try
 			{
+				int tmpFieldId = FindCurrentEnumFieldId(pFormId, sFormId);
 				string tmp = arIn->GetFieldEnumValue(tmpFormId, tmpFieldId, data->u.intVal);
 
-				if(strcmp(tmp.c_str(), EmptyValue)!=0)
+				if(tmp != EmptyValue)
 					qText << "\"" << tmp << "\"";
 				else
 					qText << data->u.intVal;
@@ -215,21 +215,6 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 			break;
 		case AR_DATA_TYPE_DIARY:
 			qText << "\""<< data->u.diaryVal << "\"";
-			break;
-		case AR_DATA_TYPE_ENUM:
-			try
-			{
-				string tmp = arIn->GetFieldEnumValue(tmpFormId, tmpFieldId, data->u.enumVal);
-
-				if(strcmp(tmp.c_str(), EmptyValue)!=0)
-					qText << "\"" << tmp << "\"";
-				else
-					qText << data->u.intVal;
-			}
-			catch(exception& e)
-			{
-				cout << "EXCEPTION enumerating enum value: " << e.what() << endl;
-			}
 			break;
 		case AR_DATA_TYPE_TIME:
 			qText << "\"" << CUtil::DateTimeToHTMLString(data->u.timeVal) << "\"";
@@ -327,4 +312,46 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 		qText << "'";
 		break;
 	}
+}
+
+int CARQualification::FindCurrentEnumFieldId(int pFormId, int sFormId)
+{
+	int pos = (int)qualLevels.size();
+	
+	for (; pos > -1; --pos)
+	{
+		const ARQualifierStruct* current = qualLevels[pos];
+		if (current->operation == AR_COND_OP_REL_OP)
+		{
+			// normally all relOps have two operators. check if there is a field on one side
+			switch (current->u.relOp->operandLeft.tag)
+			{
+			case AR_FIELD:
+				tmpFormId = sFormId;
+				return current->u.relOp->operandLeft.u.fieldId;
+			case AR_FIELD_TRAN:
+			case AR_FIELD_DB:
+			case AR_FIELD_CURRENT:
+				tmpFormId = pFormId;
+				return current->u.relOp->operandLeft.u.fieldId;
+			}
+
+			switch (current->u.relOp->operandRight.tag)
+			{
+			case AR_FIELD:
+				tmpFormId = sFormId;
+				return current->u.relOp->operandRight.u.fieldId;
+			case AR_FIELD_TRAN:
+			case AR_FIELD_DB:
+			case AR_FIELD_CURRENT:
+				tmpFormId = pFormId;
+				return current->u.relOp->operandRight.u.fieldId;
+			}
+
+			// if there is a relOp without a field, this can't be a enum!
+			return -1;
+		}
+	}
+
+	return -1;
 }

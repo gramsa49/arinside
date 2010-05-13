@@ -182,7 +182,7 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 	{
 		//Query
 		stringstream strmQuery;
-		if(this->filter.GetOperation() != 0)
+		if(this->filter.GetRunIf().operation != 0)
 		{		
 			CFieldRefItem *refItem = new CFieldRefItem();
 			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;

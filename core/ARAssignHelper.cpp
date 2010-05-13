@@ -404,7 +404,6 @@ void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruc
 			break;
 		case AR_DATA_TYPE_REAL:
 		case AR_DATA_TYPE_ULONG:
-		case AR_DATA_TYPE_INTEGER:
 			{
 				strmValue << CARValue::ValueToString(v);
 			}
@@ -414,6 +413,7 @@ void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruc
 				strmValue << "$" << CARValue::ValueToString(v) << "$";
 			}
 			break;
+		case AR_DATA_TYPE_INTEGER:
 		case AR_DATA_TYPE_ENUM:
 			{
 				int nTmpActionSchemaId = schemaInsideId1;
@@ -421,7 +421,12 @@ void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruc
 				if(this->pushFieldFlag==true)
 					nTmpActionSchemaId = schemaInsideId2;
 
-				strmValue << arIn->GetFieldEnumValue(nTmpActionSchemaId, targetFieldId, v.u.enumVal);
+				string tmp = arIn->GetFieldEnumValue(nTmpActionSchemaId, targetFieldId, v.u.enumVal);
+
+				if(tmp != EmptyValue)
+					strmValue << "\"" << tmp << "\"";
+				else
+					strmValue << v.u.enumVal;
 			}
 			break;
 		default:
