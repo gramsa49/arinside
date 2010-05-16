@@ -316,7 +316,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 
 int CARQualification::FindCurrentEnumFieldId(int pFormId, int sFormId)
 {
-	int pos = (int)qualLevels.size();
+	int pos = (int)qualLevels.size() - 1;
 	
 	for (; pos > -1; --pos)
 	{
