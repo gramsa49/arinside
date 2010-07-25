@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "WebUtil.h"
+#include "../ARInside.h"
 
 using namespace OUTPUT;
 
@@ -104,40 +105,23 @@ string CWebUtil::ObjName(string objName)
 //_self, to open the link in the current window
 //_parent, to cleanup only the current frameset
 //_top, to cleanup all layered framesets
-string CWebUtil::Link(string caption, string linkTo, string imgName, int rootLevel)
+string CWebUtil::Link(const string& caption, const string& linkTo, const string& imgName, int rootLevel)
 {
-	stringstream strm;
-
-	string xhtmlCaption = Validate(caption);
-
-	if(imgName.empty())
-		strm << "<a href=\"" << linkTo << "\">" << xhtmlCaption << "</a>";
-	else
-		strm << ImageTag(imgName, rootLevel) << "<a href=\"" << Validate(linkTo) << "\">" << xhtmlCaption << "</a>";
-
-	return strm.str();
+	return Link(caption, linkTo, imgName, rootLevel, true);
 }
 
-string CWebUtil::Link(string caption, string linkTo, string imgName, int rootLevel, bool validate)
+// The following function should be removed completly. Use: "Link(const string&, CPageParams&, const string&, int)" instead.
+string CWebUtil::Link(const string& caption, const string& linkTo, const string& imgName, int rootLevel, bool validate)
 {
 	stringstream strm;
 	strm.str("");
 
-	string xhtmlCaption = caption;
+	string xhtmlCaption = (validate ? Validate(caption) : caption);
 
-	if(validate)
-	{
-		xhtmlCaption = Validate(caption);
-	}
+	if(!imgName.empty())
+		strm << ImageTag(imgName, rootLevel);
 
-	if(imgName.empty())
-	{
-		strm << "<a href=\"" << linkTo << "\">" << xhtmlCaption << "</a>";
-	}
-	else
-	{
-		strm << ImageTag(imgName, rootLevel) << "<a href=\"" << Validate(linkTo) << "\">" << xhtmlCaption << "</a>";
-	}
+	strm << "<a href=\"" << linkTo << "\">" << xhtmlCaption << "</a>";
 	return strm.str();
 }
 
@@ -148,14 +132,8 @@ string CWebUtil::LinkToActiveLinkIndex(int rootLevel)
 
 string CWebUtil::LinkToActiveLinkIndex(int objectCount, int rootLevel)
 {
-	string name = "Active Link";
-
-	if(objectCount > 1)
-	{
-		name = "Active Links";
-	}
-
-	return LinkToHelper(name, objectCount, "active_link", "active_link.gif", rootLevel);
+	string name = (objectCount > 1)?"Active Links":"Active Link";
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "active_link.gif", rootLevel);
 }
 
 string CWebUtil::LinkToActiveLinkGuideIndex(int rootLevel)
@@ -165,14 +143,8 @@ string CWebUtil::LinkToActiveLinkGuideIndex(int rootLevel)
 
 string CWebUtil::LinkToActiveLinkGuideIndex(int objectCount, int rootLevel)
 {
-	string name = "Active Link Guide";
-
-	if(objectCount > 1)
-	{
-		name = "Active Link Guides";
-	}
-
-	return LinkToHelper(name, objectCount, "active_link_guide", "al_guide.gif", rootLevel);
+	string name = (objectCount > 1?"Active Link Guides":"Active Link Guide");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE), "al_guide.gif", rootLevel);
 }
 
 string CWebUtil::LinkToApplicationIndex(int rootLevel)
@@ -182,14 +154,8 @@ string CWebUtil::LinkToApplicationIndex(int rootLevel)
 
 string CWebUtil::LinkToApplicationIndex(int objectCount, int rootLevel)
 {
-	string name = "Application";
-
-	if(objectCount > 1)
-	{
-		name = "Applications";
-	}
-
-	return LinkToHelper(name, objectCount, "application", "application.gif", rootLevel);
+	string name = (objectCount > 1?"Applications":"Application");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP), "application.gif", rootLevel);
 }
 
 string CWebUtil::LinkToEscalationIndex(int rootLevel)
@@ -199,14 +165,9 @@ string CWebUtil::LinkToEscalationIndex(int rootLevel)
 
 string CWebUtil::LinkToEscalationIndex(int objectCount, int rootLevel)
 {
-	string name = "Escalation";
+	string name = (objectCount > 1?"Escalations":"Escalation");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "escalation.gif", rootLevel);
 
-	if(objectCount > 1)
-	{
-		name = "Escalations";
-	}
-
-	return LinkToHelper(name, objectCount, "escalation", "escalation.gif", rootLevel);
 }
 
 string CWebUtil::LinkToFilterIndex(int rootLevel)
@@ -216,14 +177,8 @@ string CWebUtil::LinkToFilterIndex(int rootLevel)
 
 string CWebUtil::LinkToFilterIndex(int objectCount, int rootLevel)
 {
-	string name = "Filter";
-
-	if(objectCount > 1)
-	{
-		name = "Filters";
-	}
-
-	return LinkToHelper(name, objectCount, "filter", "filter.gif", rootLevel);
+	string name = (objectCount > 1?"Filters":"Filter");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel);	// TODO: retrieve folder name from IFileStructure later
 }
 
 string CWebUtil::LinkToFilterGuideIndex(int rootLevel)
@@ -233,14 +188,8 @@ string CWebUtil::LinkToFilterGuideIndex(int rootLevel)
 
 string CWebUtil::LinkToFilterGuideIndex(int objectCount, int rootLevel)
 {
-	string name = "Filter Guide";
-
-	if(objectCount > 1)
-	{
-		name = "Filter Guides";
-	}
-
-	return LinkToHelper(name, objectCount, "filter_guide", "filter_guide.gif", rootLevel);
+	string name = (objectCount > 1?"Filter Guides":"Filter Guide");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), "filter_guide.gif", rootLevel);
 }
 
 string CWebUtil::LinkToGroupIndex(int rootLevel)
@@ -250,14 +199,8 @@ string CWebUtil::LinkToGroupIndex(int rootLevel)
 
 string CWebUtil::LinkToGroupIndex(int objectCount, int rootLevel)
 {
-	string name = "Group";
-
-	if(objectCount > 1)
-	{
-		name = "Groups";
-	}
-
-	return LinkToHelper(name, objectCount, "group", "group.gif", rootLevel);
+	string name = (objectCount > 1 ? "Groups" : "Group");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, DATA_TYPE_GROUP), "group.gif", rootLevel);
 }
 
 string CWebUtil::LinkToMenuIndex(int rootLevel)
@@ -267,14 +210,8 @@ string CWebUtil::LinkToMenuIndex(int rootLevel)
 
 string CWebUtil::LinkToMenuIndex(int objectCount, int rootLevel)
 {
-	string name = "Menu";
-
-	if(objectCount > 1)
-	{
-		name = "Menus";
-	}
-
-	return LinkToHelper(name, objectCount, "menu", "menu.gif", rootLevel);
+	string name = (objectCount > 1?"Menus":"Menu");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), "menu.gif", rootLevel);
 }
 
 string CWebUtil::LinkToPackingListIndex(int rootLevel)
@@ -284,14 +221,8 @@ string CWebUtil::LinkToPackingListIndex(int rootLevel)
 
 string CWebUtil::LinkToPackingListIndex(int objectCount, int rootLevel)
 {
-	string name = "Packing List";
-
-	if(objectCount > 1)
-	{
-		name = "Packing Lists";
-	}
-
-	return LinkToHelper(name, objectCount, "packing_list", "packing_list.gif", rootLevel);
+	string name = (objectCount > 1?"Packing Lists":"Packing List");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK), "packing_list.gif", rootLevel);
 }
 
 string CWebUtil::LinkToRoleIndex(int rootLevel)
@@ -301,14 +232,8 @@ string CWebUtil::LinkToRoleIndex(int rootLevel)
 
 string CWebUtil::LinkToRoleIndex(int objectCount, int rootLevel)
 {
-	string name = "Role";
-
-	if(objectCount > 1)
-	{
-		name = "Roles";
-	}
-
-	return LinkToHelper(name, objectCount, "role", "doc.gif", rootLevel);
+	string name = (objectCount > 1?"Roles":"Role");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, DATA_TYPE_ROLE), "doc.gif", rootLevel);
 }
 
 string CWebUtil::LinkToSchemaIndex(int rootLevel)
@@ -318,14 +243,8 @@ string CWebUtil::LinkToSchemaIndex(int rootLevel)
 
 string CWebUtil::LinkToSchemaIndex(int objectCount, int rootLevel)
 {
-	string name = "Form";
-
-	if(objectCount > 1)
-	{
-		name = "Forms";
-	}
-
-	return LinkToHelper(name, objectCount, "schema", "schema.gif", rootLevel);
+	string name = (objectCount > 1?"Forms":"Form");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "schema.gif", rootLevel);
 }
 
 string CWebUtil::LinkToUserIndex(int rootLevel)
@@ -335,14 +254,8 @@ string CWebUtil::LinkToUserIndex(int rootLevel)
 
 string CWebUtil::LinkToUserIndex(int objectCount, int rootLevel)
 {
-	string name = "User";
-
-	if(objectCount > 1)
-	{
-		name = "Users";
-	}
-
-	return LinkToHelper(name, objectCount, "user", "user.gif", rootLevel);
+	string name = (objectCount > 1?"Users":"User");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER), "user.gif", rootLevel);
 }
 
 string CWebUtil::LinkToWebServiceIndex(int rootLevel)
@@ -352,14 +265,8 @@ string CWebUtil::LinkToWebServiceIndex(int rootLevel)
 
 string CWebUtil::LinkToWebServiceIndex(int objectCount, int rootLevel)	
 {
-	string name = "Web Service";
-
-	if(objectCount > 1)
-	{
-		name = "Web Services";
-	}
-
-	return LinkToHelper(name, objectCount, "webservice", "webservice.gif", rootLevel);
+	string name = (objectCount > 1?"Web Services":"Web Service");
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE), "webservice.gif", rootLevel);
 }
 
 string CWebUtil::LinkToContainer(int objectCount, int rootLevel, int containerType)
@@ -375,17 +282,14 @@ string CWebUtil::LinkToContainer(int objectCount, int rootLevel, int containerTy
 	}
 }
 
-string CWebUtil::LinkToHelper(string name, int objectCount, string folderName, string image, int rootLevel)
+string CWebUtil::LinkToHelper(string name, int objectCount, const CPageParams& page, string image, int rootLevel)
 {
 	stringstream strmTmp;
 	strmTmp.str("");
 
-	if(objectCount > -1)
-	{
-		strmTmp << objectCount << " ";
-	}
+	if(objectCount > -1) strmTmp << objectCount << " ";
 
-	strmTmp << CWebUtil::Link(name, RootPath(rootLevel) + folderName + "/" + CWebUtil::DocName("index"), image, rootLevel);
+	strmTmp << CWebUtil::Link(name, RootPath(rootLevel) + page->GetFullFileName(), image, rootLevel);
 	return strmTmp.str();
 }
 
@@ -399,6 +303,7 @@ string CWebUtil::ChkBoxInput(std::string nameAndValue, bool checked)
 	return strmTmp.str();
 }
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 string CWebUtil::LinkToImageIndex(int rootLevel)
 {
 	return LinkToImageIndex(-1, rootLevel);
@@ -407,5 +312,52 @@ string CWebUtil::LinkToImageIndex(int rootLevel)
 string CWebUtil::LinkToImageIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1? "Images" : "Image");
-	return LinkToHelper(name, -1, "image", "image.gif", rootLevel);
+	return LinkToHelper(name, -1, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "image.gif", rootLevel);
+}
+#endif
+
+string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel)
+{
+	return Link(caption, linkToPage, imgName, rootLevel, true, TARGET_MODE_SELF);
+}
+
+string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, bool validate)
+{
+	return Link(caption, linkToPage, imgName, rootLevel, validate, TARGET_MODE_SELF);
+}
+
+string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, LinkTargetMode target)
+{
+	return Link(caption, linkToPage, imgName, rootLevel, true, target);
+}
+
+string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, bool validate, LinkTargetMode target)
+{
+	stringstream strmTmp;
+
+	string xhtmlCaption = (validate ? Validate(caption) : caption);
+
+	if (!imgName.empty()) 
+		strmTmp << ImageTag(imgName,rootLevel);
+	
+	if (!linkToPage.Valid())
+		strmTmp << xhtmlCaption;
+	else
+	{
+		strmTmp << "<a href=\"" << RootPath(rootLevel) + linkToPage->GetFullFileName() << "\"";
+		if (target > TARGET_MODE_SELF)
+		{
+			strmTmp << " target=\"";
+			switch (target)
+			{
+				case TARGET_MODE_PARENT: strmTmp << "_parent"; break;
+				case TARGET_MODE_TOP: strmTmp << "_top"; break;
+				case TARGET_MODE_BLANK: strmTmp << "_blank"; break;
+			}
+			strmTmp << "\"";
+		}
+		strmTmp << ">" << xhtmlCaption << "</a>";
+	}
+
+	return strmTmp.str();
 }

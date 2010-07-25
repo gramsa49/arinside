@@ -45,6 +45,9 @@
 #include "output/WebUtil.h"
 #include "output/NavigationPage.h"
 
+#include "output/IFileStructure.h"
+#include "output/FileNaming.h"
+
 /////////
 // the following file is generated via a pre-build step using "svnrev_template.h" as template. 
 // The $WCREV$ keyword of the template is replaced with the revision number.
@@ -89,12 +92,18 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->vRevision = 0;
 	this->arXmlVersion = 0;
 
+	if (appConfig.oldNaming)
+		SetFileNamingStrategy(new FileNaming::DefaultFileNamingStrategy());
+	else
+		SetFileNamingStrategy(new FileNaming::ObjectNameFileNamingStrategy());
+
 	if (CARInside::pInsideInstance == NULL) 
 		CARInside::pInsideInstance = this;
 }
 
 CARInside::~CARInside(void)
 {
+	DestroyFileNamingStrategy();
 }
 
 CARInside* CARInside::GetInstance()
@@ -257,29 +266,11 @@ bool CARInside::FileExists(string fName)
 
 void CARInside::Prepare(void)
 {	
-	CWindowsUtil wUtil(this->appConfig);
-
 	CDocMain *docMain = new CDocMain();
 
 	if( docMain->Index() == 1)
 	{
-		wUtil.CreateSubDirectory("active_link");
-		wUtil.CreateSubDirectory("active_link_guide");
-		wUtil.CreateSubDirectory("application");
-		wUtil.CreateSubDirectory("escalation");
-		wUtil.CreateSubDirectory("filter");
-		wUtil.CreateSubDirectory("filter_guide");
-		wUtil.CreateSubDirectory("group");
-		wUtil.CreateSubDirectory("image");
-		wUtil.CreateSubDirectory("img");
-		wUtil.CreateSubDirectory("menu");
-		wUtil.CreateSubDirectory("other");
-		wUtil.CreateSubDirectory("packing_list");
-		wUtil.CreateSubDirectory("schema");
-		wUtil.CreateSubDirectory("template");
-		wUtil.CreateSubDirectory("user");
-		wUtil.CreateSubDirectory("role");
-		wUtil.CreateSubDirectory("webservice");
+		InitFileNamingStrategy();
 	}
 
 	delete docMain;
@@ -772,6 +763,7 @@ bool CARInside::SortByName(const CARServerObject& t1, const CARServerObject& t2 
 	return ( tmpStr1.compare(tmpStr2) < 0 );
 }
 
+// TODO: this method becomes obsolete when IFileNaming is finished
 string CARInside::ObjListFilename(string firstChar)
 {
 	string fName = "index_";
@@ -795,18 +787,18 @@ void CARInside::Documentation(void)
 	docMain->ServerInfoList();
 
 	//ContainerList
-	docMain->ContainerList(ARCON_GUIDE, "index", "ContainerList (ActiveLinkGuide)", "*");
-	docMain->ContainerList(ARCON_APP, "index", "ContainerList (Application)", "*");
-	docMain->ContainerList(ARCON_PACK, "index", "ContainerList (PackingList)", "*");
-	docMain->ContainerList(ARCON_FILTER_GUIDE, "index", "ContainerList (FilterGuide)", "*");
-	docMain->ContainerList(ARCON_WEBSERVICE, "index", "ContainerList (Webservice)", "*");	
+	docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*");
+	docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*");
+	docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*");
+	docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*");
+	docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->ContainerList(ARCON_GUIDE, ObjListFilename(std::string(1, strValue.at(i))), "GuideList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_APP, ObjListFilename(std::string(1, strValue.at(i))), "ApplicationList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_PACK, ObjListFilename(std::string(1, strValue.at(i))), "PackinglistList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_FILTER_GUIDE, ObjListFilename(std::string(1, strValue.at(i))), "FilterGuideList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_WEBSERVICE, ObjListFilename(std::string(1, strValue.at(i))), "WebserviceList", std::string(1, strValue.at(i)));	
+		docMain->ContainerList(ARCON_GUIDE, "GuideList", std::string(1, strValue.at(i)));
+		docMain->ContainerList(ARCON_APP, "ApplicationList", std::string(1, strValue.at(i)));
+		docMain->ContainerList(ARCON_PACK, "PackinglistList", std::string(1, strValue.at(i)));
+		docMain->ContainerList(ARCON_FILTER_GUIDE, "FilterGuideList", std::string(1, strValue.at(i)));
+		docMain->ContainerList(ARCON_WEBSERVICE, "WebserviceList", std::string(1, strValue.at(i)));
 	}
 
 	//Application Details
@@ -831,6 +823,7 @@ void CARInside::Documentation(void)
 			break;
 		default:
 			{
+				// TODO: is this output really correct? All other container types are documented and LOGged within the next loop!
 				LOG << "Container [" << (cntIndex + 1) << "-" << cntCount << "] '" << cont.GetName() << "' [OK]" << endl;
 			}
 			break;
@@ -884,13 +877,13 @@ void CARInside::Documentation(void)
 	}
 
 	//ActiveLink List
-	docMain->ActiveLinkList("index", "*");
+	docMain->ActiveLinkList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->ActiveLinkList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->ActiveLinkList(std::string(1, strValue.at(i)));
 	}	
 
-	docMain->ActiveLinkActionList("index_action");
+	docMain->ActiveLinkActionList();
 
 	//ActiveLink Details
 	tmpCount = alList.GetCount();
@@ -898,19 +891,19 @@ void CARInside::Documentation(void)
 	for (unsigned int actlinkIndex = 0; actlinkIndex < tmpCount; ++actlinkIndex)
 	{	
 		LOG << "ActiveLink [" << actlinkIndex << "-" << nTmpCnt << "] '" << alList.ActiveLinkGetName(actlinkIndex) << "': ";
-		CDocAlDetails alDetails(actlinkIndex, 2);
+		CDocAlDetails alDetails(actlinkIndex);
 		alDetails.Documentation();
 	}
 
 
 
 	//Filter List
-	docMain->FilterList("index", "*");
+	docMain->FilterList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->FilterList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->FilterList(std::string(1, strValue.at(i)));
 	}	
-	docMain->FilterActionList("index_action");
+	docMain->FilterActionList();
 
 	//Filter Details
 	tmpCount = filterList.GetCount();
@@ -918,19 +911,19 @@ void CARInside::Documentation(void)
 	for (unsigned int filterIndex = 0; filterIndex < tmpCount; ++filterIndex)
 	{
 		LOG << "Filter [" << filterIndex << "-" << tmpCount << "] '" << filterList.FilterGetName(filterIndex) << "': ";
-		CDocFilterDetails filterDetails(filterIndex, 2);
+		CDocFilterDetails filterDetails(filterIndex);
 		filterDetails.Documentation();
 	}
 
 
 
 	//Escalation List
-	docMain->EscalationList("index", "*");
+	docMain->EscalationList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->EscalationList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->EscalationList(std::string(1, strValue.at(i)));
 	}
-	docMain->EscalationActionList("index_action");
+	docMain->EscalationActionList();
 
 	//Escalation Details
 	tmpCount = escalationList.GetCount();
@@ -938,17 +931,17 @@ void CARInside::Documentation(void)
 	for (unsigned int escalIndex = 0; escalIndex < tmpCount; ++escalIndex)
 	{
 		LOG << "Escalation [" << escalIndex << "-" << tmpCount << "] '" << escalationList.EscalationGetName(escalIndex) << "': ";
-		CDocEscalationDetails escalDetails(escalIndex, 2);
+		CDocEscalationDetails escalDetails(escalIndex);
 		escalDetails.Documentation();
 	}
 
 
 
 	//CharMenus
-	docMain->CharMenuList("index", "*");
+	docMain->CharMenuList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->CharMenuList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->CharMenuList(std::string(1, strValue.at(i)));
 	}	
 
 	// Char Menu Details
@@ -957,22 +950,21 @@ void CARInside::Documentation(void)
 	for (unsigned int menuIndex = 0; menuIndex < tmpCount; ++menuIndex)
 	{
 		LOG << "Menu [" << menuIndex << "-" << tmpCount << "] '" << menuList.MenuGetName(menuIndex) << "': ";
-		CDocCharMenuDetails menuDetails(menuIndex, 2);
+		CDocCharMenuDetails menuDetails(menuIndex);
 		menuDetails.Documentation();
 	}
 
 
-
 	//Schema List
-	docMain->SchemaList(AR_SCHEMA_NONE, "index", "Formlist (All)", "*");
-	docMain->SchemaList(AR_SCHEMA_REGULAR, "index_regular", "Formlist (Regular)", "*");
-	docMain->SchemaList(AR_SCHEMA_JOIN, "index_join", "Formlist (Join)", "*");
-	docMain->SchemaList(AR_SCHEMA_VIEW, "index_view", "Formlist (View)", "*");
-	docMain->SchemaList(AR_SCHEMA_DIALOG, "index_dialog", "Formlist (Dialog)", "*");
-	docMain->SchemaList(AR_SCHEMA_VENDOR, "index_vendor", "Formlist (Vendor)", "*");	
+	docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*");
+	docMain->SchemaList(AR_SCHEMA_REGULAR, CPageParams(PAGE_SCHEMA_REGULAR, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (Regular)", "*");
+	docMain->SchemaList(AR_SCHEMA_JOIN,    CPageParams(PAGE_SCHEMA_JOIN, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (Join)"   , "*");
+	docMain->SchemaList(AR_SCHEMA_VIEW,    CPageParams(PAGE_SCHEMA_VIEW, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (View)"   , "*");
+	docMain->SchemaList(AR_SCHEMA_DIALOG,  CPageParams(PAGE_SCHEMA_DIALOG, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Dialog)" , "*");
+	docMain->SchemaList(AR_SCHEMA_VENDOR,  CPageParams(PAGE_SCHEMA_VENDOR, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Vendor)" , "*");	
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->SchemaList(AR_SCHEMA_NONE, ObjListFilename(std::string(1, strValue.at(i))), "Formlist", std::string(1, strValue.at(i)));
+		docMain->SchemaList(AR_SCHEMA_NONE, CPageParams(strValue.at(i), AR_STRUCT_ITEM_XML_SCHEMA), "Formlist", std::string(1, strValue.at(i)));
 	}
 
 	//Schema and field Details
@@ -1032,7 +1024,7 @@ void CARInside::Documentation(void)
 	{
 		LOG << "Image [" << imgIndex << "-" << nTmpCnt << "] '" << imageList.ImageGetName(imgIndex) << "': ";
 
-		CDocImageDetails imgDetails(imgIndex, 2);
+		CDocImageDetails imgDetails(imgIndex);
 		imgDetails.Documentation();
 	}
 #endif
@@ -1044,20 +1036,20 @@ void CARInside::Documentation(void)
 	docMain->MessageList();	
 
 	//Analyzer
-	CDocAnalyzer *analyzer = new CDocAnalyzer("other");
+	CDocAnalyzer *analyzer = new CDocAnalyzer();
 	analyzer->Documentation();
 	delete analyzer;
 
 	//Validation
-	CDocValidator *validator = new CDocValidator("other");
+	CDocValidator *validator = new CDocValidator();
 	validator->Main();
 	delete validator;
 
 	//Group List
-	docMain->GroupList("index", "*");
+	docMain->GroupList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->GroupList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->GroupList(std::string(1, strValue.at(i)));
 	}	
 
 
@@ -1078,10 +1070,10 @@ void CARInside::Documentation(void)
 
 
 	//Role List
-	docMain->RoleList("index", "*");
+	docMain->RoleList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->RoleList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->RoleList(std::string(1, strValue.at(i)));
 	}	
 
 	//Role Details
@@ -1101,10 +1093,10 @@ void CARInside::Documentation(void)
 
 
 	//Userlists
-	docMain->UserList("index", "*");
+	docMain->UserList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->UserList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->UserList(std::string(1, strValue.at(i)));
 	}	
 
 	//User Details	list<CARUser>::iterator userIter;
@@ -1203,25 +1195,26 @@ string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fro
 
 string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
 {
-	string strFileUrl = "";
+	unsigned int page = PAGE_OVERVIEW;
+
 	switch (schemaType)
-	{		
-	case AR_SCHEMA_REGULAR: strFileUrl = CWebUtil::DocName("index_regular"); break;
-	case AR_SCHEMA_JOIN: strFileUrl = CWebUtil::DocName("index_join"); break;
-	case AR_SCHEMA_VIEW: strFileUrl = CWebUtil::DocName("index_view"); break;
-	case AR_SCHEMA_DIALOG: strFileUrl = CWebUtil::DocName("index_dialog"); break;
-	case AR_SCHEMA_VENDOR: strFileUrl = CWebUtil::DocName("index_vendor"); break;
-	default: strFileUrl = CWebUtil::DocName("index");
+	{
+		case AR_SCHEMA_REGULAR: page = PAGE_SCHEMA_REGULAR; break;
+		case AR_SCHEMA_JOIN: page = PAGE_SCHEMA_JOIN; break;
+		case AR_SCHEMA_VIEW: page = PAGE_SCHEMA_VIEW; break;
+		case AR_SCHEMA_DIALOG: page = PAGE_SCHEMA_DIALOG; break;
+		case AR_SCHEMA_VENDOR: page = PAGE_SCHEMA_VENDOR; break;
 	}
 
-	return CWebUtil::Link(CAREnum::SchemaType(schemaType), "../"+strFileUrl, "", rootLevel);
+	return CWebUtil::Link(CAREnum::SchemaType(schemaType), CPageParams(page), "", rootLevel);
 }
 
+// TODO: add a function with parameter CARSchema instead of schemaInsideId to pass in the object directly
 string CARInside::LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel)
 {
-	stringstream tmp;
-	tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << schemaInsideId << "/" << CWebUtil::DocName("form_index_list");	
-	return CWebUtil::Link(indexName, tmp.str(), "", fromRootLevel, true);
+	CARSchema schema(schemaInsideId);
+	CPageParams file(PAGE_SCHEMA_INDEXES, &schema);
+	return CWebUtil::Link(indexName, file, "", fromRootLevel);
 }
 
 string CARInside::LinkToSchema(int insideId, int fromRootLevel)
@@ -1254,43 +1247,15 @@ int CARInside::SchemaGetInsideId(string searchObjName)
 	return -1;
 }
 
-// TODO: remove unused function
-int CARInside::AlGetInsideId(string searchObjName)
-{
-	return alList.Find(searchObjName.c_str());
-}
-
-int CARInside::FilterGetInsideId(string searchObjName)
-{
-	return filterList.Find(searchObjName.c_str());
-}
-
-// TODO: the CARInside::...GetInsideId function should be removed .... use the objects instead, e.g. CARContainer
-int CARInside::ContainerGetInsideId(string searchObjName)
-{
-	return containerList.Find(searchObjName.c_str());
-}
-
-// TODO: the CARInside::...GetInsideId function should be removed .... use the objects instead, e.g. CARCharMenu
-int CARInside::MenuGetInsideId(string searchObjName)
-{
-	return menuList.Find(searchObjName.c_str());
-}
-
-int CARInside::EscalationGetInsideId(string searchObjName)
-{
-	return escalationList.Find(searchObjName.c_str());
-}
-
 string CARInside::LinkToUser(string loginName, int rootLevel)
 {	
 	list<CARUser>::iterator userIter;			
 	for ( userIter = userList.begin(); userIter != userList.end(); userIter++ )
 	{	
 		CARUser *user = &(*userIter);
-		if(strcmp(loginName.c_str(), user->name.c_str())==0)
+		if(loginName == user->name)
 		{
-			return CWebUtil::Link(loginName, CWebUtil::RootPath(rootLevel)+"user/"+CWebUtil::DocName(user->FileID()), "", rootLevel);
+			return CWebUtil::Link(loginName, CPageParams(PAGE_DETAILS, user), "", rootLevel);
 		}
 	}
 	return loginName;
@@ -1332,7 +1297,7 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 			CARGroup *group = &(*grpIter);		
 			if(group->groupId == permissionId)
 			{
-				return CWebUtil::Link(group->groupName, CWebUtil::RootPath(rootLevel)+"group/"+CWebUtil::DocName(group->FileID()), "group.gif", rootLevel);
+				return CWebUtil::Link(group->groupName, CPageParams(PAGE_DETAILS, group), "group.gif", rootLevel);
 			}		
 		}
 	}
@@ -1346,7 +1311,7 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 				CARRole *role = &(*roleIter);
 				if(role->roleId == permissionId && strcmp(role->applicationName.c_str(), appRefName.c_str())==0)
 				{
-					return CWebUtil::Link(role->roleName, CWebUtil::RootPath(rootLevel)+"role/"+CWebUtil::DocName(role->FileID()), "doc.gif", rootLevel);
+					return CWebUtil::Link(role->roleName, CPageParams(PAGE_DETAILS, role), "doc.gif", rootLevel);
 				}
 			}
 		}
@@ -1505,15 +1470,15 @@ string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 
 	if(strcmp(srvName.c_str(), "")==0)
 	{
-		return CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
+		return CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
 	}
 	else if(strcmp(srvName.c_str(), AR_CURRENT_SERVER_TAG)==0 || strcmp(srvName.c_str(), AR_CURRENT_SCREEN_TAG)==0)
 	{
-		return CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
+		return CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
 	}
 	else
 	{
-		return CWebUtil::Link(srvName, CWebUtil::RootPath(rootLevel)+"other/"+CWebUtil::DocName("server"), "", rootLevel);
+		return CWebUtil::Link(srvName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
 	}
 
 
@@ -2390,55 +2355,6 @@ void CARInside::DoWork(int nMode)
 	// write documentation
 	Documentation();
 }
-
-// TODO: obsolete function ... call CARSchema() and CARSchema::Exists instead
-//CARSchema* CARInside::FindSchema(int schemaInsideId)
-//{
-//	list<CARSchema>::iterator schemaIter;		
-//	for (schemaIter = schemaList.begin(); schemaIter != schemaList.end(); ++schemaIter)
-//	{			
-//		CARSchema *schema = &(*schemaIter);
-//		if(schema->GetInsideId() == schemaInsideId)
-//		{
-//			return schema;
-//		}
-//	}
-//	return NULL;
-//}
-
-// TODO: obsolete function ... call CARSchema() and CARSchema::Exists instead
-//CARSchema* CARInside::FindSchema(std::string schemaName)
-//{
-//	list<CARSchema>::iterator schemaIter;		
-//	for (schemaIter = schemaList.begin(); schemaIter != schemaList.end(); ++schemaIter)
-//	{			
-//		CARSchema *schema = &(*schemaIter);
-//		if(schema->name.compare(schemaName)==0)
-//		{
-//			return schema;
-//		}
-//	}
-//	return NULL;
-//}
-
-// TODO: obsolete function ... call CARField() and CARField::Exists instead
-//CARField* CARInside::FindField(CARSchema* schema, int fieldId)
-//{
-//	if (schema == NULL) return NULL;
-//
-//	list<CARField>::iterator fieldIter = schema->fieldList.begin();
-//	list<CARField>::iterator endIt = schema->fieldList.end();
-//
-//	for(; fieldIter != endIt; ++fieldIter)
-//	{
-//		CARField *field = &(*fieldIter);
-//		if(field->fieldId == fieldId)
-//		{
-//			return field;
-//		}
-//	}
-//	return NULL;
-//}
 
 void CARInside::ParseVersionString(string version)
 {

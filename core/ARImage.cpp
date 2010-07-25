@@ -75,6 +75,21 @@ const char* CARImage::GetChangeDiary() const
 	return CARInside::GetInstance()->imageList.ImageGetChangeDiary(GetInsideId()); 
 }
 
+char* CARImage::GetType() const
+{
+	return CARInside::GetInstance()->imageList.ImageGetType(GetInsideId());
+}
+
+char* CARImage::GetDescription() const
+{
+	return CARInside::GetInstance()->imageList.ImageGetDescription(GetInsideId());
+}
+
+const ARImageDataStruct& CARImage::GetData() const
+{
+	return CARInside::GetInstance()->imageList.ImageGetData(GetInsideId());
+}
+
 string CARImage::GetURL(int rootLevel, bool showImage)
 {
 	// TODO: add support for the showImage param

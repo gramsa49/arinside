@@ -20,7 +20,6 @@
 CDocAlGuideDetails::CDocAlGuideDetails(CARContainer &container)
 : alGuide(container)
 {
-	this->rootLevel = 2;
 }
 
 CDocAlGuideDetails::~CDocAlGuideDetails(void)
@@ -29,37 +28,47 @@ CDocAlGuideDetails::~CDocAlGuideDetails(void)
 
 void CDocAlGuideDetails::Documentation()
 {
-	string dir = CAREnum::ContainerDir(ARCON_GUIDE)+"/"+alGuide.FileID();
+	CPageParams file(PAGE_DETAILS, &alGuide);
+	this->rootLevel = file->GetRootLevel();
 
-	CWindowsUtil winUtil(pInside->appConfig);
-	if(winUtil.CreateSubDirectory(dir)>=0)
+	string dir = file->GetPath(); //CAREnum::ContainerDir(ARCON_GUIDE)+"/"+alGuide.FileID();
+
+	try
 	{
-		CWebPage webPage("index", alGuide.GetName(), rootLevel, pInside->appConfig);
+		CWindowsUtil winUtil(pInside->appConfig);
+		if(winUtil.CreateSubDirectory(dir)>=0)
+		{
+			CWebPage webPage(file->GetFileName(), alGuide.GetName(), this->rootLevel, pInside->appConfig);
 
-		//ContentHead informations
-		stringstream strmHead;
-		strmHead.str("");
+			//ContentHead informations
+			stringstream strmHead;
+			strmHead.str("");
 
-		strmHead << CWebUtil::LinkToActiveLinkGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->alGuide.GetName());
-		if(!this->alGuide.GetAppRefName().empty())
-			strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
+			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) + MenuSeparator + CWebUtil::ObjName(this->alGuide.GetName());
+			if(!this->alGuide.GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
 
-		webPage.AddContentHead(strmHead.str());
+			webPage.AddContentHead(strmHead.str());
 
-		//Container Base Informations
-		CDocContainerHelper *contHelper = new CDocContainerHelper(this->alGuide, this->rootLevel);
-		webPage.AddContent(contHelper->BaseInfo());
-		delete contHelper;
+			//Container Base Informations
+			CDocContainerHelper *contHelper = new CDocContainerHelper(this->alGuide, this->rootLevel);
+			webPage.AddContent(contHelper->BaseInfo());
+			delete contHelper;
 
-		//Object specific documentation
-		webPage.AddContent(AlGuideInformation());
-		webPage.AddContent(ActiveLinkActions());
+			//Object specific documentation
+			webPage.AddContent(AlGuideInformation());
+			webPage.AddContent(ActiveLinkActions());
 
-		//History
-		webPage.AddContent(this->pInside->ServerObjectHistory(&this->alGuide, this->rootLevel));
+			//History
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->alGuide, this->rootLevel));
 
-		//Save File
-		webPage.SaveInFolder(dir);
+			//Save File
+			webPage.SaveInFolder(file->GetPath());
+		}
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION in DocAlGuideDetails::Documentation of '" << this->alGuide.GetName() << "': " << e.what() << endl;
 	}
 }
 

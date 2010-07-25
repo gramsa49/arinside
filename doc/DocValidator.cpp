@@ -17,28 +17,29 @@
 #include "stdafx.h"
 #include "DocValidator.h"
 
-CDocValidator::CDocValidator(string path)
+CDocValidator::CDocValidator()
 {
-	this->path = path;
-	this->rootLevel = 1;
-	uniqueMissingFieldList.clear();
 }
 
 CDocValidator::~CDocValidator(void)
 {
-	uniqueMissingFieldList.clear();
 }
 
 
 void CDocValidator::Main()
 {
+	CPageParams file(PAGE_VALIDATOR_MAIN);
+
 	try
-	{		
+	{
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_main", "Validator", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Validator", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
@@ -52,38 +53,38 @@ void CDocValidator::Main()
 			//Field reference check
 			webPage.AddContent("Missing Objects referenced by Workflow:<br/>");
 			cout << "Field reference validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Fields", CWebUtil::DocName("validation_field_references"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Fields", CPageParams(PAGE_VALIDATOR_MISSING_FIELDS), "doc.gif", rootLevel));
 			this->FieldReferenceValidator();
 			webPage.AddContent("<br/>");
 
 			//Menu reference check
 			cout << "Menu reference validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Menus", CWebUtil::DocName("validation_menu_references"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Menus", CPageParams(PAGE_VALIDATOR_MISSING_MENUS), "doc.gif", rootLevel));
 			this->MenuReferenceValidator();
 
 			//Group permission check
 			webPage.AddContent("<br/><br/>List of server objects with no specified access groups:<br/>");
 
 			cout << "Form access group validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Forms", CWebUtil::DocName("validation_group_form"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Forms", CPageParams(PAGE_VALIDATOR_FORM_GROUPS), "doc.gif", rootLevel));
 			this->FormGroupValidator();
 
 			cout << "Field access group validation" << endl;
 			webPage.AddContent("<br/>");
-			webPage.AddContent(CWebUtil::Link("Fields", CWebUtil::DocName("validation_group_field"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Fields", CPageParams(PAGE_VALIDATOR_FIELD_GROUPS), "doc.gif", rootLevel));
 			this->FieldGroupValidator();
 
 			cout << "Active Link access group validation" << endl;
 			webPage.AddContent("<br/>");
-			webPage.AddContent(CWebUtil::Link("Active Links", CWebUtil::DocName("validation_group_al"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Active Links", CPageParams(PAGE_VALIDATOR_ACTIVELINKS_GROUPS), "doc.gif", rootLevel));
 			this->AlGroupValidator();
 
 			cout << "Container access group validation" << endl;
 			webPage.AddContent("<br/>");
-			webPage.AddContent(CWebUtil::Link("Container", CWebUtil::DocName("validation_group_container"), "doc.gif", rootLevel, true));
+			webPage.AddContent(CWebUtil::Link("Container", CPageParams(PAGE_VALIDATOR_CONTAINER_GROUPS), "doc.gif", rootLevel));
 			this->ContainerGroupValidator();
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -94,17 +95,22 @@ void CDocValidator::Main()
 
 void CDocValidator::ContainerGroupValidator()
 {
+	CPageParams file(PAGE_VALIDATOR_CONTAINER_GROUPS);
+
 	try
 	{		
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_group_container", "Container access group validation", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Container access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "Container with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -126,7 +132,7 @@ void CDocValidator::ContainerGroupValidator()
 						//Container has no access group
 						CTableRow row("");	
 						row.AddCell(CAREnum::ContainerType(type));
-						row.AddCell(pInside->LinkToContainer(cont.GetName(), this->rootLevel));
+						row.AddCell(pInside->LinkToContainer(cont.GetName(), rootLevel));
 						tblObj.AddRow(row);
 					}
 				}
@@ -135,7 +141,7 @@ void CDocValidator::ContainerGroupValidator()
 			webPage.AddContent(tblObj.ToXHtml());
 			tblObj.Clear();
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -146,17 +152,22 @@ void CDocValidator::ContainerGroupValidator()
 
 void CDocValidator::AlGroupValidator()
 {
+	CPageParams file(PAGE_VALIDATOR_ACTIVELINKS_GROUPS);
+
 	try
-	{		
+	{
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_group_al", "Active Link access group validation", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Active Link access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "Active Links with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -173,7 +184,7 @@ void CDocValidator::AlGroupValidator()
 				{
 					//Form has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToAl(alIndex, this->rootLevel));
+					row.AddCell(pInside->LinkToAl(alIndex, rootLevel));
 					tblObj.AddRow(row);
 				}
 			}
@@ -181,7 +192,7 @@ void CDocValidator::AlGroupValidator()
 			webPage.AddContent(tblObj.ToXHtml());
 			tblObj.Clear();
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -190,19 +201,24 @@ void CDocValidator::AlGroupValidator()
 	}
 }
 
-void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
+void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema)
 {
+	CPageParams file(PAGE_VALIDATOR_FIELD_GROUP_DETAILS, &schema);
+
 	try
-	{		
+	{
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage(fName, "Field access group validation", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Field access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "Fields with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -218,16 +234,16 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 				{
 					//field has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field.GetInsideId(), this->rootLevel));
+					row.AddCell(pInside->LinkToField(schema.GetInsideId(), field.GetInsideId(), rootLevel));
 					tblObj.AddRow(row);					
 				}
 			}
 
-			tblObj.description = pInside->LinkToSchema(schema.GetInsideId(), this->rootLevel);
+			tblObj.description = pInside->LinkToSchema(schema.GetInsideId(), rootLevel);
 			webPage.AddContent(tblObj.ToXHtml());
 			tblObj.Clear();
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -238,17 +254,22 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema, string fName)
 
 void CDocValidator::FieldGroupValidator()
 {
+	CPageParams file(PAGE_VALIDATOR_FIELD_GROUPS);
+
 	try
-	{		
+	{
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_group_field", "Field access group validation", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Field access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "Fields with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -278,19 +299,17 @@ void CDocValidator::FieldGroupValidator()
 
 				if(nEmptyFields > 0)
 				{
-					string fName = "validation_group_field_"+schema.FileID();
-
 					CTableRow row("");		
 					row.AddCell(nEmptyFields);
-					row.AddCell(CWebUtil::Link(schema.GetName(), CWebUtil::DocName(fName), "", 0));
+					row.AddCell(CWebUtil::Link(schema.GetName(), CPageParams(PAGE_VALIDATOR_FIELD_GROUP_DETAILS, &schema), "", rootLevel));
 					tblObj.AddRow(row);			
 
-					FieldGroupValidatorDetails(schema, fName);
+					FieldGroupValidatorDetails(schema/*, fName*/);
 				}
 			}
 
 			webPage.AddContent(tblObj.ToXHtml());
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -301,17 +320,22 @@ void CDocValidator::FieldGroupValidator()
 
 void CDocValidator::FormGroupValidator()
 {
+	CPageParams file(PAGE_VALIDATOR_FORM_GROUPS);
+
 	try
 	{		
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_group_form", "Form access group validation", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Form access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "Forms with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -328,7 +352,7 @@ void CDocValidator::FormGroupValidator()
 				{
 					//Form has no access group
 					CTableRow row("");		
-					row.AddCell(pInside->LinkToSchema(schema.GetName(), this->rootLevel));
+					row.AddCell(pInside->LinkToSchema(schema.GetName(), rootLevel));
 					tblForms.AddRow(row);
 				}
 			}
@@ -336,7 +360,7 @@ void CDocValidator::FormGroupValidator()
 			webPage.AddContent(tblForms.ToXHtml());
 			tblForms.Clear();
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -347,17 +371,22 @@ void CDocValidator::FormGroupValidator()
 
 void CDocValidator::FieldReferenceValidator()
 {
+	CPageParams file(PAGE_VALIDATOR_MISSING_FIELDS);
+
 	try
-	{		
+	{
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_field_references", "Field validator", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Field validator", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "List of missing fields that are referenced in ARSystem workflow:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -427,7 +456,7 @@ void CDocValidator::FieldReferenceValidator()
 				webPage.AddContent("Integrity check found no missing fields in workflow.");
 			}
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -516,17 +545,22 @@ int CDocValidator::NumReferences(int searchSchemaId, int searchFieldId)
 
 void CDocValidator::MenuReferenceValidator()
 {
+	CPageParams file(PAGE_VALIDATOR_MISSING_MENUS);
+
 	try
 	{
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("validation_menu_references", "Menu validator", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Menu validator", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CWebUtil::DocName("validation_main"), "", 0) << MenuSeparator;
+			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
 			contHeadStrm << "List of missing menus that are referenced in ARSystem workflow:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -579,7 +613,7 @@ void CDocValidator::MenuReferenceValidator()
 				webPage.AddContent("Integrity check found no missing menus in workflow.");
 			}
 
-			webPage.SaveInFolder(this->path);	
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch (...)

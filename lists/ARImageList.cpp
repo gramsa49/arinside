@@ -18,6 +18,7 @@
 #include "ARImageList.h"
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
+#include "../core/ARImage.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -265,9 +266,9 @@ void CARImageList::Sort()
 
 string CARImageList::ImageGetURL(unsigned int index, int rootLevel)
 {
-	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "image/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(ImageGetName(index), strmTmp.str(), "image.gif", rootLevel); 
+	CARImage img(index);
+	CPageParams file(PAGE_DETAILS, &img);
+	return CWebUtil::Link(ImageGetName(index), file, "image.gif", rootLevel); 
 }
 
 void CARImageList::AddReference(const CImageRefItem &referenceItem)

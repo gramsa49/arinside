@@ -39,7 +39,8 @@ CARServerObject* CARFilter::Clone()
 
 string CARFilter::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"filter/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "filter.gif" : ""), rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(this->GetName(), file, (showImage ? "filter.gif" : ""), rootLevel);
 }
 
 string CARFilter::GetExecuteOn(bool singleLine)

@@ -17,11 +17,9 @@
 #include "stdafx.h"
 #include "DocFilterDetails.h"
 
-CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId, int rootLevel)
+CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId)
 : filter(filterInsideId)
 {	
-	this->path = "filter/" + filter.FileID();
-	this->rootLevel = rootLevel;
 }
 
 CDocFilterDetails::~CDocFilterDetails(void)
@@ -30,13 +28,17 @@ CDocFilterDetails::~CDocFilterDetails(void)
 
 void CDocFilterDetails::Documentation()
 {	
+	CPageParams file(PAGE_DETAILS, &filter);
+	this->rootLevel = file->GetRootLevel();
+	this->path = file->GetPath();
+
 	try
 	{
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("index", filter.GetName(), this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), filter.GetName(), this->rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -205,7 +207,7 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 		pgStrm << "Run If Qualification: <br/>" << strmQuery.str();
 
 		//If-Actions		
-		CDocFilterActionStruct actionStruct(*this->pInside, this->filter, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_FILTER);
+		CDocFilterActionStruct actionStruct(*this->pInside, this->filter, schemaName, this->rootLevel, AR_STRUCT_ITEM_XML_FILTER);
 		pgStrm << actionStruct.Get("If", this->filter.GetIfActions());
 
 		//Else-Actions

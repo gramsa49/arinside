@@ -24,7 +24,7 @@ class CDocFilterDetails :
 	public CDocBase
 {
 public:
-	CDocFilterDetails(unsigned int filterInsideId, int rootLevel);
+	CDocFilterDetails(unsigned int filterInsideId);
 	~CDocFilterDetails(void);
 
 	void Documentation();

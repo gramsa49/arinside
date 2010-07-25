@@ -45,6 +45,7 @@ public:
 	const ARLocaleType& GetLocale() const;
 	int GetType();
 	const ARPropList& GetProps() const;
+	const CARSchema& GetSchema() const;
 
 	// some helpers
 	string Label();

@@ -53,9 +53,8 @@ CARServerObject* CARSchema::Clone()
 
 string CARSchema::GetURL(int rootLevel, bool useImage)
 {
-	stringstream tmp;
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("index");	
-	return CWebUtil::Link(this->GetName(), tmp.str(), (useImage ? "schema.gif" : ""), rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(this->GetName(), file, (useImage ? "schema.gif" : ""), rootLevel);
 }
 
 string CARSchema::WebAlias()
@@ -116,10 +115,7 @@ string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
 			{
 				if(vuiLabel.compare(propList.props[i].value.u.charVal) == 0)
 				{
-					stringstream tmp;
-					tmp << CWebUtil::RootPath(fromRootLevel) << "schema/" << this->GetInsideId() << "/" << CWebUtil::DocName("vui_" + vui.FileID());
-
-					return CWebUtil::Link(propList.props[i].value.u.charVal, tmp.str(), "", fromRootLevel);
+					return CWebUtil::Link(propList.props[i].value.u.charVal, CPageParams(PAGE_DETAILS, &vui), "", fromRootLevel);
 				}
 				break;
 			}

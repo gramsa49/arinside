@@ -22,7 +22,7 @@ class CDocCharMenuDetails :
 	public CDocBase
 {
 public:
-	CDocCharMenuDetails(unsigned int menuInsideId, int rootLevel);
+	CDocCharMenuDetails(unsigned int menuInsideId);
 	~CDocCharMenuDetails(void);
 
 	void Documentation();

@@ -49,10 +49,10 @@ private:
 	void WorkflowDoc();
 
 
-	string AllFields(string fName);
-	void AllFieldsCsv(string fName);
-	string AllFieldsJoin(string fName);
-	void AllFieldsJoinCsv(string fName);
+	string AllFields();
+	void AllFieldsCsv();
+	string AllFieldsJoin();
+	void AllFieldsJoinCsv();
 
 	string TypeDetails();
 	string ContainerReferences();

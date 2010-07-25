@@ -17,10 +17,10 @@
 #include "stdafx.h"
 #include "ARAssignHelper.h"
 
-CARAssignHelper::CARAssignHelper(CARInside &arIn, string dir, int rootLevel, string objName, int objType, string schemaName1, string schemaName2)
+CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, string objName, int objType, string schemaName1, string schemaName2)
 {
 	this->arIn = &arIn;
-	this->dir = dir;
+	//this->dir = dir;
 	this->rootLevel = rootLevel;
 
 	this->objName = objName;

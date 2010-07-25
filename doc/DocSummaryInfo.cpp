@@ -46,11 +46,6 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddColumn(10, "Objects");		
 		tblListObjectInfo.AddColumn(90, "Description");
 
-		CTableRow row("cssStdRow");		
-		row.AddCell(CTableCell((int)this->pInside->alList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Active Links", "active_link/index.htm", "", 0)));
-		tblListObjectInfo.AddRow(row);
-
 		unsigned int nWebservice = 0;
 		unsigned int nAlGuide = 0;
 		unsigned int nFilterGuide = 0;
@@ -92,64 +87,70 @@ void CDocSummaryInfo::Documentation()
 			}
 		}
 
+		CTableRow row("cssStdRow");
+		row.AddCell(CTableCell((int)this->pInside->alList.GetCount()));
+		row.AddCell(CTableCell(CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK) , "", 0)));
+		tblListObjectInfo.AddRow(row);
+
+
 		row.ClearCells();
 		row.AddCell(CTableCell(nWebservice));
-		row.AddCell(CTableCell(CWebUtil::Link("Web Services", "webservice/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Web Services", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell(nAlGuide));
-		row.AddCell(CTableCell(CWebUtil::Link("Active Link Guides", "active_link_guide/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell(nFilterGuide));
-		row.AddCell(CTableCell(CWebUtil::Link("Filter Guides", "filter_guide/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Filter Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell(nPacklist));
-		row.AddCell(CTableCell(CWebUtil::Link("Packing Lists", "packing_list/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Packing Lists", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell(nApplication));
-		row.AddCell(CTableCell(CWebUtil::Link("Applications", "application/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Applications", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->escalationList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Escalations", "escalation/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->filterList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Filters", "filter/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->groupList.size()));
-		row.AddCell(CTableCell(CWebUtil::Link("Groups", "group/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Groups", CPageParams(PAGE_OVERVIEW, DATA_TYPE_GROUP), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->menuList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Menus", "menu/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Menus", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->roleList.size()));
-		row.AddCell(CTableCell(CWebUtil::Link("Roles", "role/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Roles", CPageParams(PAGE_OVERVIEW, DATA_TYPE_ROLE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->schemaList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Forms", "schema/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->userList.size()));
-		row.AddCell(CTableCell(CWebUtil::Link("Users", "user/index.htm", "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Users", CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -157,7 +158,7 @@ void CDocSummaryInfo::Documentation()
 		{
 			row.ClearCells();
 			row.AddCell(CTableCell(this->pInside->imageList.GetCount()));
-			row.AddCell(CTableCell(CWebUtil::Link("Images", "image/index.htm", "", 0)));
+			row.AddCell(CTableCell(CWebUtil::Link("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "", 0)));
 			tblListObjectInfo.AddRow(row);
 		}
 #endif

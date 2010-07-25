@@ -17,6 +17,8 @@
 #include "stdafx.h"
 #include "ARRole.h"
 
+using namespace OUTPUT;
+
 CARRole::CARRole(int insideId, string requestId)
 : CARDataObject(insideId)
 {
@@ -29,5 +31,6 @@ CARRole::~CARRole(void)
 
 string CARRole::GetURL(int rootLevel)
 {
-	return CWebUtil::Link(this->roleName, CWebUtil::RootPath(rootLevel)+"role/"+CWebUtil::DocName(this->FileID()), "doc.gif", rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(this->roleName, file, "doc.gif", rootLevel);
 }

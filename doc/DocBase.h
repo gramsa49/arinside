@@ -32,6 +32,6 @@ public:
 
 protected:
 	CARInside *pInside;
-	string path;
-	int rootLevel;
+	string path; // TODO: this should be remove completly. This is an abstract class .. derived class can use IFileStructure
+	int rootLevel; // TODO: this should be remove completly. This is an abstract class .. derived class can use IFileStructure
 };

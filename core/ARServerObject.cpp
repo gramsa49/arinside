@@ -16,6 +16,9 @@
 
 #include "stdafx.h"
 #include "ARServerObject.h"
+#include "../output/WebUtil.h"
+
+using namespace OUTPUT;
 
 CARServerObjectWithData::CARServerObjectWithData(int insideId)
 : CARServerObject(insideId)

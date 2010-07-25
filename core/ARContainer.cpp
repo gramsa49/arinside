@@ -56,9 +56,8 @@ CARServerObject* CARContainer::Clone()
 
 string CARContainer::GetURL(int rootLevel, bool showImage)
 {
-	unsigned int type = GetType();
-	string tmp = CWebUtil::RootPath(rootLevel)+CAREnum::ContainerDir(type)+"/"+this->FileID()+"/"+CWebUtil::DocName("index");
-	return CWebUtil::Link(GetName(), tmp, (showImage ? CAREnum::ContainerImage(type) : ""), rootLevel);
+	CPageParams file(PAGE_DETAILS, this);	
+	return CWebUtil::Link(GetName(), file, (showImage ? CAREnum::ContainerImage(GetType()) : ""), rootLevel);
 }
 
 string CARContainer::GetName()

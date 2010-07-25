@@ -42,6 +42,11 @@ public:
 	const ARAccessNameType& GetLastChanged() const;
 	const char* GetChangeDiary() const;
 
+	// implement access functions
+	char* GetType() const;
+	char* GetDescription() const;
+	const ARImageDataStruct& GetData() const;
+	
 	string GetURL(int rootLevel, bool showImage = true);
 	
 	// class type support

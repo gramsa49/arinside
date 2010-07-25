@@ -20,7 +20,6 @@
 CDocApplicationDetails::CDocApplicationDetails(CARContainer &application)
 : pApp(application)
 {
-	this->rootLevel = 2;
 }
 
 CDocApplicationDetails::~CDocApplicationDetails(void)
@@ -31,12 +30,14 @@ void CDocApplicationDetails::Documentation()
 {
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_APP)+"/"+ this->pApp.FileID();
+		CPageParams file(PAGE_DETAILS, &pApp);
+		this->rootLevel = file->GetRootLevel();
+		string dir = file->GetPath();
 
 		CWindowsUtil winUtil(pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage("index", this->pApp.GetName(), rootLevel, pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), this->pApp.GetName(), rootLevel, pInside->appConfig);
 
 			//ContentHead informations
 			webPage.AddContentHead(CWebUtil::LinkToApplicationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pApp.GetName()));

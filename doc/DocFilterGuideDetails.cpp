@@ -20,7 +20,6 @@
 CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &filterGuide)
 {
 	this->pFilterGuide = &filterGuide;
-	this->rootLevel = 2;
 }
 
 CDocFilterGuideDetails::~CDocFilterGuideDetails(void)
@@ -28,15 +27,18 @@ CDocFilterGuideDetails::~CDocFilterGuideDetails(void)
 }
 
 void CDocFilterGuideDetails::Documentation()
-{
+{	
+	CPageParams file(PAGE_DETAILS, pFilterGuide);
+	this->rootLevel = file->GetRootLevel();
+
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_FILTER_GUIDE)+"/"+pFilterGuide->FileID();
+		string dir = file->GetPath(); // CAREnum::ContainerDir(ARCON_FILTER_GUIDE)+"/"+pFilterGuide->FileID();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage("index", pFilterGuide->GetName(), rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), pFilterGuide->GetName(), rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;

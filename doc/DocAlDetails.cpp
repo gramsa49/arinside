@@ -16,12 +16,11 @@
 
 #include "stdafx.h"
 #include "DocAlDetails.h"
+#include "../output/IFileStructure.h"
 
-CDocAlDetails::CDocAlDetails(int alInsideId, int rootLevel)
+CDocAlDetails::CDocAlDetails(int alInsideId)
 : al(alInsideId)
 {
-	this->path = "active_link/" + CARObject::FileID(alInsideId);
-	this->rootLevel = rootLevel;
 	this->props = NULL;
 }
 
@@ -31,13 +30,16 @@ CDocAlDetails::~CDocAlDetails(void)
 
 void CDocAlDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, &al);
+	this->rootLevel = file->GetRootLevel();
+
 	try
 	{
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(file->GetPath())>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("index", this->al.GetName(), this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), this->al.GetName(), this->rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -146,7 +148,7 @@ void CDocAlDetails::Documentation()
 			//History		
 			webPage.AddContent(this->pInside->ServerObjectHistory(&this->al, this->rootLevel));
 
-			webPage.SaveInFolder(path);
+			webPage.SaveInFolder(file->GetPath());
 
 			delete props; props = NULL;
 		}
@@ -294,7 +296,7 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 		pgStrm << "Run If Qualification: <br/>" << strmTmp.str();
 
 		//If-Actions		
-		CDocAlActionStruct actionStruct(*this->pInside, this->al, schemaName, this->path, this->rootLevel);
+		CDocAlActionStruct actionStruct(*this->pInside, this->al, schemaName, this->rootLevel);
 		pgStrm << actionStruct.Get("If", this->al.GetIfActions());
 
 		//Else-Actions

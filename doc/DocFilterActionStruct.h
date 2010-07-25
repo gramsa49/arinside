@@ -25,7 +25,7 @@ using namespace OUTPUT;
 class CDocFilterActionStruct
 {
 public:
-	CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, string dir, int rootLevel, int structItemType);
+	CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType);
 	~CDocFilterActionStruct(void);
 
 public:
@@ -36,7 +36,6 @@ private:
 	CARServerObject *obj;
 	string schemaName;
 	int schemaInsideId;
-	string dir;
 	int rootLevel;
 	int structItemType;
 	string ifElse;

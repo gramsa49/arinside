@@ -25,7 +25,7 @@ class CDocAlDetails :
 	public CDocBase
 {
 public:
-	CDocAlDetails(int alInsideId, int rootLevel);
+	CDocAlDetails(int alInsideId);
 	~CDocAlDetails(void);
 
 	void Documentation();

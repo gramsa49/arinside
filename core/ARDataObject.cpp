@@ -16,6 +16,9 @@
 
 #include "stdafx.h"
 #include "ARDataObject.h"
+#include "../output/WebUtil.h"
+
+using namespace OUTPUT;
 
 CARDataObject::CARDataObject(int insideId)
 : CARObject(insideId)

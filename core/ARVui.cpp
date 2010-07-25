@@ -18,6 +18,7 @@
 #include "ARVui.h"
 #include "../lists/ARVUIList.h"
 
+// TODO: write a description about how to use both types of calling this constructor
 CARVui::CARVui(unsigned int SchemaInsideId, unsigned int vuiId, int SchemaVuiIndex)
 : CARServerObject(vuiId), schema(SchemaInsideId)
 {
@@ -71,11 +72,7 @@ CARServerObject* CARVui::Clone()
 
 string CARVui::GetURL(int rootLevel, bool showImage)
 {
-	stringstream tmp;
-	tmp.str("");
-
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << schema.GetInsideId() << "/" << CWebUtil::DocName("vui_" + this->FileID());	
-	return CWebUtil::Link(this->GetName(), tmp.str(), "", rootLevel);
+	return CWebUtil::Link(this->GetName(), CPageParams(PAGE_DETAILS, this), "", rootLevel);
 }
 
 string CARVui::webAlias()
@@ -190,4 +187,9 @@ int CARVui::GetType()
 const ARPropList& CARVui::GetProps() const
 {
 	return vuiList->VUIGetProps(vuiIndex);
+}
+
+const CARSchema& CARVui::GetSchema() const
+{
+	return this->schema;
 }

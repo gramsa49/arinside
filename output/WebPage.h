@@ -31,7 +31,7 @@ namespace OUTPUT
 		void AddContentHead(const string &description);
 		void SetNavigation(const string &nav);
 
-		int SaveInFolder(string path);	
+		int SaveInFolder(const string &path);
 
 	private:
 		vector<string> bodyContent;

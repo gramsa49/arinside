@@ -99,10 +99,48 @@ void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string pa
 #else
 	// TODO: implement loading of resources for *nix-systems. Use objcopy and
 	// a table to find out the mem-address of the id given via res-parameter.
+	switch (res)
+	{
+		case ID_ACTIVE_LINK: data = _binary_res_active_link_gif_start; len = (unsigned int)_binary_res_active_link_gif_size; break;
+		case ID_AL_GUIDE: data = _binary_res_al_guide_gif_start; len = (unsigned int)_binary_res_al_guide_gif_size; break;
+		case ID_APPLICATION: data = _binary_res_application_gif_start; len = (unsigned int)_binary_res_application_gif_size; break;
+		case ID_ARS_EDIT: data = _binary_res_ars_edit_gif_start; len = (unsigned int)_binary_res_ars_edit_gif_size; break;
+		case ID_CHAPTER: data = _binary_res_chapter_gif_start; len = (unsigned int)_binary_res_chapter_gif_size; break;
+		case ID_DISABLED: data = _binary_res_disabled_gif_start; len = (unsigned int)_binary_res_disabled_gif_size; break;
+		case ID_DOC: data = _binary_res_doc_gif_start; len = (unsigned int)_binary_res_doc_gif_size; break;
+		case ID_DOWN: data = _binary_res_down_gif_start; len = (unsigned int)_binary_res_down_gif_size; break;
+		case ID_EDIT: data = _binary_res_edit_gif_start; len = (unsigned int)_binary_res_edit_gif_size; break;
+		case ID_EMPTY_LIST: data = _binary_res_empty_list_gif_start; len = (unsigned int)_binary_res_empty_list_gif_size; break;
+		case ID_ESCALATION: data = _binary_res_escalation_gif_start; len = (unsigned int)_binary_res_escalation_gif_size; break;
+		case ID_FILTER: data = _binary_res_filter_gif_start; len = (unsigned int)_binary_res_filter_gif_size; break;
+		case ID_FILTER_GUIDE: data = _binary_res_filter_guide_gif_start; len = (unsigned int)_binary_res_filter_guide_gif_size; break;
+		case ID_FOLDER: data = _binary_res_folder_gif_start; len = (unsigned int)_binary_res_folder_gif_size; break;
+		case ID_GROUP: data = _binary_res_group_gif_start; len = (unsigned int)_binary_res_group_gif_size; break;
+		case ID_HIDDEN: data = _binary_res_hidden_gif_start; len = (unsigned int)_binary_res_hidden_gif_size; break;
+		case ID_IMAGE: data = _binary_res_image_gif_start; len = (unsigned int)_binary_res_image_gif_size; break;
+		case ID_INFO: data = _binary_res_info_gif_start; len = (unsigned int)_binary_res_info_gif_size; break;
+		case ID_MENU: data = _binary_res_menu_gif_start; len = (unsigned int)_binary_res_menu_gif_size; break;
+		case ID_NEXT: data = _binary_res_next_gif_start; len = (unsigned int)_binary_res_next_gif_size; break;
+		case ID_PACKING_LIST: data = _binary_res_packing_list_gif_start; len = (unsigned int)_binary_res_packing_list_gif_size; break;
+		case ID_PREV: data = _binary_res_prev_gif_start; len = (unsigned int)_binary_res_prev_gif_size; break;
+		case ID_SCHEMA: data = _binary_res_schema_gif_start; len = (unsigned int)_binary_res_schema_gif_size; break;
+		case ID_SCRIPT: data = _binary_res_script_js_start; len = (unsigned int)_binary_res_script_js_size; break;
+		case ID_SEARCH: data = _binary_res_search_gif_start; len = (unsigned int)_binary_res_search_gif_size; break;
+		case ID_SERVER: data = _binary_res_server_gif_start; len = (unsigned int)_binary_res_server_gif_size; break;
+		case ID_SORT_ASC: data = _binary_res_sort_asc_gif_start; len = (unsigned int)_binary_res_sort_asc_gif_size; break;
+		case ID_SORT_DESC: data = _binary_res_sort_desc_gif_start; len = (unsigned int)_binary_res_sort_desc_gif_size; break;
+		case ID_SORTSCRIPT: data = _binary_res_sortscript_js_start; len = (unsigned int)_binary_res_sortscript_js_size; break;
+		case ID_STYLE_CSS: data = _binary_res_style_css_start; len = (unsigned int)_binary_res_style_css_size; break;
+		case ID_TABSCRIPT: data = _binary_res_tabscript_js_start; len = (unsigned int)_binary_res_tabscript_js_size; break;
+		case ID_UP: data = _binary_res_up_gif_start; len = (unsigned int)_binary_res_up_gif_size; break;
+		case ID_USER: data = _binary_res_user_gif_start; len = (unsigned int)_binary_res_user_gif_size; break;
+		case ID_VISIBLE: data = _binary_res_visible_gif_start; len = (unsigned int)_binary_res_visible_gif_size; break;
+		case ID_WEBSERVICE: data = _binary_res_webservice_gif_start; len = (unsigned int)_binary_res_webservice_gif_size; break;
+	}
 #endif
 
 	stringstream fullFileName;
-	fullFileName << path << "\\" << fileName;
+	fullFileName << path << "/" << fileName;
 
 	try
 	{

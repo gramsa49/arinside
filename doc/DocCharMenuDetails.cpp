@@ -17,11 +17,13 @@
 #include "stdafx.h"
 #include "DocCharMenuDetails.h"
 
-CDocCharMenuDetails::CDocCharMenuDetails(unsigned int menuInsideId, int rootLevel)
+CDocCharMenuDetails::CDocCharMenuDetails(unsigned int menuInsideId)
 : menu(menuInsideId)
 {
-	this->path = "menu/" + menu.FileID();
-	this->rootLevel = rootLevel;
+	CPageParams file(PAGE_DETAILS, &menu);
+
+	this->path = file->GetPath();
+	this->rootLevel = file->GetRootLevel();
 }
 
 CDocCharMenuDetails::~CDocCharMenuDetails(void)
@@ -30,12 +32,14 @@ CDocCharMenuDetails::~CDocCharMenuDetails(void)
 
 void CDocCharMenuDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, &menu);
+
 	try
 	{
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
-			CWebPage webPage("index", this->menu.GetName(), this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), this->menu.GetName(), this->rootLevel, this->pInside->appConfig);
 
 			const ARCharMenuStruct& menuDef = menu.GetDefinition();
 			//ContentHead informations

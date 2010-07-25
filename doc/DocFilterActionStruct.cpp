@@ -18,11 +18,10 @@
 #include "DocFilterActionStruct.h"
 #include "../tinyxml/tinyxml.h"
 
-CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, string dir, int rootLevel, int structItemType)
+CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType)
 {
 	this->arIn = &arIn;
 	this->obj = &obj;	
-	this->dir = dir;
 	this->rootLevel = rootLevel;
 	this->schemaName = schemaName;
 	this->schemaInsideId = this->arIn->SchemaGetInsideId(this->schemaName);
@@ -57,11 +56,8 @@ string CDocFilterActionStruct::Get(string ifElse, const ARFilterActionList &actL
 			string tmpActionType = CAREnum::FilterAction(action.action);
 			if(this->structItemType == AR_STRUCT_ITEM_XML_FILTER)
 			{
-				stringstream tmpLink;
-				tmpLink.str("");
-
-				tmpLink << "../../filter/index_action_" << action.action << "." << CWebUtil::WebPageSuffix();				
-				tmpActionType = CWebUtil::Link(CAREnum::FilterAction(action.action), tmpLink.str(), "", rootLevel);
+				CPageParams file(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_FILTER, action.action);
+				tmpActionType = CWebUtil::Link(CAREnum::FilterAction(action.action), file, "", rootLevel);
 			}
 			CTableCell cellActionType(tmpActionType.c_str(), "");			
 
@@ -640,7 +636,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			{
 				strm << setFieldInfo << ":<br/>" << endl;			
 
-				CARAssignHelper assignHelper(*arIn, dir, rootLevel, obj->GetName(), this->structItemType, schemaName, schemaName2);
+				CARAssignHelper assignHelper(*arIn, rootLevel, obj->GetName(), this->structItemType, schemaName, schemaName2);
 				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 			}
 			else
@@ -758,7 +754,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		else
 		{
 			strm << "<br/>" << endl;
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->GetName(), this->structItemType, schemaName, pushSchema);
+			CARAssignHelper assignHelper(*arIn, rootLevel, this->obj->GetName(), this->structItemType, schemaName, pushSchema);
 			strm << assignHelper.PushFieldsAssignment(action, nAction, ifElse);
 		}
 	}
@@ -1011,7 +1007,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		strm << "Input Mapping: "; if (action.inputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.inputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->GetName(), this->structItemType, serviceSchema, schemaName);
+			CARAssignHelper assignHelper(*arIn, rootLevel, this->obj->GetName(), this->structItemType, serviceSchema, schemaName);
 			strm << assignHelper.ServiceAssignment(action.inputFieldMapping, nAction, ifElse, "Service Input Mapping");
 		}
 
@@ -1019,7 +1015,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		strm << "Output Mapping: "; if (action.outputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.outputFieldMapping.numItems > 0)
 		{
-			CARAssignHelper assignHelper(*arIn, dir, rootLevel, this->obj->GetName(), this->structItemType, schemaName, serviceSchema);
+			CARAssignHelper assignHelper(*arIn, rootLevel, this->obj->GetName(), this->structItemType, schemaName, serviceSchema);
 			strm << assignHelper.ServiceAssignment(action.outputFieldMapping, nAction, ifElse, "Service Output Mapping");
 		}
 	}

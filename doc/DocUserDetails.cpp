@@ -20,7 +20,6 @@
 CDocUserDetails::CDocUserDetails(CARUser &arUser)
 {
 	this->pUser = &arUser;
-	this->rootLevel = 1;
 }
 
 CDocUserDetails::~CDocUserDetails(void)
@@ -29,9 +28,12 @@ CDocUserDetails::~CDocUserDetails(void)
 
 void CDocUserDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, pUser);
+	this->rootLevel = file->GetRootLevel();
+
 	try
 	{
-		CWebPage webPage(this->pUser->FileID(), this->pUser->loginName, this->rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), this->pUser->loginName, this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(CWebUtil::LinkToUserIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pUser->loginName));
@@ -86,7 +88,7 @@ void CDocUserDetails::Documentation()
 		//Histoy
 		webPage.AddContent(this->pInside->DataObjectHistory(this->pUser, this->rootLevel));
 
-		webPage.SaveInFolder("user");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{

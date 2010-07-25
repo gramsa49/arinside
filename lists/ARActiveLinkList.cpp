@@ -18,6 +18,7 @@
 #include "ARActiveLinkList.h"
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
+#include "../output/IFileStructure.h"
 #include "BlackList.h"
 
 CARActiveLinkList::CARActiveLinkList(void)
@@ -336,9 +337,9 @@ void CARActiveLinkList::Sort()
 
 string CARActiveLinkList::ActiveLinkGetURL(unsigned int index, int rootLevel)
 {
-	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "active_link/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(ActiveLinkGetName(index), strmTmp.str(), "active_link.gif", rootLevel); 
+	CARActiveLink al(index);
+	CPageParams file(PAGE_DETAILS,&al);
+	return CWebUtil::Link(ActiveLinkGetName(index), file, "active_link.gif", rootLevel); 
 }
 
 //void CARActiveLinkList::AddReference(const CImageRefItem &referenceItem)

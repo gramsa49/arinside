@@ -23,7 +23,7 @@ class CDocImageDetails :
 	public CDocBase
 {
 public:
-	CDocImageDetails(int imageIndex, int rootLevel);
+	CDocImageDetails(int imageIndex);
 	~CDocImageDetails(void);
 
 	void Documentation();

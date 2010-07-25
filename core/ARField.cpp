@@ -63,9 +63,8 @@ CARServerObject* CARField::Clone()
 
 string CARField::GetURL(int rootLevel, bool showImage)
 {
-	stringstream tmp;
-	tmp << CWebUtil::RootPath(rootLevel) << "schema/" << schema.GetInsideId() << "/" << CWebUtil::DocName(this->FileID());
-	return CWebUtil::Link(GetName(), tmp.str(), "", rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(GetName(), file, "", rootLevel);
 }
 
 string CARField::GetName()
@@ -161,4 +160,9 @@ const ARFieldLimitStruct& CARField::GetLimits() const
 const ARDisplayInstanceList& CARField::GetDisplayInstances() const
 {
 	return fieldList->FieldGetDisplayInstances(fieldIndex);
+}
+
+const CARSchema& CARField::GetSchema() const
+{
+	return schema;
 }

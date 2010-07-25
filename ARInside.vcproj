@@ -411,6 +411,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARDataObjectType.h"
+				>
+			</File>
+			<File
 				RelativePath=".\core\ARDayStructHelper.cpp"
 				>
 			</File>
@@ -831,6 +835,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\FileNaming.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\FileNaming.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Output\FilterTable.cpp"
 				>
 			</File>
@@ -844,6 +856,14 @@
 			</File>
 			<File
 				RelativePath=".\Output\GroupTable.h"
+				>
+			</File>
+			<File
+				RelativePath=".\output\IFileStructure.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\IFileStructure.h"
 				>
 			</File>
 			<File

@@ -326,7 +326,7 @@ void CARFilterList::Sort()
 
 string CARFilterList::FilterGetURL(unsigned int index, int rootLevel)
 {
-	stringstream strmTmp;
-	strmTmp << CWebUtil::RootPath(rootLevel) << "filter/" << index << "/" << CWebUtil::DocName("index");
-	return CWebUtil::Link(FilterGetName(index), strmTmp.str(), "filter.gif", rootLevel); 
+	CARFilter flt(index);
+	CPageParams file(PAGE_DETAILS, &flt);
+	return CWebUtil::Link(FilterGetName(index), file, "filter.gif", rootLevel); 
 }

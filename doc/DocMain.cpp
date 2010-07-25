@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocMain.h"
+#include "../output/IFileStructure.h"
 
 CDocMain::CDocMain()
 {
@@ -42,10 +43,12 @@ int CDocMain::Index()
 
 void CDocMain::ServerInfoList()
 {
+	CPageParams file(PAGE_SERVER_INFO);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage("server", "Server details", rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Server details", rootLevel, this->pInside->appConfig);
 		CTable tbl("serverDetailList", "TblObjectList");
 		tbl.AddColumn(40, "API CALL");
 		tbl.AddColumn(60, "Result");
@@ -70,7 +73,7 @@ void CDocMain::ServerInfoList()
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder("other");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -78,7 +81,7 @@ void CDocMain::ServerInfoList()
 	}
 }
 
-string CDocMain::ShortMenu(string curCharacter)
+string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage)
 {
 	stringstream strm;
 	try
@@ -87,12 +90,13 @@ string CDocMain::ShortMenu(string curCharacter)
 
 		string strValue = "abcdefghijklmnopqrstuvwxyz0123456789";
 		for (unsigned int i = 0; i < strValue.size(); ++i) 
-		{	
-			stringstream tmp;
-			tmp << "index_" << std::string(1, strValue.at(i));
-
+		{
 			if(std::string(1, strValue.at(i)) != curCharacter)
-				strm << "<td>" << CWebUtil::Link( std::string(1, strValue.at(i)), CWebUtil::DocName(tmp.str()), "", 1) << "</td>" << endl;
+			{
+				// copy all page params over and change the page we want to link to
+				CPageParams linkTo(curPage, strValue.at(i));
+				strm << "<td>" << CWebUtil::Link( std::string(1, strValue.at(i)), linkTo , "", curPage->GetRootLevel()) << "</td>" << endl;
+			}
 			else
 				strm << "<td>" << std::string(1, strValue.at(i)) << "</td>" << endl;			
 		}
@@ -100,7 +104,11 @@ string CDocMain::ShortMenu(string curCharacter)
 		if(curCharacter == "?")
 			strm << "<td>" << "#" << "</td>" << endl;
 		else
-			strm << "<td>" << CWebUtil::Link( "#", CWebUtil::DocName("index_other"), "", 1) << "</td>" << endl;	
+		{
+			// copy all page params over and change the page we want to link to
+			CPageParams linkTo(curPage, PAGE_OVERVIEW_OTHER);
+			strm << "<td>" << CWebUtil::Link( "#", linkTo, "", curPage->GetRootLevel()) << "</td>" << endl;	
+		}
 
 
 		strm << "</tr></table>" << endl;
@@ -112,12 +120,12 @@ string CDocMain::ShortMenu(string curCharacter)
 	return strm.str();
 }
 
-void CDocMain::SchemaList(int nType, string fileName, string title, string searchChar)
+void CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar)
 {
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, title, rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		CSchemaTable *tbl = new CSchemaTable(*this->pInside);
 
@@ -163,13 +171,13 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 		if(nType != AR_SCHEMA_NONE)
 			strmTmp << MenuSeparator << CAREnum::SchemaType(nType);
 
-		strmTmp << ShortMenu(searchChar);
+		strmTmp << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("schema");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -177,14 +185,16 @@ void CDocMain::SchemaList(int nType, string fileName, string title, string searc
 	}
 }
 
-void CDocMain::ActiveLinkList(string fileName, string searchChar)
+void CDocMain::ActiveLinkList(string searchChar)
 {
 	if (searchChar.size() != 1) return;
 
+	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_ACTIVE_LINK);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Active Link List", 1, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Active Link List", rootLevel, this->pInside->appConfig);
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
@@ -216,14 +226,14 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 
 		stringstream strmTmp;
 		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToActiveLinkIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar);
+		strmTmp << CWebUtil::LinkToActiveLinkIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
 
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("active_link");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -231,17 +241,19 @@ void CDocMain::ActiveLinkList(string fileName, string searchChar)
 	}
 }
 
-void CDocMain::ActiveLinkActionList(string fileName)
+void CDocMain::ActiveLinkActionList()
 {
+	CPageParams file(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK);
+	
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Active Link Actions", rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Active Link Actions", rootLevel, this->pInside->appConfig);
 
 		CTable tbl("alList", "TblObjectList");
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("active_link.gif", rootLevel) << CWebUtil::Link("Active Links", CWebUtil::DocName("index"), "", 1) << " with a specified action in If/Else list:";
+		strmTmp << CWebUtil::ImageTag("active_link.gif", rootLevel) << CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "", rootLevel) << " with a specified action in If/Else list:";
 
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Active Link Action (Items count if/else)");
@@ -260,11 +272,8 @@ void CDocMain::ActiveLinkActionList(string fileName)
 			//Create a new webpage for every action
 			ActiveLinkActionDetails(nActionType, nCountIf, nCountElse);
 
-			stringstream linkto;
-			linkto << "index_action_" << nActionType;
-
 			strmTmp.str("");
-			strmTmp << CWebUtil::Link(CAREnum::ActiveLinkAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
+			strmTmp << CWebUtil::Link(CAREnum::ActiveLinkAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ACTIVE_LINK, nActionType), "doc.gif", rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
 
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
@@ -274,7 +283,7 @@ void CDocMain::ActiveLinkActionList(string fileName)
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder("active_link");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -284,13 +293,14 @@ void CDocMain::ActiveLinkActionList(string fileName)
 
 void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
+	CPageParams file(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ACTIVE_LINK, nActionType);
 	try
 	{		
 		int rootLevel = 1;
 
-		stringstream strmTmp;
-		strmTmp << "index_action_" << nActionType;
-		CWebPage webPage(strmTmp.str(), "Active Link Actions", rootLevel, this->pInside->appConfig);
+		//stringstream strmTmp;
+		//strmTmp << "index_action_" << nActionType;
+		CWebPage webPage(file->GetFileName(), "Active Link Actions", rootLevel, this->pInside->appConfig);
 
 		CAlTable *tbl = new CAlTable(*this->pInside);	
 
@@ -327,14 +337,14 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 			}
 		}
 
-		strmTmp.str("");
-		strmTmp << CWebUtil::Link("Active Links", CWebUtil::DocName("index_action"), "active_link.gif", 1) << " with " << CAREnum::ActiveLinkAction(nActionType) << " action";
+		stringstream strmTmp;
+		strmTmp << CWebUtil::Link("Active Links", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "active_link.gif", rootLevel) << " with " << CAREnum::ActiveLinkAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("active_link");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -343,12 +353,14 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-void CDocMain::FilterList(string fileName, string searchChar)
+void CDocMain::FilterList(string searchChar)
 {
+	CPageParams file((unsigned int)searchChar.at(0), AR_STRUCT_ITEM_XML_FILTER);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Filter List", 1, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Filter List", file->GetRootLevel(), this->pInside->appConfig);
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
@@ -380,13 +392,13 @@ void CDocMain::FilterList(string fileName, string searchChar)
 
 		stringstream strmTmp;
 		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToFilterIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar);
+		strmTmp << CWebUtil::LinkToFilterIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("filter");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -394,17 +406,19 @@ void CDocMain::FilterList(string fileName, string searchChar)
 	}
 }
 
-void CDocMain::FilterActionList(string fileName)
+void CDocMain::FilterActionList()
 {
+	CPageParams file(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Filter Actions", rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Filter Actions", rootLevel, this->pInside->appConfig);
 
 		CTable tbl("filterList", "TblObjectList");
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("filter.gif", rootLevel) << CWebUtil::Link("Filter", CWebUtil::DocName("index"), "", rootLevel) << " with a specified action in If/Else list:";
+		strmTmp << CWebUtil::ImageTag("filter.gif", rootLevel) << CWebUtil::Link("Filter", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", rootLevel) << " with a specified action in If/Else list:";
 
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Filter Action (Items count if/else)");
@@ -421,14 +435,11 @@ void CDocMain::FilterActionList(string fileName)
 			int nCountIf = 0;
 			int nCountElse = 0;
 
-			stringstream linkto;
-			linkto << "index_action_" << nActionType;
-
 			// Create a new webpage for every action
 			FilterActionDetails(nActionType, nCountIf, nCountElse);
 
 			strmTmp.str("");
-			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
+			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_FILTER, nActionType), "doc.gif", rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
 
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));		
@@ -438,7 +449,7 @@ void CDocMain::FilterActionList(string fileName)
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder("filter");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -448,13 +459,15 @@ void CDocMain::FilterActionList(string fileName)
 
 void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
+	CPageParams file(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_FILTER, nActionType);
+
 	try
 	{
-		int rootLevel = 1;
+		int rootLevel = file->GetRootLevel();
 
-		stringstream strmTmp;
-		strmTmp << "index_action_" << nActionType;
-		CWebPage webPage(strmTmp.str(), "Filter Actions", rootLevel, this->pInside->appConfig);
+		//stringstream strmTmp;
+		//strmTmp << "index_action_" << nActionType;
+		CWebPage webPage(file->GetFileName(), "Filter Actions", rootLevel, this->pInside->appConfig);
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
@@ -491,14 +504,14 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 			}
 		}
 
-		strmTmp.str("");
-		strmTmp << CWebUtil::Link("Filter", CWebUtil::DocName("index_action"), "filter.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
+		stringstream strmTmp;
+		strmTmp << CWebUtil::Link("Filter", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("filter");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -506,12 +519,14 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 	}
 }
 
-void CDocMain::EscalationList(string fileName, string searchChar)
+void CDocMain::EscalationList(string searchChar)
 {
+	CPageParams file(searchChar.at(0), AR_STRUCT_ITEM_XML_ESCALATION);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Escalation List", 1, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Escalation List", rootLevel, this->pInside->appConfig);
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
@@ -542,13 +557,13 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 
 		stringstream strmTmp;
 		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToEscalationIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar);
+		strmTmp << CWebUtil::LinkToEscalationIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("escalation");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -556,17 +571,19 @@ void CDocMain::EscalationList(string fileName, string searchChar)
 	}
 }
 
-void CDocMain::EscalationActionList(string fileName)
+void CDocMain::EscalationActionList()
 {
+	CPageParams file(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION);
+
 	try
 	{
 		int rootLevel = 1;
-		CWebPage webPage(fileName, "Escalation Actions", rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), "Escalation Actions", rootLevel, this->pInside->appConfig);
 
 		CTable tbl("escalList", "TblObjectList");
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("escalation.gif", rootLevel) << CWebUtil::Link("Escalation", CWebUtil::DocName("index"), "", rootLevel) << " with a specified action in If/Else list:";
+		strmTmp << CWebUtil::ImageTag("escalation.gif", rootLevel) << CWebUtil::Link("Escalation", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", rootLevel) << " with a specified action in If/Else list:";
 
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Escalation Action (Items count if/else)");
@@ -581,12 +598,8 @@ void CDocMain::EscalationActionList(string fileName)
 			//Create a new webpage for every action
 			EscalationActionDetails(nActionType, nCountIf, nCountElse);
 
-			stringstream linkto;
-			linkto << "index_action_" << nActionType;
-
 			strmTmp.str("");
-			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CWebUtil::DocName(linkto.str()), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
-
+			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ESCALATION, nActionType), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
 
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
@@ -596,7 +609,7 @@ void CDocMain::EscalationActionList(string fileName)
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder("escalation");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -607,13 +620,15 @@ void CDocMain::EscalationActionList(string fileName)
 
 void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseCount)
 {
+	CPageParams file(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ESCALATION, nActionType);
+
 	try
 	{
-		int rootLevel = 1;
+		int rootLevel = file->GetRootLevel();
 
-		stringstream strmTmp;
-		strmTmp << "index_action_" << nActionType;
-		CWebPage webPage(strmTmp.str(), "Escalation Actions", rootLevel, this->pInside->appConfig);
+		//stringstream strmTmp;
+		//strmTmp << "index_action_" << nActionType;
+		CWebPage webPage(file->GetFileName(), "Escalation Actions", rootLevel, this->pInside->appConfig);
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
@@ -650,14 +665,14 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 			}
 		}
 
-		strmTmp.str("");
-		strmTmp << CWebUtil::Link("Escalation", CWebUtil::DocName("index_action"), "escalation.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
+		stringstream strmTmp;
+		strmTmp << CWebUtil::Link("Escalation", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "escalation.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("escalation");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -666,12 +681,14 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-void CDocMain::CharMenuList(string fileName, string searchChar)
+void CDocMain::CharMenuList(string searchChar)
 {
+	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_CHAR_MENU);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "CharMenu List", 1, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "CharMenu List", 1, this->pInside->appConfig);
 
 		CMenuTable *tbl = new CMenuTable(*this->pInside);
 
@@ -708,7 +725,7 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 
 		stringstream strmTmp;
 		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToMenuIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar);
+		strmTmp << CWebUtil::LinkToMenuIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
@@ -716,7 +733,7 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 
 		webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
 
-		webPage.SaveInFolder("menu");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -724,12 +741,14 @@ void CDocMain::CharMenuList(string fileName, string searchChar)
 	}
 }
 
-void CDocMain::ContainerList(int nType, string fileName, string title, string searchChar)
+void CDocMain::ContainerList(int nType, string title, string searchChar)
 {
+	unsigned int page = (unsigned int)searchChar[0];
+	CPageParams file(page ,AR_STRUCT_ITEM_XML_CONTAINER, nType);
 	try
 	{
 		int rootLevel = 1;
-		CWebPage webPage(fileName, title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		CContainerTable *tbl = new CContainerTable(*this->pInside);
 
@@ -769,7 +788,7 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 
 		stringstream strmTmp;
 		strmTmp << CWebUtil::LinkToContainer(tbl->NumRows(), rootLevel, nType);
-		strmTmp << ShortMenu(searchChar);
+		strmTmp << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
@@ -777,7 +796,7 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 
 		webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
 
-		webPage.SaveInFolder(CAREnum::ContainerDir(nType));
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -785,12 +804,15 @@ void CDocMain::ContainerList(int nType, string fileName, string title, string se
 	}
 }
 
-void CDocMain::RoleList(string fileName, string searchChar)
+void CDocMain::RoleList(string searchChar)
 {
+	unsigned int page = (unsigned int)searchChar[0];
+	CPageParams file(page, DATA_TYPE_ROLE);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Role List", rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Role List", rootLevel, this->pInside->appConfig);
 
 		CRoleTable *tbl = new CRoleTable(*this->pInside);
 
@@ -826,13 +848,13 @@ void CDocMain::RoleList(string fileName, string searchChar)
 		}
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl->NumRows() << " Roles " << ShortMenu(searchChar);
+		strmTmp << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl->NumRows() << " Roles " << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("role");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -845,13 +867,15 @@ void CDocMain::ImageList(string fileName, string searchChar)
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// server version older than 7.5 ?? then there are no files to generate
 	if (pInside->CompareServerVersion(7,5) < 0) return;
-
 	if (searchChar.size() != 1) return;
+
+	unsigned int page = (unsigned int)searchChar[0];
+	CPageParams file(page, AR_STRUCT_ITEM_XML_IMAGE);
 
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Image List", rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Image List", rootLevel, this->pInside->appConfig);
 		CImageTable imgTable(*this->pInside);
 
 		unsigned int len = this->pInside->imageList.GetCount();
@@ -880,12 +904,12 @@ void CDocMain::ImageList(string fileName, string searchChar)
 
 		stringstream strmTmp;
 		strmTmp << CWebUtil::LinkToImageIndex(imgTable.NumRows(), rootLevel);
-		strmTmp << ShortMenu(searchChar);
+		strmTmp << ShortMenu(searchChar, file);
 		
 		imgTable.SetDescription(strmTmp.str());
 		
 		webPage.AddContent(imgTable.Print());
-		webPage.SaveInFolder("image");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -894,12 +918,15 @@ void CDocMain::ImageList(string fileName, string searchChar)
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 }
 
-void CDocMain::GroupList(string fileName, string searchChar)
+void CDocMain::GroupList(string searchChar)
 {
+	unsigned int page = (unsigned int)searchChar[0];
+	CPageParams file(page, DATA_TYPE_GROUP);
+
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(fileName, "Group List", rootLevel, this->pInside->appConfig);
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Group List", rootLevel, this->pInside->appConfig);
 
 		CGroupTable *tbl = new CGroupTable(*this->pInside);
 
@@ -936,13 +963,13 @@ void CDocMain::GroupList(string fileName, string searchChar)
 		}
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("group.gif", rootLevel) << tbl->NumRows() << " Groups " << ShortMenu(searchChar);
+		strmTmp << CWebUtil::ImageTag("group.gif", rootLevel) << tbl->NumRows() << " Groups " << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("group");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -950,12 +977,15 @@ void CDocMain::GroupList(string fileName, string searchChar)
 	}
 }
 
-void CDocMain::UserList(string fileName, string searchChar)
+void CDocMain::UserList(string searchChar)
 {
+	unsigned int page = (unsigned int)searchChar[0];
+	CPageParams file(page, DATA_TYPE_USER);
+
 	try
 	{
 		int rootLevel = 1;
-		CWebPage webPage(fileName, "User List", rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), "User List", rootLevel, this->pInside->appConfig);
 
 		CUserTable *tbl = new CUserTable(*this->pInside);
 
@@ -992,13 +1022,13 @@ void CDocMain::UserList(string fileName, string searchChar)
 		}
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("user.gif", rootLevel) << tbl->NumRows() << " Users " << ShortMenu(searchChar);;
+		strmTmp << CWebUtil::ImageTag("user.gif", rootLevel) << tbl->NumRows() << " Users " << ShortMenu(searchChar, file);
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder("user");
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1008,9 +1038,11 @@ void CDocMain::UserList(string fileName, string searchChar)
 
 void CDocMain::GlobalFieldList()
 {
+	CPageParams file(PAGE_GLOBALFIELS);
+
 	try
 	{
-		int rootLevel = 1;
+		int rootLevel = file->GetRootLevel();
 
 		//List of unique globoal fields
 		list<CARGlobalField> uiGlobalFieldList;
@@ -1042,7 +1074,7 @@ void CDocMain::GlobalFieldList()
 		}
 
 
-		CWebPage webPage("global_field_list", "Global Fields", rootLevel, this->pInside->appConfig);	
+		CWebPage webPage(file->GetFileName(), "Global Fields", rootLevel, this->pInside->appConfig);	
 
 		if(uiGlobalFieldList.size() > 0)
 		{
@@ -1098,7 +1130,7 @@ void CDocMain::GlobalFieldList()
 			webPage.AddContent("No global fields loaded.");
 		}
 
-		webPage.SaveInFolder("other");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1118,9 +1150,11 @@ bool CDocMain::SortByGlobalFieldId(const CARGlobalField& t1, const CARGlobalFiel
 
 void CDocMain::MessageList()
 {
+	CPageParams file(PAGE_MESSAGES);
+
 	try
 	{
-		int rootLevel = 1;	
+		int rootLevel = file->GetRootLevel();
 		int curMsgNumber = 0;
 		list<CMessageItem> listMsgItem;
 		listMsgItem.clear();
@@ -1231,7 +1265,7 @@ void CDocMain::MessageList()
 		}
 
 
-		CWebPage webPage("message_list", "Messages", rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), "Messages", rootLevel, this->pInside->appConfig);
 		if(listMsgItem.size() > 0)
 		{
 			Sort(listMsgItem);
@@ -1269,7 +1303,7 @@ void CDocMain::MessageList()
 			webPage.AddContent("No messages loaded.");
 		}
 
-		webPage.SaveInFolder("other");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{

@@ -49,6 +49,7 @@ public:
 	string targetFolder;
 	bool fileMode;
 	string objListXML;
+	bool oldNaming;
 
 	// BlackList
 	string blackList;

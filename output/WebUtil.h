@@ -16,8 +16,17 @@
 
 #pragma once
 
+#include "IFileStructure.h"
+
 namespace OUTPUT
 {
+	enum LinkTargetMode {
+		TARGET_MODE_SELF = 0,
+		TARGET_MODE_PARENT = 1,
+		TARGET_MODE_TOP = 2,
+		TARGET_MODE_BLANK = 3,
+	};
+
 	class CWebUtil
 	{
 	public:
@@ -26,9 +35,15 @@ namespace OUTPUT
 
 		static string RootPath(int level);	
 		static string Validate(string text);
-		static string Replace(string text);	
-		static string Link(string caption, string linkTo, string imgName, int rootLevel);
-		static string Link(string caption, string linkTo, string imgName, int rootLevel, bool validate);
+		//static string Replace(string text);
+
+		static string Link(const string& caption, const string& linkTo, const string &imgName, int rootLevel);
+		static string Link(const string& caption, const string& linkTo, const string &imgName, int rootLevel, bool validate);
+		static string Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel);
+		static string Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, bool validate);
+		static string Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, LinkTargetMode target);
+		static string Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, bool validate, LinkTargetMode target);
+
 		static string WebPageSuffix();
 		static string CsvPageSuffix();
 		static string ImageTag(string imgName, int rootLevel);
@@ -51,8 +66,10 @@ namespace OUTPUT
 		static string LinkToFilterGuideIndex(int objectCount, int rootLevel);
 		static string LinkToGroupIndex(int rootLevel);
 		static string LinkToGroupIndex(int objectCount, int rootLevel);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		static string LinkToImageIndex(int rootLevel);
 		static string LinkToImageIndex(int objectCount, int rootLevel);
+#endif
 		static string LinkToMenuIndex(int rootLevel);
 		static string LinkToMenuIndex(int objectCount, int rootLevel);
 		static string LinkToPackingListIndex(int rootLevel);
@@ -67,6 +84,6 @@ namespace OUTPUT
 		static string LinkToWebServiceIndex(int objectCount, int rootLevel);	
 		static string LinkToContainer(int objectCount, int rootLevel, int containerType);
 
-		static string LinkToHelper(string name, int objectCount, string folderName, string image, int rootLevel);
+		static string LinkToHelper(string name, int objectCount, const CPageParams& page, string image, int rootLevel);
 	};
 }

@@ -23,6 +23,7 @@ class CARRole :
 public:
 	CARRole(int insideId, string requestId);
 	~CARRole(void);
+	unsigned int GetDataType() { return DATA_TYPE_GROUP; }
 
 	string GetURL(int rootLevel);
 

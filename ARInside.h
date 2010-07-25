@@ -15,6 +15,10 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
+
+class IFileNamingFactory;
+class IFileStructure;
+
 #include "ARApi.h"
 #include "core/ARActiveLink.h"
 #include "core/ARFilter.h"
@@ -29,6 +33,7 @@
 #include "core/ARServerInfo.h"
 #include "core/ARGlobalField.h"
 #include "output/WebPage.h"
+#include "output/IFileStructure.h"
 #include "util/BlackListItem.h"
 #include "WindowsUtil.h"
 #include "AppConfig.h"
@@ -55,7 +60,7 @@ public:
 
 	ARControlStruct		arControl;
 	ARStatusList		arStatus;
-	AppConfig			appConfig;	
+	AppConfig			appConfig;
 
 	int					arXmlVersion;
 	string				arServerVersion;
@@ -80,10 +85,6 @@ public:
 	void Prepare(void);		
 	void Documentation(void);
 
-
-	//CARSchema* FindSchema(int schemaInsideId);
-	//CARSchema* FindSchema(string schemaName);	
-	//CARField* FindField(CARSchema* schema, int fieldId);
 
 	string srvHostName;
 	string srvFullHostName;
@@ -164,12 +165,6 @@ private:
 	string GetARStatusError();	
 	static bool SortByName(const CARServerObject& t1, const CARServerObject& t2 );	
 	string ObjListFilename(string firstChar);
-
-	int ContainerGetInsideId(string searchObjName);	
-	int AlGetInsideId(string searchObjName);	
-	int FilterGetInsideId(string searchObjName);	
-	int EscalationGetInsideId(string searchObjName);	
-	int MenuGetInsideId(string searchObjName);	
 
 	void Sort(list<CARContainer> &listResult);
 	void Sort(list<CARCharMenu> &listResult);

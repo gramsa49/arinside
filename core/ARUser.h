@@ -23,6 +23,8 @@ class CARUser :
 public:
 	CARUser(int insideId, string requestId);
 	~CARUser(void);
+	unsigned int GetDataType() { return DATA_TYPE_USER; }
+
 
 	string loginName;
 	string fullName;

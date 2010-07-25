@@ -23,6 +23,7 @@ class CARGroup :
 public:
 	CARGroup(int insideId, string requestId);
 	~CARGroup(void);
+	unsigned int GetDataType() { return DATA_TYPE_GROUP; }
 
 	int groupId;
 	int groupType;

@@ -24,9 +24,6 @@
 CDocSchemaDetails::CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel)
 : schema(schemaInsideId)
 {
-	this->path = "schema/" + schema.FileID();
-	this->rootLevel = rootLevel;
-
 	this->uniqueAlList.clear();
 	this->uniqueEscalList.clear();
 	this->uniqueFilterList.clear();
@@ -43,7 +40,7 @@ string CDocSchemaDetails::FormPageHeader(string description)
 	contHeadStrm.str("");
 	contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 	contHeadStrm << MenuSeparator <<this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
-	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CWebUtil::DocName("index"), "", rootLevel);
+	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "", rootLevel);
 	contHeadStrm << MenuSeparator << CWebUtil::ObjName(description) << endl;
 	return contHeadStrm.str();
 }
@@ -52,23 +49,26 @@ void CDocSchemaDetails::Documentation()
 {
 	try
 	{
-		//Create a directory for each form
+		CPageParams file(PAGE_DETAILS, &this->schema);
+		rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStrm;	
-			CWebPage webPage("index", this->schema.GetName(), rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), this->schema.GetName(), rootLevel, this->pInside->appConfig);
 			
 			const ARCompoundSchema& compSchema = this->schema.GetCompound();
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
+			contHeadStrm << CWebUtil::LinkToSchemaIndex(rootLevel) << endl;
 			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
 			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->schema.GetName()) << endl;
 
 			if(!this->schema.GetAppRefName().empty())
-				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), this->rootLevel);
+				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), rootLevel);
 
 			pgStrm << contHeadStrm.str();
 
@@ -163,10 +163,10 @@ void CDocSchemaDetails::Documentation()
 			switch(compSchema.schemaType)
 			{
 			case AR_SCHEMA_JOIN:
-				pgStrm << this->AllFieldsJoin(this->schema.FileID());
+				pgStrm << this->AllFieldsJoin();
 				break;
 			default:	
-				pgStrm << this->AllFields(this->schema.FileID());
+				pgStrm << this->AllFields();
 				break;
 			}
 
@@ -211,9 +211,9 @@ void CDocSchemaDetails::Documentation()
 			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, rootLevel));
 
-			webPage.SaveInFolder(this->path);
+			webPage.SaveInFolder(path);
 			pgStrm.str("");
 		}
 	}
@@ -230,46 +230,46 @@ string CDocSchemaDetails::SchemaNavigation()
 	try
 	{
 		//Permissions
-		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CWebUtil::DocName("form_permission_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CPageParams(PAGE_SCHEMA_PERMISSIONS, &this->schema), "", rootLevel)));
 
 		//Workflow		
-		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CWebUtil::DocName("form_workflow"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CPageParams(PAGE_SCHEMA_WORKFLOW, &this->schema), "", rootLevel)));
 
 		//Indexes
-		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CWebUtil::DocName("form_index_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CPageParams(PAGE_SCHEMA_INDEXES, &this->schema), "", rootLevel)));
 
 		//SortList
-		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CWebUtil::DocName("form_sort_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CPageParams(PAGE_SCHEMA_SORTLIST, &this->schema), "", rootLevel)));
 
 		//ResultList
-		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CWebUtil::DocName("form_result_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CPageParams(PAGE_SCHEMA_RESULTLIST, &this->schema), "", rootLevel)));
 
 		//Views
-		uList.AddItem(CUListItem(CWebUtil::Link("Views", CWebUtil::DocName("form_vui_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Views", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel)));
 
 		//Subadministrator
-		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CWebUtil::DocName("form_subadmin_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CPageParams(PAGE_SCHEMA_SUBADMINS, &this->schema), "", rootLevel)));
 
 		//Active Links
-		uList.AddItem(CUListItem(CWebUtil::Link("Active Link", CWebUtil::DocName("form_al_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Active Link", CPageParams(PAGE_SCHEMA_ACTIVELINKS, &this->schema), "", rootLevel)));
 
 		//Filters
-		uList.AddItem(CUListItem(CWebUtil::Link("Filter", CWebUtil::DocName("form_filter_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Filter", CPageParams(PAGE_SCHEMA_FILTERS, &this->schema), "", rootLevel)));
 
 		//Escalations
-		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CWebUtil::DocName("form_escal_list"), "", rootLevel)));
+		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CPageParams(PAGE_SCHEMA_ESCALATIONS, &this->schema), "", rootLevel)));
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION schema navigation of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}	
 
-	return uList.ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CWebUtil::DocName("index"), "", rootLevel, false), true);
+	return uList.ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CPageParams(PAGE_DETAILS, &this->schema), "", rootLevel, false), true);
 }
 
 
 //Create a page with all fields of this form
-string CDocSchemaDetails::AllFields(string fName)
+string CDocSchemaDetails::AllFields()
 {		
 	CTable tbl("fieldListAll", "TblObjectList");
 	tbl.AddColumn(40, "Field Name");
@@ -301,7 +301,7 @@ string CDocSchemaDetails::AllFields(string fName)
 			CTableCell cellNumViews(strmTmp.str(), "");			
 
 			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field.GetTimestamp()), "");
-			CTableCell cellLastChanged(this->pInside->LinkToUser(field.GetLastChanged(), 2), "");
+			CTableCell cellLastChanged(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel), "");
 
 			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
@@ -314,10 +314,10 @@ string CDocSchemaDetails::AllFields(string fName)
 		}
 
 		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CWebUtil::CsvDocName(fName+"_fields"), "", 0) << ")" << endl;
+		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
 		tbl.description = tblDesc.str();
 
-		AllFieldsCsv(fName);
+		AllFieldsCsv();
 	}
 	catch(exception& e)
 	{
@@ -327,7 +327,7 @@ string CDocSchemaDetails::AllFields(string fName)
 	return tbl.ToXHtml();	
 }
 
-void CDocSchemaDetails::AllFieldsCsv(string fName)
+void CDocSchemaDetails::AllFieldsCsv()
 {		
 	CTable tbl("fieldListAll", "TblObjectList");
 	tbl.AddColumn(40, "Field Name");
@@ -364,8 +364,9 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 		}
 
 		//Save field information to ccs
-		CCsvPage csvPage(fName+"_fields", this->pInside->appConfig);
-		csvPage.SaveInFolder(path, tbl.ToCsv());
+		CPageParams file(PAGE_SCHEMA_FIELDS_CSV, &this->schema);
+		CCsvPage csvPage(file->GetFileName(), this->pInside->appConfig);
+		csvPage.SaveInFolder(file->GetPath(), tbl.ToCsv());
 	}
 	catch(exception& e)
 	{
@@ -375,7 +376,7 @@ void CDocSchemaDetails::AllFieldsCsv(string fName)
 
 
 //Create a page with all fields of a joinform
-string CDocSchemaDetails::AllFieldsJoin(string fName)
+string CDocSchemaDetails::AllFieldsJoin()
 {		
 	CTable tbl("fieldListAll", "TblObjectList");
 	tbl.AddColumn(20, "Field Name");
@@ -447,10 +448,10 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 		}
 
 		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CWebUtil::CsvDocName(fName+"_fields"), "", 0) << ")" << endl;
+		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
 		tbl.description = tblDesc.str();
 
-		AllFieldsJoinCsv(fName);
+		AllFieldsJoinCsv();
 	}
 	catch(exception& e)
 	{
@@ -460,7 +461,7 @@ string CDocSchemaDetails::AllFieldsJoin(string fName)
 	return tbl.ToXHtml();	
 }
 
-void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
+void CDocSchemaDetails::AllFieldsJoinCsv()
 {		
 	CTable tbl("fieldListAll", "TblObjectList");
 	tbl.AddColumn(20, "Field Name");
@@ -514,8 +515,9 @@ void CDocSchemaDetails::AllFieldsJoinCsv(string fName)
 		}
 
 		//Save field information to ccs
-		CCsvPage csvPage(fName+"_fields", this->pInside->appConfig);
-		csvPage.SaveInFolder(path, tbl.ToCsv());
+		CPageParams file(PAGE_SCHEMA_FIELDS_CSV, &this->schema);
+		CCsvPage csvPage(file->GetFileName(), this->pInside->appConfig);
+		csvPage.SaveInFolder(file->GetPath(), tbl.ToCsv());
 	}
 	catch(exception& e)
 	{
@@ -600,8 +602,11 @@ void CDocSchemaDetails::WorkflowDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_WORKFLOW, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " + this->schema.GetName() + " (Workflow)";
-		CWebPage webPage("form_workflow", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations		
 		webPage.AddContentHead(this->FormPageHeader("Workflow"));
@@ -664,7 +669,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		tblRef.description = tblDesc.str();
 
 		webPage.AddContent(tblRef.ToXHtml());
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -677,8 +682,11 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_PERMISSIONS, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Indexes)";
-		CWebPage webPage("form_permission_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Permissions"));
@@ -776,7 +784,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 		}
 
 		webPage.AddContent(fieldTbl.ToXHtml());	
-		webPage.SaveInFolder(this->path);	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -789,8 +797,11 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_SUBADMINS, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Indexes)";
-		CWebPage webPage("form_subadmin_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Subadministrator Permission"));
@@ -813,7 +824,7 @@ void CDocSchemaDetails::SchemaSubadminDoc()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		webPage.SaveInFolder(this->path);	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -826,8 +837,11 @@ void CDocSchemaDetails::IndexDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_INDEXES, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Indexes)";
-		CWebPage webPage("form_index_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Indexes"));
@@ -871,7 +885,7 @@ void CDocSchemaDetails::IndexDoc()
 					CFieldRefItem *refItem = new CFieldRefItem();
 					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 
-					string tmp = CWebUtil::Link(indexList.indexList[nIndex].indexName, CWebUtil::DocName("form_index_list"), "", 2);
+					string tmp = CWebUtil::Link(indexList.indexList[nIndex].indexName, CPageParams(PAGE_SCHEMA_INDEXES, &this->schema), "", rootLevel);
 					refItem->description = "Field in "+tmp;
 					refItem->fromName = this->schema.GetName();
 					refItem->fieldInsideId = field.GetInsideId();
@@ -885,7 +899,7 @@ void CDocSchemaDetails::IndexDoc()
 			tbl.Clear();
 		}
 
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -898,6 +912,9 @@ void CDocSchemaDetails::ResultListDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_RESULTLIST, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Results Lists Fields)";
 		CWebPage webPage("form_result_list", title, rootLevel, this->pInside->appConfig);
 
@@ -938,7 +955,7 @@ void CDocSchemaDetails::ResultListDoc()
 				CFieldRefItem *refItem = new CFieldRefItem();
 				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
 
-				string tmp = CWebUtil::Link("ResultList", CWebUtil::DocName("form_result_list"), "", 2);
+				string tmp = CWebUtil::Link("ResultList", CPageParams(PAGE_SCHEMA_RESULTLIST, &this->schema), "", rootLevel);
 				refItem->description = "Field in "+tmp;
 
 				refItem->fromName = this->schema.GetName();
@@ -952,7 +969,7 @@ void CDocSchemaDetails::ResultListDoc()
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -965,8 +982,11 @@ void CDocSchemaDetails::SortListDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_SORTLIST, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Results Lists Fields)";
-		CWebPage webPage("form_sort_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Sortlist"));
@@ -1023,7 +1043,7 @@ void CDocSchemaDetails::SortListDoc()
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1036,8 +1056,11 @@ void CDocSchemaDetails::VuiListDoc()
 {	
 	try
 	{
+		CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Views)";
-		CWebPage webPage("form_vui_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Views"));
@@ -1071,7 +1094,7 @@ void CDocSchemaDetails::VuiListDoc()
 		webPage.AddContent(tbl.ToXHtml());
 		tbl.Clear();
 
-		webPage.SaveInFolder(this->path);	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1084,8 +1107,11 @@ void CDocSchemaDetails::SchemaFilterDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_FILTERS, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Filter)";
-		CWebPage webPage("form_filter_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Filter"));
@@ -1116,13 +1142,13 @@ void CDocSchemaDetails::SchemaFilterDoc()
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("filter.gif", rootLevel) << tbl->NumRows() << " ";
-		tblDesc << CWebUtil::Link("Filter", CWebUtil::DocName("../../filter/index"), "", rootLevel);
+		tblDesc << CWebUtil::Link("Filter", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", rootLevel);
 		tbl->SetDescription(tblDesc.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1135,8 +1161,11 @@ void CDocSchemaDetails::SchemaAlDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_ACTIVELINKS, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " + this->schema.GetName() +" (ActiveLinks)";
-		CWebPage webPage("form_al_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Active Links"));
@@ -1167,13 +1196,14 @@ void CDocSchemaDetails::SchemaAlDoc()
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("active_link.gif", rootLevel) << tbl->NumRows() << " ";
-		tblDesc << CWebUtil::Link("ActiveLinks", CWebUtil::DocName("../../active_link/index"), "", rootLevel);
+		// TODO: move to single CWebUtil call
+		tblDesc << CWebUtil::Link("ActiveLinks", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "", rootLevel);
 		tbl->SetDescription(tblDesc.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1186,8 +1216,11 @@ void CDocSchemaDetails::SchemaEscalDoc()
 {
 	try
 	{
+		CPageParams file(PAGE_SCHEMA_ESCALATIONS, &this->schema);
+		int rootLevel = file->GetRootLevel();
+
 		string title = "Schema " +this->schema.GetName() +" (Escalations)";
-		CWebPage webPage("form_escal_list", title, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		webPage.AddContentHead(this->FormPageHeader("Escalations"));
@@ -1217,13 +1250,13 @@ void CDocSchemaDetails::SchemaEscalDoc()
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("escalation.gif", rootLevel) << tbl->NumRows() << " ";
-		tblDesc << CWebUtil::Link("Escalations", CWebUtil::DocName("../../escalation/index"), "", rootLevel);
+		tblDesc << CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", rootLevel);
 		tbl->SetDescription(tblDesc.str());
 
 		webPage.AddContent(tbl->Print());
 		delete tbl;
 
-		webPage.SaveInFolder(this->path);
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1762,8 +1795,11 @@ string CDocSchemaDetails::ShowProperties()
 			// doc archive properties
 			strm << ShowArchiveProperties();
 
-			// doc audit properties
-			strm << ShowAuditProperties();
+			if (pInside->CompareServerVersion(7,0) >= 0) 
+			{
+				// doc audit properties
+				strm << ShowAuditProperties();
+			}
 		}
 
 		// doc properties left

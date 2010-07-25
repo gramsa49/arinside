@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARActiveLink.h"
 #include "../ARInside.h"
+#include "../output/IFileStructure.h"
 
 CARActiveLink::CARActiveLink(int insideId)
 : CARServerObject(insideId)
@@ -35,7 +36,9 @@ CARServerObject* CARActiveLink::Clone()
 
 string CARActiveLink::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"active_link/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "active_link.gif" : ""), rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	string url = CWebUtil::Link(this->GetName(), file, (showImage ? "active_link.gif" : ""), rootLevel);
+	return url;
 }
 
 CARActiveLink::~CARActiveLink(void)

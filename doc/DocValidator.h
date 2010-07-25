@@ -21,7 +21,7 @@ class CDocValidator :
 	public CDocBase
 {
 public:
-	CDocValidator(string path);
+	CDocValidator();
 	~CDocValidator(void);
 
 	void Main();
@@ -36,7 +36,7 @@ private:
 
 	//Permission check
 	void FieldGroupValidator();
-	void FieldGroupValidatorDetails(CARSchema &schema, string fName);
+	void FieldGroupValidatorDetails(CARSchema &schema);
 
 	void FormGroupValidator();
 	void AlGroupValidator();

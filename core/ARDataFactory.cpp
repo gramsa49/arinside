@@ -33,6 +33,7 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 {	
 	try
 	{
+		CARInside* pInside = CARInside::GetInstance();
 		ARQualifierStruct	qualifier;
 
 		ARNameType schemaName;
@@ -45,7 +46,9 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 		AREntryListFieldList fields;
 		AREntryListFieldValueList values;
 
-		fields.numItems = 11;
+		fields.numItems = 9;
+		if (pInside->CompareServerVersion(7,0) >= 0) fields.numItems += 2; // if serv ver >= 7.0 get "Category" and "Computed Group Definition" field
+
 		fields.fieldsList = (AREntryListFieldStruct*)new AREntryListFieldStruct[fields.numItems];
 		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
 
@@ -58,8 +61,11 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 		fields.fieldsList[6].fieldId = 3;     //Created
 		fields.fieldsList[7].fieldId = 5;     //ModifiedBy
 		fields.fieldsList[8].fieldId = 6;     //Modified
-		fields.fieldsList[9].fieldId = 120;   //Category
-		fields.fieldsList[10].fieldId = 121;   //Computed Group Definition
+		if (pInside->CompareServerVersion(7,0) >= 0)
+		{
+			fields.fieldsList[9].fieldId = 120;   //Category
+			fields.fieldsList[10].fieldId = 121;   //Computed Group Definition
+		}
 
 		for (unsigned int k=0; k<fields.numItems; ++k) { fields.fieldsList[k].columnWidth=1; fields.fieldsList[k].separator[0]='|'; }
 
@@ -105,10 +111,14 @@ void CARDataFactory::GetListGroup(AppConfig &appConfig, list<CARGroup> &listResu
 					if(values.entryList[row].entryValues->fieldValueList[8].value.u.timeVal != NULL)
 						grp.modified = values.entryList[row].entryValues->fieldValueList[8].value.u.timeVal;
 
-					grp.groupCategory = values.entryList[row].entryValues->fieldValueList[9].value.u.intVal;
+					if (pInside->CompareServerVersion(7,0) >= 0)
+					{
+						// the next two fields are only available on 7.0+ servers
+						grp.groupCategory = values.entryList[row].entryValues->fieldValueList[9].value.u.intVal;
 
-					if(values.entryList[row].entryValues->fieldValueList[10].value.u.timeVal != NULL)
-						grp.groupDefinition = values.entryList[row].entryValues->fieldValueList[10].value.u.charVal;
+						if(values.entryList[row].entryValues->fieldValueList[10].value.u.timeVal != NULL)
+							grp.groupDefinition = values.entryList[row].entryValues->fieldValueList[10].value.u.charVal;
+					}
 
 					LOG << "Group '" << grp.groupName <<"' [OK]" << endl;
 

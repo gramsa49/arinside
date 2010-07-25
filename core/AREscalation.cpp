@@ -40,7 +40,8 @@ CARServerObject* CAREscalation::Clone()
 
 string CAREscalation::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(this->GetName(), CWebUtil::RootPath(rootLevel)+"escalation/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "escalation.gif" : ""), rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(this->GetName(), file, (showImage ? "escalation.gif" : ""), rootLevel);
 }
 
 string CAREscalation::GetTimeCriteria()

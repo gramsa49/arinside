@@ -25,7 +25,7 @@ using namespace OUTPUT;
 class CARAssignHelper
 {
 public:
-	CARAssignHelper(CARInside &arIn, string dir, int rootLevel, string objName, int objType, string schemaName1, string schemaName2);
+	CARAssignHelper(CARInside &arIn, int rootLevel, string objName, int objType, string schemaName1, string schemaName2);
 	~CARAssignHelper(void);
 
 	bool pushFieldFlag;
@@ -47,7 +47,6 @@ public:
 
 private:
 	CARInside *arIn;
-	string dir;
 	string schemaName1;
 	string schemaName2;
 	int schemaInsideId1;

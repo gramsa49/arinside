@@ -23,6 +23,7 @@ using namespace OUTPUT;
 
 extern int nFilesCreated;
 
+// TODO: replace fileName parameter with CPageParams obj and use IFileStructure internal to get fileName, folder and dirLevel
 CWebPage::CWebPage(const string &fileName, const string &title, int dirLevel, const AppConfig &appConfig)
 : appConfig(appConfig)
 {
@@ -74,7 +75,7 @@ void CWebPage::DynamicHeaderText(ofstream &strm)
 	strm << "<table>" << endl;
 	strm << "<tr>" << endl;
 	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel)+ CWebUtil::DocName("index"), "server.gif", rootLevel) << "</td>" << endl;
-	strm << "<td>" << " (Server: " << CWebUtil::Link(appConfig.serverName, CWebUtil::RootPath(rootLevel) + "other/" +CWebUtil::DocName("server"), "", rootLevel) << "</td>" << endl;
+	strm << "<td>" << " (Server: " << CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel) << "</td>" << endl;
 	strm << "<td>" << "@" << "</td>" << endl;
 	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
 	strm << "</tr>" << endl;
@@ -96,7 +97,7 @@ string CWebPage::CurrentDateTime()
 void CWebPage::DynamicFooterText(ofstream &strm)
 {
 	strm << "<table><tr>" << endl;
-	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel)+ CWebUtil::DocName("index"), "next.gif", rootLevel)<< "</td>" << endl;
+	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel) + CWebUtil::DocName("index"), "next.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
 	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
@@ -151,7 +152,7 @@ void CWebPage::WriteContent(ofstream &strm)
 }
 
 
-int CWebPage::SaveInFolder(string path)
+int CWebPage::SaveInFolder(const string &path)
 {
 	int result = 0;
 

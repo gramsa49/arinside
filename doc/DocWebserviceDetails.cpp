@@ -20,7 +20,6 @@
 CDocWebserviceDetails::CDocWebserviceDetails(CARContainer &obj)
 : ws(obj)
 {
-	this->rootLevel = 2;
 }
 
 CDocWebserviceDetails::~CDocWebserviceDetails(void)
@@ -29,14 +28,17 @@ CDocWebserviceDetails::~CDocWebserviceDetails(void)
 
 void CDocWebserviceDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, &ws);
+	this->rootLevel = file->GetRootLevel();
+
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_WEBSERVICE)+"/" + ws.FileID();
+		string dir = file->GetPath();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(dir)>=0)
+		if(winUtil.CreateSubDirectory(dir)>=0)	// TODO: depending on the file structure there might be more or less directories to create .. move this to an Init function in IFileStructure
 		{
-			CWebPage webPage("index", ws.GetName(), rootLevel, pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), ws.GetName(), rootLevel, pInside->appConfig);
 
 			//ContentHead informations
 			webPage.AddContentHead(CWebUtil::LinkToWebServiceIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->ws.GetName()) + " (Common Properties)");

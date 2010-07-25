@@ -40,26 +40,26 @@ public:
 	~CDocMain(void);
 
 	int Index();
-	void ServerInfoList();	
-	void SchemaList(int nType, string fileName, string title, string searchChar);	
-	void CharMenuList(string fileName, string searchChar);
-	void ContainerList(int nType, string fileName, string title, string searchChar);
+	void ServerInfoList();
+	void SchemaList(int nType, const CPageParams &file, string title, string searchChar);	
+	void CharMenuList(string searchChar);
+	void ContainerList(int nType, string title, string searchChar);
 	void GlobalFieldList();
 	void MessageList();
 
-	void ActiveLinkList(string fileName, string searchChar);	
-	void ActiveLinkActionList(string fileName);	
+	void ActiveLinkList(string searchChar);	
+	void ActiveLinkActionList();
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
-	void FilterList(string fileName, string searchChar);	
-	void FilterActionList(string fileName);
+	void FilterList(string searchChar);	
+	void FilterActionList();
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
-	void EscalationList(string fileName, string searchChar);
-	void EscalationActionList(string fileName);
+	void EscalationList(string searchChar);
+	void EscalationActionList();
 	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 
-	void GroupList(string fileName, string searchChar);
-	void UserList(string fileName, string searchChar);
-	void RoleList(string fileName, string searchChar);
+	void GroupList(string searchChar);
+	void UserList(string searchChar);
+	void RoleList(string searchChar);
 	void ImageList(string fileName, string searchChar);
 
 private:
@@ -69,5 +69,5 @@ private:
 	static void Sort(list<CARGlobalField> &listResult);
 	static bool SortByGlobalFieldId(const CARGlobalField& t1, const CARGlobalField& t2 );
 
-	static string ShortMenu(string curCharacter);	
+	static string ShortMenu(string curCharacter, const CPageParams &curPage);
 };

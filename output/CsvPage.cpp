@@ -23,6 +23,7 @@ using namespace OUTPUT;
 
 extern int nFilesCreated;
 
+// TODO: this class should use CPageParams instead of fileName
 CCsvPage::CCsvPage(string fileName, AppConfig &appConfig)
 {
 	this->fileName = fileName;

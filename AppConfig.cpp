@@ -36,6 +36,7 @@ AppConfig::AppConfig(void)
 	targetFolder = "";
 	fileMode	= false;
 	objListXML	= "";
+	oldNaming = false;
 
 	// BlackList
 	blackList = "";

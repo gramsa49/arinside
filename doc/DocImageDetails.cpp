@@ -22,11 +22,9 @@
 
 extern int nFilesCreated;
 
-CDocImageDetails::CDocImageDetails(int imageIndex, int rootLevel)
+CDocImageDetails::CDocImageDetails(int imageIndex)
 {
-	this->path = "image/" + CARObject::FileID(imageIndex);
 	this->imageIndex = imageIndex;
-	this->rootLevel = rootLevel;
 }
 
 CDocImageDetails::~CDocImageDetails(void)
@@ -35,18 +33,23 @@ CDocImageDetails::~CDocImageDetails(void)
 
 void CDocImageDetails::Documentation()
 {
+	CARImage image(imageIndex);
+	CPageParams file(PAGE_DETAILS, &image);
+
 	try
 	{
+		rootLevel = file->GetRootLevel();
+
 		// create a directory for each image
 		CWindowsUtil winUtil(pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)<0) return;
+		if(winUtil.CreateSubDirectory(file->GetPath())<0) return;
 
 		// now create the page
-		CWebPage webPage("index", pInside->imageList.ImageGetName(imageIndex), this->rootLevel, pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), image.GetName(), rootLevel, pInside->appConfig);
 
 		// contentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToImageIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(pInside->imageList.ImageGetName(imageIndex)) << endl;
+		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		// image details
@@ -55,7 +58,7 @@ void CDocImageDetails::Documentation()
 		tbl.AddColumn(70, "Value");
 
 		CTableRow tblRow("");
-		char *desc = pInside->imageList.ImageGetDescription(imageIndex);
+		char *desc = image.GetDescription();
 		tblRow.AddCellList("Description", (desc == NULL ? "" : desc));
 		tbl.AddRow(tblRow);
 
@@ -65,22 +68,23 @@ void CDocImageDetails::Documentation()
 		// save image and insert tag into web page
 		this->SaveImage();
 
+		CPageParams imageLink(PAGE_IMAGE_DATA, &image);
+
 		stringstream imgTag;
-		imgTag << "<p class=\"ars_image\"><img src=\"image." << pInside->imageList.ImageGetType(imageIndex) << "\" alt=\"" << pInside->imageList.ImageGetType(imageIndex) << "\" /></p>";
+		imgTag << "<p class=\"ars_image\"><img src=\"" << CWebUtil::RootPath(rootLevel) << imageLink->GetFullFileName() <<  "\" alt=\"" << image.GetType() << "\" /></p>";
 		webPage.AddContent(imgTag.str());
 
 		// add workflow references
 		webPage.AddContent(WorkflowReferences());
 		
 		// Histoy
-		CARImage img(imageIndex);
-		webPage.AddContent(pInside->ServerObjectHistory(&img, this->rootLevel));
+		webPage.AddContent(pInside->ServerObjectHistory(&image, rootLevel));
 
-		webPage.SaveInFolder(this->path);	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocImageDetails_Documentation of '" << CARInside::GetInstance()->imageList.ImageGetName(imageIndex) << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocImageDetails_Documentation of '" << image.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -91,15 +95,15 @@ void CDocImageDetails::SaveImage()
 	if (!pInside->appConfig.targetFolder.empty())
 		strm << pInside->appConfig.targetFolder << "/";
 
-	if(!path.empty())
-		strm << path << "/";
+	CARImage image(imageIndex);
+	CPageParams file(PAGE_IMAGE_DATA, &image);
 
-	strm << "image." << pInside->imageList.ImageGetType(imageIndex);
+	strm << file->GetFullFileName();
 
 	try
 	{	
 		LOG << "Save image '" << strm.str();
-		const ARImageDataStruct& imgData = pInside->imageList.ImageGetData(imageIndex);
+		const ARImageDataStruct& imgData = image.GetData();
 
 		ofstream fout( strm.str().c_str(), ios::binary);
 		fout.write((const char*)imgData.bytes, imgData.numItems);

@@ -17,12 +17,9 @@
 #include "stdafx.h"
 #include "DocEscalationDetails.h"
 
-CDocEscalationDetails::CDocEscalationDetails(unsigned int escalInsideId, int rootLevel)
+CDocEscalationDetails::CDocEscalationDetails(unsigned int escalInsideId)
 : escalation(escalInsideId)
 {
-	this->pInside = CARInside::GetInstance();
-	this->path = "escalation/" + escalation.FileID();
-	this->rootLevel = rootLevel;
 }
 
 CDocEscalationDetails::~CDocEscalationDetails(void)
@@ -31,13 +28,17 @@ CDocEscalationDetails::~CDocEscalationDetails(void)
 
 void CDocEscalationDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, &escalation);
+	this->rootLevel = file->GetRootLevel();
+	this->path = file->GetPath();
+
 	try
 	{
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("index", this->escalation.GetName(), this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), this->escalation.GetName(), this->rootLevel, this->pInside->appConfig);
 			CARProplistHelper props(&this->escalation.GetPropList());
 
 			//ContentHead informations
@@ -220,7 +221,7 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 		pgStrm << "Run If Qualification: <br/>" << strmQuery.str();
 
 		//If-Actions		
-		CDocFilterActionStruct actionStruct(*this->pInside, this->escalation, schemaName, this->path, this->rootLevel, AR_STRUCT_ITEM_XML_ESCALATION);
+		CDocFilterActionStruct actionStruct(*this->pInside, this->escalation, schemaName, this->rootLevel, AR_STRUCT_ITEM_XML_ESCALATION);
 		pgStrm << actionStruct.Get("If", this->escalation.GetIfActions());
 
 		//Else-Actions

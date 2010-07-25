@@ -29,9 +29,12 @@ CDocRoleDetails::~CDocRoleDetails(void)
 
 void CDocRoleDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, pRole);
+
 	try
 	{
-		CWebPage webPage(this->pRole->FileID(), this->pRole->roleName, this->rootLevel, this->pInside->appConfig);
+		rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), this->pRole->roleName, this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
@@ -54,7 +57,7 @@ void CDocRoleDetails::Documentation()
 		tblRow.AddCellList(CTableCell("Production Group"), CTableCell(this->pInside->LinkToGroup(this->pRole->applicationName, this->pRole->productionGroupId, this->rootLevel)));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Permissions"), this->RolePermissions());
+		tblRow.AddCellList(CTableCell("Permissions"), this->RolePermissions()); // TODO: after this call rootLevel might be incorrect
 		tbl.AddRow(tblRow);
 
 		//Add the complete table to the page
@@ -64,7 +67,7 @@ void CDocRoleDetails::Documentation()
 		//Histoy
 		webPage.AddContent(this->pInside->DataObjectHistory(this->pRole, this->rootLevel));
 
-		webPage.SaveInFolder("role");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -82,12 +85,12 @@ string CDocRoleDetails::RolePermissions()
 
 	//Form Access
 	int nResult = 0;
-	string fName = pRole->FileID() + "_list_form";
-	this->FormsDoc(fName, nResult, "Form Permission");
+
+	this->FormsDoc(nResult, "Form Permission");
 	if(nResult == 0)
 		strmTmp.str("No Form Access");
 	else
-		strmTmp << CWebUtil::Link("Form Access", CWebUtil::DocName(fName), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_ROLE_SCHEMA_LIST), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	CTableRow row("");		
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -96,12 +99,12 @@ string CDocRoleDetails::RolePermissions()
 
 	//Field Permission
 	strmTmp.str("");
-	fName = pRole->FileID() + "list_field";
-	this->FieldPermissionDoc(fName, nResult, "Field Permission");
+
+	this->FieldPermissionDoc(nResult, "Field Permission");
 	if(nResult == 0)
 		strmTmp.str("No Field Permission");
 	else
-		strmTmp << CWebUtil::Link("Field Permission", CWebUtil::DocName(fName), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_ROLE_FIELD_LIST), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -110,12 +113,12 @@ string CDocRoleDetails::RolePermissions()
 
 	//Active Link Permissions
 	strmTmp.str("");
-	fName = pRole->FileID() + "list_active_link";
-	this->AlPermissionDoc(fName, nResult, "Active Link Permission");
+
+	this->AlPermissionDoc(nResult, "Active Link Permission");
 	if(nResult == 0)
 		strmTmp.str("No Active Link Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Permission", CWebUtil::DocName(fName), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_ROLE_ACTIVELINK_LIST), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -124,12 +127,12 @@ string CDocRoleDetails::RolePermissions()
 
 	//Packing List Permissions
 	strmTmp.str("");
-	fName = pRole->FileID() + "list_packing_list";
-	this->ContainerPermissionDoc(fName, nResult, "Packing List Permission", ARCON_PACK);
+
+	this->ContainerPermissionDoc(nResult, "Packing List Permission", ARCON_PACK);
 	if(nResult == 0)
 		strmTmp.str("No Packing List Permission");
 	else
-		strmTmp << CWebUtil::Link("Packing List Permission", CWebUtil::DocName(fName), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_PACK), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -138,12 +141,12 @@ string CDocRoleDetails::RolePermissions()
 
 	//ActiveLink Guide
 	strmTmp.str("");
-	fName = pRole->FileID() + "list_al_guide";
-	this->ContainerPermissionDoc(fName, nResult, "Active Link Guide Permission", ARCON_GUIDE);
+
+	this->ContainerPermissionDoc(nResult, "Active Link Guide Permission", ARCON_GUIDE);
 	if(nResult == 0)
 		strmTmp.str("No Active Link Guide Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Guide Permission", CWebUtil::DocName(fName), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_GUIDE), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -152,12 +155,12 @@ string CDocRoleDetails::RolePermissions()
 
 	//Webservice Permissions
 	strmTmp.str("");
-	fName = pRole->FileID() + "list_webservice";
-	this->ContainerPermissionDoc(fName, nResult, "Webservice Permission", ARCON_WEBSERVICE);
+
+	this->ContainerPermissionDoc(nResult, "Webservice Permission", ARCON_WEBSERVICE);
 	if(nResult == 0)
 		strmTmp.str("No Webservice Permission");
 	else
-		strmTmp << CWebUtil::Link("Webservice Permission", CWebUtil::DocName(fName), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_WEBSERVICE), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -167,17 +170,21 @@ string CDocRoleDetails::RolePermissions()
 }
 
 
-void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
+void CDocRoleDetails::FormsDoc(int &nResult, string title)
 {
+	CPageParams file(PAGE_ROLE_SCHEMA_LIST, pRole);
+
 	try
 	{
+		rootLevel = file->GetRootLevel();
 		nResult = 0;
-		CWebPage webPage(fName, title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);	
+
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CWebUtil::DocName(this->pRole->FileID()), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -260,7 +267,7 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 		webPage.AddContent(subadminTbl.ToXHtml());
 		subadminTbl.Clear();
 
-		webPage.SaveInFolder("role");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -268,17 +275,20 @@ void CDocRoleDetails::FormsDoc(string fName, int &nResult, string title)
 	}
 }
 
-void CDocRoleDetails::AlPermissionDoc(string fName, int &nResult, string title)
+void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 {
+	CPageParams file(PAGE_ROLE_ACTIVELINK_LIST, pRole);
+
 	try
 	{
+		rootLevel = file->GetRootLevel();
 		nResult = 0;
-		CWebPage webPage(fName, title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);	
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CWebUtil::DocName(this->pRole->FileID()), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -307,7 +317,7 @@ void CDocRoleDetails::AlPermissionDoc(string fName, int &nResult, string title)
 		webPage.AddContent(alTable->Print());
 		delete alTable;
 
-		webPage.SaveInFolder("role");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -315,17 +325,21 @@ void CDocRoleDetails::AlPermissionDoc(string fName, int &nResult, string title)
 	}
 }
 
-void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string title, int containerType)
+void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int containerType)
 {
+	CPageParams file(PAGE_ROLE_CONTAINER_LIST, containerType, pRole);
+
 	try
 	{
+		rootLevel = file->GetRootLevel();
 		nResult = 0;
-		CWebPage webPage(fName, title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);	
+
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CWebUtil::DocName(this->pRole->FileID()), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -389,7 +403,7 @@ void CDocRoleDetails::ContainerPermissionDoc(string fName, int &nResult, string 
 		}
 
 
-		webPage.SaveInFolder("role");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -423,17 +437,21 @@ int CDocRoleDetails::NumAllowedFields(CARSchema& schema)
 	return nResult;
 }
 
-void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string title)
+void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 {
+	CPageParams file(PAGE_ROLE_FIELD_LIST, pRole);
+
 	try
 	{
+		rootLevel = file->GetRootLevel();
 		nResult = 0;
-		CWebPage webPage(fName, title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
+
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->name, CWebUtil::DocName(pRole->FileID()), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->name, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -518,7 +536,7 @@ void CDocRoleDetails::FieldPermissionDoc(string fName, int &nResult, string titl
 			}
 		}
 
-		webPage.SaveInFolder("role");	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{

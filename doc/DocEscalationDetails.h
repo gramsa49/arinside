@@ -25,7 +25,7 @@ class CDocEscalationDetails :
 	public CDocBase
 {
 public:
-	CDocEscalationDetails(unsigned int escalInsideId, int rootLevel);
+	CDocEscalationDetails(unsigned int escalInsideId);
 	~CDocEscalationDetails(void);
 
 	void Documentation();

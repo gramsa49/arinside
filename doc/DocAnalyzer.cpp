@@ -17,10 +17,10 @@
 #include "stdafx.h"
 #include "DocAnalyzer.h"
 
-CDocAnalyzer::CDocAnalyzer(string path)
+CDocAnalyzer::CDocAnalyzer()
 {
-	this->path = path;
-	this->rootLevel = 1;
+	//this->path = path;
+	//this->rootLevel = 1;
 }
 
 CDocAnalyzer::~CDocAnalyzer(void)
@@ -31,21 +31,26 @@ void CDocAnalyzer::Documentation()
 {
 	try
 	{
+		CPageParams file(PAGE_ANALYZER_MAIN);
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("analyzer_main", "Analyzer", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Analyzer", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
 			contHeadStrm << "Performance Analyzer" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
-			webPage.AddContent(CWebUtil::Link("Form Index Analyzer", "analyzer_schema_index."+CWebUtil::WebPageSuffix(), "doc.gif", rootLevel, true));
+			CPageParams file(PAGE_ANALYZER_QBE_CHECK);
+			webPage.AddContent(CWebUtil::Link("Form Index Analyzer", file, "doc.gif", rootLevel));
 			IndexAnalyzer();		
 
-			webPage.SaveInFolder(this->path);
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)
@@ -58,11 +63,16 @@ void CDocAnalyzer::IndexAnalyzer()
 {
 	try
 	{
+		CPageParams file(PAGE_ANALYZER_QBE_CHECK);
+		int rootLevel = file->GetRootLevel();
+		string path = file->GetPath();
+
+
 		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		if(winUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
-			CWebPage webPage("analyzer_schema_index", "Form Index Analyzer", rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Form Index Analyzer", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream contHeadStrm;
@@ -131,7 +141,7 @@ void CDocAnalyzer::IndexAnalyzer()
 			tbl.description += " Avoid using this setting if possible.";
 
 			webPage.AddContent(tbl.ToXHtml());
-			webPage.SaveInFolder(this->path);
+			webPage.SaveInFolder(path);
 		}
 	}
 	catch(exception& e)

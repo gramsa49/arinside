@@ -24,6 +24,8 @@ using namespace OUTPUT;
 
 void CNavigationPage::Write()
 {
+	// TODO: maybe add this page to IFileStructure?? or is a static file enough in this scenario??
+
 	stringstream strmName;
 	strmName << this->conf.targetFolder << "/" << CWebUtil::DocName(this->fileName);
 	CARInside *pInside = CARInside::GetInstance();
@@ -38,56 +40,56 @@ void CNavigationPage::Write()
 
 		// content
 		fout << "<li>";
-			Image(fout, "../img/", "schema.gif", 16, 16); Link(fout, "../schema/index.htm", "Forms");
+			fout << CWebUtil::Link("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "schema.gif", rootLevel, TARGET_MODE_PARENT);			
 
-			fout << "<ul>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../schema/index_regular.htm", "Regular"); fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../schema/index_join.htm"   , "Join");    fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../schema/index_view.htm"   , "View");    fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../schema/index_dialog.htm" , "Dialog");  fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../schema/index_vendor.htm" , "Vendor");  fout << "</li>";
+			fout << "<ul>"; 
+				fout << "<li>" << CWebUtil::Link("Regular", CPageParams(PAGE_SCHEMA_REGULAR), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Join"   , CPageParams(PAGE_SCHEMA_JOIN)   , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("View"   , CPageParams(PAGE_SCHEMA_VIEW)   , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Dialog" , CPageParams(PAGE_SCHEMA_DIALOG) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Vendor" , CPageParams(PAGE_SCHEMA_VENDOR) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 			fout << "</ul>";
 		fout << "</li>";
 
 		fout << "<li>";
-			Image(fout, "../img/", "active_link.gif", 16, 16); Link(fout, "../active_link/index.htm", "Active Links");
-			fout << "<ul><li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../active_link/index_action.htm" , "By Action"); fout << "</li></ul>";
+			fout << CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "active_link.gif", rootLevel, TARGET_MODE_PARENT);			
+			fout << "<ul><li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li></ul>";
 		fout << "</li>";
 
 		fout << "<li>";
-			Image(fout, "../img/", "filter.gif", 16, 16); Link(fout, "../filter/index.htm", "Filters");
-			fout << "<ul><li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../filter/index_action.htm" , "By Action"); fout << "</li></ul>";
+			fout << CWebUtil::Link("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel, TARGET_MODE_PARENT);
+			fout << "<ul><li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li></ul>";
 		fout << "</li>";
 
 		fout << "<li>";
-			Image(fout, "../img/", "escalation.gif", 16, 16); Link(fout, "../escalation/index.htm", "Escalations");
-			fout << "<ul><li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../escalation/index_action.htm" , "By Action"); fout << "</li></ul>";
+			fout << CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "escalation.gif", rootLevel, TARGET_MODE_PARENT);
+			fout << "<ul><li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li></ul>";
 		fout << "</li>";
 
-		fout << "<li>"; Image(fout, "../img/", "menu.gif", 16, 16); Link(fout, "../menu/index.htm", "Menus"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "al_guide.gif", 16, 16); Link(fout, "../active_link_guide/index.htm", "Active Link Guides"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "filter_guide.gif", 16, 16); Link(fout, "../filter_guide/index.htm", "Filter Guides"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "application.gif", 16, 16); Link(fout, "../application/index.htm", "Applications"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "packing_list.gif", 16, 16); Link(fout, "../packing_list/index.htm", "Packing Lists"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "webservice.gif", 16, 16); Link(fout, "../webservice/index.htm", "Webservices"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "group.gif", 16, 16); Link(fout, "../group/index.htm", "Groups"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../role/index.htm", "Roles"); fout << "</li>";
-		fout << "<li>"; Image(fout, "../img/", "user.gif", 16, 16); Link(fout, "../user/index.htm", "Users"); fout << "</li>";
+		fout << "<li>" << CWebUtil::Link("Menus"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU)                    , "menu.gif"        , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE)       , "al_guide.gif"    , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Filter Guides"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), "filter_guide.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Applications"      , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP)         , "application.gif" , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Packing Lists"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK)        , "packing_list.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Webservices"       , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE)  , "webservice.gif"  , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Groups"            , CPageParams(PAGE_OVERVIEW, DATA_TYPE_GROUP)                                 , "group.gif"       , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Roles"             , CPageParams(PAGE_OVERVIEW, DATA_TYPE_ROLE)                                  , "doc.gif"         , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Users"             , CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER)                                  , "user.gif"        , rootLevel, TARGET_MODE_PARENT) << "</li>";
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		if (pInside->CompareServerVersion(7,5) >= 0)
 		{
-			fout << "<li>"; Image(fout, "../img/", "image.gif", 15, 10); Link(fout, "../image/index.htm", "Images"); fout << "</li>";
+			fout << "<li>" << CWebUtil::Link("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "image.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 		}
 #endif
 
 		fout << "<li>"; 
 			Image(fout, "../img/", "folder.gif", 16, 13); fout << "Information:";
 			fout << "<ul>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../other/message_list.htm", "Messages"); fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../other/global_field_list.htm", "Global&nbsp;Fields"); fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../other/validation_main.htm", "Validator"); fout << "</li>";
-				fout << "<li>"; Image(fout, "../img/", "doc.gif", 15, 10); Link(fout, "../other/analyzer_main.htm", "Analyzer"); fout << "</li>";
+				fout << "<li>" << CWebUtil::Link("Messages"          , CPageParams(PAGE_MESSAGES)      , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Global&nbsp;Fields", CPageParams(PAGE_GLOBALFIELS)   , "doc.gif", rootLevel, false, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Validator"         , CPageParams(PAGE_VALIDATOR_MAIN), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Analyzer"          , CPageParams(PAGE_ANALYZER_MAIN) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 			fout << "</ul>";
 		fout << "</li>";
 
@@ -137,9 +139,4 @@ void CNavigationPage::Footer(ofstream &strm)
 void CNavigationPage::Image(ofstream &strm, char *path, char *file, int width, int height)
 {
 	strm << "<img src=\"" << path << file << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << file << "\" />";
-}
-
-void CNavigationPage::Link(ofstream &strm, char *href, char* content)
-{
-	strm << "<a href=\"" << href << "\" target=\"_parent\">" << content << "</a>";
 }

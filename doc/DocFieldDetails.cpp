@@ -21,8 +21,6 @@
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)
 {
-	this->path = "schema/" + schema.FileID();
-	this->rootLevel = rootLevel;
 }
 
 CDocFieldDetails::~CDocFieldDetails(void)
@@ -33,14 +31,17 @@ void CDocFieldDetails::Documentation()
 {
 	try
 	{
-		CWebPage webPage(this->field.FileID(), this->field.GetName(), rootLevel, this->pInside->appConfig);
+		CPageParams file(PAGE_DETAILS, &this->field);
+		rootLevel = file->GetRootLevel();
+
+		CWebPage webPage(file->GetFileName(), this->field.GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CWebUtil::DocName("index"), "", rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field", CWebUtil::DocName("index"), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field",  CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->field.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
@@ -115,7 +116,7 @@ void CDocFieldDetails::Documentation()
 		//History
 		webPage.AddContent(this->pInside->ServerObjectHistory(&this->field, this->rootLevel));
 
-		webPage.SaveInFolder(this->path);	
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -716,7 +717,7 @@ string CDocFieldDetails::DisplayProperties()
 
 			stringstream viewTmpDesc;
 			viewTmpDesc.str("");
-			viewTmpDesc << "Display Properties in " << CWebUtil::Link("Schema","index."+CWebUtil::WebPageSuffix(), "", rootLevel) << ", View: " << endl;					
+			viewTmpDesc << "Display Properties in " << CWebUtil::Link("Schema",CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << ", View: " << endl;
 			viewTmpDesc << this->schema.LinkToVui(dispList.dInstanceList[i].vui, rootLevel);
 			viewTmpDesc << " (Id: " << dispList.dInstanceList[i].vui << ", Label: " << this->schema.VuiGetLabel(dispList.dInstanceList[i].vui) << ")" << endl;
 

@@ -20,7 +20,6 @@
 CDocPacklistDetails::CDocPacklistDetails(CARContainer &packList)
 : pPackList(packList)
 {
-	this->rootLevel = 2;
 }
 
 CDocPacklistDetails::~CDocPacklistDetails(void)
@@ -29,14 +28,17 @@ CDocPacklistDetails::~CDocPacklistDetails(void)
 
 void CDocPacklistDetails::Documentation()
 {
+	CPageParams file(PAGE_DETAILS, &pPackList);
+	this->rootLevel = file->GetRootLevel();
+
 	try
 	{
-		string dir = CAREnum::ContainerDir(ARCON_PACK)+"/"+this->pPackList.FileID();
+		string dir = file->GetPath();
 
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage("index", this->pPackList.GetName(), this->rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), this->pPackList.GetName(), this->rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;

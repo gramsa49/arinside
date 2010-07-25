@@ -30,10 +30,10 @@ public:
 private:
 	CARRole *pRole;
 
-	string RolePermissions();	
-	void FormsDoc(string fName, int &nResult, string title);
-	void AlPermissionDoc(string fName, int &nResult, string title);
-	void ContainerPermissionDoc(string fName, int &nResult, string title, int containerType);
-	void FieldPermissionDoc(string fName, int &nResult, string title);
+	string RolePermissions();
+	void FormsDoc(int &nResult, string title);
+	void AlPermissionDoc(int &nResult, string title);
+	void ContainerPermissionDoc(int &nResult, string title, int containerType);
+	void FieldPermissionDoc(int &nResult, string title);
 	int NumAllowedFields(CARSchema& schema);
 };

@@ -21,8 +21,6 @@
 CDocVuiDetails::CDocVuiDetails(unsigned int SchemaInsideId, const CARVui& vuiObj, int rootLevel)
 : schema(SchemaInsideId), vui(vuiObj)
 {
-	this->path = "schema/" + schema.FileID();;
-	this->rootLevel = rootLevel;
 }
 
 CDocVuiDetails::~CDocVuiDetails(void)
@@ -33,15 +31,17 @@ void CDocVuiDetails::Documentation()
 {
 	try
 	{
-		string fName = "vui_"+this->vui.FileID();
-		CWebPage webPage(fName, this->vui.GetName(), this->rootLevel, this->pInside->appConfig);
+		CPageParams file(PAGE_DETAILS, &this->vui);
+		this->rootLevel = file->GetRootLevel();
+
+		CWebPage webPage(file->GetFileName(), this->vui.GetName(), this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CWebUtil::DocName("index"), "", rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CWebUtil::DocName("form_vui_list"), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->vui.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->vui.GetInsideId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
@@ -49,15 +49,13 @@ void CDocVuiDetails::Documentation()
 		//Properties
 		webPage.AddContent(CARProplistHelper::GetList(this->vui.GetProps(), this));
 
-		webPage.AddContent(this->FieldProperties(fName).ToXHtml());
+		webPage.AddContent(this->FieldProperties().ToXHtml());
 
 		webPage.AddContent(this->pInside->ServerObjectHistory(&this->vui, this->rootLevel));
-		webPage.SaveInFolder(path);	
+		webPage.SaveInFolder(file->GetPath());
 
-		//Save field information to ccs
-		CCsvPage csvPage("vui_"+this->vui.FileID(), this->pInside->appConfig);
-		csvPage.SaveInFolder(path, this->FieldPropertiesCsv(fName).ToCsv());
-
+		//Save field information to cvs
+		this->FieldPropertiesCsv();
 	}
 	catch(exception& e)
 	{
@@ -65,7 +63,7 @@ void CDocVuiDetails::Documentation()
 	}
 }
 
-CTable CDocVuiDetails::FieldProperties(string fName)
+CTable CDocVuiDetails::FieldProperties()
 {
 	CTable tbl("fieldListIndex", "TblObjectList");
 	tbl.AddColumn(25, "Field Name");
@@ -121,7 +119,7 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 		}
 
 		stringstream tblDesc;
-		tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("data", CWebUtil::CsvDocName(fName), "", 0) << ")" <<  endl;
+		tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_VUIFIELDS_CSV, &this->vui), "", rootLevel) << ")" <<  endl;
 		tbl.description = tblDesc.str();
 	}
 	catch(exception& e)
@@ -133,18 +131,22 @@ CTable CDocVuiDetails::FieldProperties(string fName)
 }
 
 
-CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
+void CDocVuiDetails::FieldPropertiesCsv()
 {
-	CTable tbl("fieldListIndex", "TblObjectList");
-	tbl.AddColumn(25, "Field Name");
-	tbl.AddColumn(10, "Field Id");
-	tbl.AddColumn(20, "Label in View");
-	tbl.AddColumn(10, "Datatype");
-	tbl.AddColumn(20, "Modified");
-	tbl.AddColumn(15, "By");
+	CPageParams csvFile(PAGE_SCHEMA_VUIFIELDS_CSV, &this->vui);
 
 	try
 	{
+		CCsvPage csvPage(csvFile->GetFileName(), this->pInside->appConfig);
+
+		CTable tbl("fieldListIndex", "TblObjectList");
+		tbl.AddColumn(25, "Field Name");
+		tbl.AddColumn(10, "Field Id");
+		tbl.AddColumn(20, "Label in View");
+		tbl.AddColumn(10, "Datatype");
+		tbl.AddColumn(20, "Modified");
+		tbl.AddColumn(15, "By");
+
 		unsigned int fieldCount = schema.GetFields()->GetCount();
 		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
@@ -188,16 +190,16 @@ CTable CDocVuiDetails::FieldPropertiesCsv(string fName)
 			}
 		}
 
-		stringstream tblDesc;
-		tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("csv", CWebUtil::CsvDocName(fName), "", 0) << ")" <<  endl;
-		tbl.description = tblDesc.str();
+		csvPage.SaveInFolder(csvFile->GetPath(), tbl.ToCsv());
+
+		//stringstream tblDesc;
+		//tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("csv", CWebUtil::CsvDocName(fName), "", 0) << ")" <<  endl;
+		//tbl.description = tblDesc.str();
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION enumerating field properties in view '" << this->vui.GetName() << "': " << e.what() << endl;
 	}
-
-	return tbl;
 }
 
 bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStruct &value, std::string &displayValue)

@@ -52,9 +52,15 @@ public:
 	const ARAccessNameType& FilterGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
 	const char* FilterGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
 	const ARPropList& FilterGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
-	unsigned int FilterGetErrorOption(unsigned int index) { assert(index < errorOptions.numItems); return errorOptions.intList[(*sortedList)[index]]; }
-	const ARNameType& FilterGetErrorHandler(unsigned int index) const { assert(index < errorHandlers.numItems); return errorHandlers.nameList[(*sortedList)[index]]; }
 	string FilterGetURL(unsigned int index, int rootLevel);
+
+	// Notice about the function below (FilterGetErrorOption)
+	// The errorOptions list might contain zero items if we connect to a 7.0/6.3
+	// or older server. If thats the case simply return 0. This implies 
+	// additionally, that the FilterGetErrorHandler function is only called when
+	// FilterGetErrorOption return nonzero.
+	unsigned int FilterGetErrorOption(unsigned int index) { if (index >= errorOptions.numItems) return 0; else return errorOptions.intList[(*sortedList)[index]]; }
+	const ARNameType& FilterGetErrorHandler(unsigned int index) const { assert(index < errorHandlers.numItems); return errorHandlers.nameList[(*sortedList)[index]]; }
 
 	const string& FilterGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
 	void FilterSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }

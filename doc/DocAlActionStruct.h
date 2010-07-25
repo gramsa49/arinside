@@ -24,7 +24,7 @@ using namespace OUTPUT;
 class CDocAlActionStruct
 {
 public:
-	CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, string dir, int rootLevel);
+	CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, int rootLevel);
 	~CDocAlActionStruct(void);
 
 public:

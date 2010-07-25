@@ -17,8 +17,7 @@
 #pragma once
 #include "ARObject.h"
 #include "../output/WebUtil.h"
-
-using namespace OUTPUT;
+#include "ARDataObjectType.h"
 
 class CARDataObject :
 	public CARObject
@@ -32,6 +31,7 @@ public:
 	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
 	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
 
+	virtual unsigned int GetDataType() = 0;
 	string name;
 	string requestId;
 	ARTimestamp created;

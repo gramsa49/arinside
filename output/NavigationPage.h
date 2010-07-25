@@ -20,17 +20,17 @@
 class CNavigationPage
 {
 public:
-	CNavigationPage(AppConfig &config) : conf(config) { fileName = "template/navigation"; }
+	CNavigationPage(AppConfig &config) : conf(config) { fileName = "template/navigation"; rootLevel = 1; }
 	~CNavigationPage() { }
 
 	void Write();
 private:
 	AppConfig &conf;
 	string fileName;
+	int rootLevel;
 
 	void Header(ofstream &strm);
 	void Footer(ofstream &strm);
 
 	void Image(ofstream &strm, char *path, char *file, int width, int height);
-	void Link(ofstream &strm, char *href, char *content);
 };

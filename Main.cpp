@@ -146,7 +146,8 @@ int main(int argc, char* argv[])
 				msg = "Required argument(s) missing: " + missingArgs;
 				
 				cout << endl;
-				_output.failure(cmd,CmdLineParseException(msg));
+				CmdLineParseException parseErr(msg);
+				_output.failure(cmd, parseErr);
 			}
 		}
 
@@ -273,6 +274,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto<string>(cfg.targetFolder, "TargetFolder", "DefaultOutputFolder");
 		config.readInto<bool>(cfg.fileMode, "FileMode", false);
 		config.readInto<string>(cfg.objListXML, "ObjListXML", "");
+		config.readInto<bool>(cfg.oldNaming, "OldNaming", false);
 		config.readInto<string>(cfg.blackList, "BlackList", "");
 		config.readInto<bool>(cfg.bLoadServerInfoList, "LoadServerInfoList", true);
 		config.readInto<bool>(cfg.bLoadUserList, "LoadUserList", true);
@@ -301,6 +303,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		LOG << "TargetFolder: " << cfg.targetFolder << endl;
 		LOG << "FileMode: " << cfg.fileMode << endl;
 		LOG << "ObjListXML: " << cfg.objListXML << endl;
+		LOG << "OldNaming: " << cfg.oldNaming << endl;
 		LOG << "BlackList: " << cfg.blackList << endl;
 		LOG << "LoadServerInfoList: " << cfg.bLoadServerInfoList << endl;
 		LOG << "LoadUserList: " << cfg.bLoadUserList << endl;

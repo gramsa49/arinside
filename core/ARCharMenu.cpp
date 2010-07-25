@@ -50,7 +50,8 @@ CARServerObject* CARCharMenu::Clone()
 
 string CARCharMenu::GetURL(int rootLevel, bool showImage)
 {
-	return CWebUtil::Link(GetARName(), CWebUtil::RootPath(rootLevel)+"menu/"+this->FileID()+"/"+CWebUtil::DocName("index"), (showImage ? "menu.gif" : ""), rootLevel);
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(GetARName(), file, (showImage ? "menu.gif" : ""), rootLevel);
 }
 
 string CARCharMenu::GetName()
