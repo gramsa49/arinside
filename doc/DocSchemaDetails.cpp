@@ -1431,9 +1431,9 @@ string CDocSchemaDetails::TableFieldReferences()
 		unsigned int schemaCount = pInside->schemaList.GetCount();
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{			
-			CARSchema schema(schemaIndex);
+			CARSchema searchSchema(schemaIndex);
 			
-			unsigned int fieldCount = schema.GetFields()->GetCount();
+			unsigned int fieldCount = searchSchema.GetFields()->GetCount();
 			for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 			{
 				CARField field(schemaIndex, 0, fieldIndex);
@@ -1449,7 +1449,7 @@ string CDocSchemaDetails::TableFieldReferences()
 					if(schema.GetName().compare(tableSchema) == 0)
 					{
 						strm << "Table: " << field.GetURL(rootLevel);
-						strm << " in form: " << schema.GetURL(rootLevel) << "<br/>" << endl;
+						strm << " in form: " << searchSchema.GetURL(rootLevel) << "<br/>" << endl;
 
 						bFound = true;
 					}
