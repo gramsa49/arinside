@@ -90,7 +90,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Form Access");
 	else
-		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_ROLE_SCHEMA_LIST), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_ROLE_SCHEMA_LIST, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	CTableRow row("");		
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -104,7 +104,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Field Permission");
 	else
-		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_ROLE_FIELD_LIST), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_ROLE_FIELD_LIST, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -118,7 +118,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_ROLE_ACTIVELINK_LIST), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_ROLE_ACTIVELINK_LIST, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -132,7 +132,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Packing List Permission");
 	else
-		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_PACK), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_PACK, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -146,7 +146,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Guide Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_GUIDE), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_GUIDE, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -160,7 +160,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Webservice Permission");
 	else
-		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_WEBSERVICE), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_WEBSERVICE, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
