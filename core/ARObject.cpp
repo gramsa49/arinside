@@ -41,6 +41,7 @@ string CARObject::FileID(int insideId)
 
 string CARObject::GetNameFirstChar(const std::string &str)
 {
+	if (str.empty()) return str;
 	return CUtil::String2Comp(std::string(1, str.at(0)));
 }
 
