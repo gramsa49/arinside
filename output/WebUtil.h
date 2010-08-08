@@ -44,6 +44,8 @@ namespace OUTPUT
 		static string Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, LinkTargetMode target);
 		static string Link(const string& caption, const CPageParams &linkToPage, const string& imgName, int rootLevel, bool validate, LinkTargetMode target);
 
+		static string HtmlPageSuffix();
+		static string HtmlGZPageSuffix();
 		static string WebPageSuffix();
 		static string CsvPageSuffix();
 		static string ImageTag(string imgName, int rootLevel);
@@ -85,5 +87,7 @@ namespace OUTPUT
 		static string LinkToContainer(int objectCount, int rootLevel, int containerType);
 
 		static string LinkToHelper(string name, int objectCount, const CPageParams& page, string image, int rootLevel);
+
+		static string webpageFileExtension;
 	};
 }

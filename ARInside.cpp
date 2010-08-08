@@ -271,6 +271,8 @@ void CARInside::Prepare(void)
 	if( docMain->Index() == 1)
 	{
 		InitFileNamingStrategy();
+		if (appConfig.bGZCompression)
+			WriteHTAccess();
 	}
 
 	delete docMain;
@@ -2683,3 +2685,28 @@ string CARInside::LinkToImage(const string &imageName, int rootLevel)
 }
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
+bool CARInside::WriteHTAccess()
+{
+	stringstream strm;
+	strm << this->appConfig.targetFolder << "/" << ".htaccess";
+
+	if (FileExists(strm.str()))
+		return true;		// if file is already there, it should be configured correctly
+
+	try
+	{
+		string fileName = strm.str();
+		LOG << "Save file '" << fileName;
+
+		ofstream fout(fileName.c_str(), ios::out);
+		fout << "RemoveType .gz" << endl << "AddEncoding gzip .gz";
+		fout.close();
+	}
+	catch (exception &e)
+	{
+		stringstream erStrm;
+		erStrm << "Error saving file '" << strm.str() << "' to disk. Error: " << e.what();
+		throw(AppException(erStrm.str(), "undefined", "FileIo"));
+	}
+	return true;
+}

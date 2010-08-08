@@ -42,13 +42,13 @@ namespace OUTPUT
 
 		const AppConfig &appConfig;
 		
-		void WriteContent(ofstream &strm);
+		void WriteContent(ostream &strm);
 
-		void PageHeader(ofstream &strm);
-		void ContentOpen(ofstream &strm);
-		void ContentClose(ofstream &strm);
-		void DynamicHeaderText(ofstream &strm);
-		void DynamicFooterText(ofstream &strm);
+		void PageHeader(ostream &strm);
+		void ContentOpen(ostream &strm);
+		void ContentClose(ostream &strm);
+		void DynamicHeaderText(ostream &strm);
+		void DynamicFooterText(ostream &strm);
 		string CurrentDateTime();
 	};
 }

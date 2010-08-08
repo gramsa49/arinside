@@ -55,6 +55,7 @@ AppConfig::AppConfig(void)
 	rpcPort = 0;
 	bCompactFolder = false;
 	bDeleteExistingFiles = false;
+	bGZCompression = false;
 
 	//Notes to be displayed on home page
 	runNotes = "";

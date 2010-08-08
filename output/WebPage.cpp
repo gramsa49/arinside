@@ -18,6 +18,7 @@
 #include "WebPage.h"
 #include "WebUtil.h"
 #include "../ARInside.h"
+#include "../gzstream.h"
 
 using namespace OUTPUT;
 
@@ -52,7 +53,7 @@ void CWebPage::AddContentHead(const string &description)
 	AddContent("<br/><br/>");
 }
 
-void CWebPage::PageHeader(ofstream &strm)
+void CWebPage::PageHeader(ostream &strm)
 {
 	strm << "<?xml version=\"1.0\" ?>" << endl;
 	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
@@ -70,7 +71,7 @@ void CWebPage::PageHeader(ofstream &strm)
 	strm << "</head>" << endl;
 }
 
-void CWebPage::DynamicHeaderText(ofstream &strm)
+void CWebPage::DynamicHeaderText(ostream &strm)
 {
 	strm << "<table>" << endl;
 	strm << "<tr>" << endl;
@@ -94,7 +95,7 @@ string CWebPage::CurrentDateTime()
 	return string;
 }
 
-void CWebPage::DynamicFooterText(ofstream &strm)
+void CWebPage::DynamicFooterText(ostream &strm)
 {
 	strm << "<table><tr>" << endl;
 	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel) + CWebUtil::DocName("index"), "next.gif", rootLevel)<< "</td>" << endl;
@@ -105,7 +106,7 @@ void CWebPage::DynamicFooterText(ofstream &strm)
 	strm << "</tr></table>" << endl;
 }
 
-void CWebPage::ContentOpen(ofstream &strm)
+void CWebPage::ContentOpen(ostream &strm)
 {
 	strm << "<body>" << endl;
 	strm << "<a name=\"top\"></a>" << endl;
@@ -113,11 +114,11 @@ void CWebPage::ContentOpen(ofstream &strm)
 	strm << "<tr><td class=\"TdMainHeader\" colspan=\"3\">" << endl;
 	DynamicHeaderText(strm);
 	strm << "</td></tr><tr><td class=\"TdMainMenu\">" << endl;
-	strm << "<iframe id=\"IFrameMenu\" src=\"" << CWebUtil::RootPath(rootLevel) << "template/navigation.htm\" name=\"Navigation\" frameborder=\"0\">" << endl;
+	strm << "<iframe id=\"IFrameMenu\" src=\"" << CWebUtil::RootPath(rootLevel) << "template/navigation." << CWebUtil::WebPageSuffix() << "\" name=\"Navigation\" frameborder=\"0\">" << endl;
 	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << endl;
 }
 
-void CWebPage::ContentClose(ofstream &strm)
+void CWebPage::ContentClose(ostream &strm)
 {
 	strm << "</td>" << endl;
 
@@ -139,7 +140,7 @@ void CWebPage::ContentClose(ofstream &strm)
 
 
 
-void CWebPage::WriteContent(ofstream &strm)
+void CWebPage::WriteContent(ostream &strm)
 {	
 	PageHeader(strm);
 	ContentOpen(strm);
@@ -163,12 +164,22 @@ int CWebPage::SaveInFolder(const string &path)
 		strm << this->appConfig.targetFolder << "/" << CWebUtil::DocName(this->fileName);
 
 	try
-	{	
-		LOG << "Save file '" << strm.str();
+	{
+		string fileName = strm.str();
+		LOG << "Save file '" << fileName;
 
-		ofstream fout( strm.str().c_str(), ios::out);
+		ostream *outStream;
+		if (CARInside::GetInstance()->appConfig.bGZCompression)
+			outStream = new ogzstream(fileName.c_str(), ios::out);
+		else 
+			outStream = new ofstream(fileName.c_str(), ios::out);
+
+		ostream &fout = *outStream;
+
 		WriteContent(fout);
-		fout.close();
+
+		fout.flush();
+		delete outStream;
 
 		LOG << "' [OK]" << endl;
 

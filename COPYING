@@ -31,3 +31,17 @@ License : MIT (see ./tclap/LICENSE)
 
 TCLAP is a small, flexible library that provides a simple interface for 
 defining and accessing command line arguments.
+
+== zlib ==
+Homepage: http://www.zlib.net
+License:  http://www.zlib.net/zlib_license.html
+
+The zlib compression library provides in-memory compression and decompression
+functions, including integrity checks of the uncompressed data.
+
+== Gzstream Library ==
+Homepage: http://www.cs.unc.edu/Research/compgeom/gzstream/
+License:  LGPL (see ./gzstream.cpp)
+
+Gzstream is a small C++ library, basically just a wrapper, that provides the
+functionality of the zlib C-library in a C++ iostream.

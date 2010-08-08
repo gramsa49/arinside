@@ -61,6 +61,7 @@ public:
 	bool bLoadRoleList;
 	bool bUseUtf8;
 	bool bCompactFolder;
+	bool bGZCompression;
 	bool bDeleteExistingFiles;
 
 	string serverName;

@@ -42,7 +42,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\Api750\include;.\;"
+				AdditionalIncludeDirectories=".\Tclap;..\..\Api750\include;.\;..\..\libs\zlib\include;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -63,9 +63,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi75.lib arxmlutil75.lib"
+				AdditionalDependencies="arapi75.lib arxmlutil75.lib zdll.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\Api750\lib"
+				AdditionalLibraryDirectories="..\..\Api750\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -122,7 +122,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;"
+				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -141,9 +141,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi75.lib arxmlutil75.lib"
+				AdditionalDependencies="arapi75.lib arxmlutil75.lib zdll.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\Api750\lib"
+				AdditionalLibraryDirectories="..\..\Api750\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -202,7 +202,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;"
+				AdditionalIncludeDirectories=".\tclap;..\..\Api750\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA;AR_STRICT_ANSI"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -221,9 +221,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi75.lib arxmlutil75.lib"
+				AdditionalDependencies="arapi75.lib arxmlutil75.lib zdll.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\Api750\lib"
+				AdditionalLibraryDirectories="..\..\Api750\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"
@@ -274,6 +274,10 @@
 			</File>
 			<File
 				RelativePath=".\ConfigFile.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\gzstream.cpp"
 				>
 			</File>
 			<File
@@ -340,6 +344,10 @@
 			</File>
 			<File
 				RelativePath=".\ConfigFile.h"
+				>
+			</File>
+			<File
+				RelativePath=".\gzstream.h"
 				>
 			</File>
 			<File

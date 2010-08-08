@@ -29,8 +29,8 @@ private:
 	string fileName;
 	int rootLevel;
 
-	void Header(ofstream &strm);
-	void Footer(ofstream &strm);
+	void Header(ostream &strm);
+	void Footer(ostream &strm);
 
-	void Image(ofstream &strm, char *path, char *file, int width, int height);
+	void Image(ostream &strm, char *path, char *file, int width, int height);
 };

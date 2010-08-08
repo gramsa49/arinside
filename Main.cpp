@@ -282,6 +282,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto<bool>(cfg.bLoadRoleList, "LoadRoleList", true);
 		config.readInto<bool>(cfg.bUseUtf8, "Utf-8", false);
 		config.readInto<bool>(cfg.bCompactFolder, "CompactFolder", false);
+		config.readInto<bool>(cfg.bGZCompression, "GZCompression", false);
 		config.readInto<bool>(cfg.bDeleteExistingFiles, "DeleteExistingFiles", false);
 		config.readInto<string>(cfg.runNotes, "RunNotes", "");
 		config.readInto<string>(cfg.serverName, "ServerName", "");
@@ -311,9 +312,15 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		LOG << "LoadRoleList: " << cfg.bLoadRoleList << endl;
 		LOG << "Utf-8: " << cfg.bUseUtf8 << endl;
 		LOG << "CompactFolder: " << cfg.bCompactFolder << endl;
+		LOG << "GZCompression: " << cfg.bGZCompression << endl;
 		LOG << "DeleteExistingFiles: " << cfg.bDeleteExistingFiles << endl;
 		LOG << "RunNotes: " << cfg.runNotes << endl;
-		LOG << endl;		
+		LOG << endl;
+
+		if (cfg.bGZCompression)
+			CWebUtil::webpageFileExtension = CWebUtil::HtmlGZPageSuffix();
+		else
+			CWebUtil::webpageFileExtension = CWebUtil::HtmlPageSuffix();
 	}
 	catch(exception& e)
 	{

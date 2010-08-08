@@ -19,6 +19,7 @@
 #include "WebUtil.h"
 #include "../AppException.h"
 #include "../ARInside.h"
+#include "../gzstream.h"
 
 using namespace OUTPUT;
 
@@ -31,9 +32,16 @@ void CNavigationPage::Write()
 	CARInside *pInside = CARInside::GetInstance();
 
 	try
-	{	
+	{
 		LOG << "Save file '" << strmName.str();
-		ofstream fout( strmName.str().c_str(), ios::out);
+
+		ostream *outStream;
+		if (pInside->appConfig.bGZCompression)
+			outStream = new ogzstream(strmName.str().c_str(), ios::out);
+		else 
+			outStream = new ofstream(strmName.str().c_str(), ios::out);
+
+		ostream &fout = *outStream;
 
 		// header
 		Header(fout);
@@ -96,7 +104,8 @@ void CNavigationPage::Write()
 		// footer
 		Footer(fout);
 
-		fout.close();
+		outStream->flush();
+		delete outStream;
 
 		LOG << "' [OK]" << endl;
 	}
@@ -108,7 +117,7 @@ void CNavigationPage::Write()
 	}
 }
 
-void CNavigationPage::Header(ofstream &strm)
+void CNavigationPage::Header(ostream &strm)
 {
 	strm << "<?xml version=\"1.0\" encoding=\"ISO-8859-1\" ?> " << endl;
 
@@ -131,12 +140,12 @@ void CNavigationPage::Header(ofstream &strm)
 	<body><ul>";
 }
 
-void CNavigationPage::Footer(ofstream &strm)
+void CNavigationPage::Footer(ostream &strm)
 {
 	strm << "</ul></body></html>";
 }
 
-void CNavigationPage::Image(ofstream &strm, char *path, char *file, int width, int height)
+void CNavigationPage::Image(ostream &strm, char *path, char *file, int width, int height)
 {
 	strm << "<img src=\"" << path << file << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << file << "\" />";
 }

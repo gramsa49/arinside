@@ -194,4 +194,6 @@ private:
 	string processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 	string processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+
+	bool WriteHTAccess();
 };

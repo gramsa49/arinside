@@ -20,6 +20,8 @@
 
 using namespace OUTPUT;
 
+string CWebUtil::webpageFileExtension;
+
 CWebUtil::CWebUtil(void)
 {
 }
@@ -49,9 +51,19 @@ string CWebUtil::Validate(string text)
 	return text;
 }
 
-string CWebUtil::WebPageSuffix()
+string CWebUtil::HtmlPageSuffix()
 {
 	return "htm";
+}
+
+string CWebUtil::HtmlGZPageSuffix()
+{
+	return "htm.gz";
+}
+
+string CWebUtil::WebPageSuffix()
+{
+	return webpageFileExtension;
 }
 
 string CWebUtil::CsvPageSuffix()
