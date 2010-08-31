@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "resource.h"
 #include "WindowsUtil.h"
+#include "AppException.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -24,6 +25,8 @@
 #ifdef WIN32
 #include <windows.h>
 #include <direct.h>
+#else
+#include <errno.h>
 #endif // WIN32
 
 CWindowsUtil::CWindowsUtil(AppConfig &appConfig)
@@ -204,4 +207,33 @@ int CWindowsUtil::CreateSubDirectory(string name)
 	}
 
 	return 0;
+}
+
+string CWindowsUtil::GetRealPathName(const std::string &path)
+{
+#ifdef WIN32
+	char buffer[MAX_PATH]; buffer[0] = 0;
+	LPSTR *filePos = NULL;
+
+	DWORD len = GetFullPathName(path.c_str(), MAX_PATH, buffer, filePos);
+	if (len > MAX_PATH || len == 0)
+	{
+		stringstream tmp;
+		tmp << "Error: could not retrieve the full output path! (" << GetLastError() << ")";
+		throw AppException(tmp.str(), "filesystem");			
+	}
+#else
+	// NOTE: realpath doesn't return the full path under SunOS if a relativ path is specified.
+	char buffer[PATH_MAX]; buffer[0] = 0;
+	char *p;
+	p = realpath(path.c_str(), buffer);
+	if (p == NULL)
+	{
+		if (errno == ENOENT) return path;
+		stringstream tmp;
+		tmp << strerror(errno) << ": " << path;
+		throw AppException(tmp.str(), "filesystem");			
+	}
+#endif
+	return buffer;
 }

@@ -150,3 +150,9 @@ string CUtil::TimeOfDayToString(ARTime time)
 
 	return buffer;
 }
+
+bool CUtil::StrEndsWith(const std::string &str, const std::string &search)
+{
+	if (search.size() > str.size()) return false;
+	return equal(str.end() - search.size(), str.end(), search.begin());
+}

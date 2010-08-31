@@ -40,6 +40,7 @@ public:
 	static string ClearSpaces(const string &strIn);
 	static string String2Comp(string strIn);
 	static string StrReplace(const std::string &search, const std::string &replace, std::string searchin);
+	static bool StrEndsWith(const std::string &str, const std::string &search);
 	//static int SplitString(const string& input, const string& delimiter, vector<string>& results, bool includeEmpties);	
 
 	static int SplitString(const std::string& input_record, std::vector<std::string>& colv);
