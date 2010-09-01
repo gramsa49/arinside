@@ -56,7 +56,11 @@ int main(int argc, char* argv[])
 
 	cout << "ARInside Version " << AppVersion << endl << endl;
 
-	CmdLine cmd("ARInside -- http://arinside.org", ' ', AppVersion);
+	CmdLine cmd("ARInside -- http://arinside.org\n"
+		          "Copyright (C) 2010 Stefan Nerlich, LJ Longwing, John Luthgers\n"
+							"This program comes with ABSOLUTELY NO WARRANTY, is free software, and you are welcome to "
+							"redistribute it under certain conditions; see COPYING file for more details.", 
+							' ', AppVersion);
 
 	ValueArg<string> iniArg("i", "ini", "Application settings filename", true, "settings.ini", "string");
 	ValueArg<string> serverArg("s","server","ARSystem server",false,"","string");
