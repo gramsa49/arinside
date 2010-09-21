@@ -54,10 +54,13 @@ int main(int argc, char* argv[])
 	int tcp = 0;
 	int rpc = 0;
 
-	cout << "ARInside Version " << AppVersion << endl;
-	cout << "Copyright (c) 2009 Stefan Nerlich" << endl << endl;
+	cout << "ARInside Version " << AppVersion << endl << endl;
 
-	CmdLine cmd("ARInside -- http://arinside.org", ' ', AppVersion);
+	CmdLine cmd("ARInside -- http://arinside.org\n"
+		          "Copyright (C) 2010 Stefan Nerlich, LJ Longwing, John Luthgers\n"
+							"This program comes with ABSOLUTELY NO WARRANTY, is free software, and you are welcome to "
+							"redistribute it under certain conditions; see COPYING file for more details.", 
+							' ', AppVersion);
 
 	ValueArg<string> iniArg("i", "ini", "Application settings filename", true, "settings.ini", "string");
 	ValueArg<string> serverArg("s","server","ARSystem server",false,"","string");
@@ -103,22 +106,22 @@ int main(int argc, char* argv[])
 		LoadConfigFile(settingsIni, appConfig);
 
 		// override settings with values specified by the command line 
-		if (!server.empty() || appConfig.serverName.empty())
+		if (serverArg.isSet())
 			appConfig.serverName = server;
 
-		if (!output.empty() || appConfig.targetFolder.empty())
+		if (outputFolder.isSet())
 			appConfig.targetFolder = output;
 
-		if (!login.empty() || appConfig.userName.empty())
+		if (loginArg.isSet())
 			appConfig.userName = login;
 
-		if (!pwd.empty() || appConfig.password.empty())
+		if (pwdArg.isSet())
 			appConfig.password = pwd;
 
-		if (tcp > 0)
+		if (tcpArg.isSet())
 			appConfig.tcpPort = tcp;
 
-		if (rpc > 0)
+		if (rpcArg.isSet())
 			appConfig.rpcPort = rpc;
 
 		// special checks for server mode
@@ -127,7 +130,7 @@ int main(int argc, char* argv[])
 			string missingArgs;
 			unsigned int missingCount = 0;
 
-			if (appConfig.serverName.empty())
+			if (!appConfig.fileMode && appConfig.serverName.empty())
 			{
 				missingCount++;
 				missingArgs = "server / ServerName";
@@ -151,8 +154,22 @@ int main(int argc, char* argv[])
 			}
 		}
 
+		// validate the path of the target folder
+		if (appConfig.targetFolder.empty())
+		{
+			cout << "[ERR] Target folder setting is missing or not setup correctly!" << endl;
+			throw ExitException(1);
+		}
+		
+		string fullOutputPath = CWindowsUtil::GetRealPathName(appConfig.targetFolder);
+		if (CUtil::StrEndsWith(fullOutputPath, ":\\") || CUtil::StrEndsWith(fullOutputPath, ":/") || fullOutputPath == "/")
+		{
+			cout << "[ERR] The target directory points to the root of the device. This is not allowed!" << endl;
+			throw ExitException(1);
+		}
+
 		CWindowsUtil winUtil(appConfig);		
-		CARInside arInside(appConfig);;
+		CARInside arInside(appConfig);
 
 		//Delete existing files
 		if(appConfig.bDeleteExistingFiles)
@@ -162,6 +179,8 @@ int main(int argc, char* argv[])
 		}
 
 		//Create the target directory specified in the configuration files
+		//TODO: CreateAppDirectory returns false if the directory already exists .. this should be changed so
+		//      we can check if there is something going wrong and stop the process!!
 		winUtil.CreateAppDirectory();
 
 		if(arInside.ValidateTargetDir(appConfig.targetFolder) == 0)
@@ -213,6 +232,8 @@ int main(int argc, char* argv[])
 		}			
 		else
 		{
+			// TODO: ValidateTargetDir returns 0 on success. On error there is no information about the error
+			// at all .. only "whoops, cant create directory" .. hell yes, and now? where is my glass sphere...
 			cout << "Failed to create target directory: " << appConfig.targetFolder << endl;
 			result = AR_RETURN_ERROR;
 		}
@@ -237,7 +258,7 @@ int main(int argc, char* argv[])
 	}
 	catch(AppException &e)
 	{
-		cout << endl << "AppException: " << e.typeDescription() << endl << "Description: " << e.error();	
+		cout << endl << "AppException: " << e.typeDescription() << endl << "Description: " << e.error() << endl;	
 	}
 	catch (ArgException &e)
 	{ 
@@ -271,7 +292,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto<int>(cfg.maxRetrieve, "MaxRetrieve", 0);
 		config.readInto<string>(cfg.companyName, "CompanyName", "");
 		config.readInto<string>(cfg.companyUrl, "CompanyUrl", "");
-		config.readInto<string>(cfg.targetFolder, "TargetFolder", "DefaultOutputFolder");
+		config.readInto<string>(cfg.targetFolder, "TargetFolder", "");
 		config.readInto<bool>(cfg.fileMode, "FileMode", false);
 		config.readInto<string>(cfg.objListXML, "ObjListXML", "");
 		config.readInto<bool>(cfg.oldNaming, "OldNaming", false);
