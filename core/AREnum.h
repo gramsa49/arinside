@@ -76,6 +76,20 @@ public:
 		}
 	}
 
+	static unsigned int OperandPrecedence(int nType)
+	{
+		switch (nType)
+		{
+		case AR_ARITH_OP_ADD: return 4;
+		case AR_ARITH_OP_SUBTRACT: return 4;
+		case AR_ARITH_OP_MULTIPLY: return 3;
+		case AR_ARITH_OP_DIVIDE: return 3;
+		case AR_ARITH_OP_MODULO: return 3;
+		case AR_ARITH_OP_NEGATE: return 7;
+		default: return 99;
+		}
+	}
+
 	static string Function(int nType)
 	{
 		switch(nType)

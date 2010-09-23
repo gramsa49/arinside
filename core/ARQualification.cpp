@@ -67,7 +67,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, const CFieldRe
 			}
 			break;
 		case AR_COND_OP_REL_OP:
-			CheckOperand(&query->u.relOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&query->u.relOp->operandLeft, NULL, refItem, pFormId, sFormId, qText, rootLevel);
 			switch (query->u.relOp->operation) 
 			{		
 			case AR_REL_OP_EQUAL:
@@ -92,7 +92,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, const CFieldRe
 				qText << " LIKE ";
 				break;
 			}
-			CheckOperand(&query->u.relOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&query->u.relOp->operandRight, NULL, refItem, pFormId, sFormId, qText, rootLevel);
 			break;
 		case AR_COND_OP_FROM_FIELD: //A qualification located in a field on the form.
 			qText << "EXTERNAL ($" << arIn->LinkToField(pFormId, query->u.fieldId, rootLevel) << "$)";
@@ -107,7 +107,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, const CFieldRe
 	qualLevels.pop_back();
 }
 
-void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel)
 {		
 	switch(operand->tag)
 	{
@@ -240,49 +240,78 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, const CF
 		}
 		break;
 	case AR_ARITHMETIC:
+	{
+		// Rule 1: 
+		// if the parent has a higher precedence (in this case a lower value), we have to add parentheses
+		// Example 1: 2 * (3 + 4)      Original: (2 * (3 + 4))
+		// Example 2: 2 + 3 * 4        Original: (2 + (3 * 4))
+		// Example 3: (2 + 3) * 4      Original: ((2 + 3) * 4)
+		//
+		// Rule 2: 
+		// if the parent and the current operand have the same precedence (mul, div and modulo use the
+		// same, at least in C) and the current modulo operation is at the right side of the parent
+		// operand, only then parentheses are needed. (If the modulo is on the left side, the operation
+		// is executed from left to right and doesn't need any parentheses.)
+		// Example 1: 2 * (3 mod 4)    Original: (2 * (3 mod 4))
+		// Example 2: 2 * 3 mod 4      Original: ((2 * 3) mod 4)
+		// Example 3: 2 mod 3 * 4      Original: ((2 mod 3) * 4)
+		// Example 4: 2 mod (3 * 4)    Original: (2 mod (3 * 4))
+
+		bool addBracket = false;
+		if (parent != NULL && parent->tag == operand->tag)
+		{
+			unsigned int parentPrecedence = CAREnum::OperandPrecedence(parent->u.arithOp->operation);
+			unsigned int currentPrecedence = CAREnum::OperandPrecedence(operand->u.arithOp->operation);
+
+			if (parentPrecedence < currentPrecedence || operand->u.arithOp->operation == AR_ARITH_OP_MODULO &&
+			    parentPrecedence == currentPrecedence && &parent->u.arithOp->operandRight == operand)
+				addBracket = true;
+		}
+
 		switch (operand->u.arithOp->operation) 
 		{
 		case AR_ARITH_OP_ADD:
-			qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << "(";
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
 			qText << CAREnum::Operand(AR_ARITH_OP_ADD);
-			CheckOperand(&operand->u.arithOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			qText << ")";
+			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_SUBTRACT:
-			qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << "(";
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
 			qText << CAREnum::Operand(AR_ARITH_OP_SUBTRACT);
-			CheckOperand(&operand->u.arithOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			qText << ")";
+			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_MULTIPLY:
-			qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << "(";
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
 			qText << CAREnum::Operand(AR_ARITH_OP_MULTIPLY);
-			CheckOperand(&operand->u.arithOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			qText << ")";
+			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_DIVIDE:
-			qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << "(";
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
 			qText << CAREnum::Operand(AR_ARITH_OP_DIVIDE);
-			CheckOperand(&operand->u.arithOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			qText << ")";
+			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_MODULO:
-			qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << "(";
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
 			qText << CAREnum::Operand(AR_ARITH_OP_MODULO);
-			CheckOperand(&operand->u.arithOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
-			qText << ")";
+			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_NEGATE:
 			qText << CAREnum::Operand(AR_ARITH_OP_NEGATE);
-			CheckOperand(&operand->u.arithOp->operandRight, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
 			break;
 		}
 		break;
+	}
 	case AR_STAT_HISTORY:
 		qText << "'" << arIn->LinkToField(pFormId, 15, rootLevel) << ".";
 

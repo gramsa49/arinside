@@ -25,25 +25,25 @@ using namespace OUTPUT;
 class CARAssignHelper
 {
 public:
-	CARAssignHelper(CARInside &arIn, int rootLevel, string objName, int objType, string schemaName1, string schemaName2);
+	CARAssignHelper(CARInside &arIn, int rootLevel, const string& objName, int objType, const string& schemaName1, const string& schemaName2);
 	~CARAssignHelper(void);
 
 	bool pushFieldFlag;
 
-	string PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, string ifElse);
-	string SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, string ifElse);
-	string OpenWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
-	string CloseWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo);
-	string ServiceAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo);
-	void CheckAssignment(int targetFieldId, string ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, string refItemDesc);
+	string PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, const string& ifElse);
+	string SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, const string& ifElse);
+	string OpenWindowAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& openCloseInfo);
+	string CloseWindowAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& openCloseInfo);
+	string ServiceAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& serviceInfo);
+	unsigned int CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, const string& ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const string& refItemDesc);
 
-	void AssignValue(int targetFieldId, string ifElse, ARValueStruct &v, stringstream &assignText, string refItemDesc);	
-	void AssignField(string ifElse, int nAction, ARAssignFieldStruct &v, stringstream &assignText, string refItemDesc);
-	void AssignProcess(string ifElse, char *v, stringstream &assignText, string refItemDesc);
-	void AssignFunction(int targetFieldId, string ifElse, int nAction, ARFunctionAssignStruct &v, stringstream &assignText, string refItemDesc);	
-	void AssignDDE(string ifElse, ARDDEStruct &v, stringstream &assignText, string refItemDesc);	
-	void AssignSQL(string ifElse, ARAssignSQLStruct &v, stringstream &assignText, string refItemDesc);	
-	void AssignFilterApi(string ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, string refItemDesc);	
+	void AssignValue(int targetFieldId, const string& ifElse, ARValueStruct &v, stringstream &assignText, const string& refItemDesc);	
+	void AssignField(const string& ifElse, int nAction, ARAssignFieldStruct &v, stringstream &assignText, const string& refItemDesc);
+	void AssignProcess(const string& ifElse, char *v, stringstream &assignText, const string& refItemDesc);
+	void AssignFunction(int targetFieldId, const string& ifElse, int nAction, ARFunctionAssignStruct &v, stringstream &assignText, const string& refItemDesc);	
+	void AssignDDE(const string& ifElse, ARDDEStruct &v, stringstream &assignText, const string& refItemDesc);	
+	void AssignSQL(const string& ifElse, ARAssignSQLStruct &v, stringstream &assignText, const string& refItemDesc);	
+	void AssignFilterApi(const string& ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, const string& refItemDesc);	
 
 private:
 	CARInside *arIn;

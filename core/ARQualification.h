@@ -29,7 +29,7 @@ public:
 
 private:
 	CARInside *arIn;
-	void CheckOperand(ARFieldValueOrArithStruct *operand, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
+	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
 	int FindCurrentEnumFieldId(int pFormId, int sFormId);
 
 	int tmpFormId;

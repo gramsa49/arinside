@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "ARAssignHelper.h"
 
-CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, string objName, int objType, string schemaName1, string schemaName2)
+CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const string& objName, int objType, const string& schemaName1, const string& schemaName2)
 {
 	this->arIn = &arIn;
 	//this->dir = dir;
@@ -37,7 +37,7 @@ CARAssignHelper::~CARAssignHelper(void)
 }
 
 
-string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, string ifElse)
+string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, const string& ifElse)
 {
 	stringstream strm;
 	strm.str("");
@@ -65,7 +65,7 @@ string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &act
 			delete refItem;	
 
 			stringstream assignText;
-			CheckAssignment(nTargetFieldId, ifElse, nAction, action.pushFieldsList.pushFieldsList[i].assign, assignText, "Push Fields");
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.pushFieldsList.pushFieldsList[i].assign, assignText, "Push Fields");
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
@@ -83,7 +83,7 @@ string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &act
 	return strm.str();
 }
 
-string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, string ifElse)
+string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, const string& ifElse)
 {
 	stringstream strm;
 	strm.str("");
@@ -110,7 +110,7 @@ string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &actio
 			delete refItem;	
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldList.fieldAssignList[i].assignment, assignText, "Set Fields");
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldList.fieldAssignList[i].assignment, assignText, "Set Fields");
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -128,7 +128,7 @@ string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &actio
 	return strm.str();
 }
 
-string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo)
+string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& openCloseInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -158,7 +158,7 @@ string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, in
 			delete refItem;	
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -176,7 +176,7 @@ string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, in
 	return strm.str();
 }
 
-string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string openCloseInfo)
+string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& openCloseInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -203,7 +203,7 @@ string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, i
 			delete refItem;	
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -221,7 +221,7 @@ string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, i
 	return strm.str();
 }
 
-string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int nAction, string ifElse, string serviceInfo)
+string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& serviceInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -243,7 +243,7 @@ string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int n
 			delete refItem;	
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, serviceInfo);
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, serviceInfo);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -261,11 +261,12 @@ string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int n
 	return strm.str();
 }
 
-void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, string refItemDesc)
-{	
+unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, const string& ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const string& refItemDesc)
+{
+	unsigned int assignType = assignment.assignType;
 	try
 	{
-		switch(assignment.assignType)
+		switch(assignType)
 		{
 		case AR_ASSIGN_TYPE_VALUE:
 			{					
@@ -310,47 +311,74 @@ void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAct
 			}
 			break;
 		case AR_ASSIGN_TYPE_ARITH:
-			{			
+			{
+				// Rule 1: 
+				// if the parent has a higher precedence (in this case a lower value), we have to add parentheses
+				// Example 1: 2 * (3 + 4)      Original: (2 * (3 + 4))
+				// Example 2: 2 + 3 * 4        Original: (2 + (3 * 4))
+				// Example 3: (2 + 3) * 4      Original: ((2 + 3) * 4)
+				//
+				// Rule 2: 
+				// if the parent and the current operand have the same precedence (mul, div and modulo use the
+				// same, at least in C) and the current modulo operation is at the right side of the parent
+				// operand, only then parentheses are needed. (If the modulo is on the left side, the operation
+				// is executed from left to right and doesn't need any parentheses.)
+				// Example 1: 2 * (3 mod 4)    Original: (2 * (3 mod 4))
+				// Example 2: 2 * 3 mod 4      Original: ((2 * 3) mod 4)
+				// Example 3: 2 mod 3 * 4      Original: ((2 mod 3) * 4)
+				// Example 4: 2 mod (3 * 4)    Original: (2 mod (3 * 4))
+
+				bool addBracket = false;
+				if (parentAssignment != NULL && parentAssignment->assignType == assignment.assignType)
+				{
+					unsigned int parentPrecedence = CAREnum::OperandPrecedence(parentAssignment->u.arithOp->operation);
+					unsigned int currentPrecedence = CAREnum::OperandPrecedence(assignment.u.arithOp->operation);
+
+					if (parentPrecedence < currentPrecedence || assignment.u.arithOp->operation == AR_ARITH_OP_MODULO &&
+					    parentPrecedence == currentPrecedence && &parentAssignment->u.arithOp->operandRight == &assignment)
+						addBracket = true;
+				}
+
 				switch (assignment.u.arithOp->operation) 
 				{
 				case AR_ARITH_OP_ADD:
-					assignText << "(";
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					if (addBracket) assignText << "(";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
 					assignText << CAREnum::Operand(AR_ARITH_OP_ADD);
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-					assignText << ")";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_SUBTRACT:
-					assignText << "(";
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					if (addBracket) assignText << "(";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
 					assignText << CAREnum::Operand(AR_ARITH_OP_SUBTRACT);
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-					assignText << ")";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_MULTIPLY:
-					assignText << "(";
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					if (addBracket) assignText << "(";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
 					assignText << CAREnum::Operand(AR_ARITH_OP_MULTIPLY);
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-					assignText << ")";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_DIVIDE:
-					assignText << "(";
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					if (addBracket) assignText << "(";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
 					assignText << CAREnum::Operand(AR_ARITH_OP_DIVIDE);
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-					assignText << ")";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_MODULO:
-					assignText << "(";
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					if (addBracket) assignText << "(";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
 					assignText << CAREnum::Operand(AR_ARITH_OP_MODULO);
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
-					assignText << ")";
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_NEGATE:
 					assignText << CAREnum::Operand(AR_ARITH_OP_NEGATE);
-					CheckAssignment(targetFieldId, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
 					break;
 				}
 
@@ -382,9 +410,10 @@ void CARAssignHelper::CheckAssignment(int targetFieldId, string ifElse, int nAct
 	{
 		cout << "EXCEPTION in ActiveLink CheckAssignment of '" << this->objName << "': " << e.what() << endl;
 	}
+	return assignType;
 }
 
-void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruct &v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignValue(int targetFieldId, const string& ifElse, ARValueStruct &v, stringstream &assignText, const string& refItemDesc)
 {	
 	try
 	{
@@ -444,7 +473,7 @@ void CARAssignHelper::AssignValue(int targetFieldId, string ifElse, ARValueStruc
 	}
 }
 
-void CARAssignHelper::AssignField( string ifElse, int nAction, ARAssignFieldStruct &v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignField(const string& ifElse, int nAction, ARAssignFieldStruct &v, stringstream &assignText, const string& refItemDesc)
 {
 	try
 	{
@@ -476,7 +505,7 @@ void CARAssignHelper::AssignField( string ifElse, int nAction, ARAssignFieldStru
 	}
 }
 
-void CARAssignHelper::AssignProcess(string ifElse, char *v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignProcess(const string& ifElse, char *v, stringstream &assignText, const string& refItemDesc)
 {
 	try
 	{
@@ -498,7 +527,7 @@ void CARAssignHelper::AssignProcess(string ifElse, char *v, stringstream &assign
 	}
 }
 
-void CARAssignHelper::AssignFunction(int targetFieldId, string ifElse, int nAction, ARFunctionAssignStruct &v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignFunction(int targetFieldId, const string& ifElse, int nAction, ARFunctionAssignStruct &v, stringstream &assignText, const string& refItemDesc)
 {
 	try
 	{				
@@ -523,7 +552,7 @@ void CARAssignHelper::AssignFunction(int targetFieldId, string ifElse, int nActi
 						continue;
 					}
 
-					CheckAssignment(targetFieldId, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
 				}
 			}
 			break;
@@ -534,7 +563,7 @@ void CARAssignHelper::AssignFunction(int targetFieldId, string ifElse, int nActi
 				{
 					if(i > 0)	assignText << ", ";
 
-					CheckAssignment(targetFieldId, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
 				}
 			}
 			break;
@@ -547,7 +576,7 @@ void CARAssignHelper::AssignFunction(int targetFieldId, string ifElse, int nActi
 	}
 }
 
-void CARAssignHelper::AssignDDE(string ifElse, ARDDEStruct &v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignDDE(const string& ifElse, ARDDEStruct &v, stringstream &assignText, const string& refItemDesc)
 {
 	try
 	{
@@ -582,7 +611,7 @@ void CARAssignHelper::AssignDDE(string ifElse, ARDDEStruct &v, stringstream &ass
 	}
 }
 
-void CARAssignHelper::AssignSQL(string ifElse, ARAssignSQLStruct &v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignSQL(const string& ifElse, ARAssignSQLStruct &v, stringstream &assignText, const string& refItemDesc)
 {
 	try
 	{
@@ -594,7 +623,7 @@ void CARAssignHelper::AssignSQL(string ifElse, ARAssignSQLStruct &v, stringstrea
 	}
 }
 
-void CARAssignHelper::AssignFilterApi(string ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, string refItemDesc)
+void CARAssignHelper::AssignFilterApi(const string& ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, const string& refItemDesc)
 {
 	try
 	{
