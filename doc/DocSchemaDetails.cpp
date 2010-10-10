@@ -1382,6 +1382,7 @@ string CDocSchemaDetails::JoinFormReferences()
 	strm.str("");
 	try
 	{
+		const ARNameType& schemaName = this->schema.GetARName();
 		unsigned int schemaCount = this->pInside->schemaList.GetCount();
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{
@@ -1390,8 +1391,6 @@ string CDocSchemaDetails::JoinFormReferences()
 
 			if(compSchema.schemaType == AR_SCHEMA_JOIN)
 			{
-				const ARNameType& schemaName = this->pInside->schemaList.SchemaGetName(schemaIndex);
-
 				if(strcmp(schemaName, compSchema.u.join.memberA) == 0)
 				{
 					strm << "Primary Form in: " << schema.GetURL(rootLevel) << "<br/>" << endl;
