@@ -37,6 +37,7 @@ private:
 	string GetFieldTypes(unsigned int fieldMask);
 	string RelatedFields();
 	string RelatedActiveLinks();
+	string ContainerReferences();
 
 	string GetSQLLabelList(const ARCharMenuSQLStruct* sqlMenu);
 };

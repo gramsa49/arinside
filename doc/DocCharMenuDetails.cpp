@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocCharMenuDetails.h"
+#include "../output/ContainerTable.h"
 
 CDocCharMenuDetails::CDocCharMenuDetails(unsigned int menuInsideId)
 : menu(menuInsideId)
@@ -107,6 +108,14 @@ void CDocCharMenuDetails::Documentation()
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
+
+			//used in container?
+			row.ClearCells();
+			cellProp.content = "Container References";
+			cellPropValue.content = this->ContainerReferences();				
+			row.AddCell(cellProp);
+			row.AddCell(cellPropValue);
+			tblObjProp.AddRow(row);
 
 			//Add table to page
 			webPage.AddContent(tblObjProp.ToXHtml());
@@ -475,6 +484,46 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 	}
 
 	return tbl.ToXHtml();
+}
+
+string CDocCharMenuDetails::ContainerReferences()
+{
+	stringstream strm;
+	strm.str("");
+	try
+	{
+		CContainerTable *contTable = new CContainerTable(*this->pInside);
+		unsigned int cntCount = this->pInside->containerList.GetCount();
+		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
+		{
+			CARContainer cont(cntIndex);
+
+			if(cont.GetType() != ARCON_APP)
+			{
+				const ARReferenceList& refs = cont.GetReferences();
+				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
+				{
+					if(refs.referenceList[nCnt].type == ARREF_CHAR_MENU)
+					{
+						if(refs.referenceList[nCnt].reference.u.name != NULL &&
+						   strcmp(this->menu.GetARName(), refs.referenceList[nCnt].reference.u.name) == 0)
+						{
+							contTable->AddRow(cont, rootLevel);
+						}
+					}
+				}
+			}
+		}
+
+		strm << contTable->Print();
+		delete contTable;
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION enumerating char menu container references of '" << this->menu.GetARName() << "': " << e.what() << endl;
+	}
+
+	return strm.str();
 }
 
 string CDocCharMenuDetails::GetSQLLabelList(const ARCharMenuSQLStruct *sqlMenu)
