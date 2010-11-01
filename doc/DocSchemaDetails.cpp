@@ -264,7 +264,7 @@ string CDocSchemaDetails::SchemaNavigation()
 		cout << "EXCEPTION schema navigation of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}	
 
-	return uList.ToXHtml(CWebUtil::Link("&nbsp;Form&nbsp;Property&nbsp;Navigation&nbsp;", CPageParams(PAGE_DETAILS, &this->schema), "", rootLevel, false), true);
+	return "<ul><span class=\"objName\">" + this->schema.GetURL(rootLevel, true) + "</span>"+ uList.ToXHtml("", true) + "</ul>";
 }
 
 

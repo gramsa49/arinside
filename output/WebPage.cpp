@@ -114,6 +114,12 @@ void CWebPage::ContentOpen(ostream &strm)
 	strm << "<tr><td class=\"TdMainHeader\" colspan=\"3\">" << endl;
 	DynamicHeaderText(strm);
 	strm << "</td></tr><tr><td class=\"TdMainMenu\">" << endl;
+	if (!navContent.empty())
+	{
+		strm << "<div id=\"form_navigation\" class=\"form_navigation\">" << endl;
+		strm << navContent << endl;
+		strm << "</div>" << endl;
+	}
 	strm << "<iframe id=\"IFrameMenu\" src=\"" << CWebUtil::RootPath(rootLevel) << "template/navigation." << CWebUtil::WebPageSuffix() << "\" name=\"Navigation\" frameborder=\"0\">" << endl;
 	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << endl;
 }
@@ -121,17 +127,7 @@ void CWebPage::ContentOpen(ostream &strm)
 void CWebPage::ContentClose(ostream &strm)
 {
 	strm << "</td>" << endl;
-
-	if(!navContent.empty())
-	{
-		strm << "<td class=\"TdMainContentSmall\" style=\"width: 170px;\">" << endl;
-		strm << navContent << endl;
-		strm << "</td>" << endl;
-	}
-	else
-	{
-		strm << "<td></td>" << endl;
-	}
+	strm << "<td></td>" << endl;	// TODO: this column isn't used at all. Remove it completely from the table.
 
 	strm << "</tr><tr><td class=\"TdMainButtom\" colspan=\"3\">" << endl;
 	DynamicFooterText(strm);
