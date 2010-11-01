@@ -88,7 +88,7 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage)
 	{
 		strm << "<table><tr>" << endl;
 
-		string strValue = "abcdefghijklmnopqrstuvwxyz0123456789";
+		string strValue = "abcdefghijklmnopqrstuvwxyz0123456789#";
 		for (unsigned int i = 0; i < strValue.size(); ++i) 
 		{
 			if(std::string(1, strValue.at(i)) != curCharacter)
@@ -100,16 +100,6 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage)
 			else
 				strm << "<td>" << std::string(1, strValue.at(i)) << "</td>" << endl;			
 		}
-
-		if(curCharacter == "?")
-			strm << "<td>" << "#" << "</td>" << endl;
-		else
-		{
-			// copy all page params over and change the page we want to link to
-			CPageParams linkTo(curPage, PAGE_OVERVIEW_OTHER);
-			strm << "<td>" << CWebUtil::Link( "#", linkTo, "", curPage->GetRootLevel()) << "</td>" << endl;	
-		}
-
 
 		strm << "</tr></table>" << endl;
 	}
@@ -744,10 +734,10 @@ void CDocMain::CharMenuList(string searchChar)
 void CDocMain::ContainerList(int nType, string title, string searchChar)
 {
 	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page ,AR_STRUCT_ITEM_XML_CONTAINER, nType);
+	CPageParams file(page, AR_STRUCT_ITEM_XML_CONTAINER, nType);
 	try
 	{
-		int rootLevel = 1;
+		int rootLevel = file->GetRootLevel();
 		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 		CContainerTable *tbl = new CContainerTable(*this->pInside);
@@ -862,7 +852,7 @@ void CDocMain::RoleList(string searchChar)
 	}
 }
 
-void CDocMain::ImageList(string fileName, string searchChar)
+void CDocMain::ImageList(string searchChar)
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// server version older than 7.5 ?? then there are no files to generate

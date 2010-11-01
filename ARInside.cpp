@@ -1013,10 +1013,10 @@ void CARInside::Documentation(void)
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// Image
-	docMain->ImageList("index", "*");
+	docMain->ImageList("*");
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->ImageList(ObjListFilename(std::string(1, strValue.at(i))), std::string(1, strValue.at(i)));
+		docMain->ImageList(std::string(1, strValue.at(i)));
 	}	
 
 	// Image Details

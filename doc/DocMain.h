@@ -60,7 +60,7 @@ public:
 	void GroupList(string searchChar);
 	void UserList(string searchChar);
 	void RoleList(string searchChar);
-	void ImageList(string fileName, string searchChar);
+	void ImageList(string searchChar);
 
 private:
 	static void Sort(list<CMessageItem> &listResult);
