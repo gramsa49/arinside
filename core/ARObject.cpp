@@ -20,6 +20,9 @@
 
 using namespace OUTPUT;
 
+const char* objectNameFirstCharLetters = "abcdefghijklmnopqrstuvwxyz0123456789#";
+const int otherObjectNameIndex = 36; // strlen(objectNameFirstCharLetter) - 1
+
 CARObject::CARObject(int insideId)
 {
 	this->insideId = insideId;
@@ -57,4 +60,11 @@ bool CARObject::NameStandardFirstChar(const std::string &str)
 	if (!firstChar.empty()) 
 		return CARObject::NameStandardFirstChar(firstChar[0]);
 	return false;
+}
+
+int CARObject::GetFirstCharIndex(char ch)
+{
+	const char* index = strchr(objectNameFirstCharLetters, ch);
+	if (index == NULL) return otherObjectNameIndex;
+	return (int)(index - objectNameFirstCharLetters);
 }

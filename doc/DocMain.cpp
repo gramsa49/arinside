@@ -81,7 +81,7 @@ void CDocMain::ServerInfoList()
 	}
 }
 
-string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage)
+string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter)
 {
 	stringstream strm;
 	try
@@ -95,7 +95,19 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage)
 			{
 				// copy all page params over and change the page we want to link to
 				CPageParams linkTo(curPage, strValue.at(i));
-				strm << "<td>" << CWebUtil::Link( std::string(1, strValue.at(i)), linkTo , "", curPage->GetRootLevel()) << "</td>" << endl;
+				if (objCountPerLetter[i] > 0)
+				{
+					strm << "<td>";
+					strm << CWebUtil::Link( std::string(1, strValue.at(i)), linkTo , "", curPage->GetRootLevel());
+				}
+				else
+				{
+					strm << "<td class=\"disabledLetter\">";
+					strm << strValue.at(i);
+				}
+
+				strm << "</td>" << endl;
+
 			}
 			else
 				strm << "<td>" << std::string(1, strValue.at(i)) << "</td>" << endl;			
@@ -110,14 +122,12 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage)
 	return strm.str();
 }
 
-void CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar)
+void CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter)
 {
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		CSchemaTable *tbl = new CSchemaTable(*this->pInside);
+		CSchemaTable tbl(*this->pInside);
 
 		unsigned int schemaCount = this->pInside->schemaList.GetCount();
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
@@ -127,6 +137,16 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				if (nType == AR_SCHEMA_NONE)
+				{
+					// the first call to this function holds always "*" as search char. That's the
+					// best time to sum up the object count per letter.
+					string firstChar = schema.GetNameFirstChar();
+					if (firstChar.empty()) firstChar = "*";
+					int index = CARObject::GetFirstCharIndex(firstChar[0]);
+					++(objCountPerLetter[index]);
+				}
+
 				if(nType == AR_SCHEMA_NONE || nType == schema.GetCompound().schemaType)  //Only check type
 				{
 					bInsert = true;
@@ -150,24 +170,27 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 
 			if(bInsert)
 			{
-				tbl->AddRow(schema, rootLevel);
+				tbl.AddRow(schema, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToSchemaIndex(tbl->NumRows(), rootLevel);
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
-		if(nType != AR_SCHEMA_NONE)
-			strmTmp << MenuSeparator << CAREnum::SchemaType(nType);
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToSchemaIndex(tbl.NumRows(), rootLevel);
 
-		strmTmp << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+			if(nType != AR_SCHEMA_NONE)
+				strmTmp << MenuSeparator << CAREnum::SchemaType(nType);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.SaveInFolder(file->GetPath());
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -175,7 +198,7 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 	}
 }
 
-void CDocMain::ActiveLinkList(string searchChar)
+void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	if (searchChar.size() != 1) return;
 
@@ -184,9 +207,8 @@ void CDocMain::ActiveLinkList(string searchChar)
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "Active Link List", rootLevel, this->pInside->appConfig);
 
-		CAlTable *tbl = new CAlTable(*this->pInside);
+		CAlTable tbl(*this->pInside);
 
 		unsigned int alCount = this->pInside->alList.GetCount();
 		
@@ -195,6 +217,12 @@ void CDocMain::ActiveLinkList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = CARObject::GetNameFirstChar(pInside->alList.ActiveLinkGetName(alIdx));
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -210,20 +238,22 @@ void CDocMain::ActiveLinkList(string searchChar)
 
 			if(bInsert)
 			{
-				tbl->AddRow(alIdx, rootLevel);
+				tbl.AddRow(alIdx, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToActiveLinkIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
+		if (tbl.NumRows() > 0 || searchChar == "*") 
+		{
+			CWebPage webPage(file->GetFileName(), "Active Link List", rootLevel, this->pInside->appConfig);
 
-		tbl->SetDescription(strmTmp.str());
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToActiveLinkIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
 
-		webPage.SaveInFolder(file->GetPath());
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -343,16 +373,14 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-void CDocMain::FilterList(string searchChar)
+void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file((unsigned int)searchChar.at(0), AR_STRUCT_ITEM_XML_FILTER);
 
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "Filter List", file->GetRootLevel(), this->pInside->appConfig);
-
-		CFilterTable *tbl = new CFilterTable(*this->pInside);
+		CFilterTable tbl(*this->pInside);
 
 		unsigned int filterCount = this->pInside->filterList.GetCount();
 
@@ -361,6 +389,12 @@ void CDocMain::FilterList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = CARObject::GetNameFirstChar(pInside->filterList.FilterGetName(filterIndex));
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -376,19 +410,22 @@ void CDocMain::FilterList(string searchChar)
 
 			if(bInsert)
 			{
-				tbl->AddRow(filterIndex, rootLevel);
+				tbl.AddRow(filterIndex, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToFilterIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "Filter List", file->GetRootLevel(), this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToFilterIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.SaveInFolder(file->GetPath());
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -509,16 +546,14 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 	}
 }
 
-void CDocMain::EscalationList(string searchChar)
+void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file(searchChar.at(0), AR_STRUCT_ITEM_XML_ESCALATION);
 
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "Escalation List", rootLevel, this->pInside->appConfig);
-
-		CEscalTable *tbl = new CEscalTable(*this->pInside);
+		CEscalTable tbl(*this->pInside);
 
 		unsigned int escalCount = pInside->escalationList.GetCount();
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
@@ -526,6 +561,12 @@ void CDocMain::EscalationList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = CARObject::GetNameFirstChar(pInside->escalationList.EscalationGetName(escalIndex));
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -541,19 +582,22 @@ void CDocMain::EscalationList(string searchChar)
 
 			if(bInsert)
 			{
-				tbl->AddRow(escalIndex, rootLevel);			
+				tbl.AddRow(escalIndex, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToEscalationIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "Escalation List", rootLevel, this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToEscalationIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.SaveInFolder(file->GetPath());
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -671,16 +715,14 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-void CDocMain::CharMenuList(string searchChar)
+void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_CHAR_MENU);
 
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "CharMenu List", 1, this->pInside->appConfig);
-
-		CMenuTable *tbl = new CMenuTable(*this->pInside);
+		CMenuTable tbl(*this->pInside);
 
 		unsigned int menuCount = this->pInside->menuList.GetCount();
 		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
@@ -690,6 +732,12 @@ void CDocMain::CharMenuList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = menu.GetNameFirstChar();
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -709,21 +757,23 @@ void CDocMain::CharMenuList(string searchChar)
 
 			if(bInsert)
 			{
-				tbl->AddRow(menu, rootLevel);
+				tbl.AddRow(menu, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp.str("");
-		strmTmp << CWebUtil::LinkToMenuIndex(tbl->NumRows(), rootLevel) << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "CharMenu List", 1, this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToMenuIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
+			
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+			webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
 
-		webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
-
-		webPage.SaveInFolder(file->GetPath());
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -731,16 +781,14 @@ void CDocMain::CharMenuList(string searchChar)
 	}
 }
 
-void CDocMain::ContainerList(int nType, string title, string searchChar)
+void CDocMain::ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
 	CPageParams file(page, AR_STRUCT_ITEM_XML_CONTAINER, nType);
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		CContainerTable *tbl = new CContainerTable(*this->pInside);
+		CContainerTable tbl(*this->pInside);
 
 		unsigned int cntCount = this->pInside->containerList.GetCount();
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
@@ -752,6 +800,12 @@ void CDocMain::ContainerList(int nType, string title, string searchChar)
 				bool bInsert = false;
 				if(searchChar == "*")  //All objecte
 				{
+					// the first call to this function holds alwasy "*" as search char. That's the
+					// best time to sum up the object count per letter.
+					string firstChar = cont.GetNameFirstChar();
+					if (firstChar.empty()) firstChar = "*";
+					int index = CARObject::GetFirstCharIndex(firstChar[0]);
+					++(objCountPerLetter[index]);
 					bInsert = true;
 				}
 				else if(searchChar == "#")
@@ -771,22 +825,26 @@ void CDocMain::ContainerList(int nType, string title, string searchChar)
 
 				if(bInsert)
 				{
-					tbl->AddRow(cont, rootLevel);
+					tbl.AddRow(cont, rootLevel);
 				}
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp << CWebUtil::LinkToContainer(tbl->NumRows(), rootLevel, nType);
-		strmTmp << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToContainer(tbl.NumRows(), rootLevel, nType);
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
 
-		webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
+			webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
 
-		webPage.SaveInFolder(file->GetPath());
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -794,7 +852,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar)
 	}
 }
 
-void CDocMain::RoleList(string searchChar)
+void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
 	CPageParams file(page, DATA_TYPE_ROLE);
@@ -802,9 +860,7 @@ void CDocMain::RoleList(string searchChar)
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "Role List", rootLevel, this->pInside->appConfig);
-
-		CRoleTable *tbl = new CRoleTable(*this->pInside);
+		CRoleTable tbl(*this->pInside);
 
 		list<CARRole>::iterator listIter;				
 		for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); listIter++ )
@@ -814,37 +870,47 @@ void CDocMain::RoleList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = role->GetNameFirstChar();
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
+			else if(searchChar == "#")
+			{
+				if(!role->NameStandardFirstChar())
+				{
+					bInsert = true;
+				}
+			}
+			else
 			{
 				if(role->GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
 			}
-			else if(searchChar == "#")
-			{
-				if(!role->NameStandardFirstChar())
-				{
-					bInsert = true;		
-				}
-			}
 
 			if(bInsert)
 			{	
-				tbl->AddRow(*role, rootLevel);
+				tbl.AddRow(*role, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl->NumRows() << " Roles " << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "Role List", rootLevel, this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToRoleIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.SaveInFolder(file->GetPath());
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -852,7 +918,7 @@ void CDocMain::RoleList(string searchChar)
 	}
 }
 
-void CDocMain::ImageList(string searchChar)
+void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// server version older than 7.5 ?? then there are no files to generate
@@ -865,7 +931,6 @@ void CDocMain::ImageList(string searchChar)
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "Image List", rootLevel, this->pInside->appConfig);
 		CImageTable imgTable(*this->pInside);
 
 		unsigned int len = this->pInside->imageList.GetCount();
@@ -875,6 +940,12 @@ void CDocMain::ImageList(string searchChar)
 			
 			if (searchChar == "*") // All objects
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = CARObject::GetNameFirstChar(pInside->imageList.ImageGetName(idx));
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
 			else if (searchChar == "#")
@@ -892,14 +963,19 @@ void CDocMain::ImageList(string searchChar)
 				imgTable.AddRow(idx, rootLevel);
 		}
 
-		stringstream strmTmp;
-		strmTmp << CWebUtil::LinkToImageIndex(imgTable.NumRows(), rootLevel);
-		strmTmp << ShortMenu(searchChar, file);
-		
-		imgTable.SetDescription(strmTmp.str());
-		
-		webPage.AddContent(imgTable.Print());
-		webPage.SaveInFolder(file->GetPath());
+		if (imgTable.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "Image List", rootLevel, this->pInside->appConfig);
+
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToImageIndex(imgTable.NumRows(), rootLevel);
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			
+			imgTable.SetDescription(strmTmp.str());
+			
+			webPage.AddContent(imgTable.Print());
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -908,7 +984,7 @@ void CDocMain::ImageList(string searchChar)
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 }
 
-void CDocMain::GroupList(string searchChar)
+void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
 	CPageParams file(page, DATA_TYPE_GROUP);
@@ -916,9 +992,7 @@ void CDocMain::GroupList(string searchChar)
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), "Group List", rootLevel, this->pInside->appConfig);
-
-		CGroupTable *tbl = new CGroupTable(*this->pInside);
+		CGroupTable tbl(*this->pInside);
 
 		list<CARGroup>::iterator listIter;
 		list<CARGroup>::iterator endIt = this->pInside->groupList.end();
@@ -929,37 +1003,47 @@ void CDocMain::GroupList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objects
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = grp->GetNameFirstChar();
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
+			else if(searchChar == "#")
+			{
+				if(!grp->NameStandardFirstChar())
+				{
+					bInsert = true;
+				}
+			}
+			else
 			{
 				if(grp->GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
 			}
-			else if(searchChar == "#")
-			{
-				if(!grp->NameStandardFirstChar())
-				{
-					bInsert = true;		
-				}
-			}
 
 			if(bInsert)
 			{	
-				tbl->AddRow("", grp->groupId, rootLevel);
+				tbl.AddRow("", grp->groupId, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("group.gif", rootLevel) << tbl->NumRows() << " Groups " << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "Group List", rootLevel, this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToGroupIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.SaveInFolder(file->GetPath());
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{
@@ -967,17 +1051,15 @@ void CDocMain::GroupList(string searchChar)
 	}
 }
 
-void CDocMain::UserList(string searchChar)
+void CDocMain::UserList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
 	CPageParams file(page, DATA_TYPE_USER);
 
 	try
 	{
-		int rootLevel = 1;
-		CWebPage webPage(file->GetFileName(), "User List", rootLevel, this->pInside->appConfig);
-
-		CUserTable *tbl = new CUserTable(*this->pInside);
+		int rootLevel = file->GetRootLevel();
+		CUserTable tbl(*this->pInside);
 
 		list<CARUser>::iterator listIter;
 		list<CARUser>::iterator endIt = this->pInside->userList.end();
@@ -988,37 +1070,47 @@ void CDocMain::UserList(string searchChar)
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
+				// the first call to this function holds always "*" as search char. That's the
+				// best time to sum up the object count per letter.
+				string firstChar = user->GetNameFirstChar();
+				if (firstChar.empty()) firstChar = "*";
+				int index = CARObject::GetFirstCharIndex(firstChar[0]);
+				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
-			else if(searchChar != "#" && searchChar != "*")
+			else if(searchChar == "#")
+			{
+				if(!user->NameStandardFirstChar())
+				{
+					bInsert = true;
+				}
+			}
+			else
 			{
 				if(user->GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
 			}
-			else if(searchChar == "#")
-			{
-				if(!user->NameStandardFirstChar())
-				{
-					bInsert = true;		
-				}
-			}
 
 			if(bInsert)
 			{	
-				tbl->AddRow(*user, rootLevel);
+				tbl.AddRow(*user, rootLevel);
 			}
 		}
 
-		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("user.gif", rootLevel) << tbl->NumRows() << " Users " << ShortMenu(searchChar, file);
-		tbl->SetDescription(strmTmp.str());
+		if (tbl.NumRows() > 0 || searchChar == "*")
+		{
+			CWebPage webPage(file->GetFileName(), "User List", rootLevel, this->pInside->appConfig);
 
-		webPage.AddContent(tbl->Print());
-		delete tbl;
+			stringstream strmTmp;
+			strmTmp << CWebUtil::LinkToUserIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
-		webPage.SaveInFolder(file->GetPath());
+			tbl.SetDescription(strmTmp.str());
+			webPage.AddContent(tbl.Print());
+
+			webPage.SaveInFolder(file->GetPath());
+		}
 	}
 	catch(exception& e)
 	{

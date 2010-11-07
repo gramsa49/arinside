@@ -788,19 +788,26 @@ void CARInside::Documentation(void)
 	//Server information
 	docMain->ServerInfoList();
 
+	// container object count per first char
+	vector<int> algObjCount; algObjCount.resize(38);
+	vector<int> appObjCount; appObjCount.resize(38);
+	vector<int> pklObjCount; pklObjCount.resize(38);
+	vector<int> ftgObjCount; ftgObjCount.resize(38);
+	vector<int> wbsObjCount; wbsObjCount.resize(38);
+
 	//ContainerList
-	docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*");
-	docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*");
-	docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*");
-	docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*");
-	docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*");
+	docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*", algObjCount);
+	docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*", appObjCount);
+	docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*", pklObjCount);
+	docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*", ftgObjCount);
+	docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*", wbsObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->ContainerList(ARCON_GUIDE, "GuideList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_APP, "ApplicationList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_PACK, "PackinglistList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_FILTER_GUIDE, "FilterGuideList", std::string(1, strValue.at(i)));
-		docMain->ContainerList(ARCON_WEBSERVICE, "WebserviceList", std::string(1, strValue.at(i)));
+		docMain->ContainerList(ARCON_GUIDE, "GuideList", std::string(1, strValue.at(i)), algObjCount);
+		docMain->ContainerList(ARCON_APP, "ApplicationList", std::string(1, strValue.at(i)), appObjCount);
+		docMain->ContainerList(ARCON_PACK, "PackinglistList", std::string(1, strValue.at(i)), pklObjCount);
+		docMain->ContainerList(ARCON_FILTER_GUIDE, "FilterGuideList", std::string(1, strValue.at(i)), ftgObjCount);
+		docMain->ContainerList(ARCON_WEBSERVICE, "WebserviceList", std::string(1, strValue.at(i)), wbsObjCount);
 	}
 
 	//Application Details
@@ -878,11 +885,14 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
+	// active link object count per first char
+	vector<int> alObjCount; alObjCount.resize(38);
+
 	//ActiveLink List
-	docMain->ActiveLinkList("*");
+	docMain->ActiveLinkList("*", alObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->ActiveLinkList(std::string(1, strValue.at(i)));
+		docMain->ActiveLinkList(std::string(1, strValue.at(i)), alObjCount);
 	}	
 
 	docMain->ActiveLinkActionList();
@@ -898,12 +908,14 @@ void CARInside::Documentation(void)
 	}
 
 
+	// filter object count per first char
+	vector<int> fltObjCount; fltObjCount.resize(38);
 
 	//Filter List
-	docMain->FilterList("*");
+	docMain->FilterList("*", fltObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->FilterList(std::string(1, strValue.at(i)));
+		docMain->FilterList(std::string(1, strValue.at(i)), fltObjCount);
 	}	
 	docMain->FilterActionList();
 
@@ -918,12 +930,14 @@ void CARInside::Documentation(void)
 	}
 
 
+	// escalation object count per first char
+	vector<int> escObjCount; escObjCount.resize(38);
 
 	//Escalation List
-	docMain->EscalationList("*");
+	docMain->EscalationList("*", escObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->EscalationList(std::string(1, strValue.at(i)));
+		docMain->EscalationList(std::string(1, strValue.at(i)), escObjCount);
 	}
 	docMain->EscalationActionList();
 
@@ -938,12 +952,14 @@ void CARInside::Documentation(void)
 	}
 
 
+	// char menu object count per first char
+	vector<int> mnuObjCount; mnuObjCount.resize(38);
 
 	//CharMenus
-	docMain->CharMenuList("*");
+	docMain->CharMenuList("*", mnuObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->CharMenuList(std::string(1, strValue.at(i)));
+		docMain->CharMenuList(std::string(1, strValue.at(i)), mnuObjCount);
 	}	
 
 	// Char Menu Details
@@ -956,17 +972,19 @@ void CARInside::Documentation(void)
 		menuDetails.Documentation();
 	}
 
+	// schema types object first char count
+	vector<int> allObjCount; allObjCount.resize(38);
 
 	//Schema List
-	docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*");
-	docMain->SchemaList(AR_SCHEMA_REGULAR, CPageParams(PAGE_SCHEMA_REGULAR, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (Regular)", "*");
-	docMain->SchemaList(AR_SCHEMA_JOIN,    CPageParams(PAGE_SCHEMA_JOIN, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (Join)"   , "*");
-	docMain->SchemaList(AR_SCHEMA_VIEW,    CPageParams(PAGE_SCHEMA_VIEW, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (View)"   , "*");
-	docMain->SchemaList(AR_SCHEMA_DIALOG,  CPageParams(PAGE_SCHEMA_DIALOG, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Dialog)" , "*");
-	docMain->SchemaList(AR_SCHEMA_VENDOR,  CPageParams(PAGE_SCHEMA_VENDOR, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Vendor)" , "*");	
+	docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*", allObjCount);
+	docMain->SchemaList(AR_SCHEMA_REGULAR, CPageParams(PAGE_SCHEMA_REGULAR, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (Regular)", "*", allObjCount);
+	docMain->SchemaList(AR_SCHEMA_JOIN,    CPageParams(PAGE_SCHEMA_JOIN, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (Join)"   , "*", allObjCount);
+	docMain->SchemaList(AR_SCHEMA_VIEW,    CPageParams(PAGE_SCHEMA_VIEW, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (View)"   , "*", allObjCount);
+	docMain->SchemaList(AR_SCHEMA_DIALOG,  CPageParams(PAGE_SCHEMA_DIALOG, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Dialog)" , "*", allObjCount);
+	docMain->SchemaList(AR_SCHEMA_VENDOR,  CPageParams(PAGE_SCHEMA_VENDOR, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Vendor)" , "*", allObjCount);	
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->SchemaList(AR_SCHEMA_NONE, CPageParams(strValue.at(i), AR_STRUCT_ITEM_XML_SCHEMA), "Formlist", std::string(1, strValue.at(i)));
+		docMain->SchemaList(AR_SCHEMA_NONE, CPageParams(strValue.at(i), AR_STRUCT_ITEM_XML_SCHEMA), "Formlist", std::string(1, strValue.at(i)), allObjCount);
 	}
 
 	//Schema and field Details
@@ -1012,11 +1030,14 @@ void CARInside::Documentation(void)
 	}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	// image object count per first char
+	vector<int> imgObjCount; imgObjCount.resize(38);
+
 	// Image
-	docMain->ImageList("*");
+	docMain->ImageList("*", imgObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->ImageList(std::string(1, strValue.at(i)));
+		docMain->ImageList(std::string(1, strValue.at(i)), imgObjCount);
 	}	
 
 	// Image Details
@@ -1047,11 +1068,14 @@ void CARInside::Documentation(void)
 	validator->Main();
 	delete validator;
 
+	// group count per first char
+	vector<int> grpObjCount; grpObjCount.resize(38);
+
 	//Group List
-	docMain->GroupList("*");
+	docMain->GroupList("*", grpObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->GroupList(std::string(1, strValue.at(i)));
+		docMain->GroupList(std::string(1, strValue.at(i)), grpObjCount);
 	}	
 
 
@@ -1071,11 +1095,14 @@ void CARInside::Documentation(void)
 	}
 
 
+	// role count per first char
+	vector<int> roleObjCount; roleObjCount.resize(38);
+
 	//Role List
-	docMain->RoleList("*");
+	docMain->RoleList("*", roleObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->RoleList(std::string(1, strValue.at(i)));
+		docMain->RoleList(std::string(1, strValue.at(i)), roleObjCount);
 	}	
 
 	//Role Details
@@ -1094,11 +1121,14 @@ void CARInside::Documentation(void)
 	}
 
 
+	// user count per first char
+	vector<int> usrObjCount; usrObjCount.resize(38);
+
 	//Userlists
-	docMain->UserList("*");
+	docMain->UserList("*", usrObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
-		docMain->UserList(std::string(1, strValue.at(i)));
+		docMain->UserList(std::string(1, strValue.at(i)), usrObjCount);
 	}	
 
 	//User Details	list<CARUser>::iterator userIter;

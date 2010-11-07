@@ -324,7 +324,7 @@ string CWebUtil::LinkToImageIndex(int rootLevel)
 string CWebUtil::LinkToImageIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1? "Images" : "Image");
-	return LinkToHelper(name, -1, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "image.gif", rootLevel);
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "image.gif", rootLevel);
 }
 #endif
 

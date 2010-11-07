@@ -336,3 +336,8 @@ p
 .form_navigation {
   margin-left: 9px;
 }
+
+td.disabledLetter 
+{
+    color: Silver;
+}

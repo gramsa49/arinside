@@ -40,4 +40,5 @@ public:
 	static string GetNameFirstChar(const string& str);
 	static bool NameStandardFirstChar(char ch);
 	static bool NameStandardFirstChar(const string &str);
+	static int GetFirstCharIndex(char ch);
 };

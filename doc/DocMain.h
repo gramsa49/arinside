@@ -41,26 +41,26 @@ public:
 
 	int Index();
 	void ServerInfoList();
-	void SchemaList(int nType, const CPageParams &file, string title, string searchChar);	
-	void CharMenuList(string searchChar);
-	void ContainerList(int nType, string title, string searchChar);
+	void SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter);	
+	void CharMenuList(string searchChar, std::vector<int> &objCountPerLetter);
+	void ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter);
 	void GlobalFieldList();
 	void MessageList();
 
-	void ActiveLinkList(string searchChar);	
+	void ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter);	
 	void ActiveLinkActionList();
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
-	void FilterList(string searchChar);	
+	void FilterList(string searchChar, std::vector<int> &objCountPerLetter);	
 	void FilterActionList();
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
-	void EscalationList(string searchChar);
+	void EscalationList(string searchChar, std::vector<int> &objCountPerLetter);
 	void EscalationActionList();
 	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 
-	void GroupList(string searchChar);
-	void UserList(string searchChar);
-	void RoleList(string searchChar);
-	void ImageList(string searchChar);
+	void GroupList(string searchChar, std::vector<int>& objCountPerLetter);
+	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
+	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
+	void ImageList(string searchChar, std::vector<int> &objCountPerLetter);
 
 private:
 	static void Sort(list<CMessageItem> &listResult);
@@ -69,5 +69,5 @@ private:
 	static void Sort(list<CARGlobalField> &listResult);
 	static bool SortByGlobalFieldId(const CARGlobalField& t1, const CARGlobalField& t2 );
 
-	static string ShortMenu(string curCharacter, const CPageParams &curPage);
+	static string ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter);
 };
