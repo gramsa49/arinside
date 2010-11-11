@@ -17,7 +17,7 @@
 #pragma once
 #include "../ARApi.h"
 
-#define EnumDefault "Unknown";
+#define EnumDefault "Unknown"
 
 class CAREnum
 {
@@ -2033,6 +2033,21 @@ public:
 		case 1: return "Edit";
 		case 2: return "Run";
 		case 3: return "Create";
+		default: return EnumDefault;
+		}
+	}
+
+	static const char* FieldMappingType(int nType)
+	{
+		switch (nType)
+		{
+		case AR_FIELD_NONE: return "";
+		case AR_FIELD_REGULAR: return "Regular";
+		case AR_FIELD_JOIN: return "Join";
+		case AR_FIELD_VIEW: return "View";
+		case AR_FIELD_VENDOR: return "Vendor";
+		// currently i dont know, what this item is for
+		// case AR_FIELD_INHERITANCE: ;
 		default: return EnumDefault;
 		}
 	}

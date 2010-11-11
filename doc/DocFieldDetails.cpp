@@ -96,6 +96,23 @@ void CDocFieldDetails::Documentation()
 		row.AddCellList("Field Limits", tmp);
 		tblFieldprops.AddRow(row);
 
+		// Field Mapping (for Join, View and Vendor)
+		switch (this->field.GetMapping().fieldType)
+		{
+		case AR_FIELD_JOIN:
+		case AR_FIELD_VIEW:
+		case AR_FIELD_VENDOR:
+			tmp = this->FieldMapping();
+			if (!tmp.empty())
+			{
+				stringstream rowDescription;
+				rowDescription << CAREnum::FieldMappingType(this->field.GetMapping().fieldType) << " Information";
+				row.AddCellList(rowDescription.str(), tmp);
+				tblFieldprops.AddRow(row);
+			}
+			break;
+		}
+
 
 		//Join Form References
 		if(this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
@@ -793,3 +810,85 @@ string CDocFieldDetails::JoinFormReferences()
 
 	return strm.str();
 }
+
+string CDocFieldDetails::FieldMapping()
+{
+	stringstream strm;
+	const ARFieldMappingStruct& map = this->field.GetMapping();
+	const ARCompoundSchema& compSchema = this->schema.GetCompound();
+
+	switch (map.fieldType)
+	{
+	case AR_FIELD_JOIN:
+		{
+			if (this->field.GetFieldId() == 1)
+			{
+				strm << this->pInside->LinkToField(compSchema.u.join.memberA, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel) << "<br/>";
+				strm << this->pInside->LinkToField(compSchema.u.join.memberB, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel);
+			}
+			else
+			{
+				string schemaName;
+
+				strm << "Form Name: ";
+				if (compSchema.schemaType == AR_SCHEMA_JOIN)
+				{
+					if (map.u.join.schemaIndex == 0) // primary form
+						schemaName = compSchema.u.join.memberA;
+					else if (map.u.join.schemaIndex == 1) // secondary form
+						schemaName = compSchema.u.join.memberB;
+				}
+
+				CARSchema schema(schemaName);
+				if (schema.Exists())
+					strm << schema.GetURL(this->rootLevel);
+				else
+					strm << "<span class=\"fieldNotFound\">" << (schemaName.empty() ? EnumDefault : schemaName) << "</span>";
+				strm << "<br/>";
+
+				strm << "Field Name: ";
+				
+				CARField field(schema.GetInsideId(), map.u.join.realId);
+				if (field.Exists())
+					strm << field.GetURL(this->rootLevel);
+				else
+					strm << "<span class=\"fieldNotFound\">" << map.u.join.realId << "</span>";
+			}
+		}
+		break;
+
+	case AR_FIELD_VIEW:
+		{
+			strm << "Column: " << map.u.view.fieldName << "<br/>"; 
+			strm << "Table: ";
+			
+			if (compSchema.schemaType == AR_SCHEMA_VIEW) 
+				strm << compSchema.u.view.tableName;
+			else
+				strm << "<span class=\"fieldNotFound\">" << EnumDefault << "</span>";
+		}
+		break;
+
+	case AR_FIELD_VENDOR:
+		{
+			strm << "Column: " << map.u.vendor.fieldName << "<br/>";
+
+			strm << "Vendor: ";
+			if (compSchema.schemaType == AR_SCHEMA_VENDOR)
+				strm << compSchema.u.vendor.vendorName;
+			else
+				strm << "<span class=\"fieldNotFound\">" << EnumDefault << "</span>";
+			strm << "<br/>";
+
+			strm << "Table: ";
+			if (compSchema.schemaType == AR_SCHEMA_VENDOR)
+				strm << compSchema.u.vendor.tableName;
+			else
+				strm << "<span class=\"fieldNotFound\">" << EnumDefault << "</span>";
+		}
+		break;
+	}
+
+	return strm.str();
+}
+

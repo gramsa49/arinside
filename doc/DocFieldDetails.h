@@ -33,6 +33,7 @@ private:
 
 	string DefaultValue();
 	string FieldLimits();
+	string FieldMapping();
 	string Permisssions();
 	string DisplayProperties();
 	string JoinFormReferences();
