@@ -163,7 +163,9 @@ void CDocSchemaDetails::Documentation()
 			switch(compSchema.schemaType)
 			{
 			case AR_SCHEMA_JOIN:
-				pgStrm << this->AllFieldsJoin();
+			case AR_SCHEMA_VIEW:
+			case AR_SCHEMA_VENDOR:
+				pgStrm << this->AllFieldsSpecial();
 				break;
 			default:	
 				pgStrm << this->AllFields();
@@ -376,14 +378,14 @@ void CDocSchemaDetails::AllFieldsCsv()
 
 
 //Create a page with all fields of a joinform
-string CDocSchemaDetails::AllFieldsJoin()
+string CDocSchemaDetails::AllFieldsSpecial()
 {		
 	CTable tbl("fieldListAll", "TblObjectList");
 	tbl.AddColumn(20, "Field Name");
 	tbl.AddColumn(5, "Field ID");
-	tbl.AddColumn(10, "In Views");
 	tbl.AddColumn(5, "Datatype");
-	tbl.AddColumn(30, "Real Field ID");
+	tbl.AddColumn(30, "Real Field");
+	tbl.AddColumn(10, "In Views");
 	tbl.AddColumn(10, "Modified");
 	tbl.AddColumn(20, "By");
 
@@ -409,28 +411,39 @@ string CDocSchemaDetails::AllFieldsJoin()
 			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");
 
 			strmTmp.str("");			
-			if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+			switch (field.GetMapping().fieldType)
 			{
-				const ARCompoundSchema& compSchema = this->schema.GetCompound();
-				strmTmp.str("");
-				strmTmp << this->pInside->LinkToField(compSchema.u.join.memberA, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel);
-				strmTmp << "<br/>" << endl;
-				strmTmp << this->pInside->LinkToField(compSchema.u.join.memberB, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel);
-			}
-			else
-			{
-				strmTmp.str("");
-				if(field.GetMapping().u.join.realId > 0)
+			case AR_FIELD_JOIN:
 				{
-					string tmpBaseSchema = this->schema.GetCompound().u.join.memberA;
-					if(field.GetMapping().u.join.schemaIndex > 0)
-						tmpBaseSchema = this->schema.GetCompound().u.join.memberB;
+					if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+					{
+						const ARCompoundSchema& compSchema = this->schema.GetCompound();
+						strmTmp << this->pInside->LinkToField(compSchema.u.join.memberA, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel);
+						strmTmp << "<br/>" << endl;
+						strmTmp << this->pInside->LinkToField(compSchema.u.join.memberB, 1, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel);
+					}
+					else
+					{
+						if(field.GetMapping().u.join.realId > 0)
+						{
+							string tmpBaseSchema = this->schema.GetCompound().u.join.memberA;
+							if(field.GetMapping().u.join.schemaIndex > 0)
+								tmpBaseSchema = this->schema.GetCompound().u.join.memberB;
 
-					strmTmp << this->pInside->LinkToField(tmpBaseSchema, field.GetMapping().u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
+							strmTmp << this->pInside->LinkToField(tmpBaseSchema, field.GetMapping().u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
+						}
+						else
+							strmTmp << "&nbsp;";
+					}
 				}
-				else
-					strmTmp << "&nbsp;";
-			}			
+				break;
+			case AR_FIELD_VIEW:
+				strmTmp << field.GetMapping().u.view.fieldName;
+				break;
+			case AR_FIELD_VENDOR:
+				strmTmp << field.GetMapping().u.vendor.fieldName;
+				break;
+			}
 
 			CTableCell cellFieldRealId(strmTmp.str(), "");
 			CTableCell cellTimestamp(CUtil::DateTimeToHTMLString(field.GetTimestamp()), "");
@@ -438,9 +451,9 @@ string CDocSchemaDetails::AllFieldsJoin()
 
 			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
-			row.AddCell(cellNumViews);
 			row.AddCell(cellDataType);
 			row.AddCell(cellFieldRealId);
+			row.AddCell(cellNumViews);
 			row.AddCell(cellTimestamp);
 			row.AddCell(cellLastChanged);
 
@@ -451,7 +464,7 @@ string CDocSchemaDetails::AllFieldsJoin()
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
 		tbl.description = tblDesc.str();
 
-		AllFieldsJoinCsv();
+		AllFieldsSpecialCsv();
 	}
 	catch(exception& e)
 	{
@@ -461,14 +474,14 @@ string CDocSchemaDetails::AllFieldsJoin()
 	return tbl.ToXHtml();	
 }
 
-void CDocSchemaDetails::AllFieldsJoinCsv()
+void CDocSchemaDetails::AllFieldsSpecialCsv()
 {		
 	CTable tbl("fieldListAll", "TblObjectList");
 	tbl.AddColumn(20, "Field Name");
 	tbl.AddColumn(5, "Field ID");
-	tbl.AddColumn(10, "In Views");
 	tbl.AddColumn(5, "Datatype");
-	tbl.AddColumn(30, "Real Field ID");
+	tbl.AddColumn(30, "Real Field");
+	tbl.AddColumn(10, "In Views");
 	tbl.AddColumn(10, "Modified");
 	tbl.AddColumn(20, "By");
 
@@ -486,35 +499,52 @@ void CDocSchemaDetails::AllFieldsJoinCsv()
 			CTableCell cellNumViews(field.GetDisplayInstances().numItems, "");
 			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");
 
-			int nFieldRealId = 0;		
-			if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+			stringstream strmTmp;
+			switch (field.GetMapping().fieldType)
 			{
-				nFieldRealId = 1;
-			}
-			else
-			{
-				if(field.GetMapping().u.join.realId > 0)
-				{			
-					nFieldRealId = field.GetMapping().u.join.realId;
+			case AR_FIELD_JOIN:
+				{
+					if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+					{
+						strmTmp << 1;
+					}
+					else
+					{
+						if(field.GetMapping().u.join.realId > 0)
+						{
+							strmTmp << field.GetMapping().u.join.realId;
+						}
+					}
 				}
-			}			
+				break;
+			case AR_FIELD_VIEW:
+				{
+					strmTmp << field.GetMapping().u.view.fieldName;
+				}
+				break;
+			case AR_FIELD_VENDOR:
+				{
+					strmTmp << field.GetMapping().u.vendor.fieldName;
+				}
+				break;			
+			}
 
-			CTableCell cellFieldRealId(nFieldRealId, "");
+			CTableCell cellFieldRealId(strmTmp.str());
 			CTableCell cellTimestamp(CUtil::DateTimeToString(field.GetTimestamp()), "");
 			CTableCell cellLastChanged(field.GetLastChanged(), "");
 
 			row.AddCell(cellName);
 			row.AddCell(cellFieldId);
-			row.AddCell(cellNumViews);
 			row.AddCell(cellDataType);
 			row.AddCell(cellFieldRealId);
+			row.AddCell(cellNumViews);
 			row.AddCell(cellTimestamp);
 			row.AddCell(cellLastChanged);
 
 			tbl.AddRow(row);
 		}
 
-		//Save field information to ccs
+		//Save field information to csv
 		CPageParams file(PAGE_SCHEMA_FIELDS_CSV, &this->schema);
 		CCsvPage csvPage(file->GetFileName(), this->pInside->appConfig);
 		csvPage.SaveInFolder(file->GetPath(), tbl.ToCsv());
@@ -1890,6 +1920,17 @@ string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
 		rowOC.AddCell("Display Property Caching");
 		rowOC.AddCell(tmpStrm.str());
 		tbl.AddRow(rowOC);
+
+		ARLong32 disableStatusHistory = 0;
+		propVal = propIndex->GetAndUseValue(AR_OPROP_CORE_FIELDS_OPTION_MASK);
+		if (propVal != NULL)
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				disableStatusHistory = propVal->u.intVal;
+
+		CTableRow disSH("");
+		disSH.AddCell("Disable Status History");
+		disSH.AddCell((disableStatusHistory & AR_CORE_FIELDS_OPTION_DISABLE_STATUS_HISTORY ? "Yes" : "No"));
+		tbl.AddRow(disSH);
 #endif
 
 		// now write the table

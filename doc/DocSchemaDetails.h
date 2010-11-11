@@ -51,8 +51,8 @@ private:
 
 	string AllFields();
 	void AllFieldsCsv();
-	string AllFieldsJoin();
-	void AllFieldsJoinCsv();
+	string AllFieldsSpecial();
+	void AllFieldsSpecialCsv();
 
 	string TypeDetails();
 	string ContainerReferences();
