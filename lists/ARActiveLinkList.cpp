@@ -126,6 +126,9 @@ bool CARActiveLinkList::LoadFromServer()
 		&names,
 		&orders,
 		&schemas,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // groupListList // TODO: support static inherited permissions
+#endif
 		&groups,
 		&execMasks,
 		&controlFields,

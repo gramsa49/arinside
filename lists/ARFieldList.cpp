@@ -133,6 +133,9 @@ bool CARFieldListServer::LoadFromServer()
 		&createModes,
 		&fieldOptions,
 		&defaultValues,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // groupListList // TODO: support static inherited permissions
+#endif
 		&permLists,
 		&limits,
 		&dInstanceLists,
@@ -141,6 +144,9 @@ bool CARFieldListServer::LoadFromServer()
 		&owners,
 		&changedUsers,
 		&changeDiary,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // objPropListList // TODO: support new prop list
+#endif
 		&status) == AR_RETURN_OK)
 	{
 		FreeARBooleanList(&fldExists, false);

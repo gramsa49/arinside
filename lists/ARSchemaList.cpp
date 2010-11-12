@@ -145,6 +145,9 @@ bool CARSchemaList::LoadFromServer()
 		&names,
 		&compounds,
 		NULL, // schema inheritance list ... reserved for future use
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // groupListList // TODO: support static inherited permissions
+#endif
 		&permissions,
 		&subAdmins,
 		&resultFields,

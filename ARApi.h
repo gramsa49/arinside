@@ -37,6 +37,7 @@
 #define AR_API_VERSION_700 12
 #define AR_API_VERSION_710 13
 #define AR_API_VERSION_750 14
+#define AR_API_VERSION_763 17
 
 // see AR_EXPORT_VERSION in arstruct.h for definition
 #define AR_XML_VERSION_450 5

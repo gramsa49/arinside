@@ -105,6 +105,9 @@ bool CARVUIListServer::LoadFromServer()
 		&owners,
 		&changedUsers,
 		&changeDiary,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // objPropListList// TODO: support new prop list
+#endif
 		&status) == AR_RETURN_OK)
 	{
 		FreeARBooleanList(&vuiExists, false);

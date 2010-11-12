@@ -53,6 +53,9 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 	if( ARGetContainer(&pInside->arControl,
 		(char*)packingListName.c_str(),
 		&refTypes,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // groupListList 
+#endif
 		NULL,
 		NULL,
 		NULL,
