@@ -21,6 +21,11 @@
 #include "ARVui.h"
 #include "../ARInside.h"
 
+CARSchema::CARSchema()
+: CARServerObject(-1)
+{
+}
+
 CARSchema::CARSchema(int insideId)
 : CARServerObject(insideId)
 {	

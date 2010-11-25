@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARVui.h"
 #include "../lists/ARVUIList.h"
+#include "ARProplistHelper.h"
 
 // TODO: write a description about how to use both types of calling this constructor
 CARVui::CARVui(unsigned int SchemaInsideId, unsigned int vuiId, int SchemaVuiIndex)
@@ -49,6 +50,32 @@ CARVui::CARVui(unsigned int SchemaInsideId, unsigned int vuiId, int SchemaVuiInd
 	{
 		vuiIndex = SchemaVuiIndex;
 	}
+}
+
+// this searches for a VUI with the specified label
+CARVui::CARVui(unsigned int schemaInsideId, const string& vuiLabel)
+: CARServerObject(-1), schema(schemaInsideId)
+{
+	if (!schema.Exists())
+	{
+		insideId = -1;
+		vuiIndex = -1;
+		vuiList = NULL;
+		return;
+	}
+
+	// look up and store the vui index for faster access	
+	vuiList = schema.GetVUIs();
+
+	for (unsigned int vuiPos = 0; vuiPos < vuiList->GetCount(); ++vuiPos)
+	{
+		ARValueStruct* val = CARProplistHelper::Find(vuiList->VUIGetProps(vuiPos), AR_DPROP_LABEL);
+		if (val != NULL && val->dataType == AR_DATA_TYPE_CHAR && vuiLabel == val->u.charVal)
+		{
+			vuiIndex = vuiPos;
+			break;
+		}
+	}	
 }
 
 CARVui::~CARVui(void)

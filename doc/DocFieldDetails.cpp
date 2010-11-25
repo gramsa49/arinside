@@ -220,6 +220,32 @@ int CDocFieldDetails::AttachmentFieldGetPool(const CARField& fldObj)
 	return 0;
 }
 
+// just a temporary struct for column sorting
+class ColumnWithOrder
+{
+public:
+	ColumnWithOrder(unsigned int theOrder, const CARField& theField) { order = theOrder; field = theField; }
+	unsigned int order;
+	CARField field;
+};
+
+// this is a special class used in the next method for sorting table columns by column ordering
+class SortByColumnOrder
+{
+public:
+	SortByColumnOrder(int schemaIndex) 
+	{ 
+		this->schemaIndex = schemaIndex;
+	}
+	bool operator()(const ColumnWithOrder& l, const ColumnWithOrder& r) 
+	{
+		return l.order < r.order;
+	}
+
+private:
+	int schemaIndex;
+};
+
 string CDocFieldDetails::FieldLimits()
 {
 	stringstream strm;
@@ -286,38 +312,23 @@ string CDocFieldDetails::FieldLimits()
 		case AR_DATA_TYPE_COLUMN:
 			{
 				const ARColumnLimitsStruct& fLimit = this->field.GetLimits().u.columnLimits;
-				strm << "Length: " << fLimit.colLength << "<br/>" << endl;
-				strm << "Column in Table: " << this->pInside->LinkToField(this->schema.GetName(), fLimit.parent, rootLevel) << "<br/>" << endl;
+				strm << "Column in Table: " << this->pInside->LinkToField(this->schema.GetInsideId(), fLimit.parent, rootLevel) << "<br/>" << endl;
 
-				//To create a link to the datafield we first must find the target schema of the table
-				string tableSchema;
-				CARField tableField(schema.GetInsideId(), fLimit.parent);
-				if (tableField.Exists() && tableField.GetDataType() == AR_DATA_TYPE_TABLE && tableField.GetLimits().dataType == AR_DATA_TYPE_TABLE)
-				{
-					const ARFieldLimitStruct& limits = tableField.GetLimits();
-					tableSchema = limits.u.tableLimits.schema;
+				//To create a link to the datafield we first must find the source form and the source field of the column
+				CARField colSourceField; // initialize to unknown field
+				string colSourceForm;
 
-					if (!tableSchema.empty() && tableSchema[0] == '$')
-						tableSchema = limits.u.tableLimits.sampleSchema;
+				GetColumnSourceField(this->field, colSourceField, &colSourceForm);
+				int schemaIndex = colSourceField.GetSchema().GetInsideId();
+				int fieldIndex = fLimit.dataField;
 
-					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						tableSchema = schema.GetARName();
-				}
+				strm << "Source Type: " << CAREnum::ColumnDataSourceType(fLimit.dataSource) << "<br/>Source Field: " << this->pInside->LinkToField(schemaIndex, fLimit.dataField, rootLevel);
+				strm << " In Schema: " << (schemaIndex > -1 ? this->pInside->LinkToSchema(colSourceField.GetSchema().GetInsideId(), rootLevel) : colSourceForm) << "<br/>";
+				
+				if (fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_DATA_FIELD)
+					strm << "Length: " << fLimit.colLength << "<br/>";
 
-				if (!tableSchema.empty())
-				{
-					CARSchema tableSourceSchema(tableSchema);
-					if (tableSourceSchema.Exists())
-					{
-						strm << "Source Data Field: " << this->pInside->LinkToField(tableSourceSchema.GetInsideId(), fLimit.dataField, rootLevel);
-						strm << " In Schema: " << tableSourceSchema.GetURL(rootLevel) << "<br/>" << endl;
-					}
-					else
-					{
-						strm << "Source Data Field: <span class=\"fieldNotFound\">" << fLimit.dataField << "</span>";
-						strm << " In Schema: " << tableSchema << "<br/>" << endl;
-					}
-				}
+				strm << endl;
 			}
 			break;
 		case AR_DATA_TYPE_CURRENCY:
@@ -511,24 +522,89 @@ string CDocFieldDetails::FieldLimits()
 				strm << "<p>Max. Rows: " << fLimit.maxRetrieve << "<br/>" << endl;
 				strm << "Num. Columns: " << fLimit.numColumns << "<p/>" << endl;						
 
-				strm << "<p>Table Columns:<br/>" << endl;
+				CTable colTab("tableColumnList", "TblObjectList");
+				colTab.AddColumn(10,"Column Title");
+				colTab.AddColumn(70,"Field");
+				colTab.AddColumn(10,"Type");
+				colTab.AddColumn(10,"Source");
 
+				// get id of default vui
+				CARVui defaultVUI(schema.GetInsideId(), schema.GetDefaultVUI());
+				ARInternalId defaultVUIId = 0;
+				if (defaultVUI.Exists())
+					defaultVUIId = defaultVUI.GetId();
+
+				vector<ColumnWithOrder> columns; columns.reserve(fLimit.numColumns);
 				unsigned int fieldCount = schema.GetFields()->GetCount();
-				for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
+				for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 				{
 					CARField columnField(schema.GetInsideId(), 0, fieldIndex);
-					
+
 					if(columnField.GetDataType() == AR_DATA_TYPE_COLUMN)
 					{
 						const ARColumnLimitsStruct& colLimits = columnField.GetLimits().u.columnLimits;
-						if(colLimits.parent == this->field.GetInsideId())
-						{
-							strm << columnField.GetURL(rootLevel);
+						if (colLimits.parent != this->field.GetInsideId()) { continue; } // this column doesn't belong to the current table
 
-							strm << " [ Datafield: " << this->pInside->LinkToField(tableSchema, colLimits.dataField, rootLevel) << " ]<br/>" << endl; 
+						const ARDisplayInstanceList& dinstList = columnField.GetDisplayInstances();
+						
+						for (unsigned int dinstIndex = 0; dinstIndex < dinstList.numItems; ++dinstIndex)
+						{
+							if (dinstList.dInstanceList[dinstIndex].vui == defaultVUIId)
+							{
+								const ARValueStruct* val = CARProplistHelper::Find(dinstList.dInstanceList[dinstIndex].props, AR_DPROP_COLUMN_ORDER);
+								if (val != NULL && (val->dataType == AR_DATA_TYPE_INTEGER || val->dataType == AR_DATA_TYPE_ULONG))
+									columns.push_back(ColumnWithOrder(val->u.ulongVal, columnField));
+								break;
+							}
 						}
+
 					}
 				}
+				sort(columns.begin(), columns.end(), SortByColumnOrder(schema.GetInsideId()));
+
+				/*unsigned int*/ fieldCount = schema.GetFields()->GetCount();
+				for(unsigned int fieldIndex = 0; fieldIndex < columns.size(); ++fieldIndex)
+				{
+					CARField columnField(columns[fieldIndex].field);
+
+					const ARColumnLimitsStruct& colLimits = columnField.GetLimits().u.columnLimits;
+					if (colLimits.parent != this->field.GetInsideId()) { continue; } // this column doesn't belong to the current table
+
+					CARField colSourceField;	// init to none-existing field
+
+					GetColumnSourceField(columnField, colSourceField, NULL);
+
+					// for the output we need the column label, that is stored as a property
+					// within the column. Each vui could have a different label for the column.
+					// Just use the defaultVUI.
+					const ARDisplayInstanceList& vuiList = columnField.GetDisplayInstances();
+					string label;
+
+					for (unsigned int vPos = 0; vPos < vuiList.numItems; ++vPos)
+					{
+						if (vuiList.dInstanceList[vPos].vui == defaultVUI.GetId())
+						{
+							const ARPropList& props = vuiList.dInstanceList[vPos].props;
+							ARValueStruct* val = CARProplistHelper::Find(props, AR_DPROP_LABEL);
+							if (val != NULL && val->dataType == AR_DATA_TYPE_CHAR)
+							{
+								label = val->u.charVal;
+							}
+							// else
+							//   keep it empty (but that shouldn't happen at all)
+							break;
+						}
+					}
+
+					// now create the row
+					CTableRow tblRow;
+					tblRow.AddCell(label);
+					tblRow.AddCell(columnField.GetURL(rootLevel));
+					tblRow.AddCell((colSourceField.Exists() ? CAREnum::DataType(colSourceField.GetDataType()) : EnumDefault));
+					tblRow.AddCell(CAREnum::ColumnDataSourceType(colLimits.dataSource));
+					colTab.AddRow(tblRow);
+				}
+				strm << colTab.ToXHtml() << endl;
 			}
 			break;
 		case AR_DATA_TYPE_VIEW:
@@ -892,3 +968,43 @@ string CDocFieldDetails::FieldMapping()
 	return strm.str();
 }
 
+bool CDocFieldDetails::GetColumnSourceField(const CARField& col, CARField& source, std::string* colSourceSchemaName)
+{
+	if (col.GetLimits().dataType != AR_DATA_TYPE_COLUMN)
+		throw AppException("invalid field type");
+
+	const ARColumnLimitsStruct& fLimit = col.GetLimits().u.columnLimits;
+	CARSchema columnSourceForm; // initialize it to invalid form
+	string columnSourceFormName;				
+
+	if (fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_DISPLAY_FIELD || fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_CONTROL_FIELD)
+	{
+		columnSourceForm = CARSchema(col.GetSchema().GetInsideId());
+		columnSourceFormName = columnSourceForm.GetARName();
+	}
+	else if (fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_DATA_FIELD)
+	{
+		CARField tableField(col.GetSchema().GetInsideId(), fLimit.parent);
+		if (tableField.Exists() && tableField.GetDataType() == AR_DATA_TYPE_TABLE && tableField.GetLimits().dataType == AR_DATA_TYPE_TABLE)
+		{
+			const ARFieldLimitStruct& limits = tableField.GetLimits();
+			columnSourceFormName = limits.u.tableLimits.schema;
+
+			if (!columnSourceFormName.empty() && columnSourceFormName[0] == '$')
+				columnSourceFormName = limits.u.tableLimits.sampleSchema;
+
+			if (columnSourceFormName.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+				columnSourceFormName = col.GetSchema().GetARName();
+		}
+		columnSourceForm = CARSchema(columnSourceFormName);
+	}
+
+	source = CARField(columnSourceForm.GetInsideId(), fLimit.dataField);
+
+	if (colSourceSchemaName)
+	{
+		(*colSourceSchemaName) = columnSourceFormName;
+	}
+
+	return columnSourceForm.Exists();
+}

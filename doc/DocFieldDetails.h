@@ -27,6 +27,9 @@ public:
 	~CDocFieldDetails(void);
 
 	void Documentation();
+
+	static bool GetColumnSourceField(const CARField& col, CARField& source, std::string* colSourceSchemaName);
+
 private:
 	CARSchema schema;
 	CARField field;

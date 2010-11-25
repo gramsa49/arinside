@@ -23,6 +23,7 @@ class CARVui :
 {
 public:
 	CARVui(unsigned int schemaInsideId, unsigned int vuiId, int SchemaVuiIndex = -1);
+	CARVui(unsigned int schemaInsideId, const std::string& vuiLabel);
 	~CARVui(void);
 
 	bool Exists();

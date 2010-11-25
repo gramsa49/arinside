@@ -1677,35 +1677,21 @@ void CARInside::CustomFieldReferences(const CARSchema &schema, const CARField &o
 			{
 				const ARColumnLimitsStruct& fLimit = objLimits.u.columnLimits;
 
-				//To create a link to the datafield we first must find the target schema of the table
-				string tableSchema;                    // the name of table source form
+				// To create a link to the datafield we need to find the schema used by the column
+				CARField  columnSource;			    // field within the source schema
+				//string    columnSourceSchema;   // the name of the columns source form
 
-				CARField tableField(schema.GetInsideId(), fLimit.parent);
-				if (tableField.Exists())
+				// now get source datafield (and the schema as well)
+				CDocFieldDetails::GetColumnSourceField(obj, columnSource, NULL /*columnSourceSchema*/);
+
+				if (columnSource.Exists())
 				{
-					const ARFieldLimitStruct& limits = tableField.GetLimits();
-					if (tableField.GetDataType() == AR_DATA_TYPE_TABLE && limits.dataType == AR_DATA_TYPE_TABLE)
-					{
-						tableSchema = limits.u.tableLimits.schema;
-
-						if (!tableSchema.empty() && tableSchema[0] == '$')
-							tableSchema = limits.u.tableLimits.sampleSchema;
-
-						if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-							tableSchema = schema.GetARName();
-
-						// now get the table source form (if exists)
-						CARSchema tableSourceSchema(tableSchema);
-
-						if (tableSourceSchema.Exists())
-						{
-							stringstream tmpDesc;
-							tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), tableField.GetFieldId(), rootLevel) << " of Form " << LinkToSchema(schema.GetInsideId(), rootLevel);
-							CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), fLimit.dataField, tableSourceSchema.GetInsideId());
-							refItem.fromFieldId = obj.GetFieldId();
-							this->AddReferenceItem(&refItem);
-						}
-					}
+					// if the columns source field exists, create a link (in the workflow references list) from the source field to the current column
+					stringstream tmpDesc;
+					tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), fLimit.parent, rootLevel) << " of Form " << LinkToSchema(schema.GetInsideId(), rootLevel);
+					CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), columnSource.GetInsideId(), columnSource.GetSchema().GetInsideId());
+					refItem.fromFieldId = obj.GetInsideId();
+					this->AddReferenceItem(&refItem);
 				}
 			}
 			break;

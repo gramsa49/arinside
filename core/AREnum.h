@@ -2051,4 +2051,17 @@ public:
 		default: return EnumDefault;
 		}
 	}
+
+	static const char* ColumnDataSourceType(int nType)
+	{
+		switch (nType)
+		{
+		case COLUMN_LIMIT_DATASOURCE_DATA_FIELD: return "Data Field";
+		case COLUMN_LIMIT_DATASOURCE_DISPLAY_FIELD: return "Display Field";
+		case COLUMN_LIMIT_DATASOURCE_CONTROL_FIELD: return "Control Field";
+		case COLUMN_LIMIT_DATASOURCE_TRIM_FIELD: return "Trim Field";
+		case COLUMN_LIMIT_DATASOURCE_VIEW_FIELD: return "View Field";
+		default: return EnumDefault;
+		}
+	}
 };

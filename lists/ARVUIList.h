@@ -113,7 +113,7 @@ public:
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const { return changedUsers.nameList[sortedList[index]]; }
 	virtual const char* VUIGetChangeDiary(unsigned int index) const { return changeDiary.stringList[sortedList[index]]; }
 
-	// the sort class needs access the the "names" member variable
+	// the sort class needs access to the "names" member variable
 	friend class SortByName<CARVUIListServer>;
 
 private:

@@ -24,7 +24,8 @@ class CARField :
 private:
 
 public:
-	CARField(unsigned int SchemaInsideId, unsigned int fieldId, int SchemaFieldIndex = -1);
+	CARField();
+	CARField(int SchemaInsideId, unsigned int fieldId, int SchemaFieldIndex = -1);
 	~CARField(void) {}
 
 	// use this function after calling the constructor with just a fieldId and no index specified.

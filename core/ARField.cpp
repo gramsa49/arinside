@@ -18,7 +18,13 @@
 #include "ARField.h"
 #include "../lists/ARFieldList.h"
 
-CARField::CARField(unsigned int SchemaInsideId, unsigned int fieldId, int SchemaFieldIndex)
+CARField::CARField()
+: CARServerObject(-1), schema(-1)
+{
+	fieldIndex = -1;
+}
+
+CARField::CARField(int SchemaInsideId, unsigned int fieldId, int SchemaFieldIndex)
 : CARServerObject(fieldId), schema(SchemaInsideId)
 {	
 	if (!schema.Exists())

@@ -24,6 +24,7 @@ class CARSchema :
 	public CARServerObject
 {
 public:
+	CARSchema();
 	CARSchema(int insideId);
 	CARSchema(const string& schemaName);
 	~CARSchema(void);
