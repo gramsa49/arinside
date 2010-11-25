@@ -223,6 +223,11 @@ public:
 		case AR_DPROP_DATA_MENU_BBOX: return "Data Menu BBox";
 		case AR_DPROP_DATA_EXPAND_BBOX: return "Data Expand BBox";
 		case AR_DPROP_CHARFIELD_DISPLAY_TYPE: return "Char Field Display Type";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_DPROP_CHARFIELD_AUTO_COMPLETE: return "Auto Complete";
+		case AR_DPROP_CHARFIELD_AUTO_COMPLETE_MATCH_BY: return "Auto Complete Match By";
+		case AR_DPROP_ENABLE_CLEAR: return "Enable Clear";
+#endif
 		case AR_DPROP_TEXT: return "Text";
 		case AR_DPROP_TEXT_FONT_STYLE: return "Text Font Style";
 		case AR_DPROP_TEXT_FONT_SIZE: return "Text Font Size";
@@ -337,6 +342,46 @@ public:
 		case AR_DPROP_WEB_TOOLBAR_VISIBILITY: return "Web Toobar Visibility";
 		case AR_DPROP_AR_GRAPH_PLUGIN_NAME: return "Graph Plugin Name";
 		case AR_DPROP_EXPAND_COLLAPSE_TREE_LEVELS: return "Expand/Collapse Tree Levels";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+		case AR_DPROP_ATTACH_DESELECT_LABEL: return "Attachment Deselect Label";	
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_DPROP_LAYOUT_POLICY: return "Layout Style"; // TODO: support enum values
+		case AR_DPROP_PAGEHOLDER_DISPLAY_TYPE: return "Display Type"; // TODO: support enum values
+		case AR_DPROP_ORIENTATION: return "Orientation"; // TODO: support enum values
+		case AR_DPROP_PAGEHOLDER_MARGIN_LEFT: return "Margin Left";
+		case AR_DPROP_PAGEHOLDER_MARGIN_TOP: return "Margin Top";
+		case AR_DPROP_PAGEHOLDER_MARGIN_RIGHT: return "Margin Right";
+		case AR_DPROP_PAGEHOLDER_MARGIN_BOTTOM: return "Margin Bottom";
+		case AR_DPROP_PAGEHOLDER_SPACING: return "Spacing";
+		case AR_DPROP_PAGEHOLDER_INIT_PAGE: return "Init Page";
+		case AR_DPROP_PAGE_HEADER_STATE: return "Header State"; // TODO: support enum values
+		case AR_DPROP_PAGE_HEADER_COLOR: return "Header Color"; // TODO: support color values
+		case AR_DPROP_PAGE_INITIAL_SIZE: return "Initial Size";
+		case AR_DPROP_PAGE_MIN_SIZE: return "Min Size";
+		case AR_DPROP_PAGE_MAX_SIZE: return "Max Size";
+		case AR_DPROP_PAGE_BODY_STATE: return "Body State"; // TODO: support enum values
+		case AR_DPROP_LOCALIZATION_REQUIRED: return "Localization Required"; // TODO: support enum values
+		case AR_DPROP_FIELD_HIGHLIGHT: return "Highlight";
+		case AR_DPROP_FIELD_HIGHLIGHT_START_COLOR: return "Start Color"; // TODO: support color values
+		case AR_DPROP_FIELD_HIGHLIGHT_END_COLOR: return "End Color"; // TODO: support color values
+		case AR_DPROP_FIELD_ROUNDED: return "Rounded";
+		case AR_DPROP_FIELD_MIN_WIDTH: return "Min Width";
+		case AR_DPROP_FIELD_MAX_WIDTH: return "Max Width";
+		case AR_DPROP_FIELD_MIN_HEIGHT: return "Min Height";
+		case AR_DPROP_FIELD_MAX_HEIGHT: return "Max Height";
+		case AR_DPROP_COLOR_FILL_GRADIENT: return "Fill Gradient"; // TODO: this is displayed as "Background Color" property for Panel fields
+		case AR_DPROP_COLOR_FILL_GRADIENT_EFFECT: return "Fill Gradient Effect"; // TODO: support enum values
+		case AR_DPROP_COLOR_FILL_OPACITY: return "Fill Opacity";
+		case AR_DPROP_FIELD_ROUNDED_TOP_RIGHT_RADIUS: return "Rounded Top Right Radius";
+		case AR_DPROP_FIELD_ROUNDED_TOP_LEFT_RADIUS: return "Rounded Top Left Radius";
+		case AR_DPROP_FIELD_ROUNDED_BOTTOM_RIGHT_RADIUS: return "Rounded Bottom Right Radius";
+		case AR_DPROP_FIELD_ROUNDED_BOTTOM_LEFT_RADIUS: return "Rounded Bottom Left Radius";
+		case AR_DPROP_PANELHOLDER_SPLITTER: return "Splitter State"; // TODO: support enum values
+		case AR_DPROP_COLOR_GRADIENT_HEADER: return "Gradient Header Color"; // TODO: support color values
+		case AR_DPROP_COLOR_GRADIENT_EFFECT_HEADER: return "Gradient Header Effect"; // TODO: support enum values
+		case AR_DPROP_HIDE_PANELHOLDER_BORDERS: return "Borderless";
+#endif
 		case AR_DPROP_PREFIX_NEW: return "Prefix New";
 		case AR_DPROP_PREFIX_SEARCH: return "Prefix Search";
 		case AR_DPROP_PREFIX_MODIFY: return "Prefix Modify";
@@ -344,7 +389,7 @@ public:
 		case AR_DPROP_PREFIX_DISPLAY: return "Prefix Display";
 		case AR_DPROP_PREFIX_MATCHING_REQ: return "Prefix Matching Request";
 		case AR_DPROP_PREFIX_NO_MATCHING_REQ: return "Prefix No Matching Request";		
-		case AR_DPROP_TABLE_DISPLAY_TYPE: return "Table Display Type";
+		case AR_DPROP_TABLE_DISPLAY_TYPE: return "Table Display Type"; // TODO: support enum values
 		case AR_DPROP_TABLE_SELINIT: return "Table Select Init";
 		case AR_DPROP_TABLE_SELREFRESH: return "Table Select Refresh";
 		case AR_DPROP_TABLE_CHUNK_SIZE: return "Table Chunk Size";
@@ -382,6 +427,18 @@ public:
 		case AR_DPROP_TABLE_USE_LOCALE: return "Use Locale";
 		case AR_DPROP_QUERY_LIST_BKG_COLOR: return "Query List Background Color";
 		case AR_DPROP_AUTO_MAXIMIZE_WINDOW: return "Auto Maximize Window";
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_DPROP_VIEW_RTL: return "Right To Left";
+		case AR_DPROP_TABLE_PAGE_ARRAY_LEFT_MARGIN: return "Margin Left";
+		case AR_DPROP_TABLE_PAGE_ARRAY_RIGHT_MARGIN: return "Margin Right";
+		case AR_DPROP_TABLE_PAGE_ARRAY_TOP_MARGIN: return "Margin Top";
+		case AR_DPROP_TABLE_PAGE_ARRAY_BOTTOM_MARGIN: return "Margin Bottom";
+		case AR_DPROP_TABLE_PAGE_VISIBLE_COLUMNS: return "Visible Columns";
+		case AR_DPROP_TABLE_PAGE_ARRAY_HOR_SPACE: return "Panel Width";
+		case AR_DPROP_TABLE_PAGE_ARRAY_VER_SPACE: return "Panel Height";
+		case AR_DPROP_FORM_LOCK_ALLVUI: return "Form Lock All VUI";
+		case AR_DPROP_VUI_LOCK_VUI: return "VUI Lock VUI";
 #endif
 		default: 
 #ifdef _DEBUG
@@ -784,6 +841,9 @@ public:
 				case AR_DVAL_CHARFIELD_EDIT: return "Edit";
 				case AR_DVAL_CHARFIELD_DROPDOWN: return "Dropdown";
 				case AR_DVAL_CHARFIELD_MASKED: return "Masked";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+				case AR_DVAL_CHARFIELD_FILE: return "File";
+#endif
 				default: return EnumDefault;
 				}
 			}
@@ -2061,6 +2121,17 @@ public:
 		case COLUMN_LIMIT_DATASOURCE_CONTROL_FIELD: return "Control Field";
 		case COLUMN_LIMIT_DATASOURCE_TRIM_FIELD: return "Trim Field";
 		case COLUMN_LIMIT_DATASOURCE_VIEW_FIELD: return "View Field";
+		default: return EnumDefault;
+		}
+	}
+
+	static const char* StorageOptionForCLOB(int nOpt)
+	{
+		switch (nOpt)
+		{
+		case AR_STORE_OPT_DEF: return "Default";
+		case AR_STORE_OPT_INROW: return "In-Row";
+		case AR_STORE_OPT_OUTROW: return "Out-Of-Row";
 		default: return EnumDefault;
 		}
 	}

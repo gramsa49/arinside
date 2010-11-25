@@ -277,6 +277,13 @@ string CDocFieldDetails::FieldLimits()
 
 				if(fLimit.pattern != NULL && !strcmp(fLimit.pattern, "")==0 )
 					strm << "Pattern: " << fLimit.pattern << "<br/>" << endl;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+				if (pInside->CompareServerVersion(7,5) >= 0)
+				{
+					strm << "Length Unit: " << (fLimit.lengthUnits == 1 ? "Chars" : "Bytes") << "<br/>" << endl;
+					strm << "CLOB-Storage: " << CAREnum::StorageOptionForCLOB(fLimit.storageOptionForCLOB) << endl;
+				}
+#endif
 			}
 			break;
 		case AR_DATA_TYPE_ATTACH:
@@ -383,6 +390,12 @@ string CDocFieldDetails::FieldLimits()
 			{
 				const ARDisplayLimits& fLimit = this->field.GetLimits().u.displayLimits;
 				strm << "Max. Length: " << fLimit.maxLength << "<br/>" << endl;	
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+				if (pInside->CompareServerVersion(7,5) >= 0)
+				{
+					strm << "Length Unit: " << (fLimit.lengthUnits == 1 ? "Chars" : "Bytes") << "<br/>" << endl;
+				}
+#endif
 			}
 			break;		
 		case AR_DATA_TYPE_ENUM:

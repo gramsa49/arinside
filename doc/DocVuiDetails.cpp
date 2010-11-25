@@ -204,23 +204,38 @@ void CDocVuiDetails::FieldPropertiesCsv()
 
 bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStruct &value, std::string &displayValue)
 {
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	switch (propId)
 	{
 	case AR_DPROP_DETAIL_PANE_IMAGE:
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	case AR_DPROP_TITLE_BAR_ICON_IMAGE:
 		if (value.dataType == AR_DATA_TYPE_CHAR)
 		{
 			int imageIndex = pInside->imageList.FindImage(value.u.charVal);
 			if (imageIndex < 0) return false;
 
 			displayValue = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
-			
-			CImageRefItem refItem(imageIndex,"Background in VUI of Form " + this->schema.GetURL(rootLevel), &vui);
-			pInside->imageList.AddReference(refItem);
-			return true;
+
+			string description;
+			switch (propId)
+			{
+			case AR_DPROP_DETAIL_PANE_IMAGE: 
+				description = "Background in VUI of Form " + this->schema.GetURL(rootLevel);
+				break;
+			case AR_DPROP_TITLE_BAR_ICON_IMAGE:
+				description = "Title Bar Icon in VUI of Form " + this->schema.GetURL(rootLevel);
+				break;
+			}
+
+			if (!description.empty())
+			{
+				CImageRefItem refItem(imageIndex, description, &vui);
+				pInside->imageList.AddReference(refItem);
+				return true;
+			}
 		}
-#endif
 		break;
 	}
+#endif
 	return false;
 }

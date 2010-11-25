@@ -293,7 +293,6 @@ void CDocValidator::FieldGroupValidator()
 					if(field.GetPermissions().numItems == 0)      //First check if the field has any access group
 					{
 						nEmptyFields++;
-						break;
 					}
 				}
 
