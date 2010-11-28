@@ -40,7 +40,7 @@ string CDocSchemaDetails::FormPageHeader(string description)
 	contHeadStrm.str("");
 	contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 	contHeadStrm << MenuSeparator <<this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
-	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "", rootLevel);
+	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel);
 	contHeadStrm << MenuSeparator << CWebUtil::ObjName(description) << endl;
 	return contHeadStrm.str();
 }
