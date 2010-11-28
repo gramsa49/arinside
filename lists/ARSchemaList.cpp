@@ -366,6 +366,11 @@ int CARSchemaList::AddSchemaFromXML(ARXMLParsedStream &stream, const char* schem
 
 int CARSchemaList::Find(const char* name)
 {
+#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	CMapType::const_iterator it = searchList.find(string(name));
+	if (it == searchList.end()) return -1;
+	return it->second;
+#else
 	unsigned int count = GetCount();
 	for (unsigned int i = 0; i < count; ++i)
 	{
@@ -380,10 +385,19 @@ int CARSchemaList::Find(const char* name)
 			break;
 	}
 	return -1;
+#endif
 }
 
 void CARSchemaList::Sort()
 {
 	if (GetCount() > 0)
 		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARSchemaList>(*this));
+
+#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	if (!searchList.empty()) searchList.clear();
+	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	{
+		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+	}
+#endif
 }

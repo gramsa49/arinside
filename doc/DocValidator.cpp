@@ -414,7 +414,7 @@ void CDocValidator::FieldReferenceValidator()
 						tblRef.AddColumn(40, "Description");
 
 						list<CFieldRefItem>::iterator iter;
-						for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )
+						for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); ++iter )
 						{	
 							CFieldRefItem *item = &(*iter);
 							if(item->schemaInsideId == missingFieldItem->schemaInsideId && item->fieldInsideId == missingFieldItem->fieldInsideId)
@@ -469,12 +469,9 @@ bool CDocValidator::InList(int fieldId, int schemaId)
 	try
 	{
 		list<CFieldRefItem>::iterator fIter;
-		CFieldRefItem *fItem;
-		for(fIter = uniqueMissingFieldList.begin(); fIter != uniqueMissingFieldList.end(); fIter++)
+		for(fIter = uniqueMissingFieldList.begin(); fIter != uniqueMissingFieldList.end(); ++fIter)
 		{
-			fItem = &(*fIter);
-
-			if(fItem->fieldInsideId == fieldId && fItem->schemaInsideId == schemaId)
+			if(fIter->fieldInsideId == fieldId && fIter->schemaInsideId == schemaId)
 			{
 				return true;
 			}
@@ -496,14 +493,11 @@ void CDocValidator::BuildUniqueFieldList()
 		uniqueMissingFieldList.clear();
 
 		list<CFieldRefItem>::iterator missingFieldIter;
-		CFieldRefItem *missingFieldItem;
-		for(missingFieldIter = this->pInside->listFieldNotFound.begin(); missingFieldIter != this->pInside->listFieldNotFound.end(); missingFieldIter++)
+		for(missingFieldIter = this->pInside->listFieldNotFound.begin(); missingFieldIter != this->pInside->listFieldNotFound.end(); ++missingFieldIter)
 		{
-			missingFieldItem = &(*missingFieldIter);
-
-			if(!InList(missingFieldItem->fieldInsideId, missingFieldItem->schemaInsideId))
+			if(!InList(missingFieldIter->fieldInsideId, missingFieldIter->schemaInsideId))
 			{
-				uniqueMissingFieldList.push_back(*missingFieldItem);
+				uniqueMissingFieldList.push_back(*missingFieldIter);
 			}
 		}
 	}
@@ -520,14 +514,12 @@ int CDocValidator::NumReferences(int searchSchemaId, int searchFieldId)
 	try
 	{
 		list<CFieldRefItem>::iterator iter;
-		CFieldRefItem *item;
 
-		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )
+		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); ++iter )
 		{	
-			item = &(*iter);
-			if(item->schemaInsideId == searchSchemaId  && item->fieldInsideId == searchFieldId)
+			if(iter->schemaInsideId == searchSchemaId  && iter->fieldInsideId == searchFieldId)
 			{			
-				if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
+				if(strcmp(iter->fromName.c_str(), EmptyValue)!=0)
 				{
 					nResult++;
 				}
@@ -578,7 +570,7 @@ void CDocValidator::MenuReferenceValidator()
 
 				for ( ; mIter != endIt; ++mIter)
 				{
-					CMissingMenuRefItem mnuRefItem = *mIter;
+					CMissingMenuRefItem& mnuRefItem = *mIter;
 					CTableRow row("cssStdRow");
 
 					string tmpEnabled = pInside->XmlObjEnabled(mnuRefItem.arsStructItemType, mnuRefItem.fromName);

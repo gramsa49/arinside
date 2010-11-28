@@ -303,6 +303,11 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 
 int CARFilterList::Find(const char* name)
 {
+#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	CMapType::const_iterator it = searchList.find(string(name));
+	if (it == searchList.end()) return -1;
+	return it->second;
+#else
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
 		int result = strcoll(names.nameList[(*sortedList)[i]], name);
@@ -316,12 +321,21 @@ int CARFilterList::Find(const char* name)
 			break;
 	}
 	return -1;
+#endif;
 }
 
 void CARFilterList::Sort()
 {
 	if (GetCount() > 0)
 		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARFilterList>(*this));
+
+#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	if (!searchList.empty()) searchList.clear();
+	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	{
+		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+	}
+#endif
 }
 
 string CARFilterList::FilterGetURL(unsigned int index, int rootLevel)

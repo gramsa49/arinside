@@ -863,7 +863,7 @@ void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 		CRoleTable tbl(*this->pInside);
 
 		list<CARRole>::iterator listIter;				
-		for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); listIter++ )
+		for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); ++listIter )
 		{	
 			CARRole *role = &(*listIter);
 

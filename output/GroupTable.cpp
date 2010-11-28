@@ -48,12 +48,13 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 {
 	CARRole *insertRole = NULL;
 	list<CARRole>::iterator listIter;		
-	for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); listIter++ )
+	for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); ++listIter )
 	{
 		CARRole *role = &(*listIter);
 		if(role->roleId == roleId)
 		{
 			insertRole = role;
+			break;
 		}	
 	}
 
@@ -71,17 +72,15 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 	{
 		CTableRow tblRow("");
 
-		stringstream strmName, strmId, strmTimestamp, strmLastchanged;
+		stringstream strmName, strmId;
 		strmName << roleId << " (not loaded)";
 		strmId << roleId;
-		strmTimestamp << EmptyValue;
-		strmLastchanged << EmptyValue;
 
 		tblRow.AddCell( CTableCell("Role"));
 		tblRow.AddCell( CTableCell(strmName.str()));	
 		tblRow.AddCell( CTableCell(strmId.str()));
-		tblRow.AddCell( CTableCell(strmTimestamp.str()));
-		tblRow.AddCell( CTableCell(strmLastchanged.str()));        
+		tblRow.AddCell( CTableCell(EmptyValue)); // Timestamp
+		tblRow.AddCell( CTableCell(EmptyValue)); // LastChangedBy
 		this->tbl.AddRow(tblRow);
 	}
 }
@@ -90,12 +89,13 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 {	
 	CARGroup *insertGrp = NULL;
 	list<CARGroup>::iterator listIter;		
-	for ( listIter = this->pInside->groupList.begin(); listIter != this->pInside->groupList.end(); listIter++ )
+	for ( listIter = this->pInside->groupList.begin(); listIter != this->pInside->groupList.end(); ++listIter )
 	{
 		CARGroup *grp = &(*listIter);
 		if(grp->groupId == groupId)
 		{
 			insertGrp = grp;
+			break;
 		}	
 	}
 
@@ -114,17 +114,15 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 	{
 		CTableRow tblRow("");
 
-		stringstream strmName, strmId, strmTimestamp, strmLastchanged;
+		stringstream strmName, strmId;
 		strmName << groupId << " (not loaded)";
 		strmId << groupId;
-		strmTimestamp << EmptyValue;
-		strmLastchanged << EmptyValue;
 
 		tblRow.AddCell( CTableCell("Group"));
 		tblRow.AddCell( CTableCell(strmName.str()));	
 		tblRow.AddCell( CTableCell(strmId.str()));
-		tblRow.AddCell( CTableCell(strmTimestamp.str()));
-		tblRow.AddCell( CTableCell(strmLastchanged.str()));        
+		tblRow.AddCell( CTableCell(EmptyValue));		// Timestamp
+		tblRow.AddCell( CTableCell(EmptyValue));		// LastChangedBy
 		this->tbl.AddRow(tblRow);
 	}	
 }

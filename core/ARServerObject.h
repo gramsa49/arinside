@@ -36,36 +36,3 @@ public:
 	virtual CARServerObject* Clone() = 0;
 	virtual bool IsClonable() = 0;
 };
-
-class CARServerObjectWithData : public CARServerObject
-{
-public:
-	CARServerObjectWithData(int insideId);
-	~CARServerObjectWithData();
-
-	// implement function inherited from CARServerObject
-	const char* GetHelpText() const { return helptext; }
-	ARTimestamp GetTimestamp() { return timestamp; }
-	const ARAccessNameType& GetOwner() const { return owner; }
-	const ARAccessNameType& GetLastChanged() const { return lastChanged; }
-	const char* GetChangeDiary() const { return changeDiary; }
-
-	// implement function inherited from CARObject
-	string GetName() { return name; }
-	string GetName() const { return name; }
-	string GetNameFirstChar() { return CARObject::GetNameFirstChar(name); }
-	bool NameStandardFirstChar() { return CARObject::NameStandardFirstChar(name); }
-
-	// server objects with data aren't clonable, but their pointers are valid during the whole run
-	CARServerObject* Clone() { return this; }
-	bool IsClonable() { return false; }
-
-	string              name;
-	char                *helptext;
-	ARTimestamp         timestamp;
-	ARAccessNameType    owner;
-	ARAccessNameType    lastChanged;
-	char                *changeDiary;		
-	unsigned int        xmlDocVersion;
-	string              appRefName;
-};

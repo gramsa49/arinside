@@ -243,6 +243,11 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 
 int CARImageList::FindImage(const char* name)
 {
+#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	CMapType::const_iterator it = searchList.find(string(name));
+	if (it == searchList.end()) return -1;
+	return it->second;
+#else
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
 		int result = strcoll(names.nameList[(*sortedList)[i]], name);
@@ -256,12 +261,21 @@ int CARImageList::FindImage(const char* name)
 			break;
 	}
 	return -1;
+#endif
 }
 
 void CARImageList::Sort()
 {
 	if (GetCount() > 0)
 		std::sort(sortedList->begin(),sortedList->end(), SortByName<CARImageList>(*this));
+
+#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	if (!searchList.empty()) searchList.clear();
+	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	{
+		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+	}
+#endif
 }
 
 string CARImageList::ImageGetURL(unsigned int index, int rootLevel)

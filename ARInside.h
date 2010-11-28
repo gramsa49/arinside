@@ -68,7 +68,7 @@ public:
 	int					vMinor;
 	int					vRevision;
 
-	static CARInside* GetInstance();
+	inline static CARInside* GetInstance() { return CARInside::pInsideInstance; }
 	
 	int Init(string user, string pw, string server, int port, int rpc);
 	void DoWork(int nMode);
@@ -141,7 +141,7 @@ public:
 	string LinkToEscalation(string escalationName, int rootLevel);
 	string LinkToUser(string loginName, int rootLevel);	
 	string LinkToSchemaTypeList(int schemaType, int rootLevel);	
-	string LinkToGroup(string appRefName, int permissionId, int rootLevel);
+	string LinkToGroup(const string& appRefName, int permissionId, int rootLevel);
 	string GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition);
 
 	void AddReferenceItem(CFieldRefItem *refItem);
@@ -188,11 +188,11 @@ private:
 	void ParseVersionString(string version);
 	void ParseVersionString(int xmlVersion);
 
-	bool getPos(string inText, string findText);
-	string processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	bool getPos(const string& inText, const string& findText);
+	string processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
 
 	bool WriteHTAccess();

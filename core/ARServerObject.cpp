@@ -20,18 +20,3 @@
 
 using namespace OUTPUT;
 
-CARServerObjectWithData::CARServerObjectWithData(int insideId)
-: CARServerObject(insideId)
-{		
-	helptext = "";
-	timestamp = 0;	
-	changeDiary = "";
-	xmlDocVersion = 0;
-	appRefName = "";
-	ARZeroMemory(&owner);
-	ARZeroMemory(&lastChanged);
-}
-
-CARServerObjectWithData::~CARServerObjectWithData(void)
-{
-}

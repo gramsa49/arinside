@@ -39,25 +39,15 @@ string CDocContainerHelper::BaseInfo()
 		CTableRow row("");		
 
 		//Label
-		if(this->container.GetLabel() != NULL)
-		{
-			row.AddCellList(CTableCell("Label"), CTableCell(this->container.GetLabel()));
-		}
-		else
-		{
-			row.AddCellList(CTableCell("Label"), CTableCell(EmptyValue));
-		}
+		const char* text = this->container.GetLabel();
+		if (text == NULL) text = EmptyValue;
+		row.AddCellList(CTableCell("Label"), CTableCell(text));
 		tblProp.AddRow(row);
 
 		//Description
-		if(this->container.GetDescription() != NULL)
-		{
-			row.AddCellList(CTableCell("Description"), CTableCell(this->container.GetDescription()));
-		}
-		else
-		{
-			row.AddCellList(CTableCell("Description"), CTableCell(EmptyValue));	
-		}
+		text = this->container.GetDescription();
+		if (text == NULL) text = EmptyValue;
+		row.AddCellList(CTableCell("Description"), CTableCell(text));
 		tblProp.AddRow(row);
 
 		//Permissions		
@@ -132,14 +122,11 @@ string CDocContainerHelper::PermissionList()
 
 		const ARPermissionList& groupList = this->container.GetPermissions();
 		for(unsigned int i=0; i< groupList.numItems; i++)
-		{			
-			CTableRow row("");			
-			string img;
+		{
+			const ARPermissionStruct& perm = groupList.permissionList[i];
 
-			if(groupList.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
-				img = CWebUtil::ImageTag("hidden.gif", rootLevel);
-			else
-				img = CWebUtil::ImageTag("visible.gif", rootLevel);
+			CTableRow row("");			
+			string img = CWebUtil::ImageTag((perm.permissions == AR_PERMISSIONS_HIDDEN ? "hidden.gif" : "visible.gif"), rootLevel);
 
 			string appRefName;
 			if(this->container.GetAppRefName().empty())

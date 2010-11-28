@@ -106,11 +106,6 @@ CARInside::~CARInside(void)
 	DestroyFileNamingStrategy();
 }
 
-CARInside* CARInside::GetInstance()
-{
-	return CARInside::pInsideInstance;
-}
-
 int CARInside::Init(string user, string pw, string server, int port, int rpc)
 {
 	cout << endl << "Connecting to server " << server << "..." << endl;
@@ -1135,7 +1130,7 @@ void CARInside::Documentation(void)
 	nTmpCnt=1;
 	list<CARUser>::iterator userIter;
 	cout << "Starting User Documentation" << endl;
-	for ( userIter = this->userList.begin(); userIter != this->userList.end(); userIter++ )
+	for ( userIter = this->userList.begin(); userIter != this->userList.end(); ++userIter )
 	{
 		CARUser *user = &(*userIter);
 
@@ -1281,13 +1276,14 @@ int CARInside::SchemaGetInsideId(string searchObjName)
 
 string CARInside::LinkToUser(string loginName, int rootLevel)
 {	
-	list<CARUser>::iterator userIter;			
-	for ( userIter = userList.begin(); userIter != userList.end(); userIter++ )
+	list<CARUser>::iterator user = userList.begin();			
+	list<CARUser>::iterator endIt = userList.end();
+
+	for ( ; user != userList.end(); ++user )
 	{	
-		CARUser *user = &(*userIter);
 		if(loginName == user->name)
 		{
-			return CWebUtil::Link(loginName, CPageParams(PAGE_DETAILS, user), "", rootLevel);
+			return CWebUtil::Link(loginName, CPageParams(PAGE_DETAILS, &*user), "", rootLevel);
 		}
 	}
 	return loginName;
@@ -1315,7 +1311,7 @@ bool CARInside::ValidateGroup(const string& appRefName, int permissionId)
 	return false;
 }
 
-string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel)
+string CARInside::LinkToGroup(const string& appRefName, int permissionId, int rootLevel)
 {	
 	stringstream strmTmp;
 	strmTmp.str("");
@@ -1323,13 +1319,13 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 
 	if(permissionId >= 0)
 	{
-		list<CARGroup>::iterator grpIter;			
-		for ( grpIter = this->groupList.begin(); grpIter != this->groupList.end(); grpIter++ )
+		list<CARGroup>::iterator group = this->groupList.begin();
+		list<CARGroup>::iterator endIt = this->groupList.end();
+		for ( ; group != endIt; ++group )
 		{	
-			CARGroup *group = &(*grpIter);		
 			if(group->groupId == permissionId)
 			{
-				return CWebUtil::Link(group->groupName, CPageParams(PAGE_DETAILS, group), "group.gif", rootLevel);
+				return CWebUtil::Link(group->groupName, CPageParams(PAGE_DETAILS, &*group), "group.gif", rootLevel);
 			}		
 		}
 	}
@@ -1337,13 +1333,13 @@ string CARInside::LinkToGroup(string appRefName, int permissionId, int rootLevel
 	{
 		if(appRefName.c_str() != NULL && strcmp(appRefName.c_str(), "") != 0)
 		{
-			list<CARRole>::iterator roleIter;
-			for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++)
+			list<CARRole>::iterator role = this->roleList.begin();
+			list<CARRole>::iterator endIt = this->roleList.end();
+			for( ; role != endIt; ++role)
 			{
-				CARRole *role = &(*roleIter);
-				if(role->roleId == permissionId && strcmp(role->applicationName.c_str(), appRefName.c_str())==0)
+				if(role->roleId == permissionId && role->applicationName == appRefName)
 				{
-					return CWebUtil::Link(role->roleName, CPageParams(PAGE_DETAILS, role), "doc.gif", rootLevel);
+					return CWebUtil::Link(role->roleName, CPageParams(PAGE_DETAILS, &*role), "doc.gif", rootLevel);
 				}
 			}
 		}
@@ -1757,8 +1753,7 @@ void CARInside::AddMissingMenu(const CMissingMenuRefItem& refItem)
 		list<CMissingMenuRefItem>::iterator endIt = listMenuNotFound.end();
 		for ( ; mIter != endIt; ++mIter)
 		{
-			CMissingMenuRefItem current = *mIter;
-			if (current == refItem)
+			if (*mIter == refItem)
 			{
 				return;
 			}
@@ -2496,7 +2491,7 @@ int CARInside::CompareServerVersion(int major, int minor, int revision)
 	/*if (vMajor > major)*/ return 1;
 }
 
-string CARInside::processOneField(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -2528,7 +2523,7 @@ string CARInside::processOneField(string command, string inText, int schemaInsid
 
 	return strmTmp.str();
 }
-string CARInside::processTwoFields(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -2572,7 +2567,7 @@ string CARInside::processTwoFields(string command, string inText, int schemaInsi
 
 	return strmTmp.str();
 }
-string CARInside::processForm(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
 {
 	stringstream strmTmp;
 	string form = "";
@@ -2609,7 +2604,7 @@ string CARInside::processForm(string command, string inText, int schemaInsideId,
 
 	return strmTmp.str();
 }
-string CARInside::processSecondParameter(string command, string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -2639,16 +2634,10 @@ string CARInside::processSecondParameter(string command, string inText, int sche
 
 	return strmTmp.str();
 }
-bool CARInside::getPos(string inText, string findText)
+bool CARInside::getPos(const string& inText, const string& findText)
 {
 	size_t pos = inText.find(findText);
-	bool found = false;
-	if (pos != std::string::npos)
-		found = true;
-	else
-		pos = 0;
-
-	return found;
+	return (pos != std::string::npos);
 }
 
 string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
