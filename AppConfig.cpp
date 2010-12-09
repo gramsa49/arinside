@@ -53,6 +53,7 @@ AppConfig::AppConfig(void)
 	password = "";
 	tcpPort = 0;
 	rpcPort = 0;
+	apiTimeout = 0;
 	bCompactFolder = false;
 	bDeleteExistingFiles = false;
 	bGZCompression = false;

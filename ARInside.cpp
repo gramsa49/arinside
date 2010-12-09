@@ -147,6 +147,32 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			}
 		}
 
+		if(this->appConfig.apiTimeout > 120) // at least 120 seconds api timeout
+		{
+			ARValueStruct val; 
+			for (unsigned int valId = AR_SESS_TIMEOUT_NORMAL; valId <= AR_SESS_TIMEOUT_XLONG; ++valId)
+			{
+				ARZeroMemory(&val);
+				nResult = ARGetSessionConfiguration(&this->arControl, valId, &val, &this->arStatus);
+
+				// validate result
+				if (nResult != AR_RETURN_OK) continue;	// ok, if this fails, dont bother .. next one
+				if (val.dataType != AR_DATA_TYPE_INTEGER) continue;
+				if (val.u.intVal > this->appConfig.apiTimeout) continue;
+
+				// setup value
+				val.dataType = AR_DATA_TYPE_INTEGER;
+				val.u.intVal = this->appConfig.apiTimeout;
+
+				// now configure session
+				nResult = ARSetSessionConfiguration(&this->arControl, valId, &val, &this->arStatus);
+				if (nResult != AR_RETURN_OK)
+				{
+					cout << "Setting session timeout failed: " << GetARStatusError();
+				}
+			}
+		}
+
 		if(nResult == AR_RETURN_OK)
 		{
 			ARBoolean isAdmin, isSubadmin, hasCustomize;

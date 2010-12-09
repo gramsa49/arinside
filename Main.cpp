@@ -311,6 +311,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto<int>(cfg.rpcPort, "RPCPort", 0);
 		config.readInto<string>(cfg.userName, "Username", "");
 		config.readInto<string>(cfg.password, "Password", "");
+		config.readInto<int>(cfg.apiTimeout, "APITimeout", 0);
 		cout << endl;
 
 		LOG << "UserForm: " << cfg.userForm << endl;		

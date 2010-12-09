@@ -69,5 +69,7 @@ public:
 	string password;
 	int tcpPort;
 	int rpcPort;
+	int apiTimeout;
+
 	string runNotes;
 };
