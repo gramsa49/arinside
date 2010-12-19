@@ -23,7 +23,7 @@ CTable::CTable()
 {
 }
 
-CTable::CTable(string htmId, string cssClass)
+CTable::CTable(const string& htmId, const string& cssClass)
 {
 	this->htmId = htmId;
 	this->cssClass = cssClass;
@@ -31,9 +31,6 @@ CTable::CTable(string htmId, string cssClass)
 
 CTable::~CTable(void)
 {
-	this->listColumns.clear();
-	this->listRows.clear();
-	this->description = "";
 }
 
 int CTable::NumRows()
@@ -41,29 +38,29 @@ int CTable::NumRows()
 	return (int)this->listRows.size();
 }
 
-void CTable::AddColumn(int width, string text)
+void CTable::AddColumn(int width, const string& text)
 {
 	CTableColumn col(width, text, "colStdClass");
 	this->listColumns.push_back(col);
 }
 
-void CTable::AddColumn(int width, string text, string cssClass)
+void CTable::AddColumn(int width, const string& text, const string& cssClass)
 {
 	CTableColumn col(width, text, cssClass);
 	this->listColumns.push_back(col);
 }
 
-void CTable::AddRow(CTableRow tableRow)
+void CTable::AddRow(const CTableRow& tableRow)
 {
 	this->listRows.push_back(tableRow);
 }
 
-void CTable::SetHtmId(string htmId)
+void CTable::SetHtmId(const string& htmId)
 {
 	this->htmId = htmId;
 }
 
-void CTable::SetCssClass(string cssClass)
+void CTable::SetCssClass(const string& cssClass)
 {
 	this->cssClass = cssClass;
 }
@@ -84,17 +81,15 @@ void CTable::ClearColumns()
 	this->listColumns.clear();
 }
 
-string CTable::GetHtmlRows()
-{	
-	stringstream strm;
+void CTable::GetHtmlRows(std::ostream& strm)
+{
 	list<CTableRow>::iterator rowIter;
 	list<CTableRow>::iterator endIter = listRows.end();
 	for ( rowIter = listRows.begin(); rowIter != endIter; ++rowIter )
 	{	
 		CTableRow *rowItem = &(*rowIter);
-		strm << rowItem->ToXHtml() << endl;
+		rowItem->ToXHtml(strm);
 	}
-	return strm.str();
 }
 
 string CTable::GetCsvRows()
@@ -109,9 +104,8 @@ string CTable::GetCsvRows()
 	return strm.str();
 }
 
-string CTable::GetColumnDefinition()
+void CTable::GetColumnDefinition(std::ostream& strm)
 {
-	stringstream strm;
 	strm << "<colgroup>" << endl;
 	list<CTableColumn>::iterator colIter;
 	CTableColumn *colItem;
@@ -119,11 +113,10 @@ string CTable::GetColumnDefinition()
 	for ( colIter = listColumns.begin(); colIter != listColumns.end(); colIter++ )
 	{	
 		colItem = &(*colIter);
-		strm << colItem->ColToXHtml() << endl;
+		colItem->ColToXHtml(strm);
 	}
 
 	strm << "</colgroup>" << endl;
-	return strm.str();
 }
 
 string CTable::GetCsvHeaderDefinition()
@@ -142,9 +135,8 @@ string CTable::GetCsvHeaderDefinition()
 	return strm.str();
 }
 
-string CTable::GetHeaderDefinition()
+void CTable::GetHeaderDefinition(std::ostream& strm)
 {
-	stringstream strm;
 	strm << "<tr>" << endl;
 
 	list<CTableColumn>::iterator colIter;
@@ -152,11 +144,10 @@ string CTable::GetHeaderDefinition()
 	for ( colIter = listColumns.begin(); colIter != listColumns.end(); colIter++ )
 	{	
 		colItem = &(*colIter);
-		strm << colItem->HeaderCellToXHtml() << endl;
+		colItem->HeaderCellToXHtml(strm);
 	}
 
 	strm << "</tr>" << endl;   
-	return strm.str();
 }
 
 string CTable::ToXHtml()
@@ -164,7 +155,7 @@ string CTable::ToXHtml()
 	return this->ToXHtml("");
 }
 
-string CTable::ToXHtml(string styleTag)
+string CTable::ToXHtml(const string& styleTag)
 {
 	stringstream strm;	    
 
@@ -182,27 +173,25 @@ string CTable::ToXHtml(string styleTag)
 		strm << " style=\"" << styleTag << "\"";
 	}
 
-	if(this->cssClass.empty())
+	if(!this->cssClass.empty())
 	{
-		strm << ">" << endl;
-	}
-	else
-	{
-		strm << " class=\"" << this->cssClass << "\">" << endl;
+		strm << " class=\"" << this->cssClass << "\"" << endl;
 	}
 
-	strm << this->GetColumnDefinition();
-	strm << this->GetHeaderDefinition();
+	strm << ">" << endl; // closing table tag here
+
+	this->GetColumnDefinition(strm);
+	this->GetHeaderDefinition(strm);
 
 	if(listRows.size() > 0)
 	{
-		strm << this->GetHtmlRows() << endl;	
+		this->GetHtmlRows(strm);
 	}
 	else
 	{
 		size_t nColspan = listColumns.size();
-		strm << "<tr>" << endl << "<td colspan=\"" << (unsigned int)nColspan << "\">" << endl;
-		strm << "Table contains no data" << endl;
+		strm << "<tr>" << endl << "<td colspan=\"" << (unsigned int)nColspan << "\">";
+		strm << "Table contains no data";
 		strm << "</td>" << endl << "</tr>" << endl;
 	}
 
@@ -227,10 +216,10 @@ string CTable::ToXHtmlNoHeader()
 		strm << " class=\"" << this->cssClass << "\">" << endl;
 	}
 
-	strm << this->GetColumnDefinition();
+	this->GetColumnDefinition(strm);
 	if(listRows.size() > 0)
 	{
-		strm << this->GetHtmlRows() << endl;	
+		this->GetHtmlRows(strm);
 	}
 	else
 	{

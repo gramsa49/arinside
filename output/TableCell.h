@@ -31,7 +31,7 @@ namespace OUTPUT
 
 		~CTableCell(void);
 
-		string ToXHtml();
+		void ToXHtml(std::ostream& strm);
 		string ToCsv();
 		string content;
 

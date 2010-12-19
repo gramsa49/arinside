@@ -1188,7 +1188,7 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 	return EmptyValue;
 }
 
-string CARInside::LinkToField(string schemaName, int fieldInsideId, int fromRootLevel)
+string CARInside::LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel)
 {	
 	return LinkToField(SchemaGetInsideId(schemaName), fieldInsideId, fromRootLevel);
 }
@@ -1256,7 +1256,7 @@ string CARInside::LinkToSchema(int insideId, int fromRootLevel)
 	return EmptyValue;
 }
 
-string CARInside::LinkToSchema(string schemaName, int fromRootLevel)
+string CARInside::LinkToSchema(const string& schemaName, int fromRootLevel)
 {
 	CARSchema schema(schemaName);
 	if(schema.Exists())
@@ -2210,38 +2210,26 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 	try
 	{
-		list<CChangeHistoryEntry> listHistoryEntry;
+		stringstream historyLog;
 		if(obj->GetChangeDiary() != NULL)
 		{				
-			ARDiaryList diaryList;
+			ARDiaryList diaryList; ARZeroMemory(&diaryList);
 			if(ARDecodeDiary(&this->arControl, const_cast<char*>(obj->GetChangeDiary()), &diaryList, &this->arStatus)==AR_RETURN_OK)
 			{
-				if(diaryList.diaryList != NULL)
-				{			
+				if(diaryList.numItems > 0)
+				{
 					for(unsigned int j=0; j<diaryList.numItems; j++)
 					{
-						CChangeHistoryEntry entry(diaryList.diaryList[j].timeVal, diaryList.diaryList[j].user, diaryList.diaryList[j].value);		
-						listHistoryEntry.push_back(entry);
+						historyLog << CUtil::DateTimeToHTMLString(diaryList.diaryList[j].timeVal) << " " << this->LinkToUser(diaryList.diaryList[j].user, rootLevel) << "<br/>" << endl;
+						historyLog << diaryList.diaryList[j].value << "<br/><br/>" << endl;
 					}
+				}
+				else
+				{
+					historyLog << EmptyValue << endl;
 				}
 			}
 			FreeARDiaryList(&diaryList, false);				
-		}
-
-		stringstream historyLog;
-		if(listHistoryEntry.size() > 0)
-		{
-			list<CChangeHistoryEntry>::iterator listIter;		
-			for ( listIter = listHistoryEntry.begin(); listIter != listHistoryEntry.end(); listIter++ )
-			{	
-				CChangeHistoryEntry historyEntry = (CChangeHistoryEntry) *listIter;
-				historyLog << CUtil::DateTimeToHTMLString(historyEntry.ts) << " " << this->LinkToUser(historyEntry.user, rootLevel) << "<br/>" << endl;
-				historyLog << historyEntry.entry << "<br/><br/>" << endl;
-			}
-		}
-		else
-		{
-			historyLog << EmptyValue << endl;
 		}
 
 		CTable tbl("history", "TblObjectHistory");
@@ -2269,17 +2257,20 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		tbl.AddRow(tblRow);
 
 		//Helptext
-		string tmpHelptext = EmptyValue;
+		string tmpHelptext;
 		if(obj->GetHelpText() != NULL)
 		{
 			tmpHelptext = CUtil::StrReplace("\n", "<br/>", obj->GetHelpText());
+		}
+		else
+		{
+		  tmpHelptext = EmptyValue;
 		}
 
 		tblRow.AddCellList(CTableCell("Helptext"), CTableCell(tmpHelptext));
 		tbl.AddRow(tblRow);
 
 		strm << tbl.ToXHtml();
-		tbl.Clear();
 	}
 	catch(exception& e)
 	{

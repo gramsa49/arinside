@@ -32,7 +32,7 @@ public:
 		case AR_DVAL_TRIM_SHAPE: return "Shape";
 		case AR_DVAL_TRIM_TEXT: return "Multi-Row text";
 		case AR_DVAL_TRIM_IMAGE: return "Image";
-		default: return EnumDefault;
+		default: return "";
 		}
 	}
 
@@ -462,7 +462,6 @@ public:
 				{
 				case AR_DVAL_NAVBAR_SELITEM_NOFIRE: return "Do Not Fire Workflow";
 				case AR_DVAL_NAVBAR_SELITEM_FIRE: return "Fire Workflow";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -472,7 +471,6 @@ public:
 				{
 				case AR_DVAL_TABLE_COL_WRAP_TEXT_DISABLE: return "Disable";
 				case AR_DVAL_TABLE_COL_WRAP_TEXT_ENABLE: return "Enable";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -483,7 +481,6 @@ public:
 				case AR_DVAL_VIEWFIELD_BORDERS_DEFAULT: return "Default";
 				case AR_DVAL_VIEWFIELD_BORDERS_NONE: return "None";
 				case AR_DVAL_VIEWFIELD_BORDERS_ENABLE: return "Enable";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -494,7 +491,6 @@ public:
 				case AR_DVAL_VIEWFIELD_SCROLLBARS_AUTO: return "Auto";
 				case AR_DVAL_VIEWFIELD_SCROLLBARS_ON: return "On";
 				case AR_DVAL_VIEWFIELD_SCROLLBARS_HIDDEN: return "Hidden";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -504,7 +500,6 @@ public:
 				{
 				case AR_DVAL_FIXED_TABLE_HEADERS_DISABLE: return "Disabled";
 				case AR_DVAL_FIXED_TABLE_HEADERS_ENABLE: return "Enabled";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -515,7 +510,6 @@ public:
 				case AR_DVAL_TABLE_COL_DISPLAY_NONEDITABLE: return "Not editable";
 				case AR_DVAL_TABLE_COL_DISPLAY_EDITABLE: return "Editable";
 				case AR_DVAL_TABLE_COL_DISPLAY_HTML: return "Display Html in Column";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -526,7 +520,6 @@ public:
 				case AR_DVAL_TABLE_SELROWS_MULTI_SELECT: return "Multiple Selection";
 				case AR_DVAL_TABLE_SELROWS_DISABLE_YES: return "Disable Selection";
 				case AR_DVAL_TABLE_SELROWS_SINGLE_SELECT: return "Single Select";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -536,7 +529,6 @@ public:
 				{
 				case AR_DPROP_TABLE_AUTOREFRESH: return "Auto Refresh";
 				case AR_DPROP_TABLE_DRILL_COL: return "Drill Down";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -549,7 +541,6 @@ public:
 				case AR_DVAL_TABLE_SELREFRESH_FIRSTFIRE: return "Select 1st, Fire Workflow";
 				case AR_DVAL_TABLE_SELREFRESH_FIRSTNOFIRE: return "Select 1st, No Workflow";
 				case AR_DVAL_TABLE_SELREFRESH_NOSEL: return "No Selection, No Workflow";			
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -560,7 +551,6 @@ public:
 				case AR_DVAL_TABLE_SELINIT_SELFIRE: return "Select 1st, Fire Workflow";
 				case AR_DVAL_TABLE_SELINIT_SELNOFIRE: return "Select 1st, No Workflow";
 				case AR_DVAL_TABLE_SELINIT_NOSEL: return "No Select, No Workflow";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -574,7 +564,6 @@ public:
 				case AR_DVAL_TABLE_DISPLAY_SINGLE_TABLE_TREE: return "Single Table Tree";
 				case AR_DVAL_TABLE_DISPLAY_MULTI_TABLE_TREE: return "Multi Table Tree";
 				case AR_DVAL_TABLE_DISPLAY_PAGE_ARRAY: return "Table Page Array Field";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -584,7 +573,6 @@ public:
 				{
 				case AR_DVAL_EXPAND_ALL_LEVELS: return "Expand All";
 				case AR_DVAL_COLLAPSE_ALL_LEVELS: return "Collapse All";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -594,7 +582,6 @@ public:
 				{
 				case AR_DVAL_AUTO_FIELD_NEW_SECTION_OFF: return "Off";
 				case AR_DVAL_AUTO_FIELD_NEW_SECTION_ON: return "On";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -604,7 +591,6 @@ public:
 				{
 				case AR_DVAL_AUTO_FIELD_NEW_COLUMN_OFF: return "Off";
 				case AR_DVAL_AUTO_FIELD_NEW_COLUMN_ON: return "On";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -614,7 +600,6 @@ public:
 				{
 				case AR_DVAL_FORMACTION_FLDS_EXCLUDE_OFF: return "Off";
 				case AR_DVAL_FORMACTION_FLDS_EXCLUDE_ON: return "On";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -624,7 +609,6 @@ public:
 				{
 				case AR_DVAL_AUTO_FIELD_ALIGN_LEFT: return "Left";
 				case AR_DVAL_AUTO_FIELD_ALIGN_RIGHT: return "Right";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -634,7 +618,6 @@ public:
 				{
 				case AR_DVAL_AUTO_FIELD_SPACER_OFF: return "Off";
 				case AR_DVAL_AUTO_FIELD_SPACER_ON: return "On";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -645,7 +628,6 @@ public:
 				case AR_DVAL_AUTO_FIELD_LEVEL1: return "Level1";
 				case AR_DVAL_AUTO_FIELD_LEVEL2: return "Level2";
 				case AR_DVAL_AUTO_FIELD_LEVEL3: return "Level3";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -655,7 +637,6 @@ public:
 				{
 				case AR_DVAL_AUTO_LAYOUT_VUI_NAV_OFF: return "Off";
 				case AR_DVAL_AUTO_LAYOUT_VUI_NAV_ON: return "On";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -665,7 +646,6 @@ public:
 				{
 				case AR_DVAL_AUTO_LAYOUT_OFF: return "Off";
 				case AR_DVAL_AUTO_LAYOUT_ON: return "On";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -679,7 +659,6 @@ public:
 				case AR_DVAL_AUTO_FIELD_GROUPTITLE: return "Group Title";
 				case AR_DVAL_AUTO_FIELD_PAGETITLE: return "Page Title";
 				case AR_DVAL_AUTO_FIELD_APPTITLE: return "App Title";
-				default: return EnumDefault;
 				}
 			}
 			break;		
@@ -689,7 +668,6 @@ public:
 				{
 				case AR_DVAL_AUTOFIT_COLUMNS_NONE: return "None";
 				case AR_DVAL_AUTOFIT_COLUMNS_SET: return "Set";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -699,7 +677,6 @@ public:
 				{
 				case AR_DVAL_REFRESH_NONE: return "None";
 				case AR_DVAL_REFRESH_TABLE_MAX: return "Refresh";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -709,7 +686,6 @@ public:
 				{                                          
 				case AR_DVAL_DRILL_DOWN_NONE: return "None";
 				case AR_DVAL_DRILL_DOWN_ENABLE: return "Enable";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -719,7 +695,6 @@ public:
 				{                                         
 				case AR_DVAL_SORT_DIR_ASCENDING: return "Ascending";
 				case AR_DVAL_SORT_DIR_DESCENDING: return "Descending";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -729,7 +704,6 @@ public:
 				{
 				case AR_DVAL_PANE_VISIBILITY_USER_CHOICE: return "User Choice";
 				case AR_DVAL_PANE_VISIBILITY_ADMIN: return "Administrator defined";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -739,7 +713,6 @@ public:
 				{
 				case AR_DVAL_PAGE_SCROLL: return "Scroll";
 				case AR_DVAL_PAGE_LAYER: return "Layer";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -752,7 +725,6 @@ public:
 				case AR_DVAL_PAGE_DISPLAY_LEFT: return "Left";
 				case AR_DVAL_PAGE_DISPLAY_RIGHT: return "Right";
 				case AR_DVAL_PAGE_DISPLAY_NONE: return "None";
-				default: return EnumDefault;
 				}
 
 			}
@@ -765,7 +737,6 @@ public:
 				case AR_DVAL_PANE_HIDDEN : return "Hidden";
 				case AR_DVAL_PANE_VISIBLE : return "Visible";
 				case AR_DVAL_PANE_ALWAYS_VISIBLE: return "Always Visible";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -775,7 +746,6 @@ public:
 				{
 				case AR_DVAL_BKG_MODE_OPAQUE: return "Default";
 				case AR_DVAL_BKG_MODE_TRANSPARENT: return "Transparent";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -786,7 +756,6 @@ public:
 				case AR_DVAL_DATETIME_BOTH: return "Time and Date";
 				case AR_DVAL_DATETIME_TIME: return "Time Only";
 				case AR_DVAL_DATETIME_DATE: return "Date Only";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -800,7 +769,6 @@ public:
 				case AR_DVAL_CNTL_CHOICE: return "Choice";
 				case AR_DVAL_CNTL_DIALOG: return "Dialog";
 				case AR_DVAL_CNTL_A_MENU: return "Menu";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -813,7 +781,6 @@ public:
 				case AR_DVAL_IMAGE_RIGHT: return "Right";
 				case AR_DVAL_IMAGE_ABOVE: return "Above";
 				case AR_DVAL_IMAGE_BELOW: return "Below";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -845,7 +812,6 @@ public:
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_DVAL_CHARFIELD_FILE: return "File";
 #endif
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -856,7 +822,6 @@ public:
 				case AR_DVAL_RADIO_DROPDOWN: return "Dropdown";
 				case AR_DVAL_RADIO_RADIO: return "Radio";
 				case AR_DVAL_RADIO_CHECKBOX: return "Checkbox";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -868,7 +833,6 @@ public:
 				case AR_DVAL_ENDCAP_FLUSH: return "Flush";
 				case AR_DVAL_ENDCAP_EXTENDED: return "Extended";
 				case AR_DVAL_ENDCAP_ARROW1: return "Arrow1";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -881,7 +845,6 @@ public:
 				case AR_DVAL_JOINT_ROUNDED: return "Rounded";
 				case AR_DVAL_JOINT_SMOOTH: return "Smooth";
 				case AR_DVAL_JOINT_MAX_SMOOTH: return "Max. Smooth";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -897,7 +860,6 @@ public:
 				case AR_DVAL_ALIGN_FILL: return "Fill";
 				case AR_DVAL_ALIGN_BOTTOM : return "Bottom";
 				case AR_DVAL_ALIGN_TILE: return "Tile";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -913,7 +875,6 @@ public:
 				case AR_DVAL_JUSTIFY_FILL: return "Fill";
 				case AR_DVAL_JUSTIFY_RIGHT: return "Right";
 				case AR_DVAL_JUSTIFY_TILE: return "Tile";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -926,7 +887,6 @@ public:
 				case AR_DVAL_DEPTH_EFFECT_SUNKEN: return "Sunken";
 				case AR_DVAL_DEPTH_EFFECT_FLOATING: return "Floating";
 				case AR_DVAL_DEPTH_EFFECT_ETCHED: return "Etched";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -938,7 +898,6 @@ public:
 				case AR_DVAL_ENABLE_READ_ONLY: return "Read Only";
 				case AR_DVAL_ENABLE_READ_WRITE: return "Read/Write";
 				case AR_DVAL_ENABLE_DISABLE:return "Disabled";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -954,7 +913,6 @@ public:
 				case AR_DVAL_EXPAND_BOX_DEFAULT: return "Default";
 				case AR_DVAL_EXPAND_BOX_HIDE: return "Hide";
 				case AR_DVAL_EXPAND_BOX_SHOW: return "Show";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -969,7 +927,6 @@ public:
 				{
 				case AR_DVAL_LAYOUT_XY: return "XY";
 				case AR_DVAL_LAYOUT_FILL: return "Fill";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -981,7 +938,6 @@ public:
 				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_STACKEDVIEW: return "StackedView";
 				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_SPLITTERVIEW: return "SplitterView";
 				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_ACCORDION: return "Accordion";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -991,7 +947,6 @@ public:
 				{
 				case AR_DVAL_ORIENTATION_HORIZONTAL: return "Horizontal";
 				case AR_DVAL_ORIENTATION_VERTICAL: return "Vertical";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -1001,7 +956,6 @@ public:
 				{
 				case AR_DVAL_PAGE_HEADER_HIDDEN: return "Hidden";
 				case AR_DVAL_PAGE_HEADER_VISIBLE: return "Visible";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -1011,7 +965,6 @@ public:
 				{
 				case AR_DVAL_PAGE_BODY_COLLAPSE: return "Collapse";
 				case AR_DVAL_PAGE_BODY_EXPAND: return "Expand";
-				default: return EnumDefault;
 				}
 			}
 			break;
@@ -1021,11 +974,9 @@ public:
 				{
 				case AR_DVAL_SPLITTER_SHOW: return "Show";
 				case AR_DVAL_SPLITTER_HIDE: return "Hide";
-				default: return EnumDefault;
 				}
 			}
 			break;
-		default: return EnumDefault;
 		}
 	}
 

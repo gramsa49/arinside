@@ -45,7 +45,7 @@ void CDocEscalationDetails::Documentation()
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->escalation.GetName());
+			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName());
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 

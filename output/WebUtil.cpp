@@ -81,30 +81,30 @@ string CWebUtil::CsvDocName(string fName)
 	return fName+"."+CsvPageSuffix();
 }
 
-string CWebUtil::ImageTag(string imgName, int rootLevel)
+string CWebUtil::ImageTag(const string& imgName, int rootLevel)
 {
 	stringstream strm;
 
 	int width  = 16;
 	int height = 16;
 
-	if(strcmp(imgName.c_str(), "doc.gif")==0)			{ width =15 ; height =10 ; }
-	if(strcmp(imgName.c_str(), "down.gif")==0)			{ width =14 ; height =10 ; }
-	if(strcmp(imgName.c_str(), "folder.gif")==0)		{ width =16 ; height =13 ; }
-	if(strcmp(imgName.c_str(), "chapter.gif")==0)		{ width =15 ; height =13 ; }
-	if(strcmp(imgName.c_str(), "next.gif")==0)			{ width =10 ; height =10 ; }
-	if(strcmp(imgName.c_str(), "prev.gif")==0)			{ width =10 ; height =10 ; }
-	if(strcmp(imgName.c_str(), "up.gif")==0)			{ width =14 ; height =10 ; }
-	if(strcmp(imgName.c_str(), "visible.gif")==0)		{ width =18 ; height =18 ; }
-	if(strcmp(imgName.c_str(), "edit.gif")==0)			{ width =18 ; height =18 ; }	
-	if(strcmp(imgName.c_str(), "hidden.gif")==0)		{ width =18 ; height =18 ; }
+	if(imgName == "doc.gif")        { width =15 ; height =10 ; }
+	if(imgName == "down.gif")       { width =14 ; height =10 ; }
+	if(imgName == "folder.gif")     { width =16 ; height =13 ; }
+	if(imgName == "chapter.gif")    { width =15 ; height =13 ; }
+	if(imgName == "next.gif")       { width =10 ; height =10 ; }
+	if(imgName == "prev.gif")       { width =10 ; height =10 ; }
+	if(imgName == "up.gif")         { width =14 ; height =10 ; }
+	if(imgName == "visible.gif")    { width =18 ; height =18 ; }
+	if(imgName == "edit.gif")       { width =18 ; height =18 ; }	
+	if(imgName == "hidden.gif")     { width =18 ; height =18 ; }
 
 	strm << "<img src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\">";
 
 	return strm.str();
 }
 
-string CWebUtil::ObjName(string objName)
+string CWebUtil::ObjName(const string& objName)
 {
 	stringstream strm;
 	strm << "<span class=\"objName\">" << objName << "</span>" << endl;

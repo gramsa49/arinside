@@ -44,7 +44,7 @@ void CDocFilterGuideDetails::Documentation()
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pFilterGuide->GetName());
+			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pFilterGuide->GetName());
 			if(!this->pFilterGuide->GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pFilterGuide->GetAppRefName(), this->rootLevel);
 

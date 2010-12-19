@@ -47,7 +47,7 @@ void CDocCharMenuDetails::Documentation()
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->menu.GetName()) + " (" + CAREnum::MenuType(menuDef.menuType) + ")";
+			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->menu.GetName()) << " (" << CAREnum::MenuType(menuDef.menuType) << ")";
 			if(!this->menu.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->menu.GetAppRefName(), this->rootLevel);
 

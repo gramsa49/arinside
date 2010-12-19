@@ -93,12 +93,18 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 		break;
 	case AR_DATA_TYPE_INTEGER:
 		{	
-			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.intVal);
-			if(strmValue.str() == "Unknown")
+			string strValue = CAREnum::FieldPropertiesValue(nProp, arV.u.intVal);
+			if(!strValue.empty())
 			{
-				strmValue.str("");
-				strmValue << arV.u.intVal;
-			}	
+				strmValue << strValue;
+			}
+			else
+			{
+				strmValue << EnumDefault;
+#if _DEBUG
+				strmValue << " (" << arV.u.intVal << ")";
+#endif
+			}
 		}
 		break;
 	case AR_DATA_TYPE_DATE:
@@ -128,12 +134,19 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 			}
 			else
 			{
-				strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.ulongVal);
+				string strValue = CAREnum::FieldPropertiesValue(nProp, arV.u.ulongVal);
 
-				if(strmValue.str() == "Unknown")
+				if(!strValue.empty())
 				{
 					strmValue.str("");
 					strmValue << arV.u.ulongVal;
+				}
+				else
+				{
+					strmValue << EnumDefault;
+#if _DEBUG
+					strmValue << " (" << arV.u.intVal << ")";
+#endif
 				}
 			}
 		}
@@ -145,12 +158,19 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 		break;
 	case AR_DATA_TYPE_ENUM:
 		{
-			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.enumVal);
+			string strValue = CAREnum::FieldPropertiesValue(nProp, arV.u.enumVal);
 
-			if(strmValue.str() == "Unknown")
+			if(!strValue.empty())
 			{
 				strmValue.str("");
 				strmValue << arV.u.enumVal;
+			}
+			else
+			{
+				strmValue << EnumDefault;
+#if _DEBUG
+				strmValue << " (" << arV.u.intVal << ")";
+#endif
 			}
 		}
 		break;
@@ -171,7 +191,9 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 		break;
 	case AR_DATA_TYPE_BITMASK:
 		{
-			strmValue << CAREnum::FieldPropertiesValue(nProp, arV.u.maskVal);				
+			string strValue = CAREnum::FieldPropertiesValue(nProp, arV.u.maskVal);
+			if (strValue.empty()) strValue = EnumDefault;
+			strmValue << strValue;
 		}
 		break;
 	}

@@ -27,8 +27,8 @@ namespace OUTPUT
 		CTableColumn(int width, const string &title, const string &cssClass);
 		~CTableColumn(void);
 
-		string ColToXHtml();
-		string HeaderCellToXHtml();
+		void ColToXHtml(std::ostream& strm);
+		void HeaderCellToXHtml(std::ostream& strm);
 		string GetTitle();
 
 	private:

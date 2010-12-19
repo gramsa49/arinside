@@ -114,7 +114,7 @@ public:
 
 	int SchemaGetInsideId(string searchObjName);
 
-	string LinkToField(string schemaName, int fieldInsideId, int fromRootLevel);	
+	string LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel);	
 	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel, bool needValidField = true);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);	
 
@@ -133,7 +133,7 @@ public:
 	string LinkToImage(const string &imageName, int rootLevel);
 #endif
 	string LinkToMenu(string menuName, int rootLevel, bool* bFound = NULL);
-	string LinkToSchema(string schemaName, int fromRootLevel);
+	string LinkToSchema(const string& schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
 	string LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel);	
 	string LinkToEscalation(string escalationName, int rootLevel);

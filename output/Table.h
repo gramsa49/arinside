@@ -26,34 +26,34 @@ namespace OUTPUT
 	{
 	public:
 		CTable();
-		CTable(string htmId, string cssClass);
+		CTable(const string& htmId, const string& cssClass);
 		~CTable(void);
 
 		string description;	
 
 		string ToXHtml();
 		string ToXHtmlNoHeader();
-		string ToXHtml(string styleTag);
+		string ToXHtml(const string& styleTag);
 		string ToCsv();
 
 		void Clear();
 		void ClearRows();
 		void ClearColumns();
-		void SetHtmId(string cssClass);
-		void SetCssClass(string htmId);
+		void SetHtmId(const string& cssClass);
+		void SetCssClass(const string& htmId);
 		int NumRows();
-		void AddColumn(int width, string text);
-		void AddColumn(int width, string text, string cssClass);	
-		void AddRow(CTableRow tableRow);
+		void AddColumn(int width, const string& text);
+		void AddColumn(int width, const string& text, const string& cssClass);	
+		void AddRow(const CTableRow& tableRow);
 
 	private:	
 		list<CTableRow> listRows;
 		list<CTableColumn> listColumns;
 		string htmId;
-		string GetHtmlRows();
+		void GetHtmlRows(std::ostream& strm);
 		string GetCsvRows();
-		string GetColumnDefinition();
-		string GetHeaderDefinition();
+		void GetColumnDefinition(std::ostream& strm);
+		void GetHeaderDefinition(std::ostream& strm);
 		string GetCsvHeaderDefinition();
 	};
 }

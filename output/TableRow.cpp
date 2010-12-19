@@ -38,31 +38,31 @@ void CTableRow::ClearCells()
 	this->listCells.clear();
 }
 
-void CTableRow::AddCell(string cellText)
+void CTableRow::AddCell(const string& cellText)
 {
 	this->listCells.push_back(CTableCell(cellText));
 }
 
-void CTableRow::AddCell(CTableCell cell)
+void CTableRow::AddCell(const CTableCell& cell)
 {
 	this->listCells.push_back(cell);
 }
 
-void CTableRow::AddCellList(string cellText0, string cellText1)
+void CTableRow::AddCellList(const string& cellText0, const string& cellText1)
 {
 	this->listCells.clear();
 	this->listCells.push_back(CTableCell(cellText0));
 	this->listCells.push_back(CTableCell(cellText1));
 }
 
-void CTableRow::AddCellList(CTableCell cell0, CTableCell cell1)
+void CTableRow::AddCellList(const CTableCell& cell0, const CTableCell& cell1)
 {
 	this->listCells.clear();
 	this->listCells.push_back(cell0);
 	this->listCells.push_back(cell1);
 }
 
-void CTableRow::AddCellList(CTableCell cell0, CTableCell cell1, CTableCell cell2)
+void CTableRow::AddCellList(const CTableCell& cell0, const CTableCell& cell1, const CTableCell& cell2)
 {
 	this->listCells.clear();
 	this->listCells.push_back(cell0);
@@ -70,7 +70,7 @@ void CTableRow::AddCellList(CTableCell cell0, CTableCell cell1, CTableCell cell2
 	this->listCells.push_back(cell2);
 }
 
-void CTableRow::AddCellList(string cellText0, string cellText1, string cellText2)
+void CTableRow::AddCellList(const string& cellText0, const string& cellText1, const string& cellText2)
 {
 	this->listCells.clear();
 	this->listCells.push_back(CTableCell(cellText0));
@@ -79,33 +79,31 @@ void CTableRow::AddCellList(string cellText0, string cellText1, string cellText2
 
 }
 
-string CTableRow::GetCells()
+void CTableRow::GetCells(std::ostream& strm)
 {
-	stringstream strm;
 	list<CTableCell>::iterator cellIter;
 	list<CTableCell>::iterator endIter = listCells.end();
 	for ( cellIter = listCells.begin(); cellIter != endIter; ++cellIter )
 	{		
 		CTableCell *cell = &(*cellIter);
-		strm << cell->ToXHtml() << endl;
+		cell->ToXHtml(strm);
 	}
-	return strm.str();
 }
 
-string CTableRow::ToXHtml()
+void CTableRow::ToXHtml(std::ostream& strm)
 {
-	stringstream strm;	
-	strm.str("");
-
 	if(this->cssClass.empty())
 	{
-		strm << "<tr>" << endl << this->GetCells() << "</tr>" << endl;
+		strm << "<tr>" << endl; 
+		this->GetCells(strm);
+		strm << "</tr>" << endl;
 	}
 	else
 	{
-		strm << "<tr class=\"" << this->cssClass << "\">" << endl << this->GetCells() << "</tr>" << endl;
+		strm << "<tr class=\"" << this->cssClass << "\">" << endl;
+		this->GetCells(strm);
+		strm << "</tr>" << endl;
 	}
-	return strm.str();
 }
 
 string CTableRow::ToCsv()

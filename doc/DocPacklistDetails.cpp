@@ -44,7 +44,7 @@ void CDocPacklistDetails::Documentation()
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pPackList.GetName());
+			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName());
 			if(!this->pPackList.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pPackList.GetAppRefName(), this->rootLevel);
 

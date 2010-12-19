@@ -62,9 +62,8 @@ CTableCell::~CTableCell()
 	this->cssClass = "";
 }
 
-string CTableCell::ToXHtml(void)
+void CTableCell::ToXHtml(std::ostream& strm)
 {
-	stringstream strm;	
 	if(this->cssClass.empty())
 	{
 		strm << "<td>" << this->content << "</td>" << endl;
@@ -73,7 +72,6 @@ string CTableCell::ToXHtml(void)
 	{
 		strm << "<td class=\"" << this->cssClass << "\">" << this->content << "</td>" << endl;
 	}
-	return strm.str();
 }
 
 string CTableCell::ToCsv(void)

@@ -48,7 +48,7 @@ void CDocAlDetails::Documentation()
 			// temp list to output only infos that arent already displayed
 			props = new CARProplistHelper(&this->al.GetPropList());
 
-			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->al.GetName());
+			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName());
 			if(!this->al.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);
 

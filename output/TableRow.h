@@ -28,21 +28,21 @@ namespace OUTPUT
 		CTableRow(const string &cssClass);
 		~CTableRow(void);
 
-		string ToXHtml();
+		void ToXHtml(std::ostream& strm);
 		string ToCsv();
 
 		string Name;
-		void AddCell(string cellText);
-		void AddCell(CTableCell cell);
+		void AddCell(const string& cellText);
+		void AddCell(const CTableCell& cell);
 
-		void AddCellList(string cellText0, string cellText1);
-		void AddCellList(CTableCell cell0, CTableCell cell1);
+		void AddCellList(const string& cellText0, const string& cellText1);
+		void AddCellList(const CTableCell& cell0, const CTableCell& cell1);
 
-		void AddCellList(CTableCell cell0, CTableCell cell1, CTableCell cell2);	
-		void AddCellList(string cellText0, string cellText1, string cellText2);
+		void AddCellList(const CTableCell& cell0, const CTableCell& cell1, const CTableCell& cell2);	
+		void AddCellList(const string& cellText0, const string& cellText1, const string& cellText2);
 		void ClearCells();
 	private:
-		string GetCells();	
+		void GetCells(std::ostream& strm);
 		list<CTableCell> listCells;
 
 	};

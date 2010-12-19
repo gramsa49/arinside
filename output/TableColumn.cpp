@@ -36,25 +36,21 @@ CTableColumn::~CTableColumn(void)
 {
 }
 
-string CTableColumn::ColToXHtml()
+void CTableColumn::ColToXHtml(std::ostream& strm)
 {
-	stringstream strm;		
 	strm << "<col width=\"" << this->width << "%\"/>" << endl;		
-	return strm.str();
 }
 
-string CTableColumn::HeaderCellToXHtml()
+void CTableColumn::HeaderCellToXHtml(std::ostream& strm)
 {
-	stringstream strm;	
-	if(this->cssClass.length() == 0)
+	if(this->cssClass.empty())
 	{
 		strm << "<th>" << this->title << "</th>" << endl;
 	}
 	else
 	{
-		strm << "<th class=\"" << this->cssClass << "\" width=\""<< this->width<<"%\">" << this->title << "</th>" << endl;
+		strm << "<th class=\"" << this->cssClass << "\" width=\""<< this->width << "%\">" << this->title << "</th>" << endl;
 	}
-	return strm.str();
 }
 
 string CTableColumn::GetTitle()

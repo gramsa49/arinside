@@ -44,7 +44,7 @@ void CDocAlGuideDetails::Documentation()
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) + MenuSeparator + CWebUtil::ObjName(this->alGuide.GetName());
+			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) << MenuSeparator << CWebUtil::ObjName(this->alGuide.GetName());
 			if(!this->alGuide.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
 

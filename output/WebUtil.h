@@ -48,10 +48,10 @@ namespace OUTPUT
 		static string HtmlGZPageSuffix();
 		static string WebPageSuffix();
 		static string CsvPageSuffix();
-		static string ImageTag(string imgName, int rootLevel);
+		static string ImageTag(const string& imgName, int rootLevel);
 		static string DocName(string fName);
 		static string CsvDocName(string fName);
-		static string ObjName(string objName);
+		static string ObjName(const string& objName);
 		static string ChkBoxInput(string nameAndValue, bool checked);
 
 		static string LinkToActiveLinkIndex(int rootLevel);
