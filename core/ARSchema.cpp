@@ -266,3 +266,43 @@ CARVUIList* CARSchema::GetVUIs()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetVUIs(GetInsideId());
 }
+
+void CARSchema::AddFilter(const CARFilter &filter)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddFilter(GetInsideId(), filter);
+}
+
+void CARSchema::AddActiveLink(const CARActiveLink& actlink)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddActiveLink(GetInsideId(), actlink);
+}
+
+void CARSchema::AddEscalation(const CAREscalation& escalation)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddEscalation(GetInsideId(), escalation);
+}
+
+void CARSchema::AddMissingFieldReference(int fieldId, const CFieldRefItem &refItem)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddMissingFieldReference(GetInsideId(), fieldId, refItem);
+}
+
+const CARSchema::MissingReferenceList* CARSchema::GetMissingReferences()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetMissingReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetActiveLinks()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetALReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetFilters()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetFilterReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetEscalations()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetEscalationReferences(GetInsideId());
+}

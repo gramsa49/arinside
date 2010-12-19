@@ -17,6 +17,48 @@
 #include "stdafx.h"
 #include "ARFieldList.h"
 #include "../ARInside.h"
+#include "../util/FieldRefItem.h"
+
+///////////////////////////////////////////////////////////////////////////////
+// CARFieldList implementation
+bool CARFieldList::FieldReferenceExists(unsigned int index, const CFieldRefItem& refItem)
+{
+	list<CFieldRefItem>::iterator iter = workflowReferences[index].begin();
+	list<CFieldRefItem>::iterator endIt = workflowReferences[index].end();
+
+	for (; iter != endIt; ++iter)
+	{
+		if ( iter->fieldInsideId == refItem.fieldInsideId
+			//&& iter->schemaInsideId == refItem.schemaInsideId
+			&& iter->arsStructItemType == refItem.arsStructItemType
+			&& iter->fromName.compare(refItem.fromName) == 0
+			&& iter->description.compare(refItem.description) == 0)
+		{
+			return true;
+		}
+	}	
+	return false;
+}
+
+bool CARFieldList::FieldReferenceAdd(unsigned int index, const CFieldRefItem &refItem)
+{
+	if (refItem.arsStructItemType != AR_STRUCT_ITEM_XML_NONE)
+	{
+		workflowReferences[index].push_back(refItem);
+		return true;
+	}
+	return false;
+}
+
+size_t CARFieldList::FieldReferenceCount(unsigned int index)
+{
+	return workflowReferences[index].size();
+}
+
+const CARFieldList::ReferenceList& CARFieldList::FieldReferenceList(unsigned int index)
+{
+	return workflowReferences[index];
+}
 
 ///////////////////////////////////////////////////////////////////////////////
 // CARFieldListXML implementation
@@ -156,6 +198,9 @@ bool CARFieldListServer::LoadFromServer()
 		{
 			sortedList.push_back(i);
 		}
+
+		workflowReferences.resize(names.numItems);
+
 		return true;
 	}
 	else

@@ -26,9 +26,6 @@ public:
 
 	void Main();
 private:
-	int NumReferences(int searchSchemaId, int searchFieldId);
-	void BuildUniqueFieldList();
-	bool InList(int fieldId, int schemaId);
 	list<CFieldRefItem> uniqueMissingFieldList;
 
 	void FieldReferenceValidator();

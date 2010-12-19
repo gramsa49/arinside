@@ -16,9 +16,13 @@
 
 #pragma once
 #include "ARServerObject.h"
+#include "../lists/ARSchemaList.h"
 
 class CARFieldList;
 class CARVUIList;
+class CARActiveLink;
+class CARFilter;
+class CAREscalation;
 
 class CARSchema :
 	public CARServerObject
@@ -75,4 +79,18 @@ public:
 	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_SCHEMA; }
 	bool IsClonable();
 	CARServerObject* Clone();
+
+	void AddFilter(const CARFilter& filter);
+	void AddActiveLink(const CARActiveLink& actlink);
+	void AddEscalation(const CAREscalation& escalation);
+	// TODO: add references for ALG, FLG, WS
+
+	typedef CARSchemaList::MissingReferenceItem MissingReferenceItem;
+	typedef CARSchemaList::MissingReferenceList MissingReferenceList;
+	void AddMissingFieldReference(int fieldId, const CFieldRefItem& refItem);
+	const MissingReferenceList* GetMissingReferences();
+
+	const CARSchemaList::ObjectRefList& GetActiveLinks();
+	const CARSchemaList::ObjectRefList& GetFilters();
+	const CARSchemaList::ObjectRefList& GetEscalations();
 };

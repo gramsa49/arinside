@@ -274,6 +274,7 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 			refItemUser->arsStructItemType = this->structItemType;
 			refItemUser->fromName = this->obj->GetName();
 			refItemUser->description = "Field in Notify Action (User Name)";
+			refItemUser->schemaInsideId = schemaInsideId;
 			strm << "User Name: " << arIn->TextFindFields(action.user, "$", schemaInsideId, rootLevel, true, refItemUser) << "<br/>" << endl;
 			delete refItemUser;
 		}

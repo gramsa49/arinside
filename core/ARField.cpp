@@ -172,3 +172,18 @@ const CARSchema& CARField::GetSchema() const
 {
 	return schema;
 }
+
+bool CARField::ReferenceExists(const CFieldRefItem &refItem) const
+{
+	return fieldList->FieldReferenceExists(fieldIndex, refItem);
+}
+
+bool CARField::AddReference(const CFieldRefItem &refItem) const
+{
+	return fieldList->FieldReferenceAdd(fieldIndex, refItem);
+}
+
+const CARFieldList::ReferenceList CARField::GetReferences() const
+{
+	return fieldList->FieldReferenceList(fieldIndex);
+}

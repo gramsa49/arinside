@@ -78,5 +78,6 @@ private:
 	list<string> uniqueAlList;
 	list<string> uniqueFilterList;
 	list<string> uniqueEscalList;
-	CTableRow UniqueTblRow(string name, int itemType);
+
+	void AddTableRow(CTable& tbl, CARServerObject& obj);
 };

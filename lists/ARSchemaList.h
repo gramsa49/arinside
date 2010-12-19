@@ -21,6 +21,11 @@
 #include "ARVUIList.h"
 #include <assert.h>
 
+// forward declarations
+class CARActiveLink;
+class CARFilter;
+class CAREscalation;
+
 class CARSchemaList : Uncopyable
 {
 public:
@@ -36,6 +41,7 @@ public:
 	int Find(const char *name);
 	void Reserve(unsigned int size);
 	void Sort();
+	void SortReferences();
 
 	// data-access functions
 	const ARNameType& SchemaGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
@@ -57,6 +63,21 @@ public:
 
 	const string& SchemaGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
 	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
+
+	// workflow reference functions
+	typedef pair<int, CFieldRefItem> MissingReferenceItem;
+	typedef vector<MissingReferenceItem> MissingReferenceList;
+	void SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CFieldRefItem &refItem);
+	const MissingReferenceList* SchemaGetMissingReferences(unsigned int index);
+
+	typedef vector<int> ObjectRefList;
+	void SchemaAddActiveLink(unsigned int index, const CARActiveLink& actlink);
+	void SchemaAddFilter(unsigned int index, const CARFilter& filter);
+	void SchemaAddEscalation(unsigned int index, const CAREscalation& escalation);
+
+	const ObjectRefList& SchemaGetALReferences(unsigned int index) { return activeLinks[index]; }
+	const ObjectRefList& SchemaGetFilterReferences(unsigned int index) { return filters[index]; }
+	const ObjectRefList& SchemaGetEscalationReferences(unsigned int index) { return escalations[index]; }
 
 	// access for contained lists
 	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[(*sortedList)[index]]; }
@@ -93,6 +114,13 @@ private:
 
 	SchemaListState internalListState;
 	vector<int> *sortedList;	// a index, sorted by schema names
+	vector<MissingReferenceList*> missingFieldReferences;
+
+	vector<ObjectRefList> activeLinks;
+	vector<ObjectRefList> filters;
+	vector<ObjectRefList> escalations;
+	vector<ObjectRefList> alGuides;
+	vector<ObjectRefList> fltGuides;
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

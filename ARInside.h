@@ -100,9 +100,7 @@ public:
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
 	CBlackList blackList;
-	list<CFieldRefItem> listFieldRefItem; // TODO: maybe move field references over to the field itself; avoids scaning the whole list on inserts (to avoid duplicates) and output (just extract items for a special field)
 	list<CMissingMenuRefItem> listMenuRefItem;
-	list<CFieldRefItem> listFieldNotFound;
 	list<CMissingMenuRefItem> listMenuNotFound;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	CARImageList	imageList;
@@ -180,9 +178,12 @@ private:
 #endif
 
 	void BuildReferences();
+	void SortReferences();
 
 	void SearchCustomFieldReferences();
+	void SearchActiveLinkReferences();
 	void SearchFilterReferences();
+	void SearchEscalationReferences();
 	void CustomFieldReferences(const CARSchema &schema, const CARField &obj);
 
 	void ParseVersionString(string version);

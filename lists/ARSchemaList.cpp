@@ -211,6 +211,16 @@ bool CARSchemaList::LoadFromServer()
 		vuiLists.push_back(srvVuiList);
 	}
 
+	missingFieldReferences.resize(count);
+	ZeroMemory(&missingFieldReferences[0], sizeof(MissingReferenceList*) * count);
+
+	// reserve reference lists
+	activeLinks.resize(count);
+	filters.resize(count);
+	escalations.resize(count);
+	alGuides.resize(count);
+	fltGuides.resize(count);
+
 	// Sort
 	Sort();
 
@@ -400,4 +410,60 @@ void CARSchemaList::Sort()
 		searchList[string(names.nameList[(*sortedList)[i]])] = i;
 	}
 #endif
+}
+
+void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CFieldRefItem &refItem)
+{
+	if (fieldId <= 0) return;	// dont add keyword references (like $-6$ ($SERVER$))
+	MissingReferenceList* list = missingFieldReferences[(*sortedList)[index]];
+	if (list == NULL)
+	{
+		list = new MissingReferenceList();
+		missingFieldReferences[(*sortedList)[index]] = list;
+	}
+
+	if (list->size() > 0)
+	{
+		// check if reference is already there
+		MissingReferenceList::iterator curIt = list->begin();
+		MissingReferenceList::iterator endIt = list->end();
+		for (; curIt != endIt; ++curIt)
+			if (curIt->first == fieldId && 
+				// TODO: the compare of the refItem should be implemented within the object itself
+				curIt->second.arsStructItemType == refItem.arsStructItemType &&
+				curIt->second.fromName == refItem.fromName && 
+				curIt->second.description == refItem.description) return;
+	}
+	list->push_back(MissingReferenceItem(fieldId, refItem));
+}
+
+const CARSchemaList::MissingReferenceList* CARSchemaList::SchemaGetMissingReferences(unsigned int index)
+{
+	return missingFieldReferences[(*sortedList)[index]];
+}
+
+void CARSchemaList::SortReferences()
+{
+	size_t listCount = activeLinks.size();
+	for (unsigned int schemaIndex = 0; schemaIndex < listCount; ++schemaIndex)
+	{
+		std::sort(activeLinks[schemaIndex].begin(), activeLinks[schemaIndex].end());
+		std::sort(    filters[schemaIndex].begin(),     filters[schemaIndex].end());
+		std::sort(escalations[schemaIndex].begin(), escalations[schemaIndex].end());
+	}
+}
+
+void CARSchemaList::SchemaAddFilter(unsigned int index, const CARFilter &filter)
+{
+	filters[index].push_back(filter.GetInsideId());
+}
+
+void CARSchemaList::SchemaAddActiveLink(unsigned int index, const CARActiveLink &actlink)
+{
+	activeLinks[index].push_back(actlink.GetInsideId());
+}
+
+void CARSchemaList::SchemaAddEscalation(unsigned int index, const CAREscalation &escalation)
+{
+	escalations[index].push_back(escalation.GetInsideId());
 }

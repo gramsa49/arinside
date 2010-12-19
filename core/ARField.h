@@ -18,6 +18,9 @@
 #include "ARServerObject.h"
 #include "ARSchema.h"
 
+// forward declarations
+class CFieldRefItem;
+
 class CARField :
 	public CARServerObject
 {
@@ -65,6 +68,11 @@ public:
 	bool IsClonable();
 	CARServerObject* Clone();
 
+	// internal workflow references
+	typedef CARFieldList::ReferenceList ReferenceList;
+	bool ReferenceExists(const CFieldRefItem& refItem) const;
+	bool AddReference(const CFieldRefItem& refItem) const;
+	const ReferenceList GetReferences() const;
 private:
 	CARSchema schema;
 	CARFieldList *fieldList;

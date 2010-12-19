@@ -17,6 +17,52 @@
 #include "stdafx.h"
 #include "DocValidator.h"
 
+// helper functions ///////////////////////////////////////////////////////////
+bool InList(vector<int>& list, int fieldId)
+{
+	try
+	{
+		vector<int>::iterator curIt = list.begin();
+		vector<int>::iterator endIt = list.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			if (*curIt == fieldId) return true;
+		}
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION Validation_InList: " << e.what() << endl;
+	}
+
+	return false;
+}
+
+
+void BuildUniqueFieldList(vector<int>& list, const CARSchemaList::MissingReferenceList* references)
+{
+	try
+	{
+		list.clear();
+
+		CARSchemaList::MissingReferenceList::const_iterator curIt = references->begin();
+		CARSchemaList::MissingReferenceList::const_iterator endIt = references->end();
+
+		for(; curIt != endIt; ++curIt)
+		{
+			if(!InList(list, curIt->first))
+			{
+				list.push_back(curIt->first);
+			}
+		}
+		std::sort(list.begin(), list.end());
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION Validation_BuildUniqueFieldList: " << e.what() << endl;
+	}
+}
+
+// DocValidator implementation ////////////////////////////////////////////////
 CDocValidator::CDocValidator()
 {
 }
@@ -389,72 +435,77 @@ void CDocValidator::FieldReferenceValidator()
 			contHeadStrm << "List of missing fields that are referenced in ARSystem workflow:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
-			BuildUniqueFieldList();
+			//Outer table
+			bool emptyTable = true;
+			CTable tbl("fieldListAll", "TblObjectList");
+			tbl.AddColumn(10, "Missing Field");
+			tbl.AddColumn(30, "Form");		
+			tbl.AddColumn(60, "Workflow Items");
 
-			if(this->uniqueMissingFieldList.size() > 0)
+			unsigned int schemaCount = pInside->schemaList.GetCount();
+			for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 			{
-				//Outer table
-				CTable tbl("fieldListAll", "TblObjectList");
-				tbl.AddColumn(10, "Missing Field");
-				tbl.AddColumn(30, "Form");		
-				tbl.AddColumn(60, "Workflow Items");
+				CARSchema schema(schemaIndex);
+				const CARSchema::MissingReferenceList* missingList = schema.GetMissingReferences();
+				if (missingList == NULL) continue;
+				if (missingList->size() == 0) continue;
+				emptyTable = false;
 
+				// inner field references table
+				CTable tblRef("referenceList", "TblObjectList");
+				tblRef.AddColumn(10, "Type");
+				tblRef.AddColumn(45, "Server object");
+				tblRef.AddColumn(5, "Enabled");
+				tblRef.AddColumn(40, "Description");
 
-				list<CFieldRefItem>::iterator missingFieldIter;			
-				for(missingFieldIter = this->uniqueMissingFieldList.begin(); missingFieldIter != this->uniqueMissingFieldList.end(); missingFieldIter++)
+				// create a unique field list
+				vector<int> missingFields;
+				BuildUniqueFieldList(missingFields, missingList);
+
+				vector<int>::iterator missFldCurIt = missingFields.begin();
+				vector<int>::iterator missFldEndIt = missingFields.end();
+
+				for (; missFldCurIt != missFldEndIt; ++missFldCurIt)
 				{
-					CFieldRefItem *missingFieldItem = &(*missingFieldIter);
-					if(NumReferences(missingFieldItem->schemaInsideId, missingFieldItem->fieldInsideId) > 0)
+					CARSchema::MissingReferenceList::const_iterator curIt = missingList->begin();
+					CARSchema::MissingReferenceList::const_iterator endIt = missingList->end();
+
+					for (; curIt < endIt; ++curIt)
 					{
-						//Field references
-						CTable tblRef("referenceList", "TblObjectList");
-						tblRef.AddColumn(10, "Type");
-						tblRef.AddColumn(45, "Server object");
-						tblRef.AddColumn(5, "Enabled");
-						tblRef.AddColumn(40, "Description");
+						if (curIt->first == *missFldCurIt)
+						{
+							CTableRow row("cssStdRow");		
+							row.AddCell(CTableCell(CAREnum::XmlStructItem(curIt->second.arsStructItemType)));
+							row.AddCell(CTableCell(this->pInside->LinkToXmlObjType(curIt->second.arsStructItemType, curIt->second.fromName, rootLevel)));
 
-						list<CFieldRefItem>::iterator iter;
-						for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); ++iter )
-						{	
-							CFieldRefItem *item = &(*iter);
-							if(item->schemaInsideId == missingFieldItem->schemaInsideId && item->fieldInsideId == missingFieldItem->fieldInsideId)
-							{			
-								if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
-								{
-									CTableRow row("cssStdRow");		
-									row.AddCell(CTableCell(CAREnum::XmlStructItem(item->arsStructItemType)));				
-									row.AddCell(CTableCell(this->pInside->LinkToXmlObjType(item->arsStructItemType, item->fromName, rootLevel)));
+							string tmpEnabled = this->pInside->XmlObjEnabled(curIt->second.arsStructItemType, curIt->second.fromName);
+							string tmpCssEnabled = "";
 
-									string tmpEnabled = this->pInside->XmlObjEnabled(item->arsStructItemType, item->fromName);
-									string tmpCssEnabled = "";
+							if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
+								tmpCssEnabled = "objStatusDisabled";
 
-									if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
-										tmpCssEnabled = "objStatusDisabled";
-
-									row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-									row.AddCell(CTableCell(item->description));
-									tblRef.AddRow(row);		
-								}
-							}
+							row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+							row.AddCell(CTableCell(curIt->second.description));
+							tblRef.AddRow(row);		
 						}
-
-
-						CTableRow row("");				
-						row.AddCell(CTableCell(missingFieldItem->fieldInsideId));
-						row.AddCell(CTableCell(this->pInside->LinkToSchema(missingFieldItem->schemaInsideId, rootLevel)));
-						row.AddCell(CTableCell(tblRef.ToXHtml()));	
-						tbl.AddRow(row);					
 					}
-				}
 
+					CTableRow row("");				
+					row.AddCell(CTableCell(*missFldCurIt));
+					row.AddCell(CTableCell(this->pInside->LinkToSchema(schema.GetInsideId(), rootLevel)));
+					row.AddCell(CTableCell(tblRef.ToXHtml()));	
+					tbl.AddRow(row);					
+				}
+			}
+
+			if (!emptyTable)
+			{
 				webPage.AddContent(tbl.ToXHtml());
-				tbl.ClearRows();
 			}
 			else
 			{
 				webPage.AddContent("Integrity check found no missing fields in workflow.");
 			}
-
 			webPage.SaveInFolder(path);
 		}
 	}
@@ -462,76 +513,6 @@ void CDocValidator::FieldReferenceValidator()
 	{
 		cout << "EXCEPTION Field_Reference_Validation: " << e.what() << endl;
 	}
-}
-
-bool CDocValidator::InList(int fieldId, int schemaId)
-{
-	try
-	{
-		list<CFieldRefItem>::iterator fIter;
-		for(fIter = uniqueMissingFieldList.begin(); fIter != uniqueMissingFieldList.end(); ++fIter)
-		{
-			if(fIter->fieldInsideId == fieldId && fIter->schemaInsideId == schemaId)
-			{
-				return true;
-			}
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION Validation_InList: " << e.what() << endl;
-	}
-
-	return false;
-}
-
-
-void CDocValidator::BuildUniqueFieldList()
-{
-	try
-	{
-		uniqueMissingFieldList.clear();
-
-		list<CFieldRefItem>::iterator missingFieldIter;
-		for(missingFieldIter = this->pInside->listFieldNotFound.begin(); missingFieldIter != this->pInside->listFieldNotFound.end(); ++missingFieldIter)
-		{
-			if(!InList(missingFieldIter->fieldInsideId, missingFieldIter->schemaInsideId))
-			{
-				uniqueMissingFieldList.push_back(*missingFieldIter);
-			}
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION Validation_BuildUniqueFieldList: " << e.what() << endl;
-	}
-}
-
-int CDocValidator::NumReferences(int searchSchemaId, int searchFieldId)
-{
-	int nResult = 0;
-
-	try
-	{
-		list<CFieldRefItem>::iterator iter;
-
-		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); ++iter )
-		{	
-			if(iter->schemaInsideId == searchSchemaId  && iter->fieldInsideId == searchFieldId)
-			{			
-				if(strcmp(iter->fromName.c_str(), EmptyValue)!=0)
-				{
-					nResult++;
-				}
-			}
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION Validation_NumReferences: " << e.what() << endl;
-	}
-
-	return nResult;
 }
 
 void CDocValidator::MenuReferenceValidator()

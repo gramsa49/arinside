@@ -55,7 +55,7 @@
 
 /////////
 // version information block
-#define VERSION "3.0.1"
+#define VERSION "3.0.2"
 #if defined(_DEBUG)
 #define VERSION_STR VERSION "." SVN_REV_STR " Debug"
 #elif defined(_ARINSIDE_BETA)
@@ -80,9 +80,7 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->roleList.clear();
 	this->serverInfoList.clear();
 	this->globalFieldList.clear();
-	this->listFieldRefItem.clear();
 	this->listMenuRefItem.clear();
-	this->listFieldNotFound.clear();
 
 	this->nDurationLoad = 0;
 	this->nDurationDocumentation = 0;
@@ -301,23 +299,10 @@ void CARInside::Prepare(void)
 
 bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem)
 {
-	list<CFieldRefItem>::iterator iter;
-	list<CFieldRefItem>::iterator endIt = this->listFieldRefItem.end();
-	CFieldRefItem *item;
+	CARField fld(schemaInsideId, fieldInsideId);
+	if (!fld.Exists()) return false;
 
-	for ( iter = this->listFieldRefItem.begin(); iter != endIt; ++iter)
-	{	
-		item = &(*iter);
-		if(	item->fieldInsideId == fieldInsideId
-			&& item->schemaInsideId == schemaInsideId
-			&& item->arsStructItemType == refItem.arsStructItemType
-			&& item->fromName.compare(refItem.fromName) == 0
-			&& item->description.compare(refItem.description) == 0)
-		{
-			return true;
-		}
-	}	
-	return false;
+	return fld.ReferenceExists(refItem);
 }
 
 void CARInside::LoadServerObjects(int nMode)
@@ -1221,15 +1206,6 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 
 	if(needValidField && fieldInsideId > 0 && schemaInsideId > -1) //OpenWindow uses 0 what is no valid field
 	{
-		CFieldRefItem *refItemNotFound = new CFieldRefItem();
-		refItemNotFound->arsStructItemType = AR_STRUCT_ITEM_XML_FIELD;
-		refItemNotFound->fromName = "";						
-		refItemNotFound->schemaInsideId = schemaInsideId;
-		refItemNotFound->fieldInsideId = fieldInsideId;
-		refItemNotFound->description = "Field does not exist";	
-		this->listFieldNotFound.push_back(*refItemNotFound);
-		delete refItemNotFound;
-
 		tmp << "<span class=\"fieldNotFound\">" << fieldInsideId << "</span>";
 	}
 	else
@@ -1758,17 +1734,22 @@ void CARInside::CustomFieldReferences(const CARSchema &schema, const CARField &o
 
 void CARInside::AddReferenceItem(CFieldRefItem *refItem)
 {
-	try
+	CARSchema schema(refItem->schemaInsideId);
+	CARField fld(refItem->schemaInsideId, refItem->fieldInsideId);
+
+	if (fld.Exists())
 	{
-		if(refItem->schemaInsideId > -1 && refItem->arsStructItemType != AR_STRUCT_ITEM_XML_NONE)
-		{
-			this->listFieldRefItem.insert(this->listFieldRefItem.end(), *refItem);
-		}
+		fld.AddReference(*refItem);
 	}
-	catch(exception& e)
+	else if (schema.Exists())
 	{
-		cout << "EXCEPTION AddReferenceItem: " << e.what() << endl;
+		schema.AddMissingFieldReference(refItem->fieldInsideId, *refItem);
 	}
+	// TODO: create a list of missing schemas
+	//else
+	//{
+	//	LOG << "Missing Schema!" << endl;
+	//}
 }
 
 void CARInside::AddMissingMenu(const CMissingMenuRefItem& refItem)
@@ -2311,7 +2292,16 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 void CARInside::BuildReferences()
 {
 	SearchCustomFieldReferences();
+	SearchActiveLinkReferences();
 	SearchFilterReferences();
+	SearchEscalationReferences();
+
+	SortReferences();
+}
+
+void CARInside::SortReferences()
+{
+	schemaList.SortReferences();
 }
 
 void CARInside::SearchFilterReferences()
@@ -2329,6 +2319,8 @@ void CARInside::SearchFilterReferences()
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; filterIndex++)
 		{
 			CARFilter filter(filterIndex);
+
+			// add error handler refs
 			if (filter.GetErrorOption() == AR_FILTER_ERRHANDLER_ENABLE)
 			{
 				ErrorCallMap::iterator item = errorCalls.find(filter.GetErrorHandler());
@@ -2341,6 +2333,20 @@ void CARInside::SearchFilterReferences()
 				else
 				{
 					item->second.insert(item->second.end(), filter.GetName());
+				}
+			}
+
+			// add schema references
+			const ARWorkflowConnectStruct& formList = filter.GetSchemaList();
+			if (formList.type == AR_WORKFLOW_CONN_SCHEMA_LIST)
+			{
+				for (unsigned int listIndex = 0; listIndex < formList.u.schemaList->numItems; ++listIndex)
+				{
+					CARSchema schema(formList.u.schemaList->nameList[listIndex]);
+					if (schema.Exists())
+					{
+						schema.AddFilter(filter);
+					}
 				}
 			}
 		}
@@ -2371,6 +2377,50 @@ void CARInside::SearchFilterReferences()
 	catch (exception &e)
 	{
 		cerr << "EXCEPTION SearchFilterReferences: " << e.what() << endl;
+	}
+}
+
+void CARInside::SearchActiveLinkReferences()
+{
+	unsigned int actlinkCount = alList.GetCount();
+	for (unsigned int actlinkIndex = 0; actlinkIndex < actlinkCount; actlinkIndex++)
+	{
+		CARActiveLink al(actlinkIndex);
+		const ARWorkflowConnectStruct& connectList = al.GetSchemaList();
+
+		if (connectList.type == AR_WORKFLOW_CONN_SCHEMA_LIST)
+		{
+			for (unsigned int connectIndex = 0; connectIndex < connectList.u.schemaList->numItems; ++connectIndex)
+			{
+				CARSchema schema(connectList.u.schemaList->nameList[connectIndex]);
+				if (schema.Exists())
+				{
+					schema.AddActiveLink(al);
+				}
+			}
+		}
+	}
+}
+
+void CARInside::SearchEscalationReferences()
+{
+	unsigned int escalCount = escalationList.GetCount();
+	for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
+	{
+		CAREscalation	escal(escalIndex);
+		const ARWorkflowConnectStruct& connectList = escal.GetSchemaList();
+
+		if (connectList.type == AR_WORKFLOW_CONN_SCHEMA_LIST)
+		{
+			for (unsigned int connectIndex = 0; connectIndex < connectList.u.schemaList->numItems; ++connectIndex)
+			{
+				CARSchema schema(connectList.u.schemaList->nameList[connectIndex]);
+				if (schema.Exists())
+				{
+					schema.AddEscalation(escal);
+				}
+			}
+		}
 	}
 }
 

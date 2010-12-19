@@ -155,29 +155,29 @@ string CDocFieldDetails::WorkflowReferences()
 		tblRef.AddColumn(5, "Enabled");
 		tblRef.AddColumn(40, "Description");
 
-		list<CFieldRefItem>::iterator iter;
-		list<CFieldRefItem>::iterator endIt = this->pInside->listFieldRefItem.end();
-		for ( iter = this->pInside->listFieldRefItem.begin(); iter != endIt; ++iter )
+		const CARField::ReferenceList& list = this->field.GetReferences();
+		CARField::ReferenceList::const_iterator iter = list.begin();
+		CARField::ReferenceList::const_iterator endIt = list.end();
+
+		for (; iter != endIt; ++iter)
 		{	
-			CFieldRefItem *item = &(*iter);
-			if(item->schemaInsideId == this->schema.GetInsideId() && item->fieldInsideId == this->field.GetInsideId())
-			{			
-				if(item->fromName.compare(EmptyValue)!=0)
-				{
-					CTableRow row("cssStdRow");		
-					row.AddCell(CAREnum::XmlStructItem(item->arsStructItemType));				
-					row.AddCell(this->pInside->LinkToXmlObjType(item->arsStructItemType, item->fromName, item->fromFieldId, rootLevel));
+			const CFieldRefItem *item = &(*iter);
 
-					string tmpEnabled = this->pInside->XmlObjEnabled(item->arsStructItemType, item->fromName);
-					string tmpCssEnabled = "";
+			if(item->fromName.compare(EmptyValue)!=0)
+			{
+				CTableRow row("cssStdRow");		
+				row.AddCell(CAREnum::XmlStructItem(item->arsStructItemType));				
+				row.AddCell(this->pInside->LinkToXmlObjType(item->arsStructItemType, item->fromName, item->fromFieldId, rootLevel));
 
-					if(tmpEnabled.compare("Disabled")==0)
-						tmpCssEnabled = "objStatusDisabled";
+				string tmpEnabled = this->pInside->XmlObjEnabled(item->arsStructItemType, item->fromName);
+				string tmpCssEnabled = "";
 
-					row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-					row.AddCell(item->description);				
-					tblRef.AddRow(row);		
-				}
+				if(tmpEnabled.compare("Disabled")==0)
+					tmpCssEnabled = "objStatusDisabled";
+
+				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+				row.AddCell(item->description);				
+				tblRef.AddRow(row);		
 			}
 		}
 

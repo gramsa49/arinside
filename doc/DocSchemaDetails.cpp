@@ -612,20 +612,19 @@ bool CDocSchemaDetails::IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct&
 	return false;
 }
 
-CTableRow CDocSchemaDetails::UniqueTblRow(string listItemName, int itemType)
-{			
-	CTableRow row("cssStdRow");		
-	row.AddCell(CAREnum::XmlStructItem(itemType));				
-	row.AddCell(this->pInside->LinkToXmlObjType(itemType, listItemName, rootLevel));
-
-	string tmpEnabled = this->pInside->XmlObjEnabled(itemType, listItemName);
+void CDocSchemaDetails::AddTableRow(CTable& tbl, CARServerObject& obj)
+{
+	string tmpEnabled = this->pInside->XmlObjEnabled(&obj);
 	string tmpCssEnabled = "";
 
-	if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
+	if(tmpEnabled == "Disabled")
 		tmpCssEnabled = "objStatusDisabled";
 
+	CTableRow row("cssStdRow");
+	row.AddCell(CAREnum::XmlStructItem(obj.GetServerObjectTypeXML()));
+	row.AddCell(obj.GetURL(rootLevel));
 	row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-	return row;
+	tbl.AddRow(row);
 }
 
 void CDocSchemaDetails::WorkflowDoc()
@@ -651,47 +650,38 @@ void CDocSchemaDetails::WorkflowDoc()
 		tblRef.AddColumn(25, "Server object");
 		tblRef.AddColumn(10, "Enabled");
 
-		list<CFieldRefItem>::iterator iter;
-		for ( iter = this->pInside->listFieldRefItem.begin(); iter != this->pInside->listFieldRefItem.end(); iter++ )
-		{	
-			CFieldRefItem *item = &(*iter);
-			if(item->schemaInsideId == this->schema.GetInsideId() 
-				&& ( item->arsStructItemType == AR_STRUCT_ITEM_XML_FILTER
-				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK
-				|| item->arsStructItemType == AR_STRUCT_ITEM_XML_ESCALATION))
-			{			
-				if(strcmp(item->fromName.c_str(), EmptyValue)!=0)
-				{
-					if(item->arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
-					{
-						if(!this->InAlList(item->fromName))
-						{
-							this->uniqueAlList.insert(this->uniqueAlList.end(), item->fromName);
-							tblRef.AddRow(UniqueTblRow(item->fromName, AR_STRUCT_ITEM_XML_ACTIVE_LINK));
-						}
-					}
+		const CARSchemaList::ObjectRefList& alList = this->schema.GetActiveLinks();
+		const CARSchemaList::ObjectRefList& fltList = this->schema.GetFilters();
+		const CARSchemaList::ObjectRefList& escList = this->schema.GetEscalations();
 
-					if(item->arsStructItemType == AR_STRUCT_ITEM_XML_FILTER)
-					{
-						if(!this->InFilterList(item->fromName))
-						{
-							this->uniqueFilterList.insert(this->uniqueFilterList.end(), item->fromName);
-							tblRef.AddRow(UniqueTblRow(item->fromName, AR_STRUCT_ITEM_XML_FILTER));
-						}
-					}
-
-					if(item->arsStructItemType == AR_STRUCT_ITEM_XML_ESCALATION)
-					{
-						if(!this->InEscalList(item->fromName))
-						{
-							this->uniqueEscalList.insert(this->uniqueEscalList.end(), item->fromName);
-							tblRef.AddRow(UniqueTblRow(item->fromName, AR_STRUCT_ITEM_XML_ESCALATION));
-						}
-					}
-				}
-			}
+		// Add all active links
+		CARSchemaList::ObjectRefList::const_iterator curIt = alList.begin();
+		CARSchemaList::ObjectRefList::const_iterator endIt = alList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARActiveLink al(*curIt);
+			AddTableRow(tblRef, al);
 		}
 
+		// Add all filters
+		curIt = fltList.begin();
+		endIt = fltList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARFilter flt(*curIt);
+			AddTableRow(tblRef, flt);
+		}
+
+		// Add all escalations
+		curIt = escList.begin();
+		endIt = escList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CAREscalation esc(*curIt);
+			AddTableRow(tblRef, esc);
+		}
+
+		// TODO: add ALG, FLG, WS objects too?
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";

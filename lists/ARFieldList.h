@@ -16,11 +16,12 @@
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
+#include "../util/FieldRefItem.h"
 #include "ARListHelpers.h"
 #include <assert.h>
 
 // forward declarations
-class SortByFieldNameXML; 
+class SortByFieldNameXML;
 class CARSchemaList;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -57,6 +58,17 @@ public:
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const = 0;
 	virtual const char* FieldGetChangeDiary(unsigned int index) const = 0;
 	//virtual string FieldGetURL(unsigned int index, int rootLevel) = 0;
+
+	// types used for workflow references
+	typedef list<CFieldRefItem> ReferenceList;
+	// Workflow references
+	bool FieldReferenceExists(unsigned int index, const CFieldRefItem& refItem);
+	bool FieldReferenceAdd(unsigned int index, const CFieldRefItem& refItem);
+	size_t FieldReferenceCount(unsigned int index);
+	const ReferenceList& FieldReferenceList(unsigned int index);
+
+protected:
+	vector<ReferenceList> workflowReferences;	// this list holds the workflow references
 };
 
 ///////////////////////////////////////////////////////////////////////////////
