@@ -346,22 +346,22 @@ public:
 		case AR_DPROP_ATTACH_DESELECT_LABEL: return "Attachment Deselect Label";	
 #endif
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-		case AR_DPROP_LAYOUT_POLICY: return "Layout Style"; // TODO: support enum values
-		case AR_DPROP_PAGEHOLDER_DISPLAY_TYPE: return "Display Type"; // TODO: support enum values
-		case AR_DPROP_ORIENTATION: return "Orientation"; // TODO: support enum values
+		case AR_DPROP_LAYOUT_POLICY: return "Layout Style";
+		case AR_DPROP_PAGEHOLDER_DISPLAY_TYPE: return "Display Type";
+		case AR_DPROP_ORIENTATION: return "Orientation";
 		case AR_DPROP_PAGEHOLDER_MARGIN_LEFT: return "Margin Left";
 		case AR_DPROP_PAGEHOLDER_MARGIN_TOP: return "Margin Top";
 		case AR_DPROP_PAGEHOLDER_MARGIN_RIGHT: return "Margin Right";
 		case AR_DPROP_PAGEHOLDER_MARGIN_BOTTOM: return "Margin Bottom";
 		case AR_DPROP_PAGEHOLDER_SPACING: return "Spacing";
 		case AR_DPROP_PAGEHOLDER_INIT_PAGE: return "Init Page";
-		case AR_DPROP_PAGE_HEADER_STATE: return "Header State"; // TODO: support enum values
+		case AR_DPROP_PAGE_HEADER_STATE: return "Header State";
 		case AR_DPROP_PAGE_HEADER_COLOR: return "Header Color"; // TODO: support color values
 		case AR_DPROP_PAGE_INITIAL_SIZE: return "Initial Size";
 		case AR_DPROP_PAGE_MIN_SIZE: return "Min Size";
 		case AR_DPROP_PAGE_MAX_SIZE: return "Max Size";
-		case AR_DPROP_PAGE_BODY_STATE: return "Body State"; // TODO: support enum values
-		case AR_DPROP_LOCALIZATION_REQUIRED: return "Localization Required"; // TODO: support enum values
+		case AR_DPROP_PAGE_BODY_STATE: return "Body State";
+		case AR_DPROP_LOCALIZATION_REQUIRED: return "Localization Required";
 		case AR_DPROP_FIELD_HIGHLIGHT: return "Highlight";
 		case AR_DPROP_FIELD_HIGHLIGHT_START_COLOR: return "Start Color"; // TODO: support color values
 		case AR_DPROP_FIELD_HIGHLIGHT_END_COLOR: return "End Color"; // TODO: support color values
@@ -377,7 +377,7 @@ public:
 		case AR_DPROP_FIELD_ROUNDED_TOP_LEFT_RADIUS: return "Rounded Top Left Radius";
 		case AR_DPROP_FIELD_ROUNDED_BOTTOM_RIGHT_RADIUS: return "Rounded Bottom Right Radius";
 		case AR_DPROP_FIELD_ROUNDED_BOTTOM_LEFT_RADIUS: return "Rounded Bottom Left Radius";
-		case AR_DPROP_PANELHOLDER_SPLITTER: return "Splitter State"; // TODO: support enum values
+		case AR_DPROP_PANELHOLDER_SPLITTER: return "Splitter State";
 		case AR_DPROP_COLOR_GRADIENT_HEADER: return "Gradient Header Color"; // TODO: support color values
 		case AR_DPROP_COLOR_GRADIENT_EFFECT_HEADER: return "Gradient Header Effect"; // TODO: support enum values
 		case AR_DPROP_HIDE_PANELHOLDER_BORDERS: return "Borderless";
@@ -389,7 +389,7 @@ public:
 		case AR_DPROP_PREFIX_DISPLAY: return "Prefix Display";
 		case AR_DPROP_PREFIX_MATCHING_REQ: return "Prefix Matching Request";
 		case AR_DPROP_PREFIX_NO_MATCHING_REQ: return "Prefix No Matching Request";		
-		case AR_DPROP_TABLE_DISPLAY_TYPE: return "Table Display Type"; // TODO: support enum values
+		case AR_DPROP_TABLE_DISPLAY_TYPE: return "Table Display Type";
 		case AR_DPROP_TABLE_SELINIT: return "Table Select Init";
 		case AR_DPROP_TABLE_SELREFRESH: return "Table Select Refresh";
 		case AR_DPROP_TABLE_CHUNK_SIZE: return "Table Chunk Size";
@@ -425,7 +425,7 @@ public:
 #if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_DPROP_BUTTON_ALT_TEXT: return "Button Alt Text";
 		case AR_DPROP_TABLE_USE_LOCALE: return "Use Locale";
-		case AR_DPROP_QUERY_LIST_BKG_COLOR: return "Query List Background Color";
+		case AR_DPROP_QUERY_LIST_BKG_COLOR: return "Query List Background Color"; // TODO: support color list values and field reference
 		case AR_DPROP_AUTO_MAXIMIZE_WINDOW: return "Auto Maximize Window";
 #endif
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -569,10 +569,11 @@ public:
 				switch(nVal)
 				{
 				case AR_DVAL_TABLE_DISPLAY_TABLE: return "Table";
-				case AR_DVAL_TABLE_DISPLAY_RESULTS_LIST: return "Result List";
-				case AR_DVAL_TABLE_DISPLAY_NOTIFICATION: return "Notification";
+				case AR_DVAL_TABLE_DISPLAY_RESULTS_LIST: return "Results List";
+				case AR_DVAL_TABLE_DISPLAY_NOTIFICATION: return "Alert List";
 				case AR_DVAL_TABLE_DISPLAY_SINGLE_TABLE_TREE: return "Single Table Tree";
 				case AR_DVAL_TABLE_DISPLAY_MULTI_TABLE_TREE: return "Multi Table Tree";
+				case AR_DVAL_TABLE_DISPLAY_PAGE_ARRAY: return "Table Page Array Field";
 				default: return EnumDefault;
 				}
 			}
@@ -960,6 +961,68 @@ public:
 		case AR_DPROP_CNTL_TYPE:
 			{
 				return ControlType(nVal);
+			}
+			break;
+		case AR_DPROP_LAYOUT_POLICY:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_LAYOUT_XY: return "XY";
+				case AR_DVAL_LAYOUT_FILL: return "Fill";
+				default: return EnumDefault;
+				}
+			}
+			break;
+		case AR_DPROP_PAGEHOLDER_DISPLAY_TYPE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_TABCTRL: return "TabControl";
+				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_STACKEDVIEW: return "StackedView";
+				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_SPLITTERVIEW: return "SplitterView";
+				case AR_DVAL_PAGEHOLDER_DISPLAY_TYPE_ACCORDION: return "Accordion";
+				default: return EnumDefault;
+				}
+			}
+			break;
+		case AR_DPROP_ORIENTATION:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_ORIENTATION_HORIZONTAL: return "Horizontal";
+				case AR_DVAL_ORIENTATION_VERTICAL: return "Vertical";
+				default: return EnumDefault;
+				}
+			}
+			break;
+		case AR_DPROP_PAGE_HEADER_STATE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_PAGE_HEADER_HIDDEN: return "Hidden";
+				case AR_DVAL_PAGE_HEADER_VISIBLE: return "Visible";
+				default: return EnumDefault;
+				}
+			}
+			break;
+		case AR_DPROP_PAGE_BODY_STATE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_PAGE_BODY_COLLAPSE: return "Collapse";
+				case AR_DVAL_PAGE_BODY_EXPAND: return "Expand";
+				default: return EnumDefault;
+				}
+			}
+			break;
+		case AR_DPROP_PANELHOLDER_SPLITTER:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_SPLITTER_SHOW: return "Show";
+				case AR_DVAL_SPLITTER_HIDE: return "Hide";
+				default: return EnumDefault;
+				}
 			}
 			break;
 		default: return EnumDefault;
