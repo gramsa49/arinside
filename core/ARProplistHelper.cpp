@@ -100,10 +100,7 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 			}
 			else
 			{
-				strmValue << EnumDefault;
-#if _DEBUG
-				strmValue << " (" << arV.u.intVal << ")";
-#endif
+				strmValue << arV.u.intVal;
 			}
 		}
 		break;
@@ -129,7 +126,6 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 		{
 			if(nProp == AR_OPROP_SCC_TIMESTAMP)
 			{
-				strmValue.str("");
 				strmValue << CUtil::DateTimeToHTMLString(arV.u.ulongVal);
 			}
 			else
@@ -138,15 +134,11 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 
 				if(!strValue.empty())
 				{
-					strmValue.str("");
-					strmValue << arV.u.ulongVal;
+					strmValue << strValue;
 				}
 				else
 				{
-					strmValue << EnumDefault;
-#if _DEBUG
-					strmValue << " (" << arV.u.intVal << ")";
-#endif
+					strmValue << arV.u.ulongVal;
 				}
 			}
 		}
@@ -162,15 +154,11 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 
 			if(!strValue.empty())
 			{
-				strmValue.str("");
-				strmValue << arV.u.enumVal;
+				strmValue << strValue;
 			}
 			else
 			{
-				strmValue << EnumDefault;
-#if _DEBUG
-				strmValue << " (" << arV.u.intVal << ")";
-#endif
+				strmValue << arV.u.enumVal;
 			}
 		}
 		break;
@@ -178,9 +166,15 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 		{				
 			if(arV.u.coordListVal != NULL)
 			{
-				if(arV.u.coordListVal[0].coords != NULL)
+				if (arV.u.coordListVal->numItems > 0)
 				{
-					strmValue << "X: " << arV.u.coordListVal[0].coords->x << " Y: " << arV.u.coordListVal[0].coords->y << "<br/>" << endl;
+					if (arV.u.coordListVal->numItems > 1) strmValue << "(";
+					for (unsigned int coordIndex = 0; coordIndex < arV.u.coordListVal->numItems; ++coordIndex)
+					{
+						if (coordIndex > 0) strmValue << ") - (";
+						strmValue << arV.u.coordListVal->coords[coordIndex].x << " , " << arV.u.coordListVal->coords[coordIndex].y;
+					}
+					if (arV.u.coordListVal->numItems > 1) strmValue << ")";
 				}
 				else
 				{

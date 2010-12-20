@@ -978,6 +978,7 @@ public:
 			}
 			break;
 		}
+		return "";
 	}
 
 
@@ -1462,6 +1463,16 @@ public:
 		case AR_KEYWORD_ERRNO: return "ERRNO";
 		case AR_KEYWORD_ERRMSG: return "ERRMSG";
 		case AR_KEYWORD_ERRAPPENDMSG: return "ERRAPPENDMSG";
+
+		// pattern support
+		case AR_PATTERN_KEY_DIGIT: return "DIGIT";
+		case AR_PATTERN_KEY_ALPHA: return "ALPHA";
+		case AR_PATTERN_KEY_ALNUM: return "ALNUM";
+		case AR_PATTERN_KEY_PRINT: return "PRINT";
+		case AR_PATTERN_KEY_UPPER: return "UPPER";
+		case AR_PATTERN_KEY_LOWER: return "LOWER";
+		case AR_PATTERN_KEY_MENU: return "MENU";
+
 #endif
 		default: return EnumDefault;
 		}

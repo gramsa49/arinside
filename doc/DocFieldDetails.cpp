@@ -276,7 +276,13 @@ string CDocFieldDetails::FieldLimits()
 				strm << "Max. Length: " << fLimit.maxLength << "<br/>" << endl;
 
 				if(fLimit.pattern != NULL && !strcmp(fLimit.pattern, "")==0 )
-					strm << "Pattern: " << fLimit.pattern << "<br/>" << endl;
+				{
+					// TODO: make the refItem-parameter to TextFindFields optional (NULLable)
+					// This reference item is only constructed for TextFindFields, but is never used. Only to display PATTERN-Keywords correctly.
+					CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, field.GetName(), "in pattern of field", field.GetFieldId(), schema.GetInsideId());
+					strm << "Pattern: " << pInside->TextFindFields(fLimit.pattern, "$", refItem.schemaInsideId, rootLevel, true, &refItem) << "<br/>" << endl;
+				}
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				if (pInside->CompareServerVersion(7,5) >= 0)
 				{
