@@ -51,9 +51,9 @@ namespace OUTPUT
 		list<CTableColumn> listColumns;
 		string htmId;
 		void GetHtmlRows(std::ostream& strm);
-		string GetCsvRows();
+		void GetCsvRows(std::ostream& strm);
 		void GetColumnDefinition(std::ostream& strm);
 		void GetHeaderDefinition(std::ostream& strm);
-		string GetCsvHeaderDefinition();
+		void GetCsvHeaderDefinition(std::ostream& strm);
 	};
 }

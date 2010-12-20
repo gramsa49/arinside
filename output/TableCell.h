@@ -32,7 +32,7 @@ namespace OUTPUT
 		~CTableCell(void);
 
 		void ToXHtml(std::ostream& strm);
-		string ToCsv();
+		void ToCsv(std::ostream& strm);
 		string content;
 
 	};

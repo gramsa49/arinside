@@ -74,12 +74,7 @@ void CTableCell::ToXHtml(std::ostream& strm)
 	}
 }
 
-string CTableCell::ToCsv(void)
+void CTableCell::ToCsv(std::ostream& strm)
 {
-	stringstream strm;	
-	strm.str("");
-
 	strm << this->content << "\t";
-
-	return strm.str();
 }

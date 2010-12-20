@@ -106,16 +106,12 @@ void CTableRow::ToXHtml(std::ostream& strm)
 	}
 }
 
-string CTableRow::ToCsv()
+void CTableRow::ToCsv(std::ostream& strm)
 {
-	stringstream strm;
-	strm.str("");
-
 	list<CTableCell>::iterator cellIter;
-	for ( cellIter = listCells.begin(); cellIter != listCells.end(); cellIter++ )
+	for ( cellIter = listCells.begin(); cellIter != listCells.end(); ++cellIter )
 	{		
 		CTableCell *cell = &(*cellIter);
-		strm << cell->ToCsv();
+		cell->ToCsv(strm);
 	}
-	return strm.str();
 }

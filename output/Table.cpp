@@ -92,16 +92,15 @@ void CTable::GetHtmlRows(std::ostream& strm)
 	}
 }
 
-string CTable::GetCsvRows()
+void CTable::GetCsvRows(std::ostream& strm)
 {	
-	stringstream strm;
 	list<CTableRow>::iterator rowIter;
-	for ( rowIter = listRows.begin(); rowIter != listRows.end(); rowIter++ )
+	for ( rowIter = listRows.begin(); rowIter != listRows.end(); ++rowIter )
 	{	
 		CTableRow *rowItem = &(*rowIter);
-		strm << rowItem->ToCsv() << "\n";
+		rowItem->ToCsv(strm);
+		strm << "\n";
 	}
-	return strm.str();
 }
 
 void CTable::GetColumnDefinition(std::ostream& strm)
@@ -110,7 +109,7 @@ void CTable::GetColumnDefinition(std::ostream& strm)
 	list<CTableColumn>::iterator colIter;
 	CTableColumn *colItem;
 
-	for ( colIter = listColumns.begin(); colIter != listColumns.end(); colIter++ )
+	for ( colIter = listColumns.begin(); colIter != listColumns.end(); ++colIter )
 	{	
 		colItem = &(*colIter);
 		colItem->ColToXHtml(strm);
@@ -119,20 +118,16 @@ void CTable::GetColumnDefinition(std::ostream& strm)
 	strm << "</colgroup>" << endl;
 }
 
-string CTable::GetCsvHeaderDefinition()
+void CTable::GetCsvHeaderDefinition(std::ostream& strm)
 {
-	stringstream strm;
-	strm.str("");
-
 	list<CTableColumn>::iterator colIter;
 	CTableColumn *colItem;	
-	for ( colIter = listColumns.begin(); colIter != listColumns.end(); colIter++ )
+	for ( colIter = listColumns.begin(); colIter != listColumns.end(); ++colIter )
 	{	
 		colItem = &(*colIter);
 		strm << colItem->GetTitle() << "\t";
 	}
 	strm << "\n";
-	return strm.str();
 }
 
 void CTable::GetHeaderDefinition(std::ostream& strm)
@@ -141,7 +136,7 @@ void CTable::GetHeaderDefinition(std::ostream& strm)
 
 	list<CTableColumn>::iterator colIter;
 	CTableColumn *colItem;	
-	for ( colIter = listColumns.begin(); colIter != listColumns.end(); colIter++ )
+	for ( colIter = listColumns.begin(); colIter != listColumns.end(); ++colIter )
 	{	
 		colItem = &(*colIter);
 		colItem->HeaderCellToXHtml(strm);
@@ -238,11 +233,11 @@ string CTable::ToCsv()
 	stringstream strm;
 	strm.str("");	
 
-	strm << this->GetCsvHeaderDefinition();
+	this->GetCsvHeaderDefinition(strm);
 
 	if(listRows.size() > 0)
 	{
-		strm << this->GetCsvRows();	
+		this->GetCsvRows(strm);
 	}
 
 	return strm.str();	
