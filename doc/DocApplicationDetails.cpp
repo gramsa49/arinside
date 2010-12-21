@@ -127,7 +127,7 @@ string CDocApplicationDetails::ApplicationInformation()
 		row.ClearCells();
 		CTableCell cellSrvType("Primary Form", "");
 		CTableCell cellSrvObj(this->pInside->LinkToSchema(this->GetPrimaryForm(), this->rootLevel), "");
-		if(cellSrvObj.content.size()==0)
+		if(cellSrvObj.content.empty())
 			cellSrvObj.content = EmptyValue;
 
 		row.AddCell(cellSrvType);
@@ -191,17 +191,17 @@ string CDocApplicationDetails::ApplicationInformation()
 
 
 		//Related containers
-		for(int nType=1; nType<6; nType++)
+		for(int nType = ARCON_GUIDE; nType <= ARCON_WEBSERVICE; nType++)
 		{			
-			strResult = SearchContainer(nResult, nType);
-			row.ClearCells();
-			cellSrvType.content = CWebUtil::LinkToContainer(nResult, this->rootLevel, nType);
-			cellSrvObj.content = strResult;
-			if(cellSrvObj.content.size()==0)
-				cellSrvObj.content = EmptyValue;
-
 			if(nType != ARCON_APP) //Application cannot be embedded in another app
 			{
+				strResult = SearchContainer(nResult, nType);
+				row.ClearCells();
+				cellSrvType.content = CWebUtil::LinkToContainer(nResult, this->rootLevel, nType);
+				cellSrvObj.content = strResult;
+				if(cellSrvObj.content.empty())
+					cellSrvObj.content = EmptyValue;
+
 				row.AddCell(cellSrvType);
 				row.AddCell(cellSrvObj);
 				tblProp.AddRow(row);
@@ -238,20 +238,32 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 
 	try
 	{
+		list<int> schemaList;
 		//Update the schema informations
 		const ARReferenceList& refs = this->pApp.GetReferences();
 		for ( unsigned int refIndex = 0; refIndex < refs.numItems; ++refIndex )
 		{
-			if (refs.referenceList[refIndex].type == ARREF_SCHEMA)
+			if (refs.referenceList[refIndex].type == ARREF_SCHEMA && refs.referenceList[refIndex].reference.dataType == ARREF_DATA_ARSREF)
 			{
 				CARSchema schema(refs.referenceList[refIndex].reference.u.name);
 				if (schema.Exists())
 				{
-					nResult++;
-					strmResult << schema.GetURL(this->rootLevel) << "<br/>" << endl;
 					schema.SetAppRefName(this->pApp.GetName());
+					schemaList.push_back(schema.GetInsideId());
 				}
-			};
+			}
+		}
+
+		schemaList.sort();
+		schemaList.unique();
+		nResult = (int)schemaList.size();
+
+		list<int>::iterator curIt = schemaList.begin();
+		list<int>::iterator endIt = schemaList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARSchema schema(*curIt);
+			strmResult << schema.GetURL(this->rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -265,79 +277,95 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 string CDocApplicationDetails::SearchActiveLinks(int &nResult)
 {
 	stringstream strmResult;
-	strmResult.str("");
-
 	nResult = 0;
 
 	try
-	{	
-		unsigned int alCount = pInside->alList.GetCount();
-		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
-		{				
-			CARActiveLink obj(alIndex);
-
-			bool bInsert = false;
-
-			for(unsigned int i=0; i< obj.GetSchemaList().u.schemaList->numItems; i++)
+	{
+		list<int> appALList;
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; ++i)
+		{
+			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
 			{
-				if(InList(obj.GetSchemaList().u.schemaList->nameList[i], ARREF_SCHEMA))
+				CARSchema schema(refs.referenceList[i].reference.u.name);
+				if (schema.Exists())
 				{
-					bInsert = true;
+					const CARSchemaList::ObjectRefList& schemaALList = schema.GetActiveLinks();
+					CARSchemaList::ObjectRefList::const_iterator curIt = schemaALList.begin();
+					CARSchemaList::ObjectRefList::const_iterator endIt = schemaALList.end();
+					
+					for (; curIt != endIt; ++curIt)
+					{
+						CARActiveLink al(*curIt);
+						al.SetAppRefName(this->pApp.GetName());
+						appALList.push_back(*curIt);
+					}
 				}
 			}
+		}
 
-			if(InList(obj.GetName().c_str(), ARREF_ACTLINK))
-				bInsert = true;
+		// make the al list unique
+		appALList.sort();
+		appALList.unique();
+		nResult = (int)appALList.size();
 
-			if(bInsert)
-			{
-				nResult++;
-				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
-				obj.SetAppRefName(this->pApp.GetName());
-			}
-		}		
+		list<int>::iterator curIt = appALList.begin();
+		list<int>::iterator endIt = appALList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARActiveLink al(*curIt);
+			strmResult << al.GetURL(rootLevel) << "<br/>" << endl;
+		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in ApplicationDetails_SearchActiveLinks: " << e.what() << endl; 
 	}
-
 	return strmResult.str();
 }
 
 string CDocApplicationDetails::SearchFilters(int &nResult)
 {
 	stringstream strmResult;
-	strmResult.str("");
 
 	nResult = 0;
 
 	try
 	{
-		unsigned int filterCount = pInside->filterList.GetCount();
-		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
-		{	
-			CARFilter obj(filterIndex);
-			bool bInsert = false;
-
-			unsigned int schemaCount = obj.GetSchemaList().u.schemaList->numItems;
-			for(unsigned int i=0; i < schemaCount; ++i)
+		list<int> appFltList;
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; ++i)
+		{
+			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
 			{
-				if(InList(obj.GetSchemaList().u.schemaList->nameList[i], ARREF_SCHEMA))
+				CARSchema schema(refs.referenceList[i].reference.u.name);
+				if (schema.Exists())
 				{
-					bInsert = true;
+					const CARSchemaList::ObjectRefList& schemaFltList = schema.GetFilters();
+					CARSchemaList::ObjectRefList::const_iterator curIt = schemaFltList.begin();
+					CARSchemaList::ObjectRefList::const_iterator endIt = schemaFltList.end();
+					
+					for (; curIt != endIt; ++curIt)
+					{
+						CARFilter flt(*curIt);
+						flt.SetAppRefName(this->pApp.GetName());
+						appFltList.push_back(*curIt);
+					}
 				}
 			}
+		}
 
-			if(InList(obj.GetName(), ARREF_FILTER))
-				bInsert = true;
+		// make the filter list unique
+		appFltList.sort();
+		appFltList.unique();
+		nResult = (int)appFltList.size();
 
-			if(bInsert)
-			{
-				nResult++;
-				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
-				obj.SetAppRefName(this->pApp.GetName());
-			}
+		list<int>::iterator curIt = appFltList.begin();
+		list<int>::iterator endIt = appFltList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARFilter flt(*curIt);
+			strmResult << flt.GetURL(rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -357,30 +385,41 @@ string CDocApplicationDetails::SearchEscalations(int &nResult)
 
 	try
 	{
-		unsigned int escalCount = pInside->escalationList.GetCount();
-		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex )
-		{	
-			CAREscalation escalation(escalIndex);
-			bool bInsert = false;
-
-			for(unsigned int i=0; i< escalation.GetSchemaList().u.schemaList->numItems; ++i)
+		list<int> appEscList;
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; ++i)
+		{
+			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
 			{
-				if(InList(escalation.GetSchemaList().u.schemaList->nameList[i], ARREF_SCHEMA))
+				CARSchema schema(refs.referenceList[i].reference.u.name);
+				if (schema.Exists())
 				{
-					bInsert = true;
+					const CARSchemaList::ObjectRefList& schemaEscList = schema.GetEscalations();
+					CARSchemaList::ObjectRefList::const_iterator curIt = schemaEscList.begin();
+					CARSchemaList::ObjectRefList::const_iterator endIt = schemaEscList.end();
+					
+					for (; curIt != endIt; ++curIt)
+					{
+						CAREscalation esc(*curIt);
+						esc.SetAppRefName(this->pApp.GetName());
+						appEscList.push_back(*curIt);
+					}
 				}
 			}
+		}
 
-			if(InList(escalation.GetName().c_str(), ARREF_ESCALATION))
-				bInsert = true;
+		// make the escalation list unique
+		appEscList.sort();
+		appEscList.unique();
+		nResult = (int)appEscList.size();
 
-			if(bInsert)
-			{
-				nResult++;
-				strmResult << escalation.GetURL(rootLevel) << "<br/>" << endl;
-				escalation.SetAppRefName(this->pApp.GetName());
-			}
-		}		
+		list<int>::iterator curIt = appEscList.begin();
+		list<int>::iterator endIt = appEscList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CAREscalation esc(*curIt);
+			strmResult << esc.GetURL(rootLevel) << "<br/>" << endl;
+		}
 	}
 	catch(exception& e)
 	{
@@ -400,42 +439,82 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 
 	try
 	{
-		unsigned int cntCount = pInside->containerList.GetCount();
-		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
-		{	
-			bool bInsert = false;
-			CARContainer obj(cntIndex);
-
-			if(obj.GetType() == nType)
+		list<int> appCntList;
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; ++i)
+		{
+			switch (nType)
 			{
-				// first check, if the container is contained in the application
-				if(this->InList(obj.GetName(), ARREF_CONTAINER))
+			case ARCON_GUIDE:
+			case ARCON_FILTER_GUIDE:
 				{
-					bInsert = true;
-				}
-				else
-				{
-					// if the container is not contained in the application, check if there is a schema, that is part of the app
-					const ARContainerOwnerObjList& ownerObjList = obj.GetOwnerObjects();
-					for(unsigned int i=0; i< ownerObjList.numItems; i++)
+					if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
 					{
-						if(this->InList(ownerObjList.ownerObjList[i].ownerName, ARREF_SCHEMA))
+						CARSchema schema(refs.referenceList[i].reference.u.name);
+						if (schema.Exists())
 						{
-							bInsert = true;
-							break;	// stop here, one is enough
+							// define the iterators
+							CARSchemaList::ObjectRefList::const_iterator curIt;
+							CARSchemaList::ObjectRefList::const_iterator endIt;
+							
+							// now get the iterator based on the type
+							switch (nType)
+							{
+							case ARCON_GUIDE:
+								{
+									const CARSchemaList::ObjectRefList& schemaALGList = schema.GetActLinkGuides(); 
+									curIt = schemaALGList.begin();
+									endIt = schemaALGList.end();
+								}
+								break;
+							case ARCON_FILTER_GUIDE:
+								{
+									const CARSchemaList::ObjectRefList& schemaFLGList = schema.GetFilterGuides();
+									curIt = schemaFLGList.begin();
+									endIt = schemaFLGList.end();
+								}
+								break;
+							}
+
+							// loop over the containers
+							for (; curIt != endIt; ++curIt)
+							{
+								CARContainer cnt(*curIt);
+								cnt.SetAppRefName(this->pApp.GetName());
+								appCntList.push_back(*curIt);
+							}
 						}
 					}
 				}
-
-				if(bInsert)
+				break;
+			case ARCON_PACK:
 				{
-					nResult++;
-					strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
-
-					obj.SetAppRefName(this->pApp.GetName());
+					if (refs.referenceList[i].type == ARREF_CONTAINER && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
+					{
+						CARContainer cnt(refs.referenceList[i].reference.u.name);
+						if (cnt.Exists() && cnt.GetType() == nType)
+						{
+							cnt.SetAppRefName(this->pApp.GetName());
+							appCntList.push_back(cnt.GetInsideId());
+						}
+					}
 				}
+				break;
 			}
-		}	
+		}
+
+		// make the container list unique
+		appCntList.sort();
+		appCntList.unique();
+		nResult = (int)appCntList.size();
+
+		list<int>::iterator curIt = appCntList.begin();
+		list<int>::iterator endIt = appCntList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer cnt(*curIt);
+			strmResult << cnt.GetURL(rootLevel) << "<br/>" << endl;
+		}
 	}
 	catch(exception& e)
 	{
@@ -454,49 +533,48 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 
 	try
 	{
-		unsigned int menuCount = pInside->menuList.GetCount();
-		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
-		{	
-			bool bInsert = false;
-			CARCharMenu obj(menuIndex);
-
-			unsigned int schemaCount = this->pInside->schemaList.GetCount();
-			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
-			{			
-				CARSchema schema(schemaIndex);
-
-				if(InList(schema.GetName(), ARREF_SCHEMA))
+		list<int> appMnuList;
+		const ARReferenceList& refs = this->pApp.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; ++i)
+		{
+			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
+			{
+				CARSchema schema(refs.referenceList[i].reference.u.name);
+				if (schema.Exists())
 				{
-					unsigned int fieldCount = schema.GetFields()->GetCount();
-					for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
+					CARFieldList* fields = schema.GetFields();
+					unsigned int fieldCount = fields->GetCount();
+
+					for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 					{
-						CARField field(schemaIndex, 0, fieldIndex);
-						if(field.GetDataType() == AR_DATA_TYPE_CHAR)
+						CARField fld(schema.GetInsideId(), 0, fieldIndex);
+						const ARFieldLimitStruct& limits = fld.GetLimits();
+
+						if (fld.GetDataType() == AR_DATA_TYPE_CHAR && limits.dataType == AR_DATA_TYPE_CHAR && limits.u.charLimits.charMenu[0] != 0)
 						{
-							if(strcmp(field.GetLimits().u.charLimits.charMenu, obj.GetARName()) == 0)
+							CARCharMenu mnu(limits.u.charLimits.charMenu);
+							if (mnu.Exists())
 							{
-								bInsert = true;
-								goto schemaScanEnd;
+								mnu.SetAppRefName(this->pApp.GetName());
+								appMnuList.push_back(mnu.GetInsideId());
 							}
 						}
 					}
 				}
 			}
-schemaScanEnd:
+		}
 
-			// TODO: check this whole function
-			// if the menu is in the list, why do we scan for schemas using this menu at all?
-			// and if the menu is never in the list (just the schema), then there is no need to call InList for the menu!
-			if(InList(obj.GetARName(), ARREF_CHAR_MENU))
-				bInsert = true;
+		// make the escalation list unique
+		appMnuList.sort();
+		appMnuList.unique();
+		nResult = (int)appMnuList.size();
 
-			if(bInsert)
-			{
-				nResult++;
-				strmResult << obj.GetURL(rootLevel) << "<br/>" << endl;
-
-				obj.SetAppRefName(this->pApp.GetName());
-			}
+		list<int>::iterator curIt = appMnuList.begin();
+		list<int>::iterator endIt = appMnuList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARCharMenu mnu(*curIt);
+			strmResult << mnu.GetURL(rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)

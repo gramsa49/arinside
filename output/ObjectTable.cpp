@@ -28,7 +28,7 @@ CObjectTable::~CObjectTable(void)
 {	
 }
 
-void CObjectTable::SetDescription(string desc)
+void CObjectTable::SetDescription(const string& desc)
 {
 	this->tbl.description = desc;
 }
@@ -41,4 +41,15 @@ int CObjectTable::NumRows()
 string CObjectTable::Print()
 {
 	return this->tbl.ToXHtml();
+}
+
+void CObjectTable::Print(std::ostream& strm)
+{
+	strm << tbl;
+}
+
+std::ostream& operator<<(std::ostream& strm, OUTPUT::CObjectTable& oTbl)
+{
+	oTbl.Print(strm);
+	return strm;
 }

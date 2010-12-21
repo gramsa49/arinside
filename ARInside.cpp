@@ -2259,6 +2259,7 @@ void CARInside::BuildReferences()
 	SearchActiveLinkReferences();
 	SearchFilterReferences();
 	SearchEscalationReferences();
+	SearchContainerReferences();
 
 	SortReferences();
 }
@@ -2346,6 +2347,8 @@ void CARInside::SearchFilterReferences()
 
 void CARInside::SearchActiveLinkReferences()
 {
+	cout << "Checking active link references";
+
 	unsigned int actlinkCount = alList.GetCount();
 	for (unsigned int actlinkIndex = 0; actlinkIndex < actlinkCount; actlinkIndex++)
 	{
@@ -2364,10 +2367,14 @@ void CARInside::SearchActiveLinkReferences()
 			}
 		}
 	}
+
+	cout << endl;
 }
 
 void CARInside::SearchEscalationReferences()
 {
+	cout << "Checking escalation references";
+
 	unsigned int escalCount = escalationList.GetCount();
 	for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 	{
@@ -2386,6 +2393,64 @@ void CARInside::SearchEscalationReferences()
 			}
 		}
 	}
+
+	cout << endl;
+}
+
+void CARInside::SearchContainerReferences()
+{
+	cout << "Checking container references";
+
+	unsigned int cntCount = containerList.GetCount();
+	for (unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex)
+	{
+		CARContainer cnt(cntIndex);
+		switch (cnt.GetType())
+		{
+		case ARCON_GUIDE:
+		case ARCON_FILTER_GUIDE:
+			{
+				const ARContainerOwnerObjList& ownerList = cnt.GetOwnerObjects();
+				for (unsigned int ownerIndex = 0; ownerIndex < ownerList.numItems; ++ownerIndex)
+				{
+					if (ownerList.ownerObjList[ownerIndex].type == ARCONOWNER_SCHEMA)
+					{
+						CARSchema schema(ownerList.ownerObjList[ownerIndex].ownerName);
+						if (schema.Exists())
+						{
+							switch (cnt.GetType())
+							{
+							case ARCON_GUIDE:
+								schema.AddActLinkGuide(cnt);
+								break;
+							case ARCON_FILTER_GUIDE:
+								schema.AddFilterGuide(cnt);
+								break;
+							}
+						}
+					}
+				}
+			}
+			break;
+		case ARCON_PACK:
+			{
+				const ARReferenceList& refs = cnt.GetReferences();
+				for (unsigned int refIndex = 0; refIndex < refs.numItems; ++refIndex)
+				{
+					if (refs.referenceList[refIndex].type == ARREF_SCHEMA && refs.referenceList[refIndex].reference.dataType == ARREF_DATA_ARSREF)
+					{
+						CARSchema schema(refs.referenceList[refIndex].reference.u.name);
+						if (schema.Exists())
+						{
+							schema.AddPackingList(cnt);
+						}
+					}
+				}
+			}
+			break;
+		}
+	}
+	cout << endl;
 }
 
 void CARInside::DoWork(int nMode)

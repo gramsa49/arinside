@@ -182,6 +182,7 @@ private:
 	void SearchActiveLinkReferences();
 	void SearchFilterReferences();
 	void SearchEscalationReferences();
+	void SearchContainerReferences();
 	void CustomFieldReferences(const CARSchema &schema, const CARField &obj);
 
 	void ParseVersionString(string version);

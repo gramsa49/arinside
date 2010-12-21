@@ -1352,34 +1352,19 @@ string CDocSchemaDetails::ContainerReferences()
 	strm.str("");
 	try
 	{
-		string schemaName = schema.GetName();
+		const CARSchemaList::ObjectRefList& alg = schema.GetActLinkGuides();
+		CARSchemaList::ObjectRefList::const_iterator curIt = alg.begin();
+		CARSchemaList::ObjectRefList::const_iterator endIt = alg.end();
+
 		CContainerTable *contTable = new CContainerTable(*this->pInside);
 
-		unsigned int cntCount = this->pInside->containerList.GetCount();
-		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
+		for (; curIt != endIt; ++curIt)
 		{
-			CARContainer cont(cntIndex);
-
-			if (cont.GetType() != ARCON_APP)
-			{
-				const ARReferenceList& refs = cont.GetReferences();
-				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
-				{
-					if(refs.referenceList[nCnt].reference.u.name != NULL)
-					{
-						if(refs.referenceList[nCnt].type == ARREF_SCHEMA &&
-						   schemaName == refs.referenceList[nCnt].reference.u.name)
-						{
-							contTable->AddRow(cont, rootLevel);
-						}
-					}
-				}
-			}
-		}		
-
+			contTable->AddRow(CARContainer(*curIt), rootLevel);
+		}
 
 		if(contTable->NumRows() > 0)
-			strm << contTable->Print();
+			strm << *contTable;
 		else
 			strm << EmptyValue;
 
@@ -1509,7 +1494,7 @@ string CDocSchemaDetails::SearchMenuReferences()
 
 
 		if(menuTable->NumRows() > 0)
-			strm << menuTable->Print();
+			strm << *menuTable;
 		else
 			strm << EmptyValue;
 
@@ -1595,7 +1580,7 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 		}
 
 		if(alTable->NumRows() > 0)
-			strm << alTable->Print();
+			strm << *alTable;
 		else
 			strm << EmptyValue;
 
@@ -1686,7 +1671,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 		}
 
 		if(alTable->NumRows() > 0)
-			strm << alTable->Print();
+			strm << *alTable;
 		else
 			strm << EmptyValue;
 
@@ -1773,7 +1758,7 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 		}
 
 		if(filterTable->NumRows() > 0)
-			strm << filterTable->Print();
+			strm << *filterTable;
 		else
 			strm << EmptyValue;
 
@@ -1798,29 +1783,23 @@ string CDocSchemaDetails::ShowProperties()
 		const ARPropList& propList = this->schema.GetProps();
 		CARProplistHelper propIdx(&propList);
 
-		//for (unsigned int i=0; i < propList->numItems; ++i)
-		//{
-		//	propIdx[propList->props[i].prop] = &propList->props[i].value;
-		//}
-
 		// doc basic properties
-		strm << ShowBasicProperties(&propIdx);
+		ShowBasicProperties(strm, &propIdx);
 
 		if (this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
 		{
 			// doc archive properties
-			strm << ShowArchiveProperties();
+			ShowArchiveProperties(strm);
 
 			if (pInside->CompareServerVersion(7,0) >= 0) 
 			{
 				// doc audit properties
-				strm << ShowAuditProperties();
+				ShowAuditProperties(strm);
 			}
 		}
 
 		// doc properties left
-		//strm << ShowPropertiesLeft(&propIdx);
-		strm << propIdx.UnusedPropertiesToHTML();
+		propIdx.UnusedPropertiesToHTML(strm);
 	}
 	catch(exception& e)
 	{
@@ -1829,10 +1808,8 @@ string CDocSchemaDetails::ShowProperties()
 	return strm.str();
 }
 
-string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
+void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelper* propIndex)
 {
-	stringstream strm;
-	strm.str("");
 	ARValueStruct* propVal;
 
 	try
@@ -1928,14 +1905,10 @@ string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
 	{
 		cout << "EXCEPTION enumerating basic properties: " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
-string CDocSchemaDetails::ShowAuditProperties()
+void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 {
-	stringstream strm; strm.str("");
-
 	try
 	{
 		const ARAuditInfoStruct& audit = this->schema.GetAuditInfo();
@@ -2017,13 +1990,10 @@ string CDocSchemaDetails::ShowAuditProperties()
 	{
 		cerr << "EXCEPTION audit properties" << endl;
 	}
-	return strm.str();
 }
 
-string CDocSchemaDetails::ShowArchiveProperties()
+void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 {
-	stringstream strm; strm.str("");
-
 	try
 	{
 		const ARArchiveInfoStruct& archive = this->schema.GetArchiveInfo();
@@ -2120,5 +2090,4 @@ string CDocSchemaDetails::ShowArchiveProperties()
 	{
 		cerr << "EXCEPTION archive properties" << endl;
 	}
-	return strm.str();
 }

@@ -282,6 +282,21 @@ void CARSchema::AddEscalation(const CAREscalation& escalation)
 	CARInside::GetInstance()->schemaList.SchemaAddEscalation(GetInsideId(), escalation);
 }
 
+void CARSchema::AddActLinkGuide(const CARContainer& alGuide)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddActLinkGuide(GetInsideId(), alGuide);
+}
+
+void CARSchema::AddFilterGuide(const CARContainer& fltGuide)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddFilterGuide(GetInsideId(), fltGuide);
+}
+
+void CARSchema::AddPackingList(const CARContainer &packList)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddPackingList(GetInsideId(), packList);
+}
+
 void CARSchema::AddMissingFieldReference(int fieldId, const CFieldRefItem &refItem)
 {
 	CARInside::GetInstance()->schemaList.SchemaAddMissingFieldReference(GetInsideId(), fieldId, refItem);
@@ -305,4 +320,19 @@ const CARSchemaList::ObjectRefList& CARSchema::GetFilters()
 const CARSchemaList::ObjectRefList& CARSchema::GetEscalations()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetEscalationReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetActLinkGuides()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetActLinkGuideReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetFilterGuides()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetFilterGuideReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetPackingLists()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetPackingListReferences(GetInsideId());
 }

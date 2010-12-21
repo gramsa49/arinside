@@ -184,7 +184,7 @@ string CDocEscalationDetails::ContainerReferences()
 			}
 		}		
 
-		strm << contTable->Print();
+		strm << *contTable;
 		delete contTable;
 	}
 	catch(exception& e)

@@ -25,6 +25,7 @@
 class CARActiveLink;
 class CARFilter;
 class CAREscalation;
+class CARContainer;
 
 class CARSchemaList : Uncopyable
 {
@@ -74,10 +75,16 @@ public:
 	void SchemaAddActiveLink(unsigned int index, const CARActiveLink& actlink);
 	void SchemaAddFilter(unsigned int index, const CARFilter& filter);
 	void SchemaAddEscalation(unsigned int index, const CAREscalation& escalation);
+	void SchemaAddActLinkGuide(unsigned int index, const CARContainer& alGuide);
+	void SchemaAddFilterGuide(unsigned int index, const CARContainer& fltGuide);
+	void SchemaAddPackingList(unsigned int index, const CARContainer& packingList);
 
 	const ObjectRefList& SchemaGetALReferences(unsigned int index) { return activeLinks[index]; }
 	const ObjectRefList& SchemaGetFilterReferences(unsigned int index) { return filters[index]; }
 	const ObjectRefList& SchemaGetEscalationReferences(unsigned int index) { return escalations[index]; }
+	const ObjectRefList& SchemaGetActLinkGuideReferences(unsigned int index) { return alGuides[index]; }
+	const ObjectRefList& SchemaGetFilterGuideReferences(unsigned int index) { return fltGuides[index]; }
+	const ObjectRefList& SchemaGetPackingListReferences(unsigned int index) { return packLists[index]; }
 
 	// access for contained lists
 	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[(*sortedList)[index]]; }
@@ -121,6 +128,8 @@ private:
 	vector<ObjectRefList> escalations;
 	vector<ObjectRefList> alGuides;
 	vector<ObjectRefList> fltGuides;
+	vector<ObjectRefList> packLists;
+
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

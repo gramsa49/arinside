@@ -98,7 +98,7 @@ string CDocContainerHelper::SubadminList()
 			grpTbl->AddRow(this->container.GetAppRefName(), admingrpList.internalIdList[i], this->rootLevel);
 		}
 
-		strm << grpTbl->Print();
+		strm << *grpTbl;
 		delete grpTbl;
 	}
 	catch(exception& e)

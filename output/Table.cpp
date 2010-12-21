@@ -27,6 +27,7 @@ CTable::CTable(const string& htmId, const string& cssClass)
 {
 	this->htmId = htmId;
 	this->cssClass = cssClass;
+	this->hideHeader = false;
 }
 
 CTable::~CTable(void)

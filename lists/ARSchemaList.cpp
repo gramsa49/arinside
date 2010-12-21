@@ -220,6 +220,7 @@ bool CARSchemaList::LoadFromServer()
 	escalations.resize(count);
 	alGuides.resize(count);
 	fltGuides.resize(count);
+	packLists.resize(count);
 
 	// Sort
 	Sort();
@@ -450,6 +451,9 @@ void CARSchemaList::SortReferences()
 		std::sort(activeLinks[schemaIndex].begin(), activeLinks[schemaIndex].end());
 		std::sort(    filters[schemaIndex].begin(),     filters[schemaIndex].end());
 		std::sort(escalations[schemaIndex].begin(), escalations[schemaIndex].end());
+		std::sort(   alGuides[schemaIndex].begin(),    alGuides[schemaIndex].end());
+		std::sort(  fltGuides[schemaIndex].begin(),   fltGuides[schemaIndex].end());
+		std::sort(  packLists[schemaIndex].begin(),   packLists[schemaIndex].end());
 	}
 }
 
@@ -466,4 +470,19 @@ void CARSchemaList::SchemaAddActiveLink(unsigned int index, const CARActiveLink 
 void CARSchemaList::SchemaAddEscalation(unsigned int index, const CAREscalation &escalation)
 {
 	escalations[index].push_back(escalation.GetInsideId());
+}
+
+void CARSchemaList::SchemaAddActLinkGuide(unsigned int index, const CARContainer &alGuide)
+{
+	alGuides[index].push_back(alGuide.GetInsideId());
+}
+
+void CARSchemaList::SchemaAddFilterGuide(unsigned int index, const CARContainer &fltGuide)
+{
+	fltGuides[index].push_back(fltGuide.GetInsideId());
+}
+
+void CARSchemaList::SchemaAddPackingList(unsigned int index, const CARContainer &packList)
+{
+	packLists[index].push_back(packList.GetInsideId());
 }

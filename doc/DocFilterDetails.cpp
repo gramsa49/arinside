@@ -165,7 +165,7 @@ string CDocFilterDetails::ContainerReferences()
 			}
 		}		
 
-		strm << contTable.Print();
+		strm << contTable;
 	}
 	catch(exception& e)
 	{

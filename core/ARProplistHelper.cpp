@@ -276,8 +276,12 @@ ARValueStruct* CARProplistHelper::GetValue(ARULong32 nProp)
 string CARProplistHelper::UnusedPropertiesToHTML()
 {
 	stringstream strm;
-	strm.str("");
+	UnusedPropertiesToHTML(strm);
+	return strm.str();
+}
 
+void CARProplistHelper::UnusedPropertiesToHTML(std::ostream& strm)
+{
 	try
 	{
 		CTable tbl("displayPropList", "TblObjectList");
@@ -307,8 +311,6 @@ string CARProplistHelper::UnusedPropertiesToHTML()
 	{
 		cout << "EXCEPTION enumerating unused object properties: " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 CARProplistHelper::PropHelpData::PropHelpData(void)

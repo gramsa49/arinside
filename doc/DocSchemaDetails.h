@@ -64,9 +64,9 @@ private:
 	string SearchMenuReferences();
 	
 	string ShowProperties();
-	string ShowBasicProperties(CARProplistHelper* propIndex);
-	string ShowAuditProperties();
-	string ShowArchiveProperties();
+	void ShowBasicProperties(std::ostream& strm, CARProplistHelper* propIndex);
+	void ShowAuditProperties(std::ostream& strm);
+	void ShowArchiveProperties(std::ostream& strm);
 
 	string SchemaNavigation();	
 	string FormPageHeader(string description);

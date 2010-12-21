@@ -28,8 +28,9 @@ namespace OUTPUT
 		~CObjectTable(void);
 
 		string Print();
+		void Print(std::ostream& strm);
 		int NumRows();
-		void SetDescription(string desc);
+		void SetDescription(const string& desc);
 
 	protected:
 		CARInside *pInside;
@@ -37,3 +38,5 @@ namespace OUTPUT
 
 	};
 }
+
+std::ostream& operator<<(std::ostream& strm, OUTPUT::CObjectTable& tbl);

@@ -171,7 +171,7 @@ string CDocAlDetails::Permissions()
 			grpTbl->AddRow(this->al.GetAppRefName(), this->al.GetGroupList().internalIdList[i], this->rootLevel);
 		}
 
-		strm << grpTbl->Print();
+		strm << *grpTbl;
 		delete grpTbl;
 
 	}
@@ -212,7 +212,7 @@ string CDocAlDetails::ContainerReferences()
 			}
 		}
 
-		strm << contTable->Print();
+		strm << *contTable;
 		delete contTable;
 	}
 	catch(exception& e)

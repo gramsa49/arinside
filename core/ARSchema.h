@@ -83,7 +83,10 @@ public:
 	void AddFilter(const CARFilter& filter);
 	void AddActiveLink(const CARActiveLink& actlink);
 	void AddEscalation(const CAREscalation& escalation);
-	// TODO: add references for ALG, FLG, WS
+	void AddActLinkGuide(const CARContainer& alGuide);
+	void AddFilterGuide(const CARContainer& fltGuide);
+	void AddPackingList(const CARContainer& packList);
+	// TODO: add references for WS
 
 	typedef CARSchemaList::MissingReferenceItem MissingReferenceItem;
 	typedef CARSchemaList::MissingReferenceList MissingReferenceList;
@@ -93,4 +96,7 @@ public:
 	const CARSchemaList::ObjectRefList& GetActiveLinks();
 	const CARSchemaList::ObjectRefList& GetFilters();
 	const CARSchemaList::ObjectRefList& GetEscalations();
+	const CARSchemaList::ObjectRefList& GetActLinkGuides();
+	const CARSchemaList::ObjectRefList& GetFilterGuides();
+	const CARSchemaList::ObjectRefList& GetPackingLists();
 };
