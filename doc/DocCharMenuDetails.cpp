@@ -165,8 +165,7 @@ string CDocCharMenuDetails::CharMenuDetails()
 			row.AddCell(cellItemValue);
 			tbl.AddRow(row);		
 		}
-		strm << tbl.ToXHtml();
-		tbl.Clear();
+		strm << tbl;
 	}
 	catch(exception& e)
 	{

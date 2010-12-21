@@ -164,8 +164,7 @@ string CDocImageDetails::WorkflowReferences()
 
 		tblRef.description = tblDesc.str();
 
-		strm << tblRef.ToXHtml();
-		tblRef.Clear();
+		strm << tblRef;
 	}
 	catch(exception& e)
 	{

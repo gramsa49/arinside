@@ -147,13 +147,13 @@ void CTable::GetHeaderDefinition(std::ostream& strm)
 
 string CTable::ToXHtml()
 {
-	return this->ToXHtml("");
+	stringstream strm;	    
+	ToXHtml(strm);
+	return strm.str();
 }
 
-string CTable::ToXHtml(const string& styleTag)
+void CTable::ToXHtml(std::ostream &strm)
 {
-	stringstream strm;	    
-
 	if(!this->description.empty())
 	{
 		strm << "<h2>" << endl;
@@ -162,11 +162,6 @@ string CTable::ToXHtml(const string& styleTag)
 	}
 
 	strm << "<table id=\"" << this->htmId << "\"";
-
-	if(!styleTag.empty())
-	{
-		strm << " style=\"" << styleTag << "\"";
-	}
 
 	if(!this->cssClass.empty())
 	{
@@ -191,7 +186,6 @@ string CTable::ToXHtml(const string& styleTag)
 	}
 
 	strm << "</table>" << endl;
-	return strm.str();	
 }
 
 
@@ -241,4 +235,10 @@ string CTable::ToCsv()
 	}
 
 	return strm.str();	
+}
+
+ostream& operator<<(ostream& strm, OUTPUT::CTable& tbl)
+{ 
+	tbl.ToXHtml(strm);
+	return strm;
 }

@@ -2096,7 +2096,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 	return inText;
 }
 
-
+// TODO: remove unused function
 string CARInside::TextFindKeywords(string inText, string fieldSeparator)
 {	
 
@@ -2192,8 +2192,7 @@ string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
 		tblRow.AddCellList(CTableCell("Modified"), CTableCell(strmTmp.str()));
 		tbl.AddRow(tblRow);
 
-		strm << tbl.ToXHtml();
-		tbl.Clear();
+		strm << tbl;
 	}
 	catch(exception& e)
 	{
@@ -2270,7 +2269,7 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		tblRow.AddCellList(CTableCell("Helptext"), CTableCell(tmpHelptext));
 		tbl.AddRow(tblRow);
 
-		strm << tbl.ToXHtml();
+		strm << tbl;
 	}
 	catch(exception& e)
 	{

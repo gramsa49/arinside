@@ -185,7 +185,6 @@ void CDocValidator::ContainerGroupValidator()
 			}
 
 			webPage.AddContent(tblObj.ToXHtml());
-			tblObj.Clear();
 
 			webPage.SaveInFolder(path);
 		}
@@ -236,7 +235,6 @@ void CDocValidator::AlGroupValidator()
 			}
 
 			webPage.AddContent(tblObj.ToXHtml());
-			tblObj.Clear();
 
 			webPage.SaveInFolder(path);
 		}
@@ -287,7 +285,6 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema)
 
 			tblObj.description = pInside->LinkToSchema(schema.GetInsideId(), rootLevel);
 			webPage.AddContent(tblObj.ToXHtml());
-			tblObj.Clear();
 
 			webPage.SaveInFolder(path);
 		}
@@ -403,7 +400,6 @@ void CDocValidator::FormGroupValidator()
 			}
 
 			webPage.AddContent(tblForms.ToXHtml());
-			tblForms.Clear();
 
 			webPage.SaveInFolder(path);
 		}

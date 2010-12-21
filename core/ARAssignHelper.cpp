@@ -73,7 +73,7 @@ string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &act
 			tblFieldList.AddRow(row);	
 		}
 
-		strm << tblFieldList.ToXHtml();
+		strm << tblFieldList;
 	}
 	catch(exception& e)
 	{
@@ -118,7 +118,7 @@ string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &actio
 			tblFieldList.AddRow(row);	
 		}
 
-		strm << tblFieldList.ToXHtml();
+		strm << tblFieldList;
 	}
 	catch(exception& e)
 	{
@@ -166,7 +166,7 @@ string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, in
 			tblFieldList.AddRow(row);	
 		}
 
-		strm << tblFieldList.ToXHtml();
+		strm << tblFieldList;
 	}
 	catch(exception& e)
 	{
@@ -211,7 +211,7 @@ string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, i
 			tblFieldList.AddRow(row);	
 		}
 
-		strm << tblFieldList.ToXHtml();
+		strm << tblFieldList;
 	}
 	catch(exception& e)
 	{
@@ -251,7 +251,7 @@ string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int n
 			tblFieldList.AddRow(row);	
 		}
 
-		strm << tblFieldList.ToXHtml();
+		strm << tblFieldList;
 	}
 	catch(exception& e)
 	{

@@ -221,7 +221,7 @@ string CARProplistHelper::GetList(const ARPropList &objPropList, CARPropertyCall
 		}
 
 		tbl.description = "Object Properties:";
-		strm << tbl.ToXHtml();
+		strm << tbl;
 
 	}
 	catch(exception& e)
@@ -300,7 +300,7 @@ string CARProplistHelper::UnusedPropertiesToHTML()
 		}
 
 		tbl.description = "Object Properties:";
-		strm << tbl.ToXHtml();
+		strm << tbl;
 
 	}
 	catch(exception& e)

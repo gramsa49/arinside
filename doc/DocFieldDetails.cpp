@@ -186,8 +186,7 @@ string CDocFieldDetails::WorkflowReferences()
 
 		tblRef.description = tblDesc.str();
 
-		strm << tblRef.ToXHtml();
-		tblRef.Clear();
+		strm << tblRef;
 	}
 	catch(exception& e)
 	{
@@ -623,7 +622,7 @@ string CDocFieldDetails::FieldLimits()
 					tblRow.AddCell(CAREnum::ColumnDataSourceType(colLimits.dataSource));
 					colTab.AddRow(tblRow);
 				}
-				strm << colTab.ToXHtml() << endl;
+				strm << colTab << endl;
 			}
 			break;
 		case AR_DATA_TYPE_VIEW:
@@ -755,7 +754,7 @@ string CDocFieldDetails::Permisssions()
 			row.ClearCells();
 		}
 
-		strm << tbl.ToXHtml();
+		strm << tbl;
 	}
 	catch(exception& e)
 	{
@@ -835,9 +834,7 @@ string CDocFieldDetails::DisplayProperties()
 
 
 			tbl.description = viewTmpDesc.str();
-			strm << tbl.ToXHtml();
-
-			viewTmpDesc.str("");
+			strm << tbl;
 		}	
 	}
 	catch(exception& e)

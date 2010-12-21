@@ -31,9 +31,9 @@ namespace OUTPUT
 
 		string description;	
 
+		void ToXHtml(std::ostream& strm);
 		string ToXHtml();
 		string ToXHtmlNoHeader();
-		string ToXHtml(const string& styleTag);
 		string ToCsv();
 
 		void Clear();
@@ -57,3 +57,5 @@ namespace OUTPUT
 		void GetCsvHeaderDefinition(std::ostream& strm);
 	};
 }
+
+ostream& operator<<(ostream& strm, OUTPUT::CTable& tbl);

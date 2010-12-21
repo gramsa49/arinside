@@ -71,7 +71,6 @@ void CDocMain::ServerInfoList()
 		tbl.description = tblDesc.str();
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -301,7 +300,6 @@ void CDocMain::ActiveLinkActionList()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -474,7 +472,6 @@ void CDocMain::FilterActionList()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -641,7 +638,6 @@ void CDocMain::EscalationActionList()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -1195,7 +1191,6 @@ void CDocMain::GlobalFieldList()
 
 				CTableRow tblRow("");
 				tblRow.AddCellList(CTableCell(uiField->arGlobalFieldId), CTableCell(innerTbl.ToXHtml()));
-				innerTbl.Clear();
 
 				tbl.AddRow(tblRow);
 			}
@@ -1205,7 +1200,6 @@ void CDocMain::GlobalFieldList()
 			tbl.description = strmTmp.str();
 
 			webPage.AddContent(tbl.ToXHtml());
-			tbl.Clear();
 		}
 		else
 		{
@@ -1239,7 +1233,6 @@ void CDocMain::MessageList()
 		int rootLevel = file->GetRootLevel();
 		int curMsgNumber = 0;
 		list<CMessageItem> listMsgItem;
-		listMsgItem.clear();
 
 		//Search all activelinks
 		unsigned int alCount = pInside->alList.GetCount();
@@ -1377,8 +1370,6 @@ void CDocMain::MessageList()
 			}
 
 			webPage.AddContent(tbl.ToXHtml());
-			tbl.Clear();
-			listMsgItem.clear();
 		}
 		else
 		{

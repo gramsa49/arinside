@@ -262,10 +262,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 
 
 		webPage.AddContent(schemaTbl.ToXHtml());
-		schemaTbl.Clear();
-
 		webPage.AddContent(subadminTbl.ToXHtml());
-		subadminTbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}

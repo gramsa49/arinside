@@ -156,7 +156,7 @@ void CDocSchemaDetails::Documentation()
 			tblObjProp.AddRow(row);
 
 			//Add table to page
-			pgStrm << tblObjProp.ToXHtml();	
+			pgStrm << tblObjProp;
 			tblObjProp.Clear();
 
 			//Fields
@@ -916,7 +916,6 @@ void CDocSchemaDetails::IndexDoc()
 			}
 
 			webPage.AddContent(tbl.ToXHtml());
-			tbl.Clear();
 		}
 
 		webPage.SaveInFolder(file->GetPath());
@@ -987,7 +986,6 @@ void CDocSchemaDetails::ResultListDoc()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -1061,7 +1059,6 @@ void CDocSchemaDetails::SortListDoc()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -1112,7 +1109,6 @@ void CDocSchemaDetails::VuiListDoc()
 		}
 
 		webPage.AddContent(tbl.ToXHtml());
-		tbl.Clear();
 
 		webPage.SaveInFolder(file->GetPath());
 	}
@@ -1925,8 +1921,7 @@ string CDocSchemaDetails::ShowBasicProperties(CARProplistHelper* propIndex)
 
 		// now write the table
 		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Basic / EntryPoints:";
-		strm << tbl.ToXHtml();
-		tbl.Clear();
+		strm << tbl;
 	}
 	catch(exception& e)
 	{
@@ -2015,8 +2010,7 @@ string CDocSchemaDetails::ShowAuditProperties()
 		tbl.AddRow(row);
 
 		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Audit Settings:";
-		strm << tbl.ToXHtml();
-		tbl.Clear();
+		strm << tbl;
 	}
 	catch (...)
 	{
@@ -2119,8 +2113,7 @@ string CDocSchemaDetails::ShowArchiveProperties()
 		tbl.AddRow(row);
 
 		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Archive Settings:";
-		strm << tbl.ToXHtml();
-		tbl.Clear();
+		strm << tbl;
 	}
 	catch (...)
 	{

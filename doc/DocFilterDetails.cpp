@@ -265,9 +265,8 @@ string CDocFilterDetails::WorkflowReferences()
 
 			tblRef.description = tblDesc.str();
 
-			strm << tblRef.ToXHtml();
+			strm << tblRef;
 		}
-		tblRef.Clear();
 	}
 	catch (...)
 	{

@@ -152,7 +152,7 @@ string CDocFilterActionStruct::Get(string ifElse, const ARFilterActionList &actL
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << ifElse << "-Actions";
 		tblListAction.description = tblDesc.str();
 
-		strm << tblListAction.ToXHtml();
+		strm << tblListAction;
 	}
 	catch(exception& e)
 	{
@@ -230,7 +230,7 @@ string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, stri
 			}
 		}	
 
-		strm << tblListField.ToXHtml();
+		strm << tblListField;
 	}
 	catch(exception& e)
 	{
@@ -576,7 +576,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				tblInputMappingList.AddColumn(30, "Element");
 				tblInputMappingList.AddColumn(70, "Field");
 				input << processMappingXML(element, "", tblInputMappingList, "", "Input");
-				input << tblInputMappingList.ToXHtml();
+				input << tblInputMappingList;
 				strm << "<BR/>";
 				strm << "Input Mapping: " << input.str() << "<BR/>";
 			}
@@ -597,7 +597,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 				tblOutputMappingList.AddColumn(70, "Field");
 
 				output << processMappingXML(element, "", tblOutputMappingList, "", "Output");
-				output << tblOutputMappingList.ToXHtml();
+				output << tblOutputMappingList;
 				strm << "Output Mapping: " << output.str();
 			}
 		}

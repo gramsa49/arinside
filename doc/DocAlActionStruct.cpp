@@ -175,7 +175,7 @@ string CDocAlActionStruct::Get(const string &ifElse, const ARActiveLinkActionLis
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << ifElse << "-Actions";
 		tblListAction.description = tblDesc.str();
 
-		strm << tblListAction.ToXHtml();
+		strm << tblListAction;
 	}
 	catch(exception& e)
 	{
@@ -253,7 +253,7 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 			}
 		}	
 
-		strm << tblListField.ToXHtml();
+		strm << tblListField;
 	}
 	catch(exception& e)
 	{
@@ -326,7 +326,7 @@ string CDocAlActionStruct::ActionMacro(const ARActiveLinkMacroStruct &action, in
 					tblMacro.AddRow(mRow);	
 				}
 			}
-			strm << tblMacro.ToXHtml();
+			strm << tblMacro;
 			strm << "<br/>Macro Text: <br/>" << action.macroText << endl;
 		}
 	}
@@ -883,7 +883,7 @@ string CDocAlActionStruct::ActionAutomation(const ARAutomationStruct &action, in
 				mRow.AddCell( CTableCell(mName.str()));
 				tblOleMethods.AddRow(mRow);	
 			}	
-			strm << tblOleMethods.ToXHtml();
+			strm << tblOleMethods;
 		}
 	}
 	catch(exception& e)
@@ -1291,7 +1291,7 @@ string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAct
 					}
 				}
 
-				strm << "<p>Sort Order" << tblSortList.ToXHtml() << "</p>";
+				strm << "<p>Sort Order" << tblSortList << "</p>";
 			}
 
 			// additional report informations
