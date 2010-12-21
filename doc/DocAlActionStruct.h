@@ -41,65 +41,65 @@ private:
 	string ifElse;
 
 	//Get all matching IDs of two forms
-	string AllMatchingIds(string table1, string table2, string description, int nAction);
+	void AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, const string& description, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_NONE
 	string ActionNone(int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_MACRO
-	string ActionMacro(const ARActiveLinkMacroStruct &action, int nAction);
+	void ActionMacro(std::ostream& strm, const ARActiveLinkMacroStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_FIELDS
-	string ActionSetFields(const ARSetFieldsActionStruct &action, int nAction);
+	void ActionSetFields(std::ostream& strm, const ARSetFieldsActionStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_PROCESS
-	string ActionProcess(const char *action, int nAction);
+	void ActionProcess(std::ostream& strm, const char *action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_MESSAGE
-	string ActionMessage(const ARMessageStruct &action, int nAction);
+	void ActionMessage(std::ostream& strm, const ARMessageStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_SET_CHAR
-	string ActionSetChar(const ARFieldCharacteristics &action, int nAction);
+	void ActionSetChar(std::ostream& strm, const ARFieldCharacteristics &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_DDE
-	string ActionDde(const ARDDEStruct &action, int nAction);
+	void ActionDde(std::ostream& strm, const ARDDEStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_FIELDP
-	string ActionPushFields(const ARPushFieldsActionStruct &action, int nAction);
+	void ActionPushFields(std::ostream& strm, const ARPushFieldsActionStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_SQL
-	string ActionSql(const ARSQLStruct &action, int nAction);
+	void ActionSql(std::ostream& strm, const ARSQLStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_AUTO
-	string ActionAutomation(const ARAutomationStruct &action, int nAction);
+	void ActionAutomation(std::ostream& strm, const ARAutomationStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_OPENDLG
-	string ActionOpenDlg(const AROpenDlgStruct &action, int nAction);
+	void ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct &action, int nAction);
 	bool ActionOpenDlgQualifier(int nWindowType);
 
 	// AR_ACTIVE_LINK_ACTION_COMMITC
-	string ActionCommitChanges(const ARCommitChangesStruct &action, int nAction);
+	void ActionCommitChanges(std::ostream& strm, const ARCommitChangesStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_CLOSEWND
-	string ActionCloseWindow(const ARCloseWndStruct &action, int nAction);
+	void ActionCloseWindow(std::ostream& strm, const ARCloseWndStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_CALLGUIDE
-	string ActionCallGuide(const ARCallGuideStruct &action, int nAction);
+	void ActionCallGuide(std::ostream& strm, const ARCallGuideStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_EXITGUIDE
-	string ActionExitGuide(const ARExitGuideStruct &action, int nAction);
+	void ActionExitGuide(std::ostream& strm, const ARExitGuideStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL
-	string ActionGotoGuideLabel(const ARGotoGuideLabelStruct &action, int nAction);
+	void ActionGotoGuideLabel(std::ostream& strm, const ARGotoGuideLabelStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_WAIT
-	string ActionWait(const ARWaitStruct &action, int nAction);
+	void ActionWait(std::ostream& strm, const ARWaitStruct &action, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_GOTOACTION
-	string ActionGotoAction(const ARGotoActionStruct &action, int nAction);
+	void ActionGotoAction(std::ostream& strm, const ARGotoActionStruct &action, int nAction);
 
 #if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 	// AR_ACTIVE_LINK_ACTION_SERVICE
-	string ActionService(const ARActiveLinkSvcActionStruct &action, int nAction);
+	void ActionService(std::ostream& strm, const ARActiveLinkSvcActionStruct &action, int nAction);
 #endif
 };

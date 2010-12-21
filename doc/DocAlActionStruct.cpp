@@ -69,93 +69,93 @@ string CDocAlActionStruct::Get(const string &ifElse, const ARActiveLinkActionLis
 				break;
 			case AR_ACTIVE_LINK_ACTION_MACRO:
 				{
-					actionDesc << ActionMacro(action.u.macro, nAction);					
+					ActionMacro(actionDesc, action.u.macro, nAction);					
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_FIELDP:
 				{					
-					actionDesc << ActionPushFields(action.u.pushFields, nAction);					
+					ActionPushFields(actionDesc, action.u.pushFields, nAction);					
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_FIELDS:
 				{
-					actionDesc << ActionSetFields(action.u.setFields, nAction);	
+					ActionSetFields(actionDesc, action.u.setFields, nAction);	
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_PROCESS:
 				{
-					actionDesc << ActionProcess(action.u.process, nAction);	
+					ActionProcess(actionDesc, action.u.process, nAction);	
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_MESSAGE:
 				{
-					actionDesc << ActionMessage(action.u.message, nAction);					
+					ActionMessage(actionDesc, action.u.message, nAction);					
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_SET_CHAR:
 				{
-					actionDesc << ActionSetChar(action.u.characteristics, nAction);
+					ActionSetChar(actionDesc, action.u.characteristics, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_DDE:
 				{
-					actionDesc << ActionDde(action.u.dde, nAction);
+					ActionDde(actionDesc, action.u.dde, nAction);
 				}
 				break;				
 			case AR_ACTIVE_LINK_ACTION_SQL:
 				{
-					actionDesc << ActionSql(action.u.sqlCommand, nAction);
+					ActionSql(actionDesc, action.u.sqlCommand, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_AUTO:
 				{
-					actionDesc << ActionAutomation(action.u.automation, nAction);
+					ActionAutomation(actionDesc, action.u.automation, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPENDLG:
 				{
-					actionDesc << ActionOpenDlg(action.u.openDlg, nAction);
+					ActionOpenDlg(actionDesc, action.u.openDlg, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_COMMITC:
 				{
-					actionDesc << ActionCommitChanges(action.u.commitChanges, nAction);
+					ActionCommitChanges(actionDesc, action.u.commitChanges, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_CLOSEWND:
 				{
-					actionDesc << ActionCloseWindow(action.u.closeWnd, nAction);		
+					ActionCloseWindow(actionDesc, action.u.closeWnd, nAction);		
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_CALLGUIDE:
 				{
-					actionDesc << ActionCallGuide(action.u.callGuide, nAction);
+					ActionCallGuide(actionDesc, action.u.callGuide, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_EXITGUIDE:
 				{
-					actionDesc << ActionExitGuide(action.u.exitGuide, nAction);
+					ActionExitGuide(actionDesc, action.u.exitGuide, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL:
 				{
-					actionDesc << ActionGotoGuideLabel(action.u.gotoGuide, nAction);
+					ActionGotoGuideLabel(actionDesc, action.u.gotoGuide, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_WAIT:
 				{
-					actionDesc << ActionWait(action.u.waitAction, nAction);
+					ActionWait(actionDesc, action.u.waitAction, nAction);
 				}
 				break;
 			case AR_ACTIVE_LINK_ACTION_GOTOACTION:
 				{					
-					actionDesc << ActionGotoAction(action.u.gotoAction, nAction);				
+					ActionGotoAction(actionDesc, action.u.gotoAction, nAction);				
 				}
 				break;
 #if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 			case AR_ACTIVE_LINK_ACTION_SERVICE:
 				{
-					actionDesc << ActionService(action.u.service, nAction);
+					ActionService(actionDesc, action.u.service, nAction);
 				}
 				break;
 #endif
@@ -186,11 +186,8 @@ string CDocAlActionStruct::Get(const string &ifElse, const ARActiveLinkActionLis
 }
 
 //All matching Ids
-string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string description, int nAction)
+void CDocAlActionStruct::AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, const string& description, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{		
 		CARSchema schema1(table1);
@@ -203,6 +200,21 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 
 		if(schema1.Exists() && schema2.Exists())
 		{
+			// description for left references
+			stringstream strmTmpDesc;
+			strmTmpDesc << description << " (All Matching Ids) [Target] " << ifElse << "-Action " << nAction;
+
+			//Reference objects for left and right field
+			CFieldRefItem refItemField1(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), 0, schema1.GetInsideId());
+
+			// description for right references
+			strmTmpDesc.str("");
+			strmTmpDesc << description << " (All Matching Ids) [Value] " << ifElse << "-Action " << nAction;
+
+			//Reference object for field2
+			CFieldRefItem refItemField2(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), 0, schema2.GetInsideId());
+
+			// scan the fields
 			unsigned int fieldCount1 = schema1.GetFields()->GetCount();
 			for(unsigned int fieldIndex1 = 0; fieldIndex1 < fieldCount1; ++fieldIndex1)
 			{
@@ -214,44 +226,24 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 
 					if(tmpField2.Exists() && tmpField2.GetDataType() <= AR_MAX_STD_DATA_TYPE)
 					{
-						//Reference field1
-						CFieldRefItem *refItemField1 = new CFieldRefItem();
-						refItemField1->arsStructItemType = this->structItemType;
-						refItemField1->fromName = this->obj->GetName();
-						refItemField1->schemaInsideId = schema1.GetInsideId();
-						refItemField1->fieldInsideId = tmpField1.GetInsideId();
-
-						stringstream strmTmpDesc;
-						strmTmpDesc.str("");
-						strmTmpDesc << description << " (All Matching Ids) [Target] " << ifElse << "-Action " << nAction;
-						refItemField1->description = strmTmpDesc.str();
-						arIn->AddReferenceItem(refItemField1);
-						delete refItemField1;
-
-						//Reference field2
-						CFieldRefItem *refItemField2 = new CFieldRefItem();
-						refItemField2->arsStructItemType = this->structItemType;
-						refItemField2->fromName = this->obj->GetName();
-						refItemField2->schemaInsideId = schema2.GetInsideId();
-						refItemField2->fieldInsideId = tmpField2.GetInsideId();
-
-						strmTmpDesc.str("");
-						strmTmpDesc << description << " (All Matching Ids) [Value] " << ifElse << "-Action " << nAction;
-						refItemField2->description = strmTmpDesc.str();
-						arIn->AddReferenceItem(refItemField2);
-						delete refItemField2;
-
+						// add reference for left field
+						refItemField1.fieldInsideId = tmpField1.GetInsideId();
+						arIn->AddReferenceItem(&refItemField1);
+						
+						// add reference for right field
+						refItemField2.fieldInsideId = tmpField2.GetInsideId();
+						arIn->AddReferenceItem(&refItemField2);
 
 						//Matching ID
 						CTableRow row("cssStdRow");		
 						row.AddCell(CTableCell(tmpField1.GetFieldId()));
-						row.AddCell(CTableCell(arIn->LinkToField(schema1.GetARName(), tmpField1.GetInsideId(), this->rootLevel)));
-						row.AddCell(CTableCell(arIn->LinkToField(schema2.GetARName(), tmpField2.GetInsideId(), this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema1.GetInsideId(), tmpField1.GetInsideId(), this->rootLevel)));
+						row.AddCell(CTableCell(arIn->LinkToField(schema2.GetInsideId(), tmpField2.GetInsideId(), this->rootLevel)));
 						tblListField.AddRow(row);
 					}
 				}
 			}
-		}	
+		}
 
 		strm << tblListField;
 	}
@@ -259,8 +251,6 @@ string CDocAlActionStruct::AllMatchingIds(string table1, string table2, string d
 	{
 		cout << "EXCEPTION in AlAllMatchingIds of " << table1 << ", " << table2 << ": " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_NONE
@@ -270,11 +260,8 @@ string CDocAlActionStruct::ActionNone(int nAction)
 }
 
 // AR_ACTIVE_LINK_ACTION_MACRO
-string CDocAlActionStruct::ActionMacro(const ARActiveLinkMacroStruct &action, int nAction)
+void CDocAlActionStruct::ActionMacro(std::ostream& strm, const ARActiveLinkMacroStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		if(action.macroName != NULL)
@@ -300,28 +287,22 @@ string CDocAlActionStruct::ActionMacro(const ARActiveLinkMacroStruct &action, in
 				if(action.macroParms.parms[nCnt].name != NULL
 					&& action.macroParms.parms[nCnt].value != NULL)
 				{
-					stringstream pName, pValue;
-					pName.str("");
-					pValue.str("");
+					const char* pName = action.macroParms.parms[nCnt].name;
+					const char* pValue = action.macroParms.parms[nCnt].value;
 
-					pName << action.macroParms.parms[nCnt].name;
-					pValue << action.macroParms.parms[nCnt].value;
-
-					CFieldRefItem *refItemTmp = new CFieldRefItem();
-					refItemTmp->arsStructItemType = this->structItemType;
-
+					// create reference item description
 					stringstream strmTmpDesc;
 					strmTmpDesc << "Field in Macro " << ifElse << "-Action " << nAction;
-					refItemTmp->description = strmTmpDesc.str();
 
-					refItemTmp->fromName = this->obj->GetName();
-					refItemTmp->schemaInsideId = schemaInsideId;	
+					// create reference item
+					CFieldRefItem refItemTmp(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), 0, schemaInsideId);
 
-					string parameterValue = arIn->TextFindFields(pValue.str(), "$", schemaInsideId, rootLevel, true, refItemTmp);
-					delete refItemTmp;
+					// find field references
+					string parameterValue = arIn->TextFindFields(pValue, "$", schemaInsideId, rootLevel, true, &refItemTmp);
 
+					// add the al action row
 					CTableRow mRow("cssStdRow");		
-					mRow.AddCell(CTableCell(pName.str()));				
+					mRow.AddCell(CTableCell(pName));
 					mRow.AddCell(CTableCell(parameterValue));
 					tblMacro.AddRow(mRow);	
 				}
@@ -334,18 +315,13 @@ string CDocAlActionStruct::ActionMacro(const ARActiveLinkMacroStruct &action, in
 	{
 		cout << "EXCEPTION in AlActionMacro of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_FIELDS
-string CDocAlActionStruct::ActionSetFields(const ARSetFieldsActionStruct &action, int nAction)
+void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsActionStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
-	{		
+	{
 		//Find the seconds form in the set fields assignemt
 		//Possible values: "", "*", "schemaName" 
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
@@ -371,60 +347,38 @@ string CDocAlActionStruct::ActionSetFields(const ARSetFieldsActionStruct &action
 		//Qualification
 		strm << qualification.str() << endl;		
 
-		//All matching Ids
-		string setFieldInfo = "Field Mapping";
-		for(unsigned int i= 0; i< action.fieldList.numItems; i++)
+		// set field mapping
+		strm << "Field Mapping:";
+		if (action.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 		{
-			if(action.fieldList.fieldAssignList[i].fieldId == AR_LIKE_ID)
-			{
-				setFieldInfo = "Field Mapping: All Matching Ids";
-
-				strm << this->AllMatchingIds(schemaName, tmpDisplayName, "Set Fields", nAction);
-			}
-		}
-
-		if(strcmp(setFieldInfo.c_str(), "Field Mapping") ==  0)
-		{
-			strm << setFieldInfo << ":<br/>" << endl;
-
-			CARAssignHelper assignHelper(*arIn, rootLevel, this->obj->GetName(), this->structItemType, schemaName, schemaName2);
-			strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
+			strm << " All Matching Ids<br/>";
+			this->AllMatchingIds(strm, schemaName, tmpDisplayName, "Set Fields", nAction);
 		}
 		else
 		{
-			strm << setFieldInfo << endl;
+			strm << "<br/>" << endl;
+			CARAssignHelper assignHelper(*arIn, rootLevel, this->obj->GetName(), this->structItemType, schemaName, schemaName2);
+			strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in AlActionSetFields of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_PROCESS
-string CDocAlActionStruct::ActionProcess(const char *action, int nAction)
+void CDocAlActionStruct::ActionProcess(std::ostream& strm, const char *action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		if(action != NULL)
 		{
-			CFieldRefItem *refItemTmp = new CFieldRefItem();
-			refItemTmp->arsStructItemType = this->structItemType;
-
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Field in Run Process " << ifElse << "-Action " << nAction;
-			refItemTmp->description = strmTmpDesc.str();
 
-			refItemTmp->fromName = this->obj->GetName();
-			refItemTmp->schemaInsideId = schemaInsideId;
-
-			strm << arIn->TextFindFields(action, "$", refItemTmp->schemaInsideId, rootLevel, true, refItemTmp) << endl;
-			delete refItemTmp;
+			CFieldRefItem refItemTmp(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), 0, schemaInsideId);
+			strm << arIn->TextFindFields(action, "$", schemaInsideId, rootLevel, true, &refItemTmp) << endl;
 		}
 		else
 		{
@@ -435,16 +389,11 @@ string CDocAlActionStruct::ActionProcess(const char *action, int nAction)
 	{
 		cout << "EXCEPTION in AlActionProcess of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_MESSAGE
-string CDocAlActionStruct::ActionMessage(const ARMessageStruct &action, int nAction)
+void CDocAlActionStruct::ActionMessage(std::ostream& strm, const ARMessageStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		strm << "Message Number: " << action.messageNum << "<br/>" << endl;
@@ -452,33 +401,22 @@ string CDocAlActionStruct::ActionMessage(const ARMessageStruct &action, int nAct
 
 		if(action.messageText != NULL)
 		{
-			CFieldRefItem *refItemTmp = new CFieldRefItem();
-			refItemTmp->arsStructItemType = this->structItemType;
-
 			stringstream strmTmpDesc;
 			strmTmpDesc << "Message " << ifElse << "-Action " << nAction;
-			refItemTmp->description = strmTmpDesc.str();
 
-			refItemTmp->fromName = this->obj->GetName();
-			refItemTmp->schemaInsideId = schemaInsideId;
-			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, refItemTmp) << "<br/>" << endl;
-			delete refItemTmp;
+			CFieldRefItem refItemTmp(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), 0, schemaInsideId);
+			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, &refItemTmp) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in AlActionMessage of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_SET_CHAR
-string CDocAlActionStruct::ActionSetChar(const ARFieldCharacteristics &action, int nAction)
+void CDocAlActionStruct::ActionSetChar(std::ostream& strm, const ARFieldCharacteristics &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		stringstream strmTmpDesc;
@@ -492,11 +430,11 @@ string CDocAlActionStruct::ActionSetChar(const ARFieldCharacteristics &action, i
 		strm << "Field ";
 		if (action.option == AR_FIELD_CHAR_OPTION_REFERENCE)
 		{
-			strm << "(Use Value Of): $" << arIn->LinkToField(schemaName, action.fieldId, rootLevel) << "$<br/>" << endl;
+			strm << "(Use Value Of): $" << arIn->LinkToField(schemaInsideId, action.fieldId, rootLevel) << "$<br/>" << endl;
 		}
 		else
 		{
-			strm << "Name: " << arIn->LinkToField(schemaName, action.fieldId, rootLevel) << "<br/>" << endl;
+			strm << "Name: " << arIn->LinkToField(schemaInsideId, action.fieldId, rootLevel) << "<br/>" << endl;
 		}
 
 		//Access Option
@@ -504,48 +442,33 @@ string CDocAlActionStruct::ActionSetChar(const ARFieldCharacteristics &action, i
 
 
 		//Font
-		string tmp = "";
+		bool fontPropFound = false;
 		for(unsigned int i=0; i< action.props.numItems; i++)
 		{	
-			switch(action.props.props[i].prop)
+			if(action.props.props[i].prop == AR_DPROP_LABEL_FONT_STYLE && action.props.props[i].value.dataType == AR_DATA_TYPE_CHAR)
 			{
-			case AR_DPROP_LABEL_FONT_STYLE:
-				{
-					if(action.props.props[i].value.u.charVal != NULL)
-					{
-						tmp = action.props.props[i].value.u.charVal;
-					}
-				}
+				strm << "Field Font: " << action.props.props[i].value.u.charVal << "<br/>" << endl;
+				fontPropFound = true;
 				break;
 			}
 		}
-		if(tmp.size() > 0)
-			strm << "Field Font: " << tmp << "<br/>" << endl;
-		else
+		if (!fontPropFound)
 			strm << "Field Font: Unchanged<br/>" << endl;
 
 
-
 		//Visibility
-		tmp = "";
+		bool visibilityPropFound = false;
 		for(unsigned int i=0; i< action.props.numItems; i++)
 		{	
-			switch(action.props.props[i].prop)
-			{				
-			case AR_DPROP_VISIBLE:
-				{					
-					if(action.props.props[i].value.dataType == AR_DATA_TYPE_ENUM || action.props.props[i].value.dataType == AR_DATA_TYPE_INTEGER)
-					{
-						tmp =  CAREnum::SetCharFieldVisibility(action.props.props[i].value.u.intVal);
-					}
-				}
+			if(action.props.props[i].prop == AR_DPROP_VISIBLE && 
+				action.props.props[i].value.dataType == AR_DATA_TYPE_ENUM || action.props.props[i].value.dataType == AR_DATA_TYPE_INTEGER)
+			{
+				strm << "Visibility: " << CAREnum::SetCharFieldVisibility(action.props.props[i].value.u.intVal) << "<br/>" << endl;
+				visibilityPropFound = true;
 				break;
 			}
 		}
-
-		if(tmp.size() > 0)
-			strm << "Visibility: " << tmp << "<br/>" << endl;
-		else
+		if(!visibilityPropFound)
 			strm << "Visibility: Unchanged<br/>" << endl;
 
 
@@ -629,25 +552,15 @@ string CDocAlActionStruct::ActionSetChar(const ARFieldCharacteristics &action, i
 				break;
 			case AR_DPROP_LABEL:
 				{	
-					//if(action.props.props[i].value != NULL)
+					string value = CARValue::ValueToString(action.props.props[i].value);
+					if(!value.empty())
 					{
-						stringstream strmTmp;
-						strmTmp << CARValue::ValueToString(action.props.props[i].value);
-						if(strmTmp.str().size() > 0)
-						{
-							CFieldRefItem *refItemTmp = new CFieldRefItem();
-							refItemTmp->arsStructItemType = this->structItemType;
+						stringstream strmTmpDesc;
+						strmTmpDesc << "Change Field Label " << ifElse << "-Action " << nAction;
 
-							stringstream strmTmpDesc;
-							strmTmpDesc << "Change Field Label " << ifElse << "-Action " << nAction;
-							refItemTmp->description = strmTmpDesc.str();
+						CFieldRefItem refItemTmp(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), 0, schemaInsideId);
 
-							refItemTmp->fromName = this->obj->GetName();
-							refItemTmp->schemaInsideId = schemaInsideId;
-
-							strm << "Field Label: " << arIn->TextFindFields(strmTmp.str(), "$", schemaInsideId, rootLevel, true, refItemTmp)  << "<br/>" << endl;					
-							delete refItemTmp;
-						}
+						strm << "Field Label: " << arIn->TextFindFields(value, "$", schemaInsideId, rootLevel, true, &refItemTmp)  << "<br/>" << endl;					
 					}
 				}
 				break;
@@ -659,16 +572,11 @@ string CDocAlActionStruct::ActionSetChar(const ARFieldCharacteristics &action, i
 	{
 		cout << "EXCEPTION in AlActionSetChar of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_DDE
-string CDocAlActionStruct::ActionDde(const ARDDEStruct &action, int nAction)
+void CDocAlActionStruct::ActionDde(std::ostream& strm, const ARDDEStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		strm << "Action: " << CAREnum::DDEAction(action.action) << "<br/>" << endl;					
@@ -692,16 +600,11 @@ string CDocAlActionStruct::ActionDde(const ARDDEStruct &action, int nAction)
 	{
 		cout << "EXCEPTION in AlActionDde of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_FIELDP
-string CDocAlActionStruct::ActionPushFields(const ARPushFieldsActionStruct &action, int nAction)
+void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFieldsActionStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		string pushServer;
@@ -789,7 +692,7 @@ string CDocAlActionStruct::ActionPushFields(const ARPushFieldsActionStruct &acti
 		if(action.pushFieldsList.pushFieldsList[0].field.u.fieldId == AR_LIKE_ID)
 		{
 			strm << " All Matching Ids<br/>";
-			strm << this->AllMatchingIds(schemaName, pushSchema, "Push Fields", nAction);
+			this->AllMatchingIds(strm, schemaName, pushSchema, "Push Fields", nAction);
 		}
 		else
 		{
@@ -802,16 +705,11 @@ string CDocAlActionStruct::ActionPushFields(const ARPushFieldsActionStruct &acti
 	{
 		cout << "EXCEPTION in AlActionPushFields of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_SQL
-string CDocAlActionStruct::ActionSql(const ARSQLStruct &action, int nAction)
+void CDocAlActionStruct::ActionSql(std::ostream& strm, const ARSQLStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{		
 		if(action.server != NULL)
@@ -837,16 +735,11 @@ string CDocAlActionStruct::ActionSql(const ARSQLStruct &action, int nAction)
 	{
 		cout << "EXCEPTION in AlActionSql of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_AUTO
-string CDocAlActionStruct::ActionAutomation(const ARAutomationStruct &action, int nAction)
+void CDocAlActionStruct::ActionAutomation(std::ostream& strm, const ARAutomationStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		if(action.action != NULL)
@@ -866,21 +759,19 @@ string CDocAlActionStruct::ActionAutomation(const ARAutomationStruct &action, in
 
 			for(unsigned int nCnt = 0; nCnt < action.methodList.numItems; nCnt++)
 			{
-				stringstream mId, mName, mValue;
-				mId.str("");
-				mName.str("");
-				mValue.str("");
+				string mId, mName, mValue;
+
 
 				if(action.methodList.methodList[nCnt].methodIId != NULL)
-					mId << action.methodList.methodList[nCnt].methodIId;
+					mId = action.methodList.methodList[nCnt].methodIId;
 
 				if(action.methodList.methodList[nCnt].methodName != NULL)
-					mName << action.methodList.methodList[nCnt].methodName;
+					mName = action.methodList.methodList[nCnt].methodName;
 
 
 				CTableRow mRow("cssStdRow");
-				mRow.AddCell( CTableCell(mId.str()));
-				mRow.AddCell( CTableCell(mName.str()));
+				mRow.AddCell( CTableCell(mId) );
+				mRow.AddCell( CTableCell(mName) );
 				tblOleMethods.AddRow(mRow);	
 			}	
 			strm << tblOleMethods;
@@ -890,8 +781,6 @@ string CDocAlActionStruct::ActionAutomation(const ARAutomationStruct &action, in
 	{
 		cout << "EXCEPTION in AlActionAutomation of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 
@@ -914,11 +803,8 @@ bool CDocAlActionStruct::ActionOpenDlgQualifier(int nWindowType)
 }
 
 // AR_ACTIVE_LINK_ACTION_OPENDLG
-string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAction)
+void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		string openWindowServer;
@@ -1251,7 +1137,7 @@ string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAct
 			else if (action.msg.messageType > 0)
 			{
 				strm << "Show message<br/>";
-				strm << ActionMessage(action.msg, nAction);
+				ActionMessage(strm, action.msg, nAction);
 			}
 			strm << "</p>" << endl;
 
@@ -1377,16 +1263,11 @@ string CDocAlActionStruct::ActionOpenDlg(const AROpenDlgStruct &action, int nAct
 	{
 		cout << "EXCEPTION in AlActionOpenDlg of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_COMMITC
-string CDocAlActionStruct::ActionCommitChanges(const ARCommitChangesStruct &action, int nAction)
+void CDocAlActionStruct::ActionCommitChanges(std::ostream& strm, const ARCommitChangesStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		strm << "Schema: " << arIn->LinkToSchema(action.schemaName, rootLevel) << "<br/>" << endl;
@@ -1399,16 +1280,11 @@ string CDocAlActionStruct::ActionCommitChanges(const ARCommitChangesStruct &acti
 	{
 		cout << "EXCEPTION in AlActionCommitChanges of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_CLOSEWND
-string CDocAlActionStruct::ActionCloseWindow(const ARCloseWndStruct &action, int nAction)
+void CDocAlActionStruct::ActionCloseWindow(std::ostream& strm, const ARCloseWndStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{		
 		if(action.closeAll == TRUE)
@@ -1420,16 +1296,11 @@ string CDocAlActionStruct::ActionCloseWindow(const ARCloseWndStruct &action, int
 	{
 		cout << "EXCEPTION in AlActionCloseWindow of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_CALLGUIDE
-string CDocAlActionStruct::ActionCallGuide(const ARCallGuideStruct &action, int nAction)
+void CDocAlActionStruct::ActionCallGuide(std::ostream& strm, const ARCallGuideStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		if (action.serverName[0] == '$' /*&& action.sampleServer[0] != 0*/)
@@ -1487,116 +1358,95 @@ string CDocAlActionStruct::ActionCallGuide(const ARCallGuideStruct &action, int 
 	{
 		cout << "EXCEPTION in AlActionCallGuide of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_EXITGUIDE
-string CDocAlActionStruct::ActionExitGuide(const ARExitGuideStruct &action, int nAction)
+void CDocAlActionStruct::ActionExitGuide(std::ostream& strm, const ARExitGuideStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
-	{		
+	{
+		strm << "<input type=\"checkbox\" name=\"exitGuide\" value=\"exitGuideCloseAll\"";
 		if(action.closeAll == TRUE)
 		{
-			strm << "<input type=\"checkbox\" name=\"exitGuide\" value=\"exitGuideCloseAll\" checked>Close all guides on exit" << endl;
+			strm << " checked";
 		}
-		else
-		{
-			strm << "<input type=\"checkbox\" name=\"exitGuide\" value=\"exitGuideCloseAll\">Close all guides on exit" << endl;
-		}
+		strm << ">Close all guides on exit" << endl;
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in AlActionExitGuide of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_GOTOGUIDELABEL
-string CDocAlActionStruct::ActionGotoGuideLabel(const ARGotoGuideLabelStruct &action, int nAction)
+void CDocAlActionStruct::ActionGotoGuideLabel(std::ostream& strm, const ARGotoGuideLabelStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
-		if(action.label != NULL)
-		{
-			strm << "Guide Label: " << action.label << endl;	
-		}
-		else
-		{
-			strm << "Guide Label: " << EmptyValue << endl;	
-		}
+		strm << "Guide Label: " << (action.label != NULL ? action.label : EmptyValue) << endl;	
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in AlActionGuideLabel of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_WAIT
-string CDocAlActionStruct::ActionWait(const ARWaitStruct &action, int nAction)
+void CDocAlActionStruct::ActionWait(std::ostream& strm, const ARWaitStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
-		if(action.continueButtonTitle != NULL)
-		{
-			strm << "Label for Continue Button: " << action.continueButtonTitle << endl;
-		}
-		else
-		{
-			strm << "Label for Continue Button: " << EmptyValue << endl;
-		}
+		strm << "Label for Continue Button: " << (action.continueButtonTitle != NULL ? action.continueButtonTitle : EmptyValue) << endl;
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in AlActionWait of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 // AR_ACTIVE_LINK_ACTION_GOTOACTION
-string CDocAlActionStruct::ActionGotoAction(const ARGotoActionStruct &action, int nAction)
+void CDocAlActionStruct::ActionGotoAction(std::ostream& strm, const ARGotoActionStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
-		if(action.fieldIdOrValue != NULL)
+		strm << "FieldId or Value: ";
+		switch (action.tag)
 		{
-			strm << "FieldId or Value: " << arIn->LinkToField(schemaName, action.fieldIdOrValue, rootLevel) << endl;
-		}
-		else
-		{
-			strm << "FieldId or Value: " << EmptyValue << endl;
+		case AR_GOTO_FIELD_XREF:
+			{
+			// generate reference description
+			stringstream strmTmpDesc;
+			strmTmpDesc << "Used as Goto-Value in " << ifElse << "-Action " << nAction;
+			
+			// add new reference item to the field
+			CFieldRefItem refItem(this->structItemType, this->obj->GetName(), strmTmpDesc.str(), action.fieldIdOrValue, schemaInsideId);
+			arIn->AddReferenceItem(&refItem);
+
+			// link to field in current page
+			strm << arIn->LinkToField(schemaName, action.fieldIdOrValue, rootLevel) << endl;
+			break;
+			}
+		case AR_GOTO_ABSOLUTE_ORDER:
+			strm << action.fieldIdOrValue;
+			break;
+		case AR_GOTO_OFFSET_FORWARD:
+			strm << "+" << action.fieldIdOrValue;
+			break;
+		case AR_GOTO_OFFSET_BACKWARD:
+			strm << "-" << action.fieldIdOrValue;
+			break;
 		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in AlActionGotoAction of '" << this->obj->GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 // AR_ACTIVE_LINK_ACTION_SERVICE
-string CDocAlActionStruct::ActionService(const ARActiveLinkSvcActionStruct &action, int nAction)
+void CDocAlActionStruct::ActionService(std::ostream& strm, const ARActiveLinkSvcActionStruct &action, int nAction)
 {
-	stringstream strm;
-	strm.str("");
 	string serviceServer;
 	string serviceSchema;
 
@@ -1685,7 +1535,5 @@ string CDocAlActionStruct::ActionService(const ARActiveLinkSvcActionStruct &acti
 	{
 		cout << "EXCEPTION in AlActionService: " << this->obj->GetName() << endl;
 	}
-
-	return strm.str();
 }
 #endif
