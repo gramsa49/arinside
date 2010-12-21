@@ -1300,10 +1300,10 @@ bool CARInside::ValidateGroup(const string& appRefName, int permissionId)
 	else
 	{
 		list<CARRole>::iterator roleIter;
-		for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++)
+		for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); ++roleIter)
 		{
 			CARRole *role = &(*roleIter);
-			if(role->roleId == permissionId && strcmp(role->applicationName.c_str(), appRefName.c_str())==0)
+			if(role->roleId == permissionId && (role->applicationName == appRefName))
 			{
 				return true;
 			}
@@ -1315,10 +1315,6 @@ bool CARInside::ValidateGroup(const string& appRefName, int permissionId)
 
 string CARInside::LinkToGroup(const string& appRefName, int permissionId, int rootLevel)
 {	
-	stringstream strmTmp;
-	strmTmp.str("");
-	strmTmp << permissionId;
-
 	if(permissionId >= 0)
 	{
 		list<CARGroup>::iterator group = this->groupList.begin();
@@ -1333,7 +1329,7 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 	}
 	else
 	{
-		if(appRefName.c_str() != NULL && strcmp(appRefName.c_str(), "") != 0)
+		if(!appRefName.empty())
 		{
 			list<CARRole>::iterator role = this->roleList.begin();
 			list<CARRole>::iterator endIt = this->roleList.end();
@@ -1347,58 +1343,38 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 		}
 	}
 
+	stringstream strmTmp;
+	strmTmp << permissionId;
 	return strmTmp.str();
-}
-
-string CARInside::LinkToAlRef(int alInsideId, int rootLevel)
-{
-	if (alInsideId < 0) return EmptyValue;
-
-	CARActiveLink al(alInsideId);
-	return LinkToAlRef(al, rootLevel);
 }
 
 string CARInside::LinkToAlRef(const string &alName, int rootLevel)
 {
-	if (alName.empty()) return EmptyValue;
+	CARActiveLink al(alName);
+	if (!al.Exists())
+		return EmptyValue;
 
-	int alInsideId = alList.Find(alName.c_str());
-	if (alInsideId > -1)
-		return LinkToAlRef(alInsideId, rootLevel);
-
-	return EmptyValue;
-}
-
-string CARInside::LinkToAlRef(CARActiveLink &al, int rootLevel)
-{
 	stringstream strmTmp;
-	strmTmp.str("");
-
 	strmTmp << al.GetURL(rootLevel) << " (" << al.GetOrder() << ")";
 	return strmTmp.str();
 }
 
-string CARInside::LinkToAl(string alName, int fromRootLevel)
+string CARInside::LinkToAl(const string& alName, int fromRootLevel)
 {
-	if (alName.empty()) return alName;
+	CARActiveLink al(alName);
+	if (!al.Exists())
+		return alName;
 
-	int alInsideId = alList.Find(alName.c_str());
-	if (alInsideId > -1)
-	{
-		CARActiveLink al(alInsideId);
-		return al.GetURL(fromRootLevel);
-	}
-
-	return alName;
+	return al.GetURL(fromRootLevel);
 }
 
 string CARInside::LinkToAl(int alInsideId, int rootLevel)
 {
-	if (alInsideId > -1)
-	{
-		CARActiveLink al(alInsideId);
+	CARActiveLink al(alInsideId);
+
+	if (al.Exists())
 		return al.GetURL(rootLevel);
-	}
+
 	return EmptyValue;
 }
 
@@ -1590,16 +1566,14 @@ string CARInside::XmlObjEnabled(CARServerObject *obj)
 
 string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 {
-	string result = "";
-
 	switch(arsStructItemType)
 	{
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
-			int alInsideId = alList.Find(objName.c_str());
-			if (alInsideId > -1)
+			CARActiveLink al(objName);
+			if (al.Exists())
 			{
-				return CAREnum::ObjectEnable(alList.ActiveLinkGetEnabled(alInsideId));
+				return CAREnum::ObjectEnable(al.GetEnabled());
 			}
 		}
 		break;
@@ -1623,7 +1597,7 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 		break;	
 	}
 
-	return result;
+	return "";
 }
 
 

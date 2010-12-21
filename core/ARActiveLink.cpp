@@ -24,6 +24,12 @@ CARActiveLink::CARActiveLink(int insideId)
 {
 }
 
+CARActiveLink::CARActiveLink(const string& name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->alList.Find(name.c_str());
+}
+
 bool CARActiveLink::IsClonable()
 {
 	return true;
@@ -43,6 +49,11 @@ string CARActiveLink::GetURL(int rootLevel, bool showImage)
 
 CARActiveLink::~CARActiveLink(void)
 {
+}
+
+bool CARActiveLink::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->alList.GetCount());
 }
 
 /// Builds a ExecuteOn-string

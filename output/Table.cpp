@@ -171,7 +171,8 @@ void CTable::ToXHtml(std::ostream &strm)
 	strm << ">" << endl; // closing table tag here
 
 	this->GetColumnDefinition(strm);
-	this->GetHeaderDefinition(strm);
+	if (!hideHeader)
+		this->GetHeaderDefinition(strm);
 
 	if(listRows.size() > 0)
 	{
@@ -186,40 +187,6 @@ void CTable::ToXHtml(std::ostream &strm)
 	}
 
 	strm << "</table>" << endl;
-}
-
-
-string CTable::ToXHtmlNoHeader()
-{
-	stringstream strm;
-	strm.str("");
-
-	strm << "<table id=\"" << this->htmId << "\"";
-
-	if(this->cssClass.length() == 0)
-	{
-		strm << ">" << endl;
-	}
-	else
-	{
-		strm << " class=\"" << this->cssClass << "\">" << endl;
-	}
-
-	this->GetColumnDefinition(strm);
-	if(listRows.size() > 0)
-	{
-		this->GetHtmlRows(strm);
-	}
-	else
-	{
-		size_t nColspan = listColumns.size();
-		strm << "<tr>" << endl << "<td colspan=\"" << (unsigned)nColspan << "\">" << endl;
-		strm << "Table contains no data" << endl;
-		strm << "</td>" << endl << "</tr>" << endl;
-	}
-
-	strm << "</table>" << endl;
-	return strm.str();	
 }
 
 string CTable::ToCsv()

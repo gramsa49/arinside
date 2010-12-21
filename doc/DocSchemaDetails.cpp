@@ -770,6 +770,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 				tblFieldPermissionDetails.AddColumn(5, "Permission");
 				tblFieldPermissionDetails.AddColumn(20, "Description");
 				tblFieldPermissionDetails.AddColumn(75, "Group Name");
+				tblFieldPermissionDetails.DisableHeader();
 
 				for(unsigned int i = 0; i < fldPerms.numItems; ++i)
 				{
@@ -787,7 +788,7 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 					tblFieldPermissionDetails.AddRow(row);
 				}
 
-				strmFieldPermissions << tblFieldPermissionDetails.ToXHtmlNoHeader();
+				strmFieldPermissions << tblFieldPermissionDetails;
 			}
 			else
 			{

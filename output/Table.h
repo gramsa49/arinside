@@ -46,10 +46,14 @@ namespace OUTPUT
 		void AddColumn(int width, const string& text, const string& cssClass);	
 		void AddRow(const CTableRow& tableRow);
 
+		void DisableHeader() { hideHeader = true; }
+		void EnableHeader() { hideHeader = false; }
+
 	private:	
 		list<CTableRow> listRows;
 		list<CTableColumn> listColumns;
 		string htmId;
+		bool hideHeader;
 		void GetHtmlRows(std::ostream& strm);
 		void GetCsvRows(std::ostream& strm);
 		void GetColumnDefinition(std::ostream& strm);

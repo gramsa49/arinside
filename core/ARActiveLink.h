@@ -26,7 +26,10 @@ class CARActiveLink :
 {
 public:
 	CARActiveLink(int insideId);
+	CARActiveLink(const string& name);
 	~CARActiveLink(void);
+
+	bool Exists();
 
 	// implement functions inherited from CARObject
 	string GetName();

@@ -42,13 +42,49 @@ string CWebUtil::RootPath(int level)
 	}
 }
 
-string CWebUtil::Validate(string text)
+string CWebUtil::Validate(const string& text)
 {
-	text = CUtil::StrReplace("&", "&amp;", text);
-	text = CUtil::StrReplace("\"", "&quot;", text);
-	text = CUtil::StrReplace("<", "&lt;", text);
-	text = CUtil::StrReplace(">", "&gt;", text);
-	return text;
+	const char* HtmlSpecialChars = "&\"<>";
+
+	std::string::size_type start = 0;
+	std::string::size_type pos = text.find_first_of(HtmlSpecialChars, start);
+
+	if (pos == std::string::npos) return text;
+
+	stringstream result;
+	while(pos != std::string::npos)
+	{
+		result << text.substr(start, pos - start);
+
+		switch (text[pos])
+		{
+		case '&':
+			result << "&amp;";
+			break;
+		case '\"':
+			result << "&quot;";
+			break;
+		case '<':
+			result << "&lt;";
+			break;
+		case '>':
+			result << "&gt;";
+			break;
+		}
+		start = pos + 1;
+		pos = text.find_first_of(HtmlSpecialChars, start);
+	}
+
+	if (start < text.size())
+		result << text.substr(start);
+
+	return result.str();
+
+	//text = CUtil::StrReplace("&", "&amp;", text);
+	//text = CUtil::StrReplace("\"", "&quot;", text);
+	//text = CUtil::StrReplace("<", "&lt;", text);
+	//text = CUtil::StrReplace(">", "&gt;", text);
+	//return text;
 }
 
 string CWebUtil::HtmlPageSuffix()
@@ -71,12 +107,12 @@ string CWebUtil::CsvPageSuffix()
 	return "txt";
 }
 
-string CWebUtil::DocName(string fName)
+string CWebUtil::DocName(const string& fName)
 {
 	return fName+"."+WebPageSuffix();
 }
 
-string CWebUtil::CsvDocName(string fName)
+string CWebUtil::CsvDocName(const string& fName)
 {
 	return fName+"."+CsvPageSuffix();
 }

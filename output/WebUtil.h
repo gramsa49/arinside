@@ -34,7 +34,7 @@ namespace OUTPUT
 		~CWebUtil(void);
 
 		static string RootPath(int level);	
-		static string Validate(string text);
+		static string Validate(const string& text);
 		//static string Replace(string text);
 
 		static string Link(const string& caption, const string& linkTo, const string &imgName, int rootLevel);
@@ -49,8 +49,8 @@ namespace OUTPUT
 		static string WebPageSuffix();
 		static string CsvPageSuffix();
 		static string ImageTag(const string& imgName, int rootLevel);
-		static string DocName(string fName);
-		static string CsvDocName(string fName);
+		static string DocName(const string& fName);
+		static string CsvDocName(const string& fName);
 		static string ObjName(const string& objName);
 		static string ChkBoxInput(string nameAndValue, bool checked);
 
