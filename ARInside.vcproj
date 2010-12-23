@@ -1564,6 +1564,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\RefItem.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\RefItem.h"
+				>
+			</File>
+			<File
 				RelativePath=".\util\Uncopyable.h"
 				>
 			</File>

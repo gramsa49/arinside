@@ -16,7 +16,9 @@
 
 #pragma once
 
-class CFieldRefItem
+#include "RefItem.h"
+
+class CFieldRefItem : public CRefItem
 {
 public:
 	CFieldRefItem();
@@ -29,4 +31,11 @@ public:
 	string description;
 	int fieldInsideId;
 	int schemaInsideId;
+
+	virtual int GetReferenceType() { return REF_ITEM_TYPE_OLD; }
+	virtual int GetObjectXMLType() { return arsStructItemType; }
+	virtual string GetObjectName();
+	virtual unsigned int GetObjectEnabled(bool &supportsEnabled);
+	virtual string GetDescription();
+	
 };
