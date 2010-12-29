@@ -37,7 +37,7 @@ class IFileStructure;
 #include "util/BlackListItem.h"
 #include "WindowsUtil.h"
 #include "AppConfig.h"
-#include "util/FieldRefItem.h"
+#include "util/RefItem.h"
 #include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
 #include "lists/ARSchemaList.h"
@@ -140,13 +140,13 @@ public:
 	string LinkToGroup(const string& appRefName, int permissionId, int rootLevel);
 	string GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition);
 
-	void AddReferenceItem(CFieldRefItem *refItem);
+	void AddFieldReference(int schemaId, int fieldId, const CRefItem& ref);
 	void AddMissingMenu(const CMissingMenuRefItem& refItem);
-	string TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, CFieldRefItem *refItem);
+	string TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
 	string TextFindKeywords(string inText, string fieldSeparator);	
-	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 
-	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem);
+	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CRefItem &refItem);
 
 	string ServerObjectHistory(CARServerObject *obj, int rootLevel);
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);
@@ -189,11 +189,11 @@ private:
 	void ParseVersionString(int xmlVersion);
 
 	bool getPos(const string& inText, const string& findText);
-	string processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
-	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, CFieldRefItem *refItem);
+	string processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
+	string processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
+	string processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
+	string processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
+	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 
 	bool WriteHTAccess();
 };

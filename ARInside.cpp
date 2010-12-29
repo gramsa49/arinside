@@ -297,7 +297,7 @@ void CARInside::Prepare(void)
 	delete docMain;
 }
 
-bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CFieldRefItem &refItem)
+bool CARInside::FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CRefItem &refItem)
 {
 	CARField fld(schemaInsideId, fieldInsideId);
 	if (!fld.Exists()) return false;
@@ -1659,11 +1659,8 @@ void CARInside::CustomFieldReferences(const CARSchema &schema, const CARField &o
 				if (columnSource.Exists())
 				{
 					// if the columns source field exists, create a link (in the workflow references list) from the source field to the current column
-					stringstream tmpDesc;
-					tmpDesc << "Column in Table " + LinkToField(schema.GetInsideId(), fLimit.parent, rootLevel) << " of Form " << LinkToSchema(schema.GetInsideId(), rootLevel);
-					CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), tmpDesc.str(), columnSource.GetInsideId(), columnSource.GetSchema().GetInsideId());
-					refItem.fromFieldId = obj.GetInsideId();
-					this->AddReferenceItem(&refItem);
+					CRefItem refItem(obj, 0, fLimit.parent, REFM_TABLEFIELD_COLUMN);
+					this->AddFieldReference(columnSource.GetSchema().GetInsideId(), columnSource.GetInsideId(), refItem);
 				}
 			}
 			break;
@@ -1687,8 +1684,7 @@ void CARInside::CustomFieldReferences(const CARSchema &schema, const CARField &o
 				if (tableSourceSchema.Exists() && fLimit.qualifier.operation != AR_COND_OP_NONE)
 				{		
 					stringstream strmQuery;
-					CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetARName(), "Table Qualification", 0, 0);
-					refItem.fromFieldId = obj.GetFieldId();
+					CRefItem refItem(obj, REFM_TABLEFIELD_QUALIFICATION);
 
 					CARQualification arQual(*this);
 					int pFormId = schema.GetInsideId();
@@ -1706,18 +1702,18 @@ void CARInside::CustomFieldReferences(const CARSchema &schema, const CARField &o
 	}
 }
 
-void CARInside::AddReferenceItem(CFieldRefItem *refItem)
+void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref)
 {
-	CARSchema schema(refItem->schemaInsideId);
-	CARField fld(refItem->schemaInsideId, refItem->fieldInsideId);
+	CARSchema schema(schemaId);
+	CARField fld(schemaId, fieldId);
 
 	if (fld.Exists())
 	{
-		fld.AddReference(*refItem);
+		fld.AddReference(ref);
 	}
 	else if (schema.Exists())
 	{
-		schema.AddMissingFieldReference(refItem->fieldInsideId, *refItem);
+		schema.AddMissingFieldReference(fieldId, ref);
 	}
 	// TODO: create a list of missing schemas
 	//else
@@ -1747,7 +1743,7 @@ void CARInside::AddMissingMenu(const CMissingMenuRefItem& refItem)
 	}
 }
 
-string CARInside::TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, CFieldRefItem *refItem)
+string CARInside::TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem)
 {	
 	try
 	{
@@ -1825,8 +1821,8 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 
 						// now link to the field
 						strmTmp << field.GetURL(rootLevel);
-						refItem->fieldInsideId = field.GetFieldId();
-						AddReferenceItem(refItem);
+						if (refItem != NULL)
+							AddFieldReference(schemaInsideId, iFieldId, *refItem);
 
 						// special handling for status history
 						if (iFieldId == 15)
@@ -2096,7 +2092,7 @@ string CARInside::TextFindKeywords(string inText, string fieldSeparator)
 }
 
 
-string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {	
 	try
 	{
@@ -2123,9 +2119,8 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 
 			//if the string is longer because we have added a link (long string) we add a field reference
 			if(inText.length() > nLengthOrg) 
-			{						
-				refItem->fieldInsideId = field.GetFieldId();
-				AddReferenceItem(refItem);
+			{
+				AddFieldReference(schema.GetInsideId(), field.GetInsideId(), *refItem);
 			}
 		}
 	}
@@ -2409,6 +2404,7 @@ void CARInside::SearchContainerReferences()
 		{
 		case ARCON_GUIDE:
 		case ARCON_FILTER_GUIDE:
+		case ARCON_WEBSERVICE:
 			{
 				const ARContainerOwnerObjList& ownerList = cnt.GetOwnerObjects();
 				for (unsigned int ownerIndex = 0; ownerIndex < ownerList.numItems; ++ownerIndex)
@@ -2425,6 +2421,9 @@ void CARInside::SearchContainerReferences()
 								break;
 							case ARCON_FILTER_GUIDE:
 								schema.AddFilterGuide(cnt);
+								break;
+							case ARCON_WEBSERVICE:
+								schema.AddWebservice(cnt);
 								break;
 							}
 						}
@@ -2596,7 +2595,7 @@ int CARInside::CompareServerVersion(int major, int minor, int revision)
 	/*if (vMajor > major)*/ return 1;
 }
 
-string CARInside::processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -2628,7 +2627,7 @@ string CARInside::processOneField(const string& command, const string& inText, i
 
 	return strmTmp.str();
 }
-string CARInside::processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -2672,7 +2671,7 @@ string CARInside::processTwoFields(const string& command, const string& inText, 
 
 	return strmTmp.str();
 }
-string CARInside::processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {
 	stringstream strmTmp;
 	string form = "";
@@ -2709,7 +2708,7 @@ string CARInside::processForm(const string& command, const string& inText, int s
 
 	return strmTmp.str();
 }
-string CARInside::processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -2745,7 +2744,7 @@ bool CARInside::getPos(const string& inText, const string& findText)
 	return (pos != std::string::npos);
 }
 
-string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CFieldRefItem *refItem)
+string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {
 	stringstream strmTmp;
 
@@ -2755,11 +2754,12 @@ string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, CF
 		if (field.Exists())
 		{
 			strmTmp << field.GetURL(rootLevel);
-			refItem->fieldInsideId = field.GetInsideId();
-			AddReferenceItem(refItem);
 		}
 		else
 			strmTmp << iFieldId;
+
+		// add reference
+		AddFieldReference(schemaInsideId, iFieldId, *refItem);
 	}
 	catch (...) {
 		cout << "Exception in refFieldID" << endl;

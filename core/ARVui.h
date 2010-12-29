@@ -55,9 +55,9 @@ public:
 	string GetURL(int rootLevel, bool showImage = true);
 
 	// class type support
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_VUI; }
-	bool IsClonable();
-	CARServerObject* Clone();
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_VUI; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 
 private:
 	CARSchema schema;

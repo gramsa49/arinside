@@ -44,12 +44,12 @@ CARContainer::~CARContainer(void)
 {
 }
 
-bool CARContainer::IsClonable()
+bool CARContainer::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARContainer::Clone()
+CARServerObject* CARContainer::Clone() const
 {
 	return new CARContainer(*this);
 }

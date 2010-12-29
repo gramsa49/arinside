@@ -241,15 +241,9 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 			if (schemaInsideId == -2)
 				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
 
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ACTIVE_LINK;
-			refItem->description = "Control Field";
-			refItem->fromName = this->al.GetName();	
-			refItem->fieldInsideId = this->al.GetControlField();
-			refItem->schemaInsideId = schemaInsideId;
-			pgStrm << "Control Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetControlField(), rootLevel) << "<br/><br/>" << endl; 
-			this->pInside->AddReferenceItem(refItem);
-			delete refItem;
+			pgStrm << "Control Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetControlField(), rootLevel) << "<br/><br/>" << endl;
+			CRefItem refItem(this->al, REFM_CONTROLFIELD);
+			pInside->AddFieldReference(schemaInsideId, this->al.GetControlField(), refItem);
 		}
 
 
@@ -258,15 +252,9 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 			if (schemaInsideId == -2)
 				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
 
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ACTIVE_LINK;
-			refItem->description = "Focus Field";
-			refItem->fromName = this->al.GetName();	
-			refItem->fieldInsideId = this->al.GetFocusField();
-			refItem->schemaInsideId = schemaInsideId;
 			pgStrm << "Focus Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetFocusField(), rootLevel) << "<br/><br/>" << endl;
-			this->pInside->AddReferenceItem(refItem);
-			delete refItem;
+			CRefItem refItem(this->al, REFM_FOCUSFIELD);
+			pInside->AddFieldReference(schemaInsideId, al.GetFocusField(), refItem);
 		}
 
 		//Query
@@ -276,17 +264,12 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 			if (schemaInsideId == -2)
 				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
 
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_ACTIVE_LINK;
-			refItem->description = "Run If";
-			refItem->fromName = this->al.GetName();
+			CRefItem refItem(this->al, REFM_RUNIF);
 
 			CARQualification arQual(*this->pInside);
 			int pFormId = schemaInsideId;
 			int sFormId = schemaInsideId;
-			arQual.CheckQuery(&this->al.GetRunIf(), *refItem, 0, pFormId, sFormId, strmTmp, rootLevel);
-
-			delete refItem;
+			arQual.CheckQuery(&this->al.GetRunIf(), refItem, 0, pFormId, sFormId, strmTmp, rootLevel);
 		}
 		else
 		{
@@ -297,10 +280,10 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 
 		//If-Actions		
 		CDocAlActionStruct actionStruct(*this->pInside, this->al, schemaName, this->rootLevel);
-		pgStrm << actionStruct.Get("If", this->al.GetIfActions());
+		pgStrm << actionStruct.Get(IES_IF, this->al.GetIfActions());
 
 		//Else-Actions
-		pgStrm << actionStruct.Get("Else", this->al.GetElseActions());
+		pgStrm << actionStruct.Get(IES_ELSE, this->al.GetElseActions());
 	}
 	catch(exception& e)
 	{

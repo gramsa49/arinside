@@ -1540,14 +1540,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Util\FieldRefItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Util\FieldRefItem.h"
-				>
-			</File>
-			<File
 				RelativePath=".\util\ImageRefItem.cpp"
 				>
 			</File>

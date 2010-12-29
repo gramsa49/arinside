@@ -18,9 +18,6 @@
 #include "ARServerObject.h"
 #include "ARSchema.h"
 
-// forward declarations
-class CFieldRefItem;
-
 class CARField :
 	public CARServerObject
 {
@@ -64,15 +61,15 @@ public:
 	string GetURL(int rootLevel, bool showImage = true);
 
 	// class type support
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FIELD; }
-	bool IsClonable();
-	CARServerObject* Clone();
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_FIELD; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 
 	// internal workflow references
 	typedef CARFieldList::ReferenceList ReferenceList;
-	bool ReferenceExists(const CFieldRefItem& refItem) const;
-	bool AddReference(const CFieldRefItem& refItem) const;
-	const ReferenceList GetReferences() const;
+	bool ReferenceExists(const CRefItem& refItem) const;
+	void AddReference(const CRefItem& refItem) const;
+	const ReferenceList& GetReferences() const;
 private:
 	CARSchema schema;
 	CARFieldList *fieldList;

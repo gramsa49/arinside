@@ -31,8 +31,8 @@ public:
 	virtual const ARAccessNameType& GetLastChanged() const = 0;
 	virtual const char* GetChangeDiary() const = 0;
 	virtual string GetURL(int rootLevel, bool showImage = true) = 0;
-	virtual int GetServerObjectTypeXML() = 0;
+	virtual int GetServerObjectTypeXML() const = 0;
 
-	virtual CARServerObject* Clone() = 0;
-	virtual bool IsClonable() = 0;
+	virtual CARServerObject* Clone() const = 0;
+	virtual bool IsClonable() const = 0;
 };

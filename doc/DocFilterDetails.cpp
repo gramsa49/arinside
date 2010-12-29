@@ -186,18 +186,13 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 		stringstream strmQuery;
 		if(this->filter.GetRunIf().operation != 0)
 		{		
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;
-			refItem->description = "Run If";
-			refItem->fromName = this->filter.GetName();
-
+			CRefItem refItem(this->filter, REFM_RUNIF);
 			CARQualification arQual(*this->pInside);
 
 			int pFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
 			int sFormId = pFormId;
-			arQual.CheckQuery(&this->filter.GetRunIf(), *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
-			delete refItem;
+			arQual.CheckQuery(&this->filter.GetRunIf(), refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 		}
 		else
 		{
@@ -208,10 +203,10 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 
 		//If-Actions		
 		CDocFilterActionStruct actionStruct(*this->pInside, this->filter, schemaName, this->rootLevel, AR_STRUCT_ITEM_XML_FILTER);
-		pgStrm << actionStruct.Get("If", this->filter.GetIfActions());
+		pgStrm << actionStruct.Get(IES_IF, this->filter.GetIfActions());
 
 		//Else-Actions
-		pgStrm << actionStruct.Get("Else", this->filter.GetElseActions());
+		pgStrm << actionStruct.Get(IES_ELSE, this->filter.GetElseActions());
 	}
 	catch(exception& e)
 	{

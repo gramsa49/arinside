@@ -29,7 +29,7 @@ public:
 	~CDocFilterActionStruct(void);
 
 public:
-	string Get(string ifElse, const ARFilterActionList &actList);
+	string Get(IfElseState ifElse, const ARFilterActionList &actList);
 
 private:
 	CARInside *arIn;
@@ -38,10 +38,22 @@ private:
 	int schemaInsideId;
 	int rootLevel;
 	int structItemType;
-	string ifElse;
+	IfElseState ifElse;
+
+	enum AllMatchingMode 
+	{
+		AMM_PUSHFIELDS,
+		AMM_SETFIELDS
+	};
+
+	enum WebserviceMappingMode 
+	{
+		WMM_INPUT,
+		WMM_OUTPUT
+	};
 
 	//Get all matching IDs of two forms
-	string AllMatchingIds(string table1, string table2, string description, int nAction);
+	string AllMatchingIds(string table1, string table2, AllMatchingMode mode, int nAction);
 
 	//AR_FILTER_ACTION_NONE
 	string FilterActionNone(int nAction);
@@ -79,7 +91,7 @@ private:
 	// AR_FILTER_ACTION_GOTOGUIDELABEL
 	string FilterActionGotoGuideLabel(ARGotoGuideLabelStruct &action, int nAction);
 
-	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, string type);
+	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// AR_FILTER_ACTION_SERVICE

@@ -76,9 +76,9 @@ public:
 	string VuiGetLabel(int vuiId);
 
 	// class type support
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_SCHEMA; }
-	bool IsClonable();
-	CARServerObject* Clone();
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_SCHEMA; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 
 	void AddFilter(const CARFilter& filter);
 	void AddActiveLink(const CARActiveLink& actlink);
@@ -86,11 +86,11 @@ public:
 	void AddActLinkGuide(const CARContainer& alGuide);
 	void AddFilterGuide(const CARContainer& fltGuide);
 	void AddPackingList(const CARContainer& packList);
-	// TODO: add references for WS
+	void AddWebservice(const CARContainer& webservice);
 
 	typedef CARSchemaList::MissingReferenceItem MissingReferenceItem;
 	typedef CARSchemaList::MissingReferenceList MissingReferenceList;
-	void AddMissingFieldReference(int fieldId, const CFieldRefItem& refItem);
+	void AddMissingFieldReference(int fieldId, const CRefItem& refItem);
 	const MissingReferenceList* GetMissingReferences();
 
 	const CARSchemaList::ObjectRefList& GetActiveLinks();
@@ -99,4 +99,5 @@ public:
 	const CARSchemaList::ObjectRefList& GetActLinkGuides();
 	const CARSchemaList::ObjectRefList& GetFilterGuides();
 	const CARSchemaList::ObjectRefList& GetPackingLists();
+	const CARSchemaList::ObjectRefList& GetWebservices();
 };

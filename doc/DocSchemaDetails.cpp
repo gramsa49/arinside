@@ -903,16 +903,8 @@ void CDocSchemaDetails::IndexDoc()
 					tbl.AddRow(row);
 
 					//Add a reference
-					CFieldRefItem *refItem = new CFieldRefItem();
-					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-
-					string tmp = CWebUtil::Link(indexList.indexList[nIndex].indexName, CPageParams(PAGE_SCHEMA_INDEXES, &this->schema), "", rootLevel);
-					refItem->description = "Field in "+tmp;
-					refItem->fromName = this->schema.GetName();
-					refItem->fieldInsideId = field.GetInsideId();
-					refItem->schemaInsideId = this->schema.GetInsideId();
-					this->pInside->AddReferenceItem(refItem);
-					delete refItem;
+					CRefItem refItem(this->schema, 0, nIndex, REFM_SCHEMA_INDEX);
+					pInside->AddFieldReference(schema.GetInsideId(), field.GetInsideId(), refItem);
 				}
 			}
 
@@ -972,17 +964,8 @@ void CDocSchemaDetails::ResultListDoc()
 				tbl.AddRow(row);
 
 				//Add a reference
-				CFieldRefItem *refItem = new CFieldRefItem();
-				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-
-				string tmp = CWebUtil::Link("ResultList", CPageParams(PAGE_SCHEMA_RESULTLIST, &this->schema), "", rootLevel);
-				refItem->description = "Field in "+tmp;
-
-				refItem->fromName = this->schema.GetName();
-				refItem->fieldInsideId = field.GetInsideId();
-				refItem->schemaInsideId = this->schema.GetInsideId();
-				this->pInside->AddReferenceItem(refItem);
-				delete refItem;				
+				CRefItem refItem(this->schema, REFM_SCHEMA_RESULTLIST);
+				pInside->AddFieldReference(schema.GetInsideId(), field.GetInsideId(), refItem);
 			}
 		}
 
@@ -1048,14 +1031,8 @@ void CDocSchemaDetails::SortListDoc()
 				tbl.AddRow(row);
 
 				//Add a reference
-				CFieldRefItem *refItem = new CFieldRefItem();
-				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-				refItem->description = "SortList";
-				refItem->fromName = this->schema.GetName();
-				refItem->fieldInsideId = field.GetInsideId();
-				refItem->schemaInsideId = this->schema.GetInsideId();
-				this->pInside->AddReferenceItem(refItem);
-				delete refItem;
+				CRefItem refItem(this->schema, REFM_SCHEMA_SORTLIST);
+				pInside->AddFieldReference(schema.GetInsideId(), field.GetInsideId(), refItem);
 			}
 		}
 
@@ -1302,21 +1279,16 @@ string CDocSchemaDetails::TypeDetails()
 
 				if(compSchema.u.join.joinQual.operation != NULL)
 				{
-					CFieldRefItem *refItem = new CFieldRefItem();
-					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_SCHEMA;
-					refItem->description = "Join Qualification";
-					refItem->fromName = this->schema.GetName();
-
 					stringstream strmQuery;
-
+					CRefItem refItem(this->schema, REFM_SCHEMA_JOIN_QUALIFICATION);
 					CARQualification arQual(*this->pInside);
 
 					int pFormId = this->pInside->SchemaGetInsideId(compSchema.u.join.memberA);
 					int sFormId = this->pInside->SchemaGetInsideId(compSchema.u.join.memberB);
-					arQual.CheckQuery(&compSchema.u.join.joinQual, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
+
+					arQual.CheckQuery(&compSchema.u.join.joinQual, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
 					strm << "Join Qualification: " << strmQuery.str();
-					delete refItem;
 				}
 			}
 			break;
@@ -1352,6 +1324,7 @@ string CDocSchemaDetails::ContainerReferences()
 	strm.str("");
 	try
 	{
+		//// Active Link Guides ////
 		const CARSchemaList::ObjectRefList& alg = schema.GetActLinkGuides();
 		CARSchemaList::ObjectRefList::const_iterator curIt = alg.begin();
 		CARSchemaList::ObjectRefList::const_iterator endIt = alg.end();
@@ -1360,9 +1333,43 @@ string CDocSchemaDetails::ContainerReferences()
 
 		for (; curIt != endIt; ++curIt)
 		{
-			contTable->AddRow(CARContainer(*curIt), rootLevel);
+			CARContainer cont(*curIt);
+			contTable->AddRow(cont, rootLevel);
 		}
 
+		//// Filter Guides ////
+		const CARSchemaList::ObjectRefList& flg = schema.GetFilterGuides();
+		curIt = flg.begin();
+		endIt = flg.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer cont(*curIt);
+			contTable->AddRow(cont, rootLevel);
+		}
+
+		//// Packing Lists ////
+		const CARSchemaList::ObjectRefList& pkl = schema.GetPackingLists();
+		curIt = pkl.begin();
+		endIt = pkl.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer cont(*curIt);
+			contTable->AddRow(cont, rootLevel);
+		}
+
+		const CARSchemaList::ObjectRefList& ws = schema.GetWebservices();
+		curIt = ws.begin();
+		endIt = ws.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer cont(*curIt);
+			contTable->AddRow(cont, rootLevel);
+		}
+
+		//// create output ////
 		if(contTable->NumRows() > 0)
 			strm << *contTable;
 		else
@@ -1620,7 +1627,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 					if (action.schemaName[0] == '$' )
 					{
 						string sampleServer;
-						CDocActionOpenWindowHelper::GetSampleData(al, "If", i,	sampleServer, openWindowSchema);
+						CDocActionOpenWindowHelper::GetSampleData(al, IES_IF, i,	sampleServer, openWindowSchema);
 					}
 					else
 						openWindowSchema = action.schemaName;
@@ -1648,7 +1655,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 						if (action.schemaName[0] == '$' )
 						{
 							string sampleServer;
-							CDocActionOpenWindowHelper::GetSampleData(al, "Else", i,	sampleServer, openWindowSchema);
+							CDocActionOpenWindowHelper::GetSampleData(al, IES_ELSE, i,	sampleServer, openWindowSchema);
 						}
 						else
 							openWindowSchema = action.schemaName;
@@ -1964,12 +1971,11 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 
 		// audit qualification
 		stringstream qualStrm; qualStrm.str("");
-		int pFormId = this->pInside->SchemaGetInsideId(this->schema.GetARName());
-
-		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->schema.GetARName(), "Audit Qualification", 0, 0);
+		int pFormId = schema.GetInsideId();
 
 		if (audit.query.operation != AR_COND_OP_NONE)
 		{
+			CRefItem refItem(this->schema, REFM_SCHEMA_AUDIT_QUALIFICATION);
 			CARQualification arQual(*this->pInside);
 			arQual.CheckQuery(&audit.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
 		}
@@ -2060,11 +2066,11 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		}
 
 		stringstream qualStrm; qualStrm.str("");
-		int pFormId = this->pInside->SchemaGetInsideId(this->schema.GetARName());
-		CFieldRefItem refItem(AR_STRUCT_ITEM_XML_SCHEMA, this->schema.GetARName(), "Archive Qualification", 0, 0);
+		int pFormId = this->schema.GetInsideId(); //this->pInside->SchemaGetInsideId(this->schema.GetARName());
 
 		if (archive.query.operation != AR_COND_OP_NONE)
 		{
+			CRefItem refItem(this->schema, REFM_SCHEMA_ARCHIVE_QUALIFICATION);
 			CARQualification arQual(*this->pInside);
 			arQual.CheckQuery(&archive.query, refItem, 0, pFormId, pFormId, qualStrm, rootLevel);
 		}

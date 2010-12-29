@@ -25,7 +25,7 @@ CDocActionOpenWindowHelper::~CDocActionOpenWindowHelper()
 {
 }
 
-bool CDocActionOpenWindowHelper::GetSampleData(CARActiveLink& actLink, const string& ifElse, int nAction, string &server, string &schema)
+bool CDocActionOpenWindowHelper::GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string &server, string &schema)
 {
 	// ok, this is a very ugly design of the ARS api. The sample data of
 	// the action is stored within the object properties of the active-
@@ -38,7 +38,7 @@ bool CDocActionOpenWindowHelper::GetSampleData(CARActiveLink& actLink, const str
 
 	// first, decide which property we are looking for
 	unsigned int PropID = AR_OPROP_WINDOW_OPEN_IF_SAMPLE_SERVER_SCHEMA;
-	if (ifElse.compare("If") != 0)
+	if (ifElse != IES_IF)
 		PropID = AR_OPROP_WINDOW_OPEN_ELSE_SAMPLE_SERVER_SCHEMA;
 
 	// now find the index of the object property

@@ -28,7 +28,7 @@ public:
 	~CDocAlActionStruct(void);
 
 public:
-	string Get(const string &ifElse, const ARActiveLinkActionList &actList);	
+	string Get(IfElseState ifElse, const ARActiveLinkActionList &actList);	
 
 private:
 	CARInside *arIn;
@@ -38,10 +38,16 @@ private:
 	string dir;
 	int rootLevel;
 	int structItemType;
-	string ifElse;
+	IfElseState ifElse;
+
+	enum AllMatchingMode
+	{
+		AMM_PUSHFIELDS,
+		AMM_SETFIELDS
+	};
 
 	//Get all matching IDs of two forms
-	void AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, const string& description, int nAction);
+	void AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, AllMatchingMode mode, int nAction);
 
 	// AR_ACTIVE_LINK_ACTION_NONE
 	string ActionNone(int nAction);

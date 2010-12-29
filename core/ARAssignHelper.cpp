@@ -17,27 +17,44 @@
 #include "stdafx.h"
 #include "ARAssignHelper.h"
 
-CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const string& objName, int objType, const string& schemaName1, const string& schemaName2)
+CARAssignHelper::CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject &obj, const CARSchema& schema1, const CARSchema& schema2)
 {
 	this->arIn = &arIn;
-	//this->dir = dir;
+	this->object = obj.Clone();
+	this->schemaInsideId1 = schema1.GetInsideId();
+	this->schemaInsideId2 = schema2.GetInsideId();
 	this->rootLevel = rootLevel;
+}
 
-	this->objName = objName;
-	this->objType = objType;
-	this->schemaName1 = schemaName1;
-	this->schemaName2 = schemaName2;
-	this->schemaInsideId1 = this->arIn->SchemaGetInsideId(this->schemaName1);
-	this->schemaInsideId2 = this->arIn->SchemaGetInsideId(this->schemaName2);
-	this->pushFieldFlag = false;
+CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServerObject &obj, int schemaId1, int schemaId2)
+{
+	this->arIn = &arIn;
+	this->object = obj.Clone();
+	this->schemaInsideId1 = schemaId1;
+	this->schemaInsideId2 = schemaId2;
+	this->rootLevel = rootLevel;
+}
+
+CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServerObject &obj, const std::string &schemaName1, const std::string &schemaName2)
+{
+	CARSchema schema1(schemaName1);
+	CARSchema schema2(schemaName2);
+
+	this->arIn = &arIn;
+	this->object = obj.Clone();
+	this->schemaInsideId1 = schema1.GetInsideId();
+	this->schemaInsideId2 = schema2.GetInsideId();
+	this->rootLevel = rootLevel;
 }
 
 CARAssignHelper::~CARAssignHelper(void)
 {
+	if (this->object != NULL)
+		delete object;
 }
 
 
-string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, const string& ifElse)
+string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, IfElseState ifElse)
 {
 	stringstream strm;
 	strm.str("");
@@ -53,19 +70,13 @@ string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &act
 			int nTargetFieldId = action.pushFieldsList.pushFieldsList[i].field.u.fieldId;
 
 			//Add a reference to the target field 
-			stringstream desc;
-			desc << "Target in 'Push Fields' " << ifElse << "-Action " << nAction;
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->objType;
-			refItem->description = desc.str();
-			refItem->fromName = this->objName;	
-			refItem->fieldInsideId = nTargetFieldId;
-			refItem->schemaInsideId = this->schemaInsideId2;
-			arIn->AddReferenceItem(refItem);
-			delete refItem;	
+			CRefItem refTarget(*this->object, ifElse, nAction, REFM_PUSHFIELD_TARGET);
+			arIn->AddFieldReference(this->schemaInsideId2, nTargetFieldId, refTarget);
+
+			CRefItem refValue(*this->object, ifElse, nAction, REFM_PUSHFIELD_VALUE);
 
 			stringstream assignText;
-			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.pushFieldsList.pushFieldsList[i].assign, assignText, "Push Fields");
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.pushFieldsList.pushFieldsList[i].assign, assignText, refValue);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId2, nTargetFieldId, rootLevel)));
@@ -77,13 +88,13 @@ string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &act
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION PushFieldsAssignment of '" << objName << "':" << e.what() << endl;
+		cout << "EXCEPTION PushFieldsAssignment of '" << this->object->GetName() << "':" << e.what() << endl;
 	}
 
 	return strm.str();
 }
 
-string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, const string& ifElse)
+string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, IfElseState ifElse)
 {
 	stringstream strm;
 	strm.str("");
@@ -98,19 +109,13 @@ string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &actio
 			int nTargetFieldId = action.fieldList.fieldAssignList[i].fieldId;
 
 			//Add a reference to the target field 
-			stringstream desc;
-			desc << "Target in 'Set Fields' " << ifElse << "-Action " << nAction;
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->objType;
-			refItem->description = desc.str();
-			refItem->fromName = this->objName;	
-			refItem->fieldInsideId = nTargetFieldId;
-			refItem->schemaInsideId = this->schemaInsideId1;
-			arIn->AddReferenceItem(refItem);
-			delete refItem;	
+			CRefItem refTarget(*this->object, ifElse, nAction, REFM_SETFIELDS_TARGET);
+			arIn->AddFieldReference(this->schemaInsideId1, nTargetFieldId, refTarget);
+
+			CRefItem refValue(*this->object, ifElse, nAction, REFM_SETFIELDS_VALUE);
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldList.fieldAssignList[i].assignment, assignText, "Set Fields");
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldList.fieldAssignList[i].assignment, assignText, refValue);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -122,13 +127,13 @@ string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &actio
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION SetFieldsAssignment of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION SetFieldsAssignment of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
 }
 
-string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& openCloseInfo)
+string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, OpenWindowMode openCloseInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -146,19 +151,13 @@ string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, in
 				continue;
 
 			//Add a reference to the target field 
-			stringstream desc;
-			desc << "Target in '" << openCloseInfo << "' " << ifElse << "-Action " << nAction;
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->objType;
-			refItem->description = desc.str();
-			refItem->fromName = this->objName;	
-			refItem->fieldInsideId = nTargetFieldId;
-			refItem->schemaInsideId = this->schemaInsideId1;
-			arIn->AddReferenceItem(refItem);
-			delete refItem;	
+			CRefItem refTarget(*this->object, ifElse, nAction, openCloseInfo, REFM_OPENWINDOW_TARGET);
+			arIn->AddFieldReference(schemaInsideId1, nTargetFieldId, refTarget);
+
+			CRefItem refValue(*this->object, ifElse, nAction, openCloseInfo, REFM_OPENWINDOW_VALUE);
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, refValue);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -170,13 +169,13 @@ string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, in
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION SetFieldsAssignment of '" << this->objName << "':" << e.what() << endl;
+		cout << "EXCEPTION SetFieldsAssignment of '" << this->object->GetName() << "':" << e.what() << endl;
 	}
 
 	return strm.str();
 }
 
-string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& openCloseInfo)
+string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, ServiceMappingMode serviceInfo)
 {
 	stringstream strm;
 	strm.str("");
@@ -191,19 +190,13 @@ string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, i
 			int nTargetFieldId = action.fieldAssignList[i].fieldId;
 
 			//Add a reference to the target field 
-			stringstream desc;
-			desc << "Target in '" << openCloseInfo << "' " << ifElse << "-Action " << nAction;
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->objType;
-			refItem->description = desc.str();
-			refItem->fromName = this->objName;	
-			refItem->fieldInsideId = nTargetFieldId;
-			refItem->schemaInsideId = this->schemaInsideId1;
-			arIn->AddReferenceItem(refItem);
-			delete refItem;	
+			CRefItem refTarget(*this->object, ifElse, nAction, serviceInfo, REFM_SERVICE_TARGET);
+			arIn->AddFieldReference(schemaInsideId1, nTargetFieldId, refTarget);
+
+			CRefItem refValue(*this->object, ifElse, nAction, serviceInfo, REFM_SERVICE_VALUE);
 
 			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, openCloseInfo);
+			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, refValue);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
@@ -215,53 +208,13 @@ string CARAssignHelper::CloseWindowAssignment(const ARFieldAssignList &action, i
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CloseWindowAssignment of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION ServiceAssignment of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
 }
 
-string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int nAction, const string& ifElse, const string& serviceInfo)
-{
-	stringstream strm;
-	strm.str("");
-	try
-	{
-		CTable tblFieldList("setFieldsList", "TblObjectList");
-		tblFieldList.AddColumn(30, "Field Name");
-		tblFieldList.AddColumn(70, "Value");
-
-		for(unsigned int i=0; i< action.numItems; i++)
-		{
-			int nTargetFieldId = action.fieldAssignList[i].fieldId;
-
-			//Add a reference to the target field 
-			stringstream desc;
-			desc << "Target in '" << serviceInfo << "' " << ifElse << "-Action " << nAction;
-			CFieldRefItem *refItem = new CFieldRefItem(this->objType, this->objName, desc.str(), nTargetFieldId, this->schemaInsideId1);
-			arIn->AddReferenceItem(refItem);
-			delete refItem;	
-
-			stringstream assignText;		
-			CheckAssignment(nTargetFieldId, NULL, ifElse, nAction, action.fieldAssignList[i].assignment, assignText, serviceInfo);
-
-			CTableRow row("cssStdRow");
-			row.AddCell(CTableCell(arIn->LinkToField(schemaInsideId1, nTargetFieldId, rootLevel)));
-			row.AddCell(CTableCell(assignText.str()));
-			tblFieldList.AddRow(row);	
-		}
-
-		strm << tblFieldList;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION ServiceAssignment of '" << this->objName << "': " << e.what() << endl;
-	}
-
-	return strm.str();
-}
-
-unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, const string& ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const string& refItemDesc)
+unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, IfElseState ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const CRefItem& refItem)
 {
 	unsigned int assignType = assignment.assignType;
 	try
@@ -270,14 +223,14 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 		{
 		case AR_ASSIGN_TYPE_VALUE:
 			{					
-				AssignValue(targetFieldId, ifElse, assignment.u.value, assignText, refItemDesc);
+				AssignValue(targetFieldId, ifElse, assignment.u.value, assignText, refItem);
 			}
 			break;
 		case AR_ASSIGN_TYPE_FIELD:
 			{	
 				if(assignment.u.field->u.statHistory.userOrTime == 0)
 				{
-					AssignField(ifElse, nAction, *assignment.u.field, assignText, refItemDesc);
+					AssignField(ifElse, nAction, *assignment.u.field, assignText, refItem);
 				}
 				else
 				{
@@ -307,7 +260,7 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 			break;
 		case AR_ASSIGN_TYPE_PROCESS:
 			{
-				AssignProcess(ifElse, assignment.u.process, assignText, refItemDesc);
+				AssignProcess(ifElse, assignment.u.process, assignText, refItem);
 			}
 			break;
 		case AR_ASSIGN_TYPE_ARITH:
@@ -343,42 +296,42 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 				{
 				case AR_ARITH_OP_ADD:
 					if (addBracket) assignText << "(";
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItem);
 					assignText << CAREnum::Operand(AR_ARITH_OP_ADD);
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItem);
 					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_SUBTRACT:
 					if (addBracket) assignText << "(";
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItem);
 					assignText << CAREnum::Operand(AR_ARITH_OP_SUBTRACT);
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItem);
 					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_MULTIPLY:
 					if (addBracket) assignText << "(";
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItem);
 					assignText << CAREnum::Operand(AR_ARITH_OP_MULTIPLY);
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItem);
 					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_DIVIDE:
 					if (addBracket) assignText << "(";
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItem);
 					assignText << CAREnum::Operand(AR_ARITH_OP_DIVIDE);
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItem);
 					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_MODULO:
 					if (addBracket) assignText << "(";
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandLeft, assignText, refItem);
 					assignText << CAREnum::Operand(AR_ARITH_OP_MODULO);
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItem);
 					if (addBracket) assignText << ")";
 					break;
 				case AR_ARITH_OP_NEGATE:
 					assignText << CAREnum::Operand(AR_ARITH_OP_NEGATE);
-					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItemDesc);
+					CheckAssignment(targetFieldId, &assignment, ifElse, nAction, assignment.u.arithOp->operandRight, assignText, refItem);
 					break;
 				}
 
@@ -386,34 +339,34 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 			break;
 		case AR_ASSIGN_TYPE_FUNCTION:
 			{
-				AssignFunction(targetFieldId, ifElse, nAction, *assignment.u.function, assignText, refItemDesc);
+				AssignFunction(targetFieldId, ifElse, nAction, *assignment.u.function, assignText, refItem);
 			}
 			break;
 		case AR_ASSIGN_TYPE_DDE:
 			{
-				AssignDDE(ifElse, *assignment.u.dde, assignText, refItemDesc);
+				AssignDDE(ifElse, *assignment.u.dde, assignText, refItem);
 			}
 			break;
 		case AR_ASSIGN_TYPE_SQL:
 			{
-				AssignSQL(ifElse, *assignment.u.sql, assignText, refItemDesc);
+				AssignSQL(ifElse, *assignment.u.sql, assignText, refItem);
 			}
 			break;
 		case AR_ASSIGN_TYPE_FILTER_API:
 			{
-				AssignFilterApi(ifElse, *assignment.u.filterApi, assignText, refItemDesc);
+				AssignFilterApi(ifElse, *assignment.u.filterApi, assignText, refItem);
 			}
 			break;
 		}	
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in ActiveLink CheckAssignment of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in ActiveLink CheckAssignment of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 	return assignType;
 }
 
-void CARAssignHelper::AssignValue(int targetFieldId, const string& ifElse, ARValueStruct &v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignValue(int targetFieldId, IfElseState ifElse, ARValueStruct &v, stringstream &assignText, const CRefItem& refItem)
 {	
 	try
 	{
@@ -469,17 +422,14 @@ void CARAssignHelper::AssignValue(int targetFieldId, const string& ifElse, ARVal
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignValue of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignValue of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }
 
-void CARAssignHelper::AssignField(const string& ifElse, int nAction, ARAssignFieldStruct &v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignField(IfElseState ifElse, int nAction, ARAssignFieldStruct &v, stringstream &assignText, const CRefItem& refItem)
 {
 	try
 	{
-		stringstream desc;
-		desc << "Value in '"<< refItemDesc <<"' " << ifElse << "-Action " << nAction;
-
 		int nTmpActionSchemaId = schemaInsideId1;
 
 		if(schemaInsideId1 != schemaInsideId2 && this->pushFieldFlag == false)
@@ -487,47 +437,33 @@ void CARAssignHelper::AssignField(const string& ifElse, int nAction, ARAssignFie
 			nTmpActionSchemaId = schemaInsideId2;
 		}
 
-		CFieldRefItem *refItem = new CFieldRefItem();
-		refItem->arsStructItemType = this->objType;
-		refItem->description = desc.str();
-		refItem->fromName = this->objName;	
-		refItem->fieldInsideId = v.u.fieldId;
-		refItem->schemaInsideId = nTmpActionSchemaId;
-		arIn->AddReferenceItem(refItem);
-		delete refItem;	
+		arIn->AddFieldReference(nTmpActionSchemaId, v.u.fieldId, refItem);
 
 		assignText << "$" << arIn->LinkToField(nTmpActionSchemaId, v.u.fieldId, rootLevel) << "$";
 
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignField of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignField of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }
 
-void CARAssignHelper::AssignProcess(const string& ifElse, char *v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignProcess(IfElseState ifElse, char *v, stringstream &assignText, const CRefItem& refItem)
 {
 	try
 	{
 		if(v != NULL)
 		{
-			CFieldRefItem *refItem = new CFieldRefItem();
-			refItem->arsStructItemType = this->objType;
-			refItem->description = "Value in SetField Process";
-			refItem->fromName = objName;						
-			refItem->schemaInsideId = schemaInsideId2;		
-
-			assignText << "$PROCESS$ "<< arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, refItem) << endl;
-			delete refItem;
+			assignText << "$PROCESS$ "<< arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, &refItem) << endl;
 		}
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignProcess of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignProcess of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }
 
-void CARAssignHelper::AssignFunction(int targetFieldId, const string& ifElse, int nAction, ARFunctionAssignStruct &v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignFunction(int targetFieldId, IfElseState ifElse, int nAction, ARFunctionAssignStruct &v, stringstream &assignText, const CRefItem& refItem)
 {
 	try
 	{				
@@ -544,15 +480,14 @@ void CARAssignHelper::AssignFunction(int targetFieldId, const string& ifElse, in
 
 					if (i == 0 && v.parameterList[i].assignType == AR_ASSIGN_TYPE_VALUE && v.parameterList[i].u.value.dataType == AR_DATA_TYPE_INTEGER)
 					{
-						stringstream desc; desc << "HOVER-Parameter in '"<< refItemDesc <<"' " << ifElse << "-Action " << nAction;
-						CFieldRefItem refItem(this->objType, this->objName, desc.str(), v.parameterList[i].u.value.u.intVal, arIn->SchemaGetInsideId(this->schemaName1));
-						arIn->AddReferenceItem(&refItem);
+						// TODO: recreate HOVER-Reference later again (we have to differentiate between the caller-type, e.g. setfield, pushfield, service, ...)
+						arIn->AddFieldReference(this->schemaInsideId1, v.parameterList[i].u.value.u.intVal, refItem);
 
-						assignText << arIn->LinkToField(this->schemaName1, v.parameterList[i].u.value.u.intVal, rootLevel);
+						assignText << arIn->LinkToField(this->schemaInsideId1, v.parameterList[i].u.value.u.intVal, rootLevel);
 						continue;
 					}
 
-					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItem);
 				}
 			}
 			break;
@@ -563,7 +498,7 @@ void CARAssignHelper::AssignFunction(int targetFieldId, const string& ifElse, in
 				{
 					if(i > 0)	assignText << ", ";
 
-					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItemDesc);
+					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItem);
 				}
 			}
 			break;
@@ -572,11 +507,11 @@ void CARAssignHelper::AssignFunction(int targetFieldId, const string& ifElse, in
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignFunction of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignFunction of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }
 
-void CARAssignHelper::AssignDDE(const string& ifElse, ARDDEStruct &v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignDDE(IfElseState ifElse, ARDDEStruct &v, stringstream &assignText, const CRefItem& refItem)
 {
 	try
 	{
@@ -607,11 +542,11 @@ void CARAssignHelper::AssignDDE(const string& ifElse, ARDDEStruct &v, stringstre
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignDDE of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignDDE of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }
 
-void CARAssignHelper::AssignSQL(const string& ifElse, ARAssignSQLStruct &v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignSQL(IfElseState ifElse, ARAssignSQLStruct &v, stringstream &assignText, const CRefItem& refItem)
 {
 	try
 	{
@@ -619,11 +554,11 @@ void CARAssignHelper::AssignSQL(const string& ifElse, ARAssignSQLStruct &v, stri
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignSQL of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignSQL of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }
 
-void CARAssignHelper::AssignFilterApi(const string& ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, const string& refItemDesc)
+void CARAssignHelper::AssignFilterApi(IfElseState ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, const CRefItem& refItem)
 {
 	try
 	{
@@ -631,6 +566,6 @@ void CARAssignHelper::AssignFilterApi(const string& ifElse, ARAssignFilterApiStr
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AssignFilterApi of '" << this->objName << "': " << e.what() << endl;
+		cout << "EXCEPTION in AssignFilterApi of '" << this->object->GetName() << "': " << e.what() << endl;
 	}
 }

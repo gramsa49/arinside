@@ -321,7 +321,7 @@ int CARFilterList::Find(const char* name)
 			break;
 	}
 	return -1;
-#endif;
+#endif
 }
 
 void CARFilterList::Sort()

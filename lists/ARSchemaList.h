@@ -66,9 +66,9 @@ public:
 	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
 
 	// workflow reference functions
-	typedef pair<int, CFieldRefItem> MissingReferenceItem;
+	typedef pair<int, CRefItem> MissingReferenceItem;
 	typedef vector<MissingReferenceItem> MissingReferenceList;
-	void SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CFieldRefItem &refItem);
+	void SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CRefItem &refItem);
 	const MissingReferenceList* SchemaGetMissingReferences(unsigned int index);
 
 	typedef vector<int> ObjectRefList;
@@ -78,6 +78,7 @@ public:
 	void SchemaAddActLinkGuide(unsigned int index, const CARContainer& alGuide);
 	void SchemaAddFilterGuide(unsigned int index, const CARContainer& fltGuide);
 	void SchemaAddPackingList(unsigned int index, const CARContainer& packingList);
+	void SchemaAddWebservice(unsigned int index, const CARContainer& webservice);
 
 	const ObjectRefList& SchemaGetALReferences(unsigned int index) { return activeLinks[index]; }
 	const ObjectRefList& SchemaGetFilterReferences(unsigned int index) { return filters[index]; }
@@ -85,6 +86,7 @@ public:
 	const ObjectRefList& SchemaGetActLinkGuideReferences(unsigned int index) { return alGuides[index]; }
 	const ObjectRefList& SchemaGetFilterGuideReferences(unsigned int index) { return fltGuides[index]; }
 	const ObjectRefList& SchemaGetPackingListReferences(unsigned int index) { return packLists[index]; }
+	const ObjectRefList& SchemaGetWebserviceReferences(unsigned int index) { return webservices[index]; }
 
 	// access for contained lists
 	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[(*sortedList)[index]]; }
@@ -129,6 +131,7 @@ private:
 	vector<ObjectRefList> alGuides;
 	vector<ObjectRefList> fltGuides;
 	vector<ObjectRefList> packLists;
+	vector<ObjectRefList> webservices;
 
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;

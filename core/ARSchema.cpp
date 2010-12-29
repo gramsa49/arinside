@@ -46,12 +46,12 @@ bool CARSchema::Exists()
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->schemaList.GetCount());
 }
 
-bool CARSchema::IsClonable()
+bool CARSchema::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARSchema::Clone()
+CARServerObject* CARSchema::Clone() const
 {
 	return new CARSchema(*this);
 }
@@ -297,7 +297,12 @@ void CARSchema::AddPackingList(const CARContainer &packList)
 	CARInside::GetInstance()->schemaList.SchemaAddPackingList(GetInsideId(), packList);
 }
 
-void CARSchema::AddMissingFieldReference(int fieldId, const CFieldRefItem &refItem)
+void CARSchema::AddWebservice(const CARContainer& webservice)
+{
+	CARInside::GetInstance()->schemaList.SchemaAddWebservice(GetInsideId(), webservice);
+}
+
+void CARSchema::AddMissingFieldReference(int fieldId, const CRefItem &refItem)
 {
 	CARInside::GetInstance()->schemaList.SchemaAddMissingFieldReference(GetInsideId(), fieldId, refItem);
 }
@@ -335,4 +340,9 @@ const CARSchemaList::ObjectRefList& CARSchema::GetFilterGuides()
 const CARSchemaList::ObjectRefList& CARSchema::GetPackingLists()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetPackingListReferences(GetInsideId());
+}
+
+const CARSchemaList::ObjectRefList& CARSchema::GetWebservices()
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetWebserviceReferences(GetInsideId());
 }

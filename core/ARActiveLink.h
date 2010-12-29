@@ -63,7 +63,7 @@ public:
 	string GetExecuteOn(bool singleLine=false, CARProplistHelper* props=NULL);
 	string GetURL(int rootLevel, bool showImage = true);
 
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_ACTIVE_LINK; }
-	bool IsClonable();
-	CARServerObject* Clone();
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_ACTIVE_LINK; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 };

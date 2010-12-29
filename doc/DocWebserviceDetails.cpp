@@ -136,16 +136,9 @@ string CDocWebserviceDetails::WSInformation()
 							{
 								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
-								CFieldRefItem *refItemMap = new CFieldRefItem();
-								refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
-								refItemMap->fromName = ws.GetName();
-								refItemMap->schemaInsideId = schemaId;
-								refItemMap->description = "Webservice Property";
-
+								CRefItem refItem(this->ws, REFM_WEBSERVICE_PROPERTY);
 								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
-								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";
-
-								delete refItemMap;
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, &refItem) << "</pre>";
 							}
 							catch(...)
 							{
@@ -167,16 +160,9 @@ string CDocWebserviceDetails::WSInformation()
 							{
 								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
-								CFieldRefItem *refItemMap = new CFieldRefItem();
-								refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
-								refItemMap->fromName = ws.GetName();
-								refItemMap->schemaInsideId = schemaId;
-								refItemMap->description = "Webservice Operation";
-
+								CRefItem refItem(this->ws, REFM_WEBSERVICE_OPERATION);
 								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
-								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";								
-
-								delete refItemMap;
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, &refItem) << "</pre>";								
 							}
 							catch(...)
 							{
@@ -197,16 +183,9 @@ string CDocWebserviceDetails::WSInformation()
 							{
 								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
-								CFieldRefItem *refItemMap = new CFieldRefItem();
-								refItemMap->arsStructItemType = AR_STRUCT_ITEM_XML_CONTAINER;
-								refItemMap->fromName = ws.GetName();
-								refItemMap->schemaInsideId = schemaId;
-								refItemMap->description = "Webservice Field Mapping";
-
+								CRefItem refItem(this->ws, REFM_WEBSERVICE_FIELDMAP);
 								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
-								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, refItemMap) << "</pre>";
-
-								delete refItemMap;
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, &refItem) << "</pre>";
 							}
 							catch(...)
 							{

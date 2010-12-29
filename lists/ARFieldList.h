@@ -16,7 +16,7 @@
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
-#include "../util/FieldRefItem.h"
+#include "../util/RefItem.h"
 #include "ARListHelpers.h"
 #include <assert.h>
 
@@ -60,10 +60,10 @@ public:
 	//virtual string FieldGetURL(unsigned int index, int rootLevel) = 0;
 
 	// types used for workflow references
-	typedef list<CFieldRefItem> ReferenceList;
+	typedef list<CRefItem> ReferenceList;
 	// Workflow references
-	bool FieldReferenceExists(unsigned int index, const CFieldRefItem& refItem);
-	bool FieldReferenceAdd(unsigned int index, const CFieldRefItem& refItem);
+	bool FieldReferenceExists(unsigned int index, const CRefItem& refItem);
+	bool FieldReferenceAdd(unsigned int index, const CRefItem& refItem);
 	size_t FieldReferenceCount(unsigned int index);
 	const ReferenceList& FieldReferenceList(unsigned int index);
 

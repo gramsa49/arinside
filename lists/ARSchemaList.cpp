@@ -212,7 +212,7 @@ bool CARSchemaList::LoadFromServer()
 	}
 
 	missingFieldReferences.resize(count);
-	ZeroMemory(&missingFieldReferences[0], sizeof(MissingReferenceList*) * count);
+	memset(&missingFieldReferences[0], 0, sizeof(MissingReferenceList*) * count);
 
 	// reserve reference lists
 	activeLinks.resize(count);
@@ -221,6 +221,7 @@ bool CARSchemaList::LoadFromServer()
 	alGuides.resize(count);
 	fltGuides.resize(count);
 	packLists.resize(count);
+	webservices.resize(count);
 
 	// Sort
 	Sort();
@@ -286,6 +287,15 @@ void CARSchemaList::Reserve(unsigned int size)
 	appRefNames.reserve(size);
 	fieldLists.reserve(size);
 	vuiLists.reserve(size);
+
+	// reserve reference lists
+	activeLinks.resize(size);
+	filters.resize(size);
+	escalations.resize(size);
+	alGuides.resize(size);
+	fltGuides.resize(size);
+	packLists.resize(size);
+	webservices.resize(size);
 
 	reservedSize = size;
 	internalListState = CARSchemaList::INTERNAL_ALLOC;
@@ -413,7 +423,7 @@ void CARSchemaList::Sort()
 #endif
 }
 
-void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CFieldRefItem &refItem)
+void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CRefItem &refItem)
 {
 	if (fieldId <= 0) return;	// dont add keyword references (like $-6$ ($SERVER$))
 	MissingReferenceList* list = missingFieldReferences[(*sortedList)[index]];
@@ -430,10 +440,7 @@ void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int field
 		MissingReferenceList::iterator endIt = list->end();
 		for (; curIt != endIt; ++curIt)
 			if (curIt->first == fieldId && 
-				// TODO: the compare of the refItem should be implemented within the object itself
-				curIt->second.arsStructItemType == refItem.arsStructItemType &&
-				curIt->second.fromName == refItem.fromName && 
-				curIt->second.description == refItem.description) return;
+				curIt->second == refItem) return;
 	}
 	list->push_back(MissingReferenceItem(fieldId, refItem));
 }
@@ -454,6 +461,7 @@ void CARSchemaList::SortReferences()
 		std::sort(   alGuides[schemaIndex].begin(),    alGuides[schemaIndex].end());
 		std::sort(  fltGuides[schemaIndex].begin(),   fltGuides[schemaIndex].end());
 		std::sort(  packLists[schemaIndex].begin(),   packLists[schemaIndex].end());
+		std::sort(webservices[schemaIndex].begin(), webservices[schemaIndex].end());
 	}
 }
 
@@ -485,4 +493,9 @@ void CARSchemaList::SchemaAddFilterGuide(unsigned int index, const CARContainer 
 void CARSchemaList::SchemaAddPackingList(unsigned int index, const CARContainer &packList)
 {
 	packLists[index].push_back(packList.GetInsideId());
+}
+
+void CARSchemaList::SchemaAddWebservice(unsigned int index, const CARContainer &webservice)
+{
+	webservices[index].push_back(webservice.GetInsideId());
 }

@@ -27,12 +27,12 @@ CARFilter::~CARFilter(void)
 {
 }
 
-bool CARFilter::IsClonable()
+bool CARFilter::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARFilter::Clone()
+CARServerObject* CARFilter::Clone() const
 {
 	return new CARFilter(*this);
 }

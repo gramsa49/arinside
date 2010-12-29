@@ -57,12 +57,12 @@ bool CARField::Exists()
 	return (fieldIndex >= 0 && (unsigned int)fieldIndex < fieldList->GetCount());
 }
 
-bool CARField::IsClonable()
+bool CARField::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARField::Clone()
+CARServerObject* CARField::Clone() const
 {
 	return new CARField(*this);
 }
@@ -173,17 +173,17 @@ const CARSchema& CARField::GetSchema() const
 	return schema;
 }
 
-bool CARField::ReferenceExists(const CFieldRefItem &refItem) const
+bool CARField::ReferenceExists(const CRefItem &refItem) const
 {
 	return fieldList->FieldReferenceExists(fieldIndex, refItem);
 }
 
-bool CARField::AddReference(const CFieldRefItem &refItem) const
+void CARField::AddReference(const CRefItem& refItem) const
 {
-	return fieldList->FieldReferenceAdd(fieldIndex, refItem);
+	fieldList->FieldReferenceAdd(fieldIndex, refItem);
 }
 
-const CARFieldList::ReferenceList CARField::GetReferences() const
+const CARFieldList::ReferenceList& CARField::GetReferences() const
 {
 	return fieldList->FieldReferenceList(fieldIndex);
 }

@@ -161,24 +161,24 @@ string CDocFieldDetails::WorkflowReferences()
 
 		for (; iter != endIt; ++iter)
 		{	
-			const CFieldRefItem *item = &(*iter);
+			CTableRow row("cssStdRow");		
+			row.AddCell(CAREnum::XmlStructItem(iter->GetObjectType()));				
+			row.AddCell(this->pInside->LinkToXmlObjType(iter->GetObjectType(), iter->GetObjectName(), iter->GetSubObjectId(), rootLevel));
 
-			if(item->fromName.compare(EmptyValue)!=0)
+			bool hasEnabledFlag;
+			unsigned int enabled = iter->GetObjectEnabled(hasEnabledFlag);
+
+			string tmpEnabled = "";
+			string tmpCssEnabled = "";
+			if (hasEnabledFlag)
 			{
-				CTableRow row("cssStdRow");		
-				row.AddCell(CAREnum::XmlStructItem(item->arsStructItemType));				
-				row.AddCell(this->pInside->LinkToXmlObjType(item->arsStructItemType, item->fromName, item->fromFieldId, rootLevel));
-
-				string tmpEnabled = this->pInside->XmlObjEnabled(item->arsStructItemType, item->fromName);
-				string tmpCssEnabled = "";
-
-				if(tmpEnabled.compare("Disabled")==0)
-					tmpCssEnabled = "objStatusDisabled";
-
-				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-				row.AddCell(item->description);				
-				tblRef.AddRow(row);		
+				tmpEnabled = CAREnum::ObjectEnable(enabled);
+				if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
 			}
+
+			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+			row.AddCell(iter->GetDescription(rootLevel));				
+			tblRef.AddRow(row);		
 		}
 
 		stringstream tblDesc;
@@ -276,10 +276,7 @@ string CDocFieldDetails::FieldLimits()
 
 				if(fLimit.pattern != NULL && !strcmp(fLimit.pattern, "")==0 )
 				{
-					// TODO: make the refItem-parameter to TextFindFields optional (NULLable)
-					// This reference item is only constructed for TextFindFields, but is never used. Only to display PATTERN-Keywords correctly.
-					CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, field.GetName(), "in pattern of field", field.GetFieldId(), schema.GetInsideId());
-					strm << "Pattern: " << pInside->TextFindFields(fLimit.pattern, "$", refItem.schemaInsideId, rootLevel, true, &refItem) << "<br/>" << endl;
+					strm << "Pattern: " << pInside->TextFindFields(fLimit.pattern, "$", schema.GetInsideId(), rootLevel, true, NULL) << "<br/>" << endl;
 				}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -475,8 +472,8 @@ string CDocFieldDetails::FieldLimits()
 
 					if (fieldId > 0)
 					{
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), "Used as Server of Table Field", fieldId, schema.GetInsideId());
-						pInside->AddReferenceItem(&refItem);
+						CRefItem refItem(this->field, REFM_TABLEFIELD_SERVER);
+						pInside->AddFieldReference(schema.GetInsideId(), fieldId, refItem);
 					}
 				}
 				else
@@ -498,8 +495,8 @@ string CDocFieldDetails::FieldLimits()
 
 					if (fieldId > 0)
 					{
-						CFieldRefItem refItem(AR_STRUCT_ITEM_XML_FIELD, schema.GetName(), "Used as Schema of Table Field", fieldId, schema.GetInsideId());
-						pInside->AddReferenceItem(&refItem);
+						CRefItem refItem(this->field, REFM_TABLEFIELD_FORM);
+						pInside->AddFieldReference(schema.GetInsideId(), fieldId, refItem);
 					}
 				}
 				else
@@ -516,18 +513,12 @@ string CDocFieldDetails::FieldLimits()
 				stringstream strmQuery;
 				if(fLimit.qualifier.operation != AR_COND_OP_NONE)
 				{		
-					CFieldRefItem *refItem = new CFieldRefItem();
-					refItem->arsStructItemType = AR_STRUCT_ITEM_XML_NONE;  //Dont change
-					refItem->description = "";
-					refItem->fromName = this->field.GetName();
-
+					CRefItem refItem; // Dont change; reference to nothing, because table field references are already created
 					CARQualification arQual(*this->pInside);
 
 					int pFormId = schema.GetInsideId();
 					int sFormId = this->pInside->SchemaGetInsideId(tableSchema);
-					arQual.CheckQuery(&fLimit.qualifier, *refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
-
-					delete refItem;
+					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 				}
 				else
 				{

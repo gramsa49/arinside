@@ -471,17 +471,23 @@ void CDocValidator::FieldReferenceValidator()
 						if (curIt->first == *missFldCurIt)
 						{
 							CTableRow row("cssStdRow");		
-							row.AddCell(CTableCell(CAREnum::XmlStructItem(curIt->second.arsStructItemType)));
-							row.AddCell(CTableCell(this->pInside->LinkToXmlObjType(curIt->second.arsStructItemType, curIt->second.fromName, rootLevel)));
+							row.AddCell(CTableCell(CAREnum::XmlStructItem(curIt->second.GetObjectType())));
+							row.AddCell(CTableCell(this->pInside->LinkToXmlObjType(curIt->second.GetObjectType(), curIt->second.GetObjectName(), curIt->second.GetSubObjectId(), rootLevel)));
 
-							string tmpEnabled = this->pInside->XmlObjEnabled(curIt->second.arsStructItemType, curIt->second.fromName);
+							bool supportsEnabled;
+							unsigned int enabled = curIt->second.GetObjectEnabled(supportsEnabled);
+
+							string tmpEnabled = "";
 							string tmpCssEnabled = "";
 
-							if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
-								tmpCssEnabled = "objStatusDisabled";
+							if (supportsEnabled)
+							{
+								tmpEnabled = CAREnum::ObjectEnable(enabled);
+								if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
+							}
 
 							row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-							row.AddCell(CTableCell(curIt->second.description));
+							row.AddCell(CTableCell(curIt->second.GetDescription(rootLevel)));
 							tblRef.AddRow(row);		
 						}
 					}

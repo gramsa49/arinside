@@ -38,12 +38,12 @@ bool CARCharMenu::Exists()
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->menuList.GetCount());
 }
 
-bool CARCharMenu::IsClonable()
+bool CARCharMenu::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARCharMenu::Clone()
+CARServerObject* CARCharMenu::Clone() const
 {
 	return new CARCharMenu(*this);
 }

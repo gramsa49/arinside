@@ -30,12 +30,12 @@ CARActiveLink::CARActiveLink(const string& name)
 	insideId = CARInside::GetInstance()->alList.Find(name.c_str());
 }
 
-bool CARActiveLink::IsClonable()
+bool CARActiveLink::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARActiveLink::Clone()
+CARServerObject* CARActiveLink::Clone() const
 {
 	return new CARActiveLink(*this);
 }

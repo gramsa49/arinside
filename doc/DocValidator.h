@@ -26,8 +26,6 @@ public:
 
 	void Main();
 private:
-	list<CFieldRefItem> uniqueMissingFieldList;
-
 	void FieldReferenceValidator();
 	void MenuReferenceValidator();
 

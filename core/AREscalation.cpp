@@ -28,12 +28,12 @@ CAREscalation::~CAREscalation(void)
 {
 }
 
-bool CAREscalation::IsClonable()
+bool CAREscalation::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CAREscalation::Clone()
+CARServerObject* CAREscalation::Clone() const
 {
 	return new CAREscalation(*this);
 }

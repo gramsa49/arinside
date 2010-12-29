@@ -20,12 +20,12 @@
 #include "ARImage.h"
 #include "../ARInside.h"
 
-bool CARImage::IsClonable()
+bool CARImage::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARImage::Clone()
+CARServerObject* CARImage::Clone() const
 {
 	return new CARImage(*this);
 }

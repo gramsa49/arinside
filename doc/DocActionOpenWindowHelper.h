@@ -24,6 +24,6 @@ private:
 	~CDocActionOpenWindowHelper(void);
 
 public:
-	static bool GetSampleData(CARActiveLink& actLink, const string& ifElse, int nAction, string& server, string& schema);
+	static bool GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string& server, string& schema);
 	static bool GetReportData(char* reportStr, string &reportType, string &reportLocation, string &reportName, string &reportDestination, string &entryIDs, string &queryOverride, string &reportOperation, string &charEncoding);
 };

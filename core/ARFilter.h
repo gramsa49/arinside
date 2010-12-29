@@ -59,7 +59,7 @@ public:
 	string GetURL(int rootLevel, bool showImage = true);
 
 	// class type support
-	int GetServerObjectTypeXML() { return AR_STRUCT_ITEM_XML_FILTER; }
-	bool IsClonable();
-	CARServerObject* Clone();
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_FILTER; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 };

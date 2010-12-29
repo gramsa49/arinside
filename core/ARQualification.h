@@ -23,13 +23,13 @@ public:
 	CARQualification(CARInside &arIn);
 	~CARQualification(void);
 
-	void CheckQuery(const ARQualifierStruct *query, const CFieldRefItem &refItem, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
+	void CheckQuery(const ARQualifierStruct *query, const CRefItem &refItem, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
 
 	int arsStructItemType;;
 
 private:
 	CARInside *arIn;
-	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CFieldRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
+	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
 	int FindCurrentEnumFieldId(int pFormId, int sFormId);
 
 	int tmpFormId;

@@ -206,7 +206,7 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 		stringstream strmQuery;
 		if(this->escalation.GetRunIf().operation != AR_COND_OP_NONE)
 		{		
-			CFieldRefItem refItem(AR_STRUCT_ITEM_XML_ESCALATION, this->escalation.GetName(), "Run If", -1, -1);
+			CRefItem refItem(this->escalation, REFM_RUNIF);
 
 			CARQualification arQual(*this->pInside);
 			int pFormId = this->pInside->SchemaGetInsideId(schemaName);
@@ -222,10 +222,10 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 
 		//If-Actions		
 		CDocFilterActionStruct actionStruct(*this->pInside, this->escalation, schemaName, this->rootLevel, AR_STRUCT_ITEM_XML_ESCALATION);
-		pgStrm << actionStruct.Get("If", this->escalation.GetIfActions());
+		pgStrm << actionStruct.Get(IES_IF, this->escalation.GetIfActions());
 
 		//Else-Actions
-		pgStrm << actionStruct.Get("Else", this->escalation.GetElseActions());
+		pgStrm << actionStruct.Get(IES_ELSE, this->escalation.GetElseActions());
 	}
 	catch(exception& e)
 	{

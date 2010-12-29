@@ -17,8 +17,8 @@
 #include "stdafx.h"
 #include "DocActionSetFieldsHelper.h"
 
-CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, string& strIfElse, int numAction)
-: arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(strIfElse)
+CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction)
+: arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(ifElseMode)
 {
 	arStructItemType = structItemType;
 	nAction = numAction;
@@ -88,11 +88,8 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 					assignSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
 					assignSchema << setFieldsStruct.sampleSchema;
 
-					stringstream tmpDesc;
-					tmpDesc << "Form Name in 'SetFields' " << ifElse << "-Action " << nAction;
-
-					CFieldRefItem refItem(arStructItemType, obj.GetName(), tmpDesc.str(), fieldId, pFormId);
-					arIn.AddReferenceItem(&refItem);
+					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
+					arIn.AddFieldReference(pFormId, fieldId, refItem);
 				}
 				else
 				{
@@ -108,11 +105,8 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 					readServer = setFieldsStruct.sampleServer;
 					assignServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
 
-					stringstream tmpDesc;
-					tmpDesc << "Server Name in 'SetFields' " << ifElse << "-Action " << nAction;
-
-					CFieldRefItem refItem(arStructItemType, obj.GetName(), tmpDesc.str(), fieldId, pFormId);
-					arIn.AddReferenceItem(&refItem);
+					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_SERVER);
+					arIn.AddFieldReference(pFormId, fieldId, refItem);
 				}
 				else
 				{
@@ -125,7 +119,7 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 
 				assignQual << "<br/>Set Field If<br/>" << endl;
 				stringstream strmTmpQual;
-				CFieldRefItem refItem(arStructItemType, obj.GetName(), "Set Field If Qualification", -1, -1);
+				CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_QUALIFICATION);
 
 				CARQualification arQual(arIn);
 				arQual.arsStructItemType = arStructItemType;
@@ -194,9 +188,8 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 
 				if(assignment.u.sql->sqlCommand[0] != 0)
 				{
-					CFieldRefItem *refItem = new CFieldRefItem(arStructItemType, obj.GetName(), "SQL Set Field If Qualification", -1, arIn.SchemaGetInsideId(fromSchema));
-					assignQual << arIn.TextFindFields(assignment.u.sql->sqlCommand, "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, refItem) << "<br/><br/>" << endl;
-					delete refItem;
+					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_SQL_QUALIFICATION);
+					assignQual << arIn.TextFindFields(assignment.u.sql->sqlCommand, "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, &refItem) << "<br/><br/>" << endl;
 				}
 				else
 					assignQual << EmptyValue << "<br/><br/>" << endl;

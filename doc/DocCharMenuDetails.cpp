@@ -297,6 +297,8 @@ string CDocCharMenuDetails::SearchMenuDetails()
 
 	try
 	{
+		// TODO: this should not link to the schema which the menu itself uses to get its values from.
+		// Instead it should use the schemas/fields it is linked to.
 		const ARCharMenuQueryStruct& menu = this->menu.GetDefinition().u.menuQuery;
 		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
 		strm << "Schema: " << this->pInside->LinkToSchema(menu.schema, rootLevel) << "<br/>" << endl;	
@@ -309,14 +311,8 @@ string CDocCharMenuDetails::SearchMenuDetails()
 				strm << "Label Field (" << i << ") : " << this->pInside->LinkToField(menu.schema, menu.labelField[i], rootLevel);
 				strm << " (FieldId: " << menu.labelField[i] << ")<br/>" << endl;
 
-				CFieldRefItem *refItem = new CFieldRefItem();
-				refItem->arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
-				refItem->description = "Menu Label Field";
-				refItem->fromName = this->menu.GetARName();
-				refItem->fieldInsideId = menu.labelField[i];
-				refItem->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
-				this->pInside->AddReferenceItem(refItem);
-				delete refItem;
+				CRefItem refItem(this->menu, REFM_CHARMENU_LABELFIELD);
+				pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.labelField[i], refItem);
 			}
 		}
 
@@ -329,35 +325,21 @@ string CDocCharMenuDetails::SearchMenuDetails()
 
 		//Value Field
 		strm << "Value Field: " << this->pInside->LinkToField(menu.schema, menu.valueField, rootLevel);
-		CFieldRefItem *refItem = new CFieldRefItem();
-		refItem->arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
-		refItem->description = "Menu Value Field";
-		refItem->fromName = this->menu.GetARName();
-		refItem->fieldInsideId = menu.valueField;
-		refItem->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
-		this->pInside->AddReferenceItem(refItem);
-		delete refItem;
-		strm << " (FieldId: " << menu.valueField << ")<br/>" << endl;
-
+		CRefItem refItemValue(this->menu, REFM_CHARMENU_VALUE);
+		pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.valueField, refItemValue);
 
 		//Query
 		stringstream strmQuery;
 		strmQuery.str("");
 
-		CFieldRefItem *refItemQuery = new CFieldRefItem();
-		refItemQuery->arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
-		refItemQuery->description = "Search Menu Qualification";
-		refItemQuery->fromName = this->menu.GetARName();
-		refItemQuery->schemaInsideId = this->pInside->SchemaGetInsideId(menu.schema);
-
+		CRefItem refItemQuery(this->menu, REFM_CHARMENU_QUALIFICATION);
 
 		CARQualification arQual(*this->pInside);
 		int pFormId = this->pInside->SchemaGetInsideId(menu.schema);
 		int sFormId = this->pInside->SchemaGetInsideId(menu.schema);
 		arQual.arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
 
-		arQual.CheckQuery(&menu.qualifier, *refItemQuery, 0, pFormId, sFormId, strmQuery, rootLevel);
-		delete refItemQuery;
+		arQual.CheckQuery(&menu.qualifier, refItemQuery, 0, pFormId, sFormId, strmQuery, rootLevel);
 
 		if(strmQuery.str().length() > 0)
 		{

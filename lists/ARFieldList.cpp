@@ -17,22 +17,18 @@
 #include "stdafx.h"
 #include "ARFieldList.h"
 #include "../ARInside.h"
-#include "../util/FieldRefItem.h"
+#include "../util/RefItem.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CARFieldList implementation
-bool CARFieldList::FieldReferenceExists(unsigned int index, const CFieldRefItem& refItem)
+bool CARFieldList::FieldReferenceExists(unsigned int index, const CRefItem& refItem)
 {
-	list<CFieldRefItem>::iterator iter = workflowReferences[index].begin();
-	list<CFieldRefItem>::iterator endIt = workflowReferences[index].end();
+	ReferenceList::iterator curIt = workflowReferences[index].begin();
+	ReferenceList::iterator endIt = workflowReferences[index].end();
 
-	for (; iter != endIt; ++iter)
+	for (; curIt != endIt; ++curIt)
 	{
-		if ( iter->fieldInsideId == refItem.fieldInsideId
-			//&& iter->schemaInsideId == refItem.schemaInsideId
-			&& iter->arsStructItemType == refItem.arsStructItemType
-			&& iter->fromName.compare(refItem.fromName) == 0
-			&& iter->description.compare(refItem.description) == 0)
+		if (*curIt == refItem)
 		{
 			return true;
 		}
@@ -40,9 +36,9 @@ bool CARFieldList::FieldReferenceExists(unsigned int index, const CFieldRefItem&
 	return false;
 }
 
-bool CARFieldList::FieldReferenceAdd(unsigned int index, const CFieldRefItem &refItem)
+bool CARFieldList::FieldReferenceAdd(unsigned int index, const CRefItem &refItem)
 {
-	if (refItem.arsStructItemType != AR_STRUCT_ITEM_XML_NONE)
+	if (refItem.GetObjectType() != AR_STRUCT_ITEM_XML_NONE)
 	{
 		workflowReferences[index].push_back(refItem);
 		return true;

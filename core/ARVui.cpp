@@ -87,12 +87,12 @@ bool CARVui::Exists()
 	return (vuiIndex >= 0 && (unsigned int)vuiIndex < vuiList->GetCount());
 }
 
-bool CARVui::IsClonable()
+bool CARVui::IsClonable() const
 {
 	return true;
 }
 
-CARServerObject* CARVui::Clone()
+CARServerObject* CARVui::Clone() const
 {
 	return new CARVui(*this);
 }
