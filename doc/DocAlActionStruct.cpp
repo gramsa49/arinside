@@ -633,7 +633,7 @@ void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFields
 			{
 				pushSchema = action.sampleSchema;
 			}
-			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << ")";
+			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(pushSchema, rootLevel) << ")";
 
 			// create field reference
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_FORM);

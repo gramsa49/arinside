@@ -1200,6 +1200,7 @@ string CARInside::LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLev
 	{
 		return vui.GetURL(fromRootLevel);
 	}
+	return "";
 }
 
 string CARInside::LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel)
@@ -1728,7 +1729,8 @@ void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref
 
 	if (fld.Exists())
 	{
-		fld.AddReference(ref);
+		if (!fld.ReferenceExists(ref))
+			fld.AddReference(ref);
 	}
 	else if (schema.Exists())
 	{

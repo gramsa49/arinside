@@ -381,7 +381,7 @@ void CARAssignHelper::AssignValue(int targetFieldId, IfElseState ifElse, ARValue
 			break;
 		case AR_DATA_TYPE_CHAR:
 			{
-				strmValue << "\"" << CARValue::ValueToString(v) << "\"";
+				strmValue << "\"" << CWebUtil::Validate(CARValue::ValueToString(v)) << "\"";
 			}
 			break;
 		case AR_DATA_TYPE_REAL:
@@ -413,7 +413,7 @@ void CARAssignHelper::AssignValue(int targetFieldId, IfElseState ifElse, ARValue
 			break;
 		default:
 			{
-				strmValue << "\"" << CARValue::ValueToString(v) << "\"";
+				strmValue << "\"" << CWebUtil::Validate(CARValue::ValueToString(v)) << "\"";
 			}
 			break;
 		}
@@ -454,7 +454,7 @@ void CARAssignHelper::AssignProcess(IfElseState ifElse, char *v, stringstream &a
 	{
 		if(v != NULL)
 		{
-			assignText << "$PROCESS$ "<< arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, &refItem) << endl;
+			assignText << "$PROCESS$ "<< CWebUtil::Validate(arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, &refItem)) << endl;
 		}
 	}
 	catch(exception& e)
@@ -517,27 +517,27 @@ void CARAssignHelper::AssignDDE(IfElseState ifElse, ARDDEStruct &v, stringstream
 	{
 		if(v.command != NULL)
 		{
-			assignText <<"Command: " << v.command << "<br/>" << endl;
+			assignText <<"Command: " << CWebUtil::Validate(v.command) << "<br/>" << endl;
 		}
 
 		if(v.item != NULL)
 		{
-			assignText <<"Item: " << v.item << "<br/>" << endl;
+			assignText <<"Item: " << CWebUtil::Validate(v.item) << "<br/>" << endl;
 		}
 
 		if(v.pathToProgram != NULL)
 		{
-			assignText << "Path to Program: " << v.pathToProgram << "<br/>" << endl;
+			assignText << "Path to Program: " << CWebUtil::Validate(v.pathToProgram) << "<br/>" << endl;
 		}
 
 		if(v.serviceName != NULL)
 		{
-			assignText << "Server Name: " << v.serviceName << "<br/" << endl;
+			assignText << "Server Name: " << CWebUtil::Validate(v.serviceName) << "<br/" << endl;
 		}
 
 		if(v.topic != NULL)
 		{
-			assignText << "Topic: " << v.topic << "<br/>" << endl;
+			assignText << "Topic: " << CWebUtil::Validate(v.topic) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)

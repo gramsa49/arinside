@@ -447,13 +447,6 @@ void CDocValidator::FieldReferenceValidator()
 				if (missingList->size() == 0) continue;
 				emptyTable = false;
 
-				// inner field references table
-				CTable tblRef("referenceList", "TblObjectList");
-				tblRef.AddColumn(10, "Type");
-				tblRef.AddColumn(45, "Server object");
-				tblRef.AddColumn(5, "Enabled");
-				tblRef.AddColumn(40, "Description");
-
 				// create a unique field list
 				vector<int> missingFields;
 				BuildUniqueFieldList(missingFields, missingList);
@@ -465,6 +458,13 @@ void CDocValidator::FieldReferenceValidator()
 				{
 					CARSchema::MissingReferenceList::const_iterator curIt = missingList->begin();
 					CARSchema::MissingReferenceList::const_iterator endIt = missingList->end();
+
+					// inner field references table
+					CTable tblRef("referenceList", "TblObjectList");
+					tblRef.AddColumn(10, "Type");
+					tblRef.AddColumn(45, "Server object");
+					tblRef.AddColumn(5, "Enabled");
+					tblRef.AddColumn(40, "Description");
 
 					for (; curIt < endIt; ++curIt)
 					{
