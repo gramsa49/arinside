@@ -54,8 +54,7 @@ SET (ARINSIDE_SRCS
  output/WebPage.cpp output/TableColumn.cpp output/NavigationPage.cpp output/GroupTable.cpp output/ImageTable.cpp
  output/UListItem.cpp output/MenuTable.cpp output/UserTable.cpp output/WebUtil.cpp 
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
- util/ImageRefItem.cpp util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/MissingMenuRefItem.cpp
- util/BlackListItem.cpp
+ util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp
  AppConfig.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp stdafx.cpp WindowsUtil.cpp
 )
 SET (ARINSIDE_SRC_GIFS

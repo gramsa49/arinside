@@ -1540,14 +1540,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Util\MissingMenuRefItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Util\MissingMenuRefItem.h"
-				>
-			</File>
-			<File
 				RelativePath=".\util\RefItem.cpp"
 				>
 			</File>
