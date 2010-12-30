@@ -20,6 +20,17 @@
 #include "ARImage.h"
 #include "../ARInside.h"
 
+CARImage::CARImage(const string& name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->imageList.FindImage(name.c_str());
+}
+
+bool CARImage::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->imageList.GetCount());
+}
+
 bool CARImage::IsClonable() const
 {
 	return true;
@@ -93,6 +104,23 @@ const ARImageDataStruct& CARImage::GetData() const
 string CARImage::GetURL(int rootLevel, bool showImage)
 {
 	// TODO: add support for the showImage param
-	throw CARInside::GetInstance()->imageList.ImageGetURL(GetInsideId(), rootLevel);
+	return CARInside::GetInstance()->imageList.ImageGetURL(GetInsideId(), rootLevel);
+}
+
+void CARImage::AddReference(const CRefItem &refItem)
+{
+	CARInside::GetInstance()->imageList.AddReference(GetInsideId(), refItem);
+}
+
+bool CARImage::ReferenceExists(const CRefItem &refItem) const
+{
+	throw "CARImage::ReferenceExists not implemented yet!";
+	//return CARInside::GetInstance()->imageList.R
+}
+
+const CARImage::ReferenceList& CARImage::GetReferences() const
+{
+	return CARInside::GetInstance()->imageList.GetReferences(GetInsideId());
 }
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+

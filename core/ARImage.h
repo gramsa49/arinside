@@ -17,6 +17,7 @@
 #pragma once
 #include "ARServerObject.h"
 #include "ARProplistHelper.h"
+#include "../lists/ARImageList.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -27,7 +28,10 @@ class CARImage :
 {
 public:
 	CARImage(int insideId) : CARServerObject(insideId) { }
+	CARImage(const string& name);
 	~CARImage() { }
+
+	bool Exists();
 
 	// implement function inherited from CARObject
 	string GetName();
@@ -53,6 +57,13 @@ public:
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_IMAGE; }
 	bool IsClonable() const;
 	CARServerObject* Clone() const;
+
+	// referencing functions
+	typedef CARImageList::ReferenceItem ReferenceList;	
+	void AddReference(const CRefItem &refItem);
+	bool ReferenceExists(const CRefItem &refItem) const;
+	const ReferenceList& GetReferences() const;
+
 };
 
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

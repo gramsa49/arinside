@@ -16,7 +16,8 @@
 
 #include "stdafx.h"
 #include "DocFieldDetails.h"
-#include "../util/ImageRefItem.h"
+#include "../util/RefItem.h"
+#include "../core/ARImage.h"
 
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)
@@ -780,8 +781,8 @@ string CDocFieldDetails::DisplayProperties()
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				if ((dProperty.prop == AR_DPROP_PUSH_BUTTON_IMAGE || dProperty.prop == AR_DPROP_IMAGE) && dProperty.value.dataType == AR_DATA_TYPE_CHAR)
 				{
-					int imageIndex = pInside->imageList.FindImage(dProperty.value.u.charVal);
-					if (imageIndex >= 0)
+					CARImage img(dProperty.value.u.charVal);
+					if (img.Exists())
 					{
 						stringstream tmpDesc;
 						switch (dProperty.prop)
@@ -789,14 +790,13 @@ string CDocFieldDetails::DisplayProperties()
 						case AR_DPROP_PUSH_BUTTON_IMAGE:
 						case AR_DPROP_IMAGE:
 							{
-								tmpDesc << "Image on field of form " << this->schema.GetURL(rootLevel, true);
-								CImageRefItem refItem(imageIndex, tmpDesc.str(), &field);
-								pInside->imageList.AddReference(refItem);
+								CRefItem ref(field, REFM_BACKGROUND_IMAGE);
+								img.AddReference(ref);
 								break;
 							}
 						}
 
-						value = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
+						value = img.GetURL(rootLevel);
 					}
 				}
 #endif

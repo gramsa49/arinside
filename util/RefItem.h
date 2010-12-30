@@ -166,6 +166,12 @@ enum ReferenceMessages
 	REFM_WEBSERVICE_PROPERTY,
 	REFM_WEBSERVICE_OPERATION,
 	REFM_WEBSERVICE_FIELDMAP,
+
+	// image refs
+	REFM_BACKGROUND_IMAGE,
+	REFM_TITLE_BAR_ICON,
+	REFM_VUI_BACKGROUND,
+	REFM_PACKINGLIST,
 };
 
 // maybe there is a better place for the following enums and functions //
@@ -237,6 +243,7 @@ private:
 	string LinkToSchemaIndex(int rootLevel) const;
 	string LinkToSchemaResultList(int rootLevel) const;
 	string LinkToSchemaSortList(int rootLevel) const;
+	string LinkToSchema(int rootLevel) const;
 	void LinkToColumnParent(std::ostream& strm, int rootLevel) const;
 
 protected:

@@ -130,6 +130,8 @@ bool CARImageList::LoadFromServer()
 			sortedList->push_back(i);
 		}
 		funcResult = true;
+
+		referenceList.resize(names.numItems);
 	}
 	else
 	{
@@ -185,6 +187,8 @@ void CARImageList::Reserve(unsigned int size)
 
 	reservedSize = size;
 	internalListState = CARImageList::INTERNAL_ALLOC;
+
+	referenceList.resize(size);
 }
 
 int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageName)
@@ -285,8 +289,13 @@ string CARImageList::ImageGetURL(unsigned int index, int rootLevel)
 	return CWebUtil::Link(ImageGetName(index), file, "image.gif", rootLevel); 
 }
 
-void CARImageList::AddReference(const CImageRefItem &referenceItem)
+void CARImageList::AddReference(unsigned int index, const CRefItem &referenceItem)
 {
-	referenceList.push_back(referenceItem);
+	referenceList[(*sortedList)[index]].push_back(referenceItem);
+}
+
+const CARImageList::ReferenceItem& CARImageList::GetReferences(unsigned int index)
+{
+	return referenceList[(*sortedList)[index]];
 }
 #endif

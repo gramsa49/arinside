@@ -1188,6 +1188,20 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 	return EmptyValue;
 }
 
+string CARInside::LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel)
+{
+	return LinkToVui(SchemaGetInsideId(schemaName), vuiInsideId, fromRootLevel);
+}
+
+string CARInside::LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLevel)
+{
+	CARVui vui(schemaInsideId, vuiInsideId);
+	if (vui.Exists())
+	{
+		return vui.GetURL(fromRootLevel);
+	}
+}
+
 string CARInside::LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel)
 {	
 	return LinkToField(SchemaGetInsideId(schemaName), fieldInsideId, fromRootLevel);
@@ -1520,6 +1534,11 @@ string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName,
 	case AR_STRUCT_ITEM_XML_FIELD:
 		{
 			result = this->LinkToField(objName, subObjId, rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_VUI:
+		{
+			result = this->LinkToVui(objName, subObjId, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_ESCALATION:

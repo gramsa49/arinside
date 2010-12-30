@@ -114,9 +114,11 @@ public:
 
 	int SchemaGetInsideId(string searchObjName);
 
+	string LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel);
+	string LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLevel);
 	string LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel);	
 	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel, bool needValidField = true);
-	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);	
+	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 
 	string LinkToContainer(string containerName, int rootLevel);
 	string LinkToAl(const string& alName, int rootLevel);

@@ -16,7 +16,7 @@
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
-#include "../util/ImageRefItem.h"
+#include "../util/RefItem.h"
 #include "ARListHelpers.h"
 #include <assert.h>
 
@@ -33,9 +33,9 @@ public:
 	int AddImageFromXML(ARXMLParsedStream& stream, const char* imageName);
 
 	// referencing...
-	void AddReference(const CImageRefItem &referenceItem);
-	vector<CImageRefItem>::iterator ReferenceList_begin() { return referenceList.begin(); }
-	vector<CImageRefItem>::iterator ReferenceList_end() { return referenceList.end(); }
+	typedef vector<CRefItem> ReferenceItem;
+	void AddReference(unsigned int index, const CRefItem &referenceItem);
+	const ReferenceItem& GetReferences(unsigned int index);
 
 	// list functions
 	inline unsigned int GetCount() { return names.numItems; }
@@ -76,7 +76,7 @@ private:
 	ARImageDataList data;
 	ImageListState internalListState;
 	vector<int> *sortedList;
-	vector<CImageRefItem> referenceList;
+	vector<ReferenceItem> referenceList;
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

@@ -166,6 +166,22 @@ string CRefItem::LinkToSchemaSortList(int rootLevel) const
 	return cSortList;
 }
 
+string CRefItem::LinkToSchema(int rootLevel) const
+{
+	switch (arsStructItemType)
+	{
+	case AR_STRUCT_ITEM_XML_SCHEMA:
+	case AR_STRUCT_ITEM_XML_FIELD:
+	case AR_STRUCT_ITEM_XML_VUI:
+		{
+			CARSchema schema(objectId);
+			return schema.GetURL(rootLevel);
+		}
+		break;
+	default: return "";
+	}
+}
+
 void CRefItem::LinkToColumnParent(std::ostream& strm, int rootLevel) const
 {
 	// objectId contains schema id
@@ -203,6 +219,10 @@ string CRefItem::GetObjectName() const
 	switch (this->arsStructItemType)
 	{
 	case AR_STRUCT_ITEM_XML_SCHEMA:
+	// the main object of field/vui is the schema. so in this case we have to
+	// return the schema name, which is used as object name to LinkToXmlObjType
+	case AR_STRUCT_ITEM_XML_FIELD:
+	case AR_STRUCT_ITEM_XML_VUI:
 		{
 			CARSchema schema(this->objectId);
 			return schema.GetName();
@@ -248,20 +268,6 @@ string CRefItem::GetObjectName() const
 	//	{
 	//	}
 	//	break;
-	case AR_STRUCT_ITEM_XML_VUI:
-		{
-			CARVui vui(this->objectId, this->subObjectId);
-			return vui.GetName();
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_FIELD:
-		{
-			// the main object of the field is the schema. so in this case we have to
-			// return the schema name, which is used as object name to LinkToXmlObjType
-			CARSchema schema(this->objectId);
-			return schema.GetName();
-		}
-		break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	case AR_STRUCT_ITEM_IMAGE:
 		{
@@ -552,6 +558,18 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 		break;
 	case REFM_MACRO:
 		strm << "Field in Macro " << IfElse() << "-Action " << ActionIndex();
+		break;
+	case REFM_BACKGROUND_IMAGE:
+		strm << "Image on field of form " << LinkToSchema(rootLevel);
+		break;
+	case REFM_TITLE_BAR_ICON:
+		strm << "Title Bar Icon in VUI of Form " << LinkToSchema(rootLevel);
+		break;
+	case REFM_VUI_BACKGROUND:
+		strm << "Background in VUI of Form " << LinkToSchema(rootLevel);
+		break;
+	case REFM_PACKINGLIST:
+		strm << "Contained in packing list";
 		break;
 	default:
 		assert(false);

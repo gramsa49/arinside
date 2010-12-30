@@ -135,28 +135,31 @@ string CDocImageDetails::WorkflowReferences()
 		tblRef.AddColumn(5, "Enabled");
 		tblRef.AddColumn(40, "Description");
 
-		// TODO: add references here
-		vector<CImageRefItem>::iterator refIt = pInside->imageList.ReferenceList_begin();
-		vector<CImageRefItem>::iterator endIt = pInside->imageList.ReferenceList_end();
-		for ( ; refIt != endIt; ++refIt)
-		{
-			CImageRefItem &item = *refIt;
-			if (item.imageIndex == imageIndex)
+		CARImage image(this->imageIndex);
+		const CARImage::ReferenceList& refs = image.GetReferences();
+		CARImage::ReferenceList::const_iterator curIt = refs.begin();
+		CARImage::ReferenceList::const_iterator endIt = refs.end();
+		for ( ; curIt != endIt; ++curIt)
+		{			
+			CTableRow row("cssStdRow");		
+			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
+			row.AddCell(pInside->LinkToXmlObjType(curIt->GetObjectType(), curIt->GetObjectName(), curIt->GetSubObjectId(), rootLevel));
+
+			string tmpEnabled = "";
+			string tmpCssEnabled = "";
+
+			bool enabledSupported = false;
+			int enabled = curIt->GetObjectEnabled(enabledSupported);
+
+			if (enabledSupported)
 			{
-				CTableRow row("cssStdRow");		
-				row.AddCell(CAREnum::XmlStructItem(item.fromItem->GetServerObjectTypeXML()));				
-				row.AddCell(item.fromItem->GetURL(rootLevel));
-
-				string tmpEnabled = this->pInside->XmlObjEnabled(item.fromItem);
-				string tmpCssEnabled = "";
-
-				if(tmpEnabled.compare("Disabled")==0)
-					tmpCssEnabled = "objStatusDisabled";
-
-				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-				row.AddCell(item.description);
-				tblRef.AddRow(row);
+				tmpEnabled = CAREnum::ObjectEnable(enabled);
+				if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
 			}
+
+			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+			row.AddCell(curIt->GetDescription(rootLevel));
+			tblRef.AddRow(row);
 		}
 
 		stringstream tblDesc;

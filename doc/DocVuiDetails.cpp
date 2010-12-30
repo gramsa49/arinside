@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocVuiDetails.h"
 #include "../output/CsvPage.h"
+#include "../core/ARImage.h"
 
 CDocVuiDetails::CDocVuiDetails(unsigned int SchemaInsideId, const CARVui& vuiObj, int rootLevel)
 : schema(SchemaInsideId), vui(vuiObj)
@@ -211,28 +212,34 @@ bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStru
 	case AR_DPROP_TITLE_BAR_ICON_IMAGE:
 		if (value.dataType == AR_DATA_TYPE_CHAR)
 		{
-			int imageIndex = pInside->imageList.FindImage(value.u.charVal);
-			if (imageIndex < 0) return false;
-
-			displayValue = pInside->imageList.ImageGetURL(imageIndex, rootLevel);
-
-			string description;
-			switch (propId)
+			CARImage img(value.u.charVal);
+			if (img.Exists())
 			{
-			case AR_DPROP_DETAIL_PANE_IMAGE: 
-				description = "Background in VUI of Form " + this->schema.GetURL(rootLevel);
-				break;
-			case AR_DPROP_TITLE_BAR_ICON_IMAGE:
-				description = "Title Bar Icon in VUI of Form " + this->schema.GetURL(rootLevel);
-				break;
-			}
+				displayValue = img.GetURL(rootLevel);
 
-			if (!description.empty())
-			{
-				CImageRefItem refItem(imageIndex, description, &vui);
-				pInside->imageList.AddReference(refItem);
+				int msgId = -1;
+				switch (propId)
+				{
+				case AR_DPROP_DETAIL_PANE_IMAGE: 
+					msgId = REFM_VUI_BACKGROUND;
+					break;
+				case AR_DPROP_TITLE_BAR_ICON_IMAGE:
+					msgId = REFM_TITLE_BAR_ICON;
+					break;
+				}
+
+				if (msgId > -1)
+				{
+					CRefItem refItem(this->vui, msgId);
+					img.AddReference(refItem);
+				}
+
 				return true;
 			}
+			// TODO: add missing image reference
+			//else
+			//{
+			//}
 		}
 		break;
 	}

@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocPacklistDetails.h"
+#include "../core/ARImage.h"
 
 CDocPacklistDetails::CDocPacklistDetails(CARContainer &packList)
 : pPackList(packList)
@@ -145,16 +146,16 @@ string CDocPacklistDetails::PackListInformation()
 				{
 					srvType << CAREnum::ContainerRefType(refs.referenceList[i].type);
 
-					int imageIndex = pInside->imageList.FindImage(refs.referenceList[i].reference.u.name);
-					if (imageIndex < 0)
-						srvObj << this->pInside->LinkToImage(refs.referenceList[i].reference.u.name, rootLevel);
-					else
-						srvObj << this->pInside->LinkToImage(imageIndex, rootLevel);
-
-					if (imageIndex >= 0)
+					CARImage image(refs.referenceList[i].reference.u.name);
+					if (!image.Exists())
 					{
-						CImageRefItem refItem(imageIndex, "Contained in packing list", &pPackList);
-						pInside->imageList.AddReference(refItem);
+						srvObj << this->pInside->LinkToImage(refs.referenceList[i].reference.u.name, rootLevel);
+					}
+					else
+					{
+						srvObj << this->pInside->LinkToImage(image.GetInsideId(), rootLevel);
+						CRefItem refItem(pPackList, REFM_PACKINGLIST);
+						image.AddReference(refItem);
 					}
 				}
 				break;
