@@ -80,7 +80,6 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->roleList.clear();
 	this->serverInfoList.clear();
 	this->globalFieldList.clear();
-	this->listMenuRefItem.clear();
 
 	this->nDurationLoad = 0;
 	this->nDurationDocumentation = 0;
@@ -1440,25 +1439,21 @@ string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 	return filterName;
 }
 
-string CARInside::LinkToMenu(string menuName, int fromRootLevel, bool* bFound)
+string CARInside::LinkToMenu(string menuName, int fromRootLevel)
 {
 	if (menuName.compare("$NULL$")==0)
 	{
-		if (bFound) *bFound = true;
 		return menuName;
 	}
 
 	CARCharMenu menu(menuName);
 	if (menu.Exists())
 	{
-		if (bFound) { *bFound = true; }
 		return menu.GetURL(fromRootLevel);
 	}
 
 	//Menu has not been found
-	if (bFound) { *bFound = false; }
-
-	//if the menu is missing, we just return the name of it. maybe link to the
+	//If the menu is missing, we just return the name of it. maybe link to the
 	//"missing menus" page (must be implemented first) of CDocValidator later.
 	return "<span class=\"fieldNotFound\">" + menuName + "</span>";
 }
@@ -1743,24 +1738,36 @@ void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref
 	//}
 }
 
-void CARInside::AddMissingMenu(const CMissingMenuRefItem& refItem)
+void CARInside::AddMenuReference(const string& menuName, const CRefItem &ref)
 {
-	try
+	if (menuName == "$NULL$") return;
+
+	CARCharMenu menu(menuName);
+
+	if (menu.Exists())
 	{
-		list<CMissingMenuRefItem>::iterator mIter = listMenuNotFound.begin();
-		list<CMissingMenuRefItem>::iterator endIt = listMenuNotFound.end();
-		for ( ; mIter != endIt; ++mIter)
-		{
-			if (*mIter == refItem)
-			{
-				return;
-			}
-		}
-		listMenuNotFound.push_back(refItem);
+		// if the menu was found add the referece to it
+		if (!menu.ReferenceExists(ref))
+			menu.AddReference(ref);
 	}
-	catch (...)
+	else
 	{
-		cout << "EXCEPTION in AddMissingMenu" << endl;
+		// if the menu is missing, add the name to the missing menus map and append the reference to it
+		if (missingMenuReferences.find(menuName) != missingMenuReferences.end())
+		{
+			missingMenuReferences.insert(pair<string, vector<CRefItem> >(menuName, vector<CRefItem>()));
+		}
+
+		CARCharMenu::ReferenceList::iterator curIt = missingMenuReferences[menuName].begin();
+		CARCharMenu::ReferenceList::iterator endIt = missingMenuReferences[menuName].end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			if (*curIt == ref)
+				return;
+		}
+
+		missingMenuReferences[menuName].push_back(ref);
 	}
 }
 

@@ -311,6 +311,12 @@ unsigned int CRefItem::GetObjectEnabled(bool &supportsEnabled) const
 	}
 }
 
+unsigned int CRefItem::GetObjectEnabled() const
+{
+	bool se;
+	return GetObjectEnabled(se);
+}
+
 string CRefItem::GetDescription(int rootLevel) const
 {
 	stringstream strm;
@@ -570,6 +576,9 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 		break;
 	case REFM_PACKINGLIST:
 		strm << "Contained in packing list";
+		break;
+	case REFM_FIELD_CHARMENU:
+		strm << "Field Menu on Form " << LinkToSchema(rootLevel);
 		break;
 	default:
 		assert(false);

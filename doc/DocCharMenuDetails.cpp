@@ -324,7 +324,7 @@ string CDocCharMenuDetails::SearchMenuDetails()
 
 
 		//Value Field
-		strm << "Value Field: " << this->pInside->LinkToField(menu.schema, menu.valueField, rootLevel);
+		strm << "Value Field: " << this->pInside->LinkToField(menu.schema, menu.valueField, rootLevel) << "<br/>";
 		CRefItem refItemValue(this->menu, REFM_CHARMENU_VALUE);
 		pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.valueField, refItemValue);
 

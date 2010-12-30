@@ -16,6 +16,7 @@
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
+#include "../util/RefItem.h"
 #include "ARListHelpers.h"
 #include <assert.h>
 
@@ -48,6 +49,12 @@ public:
 	const string& MenuGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void MenuSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	// referencing
+	typedef vector<CRefItem> ReferenceList;
+	void AddReference(unsigned int index, const CRefItem& refItem);
+	bool ReferenceExists(unsigned int index, const CRefItem& refItem);
+	const ReferenceList& GetReferences(unsigned int index);
+
 	// the sort class needs access the the "names" member variable
 	friend class SortByName<CARMenuList>;
 private:
@@ -69,6 +76,7 @@ private:
 
 	MenuListState internalListState;
 	vector<int> sortedList;
+	vector<ReferenceList> references;
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

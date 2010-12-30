@@ -172,6 +172,8 @@ enum ReferenceMessages
 	REFM_TITLE_BAR_ICON,
 	REFM_VUI_BACKGROUND,
 	REFM_PACKINGLIST,
+
+	REFM_FIELD_CHARMENU,
 };
 
 // maybe there is a better place for the following enums and functions //
@@ -227,6 +229,8 @@ public:
 	string GetObjectName() const;
 	// returns the enabled state of the referenced object
 	unsigned int GetObjectEnabled(bool &supportsEnabled) const; // supportsEnabled is set to false, if the object doesn't support the enabled/disabled state
+	// returns the enabled state of the referenced object
+	unsigned int GetObjectEnabled() const;
 	// returns the description text of the reference
 	string GetDescription(int rootLevel) const;
 	// writes the description text to an output stream

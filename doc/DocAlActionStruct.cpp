@@ -471,14 +471,11 @@ void CDocAlActionStruct::ActionSetChar(std::ostream& strm, const ARFieldCharacte
 		{
 			if(strcmp(action.charMenu, "") != 0)
 			{
-				bool menuFound = false;
-				strm << "Menu: " << arIn->LinkToMenu(action.charMenu, rootLevel, &menuFound) << "<br/>" << endl;
+				strm << "Menu: " << arIn->LinkToMenu(action.charMenu, rootLevel) << "<br/>" << endl;
 
-				if (!menuFound)
-				{
-					CMissingMenuRefItem refItemNotFound(action.charMenu, AR_STRUCT_ITEM_XML_ACTIVE_LINK, this->obj->GetName());
-					arIn->AddMissingMenu(refItemNotFound);
-				}
+				// add a reference to the menu or save as a missing menu reference
+				CRefItem refItem(*this->obj, ifElse, nAction, REFM_CHANGEFIELD);
+				arIn->AddMenuReference(action.charMenu, refItem);
 			}
 		}
 

@@ -38,7 +38,6 @@ class IFileStructure;
 #include "WindowsUtil.h"
 #include "AppConfig.h"
 #include "util/RefItem.h"
-#include "util/MissingMenuRefItem.h"
 #include "util/AppTimer.h"
 #include "lists/ARSchemaList.h"
 #include "lists/ARActiveLinkList.h"
@@ -100,8 +99,7 @@ public:
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
 	CBlackList blackList;
-	list<CMissingMenuRefItem> listMenuRefItem;
-	list<CMissingMenuRefItem> listMenuNotFound;
+	map<string, vector<CRefItem> > missingMenuReferences;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	CARImageList	imageList;
 #endif
@@ -132,7 +130,7 @@ public:
 	string LinkToImage(unsigned int imageIndex, int rootLevel);
 	string LinkToImage(const string &imageName, int rootLevel);
 #endif
-	string LinkToMenu(string menuName, int rootLevel, bool* bFound = NULL);
+	string LinkToMenu(string menuName, int rootLevel);
 	string LinkToSchema(const string& schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
 	string LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel);	
@@ -143,7 +141,8 @@ public:
 	string GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int enumPosition);
 
 	void AddFieldReference(int schemaId, int fieldId, const CRefItem& ref);
-	void AddMissingMenu(const CMissingMenuRefItem& refItem);
+	void AddMenuReference(const string& menuName, const CRefItem& ref);
+
 	string TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
 	string TextFindKeywords(string inText, string fieldSeparator);	
 	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);

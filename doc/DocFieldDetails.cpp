@@ -261,14 +261,10 @@ string CDocFieldDetails::FieldLimits()
 
 				if(fLimit.charMenu[0] != 0)
 				{
-					bool menuFound = false;
-					strm << "Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel, &menuFound) << "<br/>" << endl;
+					strm << "Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel) << "<br/>" << endl;
 
-					if (!menuFound)
-					{
-						CMissingMenuRefItem refItemNotFound(fLimit.charMenu, AR_STRUCT_ITEM_XML_FIELD, this->schema.GetInsideId(), this->field.GetInsideId());
-						pInside->AddMissingMenu(refItemNotFound);
-					}
+					CRefItem refItem(this->field, REFM_FIELD_CHARMENU);
+					pInside->AddMenuReference(fLimit.charMenu, refItem);
 				}
 
 				strm << "Fulltext Option: " << CAREnum::FieldFTOption(fLimit.fullTextOptions) << "<br/>" << endl;

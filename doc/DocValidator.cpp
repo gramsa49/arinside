@@ -538,46 +538,49 @@ void CDocValidator::MenuReferenceValidator()
 			contHeadStrm << "List of missing menus that are referenced in ARSystem workflow:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
-			if (pInside->listMenuNotFound.size() > 0)
+			if (pInside->missingMenuReferences.size() > 0)
 			{
-				pInside->listMenuNotFound.sort();
-
 				CTable tbl("missingMenus", "TblObjectList");
 				tbl.AddColumn(30, "Menu Name");
 				tbl.AddColumn(10, "Object Type");
 				tbl.AddColumn(30, "Server object");
 				tbl.AddColumn(30, "Details");
 
-				list<CMissingMenuRefItem>::iterator mIter = pInside->listMenuNotFound.begin();
-				list<CMissingMenuRefItem>::iterator endIt = pInside->listMenuNotFound.end();
+				map<string, CARCharMenu::ReferenceList>::iterator curIt = pInside->missingMenuReferences.begin();
+				map<string, CARCharMenu::ReferenceList>::iterator endIt = pInside->missingMenuReferences.end();
 
-				for ( ; mIter != endIt; ++mIter)
+				for ( ; curIt != endIt; ++curIt)
 				{
-					CMissingMenuRefItem& mnuRefItem = *mIter;
-					CTableRow row("cssStdRow");
 
-					string tmpEnabled = pInside->XmlObjEnabled(mnuRefItem.arsStructItemType, mnuRefItem.fromName);
-					string tmpCssClass = "";
+					CARCharMenu::ReferenceList::iterator curRefIt = curIt->second.begin();
+					CARCharMenu::ReferenceList::iterator endRefIt = curIt->second.end();
 
-					if (tmpEnabled.compare("Disabled")==0)
-						tmpCssClass = "objStatusDisabled";
-
-					row.AddCell(mnuRefItem.menuName);				
-					row.AddCell(CAREnum::XmlStructItem(mnuRefItem.arsStructItemType));
-
-					if (mnuRefItem.arsStructItemType == AR_STRUCT_ITEM_XML_FIELD)
+					for (; curRefIt != endRefIt; ++curRefIt)
 					{
-						row.AddCell(pInside->LinkToField(mnuRefItem.schemaInsideId, mnuRefItem.fieldInsideId, rootLevel));
-						row.AddCell(pInside->LinkToSchema(mnuRefItem.schemaInsideId, rootLevel));
-					}
-					else
-					{
-						row.AddCell(pInside->LinkToXmlObjType(mnuRefItem.arsStructItemType, mnuRefItem.fromName, rootLevel));
-						row.AddCell(CTableCell(tmpEnabled, tmpCssClass));
-					}
+						CTableRow row("cssStdRow");
 
-					
-					tbl.AddRow(row);
+						int arsObjectType = curRefIt->GetObjectType();
+
+						row.AddCell(curIt->first);
+						row.AddCell(CAREnum::XmlStructItem(arsObjectType));
+						row.AddCell(pInside->LinkToXmlObjType(arsObjectType, curRefIt->GetObjectName(), curRefIt->GetSubObjectId(), rootLevel));
+
+						stringstream strm;
+						strm << curRefIt->GetDescription(rootLevel);
+
+						if (arsObjectType == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
+						{
+							unsigned int enabled = curRefIt->GetObjectEnabled();
+							if (!enabled)
+							{
+								strm << " (<span class=\"fieldNotFound\">" << CAREnum::ObjectEnable(enabled) << "</span>)";
+							}
+						}
+
+						row.AddCell(strm.str());
+						
+						tbl.AddRow(row);
+					}
 				}
 				webPage.AddContent(tbl.ToXHtml());
 				tbl.ClearRows();

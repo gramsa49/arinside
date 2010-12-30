@@ -16,6 +16,7 @@
 
 #pragma once
 #include "ARServerObject.h"
+#include "../lists/ARMenuList.h"
 
 class CARCharMenu :
 	public CARServerObject
@@ -56,4 +57,10 @@ public:
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_CHAR_MENU; }
 	bool IsClonable() const;
 	CARServerObject* Clone() const;
+
+	// references
+	typedef CARMenuList::ReferenceList ReferenceList;
+	void AddReference(const CRefItem& refItem);
+	bool ReferenceExists(const CRefItem& refItem) const;
+	const ReferenceList& GetReferences() const;
 };

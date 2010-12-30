@@ -130,15 +130,11 @@ string CDocPacklistDetails::PackListInformation()
 				break;
 			case ARREF_CHAR_MENU:
 				{
-					bool menuFound = false;
 					srvType << CAREnum::ContainerRefType(refs.referenceList[i].type);
-					srvObj << this->pInside->LinkToMenu(refs.referenceList[i].reference.u.name, rootLevel, &menuFound);
+					srvObj << this->pInside->LinkToMenu(refs.referenceList[i].reference.u.name, rootLevel);
 
-					if (!menuFound)
-					{
-						CMissingMenuRefItem refItemNotFound(refs.referenceList[i].reference.u.name, AR_STRUCT_ITEM_XML_CONTAINER, this->pPackList.GetName());
-						pInside->AddMissingMenu(refItemNotFound);
-					}
+					CRefItem refItem(this->pPackList, REFM_PACKINGLIST);
+					pInside->AddMenuReference(refs.referenceList[i].reference.u.name, refItem);
 				}
 				break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750

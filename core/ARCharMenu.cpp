@@ -128,3 +128,18 @@ const ARCharMenuStruct& CARCharMenu::GetDefinition() const
 {
 	return CARInside::GetInstance()->menuList.MenuGetDefinition(GetInsideId());
 }
+
+void CARCharMenu::AddReference(const CRefItem &refItem)
+{
+	return CARInside::GetInstance()->menuList.AddReference(GetInsideId(), refItem);
+}
+
+bool CARCharMenu::ReferenceExists(const CRefItem &refItem) const
+{
+	return CARInside::GetInstance()->menuList.ReferenceExists(GetInsideId(), refItem);
+}
+
+const CARCharMenu::ReferenceList& CARCharMenu::GetReferences() const
+{
+	return CARInside::GetInstance()->menuList.GetReferences(GetInsideId());
+}

@@ -24,6 +24,7 @@ CARAssignHelper::CARAssignHelper(CARInside& arIn, int rootLevel, const CARServer
 	this->schemaInsideId1 = schema1.GetInsideId();
 	this->schemaInsideId2 = schema2.GetInsideId();
 	this->rootLevel = rootLevel;
+	this->pushFieldFlag = false;
 }
 
 CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServerObject &obj, int schemaId1, int schemaId2)
@@ -33,6 +34,7 @@ CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServer
 	this->schemaInsideId1 = schemaId1;
 	this->schemaInsideId2 = schemaId2;
 	this->rootLevel = rootLevel;
+	this->pushFieldFlag = false;
 }
 
 CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServerObject &obj, const std::string &schemaName1, const std::string &schemaName2)
@@ -45,6 +47,7 @@ CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServer
 	this->schemaInsideId1 = schema1.GetInsideId();
 	this->schemaInsideId2 = schema2.GetInsideId();
 	this->rootLevel = rootLevel;
+	this->pushFieldFlag = false;
 }
 
 CARAssignHelper::~CARAssignHelper(void)

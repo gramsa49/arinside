@@ -124,6 +124,8 @@ bool CARMenuList::LoadFromServer()
 			sortedList.push_back(i);
 		}
 		funcResult = true;
+
+		references.resize(names.numItems);
 	}
 	else
 	{
@@ -146,6 +148,7 @@ void CARMenuList::Reserve(unsigned int size)
 
 	sortedList.reserve(size);
 	appRefNames.reserve(size);
+	references.resize(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -270,3 +273,25 @@ void CARMenuList::Sort()
 #endif
 }
 
+void CARMenuList::AddReference(unsigned int index, const CRefItem &refItem)
+{
+	references[sortedList[index]].push_back(refItem);
+}
+
+bool CARMenuList::ReferenceExists(unsigned int index, const CRefItem &refItem)
+{
+	ReferenceList::iterator curIt = references[sortedList[index]].begin();
+	ReferenceList::iterator endIt = references[sortedList[index]].end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (*curIt == refItem)
+			return true;
+	}
+	return false;
+}
+
+const CARMenuList::ReferenceList& CARMenuList::GetReferences(unsigned int index)
+{
+	return references[sortedList[index]];
+}
