@@ -61,7 +61,7 @@ public:
 	void SetAppRefName(const string& appName);
 
 	string GetExecuteOn(bool singleLine=false, CARProplistHelper* props=NULL);
-	string GetURL(int rootLevel, bool showImage = true);
+	string GetURL(int rootLevel, bool showImage = true) const;
 
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_ACTIVE_LINK; }
 	bool IsClonable() const;

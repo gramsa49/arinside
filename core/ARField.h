@@ -58,7 +58,7 @@ public:
 	const CARSchema& GetSchema() const;
 
 	// helpers
-	string GetURL(int rootLevel, bool showImage = true);
+	string GetURL(int rootLevel, bool showImage = true) const;
 
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_FIELD; }

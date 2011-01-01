@@ -106,7 +106,7 @@ CPageParams::CPageParams(unsigned int page, unsigned int uParam1, CARDataObject*
 	InitFile();
 }
 
-CPageParams::CPageParams(unsigned int page, CARServerObject* obj1)
+CPageParams::CPageParams(unsigned int page, const CARServerObject* obj1)
 {
 	this->page = page; 
 	this->uint1 = 0; 
@@ -116,7 +116,7 @@ CPageParams::CPageParams(unsigned int page, CARServerObject* obj1)
 	InitFile();
 }
 
-CPageParams::CPageParams(unsigned int page, unsigned int uParam1, CARServerObject *obj1)
+CPageParams::CPageParams(unsigned int page, unsigned int uParam1, const CARServerObject *obj1)
 {
 	this->page = page; 
 	this->uint1 = uParam1; 

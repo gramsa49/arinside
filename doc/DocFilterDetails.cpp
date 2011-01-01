@@ -232,15 +232,17 @@ string CDocFilterDetails::WorkflowReferences()
 		tblRef.AddColumn(40, "Description");
 
 		// output error handler callers here
-		vector<string>::const_iterator iter = this->filter.ErrorCallers().begin();
-		vector<string>::const_iterator endIt = this->filter.ErrorCallers().end();
-		for ( ; iter != endIt; ++iter)
-		{		
+		vector<unsigned int>::iterator curIt = this->filter.ErrorCallers().begin();
+		vector<unsigned int>::iterator endIt = this->filter.ErrorCallers().end();
+		for ( ; curIt != endIt; ++curIt)
+		{
+			CARFilter flt(*curIt);
+
 			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FILTER));
-			row.AddCell(pInside->LinkToXmlObjType(AR_STRUCT_ITEM_XML_FILTER, *iter, rootLevel));
+			row.AddCell(pInside->LinkToFilterRef(&flt, rootLevel));
 
-			string tmpEnabled = this->pInside->XmlObjEnabled(AR_STRUCT_ITEM_XML_FILTER, *iter);
+			string tmpEnabled = this->pInside->XmlObjEnabled(&flt);
 			string tmpCssEnabled = "";
 
 			if(strcmp(tmpEnabled.c_str(), "Disabled")==0)

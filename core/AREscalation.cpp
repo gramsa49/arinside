@@ -38,7 +38,7 @@ CARServerObject* CAREscalation::Clone() const
 	return new CAREscalation(*this);
 }
 
-string CAREscalation::GetURL(int rootLevel, bool showImage)
+string CAREscalation::GetURL(int rootLevel, bool showImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
 	return CWebUtil::Link(this->GetName(), file, (showImage ? "escalation.gif" : ""), rootLevel);

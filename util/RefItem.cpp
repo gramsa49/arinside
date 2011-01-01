@@ -386,7 +386,7 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 		strm << "Change Field " << IfElse() << "-Action " << ActionIndex();
 		break;
 	case REFM_CHANGEFIELD_OF_FIELDS_VALUE:
-		strm << "Change Field of Fields Value << " << IfElse() << "-Action " << ActionIndex();
+		strm << "Change Field of Fields Value " << IfElse() << "-Action " << ActionIndex();
 		break;
 	case REFM_CHANGEFIELD_LABEL:
 		strm << "Change Field Label " << IfElse() << "-Action " << ActionIndex();
@@ -579,6 +579,15 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 		break;
 	case REFM_FIELD_CHARMENU:
 		strm << "Field Menu on Form " << LinkToSchema(rootLevel);
+		break;
+	case REFM_CHARMENU_SQL:
+		strm << "Field in Menus SQL-Command";
+		break;
+	case REFM_CHARMENU_FORM:
+		strm << "Form-Value in Menu";
+		break;
+	case REFM_CHARMENU_SERVER:
+		strm << "Server-Value in Menu";
 		break;
 	default:
 		assert(false);

@@ -148,7 +148,7 @@ bool CARFilterList::LoadFromServer()
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
-			errorCallers.push_back(vector<string>());
+			errorCallers.push_back(vector<unsigned int>());
 			sortedList->push_back(i);
 		}
 		funcResult = true;
@@ -288,7 +288,7 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 
 		sortedList->push_back(index);
 		appRefNames.push_back("");
-		errorCallers.push_back(vector<string>());
+		errorCallers.push_back(vector<unsigned int>());
 
 		if (outDocVersion != NULL) *outDocVersion = arDocVersion;
 

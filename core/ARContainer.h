@@ -54,7 +54,7 @@ public:
 	const string& GetAppRefName() const;
 	void SetAppRefName(const string& appName);
 
-	string GetURL(int rootLevel, bool showImage = true);
+	string GetURL(int rootLevel, bool showImage = true) const;
 
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_CONTAINER; }
 	bool IsClonable() const;

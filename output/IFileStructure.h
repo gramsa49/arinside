@@ -61,9 +61,9 @@ public:
 	CPageParams(unsigned int page, unsigned int uParam1);
 	CPageParams(unsigned int page, unsigned int uParam1, unsigned int uParam2);
 	CPageParams(unsigned int page, CARDataObject* data1);
-	CPageParams(unsigned int page, CARServerObject* obj1);
+	CPageParams(unsigned int page, const CARServerObject* obj1);
 	CPageParams(unsigned int page, unsigned int uParam1, CARDataObject* data1);
-	CPageParams(unsigned int page, unsigned int uParam1, CARServerObject* obj1);
+	CPageParams(unsigned int page, unsigned int uParam1, const CARServerObject* obj1);
 	CPageParams(unsigned int page, DataObjectType dataType);
 	CPageParams(const CPageParams& val, unsigned int page); // copy constructor with overridable page
 	~CPageParams();
@@ -75,7 +75,7 @@ public:
 	unsigned int page;
 	unsigned int uint1;
 	unsigned int uint2;
-	CARServerObject* obj1;
+	const CARServerObject* obj1;
 	CARDataObject* data1;
 
 private:

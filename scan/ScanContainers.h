@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2011 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -15,26 +15,21 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include <string>
-#include <string.h>
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <list>
-#include <map>
-#include <vector>
-#include <time.h>
-#include <stdlib.h> // JLS17_LINUX
-#include <stdio.h>
 
-#include "util/Util.h"
+// forware declarations
+class CARContainer;
 
-extern const char* MenuSeparator;
-extern const char* EmptyRunIf;
-extern const char* EmptyValue;
+class CScanContainers
+{
+private:
+	CScanContainers(CARContainer& container);
+	~CScanContainers(void);
 
-using namespace std;
-using std::for_each;
+public:
+	static void Start();
 
-template<typename T>
-void SortAndRemoveDuplicates(vector<T>& v) { sort(v.begin(), v.end()); v.erase(unique(v.begin(), v.end()), v.end()); }
+private:
+	CARContainer& cont;
+
+	void Scan();
+};

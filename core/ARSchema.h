@@ -69,7 +69,7 @@ public:
 
 	// some helpers
 	string WebAlias();
-	string GetURL(int rootLevel, bool useImage = true);
+	string GetURL(int rootLevel, bool useImage = true) const;
 
 	string LinkToVui(int vuiId, int fromRootLevel);
 	string LinkToVui(string vuiName, int fromRootLevel);

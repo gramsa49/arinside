@@ -18,6 +18,8 @@
 #include "DocCharMenuDetails.h"
 #include "../output/ContainerTable.h"
 
+const char* MenuDefinitionText = "Menu Definition";
+
 CDocCharMenuDetails::CDocCharMenuDetails(unsigned int menuInsideId)
 : menu(menuInsideId)
 {
@@ -68,30 +70,30 @@ void CDocCharMenuDetails::Documentation()
 			tblObjProp.AddRow(row);	
 
 			//Menuspecific
-			row.ClearCells();
-			cellProp.content = "Menu Definition";
-			cellPropValue.content = "";
 			switch (menuDef.menuType)
 			{		
 			case AR_CHAR_MENU_LIST: 
-				cellPropValue.content = CharMenuDetails(); 
+				CharMenuDetails(tblObjProp);
 				break;
 			case AR_CHAR_MENU_QUERY:
-				cellPropValue.content = SearchMenuDetails(); 
+				SearchMenuDetails(tblObjProp);
 				break;
 			case AR_CHAR_MENU_FILE:
-				cellPropValue.content = FileMenuDetails(); 
+				FileMenuDetails(tblObjProp);
 				break;
 			case AR_CHAR_MENU_SQL:
-				cellPropValue.content = SqlMenuDetails(); 
+				SqlMenuDetails(tblObjProp);
 				break;
 			case AR_CHAR_MENU_DATA_DICTIONARY:
-				cellPropValue.content = DataDictMenuDetails(); 
+				DataDictMenuDetails(tblObjProp); 
+				break;
+			default:
+				row.ClearCells();
+				row.AddCell(MenuDefinitionText);
+				row.AddCell(EnumDefault);
+				tblObjProp.AddRow(row);	
 				break;
 			}		
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
 
 			//RelatedFields
 			row.ClearCells();
@@ -136,11 +138,8 @@ void CDocCharMenuDetails::Documentation()
 	}
 }
 
-string CDocCharMenuDetails::CharMenuDetails()
+void CDocCharMenuDetails::CharMenuDetails(CTable& table)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
 		CTable tbl("menuItems", "TblObjectList");
@@ -165,55 +164,79 @@ string CDocCharMenuDetails::CharMenuDetails()
 			row.AddCell(cellItemValue);
 			tbl.AddRow(row);		
 		}
-		strm << tbl;
+		
+		CTableRow row;
+		row.AddCell(MenuDefinitionText);
+		row.AddCell(tbl.ToXHtml());
+		table.AddRow(row);
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION Menu details doc of '" << this->menu.GetName() << "': " << e.what() << endl;
 	}
-
-
-	return strm.str();
 }
 
-string CDocCharMenuDetails::FileMenuDetails()
+void CDocCharMenuDetails::FileMenuDetails(CTable& table)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
+		stringstream strm;
+
 		const ARCharMenuFileStruct& menu = this->menu.GetDefinition().u.menuFile;
-		strm << "File Name: " << menu.filename << " (" << CAREnum::MenuFileLocation(menu.fileLocation) << ")" << endl;
+		strm << "File Name: " << menu.filename << "<br/>";
+		strm << "Location: " << CAREnum::MenuFileLocation(menu.fileLocation) << endl;
+
+		CTableRow row;
+		row.AddCell(MenuDefinitionText);
+		row.AddCell(strm.str());
+		table.AddRow(row);
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in FieldMenuDetails: " << e.what() << endl; 
 	}
-
-	return strm.str();
 }
 
-string CDocCharMenuDetails::SqlMenuDetails()
+void CDocCharMenuDetails::SqlMenuDetails(CTable& table)
 {
-	stringstream strm;
-	strm.str("");
 
 	try
 	{
-		const ARCharMenuSQLStruct& menu = this->menu.GetDefinition().u.menuSQL;
+		vector<int> attachedToSchemaList;
+		BuildUniqueSchemaList(attachedToSchemaList);
 
-		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-		strm << "Label Index List: " << GetSQLLabelList(&menu) << "<br/>" << endl;
-		strm << "Value Index: " << menu.valueIndex << "<br/><br/>" << endl;
-		strm << "SQL Command: " << menu.sqlCommand << endl;
+		// if the menu isnt attached to any form, add a dummy to the list, so the definition is generated at least once
+		if (attachedToSchemaList.empty()) attachedToSchemaList.push_back(-1);
+
+		vector<int>::iterator curIt = attachedToSchemaList.begin();
+		vector<int>::iterator endIt = attachedToSchemaList.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			CARSchema schema(*curIt);
+
+			stringstream strm;
+			const ARCharMenuSQLStruct& menu = this->menu.GetDefinition().u.menuSQL;
+
+			// in case a field in placed within the SQL command
+			CRefItem refItem(this->menu, REFM_CHARMENU_SQL);
+
+			strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
+			strm << "Label Index List: " << GetSQLLabelList(&menu) << "<br/>" << endl;
+			strm << "Value Index: " << menu.valueIndex << "<br/><br/>" << endl;
+			strm << "SQL Command: " << pInside->TextFindFields(menu.sqlCommand, "$", *curIt, rootLevel, true, &refItem) << endl;
+
+			// add the table row now
+			CTableRow row;
+			row.AddCell( (schema.Exists() ? schema.GetURL(rootLevel) : MenuDefinitionText) );
+			row.AddCell( strm.str() );
+			table.AddRow(row);
+		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in SqlMenuDetails: " << e.what() << endl; 
 	}
-
-	return strm.str();
 }
 
 string CDocCharMenuDetails::GetFieldTypes(unsigned int fieldMask)
@@ -241,121 +264,155 @@ string CDocCharMenuDetails::GetFieldTypes(unsigned int fieldMask)
 	return strm.str();
 }
 
-string CDocCharMenuDetails::DataDictMenuDetails()
+void CDocCharMenuDetails::DataDictMenuDetails(CTable& table)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
-		const ARCharMenuDDStruct& menu = this->menu.GetDefinition().u.menuDD;
+		vector<int> attachedToSchemaList;
+		BuildUniqueSchemaList(attachedToSchemaList);
 
-		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-		strm << "Label Format: " << CAREnum::MenuDDLabelFormat(menu.nameType) << "<br/>" << endl;
-		strm << "Value Format: " << CAREnum::MenuDDValueFormat(menu.valueFormat) << "<br/>" << endl;
+		// if the menu isnt attached to any form, add a dummy to the list, so the definition is generated at least once
+		if (attachedToSchemaList.empty()) attachedToSchemaList.push_back(-1);
 
-		switch(menu.structType)
+		vector<int>::iterator curIt = attachedToSchemaList.begin();
+		vector<int>::iterator endIt = attachedToSchemaList.end();
+
+		for (; curIt != endIt; ++curIt)
 		{
-		case AR_CHAR_MENU_DD_FORM:
+			CARSchema schema(*curIt);
+
+			stringstream strm;
+			const ARCharMenuDDStruct& menu = this->menu.GetDefinition().u.menuDD;
+
+			CRefItem refItemServer(this->menu, REFM_CHARMENU_SERVER);
+
+			strm << "Server: " << ( menu.server[0] == '$' ? pInside->TextFindFields(menu.server, "$", *curIt, rootLevel, true, &refItemServer) : this->pInside->LinkToServerInfo(menu.server, rootLevel)) << "<br/>" << endl;
+			strm << "Label Format: " << CAREnum::MenuDDLabelFormat(menu.nameType) << "<br/>" << endl;
+			strm << "Value Format: " << CAREnum::MenuDDValueFormat(menu.valueFormat) << "<br/>" << endl;
+
+			switch(menu.structType)
 			{
-				strm << "Object Type: Form<br/>" << endl;
+			case AR_CHAR_MENU_DD_FORM:
+				{
+					strm << "Object Type: Form<br/>" << endl;
 
-				string schemaType = "All";
-				if(menu.u.formDefn.schemaType > 0)
-					schemaType = CAREnum::SchemaType(menu.u.formDefn.schemaType);
+					string schemaType = "All";
+					if(menu.u.formDefn.schemaType > 0)
+						schemaType = CAREnum::SchemaType(menu.u.formDefn.schemaType);
 
-				strm << "Form Type: " << schemaType << "<br/>" << endl;
+					strm << "Form Type: " << schemaType << "<br/>" << endl;
 
-				string showHiddenForms = "Yes";
-				if(!menu.u.formDefn.includeHidden)
-					showHiddenForms = "No";
+					string showHiddenForms = "Yes";
+					if(!menu.u.formDefn.includeHidden)
+						showHiddenForms = "No";
 
-				strm << "Show Hidden Forms: " << showHiddenForms << "<br/>" << endl;
+					strm << "Show Hidden Forms: " << showHiddenForms << "<br/>" << endl;
+				}
+				break;
+			case AR_CHAR_MENU_DD_FIELD:
+				{
+					CRefItem refItemForm(this->menu, REFM_CHARMENU_FORM);
+
+					strm << "Object Type: Field<br/>" << endl;
+					strm << "Form Name: " << (menu.u.fieldDefn.schema[0] == '$' ? pInside->TextFindFields(menu.u.fieldDefn.schema, "$", *curIt, rootLevel, true, &refItemForm) : CWebUtil::Validate(menu.u.fieldDefn.schema)) << "<br/><br/>" << endl;
+					strm << "Field Type:<br/>" << GetFieldTypes(menu.u.fieldDefn.fieldType) << "<br/>" << endl;
+				}
+				break;
 			}
-			break;
-		case AR_CHAR_MENU_DD_FIELD:
-			{
-				strm << "Object Type: Field<br/>" << endl;
-				strm << "Form Name: " << menu.u.fieldDefn.schema << "<br/><br/>" << endl;	
-				strm << "Field Type:<br/>" << GetFieldTypes(menu.u.fieldDefn.fieldType) << "<br/>" << endl;
-			}
-			break;
+
+			// add the table row
+			CTableRow row;
+			row.AddCell((schema.Exists() ? schema.GetURL(rootLevel) : MenuDefinitionText));
+			row.AddCell(strm.str());
+			table.AddRow(row);
 		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in DDMenuDetails: " << e.what() << endl; 
 	}
-
-	return strm.str();
 }
 
-string CDocCharMenuDetails::SearchMenuDetails()
+void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 {
-	stringstream strm;
-	strm.str("");
-
 	try
 	{
-		// TODO: this should not link to the schema which the menu itself uses to get its values from.
-		// Instead it should use the schemas/fields it is linked to.
-		const ARCharMenuQueryStruct& menu = this->menu.GetDefinition().u.menuQuery;
-		strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-		strm << "Schema: " << this->pInside->LinkToSchema(menu.schema, rootLevel) << "<br/>" << endl;	
+		vector<int> attachedToSchemaList;
+		BuildUniqueSchemaList(attachedToSchemaList);
 
-		//Label Fields
-		for(int i=0; i< 5; i++)
+		// if the menu isnt attached to any form, add a dummy to the list, so the definition is generated at least once
+		if (attachedToSchemaList.empty()) attachedToSchemaList.push_back(-1);
+
+		vector<int>::iterator curIt = attachedToSchemaList.begin();
+		vector<int>::iterator endIt = attachedToSchemaList.end();
+
+		for(; curIt != endIt; ++curIt)
 		{
-			if(menu.labelField[i] != NULL)
+			stringstream strm;
+			CARSchema schema(*curIt);
+
+			const ARCharMenuQueryStruct& menu = this->menu.GetDefinition().u.menuQuery;
+			strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
+			strm << "Schema: " << this->pInside->LinkToSchema(menu.schema, rootLevel) << "<br/>" << endl;	
+
+			//Label Fields
+			for(int i=0; i< 5; i++)
 			{
-				strm << "Label Field (" << i << ") : " << this->pInside->LinkToField(menu.schema, menu.labelField[i], rootLevel);
-				strm << " (FieldId: " << menu.labelField[i] << ")<br/>" << endl;
+				if(menu.labelField[i] != NULL)
+				{
+					strm << "Label Field (" << i << ") : " << this->pInside->LinkToField(menu.schema, menu.labelField[i], rootLevel);
+					strm << " (FieldId: " << menu.labelField[i] << ")<br/>" << endl;
 
-				CRefItem refItem(this->menu, REFM_CHARMENU_LABELFIELD);
-				pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.labelField[i], refItem);
+					CRefItem refItem(this->menu, REFM_CHARMENU_LABELFIELD);
+					pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.labelField[i], refItem);
+				}
 			}
-		}
 
-		//Sort On Label
-		string sortOnLabel = "Yes";
-		if(!menu.sortOnLabel)
-			sortOnLabel = "No";
-		strm << "Sort On Label: " << sortOnLabel << "<br/>" << endl;
+			//Sort On Label
+			string sortOnLabel = "Yes";
+			if(!menu.sortOnLabel)
+				sortOnLabel = "No";
+			strm << "Sort On Label: " << sortOnLabel << "<br/>" << endl;
 
 
-		//Value Field
-		strm << "Value Field: " << this->pInside->LinkToField(menu.schema, menu.valueField, rootLevel) << "<br/>";
-		CRefItem refItemValue(this->menu, REFM_CHARMENU_VALUE);
-		pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.valueField, refItemValue);
+			//Value Field
+			strm << "Value Field: " << this->pInside->LinkToField(menu.schema, menu.valueField, rootLevel) << "<br/>";
+			CRefItem refItemValue(this->menu, REFM_CHARMENU_VALUE);
+			pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.valueField, refItemValue);
 
-		//Query
-		stringstream strmQuery;
-		strmQuery.str("");
+			//Query
+			stringstream strmQuery;
+			strmQuery.str("");
 
-		CRefItem refItemQuery(this->menu, REFM_CHARMENU_QUALIFICATION);
+			CRefItem refItemQuery(this->menu, REFM_CHARMENU_QUALIFICATION);
 
-		CARQualification arQual(*this->pInside);
-		int pFormId = this->pInside->SchemaGetInsideId(menu.schema);
-		int sFormId = this->pInside->SchemaGetInsideId(menu.schema);
-		arQual.arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
+			CARQualification arQual(*this->pInside);
+			int pFormId = this->pInside->SchemaGetInsideId(menu.schema);
+			int sFormId = this->pInside->SchemaGetInsideId(menu.schema);
+			arQual.arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
 
-		arQual.CheckQuery(&menu.qualifier, refItemQuery, 0, pFormId, sFormId, strmQuery, rootLevel);
+			arQual.CheckQuery(&menu.qualifier, refItemQuery, 0, schema.GetInsideId(), sFormId, strmQuery, rootLevel);
 
-		if(strmQuery.str().length() > 0)
-		{
-			strm << "Qualification:<br/>" << strmQuery.str() << endl;
-		}
-		else
-		{
-			strm << "Qualification: " << EmptyValue << "<br/>" << endl;
+			if(strmQuery.str().length() > 0)
+			{
+				strm << "Qualification:<br/>" << strmQuery.str() << endl;
+			}
+			else
+			{
+				strm << "Qualification: " << EmptyValue << "<br/>" << endl;
+			}
+
+			// now add the row to the table
+			CTableRow row;
+			row.AddCell((schema.Exists() ? schema.GetURL(rootLevel) : MenuDefinitionText));
+			row.AddCell(strm.str());
+			table.AddRow(row);
 		}
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in SearchMenuDetails: " << e.what() << endl; 
 	}
-
-	return strm.str();
 }
 
 string CDocCharMenuDetails::RelatedFields()
@@ -367,33 +424,22 @@ string CDocCharMenuDetails::RelatedFields()
 
 	try
 	{
-		unsigned int schemaCount = this->pInside->schemaList.GetCount();
-		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
-		{			
-			CARSchema schema(schemaIndex);
+		const CARCharMenu::ReferenceList& refs = this->menu.GetReferences();
+		CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
+		CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
 
-			unsigned int fieldCount = schema.GetFields()->GetCount();
-			for( unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex )
+		for (; curIt != endIt; ++curIt)
+		{
+			if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_FIELD && curIt->GetMessageId() == REFM_FIELD_CHARMENU)
 			{
-				CARField field(schemaIndex, 0, fieldIndex);
-
-				if(field.GetDataType() == AR_DATA_TYPE_CHAR)
-				{
-					if(strcmp(field.GetLimits().u.charLimits.charMenu, this->menu.GetARName()) == 0)
-					{
-						CTableRow row("cssStdRow");		
-						CTableCell cellFieldName(field.GetURL(rootLevel), "");				
-						CTableCell cellFieldId(field.GetInsideId(), "");
-						CTableCell cellForm(schema.GetURL(rootLevel), "");
-
-						row.AddCell(cellFieldName);
-						row.AddCell(cellFieldId);
-						row.AddCell(cellForm);
-						tbl.AddRow(row);		
-
-					}
-				}
-			}		
+				CARField field(curIt->GetObjectId(), curIt->GetSubObjectId());
+				
+				CTableRow row("cssStdRow");		
+				row.AddCell(field.GetURL(rootLevel));
+				row.AddCell(CTableCell(field.GetInsideId()));
+				row.AddCell(field.GetSchema().GetURL(rootLevel));
+				tbl.AddRow(row);		
+			}
 		}
 	}
 	catch(exception& e)
@@ -411,51 +457,24 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 
 	try
 	{
-		unsigned int alCount = pInside->alList.GetCount();
-		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
+		const CARCharMenu::ReferenceList& refs = this->menu.GetReferences();
+		CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
+		CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
+
+		for (; curIt != endIt; ++curIt)
 		{
-			CARActiveLink al(alIndex);
-			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
+			if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
 			{
-				const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
-				if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
-				{
-					if(action.u.characteristics.charMenu != NULL)
-					{
-						if(strcmp(action.u.characteristics.charMenu, this->menu.GetARName())==0)
-						{
-							CTableRow row("cssStdRow");
+				CARActiveLink al(curIt->GetObjectId());
 
-							stringstream tmp;
-							tmp << "If-Action " << nAction << " " << al.GetURL(rootLevel);
+				CTableRow row("cssStdRow");
 
-							CTableCell cellActiveLink(tmp.str(), "");						
-							row.AddCell(cellActiveLink);
-							tbl.AddRow(row);	
-						}
-					}
-				}
-			}
+				stringstream tmp;
+				tmp << curIt->IfElse() << "-Action " << curIt->ActionIndex() << " " << al.GetURL(rootLevel);
 
-			for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
-			{
-				const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
-				if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
-				{
-					if(action.u.characteristics.charMenu != NULL)
-					{
-						if(strcmp(action.u.characteristics.charMenu, this->menu.GetARName())==0)
-						{
-							CTableRow row("cssStdRow");
-
-							stringstream tmp;
-							tmp << "Else-Action " << nAction << " " << al.GetURL(rootLevel);
-
-							row.AddCell(CTableCell(tmp.str()));
-							tbl.AddRow(row);
-						}
-					}
-				}
+				CTableCell cellActiveLink(tmp.str(), "");						
+				row.AddCell(cellActiveLink);
+				tbl.AddRow(row);	
 			}
 		}
 	}
@@ -473,7 +492,7 @@ string CDocCharMenuDetails::ContainerReferences()
 	strm.str("");
 	try
 	{
-		CContainerTable *contTable = new CContainerTable(*this->pInside);
+		CContainerTable contTable(*this->pInside);
 		unsigned int cntCount = this->pInside->containerList.GetCount();
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
@@ -486,18 +505,17 @@ string CDocCharMenuDetails::ContainerReferences()
 				{
 					if(refs.referenceList[nCnt].type == ARREF_CHAR_MENU)
 					{
-						if(refs.referenceList[nCnt].reference.u.name != NULL &&
+						if(refs.referenceList[nCnt].reference.u.name[0] != 0 &&
 						   strcmp(this->menu.GetARName(), refs.referenceList[nCnt].reference.u.name) == 0)
 						{
-							contTable->AddRow(cont, rootLevel);
+							contTable.AddRow(cont, rootLevel);
 						}
 					}
 				}
 			}
 		}
 
-		strm << *contTable;
-		delete contTable;
+		strm << contTable;
 	}
 	catch(exception& e)
 	{
@@ -525,4 +543,46 @@ string CDocCharMenuDetails::GetSQLLabelList(const ARCharMenuSQLStruct *sqlMenu)
 	}
 
 	return strm.str();
+}
+
+void CDocCharMenuDetails::BuildUniqueSchemaList(std::vector<int>& schemaList)
+{
+	const CARCharMenu::ReferenceList& refs = this->menu.GetReferences();
+	CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
+	CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		switch (curIt->GetObjectType())
+		{
+		case AR_STRUCT_ITEM_XML_FIELD:
+			{
+				// the objectId of a field reference contains the schema id ... add it
+				schemaList.push_back(curIt->GetObjectId());
+			}
+			break;
+		case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
+			{
+				CARActiveLink al(curIt->GetObjectId());
+				const ARWorkflowConnectStruct& conStruct = al.GetSchemaList();
+				if (conStruct.type == AR_WORKFLOW_CONN_SCHEMA_LIST)
+				{
+					int conCount = conStruct.u.schemaList->numItems;
+					for (int conIdx = 0; conIdx < conCount; ++conIdx)
+					{
+						CARSchema schema(conStruct.u.schemaList->nameList[conIdx]);
+						
+						if (schema.Exists())
+						{
+							// each schema the referenced active link is attached to, is a candidate... add it
+							schemaList.push_back(schema.GetInsideId());
+						}
+					}
+				}
+			}
+			break;
+		}
+	}
+
+	SortAndRemoveDuplicates(schemaList);
 }

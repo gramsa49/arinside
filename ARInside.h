@@ -176,16 +176,6 @@ private:
 	int LoadImages(void);
 #endif
 
-	void BuildReferences();
-	void SortReferences();
-
-	void SearchCustomFieldReferences();
-	void SearchActiveLinkReferences();
-	void SearchFilterReferences();
-	void SearchEscalationReferences();
-	void SearchContainerReferences();
-	void CustomFieldReferences(const CARSchema &schema, const CARField &obj);
-
 	void ParseVersionString(string version);
 	void ParseVersionString(int xmlVersion);
 

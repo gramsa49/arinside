@@ -1676,6 +1676,66 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="scan"
+			>
+			<File
+				RelativePath=".\scan\ScanActiveLinks.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanActiveLinks.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanContainers.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanContainers.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanEscalations.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanEscalations.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanFields.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanFields.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanFilters.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanFilters.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanMain.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanMain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanSchema.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanSchema.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ARInside.rc"
 			>

@@ -23,6 +23,12 @@ CARFilter::CARFilter(int insideId)
 {
 }
 
+CARFilter::CARFilter(const string& name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->filterList.Find(name.c_str());
+}
+
 CARFilter::~CARFilter(void)
 {
 }
@@ -37,10 +43,15 @@ CARServerObject* CARFilter::Clone() const
 	return new CARFilter(*this);
 }
 
-string CARFilter::GetURL(int rootLevel, bool showImage)
+string CARFilter::GetURL(int rootLevel, bool showImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
 	return CWebUtil::Link(this->GetName(), file, (showImage ? "filter.gif" : ""), rootLevel);
+}
+
+bool CARFilter::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->filterList.GetCount());
 }
 
 string CARFilter::GetExecuteOn(bool singleLine)
@@ -200,7 +211,7 @@ const ARNameType& CARFilter::GetErrorHandler() const
 	return CARInside::GetInstance()->filterList.FilterGetErrorHandler(GetInsideId());
 }
 
-vector<string>& CARFilter::ErrorCallers()
+vector<unsigned int>& CARFilter::ErrorCallers()
 {
 	return CARInside::GetInstance()->filterList.FilterErrorCallers(GetInsideId());
 }

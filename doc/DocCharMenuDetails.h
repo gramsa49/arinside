@@ -29,15 +29,16 @@ public:
 private:
 	CARCharMenu menu;
 
-	string CharMenuDetails();
-	string SearchMenuDetails();
-	string FileMenuDetails();
-	string SqlMenuDetails();
-	string DataDictMenuDetails();
+	void CharMenuDetails(CTable& table);
+	void SearchMenuDetails(CTable& table);
+	void FileMenuDetails(CTable& table);
+	void SqlMenuDetails(CTable& table);
+	void DataDictMenuDetails(CTable& table);
 	string GetFieldTypes(unsigned int fieldMask);
 	string RelatedFields();
 	string RelatedActiveLinks();
 	string ContainerReferences();
 
 	string GetSQLLabelList(const ARCharMenuSQLStruct* sqlMenu);
+	void BuildUniqueSchemaList(vector<int>& schemaList);
 };

@@ -1223,8 +1223,8 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 				switch (params.obj1->GetServerObjectTypeXML())
 				{
 					case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_FIELD: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_FIELD); return new SchemaFieldDetail(static_cast<CARField*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new SchemaVUIDetail(static_cast<CARVui*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_FIELD: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_FIELD); return new SchemaFieldDetail(static_cast<const CARField*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new SchemaVUIDetail(static_cast<const CARVui*>(params.obj1));
 					case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ActiveLinkDetail(params.obj1);
 					case AR_STRUCT_ITEM_XML_FILTER: return new FilterDetail(params.obj1);
 					case AR_STRUCT_ITEM_XML_ESCALATION: return new EscalationDetail(params.obj1);
@@ -1292,7 +1292,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 						}
 					}
 					break;
-				case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new SchemaVUIOverview(static_cast<CARSchema*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new SchemaVUIOverview(static_cast<const CARSchema*>(params.obj1));
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE: return new ImageOverview();
 #endif
@@ -1317,8 +1317,8 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_SCHEMA_DIALOG: return new SchemaDialog();
 		case PAGE_SCHEMA_VENDOR: return new SchemaVendor();
 
-		case PAGE_SCHEMA_FIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new SchemaFieldsCSV(static_cast<CARSchema*>(params.obj1));
-		case PAGE_SCHEMA_VUIFIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new SchemaVUIFieldsCSV(static_cast<CARVui*>(params.obj1));
+		case PAGE_SCHEMA_FIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new SchemaFieldsCSV(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_VUIFIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new SchemaVUIFieldsCSV(static_cast<const CARVui*>(params.obj1));
 		
 		case PAGE_ACTION_OVERVIEW: 
 		{
@@ -2235,16 +2235,16 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 			{
 				switch (params.obj1->GetServerObjectTypeXML())
 				{
-					case AR_STRUCT_ITEM_XML_SCHEMA:      return new ObjectNameSchemaDetail(static_cast<CARSchema*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_FIELD:       return new ObjectNameSchemaFieldDetail(static_cast<CARField*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_VUI:         return new ObjectNameSchemaVUIDetail(static_cast<CARVui*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ObjectNameActiveLinkDetail(static_cast<CARActiveLink*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_FILTER:      return new ObjectNameFilterDetail(static_cast<CARFilter*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_ESCALATION:  return new ObjectNameEscalationDetail(static_cast<CAREscalation*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_CHAR_MENU:   return new ObjectNameMenuDetail(static_cast<CARCharMenu*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_SCHEMA:      return new ObjectNameSchemaDetail(static_cast<const CARSchema*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_FIELD:       return new ObjectNameSchemaFieldDetail(static_cast<const CARField*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_VUI:         return new ObjectNameSchemaVUIDetail(static_cast<const CARVui*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ObjectNameActiveLinkDetail(static_cast<const CARActiveLink*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_FILTER:      return new ObjectNameFilterDetail(static_cast<const CARFilter*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_ESCALATION:  return new ObjectNameEscalationDetail(static_cast<const CAREscalation*>(params.obj1));
+					case AR_STRUCT_ITEM_XML_CHAR_MENU:   return new ObjectNameMenuDetail(static_cast<const CARCharMenu*>(params.obj1));
 					case AR_STRUCT_ITEM_XML_CONTAINER:
 						{
-							CARContainer* cont = static_cast<CARContainer*>(params.obj1);
+							const CARContainer* cont = static_cast<const CARContainer*>(params.obj1);
 							switch (cont->GetType())
 							{
 							case ARCON_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_ALGUIDE);
@@ -2305,7 +2305,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 						}
 					}
 					break;
-				case AR_STRUCT_ITEM_XML_VUI: return new ObjectNameSchemaVUIOverview(static_cast<CARSchema*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_VUI: return new ObjectNameSchemaVUIOverview(static_cast<const CARSchema*>(params.obj1));
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageOverview();
 #endif
@@ -2330,8 +2330,8 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_SCHEMA_DIALOG: return new SchemaDialog();
 		case PAGE_SCHEMA_VENDOR: return new SchemaVendor();
 
-		case PAGE_SCHEMA_FIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new ObjectNameSchemaFieldsCSV(static_cast<CARSchema*>(params.obj1));
-		case PAGE_SCHEMA_VUIFIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new ObjectNameSchemaVUIFieldsCSV(static_cast<CARVui*>(params.obj1));
+		case PAGE_SCHEMA_FIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new ObjectNameSchemaFieldsCSV(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_VUIFIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new ObjectNameSchemaVUIFieldsCSV(static_cast<const CARVui*>(params.obj1));
 		
 		case PAGE_ACTION_OVERVIEW: 
 		{
@@ -2384,7 +2384,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 			}
 			break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-		case PAGE_IMAGE_DATA: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_IMAGE); return new ObjectNameImageData(static_cast<CARImage*>(params.obj1));
+		case PAGE_IMAGE_DATA: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_IMAGE); return new ObjectNameImageData(static_cast<const CARImage*>(params.obj1));
 #endif
 
 		case PAGE_SERVER_INFO: return new ServerInfo();

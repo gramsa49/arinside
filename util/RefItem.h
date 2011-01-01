@@ -141,6 +141,9 @@ enum ReferenceMessages
 	REFM_CHARMENU_LABELFIELD,
 	REFM_CHARMENU_VALUE,
 	REFM_CHARMENU_QUALIFICATION,
+	REFM_CHARMENU_SQL,
+	REFM_CHARMENU_FORM,
+	REFM_CHARMENU_SERVER,
 	REFM_NOTIFY_TEXT,
 	REFM_NOTIFY_USER,
 	REFM_NOTIFY_SUBJECT,
@@ -173,6 +176,7 @@ enum ReferenceMessages
 	REFM_VUI_BACKGROUND,
 	REFM_PACKINGLIST,
 
+	// menu references
 	REFM_FIELD_CHARMENU,
 };
 
@@ -236,14 +240,16 @@ public:
 	// writes the description text to an output stream
 	void GetDescription(std::ostream& strm, int rootLevel) const;
 
+	// additional public helpers
+	const char* IfElse() const;
+	int ActionIndex() const;
+
 private:
 	void Init(const CARServerObject& obj, int IfOrElse, int nAction, int dMessage);
 
 	// output helper functions
-	const char* IfElse() const;
 	const char* OpenClose() const;
 	const char* ServiceInfo() const;
-	int ActionIndex() const;
 	string LinkToSchemaIndex(int rootLevel) const;
 	string LinkToSchemaResultList(int rootLevel) const;
 	string LinkToSchemaSortList(int rootLevel) const;

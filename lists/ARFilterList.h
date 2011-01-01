@@ -64,7 +64,7 @@ public:
 
 	const string& FilterGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
 	void FilterSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
-	vector<string> &FilterErrorCallers(unsigned int index) { assert(index < errorCallers.size()); return errorCallers[(*sortedList)[index]]; }
+	vector<unsigned int> &FilterErrorCallers(unsigned int index) { assert(index < errorCallers.size()); return errorCallers[(*sortedList)[index]]; }
 
 	// the sort class needs access the the "names" member variable
 	friend class SortByName<CARFilterList>;
@@ -91,7 +91,7 @@ private:
 	ARUnsignedIntList errorOptions;
 	ARNameList errorHandlers;
 	vector<string> appRefNames;
-	vector< vector<string> > errorCallers;
+	vector< vector<unsigned int> > errorCallers;
 
 	FilterListState internalListState;
 	vector<int> *sortedList;	// a index, sorted by filter names

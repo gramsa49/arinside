@@ -414,11 +414,6 @@ void CDocAlActionStruct::ActionSetChar(std::ostream& strm, const ARFieldCharacte
 {
 	try
 	{
-		int msgId = (action.option == AR_FIELD_CHAR_OPTION_REFERENCE ? REFM_CHANGEFIELD_OF_FIELDS_VALUE : REFM_CHANGEFIELD);
-
-		CRefItem refItem(*this->obj, ifElse, nAction, msgId);
-		arIn->AddFieldReference(schemaInsideId, action.fieldId, refItem);
-
 		//FieldName
 		strm << "Field ";
 		if (action.option == AR_FIELD_CHAR_OPTION_REFERENCE)
@@ -472,10 +467,6 @@ void CDocAlActionStruct::ActionSetChar(std::ostream& strm, const ARFieldCharacte
 			if(strcmp(action.charMenu, "") != 0)
 			{
 				strm << "Menu: " << arIn->LinkToMenu(action.charMenu, rootLevel) << "<br/>" << endl;
-
-				// add a reference to the menu or save as a missing menu reference
-				CRefItem refItem(*this->obj, ifElse, nAction, REFM_CHANGEFIELD);
-				arIn->AddMenuReference(action.charMenu, refItem);
 			}
 		}
 

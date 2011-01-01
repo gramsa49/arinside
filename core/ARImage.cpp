@@ -101,7 +101,7 @@ const ARImageDataStruct& CARImage::GetData() const
 	return CARInside::GetInstance()->imageList.ImageGetData(GetInsideId());
 }
 
-string CARImage::GetURL(int rootLevel, bool showImage)
+string CARImage::GetURL(int rootLevel, bool showImage) const
 {
 	// TODO: add support for the showImage param
 	return CARInside::GetInstance()->imageList.ImageGetURL(GetInsideId(), rootLevel);

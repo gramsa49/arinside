@@ -40,7 +40,7 @@ CARServerObject* CARActiveLink::Clone() const
 	return new CARActiveLink(*this);
 }
 
-string CARActiveLink::GetURL(int rootLevel, bool showImage)
+string CARActiveLink::GetURL(int rootLevel, bool showImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
 	string url = CWebUtil::Link(this->GetName(), file, (showImage ? "active_link.gif" : ""), rootLevel);

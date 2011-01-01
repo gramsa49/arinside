@@ -22,7 +22,10 @@ class CARFilter :
 {
 public:
 	CARFilter(int insideId);
+	CARFilter(const string& name);
 	~CARFilter(void);
+
+	bool Exists();
 
 	// implement functions inherited from CARObject
 	string GetName();
@@ -52,11 +55,11 @@ public:
 	const string& GetAppRefName() const;
 	void SetAppRefName(const string& appName);
 
-	vector<string>& ErrorCallers();
+	vector<unsigned int>& ErrorCallers();
 
 	// some helpers
 	string GetExecuteOn(bool singleLine=false);
-	string GetURL(int rootLevel, bool showImage = true);
+	string GetURL(int rootLevel, bool showImage = true) const;
 
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_FILTER; }

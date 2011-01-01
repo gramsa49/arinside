@@ -53,6 +53,8 @@ SET (ARINSIDE_SRCS
  output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp
  output/WebPage.cpp output/TableColumn.cpp output/NavigationPage.cpp output/GroupTable.cpp output/ImageTable.cpp
  output/UListItem.cpp output/MenuTable.cpp output/UserTable.cpp output/WebUtil.cpp 
+ scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
+ scan/ScanMain.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
  util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp
  AppConfig.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp stdafx.cpp WindowsUtil.cpp
