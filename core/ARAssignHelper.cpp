@@ -457,7 +457,7 @@ void CARAssignHelper::AssignProcess(IfElseState ifElse, char *v, stringstream &a
 	{
 		if(v != NULL)
 		{
-			assignText << "$PROCESS$ "<< CWebUtil::Validate(arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, &refItem)) << endl;
+			assignText << "$PROCESS$ "<< arIn->TextFindFields(v, "$", this->schemaInsideId2, rootLevel, true, &refItem) << endl;
 		}
 	}
 	catch(exception& e)

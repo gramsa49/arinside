@@ -650,7 +650,7 @@ string CDocFieldDetails::DefaultValue()
 			{
 				if(this->field.GetDefaultValue().u.charVal != NULL)
 				{
-					strm << "\"" << CWebUtil::Validate(pInside->TextFindFields(CARValue::ValueToString(this->field.GetDefaultValue()), "$", this->schema.GetInsideId(), rootLevel, true, NULL)) << "\"" << endl;
+					strm << "\"" << pInside->TextFindFields(CARValue::ValueToString(this->field.GetDefaultValue()), "$", this->schema.GetInsideId(), rootLevel, true, NULL) << "\"" << endl;
 				}
 			}
 			break;
