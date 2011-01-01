@@ -563,7 +563,9 @@ public:
 				case AR_DVAL_TABLE_DISPLAY_NOTIFICATION: return "Alert List";
 				case AR_DVAL_TABLE_DISPLAY_SINGLE_TABLE_TREE: return "Single Table Tree";
 				case AR_DVAL_TABLE_DISPLAY_MULTI_TABLE_TREE: return "Multi Table Tree";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_DVAL_TABLE_DISPLAY_PAGE_ARRAY: return "Table Page Array Field";
+#endif
 				}
 			}
 			break;
@@ -921,6 +923,7 @@ public:
 				return ControlType(nVal);
 			}
 			break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		case AR_DPROP_LAYOUT_POLICY:
 			{
 				switch(nVal)
@@ -977,6 +980,7 @@ public:
 				}
 			}
 			break;
+#endif
 		}
 		return "";
 	}
@@ -2143,13 +2147,16 @@ public:
 		{
 		case COLUMN_LIMIT_DATASOURCE_DATA_FIELD: return "Data Field";
 		case COLUMN_LIMIT_DATASOURCE_DISPLAY_FIELD: return "Display Field";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		case COLUMN_LIMIT_DATASOURCE_CONTROL_FIELD: return "Control Field";
 		case COLUMN_LIMIT_DATASOURCE_TRIM_FIELD: return "Trim Field";
 		case COLUMN_LIMIT_DATASOURCE_VIEW_FIELD: return "View Field";
+#endif
 		default: return EnumDefault;
 		}
 	}
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	static const char* StorageOptionForCLOB(int nOpt)
 	{
 		switch (nOpt)
@@ -2160,4 +2167,5 @@ public:
 		default: return EnumDefault;
 		}
 	}
+#endif
 };

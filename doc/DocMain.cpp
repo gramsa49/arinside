@@ -283,7 +283,7 @@ void CDocMain::ActiveLinkActionList()
 #else
 #define LAST_ACTIVE_LINK_ACTION 17
 #endif
-		for(int nActionType=0; nActionType<=LAST_ACTIVE_LINK_ACTION; nActionType++)
+		for(int nActionType=AR_ACTIVE_LINK_ACTION_MACRO; nActionType<=LAST_ACTIVE_LINK_ACTION; nActionType++)
 		{		
 			int nCountIf = 0;
 			int nCountElse = 0;
@@ -455,7 +455,7 @@ void CDocMain::FilterActionList()
 #endif
 
 		//Search all possible actions
-		for(int nActionType=0; nActionType<=LAST_FILTER_ACTION; nActionType++)
+		for(int nActionType=AR_FILTER_ACTION_NOTIFY; nActionType<=LAST_FILTER_ACTION; nActionType++)
 		{		
 			int nCountIf = 0;
 			int nCountElse = 0;
@@ -619,10 +619,24 @@ void CDocMain::EscalationActionList()
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Escalation Action (Items count if/else)");
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750 // Version 7.5 and higher
+#define LAST_ESCLATION_ACTION 12
+#else
+#define LAST_ESCLATION_ACTION 11
+#endif
 
 		//Search all possible actions
-		for(int nActionType=0; nActionType<11; nActionType++)
-		{		
+		for(int nActionType=AR_FILTER_ACTION_NOTIFY; nActionType<=LAST_ESCLATION_ACTION; nActionType++)
+		{
+			switch (nActionType)
+			{
+			case AR_FILTER_ACTION_GOTOACTION:
+			case AR_FILTER_ACTION_CALLGUIDE:
+			case AR_FILTER_ACTION_EXITGUIDE:
+			case AR_FILTER_ACTION_GOTOGUIDELABEL:
+				continue;
+			}
+
 			int nCountIf = 0;
 			int nCountElse = 0;
 

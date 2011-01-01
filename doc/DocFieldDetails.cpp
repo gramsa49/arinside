@@ -977,7 +977,11 @@ bool CDocFieldDetails::GetColumnSourceField(const CARField& col, CARField& sourc
 	CARSchema columnSourceForm; // initialize it to invalid form
 	string columnSourceFormName;				
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	if (fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_DISPLAY_FIELD || fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_CONTROL_FIELD)
+#else
+	if (fLimit.dataSource == COLUMN_LIMIT_DATASOURCE_DISPLAY_FIELD)
+#endif
 	{
 		columnSourceForm = CARSchema(col.GetSchema().GetInsideId());
 		columnSourceFormName = columnSourceForm.GetARName();
