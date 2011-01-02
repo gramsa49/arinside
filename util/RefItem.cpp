@@ -376,6 +376,18 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 	case REFM_SETFIELDS_VALUE_MATCHING:
 		strm << "Value in 'Set Fields' (All Matching Ids) " << IfElse() << "-Action " << ActionIndex();
 		break;
+	case REFM_SETFIELDS_HOVERFIELD:
+		strm << "Hover-Field in 'SetFields' " << IfElse() << "-Action " << ActionIndex();
+		break;
+	case REFM_PUSHFIELD_HOVERFIELD:
+		strm << "Hover-Field in 'PushFields' " << IfElse() << "-Action " << ActionIndex();
+		break;
+	case REFM_OPENWINDOW_HOVERFIELD:
+		strm << "Hover-Field in 'OpenWindow' " << IfElse() << "-Action " << ActionIndex();
+		break;
+	case REFM_SERVICE_HOVERFIELD:
+		strm << "Hover-Field in 'Service' " << IfElse() << "-Action " << ActionIndex();
+		break;
 	case REFM_RUN_PROCESS:
 		strm << "Field in Run Process " << IfElse() << "-Action " << ActionIndex();
 		break;

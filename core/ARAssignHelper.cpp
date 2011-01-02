@@ -59,6 +59,8 @@ CARAssignHelper::~CARAssignHelper(void)
 
 string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &action, int nAction, IfElseState ifElse)
 {
+	this->mode = AM_PUSHFIELD;
+
 	stringstream strm;
 	strm.str("");
 	try
@@ -99,6 +101,8 @@ string CARAssignHelper::PushFieldsAssignment(const ARPushFieldsActionStruct &act
 
 string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, IfElseState ifElse)
 {
+	this->mode = AM_SETFIELDS;
+
 	stringstream strm;
 	strm.str("");
 	try
@@ -138,6 +142,8 @@ string CARAssignHelper::SetFieldsAssignment(const ARSetFieldsActionStruct &actio
 
 string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, OpenWindowMode openCloseInfo)
 {
+	this->mode = AM_OPENWINDOW;
+
 	stringstream strm;
 	strm.str("");
 	try
@@ -180,6 +186,8 @@ string CARAssignHelper::OpenWindowAssignment(const ARFieldAssignList &action, in
 
 string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, ServiceMappingMode serviceInfo)
 {
+	this->mode = AM_SERVICE;
+
 	stringstream strm;
 	strm.str("");
 	try
@@ -481,13 +489,43 @@ void CARAssignHelper::AssignFunction(int targetFieldId, IfElseState ifElse, int 
 				{
 					if(i > 0) assignText << ", ";
 
-					if (i == 0 && v.parameterList[i].assignType == AR_ASSIGN_TYPE_VALUE && v.parameterList[i].u.value.dataType == AR_DATA_TYPE_INTEGER)
+					if (i == 0 && v.parameterList[i].assignType == AR_ASSIGN_TYPE_VALUE)
 					{
-						// TODO: recreate HOVER-Reference later again (we have to differentiate between the caller-type, e.g. setfield, pushfield, service, ...)
-						arIn->AddFieldReference(this->schemaInsideId1, v.parameterList[i].u.value.u.intVal, refItem);
+						int fieldId = 0;
+						switch (v.parameterList[i].u.value.dataType)
+						{
+						case AR_DATA_TYPE_INTEGER:
+							fieldId = v.parameterList[i].u.value.u.intVal;
+							break;
+						case AR_DATA_TYPE_CHAR:
+							if (v.parameterList[i].u.value.u.charVal != NULL && v.parameterList[i].u.value.u.charVal[0] != 0)
+								fieldId = atoi(v.parameterList[i].u.value.u.charVal);
+							break;
+						}
 
-						assignText << arIn->LinkToField(this->schemaInsideId1, v.parameterList[i].u.value.u.intVal, rootLevel);
-						continue;
+						if (fieldId > 0)
+						{
+							int msgId = -1;
+							switch (this->mode)
+							{
+							case AM_SETFIELDS:
+								msgId = REFM_SETFIELDS_HOVERFIELD;
+								break;
+							case AM_PUSHFIELD:
+								msgId = REFM_PUSHFIELD_HOVERFIELD;
+								break;
+							case AM_OPENWINDOW:
+								msgId = REFM_OPENWINDOW_HOVERFIELD;
+								break;
+							case AM_SERVICE:
+								msgId = REFM_SERVICE_HOVERFIELD;
+								break;
+							}
+							CRefItem refItemHover(*this->object, ifElse, nAction, msgId);
+							arIn->AddFieldReference(this->schemaInsideId1, fieldId, refItemHover);
+							assignText << arIn->LinkToField(this->schemaInsideId1, fieldId, rootLevel);
+							continue;
+						}
 					}
 
 					CheckAssignment(targetFieldId, NULL, ifElse, nAction, v.parameterList[i], assignText, refItem);

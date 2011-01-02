@@ -178,7 +178,11 @@ string CARProplistHelper::GetValue(ARULong32 nProp, const ARValueStruct &arV)
 				}
 				else
 				{
+#if _DEBUG
 					strmValue << "Error enumerating coordinates" << endl;
+#else
+					strmValue << "" << endl;
+#endif
 				}
 			}
 		}

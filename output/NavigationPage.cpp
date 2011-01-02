@@ -66,7 +66,15 @@ void CNavigationPage::Write()
 
 		fout << "<li>";
 			fout << CWebUtil::Link("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel, TARGET_MODE_PARENT);
-			fout << "<ul><li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li></ul>";
+			fout << "<ul>";
+				fout << "<li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+				if (pInside->CompareServerVersion(7,1) >= 0)
+				{
+					fout << "<li>" << CWebUtil::Link("Error Handler", CPageParams(PAGE_FILTER_ERRORHANDLERS), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				}
+#endif
+			fout << "</ul>";
 		fout << "</li>";
 
 		fout << "<li>";

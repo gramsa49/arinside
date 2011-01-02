@@ -37,6 +37,8 @@ public:
 	string SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, IfElseState ifElse);
 	string OpenWindowAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, OpenWindowMode openCloseInfo);
 	string ServiceAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, ServiceMappingMode serviceInfo);
+
+private:
 	unsigned int CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, IfElseState ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const CRefItem& refItem);
 
 	void AssignValue(int targetFieldId, IfElseState ifElse, ARValueStruct &v, stringstream &assignText, const CRefItem& refItem);	
@@ -48,10 +50,19 @@ public:
 	void AssignFilterApi(IfElseState ifElse, ARAssignFilterApiStruct &v, stringstream &assignText, const CRefItem& refItem);	
 
 private:
+	enum AssignmentMode
+	{
+		AM_SETFIELDS,
+		AM_PUSHFIELD,
+		AM_OPENWINDOW,
+		AM_SERVICE,
+	};
+
 	CARInside *arIn;
 	CARServerObject* object;
 
 	int schemaInsideId1;
 	int schemaInsideId2;
 	int rootLevel;
+	AssignmentMode mode;
 };

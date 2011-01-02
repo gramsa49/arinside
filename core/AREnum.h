@@ -440,6 +440,21 @@ public:
 		case AR_DPROP_FORM_LOCK_ALLVUI: return "Form Lock All VUI";
 		case AR_DPROP_VUI_LOCK_VUI: return "VUI Lock VUI";
 #endif
+		case AR_SMOPROP_OBJECT_VERSION: return "Object Version";
+		case AR_SMOPROP_APP_OWNER: return "App Owner";
+		case AR_SMOPROP_OBJECT_LOCK_TYPE: return "Object Lock Type";
+		case AR_SMOPROP_OBJECT_LOCK_KEY: return "Object Lock Key";
+		case AR_SMOPROP_ENTRYPOINT_DEFAULT_NEW_ORDER: return "Default Entrypoint Order in New-Mode";
+		case AR_SMOPROP_ENTRYPOINT_DEFAULT_SEARCH_ORDER: return "Default Entrypoint Order in Search-Mode";
+		case AR_SMOPROP_NO_APP_STATS_LOGGING: return "No App-Statistics Logging";
+		case AR_SMOPROP_APP_LIC_VERSION: return "Application Licensing Version";
+		case AR_SMOPROP_APP_LIC_DESCRIPTOR: return "Application Licensing Descriptor";
+		case AR_SMOPROP_APP_LIC_USER_LICENSABLE: return "Application Licensing User Licensable";
+		case AR_SMOPROP_APP_ACCESS_POINT: return "Application Access Point";
+		case AR_SMOPROP_APP_BSM_TAG: return "Application BSM Tag";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_700
+		case AR_SMOPROP_PRIMARY_FIELDSET: return "Primary Fieldset";
+#endif
 		default: 
 #ifdef _DEBUG
 			stringstream tmpLabel; tmpLabel.str(""); tmpLabel << "Unknown (" << nType << ")"; return tmpLabel.str();

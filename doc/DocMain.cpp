@@ -543,6 +543,38 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 	}
 }
 
+void CDocMain::FilterErrorHandlers()
+{
+	CPageParams file(PAGE_FILTER_ERRORHANDLERS);
+
+	try
+	{
+		int rootLevel = file->GetRootLevel();
+		CWebPage webPage(file->GetFileName(), "Filter Error Handlers", rootLevel, this->pInside->appConfig);
+
+		CFilterTable tbl(*pInside);
+
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
+		{
+			CARFilter flt(filterIndex);
+			
+			if (flt.ErrorCallers().size() > 0)
+			{
+				tbl.AddRow(filterIndex, rootLevel);
+			}
+		}
+
+		webPage.AddContent(tbl.Print());
+
+		webPage.SaveInFolder(file->GetPath());
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION FilterErrorHandlers: " << e.what() << endl;
+	}
+}
+
 void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file(searchChar.at(0), AR_STRUCT_ITEM_XML_ESCALATION);

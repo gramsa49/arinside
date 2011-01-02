@@ -53,6 +53,7 @@ public:
 	void FilterList(string searchChar, std::vector<int> &objCountPerLetter);	
 	void FilterActionList();
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
+	void FilterErrorHandlers();
 	void EscalationList(string searchChar, std::vector<int> &objCountPerLetter);
 	void EscalationActionList();
 	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);

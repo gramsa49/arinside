@@ -925,6 +925,7 @@ void CARInside::Documentation(void)
 		docMain->FilterList(std::string(1, strValue.at(i)), fltObjCount);
 	}	
 	docMain->FilterActionList();
+	docMain->FilterErrorHandlers();
 
 	//Filter Details
 	tmpCount = filterList.GetCount();
