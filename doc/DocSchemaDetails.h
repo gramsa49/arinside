@@ -79,5 +79,8 @@ private:
 	list<string> uniqueFilterList;
 	list<string> uniqueEscalList;
 
-	void AddTableRow(CTable& tbl, CARServerObject& obj);
+	void AddTableRow(CTable& tbl, CARActiveLink& al);
+	void AddTableRow(CTable& tbl, CARFilter& flt);
+	void AddTableRow(CTable& tbl, CAREscalation& esc);
+	void AddTableRow(CTable& tbl, CARContainer& cont);
 };

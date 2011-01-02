@@ -76,8 +76,8 @@ string CDocFilterGuideDetails::FilterGuideInformation()
 {
 	//Container specific properties
 	CTable tblProp("specificPropList", "TblObjectList");
-	tblProp.AddColumn(50, "Label");
-	tblProp.AddColumn(50, "Filter in Guide");
+	tblProp.AddColumn(20, "Label");
+	tblProp.AddColumn(80, "Filter in Guide");
 
 	try
 	{

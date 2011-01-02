@@ -612,18 +612,70 @@ bool CDocSchemaDetails::IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct&
 	return false;
 }
 
-void CDocSchemaDetails::AddTableRow(CTable& tbl, CARServerObject& obj)
+void CDocSchemaDetails::AddTableRow(CTable& tbl, CARActiveLink& al)
 {
-	string tmpEnabled = this->pInside->XmlObjEnabled(&obj);
-	string tmpCssEnabled = "";
-
-	if(tmpEnabled == "Disabled")
-		tmpCssEnabled = "objStatusDisabled";
+	unsigned int enabled = al.GetEnabled();
+	CARProplistHelper alProps(&al.GetPropList());
 
 	CTableRow row("cssStdRow");
-	row.AddCell(CAREnum::XmlStructItem(obj.GetServerObjectTypeXML()));
-	row.AddCell(obj.GetURL(rootLevel));
-	row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+	row.AddCell(CAREnum::XmlStructItem(al.GetServerObjectTypeXML()));
+	row.AddCell(al.GetURL(rootLevel));
+	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
+	row.AddCell(CTableCell(al.GetOrder()));
+	row.AddCell(al.GetExecuteOn(true, &alProps));
+	row.AddCell(CTableCell(al.GetIfActions().numItems));
+	row.AddCell(CTableCell(al.GetElseActions().numItems));
+	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(al.GetTimestamp())));
+	row.AddCell(CTableCell(this->pInside->LinkToUser(al.GetLastChanged(), rootLevel)));
+	tbl.AddRow(row);
+}
+
+void CDocSchemaDetails::AddTableRow(CTable& tbl, CARFilter& flt)
+{
+	unsigned int enabled = flt.GetEnabled();
+
+	CTableRow row("cssStdRow");
+	row.AddCell(CAREnum::XmlStructItem(flt.GetServerObjectTypeXML()));
+	row.AddCell(flt.GetURL(rootLevel));
+	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
+	row.AddCell(CTableCell(flt.GetOrder()));
+	row.AddCell(flt.GetExecuteOn(true));
+	row.AddCell(CTableCell(flt.GetIfActions().numItems));
+	row.AddCell(CTableCell(flt.GetElseActions().numItems));
+	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(flt.GetTimestamp())));
+	row.AddCell(CTableCell(this->pInside->LinkToUser(flt.GetLastChanged(), rootLevel)));
+	tbl.AddRow(row);
+}
+
+void CDocSchemaDetails::AddTableRow(CTable& tbl, CAREscalation& esc)
+{
+	unsigned int enabled = esc.GetEnabled();
+
+	CTableRow row("cssStdRow");
+	row.AddCell(CAREnum::XmlStructItem(esc.GetServerObjectTypeXML()));
+	row.AddCell(esc.GetURL(rootLevel));
+	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
+	row.AddCell(""); // order
+	row.AddCell(esc.GetExecuteOn());
+	row.AddCell(CTableCell(esc.GetIfActions().numItems));
+	row.AddCell(CTableCell(esc.GetElseActions().numItems));
+	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(esc.GetTimestamp())));
+	row.AddCell(CTableCell(this->pInside->LinkToUser(esc.GetLastChanged(), rootLevel)));
+	tbl.AddRow(row);
+}
+
+void CDocSchemaDetails::AddTableRow(CTable& tbl, CARContainer& cont)
+{
+	CTableRow row("cssStdRow");
+	row.AddCell(CAREnum::ContainerType(cont.GetType()));
+	row.AddCell(cont.GetURL(rootLevel));
+	row.AddCell(""); // enabled column
+	row.AddCell(""); // order column
+	row.AddCell(""); // execute on column
+	row.AddCell(""); // if actions column
+	row.AddCell(""); // else actions column
+	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
+	row.AddCell(CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
 	tbl.AddRow(row);
 }
 
@@ -646,13 +698,22 @@ void CDocSchemaDetails::WorkflowDoc()
 
 		//Field references
 		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(15, "Type");
-		tblRef.AddColumn(25, "Server object");
-		tblRef.AddColumn(10, "Enabled");
+		tblRef.AddColumn(05, "Type");
+		tblRef.AddColumn(20, "Server object");
+		tblRef.AddColumn(05, "Enabled");
+		tblRef.AddColumn(05, "Order");
+		tblRef.AddColumn(10, "Execute On");
+		tblRef.AddColumn(05, "If");
+		tblRef.AddColumn(05, "Else");
+		tblRef.AddColumn(10, "Changed");
+		tblRef.AddColumn(10, "By");
 
 		const CARSchemaList::ObjectRefList& alList = this->schema.GetActiveLinks();
 		const CARSchemaList::ObjectRefList& fltList = this->schema.GetFilters();
 		const CARSchemaList::ObjectRefList& escList = this->schema.GetEscalations();
+		const CARSchemaList::ObjectRefList& algList = this->schema.GetActLinkGuides();
+		const CARSchemaList::ObjectRefList& flgList = this->schema.GetFilterGuides();
+		const CARSchemaList::ObjectRefList& wbsList = this->schema.GetWebservices();
 
 		// Add all active links
 		CARSchemaList::ObjectRefList::const_iterator curIt = alList.begin();
@@ -681,7 +742,32 @@ void CDocSchemaDetails::WorkflowDoc()
 			AddTableRow(tblRef, esc);
 		}
 
-		// TODO: add ALG, FLG, WS objects too?
+		// add all active link guides
+		curIt = algList.begin();
+		endIt = algList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer alg(*curIt);
+			AddTableRow(tblRef, alg);
+		}
+
+		// add all filter guides
+		curIt = flgList.begin();
+		endIt = flgList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer flg(*curIt);
+			AddTableRow(tblRef, flg);
+		}
+
+		// add all webservices
+		curIt = wbsList.begin();
+		endIt = wbsList.end();
+		for (; curIt != endIt; ++curIt)
+		{
+			CARContainer ws(*curIt);
+			AddTableRow(tblRef, ws);
+		}
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";

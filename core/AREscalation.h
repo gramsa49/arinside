@@ -38,7 +38,6 @@ public:
 	const char* GetChangeDiary() const;
 
 	// other filter data access functions
-	unsigned int GetOrder() const;
 	const AREscalationTmStruct& GetTimeStruct() const;
 	const ARWorkflowConnectStruct& GetSchemaList() const;
 	unsigned int GetOperation();

@@ -76,8 +76,8 @@ string CDocAlGuideDetails::AlGuideInformation()
 {
 	//Container specific properties
 	CTable tblProp("specificPropList", "TblObjectList");
-	tblProp.AddColumn(50, "Label");
-	tblProp.AddColumn(50, "Active Link in Guide");
+	tblProp.AddColumn(20, "Label");
+	tblProp.AddColumn(80, "Active Link in Guide");
 
 	try
 	{

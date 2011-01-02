@@ -68,8 +68,8 @@ string CDocWebserviceDetails::WSInformation()
 {
 	//Container specific properties
 	CTable tblProp("specificPropList", "TblObjectList");
-	tblProp.AddColumn(30, "Description");
-	tblProp.AddColumn(70, "Value");
+	tblProp.AddColumn(20, "Description");
+	tblProp.AddColumn(80, "Value");
 
 	//Label
 	try
