@@ -231,26 +231,11 @@ string CDocSchemaDetails::SchemaNavigation()
 
 	try
 	{
-		//Permissions
-		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CPageParams(PAGE_SCHEMA_PERMISSIONS, &this->schema), "", rootLevel)));
-
-		//Workflow		
-		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CPageParams(PAGE_SCHEMA_WORKFLOW, &this->schema), "", rootLevel)));
-
-		//Indexes
-		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CPageParams(PAGE_SCHEMA_INDEXES, &this->schema), "", rootLevel)));
-
-		//SortList
-		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CPageParams(PAGE_SCHEMA_SORTLIST, &this->schema), "", rootLevel)));
-
-		//ResultList
-		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CPageParams(PAGE_SCHEMA_RESULTLIST, &this->schema), "", rootLevel)));
-
 		//Views
 		uList.AddItem(CUListItem(CWebUtil::Link("Views", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel)));
 
-		//Subadministrator
-		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CPageParams(PAGE_SCHEMA_SUBADMINS, &this->schema), "", rootLevel)));
+		//Workflow		
+		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CPageParams(PAGE_SCHEMA_WORKFLOW, &this->schema), "", rootLevel)));
 
 		//Active Links
 		uList.AddItem(CUListItem(CWebUtil::Link("Active Link", CPageParams(PAGE_SCHEMA_ACTIVELINKS, &this->schema), "", rootLevel)));
@@ -260,6 +245,21 @@ string CDocSchemaDetails::SchemaNavigation()
 
 		//Escalations
 		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CPageParams(PAGE_SCHEMA_ESCALATIONS, &this->schema), "", rootLevel)));
+
+		//ResultList
+		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CPageParams(PAGE_SCHEMA_RESULTLIST, &this->schema), "", rootLevel)));
+
+		//Indexes
+		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CPageParams(PAGE_SCHEMA_INDEXES, &this->schema), "", rootLevel)));
+
+		//SortList
+		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CPageParams(PAGE_SCHEMA_SORTLIST, &this->schema), "", rootLevel)));
+
+		//Permissions
+		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CPageParams(PAGE_SCHEMA_PERMISSIONS, &this->schema), "", rootLevel)));
+
+		//Subadministrator
+		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CPageParams(PAGE_SCHEMA_SUBADMINS, &this->schema), "", rootLevel)));
 	}
 	catch(exception& e)
 	{
