@@ -27,7 +27,6 @@ CARImageList::CARImageList(void)
 	internalListState = CARImageList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
-	sortedList = NULL;
 }
 
 CARImageList::~CARImageList()
@@ -71,8 +70,6 @@ CARImageList::~CARImageList()
 
 		}
 	}
-	if (sortedList != NULL)
-		delete sortedList;
 }
 
 bool CARImageList::LoadFromServer()
@@ -123,11 +120,10 @@ bool CARImageList::LoadFromServer()
 		FreeARBooleanList(&imgExists, false);
 		internalListState = CARImageList::ARAPI_ALLOC;
 
-		sortedList = new vector<int>();
-		sortedList->reserve(names.numItems);
+		sortedList.reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
-			sortedList->push_back(i);
+			sortedList.push_back(i);
 		}
 		funcResult = true;
 
@@ -152,8 +148,7 @@ void CARImageList::Reserve(unsigned int size)
 {
 	if (internalListState != CARImageList::EMPTY) throw AppException("object isnt reusable!", "ImageList");
 
-	sortedList = new vector<int>();
-	sortedList->reserve(size);
+	sortedList.reserve(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -234,7 +229,7 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 		++objProps.numItems;
 		++data.numItems;
 
-		sortedList->push_back(index);
+		sortedList.push_back(index);
 
 		return index;
 	}
@@ -254,7 +249,7 @@ int CARImageList::FindImage(const char* name)
 #else
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		int result = strcoll(names.nameList[sortedList[i]], name);
 		if (result == 0)
 		{
 			return i;
@@ -271,13 +266,13 @@ int CARImageList::FindImage(const char* name)
 void CARImageList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(), SortByName<CARImageList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(), SortByName<CARImageList>(*this));
 
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	if (!searchList.empty()) searchList.clear();
-	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
-		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
 #endif
 }
@@ -291,11 +286,11 @@ string CARImageList::ImageGetURL(unsigned int index, int rootLevel)
 
 void CARImageList::AddReference(unsigned int index, const CRefItem &referenceItem)
 {
-	referenceList[(*sortedList)[index]].push_back(referenceItem);
+	referenceList[sortedList[index]].push_back(referenceItem);
 }
 
 const CARImageList::ReferenceItem& CARImageList::GetReferences(unsigned int index)
 {
-	return referenceList[(*sortedList)[index]];
+	return referenceList[sortedList[index]];
 }
 #endif

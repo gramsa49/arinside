@@ -45,15 +45,15 @@ public:
 
 	// The following functions give access to the data. But in most cases its easier
 	// to use the CARImage object.
-	inline const ARNameType& ImageGetName(unsigned int index) { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
-	inline char* ImageGetType(unsigned int index) { assert(index < types.numItems); return types.stringList[(*sortedList)[index]]; }
-	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[(*sortedList)[index]]; }
-	inline char* ImageGetDescription(unsigned int index) { assert(index < descriptions.numItems); return descriptions.stringList[(*sortedList)[index]]; }
-	inline char* ImageGetHelptext(unsigned int index) { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }
-	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index]]; }
-	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
-	inline char* ImageGetChangeDiary(unsigned int index) { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
-	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[(*sortedList)[index]]; }
+	inline const ARNameType& ImageGetName(unsigned int index) { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
+	inline char* ImageGetType(unsigned int index) { assert(index < types.numItems); return types.stringList[sortedList[index]]; }
+	inline const ARTimestamp& ImageGetTimestamp(unsigned int index) { return changedTimes.timestampList[sortedList[index]]; }
+	inline char* ImageGetDescription(unsigned int index) { assert(index < descriptions.numItems); return descriptions.stringList[sortedList[index]]; }
+	inline char* ImageGetHelptext(unsigned int index) { assert(index < helpTexts.numItems); return helpTexts.stringList[sortedList[index]]; }
+	inline const ARAccessNameType& ImageGetOwner(unsigned int index) { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
+	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
+	inline char* ImageGetChangeDiary(unsigned int index) { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
+	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[sortedList[index]]; }
 	string ImageGetURL(unsigned int index, int rootLevel);
 
 	// the sort class needs access the the "names" member variable
@@ -75,7 +75,7 @@ private:
 	ARPropListList objProps;
 	ARImageDataList data;
 	ImageListState internalListState;
-	vector<int> *sortedList;
+	vector<int> sortedList;
 	vector<ReferenceItem> referenceList;
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;

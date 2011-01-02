@@ -25,7 +25,6 @@ CARFilterList::CARFilterList(void)
 	internalListState = CARFilterList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
-	sortedList = NULL;
 }
 
 CARFilterList::~CARFilterList(void)
@@ -81,8 +80,6 @@ CARFilterList::~CARFilterList(void)
 
 		}
 	}
-	if (sortedList != NULL)
-		delete sortedList;
 }
 
 bool CARFilterList::LoadFromServer()
@@ -143,13 +140,12 @@ bool CARFilterList::LoadFromServer()
 		FreeARBooleanList(&fltExists, false);
 		internalListState = CARFilterList::ARAPI_ALLOC;
 
-		sortedList = new vector<int>();
-		sortedList->reserve(names.numItems);
+		sortedList.reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
 			errorCallers.push_back(vector<unsigned int>());
-			sortedList->push_back(i);
+			sortedList.push_back(i);
 		}
 		funcResult = true;
 	}
@@ -172,8 +168,7 @@ void CARFilterList::Reserve(unsigned int size)
 {
 	if (internalListState != CARFilterList::EMPTY) throw AppException("object isnt reusable!", "FilterList");
 
-	sortedList = new vector<int>();
-	sortedList->reserve(size);
+	sortedList.reserve(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -286,7 +281,7 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 		++errorOptions.numItems;
 		++errorHandlers.numItems;
 
-		sortedList->push_back(index);
+		sortedList.push_back(index);
 		appRefNames.push_back("");
 		errorCallers.push_back(vector<unsigned int>());
 
@@ -310,7 +305,7 @@ int CARFilterList::Find(const char* name)
 #else
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		int result = strcoll(names.nameList[sortedList[i]], name);
 		if (result == 0)
 		{
 			return i;
@@ -327,13 +322,13 @@ int CARFilterList::Find(const char* name)
 void CARFilterList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARFilterList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARFilterList>(*this));
 
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	if (!searchList.empty()) searchList.clear();
-	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
-		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
 #endif
 }

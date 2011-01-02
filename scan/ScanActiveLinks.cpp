@@ -84,7 +84,7 @@ void CScanActiveLinks::ScanActions(CARActiveLink& al, const ARActiveLinkActionLi
 				CRefItem refItem(al, ifElse, actionIndex, msgId);
 				AddReferenceForEachSchema(action.fieldId, refItem);
 
-				if (action.charMenu[0] != 0 && strcmp(action.charMenu, "$NULL$") != 0)
+				if (action.charMenu != NULL && action.charMenu[0] != 0 && strcmp(action.charMenu, "$NULL$") != 0)
 				{
 					// add a reference to the menu or save as a missing menu reference
 					CRefItem refItem(al, ifElse, actionIndex, REFM_CHANGEFIELD);

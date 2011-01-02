@@ -38,20 +38,20 @@ public:
 	void Sort();
 
 	// data-access functions
-	const ARNameType& FilterGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
-	unsigned int FilterGetOrder(unsigned int index) const { assert(index < orders.numItems); return orders.intList[(*sortedList)[index]]; }
-	const ARWorkflowConnectStruct& FilterGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[(*sortedList)[index]]; }
-	unsigned int FilterGetOperation(unsigned int index) { assert(index < operationSets.numItems); return operationSets.intList[(*sortedList)[index]]; }
-	unsigned int FilterGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[(*sortedList)[index]]; }
-	const ARQualifierStruct& FilterGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[(*sortedList)[index]]; }
-	const ARFilterActionList& FilterGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[(*sortedList)[index]]; }
-	const ARFilterActionList& FilterGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[(*sortedList)[index]]; }
-	char* FilterGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }
-	const ARTimestamp& FilterGetTimestamp(unsigned int index) const { return changedTimes.timestampList[(*sortedList)[index]]; }
-	const ARAccessNameType& FilterGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index]]; }
-	const ARAccessNameType& FilterGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
-	const char* FilterGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
-	const ARPropList& FilterGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
+	const ARNameType& FilterGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
+	unsigned int FilterGetOrder(unsigned int index) const { assert(index < orders.numItems); return orders.intList[sortedList[index]]; }
+	const ARWorkflowConnectStruct& FilterGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[sortedList[index]]; }
+	unsigned int FilterGetOperation(unsigned int index) { assert(index < operationSets.numItems); return operationSets.intList[sortedList[index]]; }
+	unsigned int FilterGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[sortedList[index]]; }
+	const ARQualifierStruct& FilterGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[sortedList[index]]; }
+	const ARFilterActionList& FilterGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[sortedList[index]]; }
+	const ARFilterActionList& FilterGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[sortedList[index]]; }
+	char* FilterGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[sortedList[index]]; }
+	const ARTimestamp& FilterGetTimestamp(unsigned int index) const { return changedTimes.timestampList[sortedList[index]]; }
+	const ARAccessNameType& FilterGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
+	const ARAccessNameType& FilterGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
+	const char* FilterGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
+	const ARPropList& FilterGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
 	string FilterGetURL(unsigned int index, int rootLevel);
 
 	// Notice about the function below (FilterGetErrorOption)
@@ -59,12 +59,12 @@ public:
 	// or older server. If thats the case simply return 0. This implies 
 	// additionally, that the FilterGetErrorHandler function is only called when
 	// FilterGetErrorOption return nonzero.
-	unsigned int FilterGetErrorOption(unsigned int index) { if (index >= errorOptions.numItems) return 0; else return errorOptions.intList[(*sortedList)[index]]; }
-	const ARNameType& FilterGetErrorHandler(unsigned int index) const { assert(index < errorHandlers.numItems); return errorHandlers.nameList[(*sortedList)[index]]; }
+	unsigned int FilterGetErrorOption(unsigned int index) { if (index >= errorOptions.numItems) return 0; else return errorOptions.intList[sortedList[index]]; }
+	const ARNameType& FilterGetErrorHandler(unsigned int index) const { assert(index < errorHandlers.numItems); return errorHandlers.nameList[sortedList[index]]; }
 
-	const string& FilterGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
-	void FilterSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
-	vector<unsigned int> &FilterErrorCallers(unsigned int index) { assert(index < errorCallers.size()); return errorCallers[(*sortedList)[index]]; }
+	const string& FilterGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
+	void FilterSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
+	vector<unsigned int> &FilterErrorCallers(unsigned int index) { assert(index < errorCallers.size()); return errorCallers[sortedList[index]]; }
 
 	// the sort class needs access the the "names" member variable
 	friend class SortByName<CARFilterList>;
@@ -94,7 +94,7 @@ private:
 	vector< vector<unsigned int> > errorCallers;
 
 	FilterListState internalListState;
-	vector<int> *sortedList;	// a index, sorted by filter names
+	vector<int> sortedList;	// a index, sorted by filter names
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

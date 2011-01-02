@@ -45,25 +45,25 @@ public:
 	void SortReferences();
 
 	// data-access functions
-	const ARNameType& SchemaGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
-	const ARCompoundSchema& SchemaGetCompound(unsigned int index) const { assert(index < compounds.numItems); return compounds.compoundSchema[(*sortedList)[index]]; }
-	const ARPermissionList& SchemaGetPermissions(unsigned int index) const { assert(index < permissions.numItems); return permissions.permissionList[(*sortedList)[index]]; }
-	const ARInternalIdList& SchemaGetSubadmins(unsigned int index) const { assert(index < subAdmins.numItems); return subAdmins.internalIdListList[(*sortedList)[index]]; }
-	const AREntryListFieldList& SchemaGetResultFields(unsigned int index) const { assert(index < resultFields.numItems); return resultFields.listFieldList[(*sortedList)[index]]; }
-	const ARSortList& SchemaGetSortList(unsigned int index) const { assert(index < sortings.numItems); return sortings.sortListList[(*sortedList)[index]]; }
-	const ARIndexList& SchemaGetIndexList(unsigned int index) const { assert(index < indexes.numItems); return indexes.indexListList[(*sortedList)[index]]; }
-	const ARArchiveInfoStruct& SchemaGetArchiveInfo(unsigned int index) const { assert(index < archives.numItems); return archives.archiveInfoList[(*sortedList)[index]]; }
-	const ARAuditInfoStruct& SchemaGetAuditInfo(unsigned int index) const { assert(index < audits.numItems); return audits.auditInfoList[(*sortedList)[index]]; }
-	const ARNameType& SchemaGetDefaultVUI(unsigned int index) const { assert(index < defaultVUIs.numItems); return defaultVUIs.nameList[(*sortedList)[index]]; }
-	char* SchemaGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }
-	const ARTimestamp& SchemaGetTimestamp(unsigned int index) const { return changedTimes.timestampList[(*sortedList)[index]]; }
-	const ARAccessNameType& SchemaGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index]]; }
-	const ARAccessNameType& SchemaGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
-	const char* SchemaGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
-	const ARPropList& SchemaGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
+	const ARNameType& SchemaGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
+	const ARCompoundSchema& SchemaGetCompound(unsigned int index) const { assert(index < compounds.numItems); return compounds.compoundSchema[sortedList[index]]; }
+	const ARPermissionList& SchemaGetPermissions(unsigned int index) const { assert(index < permissions.numItems); return permissions.permissionList[sortedList[index]]; }
+	const ARInternalIdList& SchemaGetSubadmins(unsigned int index) const { assert(index < subAdmins.numItems); return subAdmins.internalIdListList[sortedList[index]]; }
+	const AREntryListFieldList& SchemaGetResultFields(unsigned int index) const { assert(index < resultFields.numItems); return resultFields.listFieldList[sortedList[index]]; }
+	const ARSortList& SchemaGetSortList(unsigned int index) const { assert(index < sortings.numItems); return sortings.sortListList[sortedList[index]]; }
+	const ARIndexList& SchemaGetIndexList(unsigned int index) const { assert(index < indexes.numItems); return indexes.indexListList[sortedList[index]]; }
+	const ARArchiveInfoStruct& SchemaGetArchiveInfo(unsigned int index) const { assert(index < archives.numItems); return archives.archiveInfoList[sortedList[index]]; }
+	const ARAuditInfoStruct& SchemaGetAuditInfo(unsigned int index) const { assert(index < audits.numItems); return audits.auditInfoList[sortedList[index]]; }
+	const ARNameType& SchemaGetDefaultVUI(unsigned int index) const { assert(index < defaultVUIs.numItems); return defaultVUIs.nameList[sortedList[index]]; }
+	char* SchemaGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[sortedList[index]]; }
+	const ARTimestamp& SchemaGetTimestamp(unsigned int index) const { return changedTimes.timestampList[sortedList[index]]; }
+	const ARAccessNameType& SchemaGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
+	const ARAccessNameType& SchemaGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
+	const char* SchemaGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
+	const ARPropList& SchemaGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
 
-	const string& SchemaGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
-	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
+	const string& SchemaGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
+	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
 	// workflow reference functions
 	typedef pair<int, CRefItem> MissingReferenceItem;
@@ -89,8 +89,8 @@ public:
 	const ObjectRefList& SchemaGetWebserviceReferences(unsigned int index) { return webservices[index]; }
 
 	// access for contained lists
-	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[(*sortedList)[index]]; }
-	CARVUIList* SchemaGetVUIs(unsigned int index) { assert(index < vuiLists.size()); return vuiLists[(*sortedList)[index]]; }
+	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[sortedList[index]]; }
+	CARVUIList* SchemaGetVUIs(unsigned int index) { assert(index < vuiLists.size()); return vuiLists[sortedList[index]]; }
 
 	// the sort class needs access the the "names" member variable
 	friend class SortByName<CARSchemaList>;
@@ -122,7 +122,7 @@ private:
 	vector<CARVUIList*> vuiLists;
 
 	SchemaListState internalListState;
-	vector<int> *sortedList;	// a index, sorted by schema names
+	vector<int> sortedList;	// a index, sorted by schema names
 	vector<MissingReferenceList*> missingFieldReferences;
 
 	vector<ObjectRefList> activeLinks;

@@ -66,6 +66,8 @@ void CARFieldListXML::FinishLoading()
 			sortedList.push_back(i);
 	}
 
+	workflowReferences.resize(fieldInfo.numItems);
+
 	Sort();
 }
 

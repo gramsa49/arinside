@@ -36,22 +36,22 @@ public:
 	void Sort();
 
 	// data-access functions
-	const ARNameType& EscalationGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
-	const AREscalationTmStruct& EscalationGetTime(unsigned int index) const { assert(index < times.numItems); return times.escalationTmList[(*sortedList)[index]]; }
-	const ARWorkflowConnectStruct& EscalationGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[(*sortedList)[index]]; }
-	unsigned int EscalationGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[(*sortedList)[index]]; }
-	const ARQualifierStruct& EscalationGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[(*sortedList)[index]]; }
-	const ARFilterActionList& EscalationGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[(*sortedList)[index]]; }
-	const ARFilterActionList& EscalationGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[(*sortedList)[index]]; }
-	char* EscalationGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }
-	const ARTimestamp& EscalationGetTimestamp(unsigned int index) const { return changedTimes.timestampList[(*sortedList)[index]]; }
-	const ARAccessNameType& EscalationGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index]]; }
-	const ARAccessNameType& EscalationGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
-	const char* EscalationGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
-	const ARPropList& EscalationGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
+	const ARNameType& EscalationGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
+	const AREscalationTmStruct& EscalationGetTime(unsigned int index) const { assert(index < times.numItems); return times.escalationTmList[sortedList[index]]; }
+	const ARWorkflowConnectStruct& EscalationGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[sortedList[index]]; }
+	unsigned int EscalationGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[sortedList[index]]; }
+	const ARQualifierStruct& EscalationGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[sortedList[index]]; }
+	const ARFilterActionList& EscalationGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[sortedList[index]]; }
+	const ARFilterActionList& EscalationGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[sortedList[index]]; }
+	char* EscalationGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[sortedList[index]]; }
+	const ARTimestamp& EscalationGetTimestamp(unsigned int index) const { return changedTimes.timestampList[sortedList[index]]; }
+	const ARAccessNameType& EscalationGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
+	const ARAccessNameType& EscalationGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
+	const char* EscalationGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
+	const ARPropList& EscalationGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
 
-	const string& EscalationGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
-	void EscalationSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
+	const string& EscalationGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
+	void EscalationSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
 	// the sort class needs access the the "names" member variable
 	friend class SortByName<CAREscalationList>;
@@ -77,7 +77,7 @@ private:
 	vector<string> appRefNames;
 
 	EscalationListState internalListState;
-	vector<int> *sortedList;	// a index, sorted by escalation names
+	vector<int> sortedList;	// a index, sorted by escalation names
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

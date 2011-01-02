@@ -25,7 +25,6 @@ CAREscalationList::CAREscalationList(void)
 	internalListState = CAREscalationList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
-	sortedList = NULL;
 }
 
 CAREscalationList::~CAREscalationList(void)
@@ -75,8 +74,6 @@ CAREscalationList::~CAREscalationList(void)
 
 		}
 	}
-	if (sortedList != NULL)
-		delete sortedList;
 }
 
 bool CAREscalationList::LoadFromServer()
@@ -132,12 +129,11 @@ bool CAREscalationList::LoadFromServer()
 		FreeARBooleanList(&escExists, false);
 		internalListState = CAREscalationList::ARAPI_ALLOC;
 
-		sortedList = new vector<int>();
-		sortedList->reserve(names.numItems);
+		sortedList.reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
-			sortedList->push_back(i);
+			sortedList.push_back(i);
 		}
 		funcResult = true;
 	}
@@ -160,8 +156,7 @@ void CAREscalationList::Reserve(unsigned int size)
 {
 	if (internalListState != CAREscalationList::EMPTY) throw AppException("object isnt reusable!", "EscalationList");
 
-	sortedList = new vector<int>();
-	sortedList->reserve(size);
+	sortedList.reserve(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -256,7 +251,7 @@ int CAREscalationList::AddEscalationFromXML(ARXMLParsedStream &stream, const cha
 		++changeDiary.numItems;
 		++objProps.numItems;
 
-		sortedList->push_back(index);
+		sortedList.push_back(index);
 		appRefNames.push_back("");
 
 		if (outDocVersion != NULL) *outDocVersion = arDocVersion;
@@ -279,7 +274,7 @@ int CAREscalationList::Find(const char* name)
 #else
 	for (unsigned int i = 0; i < GetCount(); ++i)
 	{
-		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		int result = strcoll(names.nameList[sortedList[i]], name);
 		if (result == 0)
 		{
 			return i;
@@ -296,13 +291,13 @@ int CAREscalationList::Find(const char* name)
 void CAREscalationList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(),SortByName<CAREscalationList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(),SortByName<CAREscalationList>(*this));
 
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	if (!searchList.empty()) searchList.clear();
-	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
-		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
 #endif
 }

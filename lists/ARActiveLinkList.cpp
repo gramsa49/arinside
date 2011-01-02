@@ -26,7 +26,6 @@ CARActiveLinkList::CARActiveLinkList(void)
 	internalListState = CARActiveLinkList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
-	sortedList = NULL;
 }
 
 CARActiveLinkList::~CARActiveLinkList(void)
@@ -84,8 +83,6 @@ CARActiveLinkList::~CARActiveLinkList(void)
 
 		}
 	}
-	if (sortedList != NULL)
-		delete sortedList;
 }
 
 bool CARActiveLinkList::LoadFromServer()
@@ -151,12 +148,11 @@ bool CARActiveLinkList::LoadFromServer()
 		FreeARBooleanList(&alExists, false);
 		internalListState = CARActiveLinkList::ARAPI_ALLOC;
 
-		sortedList = new vector<int>();
-		sortedList->reserve(names.numItems);
+		sortedList.reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
-			sortedList->push_back(i);
+			sortedList.push_back(i);
 		}
 		funcResult = true;
 	}
@@ -179,8 +175,7 @@ void CARActiveLinkList::Reserve(unsigned int size)
 {
 	if (internalListState != CARActiveLinkList::EMPTY) throw AppException("object isnt reusable!", "ActiveLinkList");
 
-	sortedList = new vector<int>();
-	sortedList->reserve(size);
+	sortedList.reserve(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -299,7 +294,7 @@ int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const cha
 		++changeDiary.numItems;
 		++objProps.numItems;
 
-		sortedList->push_back(index);
+		sortedList.push_back(index);
 		appRefNames.push_back("");
 
 		if (outDocVersion != NULL) *outDocVersion = arDocVersion;
@@ -323,7 +318,7 @@ int CARActiveLinkList::Find(const char* name)
 	unsigned int count = GetCount();
 	for (unsigned int i = 0; i < count; ++i)
 	{
-		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		int result = strcoll(names.nameList[sortedList[i]], name);
 		if (result == 0)
 		{
 			return i;
@@ -341,13 +336,13 @@ int CARActiveLinkList::Find(const char* name)
 void CARActiveLinkList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARActiveLinkList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARActiveLinkList>(*this));
 
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	if (!searchList.empty()) searchList.clear();
-	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
-		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
 #endif
 }

@@ -37,27 +37,27 @@ public:
 	void Reserve(unsigned int size);
 	void Sort();
 
-	const ARNameType& ActiveLinkGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[(*sortedList)[index]]; }
-	unsigned int ActiveLinkGetOrder(unsigned int index) const { assert(index < orders.numItems); return orders.intList[(*sortedList)[index]]; }
-	const ARWorkflowConnectStruct& ActiveLinkGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[(*sortedList)[index]]; }
-	const ARInternalIdList& ActiveLinkGetGroupList(unsigned int index) const { assert(index < groups.numItems); return groups.internalIdListList[(*sortedList)[index]]; }
-	unsigned int ActiveLinkGetExecuteMask(unsigned int index) { assert(index < execMasks.numItems); return execMasks.intList[(*sortedList)[index]]; }
-	const ARInternalId& ActiveLinkGetControlField(unsigned int index) const { assert(index < controlFields.numItems); return controlFields.internalIdList[(*sortedList)[index]]; }
-	const ARInternalId& ActiveLinkGetFocusField(unsigned int index) const { assert(index < focusFields.numItems); return focusFields.internalIdList[(*sortedList)[index]]; }
-	unsigned int ActiveLinkGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[(*sortedList)[index]]; }
-	const ARQualifierStruct& ActiveLinkGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[(*sortedList)[index]]; }
-	const ARActiveLinkActionList& ActiveLinkGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[(*sortedList)[index]]; }
-	const ARActiveLinkActionList& ActiveLinkGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[(*sortedList)[index]]; }
-	char* ActiveLinkGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[(*sortedList)[index]]; }
-	const ARTimestamp& ActiveLinkGetTimestamp(unsigned int index) const { return changedTimes.timestampList[(*sortedList)[index]]; }
-	const ARAccessNameType& ActiveLinkGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[(*sortedList)[index]]; }
-	const ARAccessNameType& ActiveLinkGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[(*sortedList)[index]]; }
-	const char* ActiveLinkGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[(*sortedList)[index]]; }
-	const ARPropList& ActiveLinkGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[(*sortedList)[index]]; }
+	const ARNameType& ActiveLinkGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
+	unsigned int ActiveLinkGetOrder(unsigned int index) const { assert(index < orders.numItems); return orders.intList[sortedList[index]]; }
+	const ARWorkflowConnectStruct& ActiveLinkGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[sortedList[index]]; }
+	const ARInternalIdList& ActiveLinkGetGroupList(unsigned int index) const { assert(index < groups.numItems); return groups.internalIdListList[sortedList[index]]; }
+	unsigned int ActiveLinkGetExecuteMask(unsigned int index) { assert(index < execMasks.numItems); return execMasks.intList[sortedList[index]]; }
+	const ARInternalId& ActiveLinkGetControlField(unsigned int index) const { assert(index < controlFields.numItems); return controlFields.internalIdList[sortedList[index]]; }
+	const ARInternalId& ActiveLinkGetFocusField(unsigned int index) const { assert(index < focusFields.numItems); return focusFields.internalIdList[sortedList[index]]; }
+	unsigned int ActiveLinkGetEnabled(unsigned int index) { assert(index < enabledObjects.numItems); return enabledObjects.intList[sortedList[index]]; }
+	const ARQualifierStruct& ActiveLinkGetRunIf(unsigned int index) const { assert(index < queries.numItems); return queries.qualifierList[sortedList[index]]; }
+	const ARActiveLinkActionList& ActiveLinkGetIfActions(unsigned int index) const { assert(index < ifActions.numItems); return ifActions.actionListList[sortedList[index]]; }
+	const ARActiveLinkActionList& ActiveLinkGetElseActions(unsigned int index) const { assert(index < elseActions.numItems); return elseActions.actionListList[sortedList[index]]; }
+	char* ActiveLinkGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[sortedList[index]]; }
+	const ARTimestamp& ActiveLinkGetTimestamp(unsigned int index) const { return changedTimes.timestampList[sortedList[index]]; }
+	const ARAccessNameType& ActiveLinkGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
+	const ARAccessNameType& ActiveLinkGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
+	const char* ActiveLinkGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
+	const ARPropList& ActiveLinkGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
 	string ActiveLinkGetURL(unsigned int index, int rootLevel);
 
-	const string& ActiveLinkGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[(*sortedList)[index]]; }
-	void ActiveLinkSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[(*sortedList)[index]] = appName; }
+	const string& ActiveLinkGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
+	void ActiveLinkSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
 	// the sort class needs access the the "names" member variable
 	friend class SortByName<CARActiveLinkList>;
@@ -87,7 +87,7 @@ private:
 	vector<string> appRefNames;
 
 	ActiveLinkListState internalListState;
-	vector<int> *sortedList;
+	vector<int> sortedList;
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;

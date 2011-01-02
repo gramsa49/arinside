@@ -25,7 +25,6 @@ CARSchemaList::CARSchemaList(void)
 	internalListState = CARSchemaList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
-	sortedList = NULL;
 
 	ARZeroMemory(&names);
 	ARZeroMemory(&compounds);
@@ -101,8 +100,6 @@ CARSchemaList::~CARSchemaList(void)
 
 		}
 	}
-	if (sortedList != NULL)
-		delete sortedList;
 }
 
 bool CARSchemaList::LoadFromServer()
@@ -167,12 +164,11 @@ bool CARSchemaList::LoadFromServer()
 		FreeARBooleanList(&schemaExists, false);
 		internalListState = CARSchemaList::ARAPI_ALLOC;
 
-		sortedList = new vector<int>();
-		sortedList->reserve(names.numItems);
+		sortedList.reserve(names.numItems);
 		for (unsigned int i=0; i<names.numItems; ++i)
 		{
 			appRefNames.push_back("");
-			sortedList->push_back(i);
+			sortedList.push_back(i);
 		}
 		funcResult = true;
 	}
@@ -233,8 +229,8 @@ void CARSchemaList::Reserve(unsigned int size)
 {
 	if (internalListState != CARSchemaList::EMPTY) throw AppException("object isnt reusable!", "SchemaList");
 
-	sortedList = new vector<int>();
-	sortedList->reserve(size);
+	sortedList.reserve(size);
+	missingFieldReferences.resize(size);
 
 	names.numItems = 0;
 	names.nameList = new ARNameType[size];
@@ -371,7 +367,7 @@ int CARSchemaList::AddSchemaFromXML(ARXMLParsedStream &stream, const char* schem
 		fieldLists.push_back(fldList);
 		vuiLists.push_back(vuiList);
 
-		sortedList->push_back(index);
+		sortedList.push_back(index);
 		appRefNames.push_back("");
 
 		if (outDocVersion != NULL) *outDocVersion = arDocVersion;
@@ -395,7 +391,7 @@ int CARSchemaList::Find(const char* name)
 	unsigned int count = GetCount();
 	for (unsigned int i = 0; i < count; ++i)
 	{
-		int result = strcoll(names.nameList[(*sortedList)[i]], name);
+		int result = strcoll(names.nameList[sortedList[i]], name);
 		if (result == 0)
 		{
 			return i;
@@ -412,13 +408,13 @@ int CARSchemaList::Find(const char* name)
 void CARSchemaList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList->begin(),sortedList->end(),SortByName<CARSchemaList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARSchemaList>(*this));
 
 #ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	if (!searchList.empty()) searchList.clear();
-	for (unsigned int i = 0; i < sortedList->size(); ++i)
+	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
-		searchList[string(names.nameList[(*sortedList)[i]])] = i;
+		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
 #endif
 }
@@ -426,11 +422,11 @@ void CARSchemaList::Sort()
 void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CRefItem &refItem)
 {
 	if (fieldId <= 0) return;	// dont add keyword references (like $-6$ ($SERVER$))
-	MissingReferenceList* list = missingFieldReferences[(*sortedList)[index]];
+	MissingReferenceList* list = missingFieldReferences[sortedList[index]];
 	if (list == NULL)
 	{
 		list = new MissingReferenceList();
-		missingFieldReferences[(*sortedList)[index]] = list;
+		missingFieldReferences[sortedList[index]] = list;
 	}
 
 	if (list->size() > 0)
@@ -447,7 +443,7 @@ void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int field
 
 const CARSchemaList::MissingReferenceList* CARSchemaList::SchemaGetMissingReferences(unsigned int index)
 {
-	return missingFieldReferences[(*sortedList)[index]];
+	return missingFieldReferences[sortedList[index]];
 }
 
 void CARSchemaList::SortReferences()
