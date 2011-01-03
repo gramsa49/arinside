@@ -146,6 +146,15 @@ public:
 		case AR_FUNCTION_HOVER: return "HOVER";
 		case AR_FUNCTION_TEMPLATE: return "TEMPLATE";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_FUNCTION_SELECTEDROWCOUNT: return "SELECTEDROWCOUNT";
+		case AR_FUNCTION_DROPPEDROWINDEX: return "DROPPEDROWINDEX";
+		case AR_FUNCTION_DROPPEDCOLUMNINDEX: return "DROPPEDCOLUMNINDEX";
+		case AR_FUNCTION_MAPGET: return "MAPGET";
+		case AR_FUNCTION_LISTGET: return "LISTGET";
+		case AR_FUNCTION_LISTSIZE: return "LISTSIZE";
+		case AR_FUNCTION_STRIPHTML: return "STRIPHTML";
+#endif
 		default: return EnumDefault;
 		}
 	}
@@ -181,6 +190,12 @@ public:
 		case AR_OPROP_GUIDE_PARAMETERS: return "Guide Parameters";
 #if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_OPROP_CACHE_DISP_PROP: return "Cache Display Prop";
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_OPROP_DRILL_DOWN_IN_WEB_REPORTS: return "Drill Down in Web Reports";
+		case AR_OPROP_FT_STRIP_TAGS: return "FT Strip Tags";
+		case AR_OPROP_DISPLAY_FORM_SINGLETON: return "Display Form Singleton";
+		case AR_OPROP_FT_FILTER_SEARCH: return "FT Filter Search";
 #endif
 		case AR_DPROP_NONE: return "None";
 		case AR_DPROP_TRIM_TYPE: return "Trim Type";
@@ -382,6 +397,24 @@ public:
 		case AR_DPROP_COLOR_GRADIENT_EFFECT_HEADER: return "Gradient Header Effect"; // TODO: support enum values
 		case AR_DPROP_HIDE_PANELHOLDER_BORDERS: return "Borderless";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_DPROP_PANEL_SLACK_DISTRIBUTION_ORDER: return "Slack Distribution Order";
+		case AR_DPROP_PANEL_FIT_TO_CONTENT: return "Fit To Content";
+		case AR_DPROP_ALIGNED: return "Aligned";
+		case AR_DPROP_RIGHT_BBOX: return "Right Bounding Box";
+		case AR_DPROP_HEADER_HEIGHT: return "Header Hight";
+		case AR_DPROP_NAV_ITEM_TEXT_COLOR: return "Item Text Color";
+		case AR_DPROP_FIELD_DRAGGABLE: return "Draggable";
+		case AR_DPROP_FIELD_DROPPABLE: return "Droppable";
+		case AR_DPROP_LOCALIZE_VIEW: return "Localize View";
+		case AR_DPROP_LOCALIZE_FIELD: return "Localize Field";
+		case AR_DPROP_FLOW_LAYOUT_VERT_SPACE: return "Vertical Space";
+		case AR_DPROP_PANEL_MARGIN_LEFT: return "Margin Left";
+		case AR_DPROP_PANEL_MARGIN_TOP: return "Margin Top";
+		case AR_DPROP_PANEL_MARGIN_RIGHT: return "Margin Right";
+		case AR_DPROP_PANEL_MARGIN_BOTTOM: return "Margin Bottom";
+		case AR_DPROP_AUTO_RESIZE: return "Auto Resize";
+#endif
 		case AR_DPROP_PREFIX_NEW: return "Prefix New";
 		case AR_DPROP_PREFIX_SEARCH: return "Prefix Search";
 		case AR_DPROP_PREFIX_MODIFY: return "Prefix Modify";
@@ -420,7 +453,7 @@ public:
 		case AR_DPROP_FIELD_CUSTOMSTYLE: return "Field Custom Style";
 		case AR_DPROP_TABLE_TREE_CUSTOM_NULL_VALUE: return "Table Tree Custom Null Value";
 		case AR_DPROP_NAVBAR_INITIAL_SELECTED_ITEM: return "Navbar Initial Selected Item";
-		case AR_DPROP_NAVBAR_WORKFLOW_ON_SELECTED_ITEM : return "Bavbar Workflow on Selected Item";
+		case AR_DPROP_NAVBAR_WORKFLOW_ON_SELECTED_ITEM : return "Navbar Workflow on Selected Item";
 		case AR_DPROP_NAVBAR_SELECT_ITEM_ON_CLICK: return "Navbar Select Item on Click";
 #if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
 		case AR_DPROP_BUTTON_ALT_TEXT: return "Button Alt Text";
@@ -440,6 +473,21 @@ public:
 		case AR_DPROP_FORM_LOCK_ALLVUI: return "Form Lock All VUI";
 		case AR_DPROP_VUI_LOCK_VUI: return "VUI Lock VUI";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_DPROP_TABLE_ROOT_NODE_IMAGE: return "Root Node Image"; // TODO: add image reference
+		case AR_DPROP_TABLE_ROOT_NODE_ALT_TEXT: return "Root Node Alternative Text";
+		case AR_DPROP_TABLE_COL_IMAGE_LIST: return "Column Image List"; // TODO: add image references
+		case AR_DPROP_SHOWURL: return "Show URL";
+		case AR_DPROP_NAVIGATION_MODE: return "Navigation Mode";
+		case AR_DPROP_TABLE_CELL_BKG_COLOR: return "Cell Background Color"; // TODO: support color values
+		case AR_DPROP_TABLE_COL_ENABLE_SORT: return "Enable Sort";
+		case AR_DPROP_APPLIST_MODE: return "Application List Mode";
+		case AR_DPROP_TABLE_COLUMN_CHECKBOX: return "Column Checkbox";
+		case AR_DPROP_SKIN_STYLE: return "Skin Style";
+		case AR_DPROP_ATTACH_FIELD_IMAGE_CACHE: return "Attach Field Image Cache";
+		case AR_DPROP_LOCALIZE_FIELD_DATA: return "Localize Data";
+		case AR_DPROP_FIELD_PROCESS_ENTRY_MODE: return "Process Entry Mode";
+#endif
 		case AR_SMOPROP_OBJECT_VERSION: return "Object Version";
 		case AR_SMOPROP_APP_OWNER: return "App Owner";
 		case AR_SMOPROP_OBJECT_LOCK_TYPE: return "Object Lock Type";
@@ -454,6 +502,9 @@ public:
 		case AR_SMOPROP_APP_BSM_TAG: return "Application BSM Tag";
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_700
 		case AR_SMOPROP_PRIMARY_FIELDSET: return "Primary Fieldset";
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_SMOPROP_FILTER_GET_DATA_AS_USER: return "Filter Get Data As User";
 #endif
 		default: 
 #ifdef _DEBUG
@@ -524,7 +575,13 @@ public:
 				{
 				case AR_DVAL_TABLE_COL_DISPLAY_NONEDITABLE: return "Not editable";
 				case AR_DVAL_TABLE_COL_DISPLAY_EDITABLE: return "Editable";
-				case AR_DVAL_TABLE_COL_DISPLAY_HTML: return "Display Html in Column";
+				case AR_DVAL_TABLE_COL_DISPLAY_HTML: return "Read Only HTML";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+				case AR_DVAL_TABLE_COL_DISPLAY_PAGE_DATA: return "Page Data"; // is this used at all?
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+				case AR_DVAL_TABLE_COL_DISPLAY_DROPDOWN_MENU: return "Drop-Down Menu";
+#endif
 				}
 			}
 			break;
@@ -992,6 +1049,71 @@ public:
 				{
 				case AR_DVAL_SPLITTER_SHOW: return "Show";
 				case AR_DVAL_SPLITTER_HIDE: return "Hide";
+				}
+			}
+			break;
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_DPROP_ALIGNED:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_ALIGNED_LEFT: return "Left";
+				case AR_DVAL_ALIGNED_RIGHT: return "Right";
+				}
+			}
+			break;
+		case AR_DPROP_LOCALIZE_VIEW:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_LOCALIZE_VIEW_SKIP: return "Skip";
+				case AR_DVAL_LOCALIZE_VIEW_ALL: return "All";
+				}
+			}
+			break;
+		case AR_DPROP_LOCALIZE_FIELD:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_LOCALIZE_FIELD_SKIP: return "Skip";
+				case AR_DVAL_LOCALIZE_FIELD_ALL: return "All";
+				}
+			}
+			break;
+		case AR_DPROP_AUTO_RESIZE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_RESIZE_NONE: return "None";
+				case AR_DVAL_RESIZE_VERT: return "Vertical";
+				}
+			}
+			break;
+		case AR_DPROP_NAVIGATION_MODE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_NAV_EXPANDABLE: return "Expandable";
+				case AR_DVAL_NAV_FLYOUT: return "Flyout";
+				}
+			}
+			break;
+		case AR_DPROP_APPLIST_MODE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_APP_TRADITIONAL: return "Tranditional";
+				case AR_DVAL_APP_FLYOUT: return "Flyout";
+				}
+			}
+			break;
+		case AR_DPROP_FIELD_PROCESS_ENTRY_MODE:
+			{
+				switch(nVal)
+				{
+				case AR_DVAL_FIELD_PROCESS_NOT_REQUIRED: return "Not Required";
+				case AR_DVAL_FIELD_PROCESS_REQUIRED: return "Required";
 				}
 			}
 			break;
@@ -1513,6 +1635,16 @@ public:
 		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
 			return AR_ACTIVE_LINK_ACTION_OPEN_DSPLY;
 
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_LST:
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_DETAIL:
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_SPLIT:
+			return AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT;
+
+		case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_LST:
+		case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_DETAIL:
+		case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_SPLIT:
+			return AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT;
+
 		default:
 			return nType;
 		}
@@ -1534,6 +1666,10 @@ public:
 		case AR_ACTIVE_LINK_ACTION_OPEN_REPORT: return "Report";
 		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY: return "Modify";
 		case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY: return "Display";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT: return "Modify Directly";
+		case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT: return "Display Directly";
+#endif
 		default: return EnumDefault;
 		}
 	}

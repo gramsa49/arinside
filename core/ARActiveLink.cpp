@@ -103,6 +103,10 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 			AR_EXECUTE_ON_PAGE_EXPAND, "Expand",
 			AR_EXECUTE_ON_PAGE_COLLAPSE, "Collapse",
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+			AR_EXECUTE_ON_DRAG, "Drag",
+			AR_EXECUTE_ON_DROP, "Drop",
+#endif
 			0,NULL
 		};
 

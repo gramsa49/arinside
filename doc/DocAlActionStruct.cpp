@@ -758,6 +758,14 @@ bool CDocAlActionStruct::ActionOpenDlgQualifier(int nWindowType)
 	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
 	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
 	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_LST:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_DETAIL:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_SPLIT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_LST:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_DETAIL:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_SPLIT:
 		return true;
 	default: return false;
 	}
@@ -789,18 +797,26 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			{
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_LST:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_LST:
 				strm << "List Only";
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_DETAIL:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_DETAIL:
 				strm << "Details Only";
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_SPLIT:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_SPLIT:
 				strm << "Split Window";
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
+			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
 				strm << "&lt;Clear&gt;";
 			}
 			strm << endl;
@@ -808,7 +824,8 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 
 		// target location
 		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT ||
-		    windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
+		    windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT ||
+				windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT)
 		{
 			strm << "<br/>Target Location: ";
 
@@ -1017,7 +1034,8 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 
 		// suppres empty list
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY)
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY ||
+			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT)
 		{
 			strm << "<input type=\"checkbox\" name=\"suprEmptyLst\" value=\"suprEmptyLstVal\" " << (action.suppressEmptyLst ? "checked" : "") << ">Suppress Empty List<br/>" << endl;		
 		}
@@ -1057,7 +1075,9 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 		strm << "</p>";
 
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY ||
+			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT ||
+			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 		{
 			// message
 			strm << "<p>If No Request Match: ";
@@ -1180,7 +1200,9 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			}
 
 			// polling interval
-			if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY) && action.pollinginterval > 0)
+			if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY ||
+				windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT) &&
+				action.pollinginterval > 0)
 			{
 				strm << "<p>Polling interval: " << action.pollinginterval << "</p>" << endl;
 			}
