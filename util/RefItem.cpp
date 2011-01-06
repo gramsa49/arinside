@@ -201,7 +201,8 @@ bool CRefItem::operator ==(const CRefItem &r)
 	if (this->arsStructItemType == r.arsStructItemType &&
 		this->objectId == r.objectId &&
 		this->messageId == r.messageId &&
-		this->actionIndex == r.actionIndex &&
+		// jls17 NOTE/TODO: just a test to eliminate duplicate references when field is used in multiple action within the same object
+		//this->actionIndex == r.actionIndex && 
 		this->subObjectId == r.subObjectId)
 	{
 		return true;
@@ -308,6 +309,48 @@ unsigned int CRefItem::GetObjectEnabled(bool &supportsEnabled) const
 	default:
 		supportsEnabled = false;
 		return false;
+	}
+}
+
+int CRefItem::GetObjectOrder() const
+{
+	switch (GetObjectType())
+	{
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
+		{
+			CARActiveLink al(GetObjectId());
+			return al.GetOrder();
+		}
+	case AR_STRUCT_ITEM_XML_FILTER:
+		{
+			CARFilter flt(GetObjectId());
+			return flt.GetOrder();
+		}
+	default: return -1;
+	}
+}
+
+string CRefItem::GetObjectExecuteOn() const
+{
+	switch (GetObjectType())
+	{
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
+		{
+			CARActiveLink al(GetObjectId());
+			CARProplistHelper props(&al.GetPropList());
+			return al.GetExecuteOn(true, &props);
+		}
+	case AR_STRUCT_ITEM_XML_FILTER:
+		{
+			CARFilter flt(GetObjectId());
+			return flt.GetExecuteOn(true);
+		}
+	case AR_STRUCT_ITEM_XML_ESCALATION:
+		{
+			CAREscalation esc(GetObjectId());
+			return esc.GetExecuteOn();
+		}
+	default: return "";
 	}
 }
 

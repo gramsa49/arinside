@@ -243,6 +243,10 @@ public:
 	string GetDescription(int rootLevel) const;
 	// writes the description text to an output stream
 	void GetDescription(std::ostream& strm, int rootLevel) const;
+	// returns the order of AL or FLT or -1 if the object doesnt have a order number
+	int GetObjectOrder() const;
+	// return the execute-on string of the object (in a single line)
+	string GetObjectExecuteOn() const;
 
 	// additional public helpers
 	const char* IfElse() const;

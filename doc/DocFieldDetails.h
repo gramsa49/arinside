@@ -41,5 +41,6 @@ private:
 	string DisplayProperties();
 	string JoinFormReferences();
 	string WorkflowReferences();
+	string WorkflowAttached();
 	int AttachmentFieldGetPool(const CARField& fldObj);
 };

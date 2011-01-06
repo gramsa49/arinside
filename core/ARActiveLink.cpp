@@ -71,7 +71,7 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 		} ARInsideExecOnStruct;
 
 		const ARInsideExecOnStruct executeText[] = {
-			AR_EXECUTE_ON_BUTTON, "Button",
+			AR_EXECUTE_ON_BUTTON, "Button/MenuField",
 			AR_EXECUTE_ON_RETURN, "Return",
 			AR_EXECUTE_ON_SUBMIT, "Submit",
 			AR_EXECUTE_ON_MODIFY, "Modify",

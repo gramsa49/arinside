@@ -758,6 +758,7 @@ bool CDocAlActionStruct::ActionOpenDlgQualifier(int nWindowType)
 	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
 	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
 	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
 	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_LST:
 	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_DETAIL:
@@ -766,6 +767,7 @@ bool CDocAlActionStruct::ActionOpenDlgQualifier(int nWindowType)
 	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_LST:
 	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_DETAIL:
 	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_SPLIT:
+#endif
 		return true;
 	default: return false;
 	}
@@ -797,26 +799,34 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			{
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_LST:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_LST:
+#endif
 				strm << "List Only";
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_DETAIL:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_DETAIL:
+#endif
 				strm << "Details Only";
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_SPLIT:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_SPLIT:
+#endif
 				strm << "Split Window";
 				break;
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
 			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+#endif
 				strm << "&lt;Clear&gt;";
 			}
 			strm << endl;
@@ -824,8 +834,11 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 
 		// target location
 		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT ||
-		    windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT ||
-				windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT)
+		    windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+				|| windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT
+#endif
+				)
 		{
 			strm << "<br/>Target Location: ";
 
@@ -1034,8 +1047,11 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 
 		// suppres empty list
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY ||
-			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT)
+		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+			|| windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT
+#endif
+			)
 		{
 			strm << "<input type=\"checkbox\" name=\"suprEmptyLst\" value=\"suprEmptyLstVal\" " << (action.suppressEmptyLst ? "checked" : "") << ">Suppress Empty List<br/>" << endl;		
 		}
@@ -1076,7 +1092,9 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		strm << "</p>";
 
 		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY ||
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT ||
+#endif
 			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 		{
 			// message
@@ -1200,9 +1218,11 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			}
 
 			// polling interval
-			if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY ||
-				windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT) &&
-				action.pollinginterval > 0)
+			if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+				|| windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT
+#endif
+				) && action.pollinginterval > 0)
 			{
 				strm << "<p>Polling interval: " << action.pollinginterval << "</p>" << endl;
 			}

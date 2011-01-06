@@ -49,8 +49,8 @@ void CDocFieldDetails::Documentation()
 
 		//Field property table
 		CTable tblFieldprops("commonPropList", "TblObjectList");
-		tblFieldprops.AddColumn(30, "Description");
-		tblFieldprops.AddColumn(70, "Value");
+		tblFieldprops.AddColumn(20, "Description");
+		tblFieldprops.AddColumn(80, "Value");
 
 		//Create Mode
 		CTableRow row("cssStdRow");		
@@ -91,11 +91,11 @@ void CDocFieldDetails::Documentation()
 
 		//Fieldlimits		
 		tmp = this->FieldLimits();
-		if(tmp.empty())
-			tmp = EmptyValue;
-
-		row.AddCellList("Field Limits", tmp);
-		tblFieldprops.AddRow(row);
+		if(!tmp.empty())
+		{
+			row.AddCellList("Field Limits", tmp);
+			tblFieldprops.AddRow(row);
+		}
 
 		// Field Mapping (for Join, View and Vendor)
 		switch (this->field.GetMapping().fieldType)
@@ -123,6 +123,14 @@ void CDocFieldDetails::Documentation()
 				tmp = EmptyValue;
 
 			row.AddCellList("References to Join-Forms", tmp);
+			tblFieldprops.AddRow(row);
+		}
+
+		// attached workflow
+		tmp = this->WorkflowAttached();
+		if (!tmp.empty())
+		{
+			row.AddCellList("Attached Workflow", tmp);
 			tblFieldprops.AddRow(row);
 		}
 
@@ -161,7 +169,10 @@ string CDocFieldDetails::WorkflowReferences()
 		CARField::ReferenceList::const_iterator endIt = list.end();
 
 		for (; iter != endIt; ++iter)
-		{	
+		{
+			if (iter->GetMessageId() == REFM_FOCUSFIELD || iter->GetMessageId() == REFM_CONTROLFIELD)
+				continue;
+
 			CTableRow row("cssStdRow");		
 			row.AddCell(CAREnum::XmlStructItem(iter->GetObjectType()));				
 			row.AddCell(this->pInside->LinkToXmlObjType(iter->GetObjectType(), iter->GetObjectName(), iter->GetSubObjectId(), rootLevel));
@@ -1011,4 +1022,96 @@ bool CDocFieldDetails::GetColumnSourceField(const CARField& col, CARField& sourc
 	}
 
 	return columnSourceForm.Exists();
+}
+
+class SortRefItemByOrder
+{
+public:
+	bool operator()(CRefItem& l, CRefItem& r) 
+	{
+		bool equal = l.GetObjectOrder() == r.GetObjectOrder();
+		if (equal)
+		{
+			equal = l.GetObjectName() < r.GetObjectName();
+		}
+		return equal;
+	}
+
+private:
+	unsigned int GetOrderOf(CRefItem& ref)
+	{
+		switch (ref.GetObjectType())
+		{
+		case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
+			{
+				CARActiveLink al(ref.GetObjectId());
+				return al.GetOrder();
+			}
+			break;
+		default:
+			return 0;
+		}
+	}
+};
+
+string CDocFieldDetails::WorkflowAttached()
+{
+	stringstream strm;
+
+	try
+	{
+		// temporary reference list
+		CARField::ReferenceList attachedWF;
+
+		const CARField::ReferenceList& list = this->field.GetReferences();
+		CARField::ReferenceList::const_iterator curIt = list.begin();
+		CARField::ReferenceList::const_iterator endIt = list.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			int msgId = curIt->GetMessageId();
+			if (msgId == REFM_FOCUSFIELD || msgId == REFM_CONTROLFIELD)
+			{
+				attachedWF.push_back(*curIt);
+			}
+		}
+		attachedWF.sort(SortRefItemByOrder());
+
+		//Field references
+		CTable tblRef("referenceList", "TblObjectList");
+		tblRef.AddColumn(10, "Order");
+		tblRef.AddColumn(45, "Server object");
+		tblRef.AddColumn(5, "Enabled");
+		tblRef.AddColumn(40, "Execute On");
+
+		curIt = attachedWF.begin();
+		endIt = attachedWF.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			int enabled = curIt->GetObjectEnabled();
+			int order = curIt->GetObjectOrder();
+			string execution = curIt->GetObjectExecuteOn();
+			string cssEnabled;
+
+			if (enabled == 0)
+				cssEnabled = "objStatusDisabled";
+
+			CTableRow row("cssStdRow");
+			row.AddCell(CTableCell(order));
+			row.AddCell(pInside->LinkToXmlObjType(curIt->GetObjectType(), curIt->GetObjectName(), curIt->GetSubObjectId(), rootLevel));
+			row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), cssEnabled));
+			row.AddCell(execution);
+			tblRef.AddRow(row);
+		}
+
+		if (tblRef.NumRows() > 0)
+			strm << tblRef;
+	}
+	catch (exception &e)
+	{
+		cout << "EXCEPTION enumerating attached workflow for field: " << this->field.GetFieldId() <<" in schema " << this->schema.GetName() << " error: " << e.what() << endl;
+	}
+
+	return strm.str();
 }
