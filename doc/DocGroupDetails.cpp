@@ -238,29 +238,23 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 		tbl.AddColumn(20, "Modified");
 		tbl.AddColumn(20, "By");
 
-		list<CARUser>::iterator listIter;		
-		for ( listIter = this->pInside->userList.begin(); listIter != this->pInside->userList.end(); listIter++ )
+		unsigned int userCount = this->pInside->userList.GetCount();
+		for (unsigned int userId = 0; userId < userCount; ++userId)
 		{	
-			CARUser *user = &(*listIter);
+			CARUser user(userId);
 
-			bool bInsert = false;
-			for(unsigned int i=0; i< user->groupList.size(); i++)
+			const CARUser::GroupList& grpList = user.GetGroups();
+			CARUser::GroupList::const_iterator findIt = std::find(grpList.begin(), grpList.end(), this->pGroup->groupId);
+
+			if (findIt != grpList.end())
 			{
-				string grpIdString = CUtil::ClearSpaces(user->groupList[i]);
-				if(grpIdString.size() > 0)
-				{
-					int grpId = atoi(grpIdString.c_str());	
-					if(grpId == pGroup->groupId)
-					{
-						CTableRow row("");
-						row.AddCell(CTableCell(CWebUtil::Link(user->loginName, CPageParams(PAGE_DETAILS, user),"", rootLevel)));
-						row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user->modified)));
-						row.AddCell(CTableCell(this->pInside->LinkToUser(user->modifiedBy, rootLevel)));
-						tbl.AddRow(row);
+				CTableRow row("");
+				row.AddCell(CTableCell(CWebUtil::Link(user.GetName(), CPageParams(PAGE_DETAILS, &user),"", rootLevel)));
+				row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user.GetModifiedDate())));
+				row.AddCell(CTableCell(this->pInside->LinkToUser(user.GetLastChanged(), rootLevel)));
+				tbl.AddRow(row);
 
-						nResult++;
-					}
-				}
+				nResult++;
 			}
 		}
 

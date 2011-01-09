@@ -1103,18 +1103,17 @@ void CDocMain::UserList(string searchChar, std::vector<int>& objCountPerLetter)
 		int rootLevel = file->GetRootLevel();
 		CUserTable tbl(*this->pInside);
 
-		list<CARUser>::iterator listIter;
-		list<CARUser>::iterator endIt = this->pInside->userList.end();
-		for (listIter = this->pInside->userList.begin(); listIter != endIt; ++listIter)
+		unsigned int userCount = this->pInside->userList.GetCount();
+		for (unsigned int userIndex = 0; userIndex < userCount; ++userIndex)
 		{	
-			CARUser *user = &(*listIter);
+			CARUser user(userIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = user->GetNameFirstChar();
+				string firstChar = user.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -1122,14 +1121,14 @@ void CDocMain::UserList(string searchChar, std::vector<int>& objCountPerLetter)
 			}
 			else if(searchChar == "#")
 			{
-				if(!user->NameStandardFirstChar())
+				if(!user.NameStandardFirstChar())
 				{
 					bInsert = true;
 				}
 			}
 			else
 			{
-				if(user->GetNameFirstChar() == searchChar)
+				if(user.GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
@@ -1137,7 +1136,7 @@ void CDocMain::UserList(string searchChar, std::vector<int>& objCountPerLetter)
 
 			if(bInsert)
 			{	
-				tbl.AddRow(*user, rootLevel);
+				tbl.AddRow(user, rootLevel);
 			}
 		}
 

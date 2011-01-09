@@ -149,7 +149,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->userList.size()));
+		row.AddCell(CTableCell((int)this->pInside->userList.GetCount()));
 		row.AddCell(CTableCell(CWebUtil::Link("Users", CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -171,7 +171,7 @@ void CDocSummaryInfo::Documentation()
 		nNumTotalObjects += (unsigned int)this->pInside->menuList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->roleList.size();
 		nNumTotalObjects += (unsigned int)this->pInside->schemaList.GetCount();
-		nNumTotalObjects += (unsigned int)this->pInside->userList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->userList.GetCount();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		nNumTotalObjects += this->pInside->imageList.GetCount();
 #endif			

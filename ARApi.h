@@ -29,6 +29,16 @@
 #endif
 #endif
 
+// to support our own xml object types used in lists
+#define AR_STRUCT_ITEM_USER    500
+#define AR_STRUCT_ITEM_GROUP   501
+#define AR_STRUCT_ITEM_ROLE    502
+
+#define AR_STRUCT_ITEM_XML_USER       (AR_STRUCT_XML_OFFSET | AR_STRUCT_ITEM_USER)
+#define AR_STRUCT_ITEM_XML_GROUP      (AR_STRUCT_XML_OFFSET | AR_STRUCT_ITEM_GROUP)
+#define AR_STRUCT_ITEM_XML_ROLE       (AR_STRUCT_XML_OFFSET | AR_STRUCT_ITEM_ROLE)
+
+// api version definitions (see AR_CURRENT_API_VERSION in ar.h)
 #define AR_API_VERSION_450 7
 #define AR_API_VERSION_500 8			// TODO: check this again !!
 #define AR_API_VERSION_510 9

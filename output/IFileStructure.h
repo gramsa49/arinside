@@ -76,7 +76,7 @@ public:
 	unsigned int uint1;
 	unsigned int uint2;
 	const CARServerObject* obj1;
-	CARDataObject* data1;
+	CARDataObject* data1; //TODO: should be obsolete if the CARDataObject is migrated to CARServerObject
 
 private:
 	IFileStructure* file;

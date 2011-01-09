@@ -77,7 +77,6 @@ CARInside* CARInside::pInsideInstance = NULL;
 CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
-	this->userList.clear();
 	this->groupList.clear();
 	this->roleList.clear();
 	this->serverInfoList.clear();
@@ -556,14 +555,8 @@ void CARInside::LoadFromServer(void)
 	if(appConfig.bLoadUserList)
 	{
 		cout << endl << "Start loading Users:" << endl;		
-
-		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
-		dataFactory->GetListUser(this->appConfig, userList);
-
-		dataFactory->Sort(userList);
-		cout << (unsigned int)userList.size() << " Users loaded" << endl;
-
-		delete dataFactory;
+		userList.LoadFromServer();
+		cout << userList.GetCount() << " Users loaded" << endl;
 	}
 	else
 		cout << endl << "Loading Users [SKIPPED]" << endl;
@@ -1139,19 +1132,18 @@ void CARInside::Documentation(void)
 		docMain->UserList(std::string(1, strValue.at(i)), usrObjCount);
 	}	
 
-	//User Details	list<CARUser>::iterator userIter;
-	nTmpCnt=1;
-	list<CARUser>::iterator userIter;
+	//User Details
 	cout << "Starting User Documentation" << endl;
-	for ( userIter = this->userList.begin(); userIter != this->userList.end(); ++userIter )
-	{
-		CARUser *user = &(*userIter);
 
-		LOG << "User [" << nTmpCnt << "-" << userList.size() << "] '" << user->loginName << "': ";
-		CDocUserDetails *userDetails = new CDocUserDetails(*user);
-		userDetails->Documentation();
-		delete userDetails;
-		nTmpCnt++;
+	tmpCount = userList.GetCount();
+	for (unsigned int userIndex = 0; userIndex < tmpCount; ++userIndex)
+	{
+		CARUser user(userIndex);
+
+		LOG << "User [" << (userIndex + 1) << "-" << tmpCount << "] '" << user.GetName() << "': ";
+		
+		CDocUserDetails userDetails(user);
+		userDetails.Documentation();
 	}
 
 	mTimer.EndTimer();
@@ -1294,17 +1286,12 @@ int CARInside::SchemaGetInsideId(string searchObjName)
 }
 
 string CARInside::LinkToUser(string loginName, int rootLevel)
-{	
-	list<CARUser>::iterator user = userList.begin();			
-	list<CARUser>::iterator endIt = userList.end();
+{
+	CARUser user(loginName);
 
-	for ( ; user != userList.end(); ++user )
-	{	
-		if(loginName == user->name)
-		{
-			return CWebUtil::Link(loginName, CPageParams(PAGE_DETAILS, &*user), "", rootLevel);
-		}
-	}
+	if (user.Exists())
+		return CWebUtil::Link(loginName, CPageParams(PAGE_DETAILS, &user), "", rootLevel);
+
 	return loginName;
 }
 

@@ -39,15 +39,15 @@ void CUserTable::AddRow(CARUser &user, int rootLevel)
 	try
 	{
 		CTableRow tblRow("");
-		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.loginName, rootLevel)));
-		tblRow.AddCell( CTableCell(CAREnum::UserGetLicType(user.licenseType)));
-		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.modified)));
-		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.modifiedBy, rootLevel)));
+		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.GetName(), rootLevel)));
+		tblRow.AddCell( CTableCell(CAREnum::UserGetLicType(user.GetLicenseType())));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.GetModifiedDate())));
+		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.GetLastChanged(), rootLevel)));
 
 		this->tbl.AddRow(tblRow);
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION adding user '" << user.loginName << "': " << e.what()<< endl;
+		cout << "EXCEPTION adding user '" << user.GetName() << "': " << e.what()<< endl;
 	}
 }

@@ -1256,6 +1256,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 					case AR_STRUCT_ITEM_XML_IMAGE: return new ImageDetail(params.obj1);
 #endif
+					case AR_STRUCT_ITEM_XML_USER: return new UserDetail(params.obj1);
 				}
 			}
 			else if (params.data1 != NULL)
@@ -2281,6 +2282,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 					case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageDetail(params.obj1);
 #endif
+					case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserDetail(params.obj1);
 				}
 			}
 			else if (params.data1 != NULL)

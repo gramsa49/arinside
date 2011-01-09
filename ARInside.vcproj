@@ -1660,6 +1660,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\ARUserList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARUserList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARVUIList.cpp"
 				>
 			</File>

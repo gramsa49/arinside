@@ -15,24 +15,52 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "ARDataObject.h"
+#include "ARServerObject.h"
+#include "../lists/ARUserList.h"
 
 class CARUser :
-	public CARDataObject
+	public CARServerObject
 {
 public:
-	CARUser(int insideId, string requestId);
+	CARUser(int insideId);
+	CARUser(const string& schemaName);
 	~CARUser(void);
-	unsigned int GetDataType() { return DATA_TYPE_USER; }
+	//unsigned int GetDataType() { return DATA_TYPE_USER; }
 
+	bool Exists();
+	
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
 
-	string loginName;
-	string fullName;
-	string email;
-	int licenseType;
-	int ftLicenseType;
-	int defNotify;
-	vector<string> groupList;
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
 
-	string comparableName;
+	// needed typedefs
+	typedef CARUserList::GroupList GroupList;
+
+	// data-access functions
+	const string& GetRequestId() const;
+	const string& GetEmail() const;
+	const GroupList& GetGroups() const;
+	const string& GetFullName() const;
+	int GetDefaultNotify() const;
+	int GetLicenseType() const;
+	int GetFTLicenseType() const;
+	ARTimestamp GetCreateDate() const;
+	ARTimestamp GetModifiedDate() const;
+
+	// some helpers
+	string GetURL(int rootLevel, bool useImage = true) const;
+
+	// class type support
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_USER; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 };

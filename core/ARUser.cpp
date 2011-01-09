@@ -16,22 +16,131 @@
 
 #include "stdafx.h"
 #include "ARUser.h"
+#include "../ARInside.h"
 
-CARUser::CARUser(int insideId, string requestId)
-: CARDataObject(insideId)
-{		
-	this->requestId = requestId;
+CARUser::CARUser(int insideId)
+: CARServerObject(insideId)
+{
+}
 
-	this->loginName = "";
-	this->fullName = "";
-	this->email = "";
-	this->licenseType = 0;
-	this->ftLicenseType = 0;
-	this->defNotify = 0;
-	this->groupList.clear();
-	this->comparableName = "";
+CARUser::CARUser(const string& userName)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->userList.Find(userName);
 }
 
 CARUser::~CARUser(void)
 {
 }
+
+bool CARUser::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->userList.GetCount());
+}
+
+bool CARUser::IsClonable() const
+{
+	return true;
+}
+
+CARServerObject* CARUser::Clone() const
+{
+	return new CARUser(*this);
+}
+
+string CARUser::GetURL(int rootLevel, bool useImage) const
+{
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(this->GetName(), file, (useImage ? "schema.gif" : ""), rootLevel);
+}
+
+string CARUser::GetName()
+{
+	return CARInside::GetInstance()->userList.UserGetName(GetInsideId());
+}
+
+string CARUser::GetName() const
+{
+	return CARInside::GetInstance()->userList.UserGetName(GetInsideId());
+}
+
+string CARUser::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->userList.UserGetName(GetInsideId())[0]));
+}
+
+bool CARUser::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const char* CARUser::GetHelpText() const
+{
+	return NULL; // no support for helptext
+}
+
+ARTimestamp CARUser::GetTimestamp()
+{
+	return CARInside::GetInstance()->userList.UserGetModifiedDate(GetInsideId());
+}
+
+const ARAccessNameType& CARUser::GetOwner() const
+{
+	return CARInside::GetInstance()->userList.UserGetCreatedBy(GetInsideId());
+}
+
+const ARAccessNameType& CARUser::GetLastChanged() const
+{
+	return CARInside::GetInstance()->userList.UserGetModifiedBy(GetInsideId());
+}
+
+const char* CARUser::GetChangeDiary() const
+{
+	return NULL;
+}
+
+const string& CARUser::GetRequestId() const
+{
+	return CARInside::GetInstance()->userList.UserGetRequestId(GetInsideId());
+}
+
+const string& CARUser::GetEmail() const
+{
+	return CARInside::GetInstance()->userList.UserGetEmail(GetInsideId());
+}
+
+const CARUser::GroupList& CARUser::GetGroups() const
+{
+	return CARInside::GetInstance()->userList.UserGetGroups(GetInsideId());
+}
+
+const string& CARUser::GetFullName() const
+{
+	return CARInside::GetInstance()->userList.UserGetFullName(GetInsideId());
+}
+
+int CARUser::GetDefaultNotify() const
+{
+	return CARInside::GetInstance()->userList.UserGetDefaultNotify(GetInsideId());
+}
+
+int CARUser::GetLicenseType() const
+{
+	return CARInside::GetInstance()->userList.UserGetLicenseType(GetInsideId());
+}
+
+int CARUser::GetFTLicenseType() const
+{
+	return CARInside::GetInstance()->userList.UserGetFTLicenseType(GetInsideId());
+}
+
+ARTimestamp CARUser::GetCreateDate() const
+{
+	return CARInside::GetInstance()->userList.UserGetCreateDate(GetInsideId());
+}
+
+ARTimestamp CARUser::GetModifiedDate() const
+{
+	return CARInside::GetInstance()->userList.UserGetModifiedDate(GetInsideId());
+}
+

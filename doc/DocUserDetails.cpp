@@ -33,10 +33,10 @@ void CDocUserDetails::Documentation()
 
 	try
 	{
-		CWebPage webPage(file->GetFileName(), this->pUser->loginName, this->rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), this->pUser->GetName(), this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
-		webPage.AddContentHead(CWebUtil::LinkToUserIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pUser->loginName));
+		webPage.AddContentHead(CWebUtil::LinkToUserIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pUser->GetName()));
 
 		//User details
 		CTable tbl("userDetails", "TblObjectList");
@@ -44,19 +44,19 @@ void CDocUserDetails::Documentation()
 		tbl.AddColumn(70, "Value");
 
 		CTableRow tblRow("");
-		tblRow.AddCellList(CTableCell("Full Name"), CTableCell(this->pUser->fullName));
+		tblRow.AddCellList(CTableCell("Full Name"), CTableCell(this->pUser->GetFullName()));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Email"), CTableCell(this->pUser->email));
+		tblRow.AddCellList(CTableCell("Email"), CTableCell(this->pUser->GetEmail()));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("License Type"), CTableCell(CAREnum::UserGetFTLicType(this->pUser->licenseType)));
+		tblRow.AddCellList(CTableCell("License Type"), CTableCell(CAREnum::UserGetFTLicType(this->pUser->GetLicenseType())));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Full Text License Type"), CTableCell(CAREnum::UserGetFTLicType(this->pUser->ftLicenseType)));
+		tblRow.AddCellList(CTableCell("Full Text License Type"), CTableCell(CAREnum::UserGetFTLicType(this->pUser->GetFTLicenseType())));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Default Notify Mechanism"), CTableCell(CAREnum::UserGetDefNotify(this->pUser->defNotify)));
+		tblRow.AddCellList(CTableCell("Default Notify Mechanism"), CTableCell(CAREnum::UserGetDefNotify(this->pUser->GetDefaultNotify())));
 		tbl.AddRow(tblRow);
 
 		//Groups
@@ -64,18 +64,13 @@ void CDocUserDetails::Documentation()
 		tblGrplist.AddColumn(10, "Group ID");
 		tblGrplist.AddColumn(90, "Group Name");
 
-		for(unsigned int i=0; i< this->pUser->groupList.size(); i++)
+		const CARUser::GroupList& groups = this->pUser->GetGroups();
+		for(unsigned int i=0; i < groups.size(); ++i)
 		{
-			string grpIdString = CUtil::ClearSpaces(this->pUser->groupList[i]);
-			if(grpIdString.size() > 0)
-			{
-				int grpId = atoi(grpIdString.c_str());
-
-				CTableRow rowGrp("cssStdRow");	
-				rowGrp.AddCell(CTableCell(grpId));
-				rowGrp.AddCell(CTableCell(this->pInside->LinkToGroup("", grpId, this->rootLevel)));
-				tblGrplist.AddRow(rowGrp);			
-			}
+			CTableRow rowGrp("cssStdRow");	
+			rowGrp.AddCell(CTableCell(groups[i]));
+			rowGrp.AddCell(CTableCell(this->pInside->LinkToGroup("", groups[i], this->rootLevel)));
+			tblGrplist.AddRow(rowGrp);			
 		}
 
 		tblRow.AddCellList(CTableCell("Group List"), CTableCell(tblGrplist.ToXHtml()));
@@ -86,7 +81,7 @@ void CDocUserDetails::Documentation()
 		tbl.Clear();
 
 		//Histoy
-		webPage.AddContent(this->pInside->DataObjectHistory(this->pUser, this->rootLevel));
+		webPage.AddContent(this->pInside->ServerObjectHistory(this->pUser, this->rootLevel));
 
 		webPage.SaveInFolder(file->GetPath());
 	}

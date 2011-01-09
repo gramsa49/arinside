@@ -30,3 +30,13 @@ struct DeletePointer : unary_function<C*, void>
 {
 	void operator()(C* p) { delete p; }
 };
+
+template<class CARListObject>
+class SortByNameDataObj
+{
+public:
+	SortByNameDataObj(const CARListObject &p) {list = &p; }
+	bool operator()(int l, int r) { return (strcoll(list->names[l].c_str(), list->names[r].c_str()) < 0); }
+private:
+	const CARListObject* list;
+};
