@@ -90,22 +90,37 @@ string CDocGroupDetails::RoleReferences()
 	tbl.AddColumn(30, "Type");
 	tbl.AddColumn(70, "Role");
 
-	list<CARRole>::iterator roleIter;		
-	for ( roleIter = this->pInside->roleList.begin(); roleIter != this->pInside->roleList.end(); roleIter++ )
+	unsigned int roleCount = this->pInside->roleList.GetCount();
+	for ( unsigned int roleIndex = 0; roleIndex < roleCount; ++roleIndex )
 	{	
-		CARRole *role = &(*roleIter);		
-		if(role->productionGroupId == this->pGroup->groupId)
+		CARRole role(roleIndex);
+
+		const CARRole::GroupList& groupsProd = role.GetGroupsProd();
+		CARRole::GroupList::const_iterator curIt = groupsProd.begin();
+		CARRole::GroupList::const_iterator endIt = groupsProd.end();
+
+		for (; curIt != endIt; ++curIt)
 		{
-			CTableRow row("");
-			row.AddCellList(CTableCell("Production"), CTableCell( role->GetURL(this->rootLevel)));
-			tbl.AddRow(row);
+			if(*curIt == this->pGroup->groupId)
+			{
+				CTableRow row("");
+				row.AddCellList(CTableCell("Production"), CTableCell( role.GetURL(this->rootLevel)));
+				tbl.AddRow(row);
+			}
 		}
 
-		if(role->testGroupId == this->pGroup->groupId)
+		const CARRole::GroupList groupsTest = role.GetGroupsTest();
+		curIt = groupsTest.begin();
+		endIt = groupsTest.end();
+
+		for (; curIt != endIt; ++curIt)
 		{
-			CTableRow row("");
-			row.AddCellList(CTableCell("Test"), CTableCell( role->GetURL(this->rootLevel)));
-			tbl.AddRow(row);
+			if(*curIt == this->pGroup->groupId)
+			{
+				CTableRow row("");
+				row.AddCellList(CTableCell("Test"), CTableCell( role.GetURL(this->rootLevel)));
+				tbl.AddRow(row);
+			}
 		}
 	}
 
@@ -250,7 +265,7 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 			{
 				CTableRow row("");
 				row.AddCell(CTableCell(CWebUtil::Link(user.GetName(), CPageParams(PAGE_DETAILS, &user),"", rootLevel)));
-				row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user.GetModifiedDate())));
+				row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user.GetTimestamp())));
 				row.AddCell(CTableCell(this->pInside->LinkToUser(user.GetLastChanged(), rootLevel)));
 				tbl.AddRow(row);
 

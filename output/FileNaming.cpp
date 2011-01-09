@@ -1257,6 +1257,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 					case AR_STRUCT_ITEM_XML_IMAGE: return new ImageDetail(params.obj1);
 #endif
 					case AR_STRUCT_ITEM_XML_USER: return new UserDetail(params.obj1);
+					case AR_STRUCT_ITEM_XML_ROLE: return new RoleDetail(static_cast<const CARRole*>(params.obj1));
 				}
 			}
 			else if (params.data1 != NULL)
@@ -1371,16 +1372,16 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 			}
 			break;
 		
-		case PAGE_ROLE_SCHEMA_LIST: assert(params.data1 != NULL); return new RoleSchemaList(params.data1);
-		case PAGE_ROLE_FIELD_LIST: assert(params.data1 != NULL); return new RoleFieldList(params.data1);
-		case PAGE_ROLE_ACTIVELINK_LIST: assert(params.data1 != NULL); return new RoleALList(params.data1);
+		case PAGE_ROLE_SCHEMA_LIST: assert(params.obj1 != NULL); return new RoleSchemaList(params.obj1);
+		case PAGE_ROLE_FIELD_LIST: assert(params.obj1 != NULL); return new RoleFieldList(params.obj1);
+		case PAGE_ROLE_ACTIVELINK_LIST: assert(params.obj1 != NULL); return new RoleALList(params.obj1);
 		case PAGE_ROLE_CONTAINER_LIST:
 			{
 				switch(params.uint1)
 				{
-				case ARCON_PACK: assert(params.data1 != NULL); return new RolePackListList(params.data1);
-				case ARCON_GUIDE: assert(params.data1 != NULL); return new RoleALGuideList(params.data1);
-				case ARCON_WEBSERVICE: assert(params.data1 != NULL); return new RoleWebserviceList(params.data1);
+				case ARCON_PACK: assert(params.obj1 != NULL); return new RolePackListList(params.obj1);
+				case ARCON_GUIDE: assert(params.obj1 != NULL); return new RoleALGuideList(params.obj1);
+				case ARCON_WEBSERVICE: assert(params.obj1 != NULL); return new RoleWebserviceList(params.obj1);
 				}
 			}
 			break;
@@ -1824,7 +1825,7 @@ class ObjectNameRoleDetail : public IFileStructure
 {
 public:
 	ObjectNameRoleDetail(const CARRole* role) : obj(role) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->roleId; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetRequestId(); return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_ROLE; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -2283,15 +2284,16 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 					case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageDetail(params.obj1);
 #endif
 					case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserDetail(params.obj1);
+					case AR_STRUCT_ITEM_XML_ROLE: return new ObjectNameRoleDetail(static_cast<const CARRole*>(params.obj1));
 				}
 			}
 			else if (params.data1 != NULL)
 			{
 				switch (params.data1->GetDataType())
 				{
-				case DATA_TYPE_USER: return new ObjectNameUserDetail(params.data1);
+				//case DATA_TYPE_USER: return new ObjectNameUserDetail(params.data1);
 				case DATA_TYPE_GROUP: return new ObjectNameGroupDetail(static_cast<CARGroup*>(params.data1));
-				case DATA_TYPE_ROLE: return new ObjectNameRoleDetail(static_cast<CARRole*>(params.data1));
+				//case DATA_TYPE_ROLE: return new ObjectNameRoleDetail(static_cast<CARRole*>(params.data1));
 				}
 			}
 		}
@@ -2397,16 +2399,16 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 			}
 			break;
 		
-		case PAGE_ROLE_SCHEMA_LIST: assert(params.data1 != NULL); return new RoleSchemaList(params.data1);
-		case PAGE_ROLE_FIELD_LIST: assert(params.data1 != NULL); return new RoleFieldList(params.data1);
-		case PAGE_ROLE_ACTIVELINK_LIST: assert(params.data1 != NULL); return new RoleALList(params.data1);
+		case PAGE_ROLE_SCHEMA_LIST: assert(params.obj1 != NULL); return new RoleSchemaList(params.obj1);
+		case PAGE_ROLE_FIELD_LIST: assert(params.obj1 != NULL); return new RoleFieldList(params.obj1);
+		case PAGE_ROLE_ACTIVELINK_LIST: assert(params.obj1 != NULL); return new RoleALList(params.obj1);
 		case PAGE_ROLE_CONTAINER_LIST:
 			{
 				switch(params.uint1)
 				{
-				case ARCON_PACK: assert(params.data1 != NULL); return new RolePackListList(params.data1);
-				case ARCON_GUIDE: assert(params.data1 != NULL); return new RoleALGuideList(params.data1);
-				case ARCON_WEBSERVICE: assert(params.data1 != NULL); return new RoleWebserviceList(params.data1);
+				case ARCON_PACK: assert(params.obj1 != NULL); return new RolePackListList(params.obj1);
+				case ARCON_GUIDE: assert(params.obj1 != NULL); return new RoleALGuideList(params.obj1);
+				case ARCON_WEBSERVICE: assert(params.obj1 != NULL); return new RoleWebserviceList(params.obj1);
 				}
 			}
 			break;

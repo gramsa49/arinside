@@ -78,7 +78,6 @@ CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
 	this->groupList.clear();
-	this->roleList.clear();
 	this->serverInfoList.clear();
 	this->globalFieldList.clear();
 
@@ -581,13 +580,8 @@ void CARInside::LoadFromServer(void)
 	if(appConfig.bLoadRoleList)
 	{
 		cout << endl << "Start loading Roles:" << endl;		
-
-		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
-		dataFactory->GetListRoles(this->appConfig, roleList);
-
-		dataFactory->Sort(roleList);
-		cout << (unsigned int)roleList.size() << " Roles loaded" << endl;
-		delete dataFactory;
+		roleList.LoadFromServer();
+		cout << (unsigned int)roleList.GetCount() << " Roles loaded" << endl;
 	}
 	else
 		cout << endl << "Loading Roles [SKIPPED]" << endl;
@@ -1107,18 +1101,16 @@ void CARInside::Documentation(void)
 	}	
 
 	//Role Details
-	nTmpCnt=1;
-	list<CARRole>::iterator roleIter;
 	cout << "Starting Role Documentation" << endl;
-	for ( roleIter = this->roleList.begin(); roleIter != this->roleList.end(); roleIter++ )
-	{
-		CARRole *role = &(*roleIter);
 
-		LOG << "Role [" << nTmpCnt << "-" << roleList.size() << "] '" << role->name << "': ";
-		CDocRoleDetails *roleDetails = new CDocRoleDetails(*role);
-		roleDetails->Documentation();
-		delete roleDetails;
-		nTmpCnt++;
+	tmpCount = roleList.GetCount();
+	for (unsigned int roleIndex = 0; roleIndex < tmpCount; ++roleIndex)
+	{
+		CARRole role(roleIndex);
+
+		LOG << "Role [" << (roleIndex + 1) << "-" << tmpCount << "] '" << role.GetName() << "': ";
+		CDocRoleDetails roleDetails(role);
+		roleDetails.Documentation();
 	}
 
 
@@ -1303,14 +1295,11 @@ bool CARInside::ValidateGroup(const string& appRefName, int permissionId)
 	}
 	else
 	{
-		list<CARRole>::iterator roleIter;
-		for(roleIter = this->roleList.begin(); roleIter != this->roleList.end(); ++roleIter)
+		CARRole role(permissionId, appRefName);
+
+		if (role.Exists())
 		{
-			CARRole *role = &(*roleIter);
-			if(role->roleId == permissionId && (role->applicationName == appRefName))
-			{
-				return true;
-			}
+			return true;
 		}
 	}
 
@@ -1335,14 +1324,11 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 	{
 		if(!appRefName.empty())
 		{
-			list<CARRole>::iterator role = this->roleList.begin();
-			list<CARRole>::iterator endIt = this->roleList.end();
-			for( ; role != endIt; ++role)
+			CARRole role(permissionId, appRefName);
+
+			if(role.Exists())
 			{
-				if(role->roleId == permissionId && role->applicationName == appRefName)
-				{
-					return CWebUtil::Link(role->roleName, CPageParams(PAGE_DETAILS, &*role), "doc.gif", rootLevel);
-				}
+				return CWebUtil::Link(role.GetName(), CPageParams(PAGE_DETAILS, &role), "doc.gif", rootLevel);
 			}
 		}
 	}

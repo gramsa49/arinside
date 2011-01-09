@@ -34,12 +34,12 @@ void CDocRoleDetails::Documentation()
 	try
 	{
 		rootLevel = file->GetRootLevel();
-		CWebPage webPage(file->GetFileName(), this->pRole->roleName, this->rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), this->pRole->GetName(), this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToRoleIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pRole->roleName) << endl;
-		contHeadStrm << " (Id: " << this->pRole->roleId << ")";
+		contHeadStrm << CWebUtil::LinkToRoleIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pRole->GetName()) << endl;
+		contHeadStrm << " (Id: " << this->pRole->GetRoleId() << ")";
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//User details
@@ -48,13 +48,19 @@ void CDocRoleDetails::Documentation()
 		tbl.AddColumn(70, "Value");
 
 		CTableRow tblRow("");
-		tblRow.AddCellList(CTableCell("Application"), CTableCell(this->pInside->LinkToContainer(this->pRole->applicationName, this->rootLevel)));
+		tblRow.AddCellList(CTableCell("Application"), CTableCell(this->pInside->LinkToContainer(this->pRole->GetApplicationName(), this->rootLevel)));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Test Group"), CTableCell(this->pInside->LinkToGroup(this->pRole->applicationName, this->pRole->testGroupId, this->rootLevel)));
+		const CARRole::GroupList& testGroups = this->pRole->GetGroupsTest();
+		int testId = 0;
+		if (testGroups.size() > 0) testId = testGroups[0];
+		tblRow.AddCellList(CTableCell("Test Group"), CTableCell(this->pInside->LinkToGroup(this->pRole->GetApplicationName(), testId, this->rootLevel)));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Production Group"), CTableCell(this->pInside->LinkToGroup(this->pRole->applicationName, this->pRole->productionGroupId, this->rootLevel)));
+		const CARRole::GroupList& prodGroups = this->pRole->GetGroupsProd();
+		int prodId = 0;
+		if (prodGroups.size() > 0) prodId = prodGroups[0];
+		tblRow.AddCellList(CTableCell("Production Group"), CTableCell(this->pInside->LinkToGroup(this->pRole->GetApplicationName(), prodId, this->rootLevel)));
 		tbl.AddRow(tblRow);
 
 		tblRow.AddCellList(CTableCell("Permissions"), this->RolePermissions()); // TODO: after this call rootLevel might be incorrect
@@ -65,13 +71,13 @@ void CDocRoleDetails::Documentation()
 		tbl.Clear();
 
 		//Histoy
-		webPage.AddContent(this->pInside->DataObjectHistory(this->pRole, this->rootLevel));
+		webPage.AddContent(this->pInside->ServerObjectHistory(this->pRole, this->rootLevel));
 
 		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_Documentation of '" << this->pRole->roleName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocRoleDetails_Documentation of '" << this->pRole->GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -179,12 +185,12 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -215,12 +221,12 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 		{	
 			CARSchema schema(schemaIndex);
 
-			if(schema.GetAppRefName() == this->pRole->applicationName)
+			if(schema.GetAppRefName() == this->pRole->GetApplicationName())
 			{
 				const ARPermissionList& groupList = schema.GetPermissions();
 				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pRole->roleId == groupList.permissionList[nGrp].groupId)
+					if(this->pRole->GetRoleId() == groupList.permissionList[nGrp].groupId)
 					{
 						string visibleInfo;
 						if(groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
@@ -244,7 +250,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 				const ARInternalIdList& admingrpList = schema.GetSubadmins();
 				for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 				{
-					if(this->pRole->roleId == admingrpList.internalIdList[nGrp])
+					if(this->pRole->GetRoleId() == admingrpList.internalIdList[nGrp])
 					{
 						CTableRow row("");
 						row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
@@ -268,7 +274,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_FormsDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocRoleDetails_FormsDoc of '" << this->pRole->GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -280,12 +286,12 @@ void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 	{
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
-		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -297,11 +303,11 @@ void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{	
 			CARActiveLink al(alIndex);
-			if(strcmp(al.GetAppRefName().c_str(), this->pRole->applicationName.c_str())==0)
+			if(al.GetAppRefName() == this->pRole->GetApplicationName())
 			{
 				for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
 				{
-					if(this->pRole->roleId == al.GetGroupList().internalIdList[nGrp])
+					if(this->pRole->GetRoleId() == al.GetGroupList().internalIdList[nGrp])
 					{
 						alTable->AddRow(alIndex, this->rootLevel);
 						nResult++;
@@ -318,7 +324,7 @@ void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_ActiveLinkDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocRoleDetails_ActiveLinkDoc of '" << this->pRole->GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -331,12 +337,12 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->roleName, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -351,12 +357,12 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 			CARContainer cont(cntIndex);
 			if(cont.GetType() == containerType)
 			{
-				if(cont.GetAppRefName() == this->pRole->applicationName)
+				if(cont.GetAppRefName() == this->pRole->GetApplicationName())
 				{
 					const ARPermissionList& groupList = cont.GetPermissions();
 					for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 					{
-						if(this->pRole->roleId == groupList.permissionList[nGrp].groupId)
+						if(this->pRole->GetRoleId() == groupList.permissionList[nGrp].groupId)
 						{
 							contTbl->AddRow(cont, this->rootLevel);
 							nResult++;
@@ -381,12 +387,12 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 			for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 			{	
 				CARContainer cont(cntIndex);
-				if(cont.GetAppRefName() == this->pRole->applicationName)
+				if(cont.GetAppRefName() == this->pRole->GetApplicationName())
 				{
 					const ARInternalIdList& admingrpList = cont.GetSubadmins();
 					for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 					{
-						if(this->pRole->roleId == admingrpList.internalIdList[nGrp])
+						if(this->pRole->GetRoleId() == admingrpList.internalIdList[nGrp])
 						{
 							subadminTbl->AddRow(cont, this->rootLevel);
 							nResult++;
@@ -404,7 +410,7 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_FormsDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocRoleDetails_FormsDoc of '" << this->pRole->GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -420,7 +426,7 @@ int CDocRoleDetails::NumAllowedFields(CARSchema& schema)
 			const ARPermissionList& permissions = field.GetPermissions();
 			for(unsigned int i = 0; i< permissions.numItems; i++)
 			{
-				if(permissions.permissionList[i].groupId == this->pRole->roleId)
+				if(permissions.permissionList[i].groupId == this->pRole->GetRoleId())
 				{
 					nResult++;
 				}
@@ -429,7 +435,7 @@ int CDocRoleDetails::NumAllowedFields(CARSchema& schema)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_NumAllowedFields of '" << this->pRole->roleName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocRoleDetails_NumAllowedFields of '" << this->pRole->GetName() << "': " << e.what() << endl;
 	}
 	return nResult;
 }
@@ -443,12 +449,12 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->roleName, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title + " " +this->pRole->GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->name, CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -467,7 +473,7 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 				
 				for(unsigned int nGrp= 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pRole->roleId == groupList.permissionList[nGrp].groupId)
+					if(this->pRole->GetRoleId() == groupList.permissionList[nGrp].groupId)
 					{
 						if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
 						{
@@ -508,7 +514,7 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 					const ARPermissionList& permissions = field.GetPermissions();
 					for(unsigned int i = 0; i< permissions.numItems; i++)
 					{
-						if(permissions.permissionList[i].groupId == this->pRole->roleId)
+						if(permissions.permissionList[i].groupId == this->pRole->GetRoleId())
 						{
 							//We found a field that this group is allowed to access
 
@@ -537,6 +543,6 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocRoleDetails_FieldsDoc of '" << this->pRole->roleName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocRoleDetails_FieldsDoc of '" << this->pRole->GetName() << "': " << e.what() << endl;
 	}
 }

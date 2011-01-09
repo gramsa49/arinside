@@ -904,17 +904,17 @@ void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 		int rootLevel = file->GetRootLevel();
 		CRoleTable tbl(*this->pInside);
 
-		list<CARRole>::iterator listIter;				
-		for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); ++listIter )
+		unsigned int roleCount = this->pInside->roleList.GetCount();
+		for (unsigned int roleIndex = 0; roleIndex < roleCount; ++roleIndex)
 		{	
-			CARRole *role = &(*listIter);
+			CARRole role(roleIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = role->GetNameFirstChar();
+				string firstChar = role.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -922,14 +922,14 @@ void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 			}
 			else if(searchChar == "#")
 			{
-				if(!role->NameStandardFirstChar())
+				if(!role.NameStandardFirstChar())
 				{
 					bInsert = true;
 				}
 			}
 			else
 			{
-				if(role->GetNameFirstChar() == searchChar)
+				if(role.GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
@@ -937,7 +937,7 @@ void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 
 			if(bInsert)
 			{	
-				tbl.AddRow(*role, rootLevel);
+				tbl.AddRow(role, rootLevel);
 			}
 		}
 

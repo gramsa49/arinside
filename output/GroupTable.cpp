@@ -46,26 +46,16 @@ void CGroupTable::AddRow(string appRefName, int id, int rootLevel)
 
 void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 {
-	CARRole *insertRole = NULL;
-	list<CARRole>::iterator listIter;		
-	for ( listIter = this->pInside->roleList.begin(); listIter != this->pInside->roleList.end(); ++listIter )
-	{
-		CARRole *role = &(*listIter);
-		if(role->roleId == roleId)
-		{
-			insertRole = role;
-			break;
-		}	
-	}
+	CARRole role(roleId, appRefName);
 
-	if(insertRole != NULL)
+	if(role.Exists())
 	{
 		CTableRow tblRow("");
 		tblRow.AddCell( CTableCell("Role"));
-		tblRow.AddCell( CTableCell(insertRole->GetURL(rootLevel)));	
-		tblRow.AddCell( CTableCell(insertRole->roleId));
-		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertRole->modified)));
-		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertRole->modifiedBy, rootLevel)));
+		tblRow.AddCell( CTableCell(role.GetURL(rootLevel)));	
+		tblRow.AddCell( CTableCell(role.GetRoleId()));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(role.GetTimestamp())));
+		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(role.GetLastChanged(), rootLevel)));
 		this->tbl.AddRow(tblRow);
 	}
 	else

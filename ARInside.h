@@ -48,6 +48,7 @@ class IFileStructure;
 #include "lists/ARImageList.h"
 #include "lists/BlackList.h"
 #include "lists/ARUserList.h"
+#include "lists/ARRoleList.h"
 
 extern const string AppVersion;
 
@@ -95,9 +96,9 @@ public:
 	CARContainerList containerList;
 	CARMenuList menuList;
 	CARUserList userList;
+	CARRoleList roleList;
 
 	list<CARGroup> groupList;
-	list<CARRole> roleList;
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
 	CBlackList blackList;

@@ -1652,6 +1652,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\ARRoleList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARRoleList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARSchemaList.cpp"
 				>
 			</File>

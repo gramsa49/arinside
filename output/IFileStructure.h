@@ -204,10 +204,10 @@ const unsigned int PAGE_GROUP_USER_LIST = 1104;
 // CPageParams: uint1 = sub-type --- data1 = groupObj
 const unsigned int PAGE_GROUP_CONTAINER_LIST = 1105;
 
-const unsigned int PAGE_ROLE_SCHEMA_LIST = 1201;
-const unsigned int PAGE_ROLE_FIELD_LIST = 1202;
-const unsigned int PAGE_ROLE_ACTIVELINK_LIST = 1203;
-const unsigned int PAGE_ROLE_CONTAINER_LIST = 1204;
+const unsigned int PAGE_ROLE_SCHEMA_LIST = 1201;          // CPageParams: obj1 = roleObj
+const unsigned int PAGE_ROLE_FIELD_LIST = 1202;           // CPageParams: obj1 = roleObj
+const unsigned int PAGE_ROLE_ACTIVELINK_LIST = 1203;      // CPageParams: obj1 = roleObj
+const unsigned int PAGE_ROLE_CONTAINER_LIST = 1204;       // CPageParams: uParam1 = subType, obj1 = roleObj
 
 // === PAGE_IMAGE_DATA ===
 // a file holding the real image of this ARImage-Object

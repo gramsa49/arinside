@@ -138,9 +138,3 @@ ARTimestamp CARUser::GetCreateDate() const
 {
 	return CARInside::GetInstance()->userList.UserGetCreateDate(GetInsideId());
 }
-
-ARTimestamp CARUser::GetModifiedDate() const
-{
-	return CARInside::GetInstance()->userList.UserGetModifiedDate(GetInsideId());
-}
-

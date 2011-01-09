@@ -15,23 +15,48 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "ARDataObject.h"
+#include "ARServerObject.h"
+#include "../lists/ARRoleList.h"
 
 class CARRole :
-	public CARDataObject
+	public CARServerObject
 {
 public:
-	CARRole(int insideId, string requestId);
+	CARRole(int insideId);
+	CARRole(int roleId, const string& appName);
 	~CARRole(void);
-	unsigned int GetDataType() { return DATA_TYPE_ROLE; }
 
-	string GetURL(int rootLevel);
+	bool Exists();
+	
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
 
-	string applicationName;
-	string roleName;
-	string comparableRoleName;
-	int roleId;
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
 
-	int testGroupId;
-	int productionGroupId;
+	// export typedefs
+	typedef CARRoleList::GroupList GroupList;
+
+	// data-access functions
+	const string& GetRequestId() const;
+	const string& GetApplicationName() const;
+	int GetRoleId() const;
+	const GroupList& GetGroupsTest() const;
+	const GroupList& GetGroupsProd() const;
+	ARTimestamp GetCreateDate() const;
+
+	// some helpers
+	string GetURL(int rootLevel, bool useImage = true) const;
+
+	// class type support
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_ROLE; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 };

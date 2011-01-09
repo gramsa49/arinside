@@ -21,10 +21,17 @@
 
 CARUserList::CARUserList(void)
 {
+	ARZeroMemory(&owners);
+	ARZeroMemory(&changedUsers);
 }
 
 CARUserList::~CARUserList(void)
 {
+	if (owners.nameList != NULL)
+		delete[] owners.nameList;
+
+	if (changedUsers.nameList != NULL)
+		delete[] changedUsers.nameList;
 }
 
 bool CARUserList::LoadFromServer()
@@ -128,7 +135,7 @@ bool CARUserList::LoadFromServer()
 										if (curPos != NULL) ++curPos;
 									} while ( curPos != NULL && curPos[0] != 0);
 								}
-								std::sort(group.begin(), group.end());
+								std::sort(gids.begin(), gids.end());
 								group.push_back(gids);
 							}
 							break;

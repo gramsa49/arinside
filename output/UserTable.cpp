@@ -41,7 +41,7 @@ void CUserTable::AddRow(CARUser &user, int rootLevel)
 		CTableRow tblRow("");
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.GetName(), rootLevel)));
 		tblRow.AddCell( CTableCell(CAREnum::UserGetLicType(user.GetLicenseType())));
-		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.GetModifiedDate())));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(user.GetTimestamp())));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(user.GetLastChanged(), rootLevel)));
 
 		this->tbl.AddRow(tblRow);

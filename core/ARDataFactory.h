@@ -28,17 +28,11 @@ public:
 	~CARDataFactory(void);
 
 	void GetListGroup(AppConfig &appConfig, list<CARGroup> &listResult);
-	void GetListRoles(AppConfig &appConfig, list<CARRole> &listResult);
-
 	void Sort(list<CARGroup> &listResult);
-	void Sort(list<CARRole> &listRole);
 private:
 	ARControlStruct *pControl;
 	ARStatusList *pStatus;
 
 	static bool SortGroupsByName(const CARGroup& ti, const CARGroup& t2);
-	static bool SortRolesByName(const CARRole& t1, const CARRole &t2);
-
 	CARGroup LoadGroup(ARNameType &schemaName, string requestId);
-	CARRole LoadRole(ARNameType &schemaName, string requestId, int insideId);
 };

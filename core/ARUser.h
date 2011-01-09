@@ -23,9 +23,8 @@ class CARUser :
 {
 public:
 	CARUser(int insideId);
-	CARUser(const string& schemaName);
+	CARUser(const string& userName);
 	~CARUser(void);
-	//unsigned int GetDataType() { return DATA_TYPE_USER; }
 
 	bool Exists();
 	
@@ -54,7 +53,6 @@ public:
 	int GetLicenseType() const;
 	int GetFTLicenseType() const;
 	ARTimestamp GetCreateDate() const;
-	ARTimestamp GetModifiedDate() const;
 
 	// some helpers
 	string GetURL(int rootLevel, bool useImage = true) const;
