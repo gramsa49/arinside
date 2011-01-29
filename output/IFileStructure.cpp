@@ -62,7 +62,6 @@ CPageParams::CPageParams(unsigned int page)
 	this->uint1 = 0; 
 	this->uint2 = 0; 
 	this->obj1 = NULL;
-	this->data1 = NULL;
 	InitFile();
 }
 
@@ -72,7 +71,6 @@ CPageParams::CPageParams(unsigned int page, unsigned int uParam1)
 	this->uint1 = uParam1; 
 	this->uint2 = 0; 
 	this->obj1 = NULL;
-	this->data1 = NULL;
 	InitFile();
 }
 
@@ -82,27 +80,6 @@ CPageParams::CPageParams(unsigned int page, unsigned int uParam1, unsigned int u
 	this->uint1 = uParam1; 
 	this->uint2 = uParam2; 
 	this->obj1 = NULL;
-	this->data1 = NULL;
-	InitFile();
-}
-
-CPageParams::CPageParams(unsigned int page, CARDataObject* data1)
-{
-	this->page = page; 
-	this->uint1 = 0; 
-	this->uint2 = 0; 
-	this->obj1 = NULL;
-	this->data1 = data1;
-	InitFile();
-}
-
-CPageParams::CPageParams(unsigned int page, unsigned int uParam1, CARDataObject* data1)
-{
-	this->page = page; 
-	this->uint1 = uParam1; 
-	this->uint2 = 0; 
-	this->obj1 = NULL;
-	this->data1 = data1;
 	InitFile();
 }
 
@@ -112,7 +89,6 @@ CPageParams::CPageParams(unsigned int page, const CARServerObject* obj1)
 	this->uint1 = 0; 
 	this->uint2 = 0; 
 	this->obj1 = obj1;
-	this->data1 = NULL;
 	InitFile();
 }
 
@@ -122,17 +98,6 @@ CPageParams::CPageParams(unsigned int page, unsigned int uParam1, const CARServe
 	this->uint1 = uParam1; 
 	this->uint2 = 0; 
 	this->obj1 = obj1;
-	this->data1 = NULL;
-	InitFile();
-}
-
-CPageParams::CPageParams(unsigned int page, DataObjectType dataType)
-{
-	this->page = page;
-	this->uint1 = AR_STRUCT_ITEM_XML_NONE; // 0
-	this->uint2 = dataType;
-	this->obj1 = NULL;
-	this->data1 = NULL;
 	InitFile();
 }
 
@@ -142,7 +107,6 @@ CPageParams::CPageParams(const CPageParams& val, unsigned int page)
 	this->uint1 = val.uint1;
 	this->uint2 = val.uint2;
 	this->obj1  = val.obj1;
-	this->data1 = val.data1;
 	InitFile();
 }
 

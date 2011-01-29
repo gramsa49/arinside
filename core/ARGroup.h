@@ -15,22 +15,43 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "ARDataObject.h"
+#include "ARServerObject.h"
 
 class CARGroup :
-	public CARDataObject
+	public CARServerObject
 {
 public:
-	CARGroup(int insideId, string requestId);
+	CARGroup(int insideId, int groupId = -1);
 	~CARGroup(void);
-	unsigned int GetDataType() { return DATA_TYPE_GROUP; }
 
-	int groupId;
-	int groupType;
-	int groupCategory;
-	string groupName;
-	string longGroupName;
-	string groupDefinition;
+	bool Exists();
+	
+	// implement functions inherited from CARObject
+	string GetName();
+	string GetName() const;
+	string GetNameFirstChar();
+	bool NameStandardFirstChar();
 
-	string comparableName;
+	// implement functions inherited from CARServerObject
+	const char* GetHelpText() const;
+	ARTimestamp GetTimestamp();
+	const ARAccessNameType& GetOwner() const;
+	const ARAccessNameType& GetLastChanged() const;
+	const char* GetChangeDiary() const;
+
+	// data-access functions
+	const string& GetRequestId() const;
+	const string& GetLongName() const;
+	ARULong32 GetGroupId() const;
+	int GetType() const;
+	int GetCategory() const;
+	const string& GetComputedQualification() const;
+
+	// some helpers
+	string GetURL(int rootLevel, bool useImage = true) const;
+
+	// class type support
+	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_GROUP; }
+	bool IsClonable() const;
+	CARServerObject* Clone() const;
 };

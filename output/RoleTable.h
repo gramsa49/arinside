@@ -18,6 +18,9 @@
 #include "../ARInside.h"
 #include "ObjectTable.h"
 
+// forward declaration
+class CARRole;
+
 namespace OUTPUT
 {
 	class CRoleTable:

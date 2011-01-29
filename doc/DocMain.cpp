@@ -565,6 +565,10 @@ void CDocMain::FilterErrorHandlers()
 			}
 		}
 
+		stringstream strm;
+		strm << CWebUtil::LinkToFilterIndex(tbl.NumRows(), rootLevel) << " used as Error Handler";
+
+		tbl.SetDescription(strm.str());
 		webPage.AddContent(tbl.Print());
 
 		webPage.SaveInFolder(file->GetPath());
@@ -897,7 +901,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page, DATA_TYPE_ROLE);
+	CPageParams file(page, AR_STRUCT_ITEM_XML_ROLE);
 
 	try
 	{
@@ -1029,25 +1033,24 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page, DATA_TYPE_GROUP);
+	CPageParams file(page, AR_STRUCT_ITEM_XML_GROUP);
 
 	try
 	{
 		int rootLevel = file->GetRootLevel();
 		CGroupTable tbl(*this->pInside);
 
-		list<CARGroup>::iterator listIter;
-		list<CARGroup>::iterator endIt = this->pInside->groupList.end();
-		for (listIter = this->pInside->groupList.begin(); listIter != endIt; ++listIter)
+		unsigned int groupCount = pInside->groupList.GetCount();
+		for (unsigned int groupIndex = 0; groupIndex < groupCount; ++groupIndex)
 		{	
-			CARGroup *grp = &(*listIter);
+			CARGroup grp(groupIndex);
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objects
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = grp->GetNameFirstChar();
+				string firstChar = grp.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -1055,14 +1058,14 @@ void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)
 			}
 			else if(searchChar == "#")
 			{
-				if(!grp->NameStandardFirstChar())
+				if(!grp.NameStandardFirstChar())
 				{
 					bInsert = true;
 				}
 			}
 			else
 			{
-				if(grp->GetNameFirstChar() == searchChar)
+				if(grp.GetNameFirstChar() == searchChar)
 				{
 					bInsert = true;
 				}
@@ -1070,7 +1073,7 @@ void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)
 
 			if(bInsert)
 			{	
-				tbl.AddRow("", grp->groupId, rootLevel);
+				tbl.AddRow("", grp.GetGroupId(), rootLevel);
 			}
 		}
 
@@ -1096,7 +1099,7 @@ void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)
 void CDocMain::UserList(string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page, DATA_TYPE_USER);
+	CPageParams file(page, AR_STRUCT_ITEM_XML_USER);
 
 	try
 	{

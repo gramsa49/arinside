@@ -15,43 +15,20 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "ARRoleList.h"
+#include "ARGroupList.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
 
-void GetGroupStringAsVector(const char* groupStr, vector<int>& addToGroupList)
+CARGroupList::CARGroupList(void)
 {
-	const char* curPos = groupStr;
-	if (curPos != NULL)
-	{
-		do
-		{
-			int groupId = atoi(curPos);
-			addToGroupList.push_back(groupId);
-			curPos = strchr(curPos,';');
-			if (curPos != NULL) ++curPos;
-		} while ( curPos != NULL && curPos[0] != 0);
-	}
-	std::sort(addToGroupList.begin(), addToGroupList.end());
-	addToGroupList.erase(unique(addToGroupList.begin(), addToGroupList.end()), addToGroupList.end());
 }
 
-CARRoleList::CARRoleList(void)
+CARGroupList::~CARGroupList(void)
 {
-	ARZeroMemory(&owners);
-	ARZeroMemory(&changedUsers);
 }
 
-CARRoleList::~CARRoleList(void)
-{
-	if (owners.nameList != NULL)
-		delete[] owners.nameList;
 
-	if (changedUsers.nameList != NULL)
-		delete[] changedUsers.nameList;
-}
-
-bool CARRoleList::LoadFromServer()
+bool CARGroupList::LoadFromServer()
 {
 	bool result = false;
 	try
@@ -63,29 +40,34 @@ bool CARRoleList::LoadFromServer()
 		ARStatusList status; ARZeroMemory(&status);
 
 		ARNameType schemaName;
-		strncpy(schemaName, appConfig.roleForm.c_str(), AR_MAX_NAME_SIZE);
+		strncpy(schemaName, appConfig.groupForm.c_str(), AR_MAX_NAME_SIZE);
 
 		char *qualString;
-		qualString = new char[appConfig.roleQuery.size() + 1];
-		strcpy(qualString, appConfig.roleQuery.c_str());
+		qualString = new char[appConfig.groupQuery.size() + 1];
+		strcpy(qualString, appConfig.groupQuery.c_str());
 
 		AREntryListFieldList fields;
 		AREntryListFieldValueList values;
 
 		fields.numItems = 10;
-		fields.fieldsList = new AREntryListFieldStruct[fields.numItems];
+		fields.fieldsList = (AREntryListFieldStruct*)new AREntryListFieldStruct[fields.numItems];
 		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
 
 		int pos = 0;
-		fields.fieldsList[pos++].fieldId = AR_RESERV_ROLE_MAPPING_APPLICATION; //ApplicationName
-		fields.fieldsList[pos++].fieldId = AR_RESERV_ROLE_MAPPING_ROLE_NAME;   //RoleName
-		fields.fieldsList[pos++].fieldId = AR_RESERV_ROLE_MAPPING_ROLE_ID;     //RoleID
-		fields.fieldsList[pos++].fieldId = AR_RESERV_APP_STATE_TEST;           //GroupName Test
-		fields.fieldsList[pos++].fieldId = AR_RESERV_APP_STATE_PRODUCTION;     //GroupName Production
-		fields.fieldsList[pos++].fieldId = AR_CORE_SUBMITTER;                  //CreatedBy
-		fields.fieldsList[pos++].fieldId = AR_CORE_CREATE_DATE;                //Created
-		fields.fieldsList[pos++].fieldId = AR_CORE_LAST_MODIFIED_BY;           //ModifiedBy
-		fields.fieldsList[pos++].fieldId = AR_CORE_MODIFIED_DATE;              //Modified
+		fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_NAME;     //GroupName
+		fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_ID;       //GroupId
+		fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_TYPE;     //GroupType
+		fields.fieldsList[pos++].fieldId = AR_CORE_DESCRIPTION;      //LongGroupName
+		fields.fieldsList[pos++].fieldId = AR_CORE_SUBMITTER;        //CreatedBy
+		fields.fieldsList[pos++].fieldId = AR_CORE_CREATE_DATE;      //Created
+		fields.fieldsList[pos++].fieldId = AR_CORE_LAST_MODIFIED_BY; //ModifiedBy
+		fields.fieldsList[pos++].fieldId = AR_CORE_MODIFIED_DATE;    //Modified
+		if (arIn->CompareServerVersion(7,0) >= 0)
+		{
+			// if serv ver >= 7.0 get "Category" and "Computed Group Definition" field
+			fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_CATEGORY;      //Category
+			fields.fieldsList[pos++].fieldId = AR_RESERV_COMPUTED_GROUP_QUAL; //Computed Group Definition
+		}
 		fields.numItems = pos;
 
 		for (unsigned int k=0; k<fields.numItems; ++k) { fields.fieldsList[k].columnWidth=1; fields.fieldsList[k].separator[0]='|'; }
@@ -94,7 +76,7 @@ bool CARRoleList::LoadFromServer()
 			schemaName,
 			NULL,
 			qualString,
-			&qualifier,
+			&qualifier, 
 			&status) == AR_RETURN_OK)
 		{
 			if (ARGetListEntryWithFields(
@@ -102,7 +84,7 @@ bool CARRoleList::LoadFromServer()
 				schemaName,
 				&qualifier,
 				&fields,
-				NULL,0,0,0,
+				NULL,0,0,0,  // sort, first, max, locale
 				&values,
 				0,&status) == AR_RETURN_OK)
 			{
@@ -123,33 +105,22 @@ bool CARRoleList::LoadFromServer()
 					{
 						switch (value.fieldValueList[curFieldPos].fieldId)
 						{
-						case AR_RESERV_ROLE_MAPPING_APPLICATION:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-								applicationName.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
-							break;
-						case AR_RESERV_ROLE_MAPPING_ROLE_NAME:
+						case AR_RESERV_GROUP_NAME:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
 								names.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
 							break;
-						case AR_RESERV_ROLE_MAPPING_ROLE_ID:
+						case AR_RESERV_GROUP_ID:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
-								roleId.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
+								ids.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
 							break;
-						case AR_RESERV_APP_STATE_TEST:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								vector<int> gids;
-								GetGroupStringAsVector(value.fieldValueList[curFieldPos].value.u.charVal, gids);
-								groupsTest.push_back(gids);
-							}
+						case AR_RESERV_GROUP_TYPE:
+							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_ENUM ||
+							    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
+								types.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
 							break;
-						case AR_RESERV_APP_STATE_PRODUCTION:
+						case AR_CORE_DESCRIPTION:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								vector<int> gids;
-								GetGroupStringAsVector(value.fieldValueList[curFieldPos].value.u.charVal, gids);
-								groupsProd.push_back(gids);
-							}
+								longNames.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
 							break;
 						case AR_CORE_SUBMITTER:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
@@ -162,6 +133,7 @@ bool CARRoleList::LoadFromServer()
 						case AR_CORE_CREATE_DATE:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
 								createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+							break;
 						case AR_CORE_LAST_MODIFIED_BY:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
 							{
@@ -172,22 +144,32 @@ bool CARRoleList::LoadFromServer()
 							break;
 						case AR_CORE_MODIFIED_DATE:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
-								createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+								modifiedDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+							break;
+						case AR_RESERV_GROUP_CATEGORY:
+							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_ENUM ||
+							    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
+								category.push_back(value.fieldValueList[curFieldPos].value.u.enumVal);
+							break;
+						case AR_RESERV_COMPUTED_GROUP_QUAL:
+							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+								computedQual.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
 							break;
 						}
 					}
 
 					if (names.size() < requestId.size()) names.resize(requestId.size());
-					if (applicationName.size() < requestId.size()) applicationName.resize(requestId.size());
-					if (roleId.size() < requestId.size()) roleId.resize(requestId.size());
-					if (groupsTest.size() < requestId.size()) groupsTest.resize(requestId.size());
-					if (groupsProd.size() < requestId.size()) groupsProd.resize(requestId.size());
+					if (ids.size() < requestId.size()) ids.resize(requestId.size());
+					if (longNames.size() < requestId.size()) longNames.resize(requestId.size());
+					if (types.size() < requestId.size()) types.resize(requestId.size());
+					if (category.size() < requestId.size()) category.resize(requestId.size());
+					if (computedQual.size() < requestId.size()) computedQual.resize(requestId.size());
 					if (createDate.size() < requestId.size()) createDate.resize(requestId.size());
 					if (modifiedDate.size() < requestId.size()) modifiedDate.resize(requestId.size());
 					while (owners.numItems < requestId.size()) { ARZeroMemory(owners.nameList[owners.numItems++]); }
 					while (changedUsers.numItems < requestId.size()) { ARZeroMemory(changedUsers.nameList[changedUsers.numItems++]); }
 
-					LOG << "Role '" << names.back() <<"' [OK]" << endl;	
+					LOG << "Group '" << names.back() <<"' [OK]" << endl;
 				}
 				FreeAREntryListFieldValueList(&values,false);
 				Sort();
@@ -206,21 +188,22 @@ bool CARRoleList::LoadFromServer()
 		delete[] fields.fieldsList;
 		delete[] qualString;
 	}
-	catch(exception& e)
+	catch(exception &e)
 	{		
-		throw(AppException(e.what(), "Error loading roles.", "CARRoleList"));
+		throw(AppException(e.what(),"Error loading groups.", "CARGroupList"));
 	}
 	return result;
 }
 
-void CARRoleList::Reserve(unsigned int count)
+void CARGroupList::Reserve(unsigned int count)
 {
 	requestId.reserve(count);
-	applicationName.reserve(count);
 	names.reserve(count);
-	roleId.reserve(count);
-	groupsTest.reserve(count);
-	groupsProd.reserve(count);
+	longNames.reserve(count);
+	ids.reserve(count);
+	types.reserve(count);
+	category.reserve(count);
+	computedQual.reserve(count);
 	createDate.reserve(count);
 	modifiedDate.reserve(count);
 
@@ -231,12 +214,12 @@ void CARRoleList::Reserve(unsigned int count)
 	changedUsers.nameList = new ARAccessNameType[count];
 }
 
-int CARRoleList::Find(int iRoleId, const string& appName)
+int CARGroupList::Find(int groupId)
 {
 	unsigned int count = GetCount();
 	for (unsigned int i = 0; i < count; ++i)
 	{
-		if (roleId[sortedList[i]] == iRoleId && applicationName[sortedList[i]] == appName)
+		if (ids[sortedList[i]] == groupId)
 		{
 			return i;
 		}
@@ -244,9 +227,8 @@ int CARRoleList::Find(int iRoleId, const string& appName)
 	return -1;
 }
 
-void CARRoleList::Sort()
+void CARGroupList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByNameDataObj<CARRoleList>(*this));
+		std::sort(sortedList.begin(),sortedList.end(),SortByNameDataObj<CARGroupList>(*this));
 }
-

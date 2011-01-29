@@ -16,19 +16,118 @@
 
 #include "stdafx.h"
 #include "ARGroup.h"
+#include "../ARInside.h"
 
-CARGroup::CARGroup(int insideId, string requestId)
-: CARDataObject(insideId)
+// call methods:
+//   1) CARGroup(15)    ...  gets the group at position 15 within the list
+//   2) CARGroup(-1, 1) ...  finds the group with id 1 (usually Administrator); 
+//                           first param is ignored in this case
+//                           check Exists function after this call
+CARGroup::CARGroup(int insideId, int groupId)
+: CARServerObject(insideId)
 {
-	this->requestId = requestId;
-
-	this->groupId = 0;
-	this->groupType = 0;
-	this->groupName = "";
-	this->longGroupName = "";
-	this->comparableName = "";
+	if (groupId >= 0)
+	{
+		this->insideId = CARInside::GetInstance()->groupList.Find(groupId);
+	}
 }
 
 CARGroup::~CARGroup(void)
 {
+}
+
+bool CARGroup::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->groupList.GetCount());
+}
+
+bool CARGroup::IsClonable() const
+{
+	return true;
+}
+
+CARServerObject* CARGroup::Clone() const
+{
+	return new CARGroup(*this);
+}
+
+string CARGroup::GetURL(int rootLevel, bool useImage) const
+{
+	CPageParams file(PAGE_DETAILS, this);
+	return CWebUtil::Link(this->GetName(), file, (useImage ? "group.gif" : ""), rootLevel);
+}
+
+string CARGroup::GetName()
+{
+	return CARInside::GetInstance()->groupList.GroupGetName(GetInsideId());
+}
+
+string CARGroup::GetName() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetName(GetInsideId());
+}
+
+string CARGroup::GetNameFirstChar()
+{
+	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->groupList.GroupGetName(GetInsideId())[0]));
+}
+
+bool CARGroup::NameStandardFirstChar()
+{
+	return CARObject::NameStandardFirstChar(GetNameFirstChar());
+}
+
+const char* CARGroup::GetHelpText() const
+{
+	return NULL; // no support for helptext
+}
+
+ARTimestamp CARGroup::GetTimestamp()
+{
+	return CARInside::GetInstance()->groupList.GroupGetModifiedDate(GetInsideId());
+}
+
+const ARAccessNameType& CARGroup::GetOwner() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetCreatedBy(GetInsideId());
+}
+
+const ARAccessNameType& CARGroup::GetLastChanged() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetModifiedBy(GetInsideId());
+}
+
+const char* CARGroup::GetChangeDiary() const
+{
+	return NULL;
+}
+
+const string& CARGroup::GetRequestId() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetRequestId(GetInsideId());
+}
+
+const string& CARGroup::GetLongName() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetLongName(GetInsideId());
+}
+
+ARULong32 CARGroup::GetGroupId() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetID(GetInsideId());
+}
+
+int CARGroup::GetType() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetType(GetInsideId());
+}
+
+int CARGroup::GetCategory() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetCategory(GetInsideId());
+}
+
+const string& CARGroup::GetComputedQualification() const
+{
+	return CARInside::GetInstance()->groupList.GroupGetComputedQual(GetInsideId());
 }

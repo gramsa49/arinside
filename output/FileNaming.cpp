@@ -1227,47 +1227,36 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 	{
 		case PAGE_DETAILS:
 		{
-			assert(params.obj1 != NULL || params.data1 != NULL);
+			assert(params.obj1 != NULL);
 
-			if (params.obj1 != NULL)
+			switch (params.obj1->GetServerObjectTypeXML())
 			{
-				switch (params.obj1->GetServerObjectTypeXML())
-				{
-					case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_FIELD: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_FIELD); return new SchemaFieldDetail(static_cast<const CARField*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new SchemaVUIDetail(static_cast<const CARVui*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ActiveLinkDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_FILTER: return new FilterDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_ESCALATION: return new EscalationDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_CHAR_MENU: return new MenuDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_CONTAINER:
+				case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_FIELD: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_FIELD); return new SchemaFieldDetail(static_cast<const CARField*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new SchemaVUIDetail(static_cast<const CARVui*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ActiveLinkDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_FILTER: return new FilterDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_ESCALATION: return new EscalationDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_CHAR_MENU: return new MenuDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_CONTAINER:
+					{
+						CARContainer* cont = (CARContainer*)params.obj1;
+						switch (cont->GetType())
 						{
-							CARContainer* cont = (CARContainer*)params.obj1;
-							switch (cont->GetType())
-							{
-							case ARCON_GUIDE: return new ALGuideDetail(params.obj1);
-							case ARCON_APP: return new ApplicationDetail(params.obj1);
-							case ARCON_FILTER_GUIDE: return new FilterGuideDetail(params.obj1);
-							case ARCON_PACK: return new PackingListDetail(params.obj1);
-							case ARCON_WEBSERVICE: return new WebserviceDetail(params.obj1);
-							}
+						case ARCON_GUIDE: return new ALGuideDetail(params.obj1);
+						case ARCON_APP: return new ApplicationDetail(params.obj1);
+						case ARCON_FILTER_GUIDE: return new FilterGuideDetail(params.obj1);
+						case ARCON_PACK: return new PackingListDetail(params.obj1);
+						case ARCON_WEBSERVICE: return new WebserviceDetail(params.obj1);
 						}
-						break;
+					}
+					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-					case AR_STRUCT_ITEM_XML_IMAGE: return new ImageDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_IMAGE: return new ImageDetail(params.obj1);
 #endif
-					case AR_STRUCT_ITEM_XML_USER: return new UserDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_ROLE: return new RoleDetail(static_cast<const CARRole*>(params.obj1));
-				}
-			}
-			else if (params.data1 != NULL)
-			{
-				switch (params.data1->GetDataType())
-				{
-				case DATA_TYPE_USER: return new UserDetail(params.data1);
-				case DATA_TYPE_GROUP: return new GroupDetail(params.data1);
-				case DATA_TYPE_ROLE: return new RoleDetail(params.data1);
-				}
+				case AR_STRUCT_ITEM_XML_USER: return new UserDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_GROUP: return new GroupDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_ROLE: return new RoleDetail(static_cast<const CARRole*>(params.obj1));
 			}
 		}
 		break;
@@ -1277,16 +1266,9 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		{
 			switch (params.uint1)
 			{
-				case AR_STRUCT_ITEM_XML_NONE:
-					{
-						switch (params.uint2)
-						{
-						case DATA_TYPE_USER: return new UserOverview();
-						case DATA_TYPE_GROUP: return new GroupOverview();
-						case DATA_TYPE_ROLE: return new RoleOverview();
-						}
-					}
-					break;
+				case AR_STRUCT_ITEM_XML_USER: return new UserOverview();
+				case AR_STRUCT_ITEM_XML_GROUP: return new GroupOverview();
+				case AR_STRUCT_ITEM_XML_ROLE: return new RoleOverview();
 				case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaOverview();
 				case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ActiveLinkOverview();
 				case AR_STRUCT_ITEM_XML_FILTER: return new FilterOverview();
@@ -1357,17 +1339,17 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		}
 		break;
 
-		case PAGE_GROUP_SCHEMA_LIST: assert(params.data1 != NULL); return new GroupSchemaList(params.data1);
-		case PAGE_GROUP_FIELD_LIST: assert(params.data1 != NULL); return new GroupFieldList(params.data1);
-		case PAGE_GROUP_ACTIVELINK_LIST: assert(params.data1 != NULL); return new GroupALList(params.data1);
-		case PAGE_GROUP_USER_LIST: assert(params.data1 != NULL); return new GroupUserList(params.data1);
+		case PAGE_GROUP_SCHEMA_LIST: assert(params.obj1 != NULL); return new GroupSchemaList(params.obj1);
+		case PAGE_GROUP_FIELD_LIST: assert(params.obj1 != NULL); return new GroupFieldList(params.obj1);
+		case PAGE_GROUP_ACTIVELINK_LIST: assert(params.obj1 != NULL); return new GroupALList(params.obj1);
+		case PAGE_GROUP_USER_LIST: assert(params.obj1 != NULL); return new GroupUserList(params.obj1);
 		case PAGE_GROUP_CONTAINER_LIST: 
 			{
 				switch (params.uint1)
 				{
-				case ARCON_PACK: assert(params.data1 != NULL); return new GroupPackListList(params.data1);
-				case ARCON_GUIDE: assert(params.data1 != NULL); return new GroupALGuideList(params.data1);
-				case ARCON_WEBSERVICE: assert(params.data1 != NULL); return new GroupWebserviceList(params.data1);
+				case ARCON_PACK: assert(params.obj1 != NULL); return new GroupPackListList(params.obj1);
+				case ARCON_GUIDE: assert(params.obj1 != NULL); return new GroupALGuideList(params.obj1);
+				case ARCON_WEBSERVICE: assert(params.obj1 != NULL); return new GroupWebserviceList(params.obj1);
 				}
 			}
 			break;
@@ -1411,16 +1393,9 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 	{
 		switch (params.uint1)
 		{
-			case AR_STRUCT_ITEM_XML_NONE:
-				{
-					switch (params.uint2)
-					{
-					case DATA_TYPE_USER: return new UserLetterOverview(params.page);
-					case DATA_TYPE_GROUP: return new GroupLetterOverview(params.page);
-					case DATA_TYPE_ROLE: return new RoleLetterOverview(params.page);
-					}
-				}
-				break;
+			case AR_STRUCT_ITEM_XML_USER: return new UserLetterOverview(params.page);
+			case AR_STRUCT_ITEM_XML_GROUP: return new GroupLetterOverview(params.page);
+			case AR_STRUCT_ITEM_XML_ROLE: return new RoleLetterOverview(params.page);
 			case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaLetterOverview(params.page);
 			case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ActiveLinkLetterOverview(params.page);
 			case AR_STRUCT_ITEM_XML_FILTER: return new FilterLetterOverview(params.page);
@@ -1717,7 +1692,7 @@ class ObjectNameGroupDetail : public IFileStructure
 {
 public:
 	ObjectNameGroupDetail(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId(); return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1729,7 +1704,7 @@ class ObjectNameGroupSchemaList : public IFileStructure
 {
 public:
 	ObjectNameGroupSchemaList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_form"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_form"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1741,7 +1716,7 @@ class ObjectNameGroupFieldList : public IFileStructure
 {
 public:
 	ObjectNameGroupFieldList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_field"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_field"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1753,7 +1728,7 @@ class ObjectNameGroupALList : public IFileStructure
 {
 public:
 	ObjectNameGroupALList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_active_link"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_active_link"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1765,7 +1740,7 @@ class ObjectNameGroupUserList : public IFileStructure
 {
 public:
 	ObjectNameGroupUserList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_user"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_user"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1777,7 +1752,7 @@ class ObjectNameGroupPackListList : public IFileStructure
 {
 public:
 	ObjectNameGroupPackListList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_packing_list"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_packing_list"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1789,7 +1764,7 @@ class ObjectNameGroupALGuideList : public IFileStructure
 {
 public:
 	ObjectNameGroupALGuideList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_al_guide"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_al_guide"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1801,7 +1776,7 @@ class ObjectNameGroupWebserviceList : public IFileStructure
 {
 public:
 	ObjectNameGroupWebserviceList(const CARGroup* grp) : obj(grp) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->groupId << "_list_webservice"; return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetGroupId() << "_list_webservice"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_GROUP; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -2254,47 +2229,36 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 	{
 		case PAGE_DETAILS:
 		{
-			assert(params.obj1 != NULL || params.data1 != NULL);
+			assert(params.obj1 != NULL);
 
-			if (params.obj1 != NULL)
+			switch (params.obj1->GetServerObjectTypeXML())
 			{
-				switch (params.obj1->GetServerObjectTypeXML())
-				{
-					case AR_STRUCT_ITEM_XML_SCHEMA:      return new ObjectNameSchemaDetail(static_cast<const CARSchema*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_FIELD:       return new ObjectNameSchemaFieldDetail(static_cast<const CARField*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_VUI:         return new ObjectNameSchemaVUIDetail(static_cast<const CARVui*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ObjectNameActiveLinkDetail(static_cast<const CARActiveLink*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_FILTER:      return new ObjectNameFilterDetail(static_cast<const CARFilter*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_ESCALATION:  return new ObjectNameEscalationDetail(static_cast<const CAREscalation*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_CHAR_MENU:   return new ObjectNameMenuDetail(static_cast<const CARCharMenu*>(params.obj1));
-					case AR_STRUCT_ITEM_XML_CONTAINER:
+				case AR_STRUCT_ITEM_XML_SCHEMA:      return new ObjectNameSchemaDetail(static_cast<const CARSchema*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_FIELD:       return new ObjectNameSchemaFieldDetail(static_cast<const CARField*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_VUI:         return new ObjectNameSchemaVUIDetail(static_cast<const CARVui*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ObjectNameActiveLinkDetail(static_cast<const CARActiveLink*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_FILTER:      return new ObjectNameFilterDetail(static_cast<const CARFilter*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_ESCALATION:  return new ObjectNameEscalationDetail(static_cast<const CAREscalation*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_CHAR_MENU:   return new ObjectNameMenuDetail(static_cast<const CARCharMenu*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_CONTAINER:
+					{
+						const CARContainer* cont = static_cast<const CARContainer*>(params.obj1);
+						switch (cont->GetType())
 						{
-							const CARContainer* cont = static_cast<const CARContainer*>(params.obj1);
-							switch (cont->GetType())
-							{
-							case ARCON_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_ALGUIDE);
-							case ARCON_APP: return new ObjectNameContainerDetail(params.obj1, DIR_APPLICATION);
-							case ARCON_FILTER_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_FLTGUIDE);
-							case ARCON_PACK: return new ObjectNameContainerDetail(params.obj1, DIR_PACKINGLIST);
-							case ARCON_WEBSERVICE: return new ObjectNameContainerDetail(params.obj1, DIR_WEBSERVICE);
-							}
+						case ARCON_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_ALGUIDE);
+						case ARCON_APP: return new ObjectNameContainerDetail(params.obj1, DIR_APPLICATION);
+						case ARCON_FILTER_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_FLTGUIDE);
+						case ARCON_PACK: return new ObjectNameContainerDetail(params.obj1, DIR_PACKINGLIST);
+						case ARCON_WEBSERVICE: return new ObjectNameContainerDetail(params.obj1, DIR_WEBSERVICE);
 						}
-						break;
+					}
+					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-					case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageDetail(params.obj1);
 #endif
-					case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserDetail(params.obj1);
-					case AR_STRUCT_ITEM_XML_ROLE: return new ObjectNameRoleDetail(static_cast<const CARRole*>(params.obj1));
-				}
-			}
-			else if (params.data1 != NULL)
-			{
-				switch (params.data1->GetDataType())
-				{
-				//case DATA_TYPE_USER: return new ObjectNameUserDetail(params.data1);
-				case DATA_TYPE_GROUP: return new ObjectNameGroupDetail(static_cast<CARGroup*>(params.data1));
-				//case DATA_TYPE_ROLE: return new ObjectNameRoleDetail(static_cast<CARRole*>(params.data1));
-				}
+				case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_GROUP: return new ObjectNameGroupDetail(static_cast<const CARGroup*>(params.obj1));
+				case AR_STRUCT_ITEM_XML_ROLE: return new ObjectNameRoleDetail(static_cast<const CARRole*>(params.obj1));
 			}
 		}
 		break;
@@ -2304,16 +2268,9 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		{
 				switch (params.uint1)
 				{
-				case AR_STRUCT_ITEM_XML_NONE:
-					{
-						switch (params.uint2)
-						{
-						case DATA_TYPE_USER: return new ObjectNameUserOverview();
-						case DATA_TYPE_GROUP: return new GroupOverview();
-						case DATA_TYPE_ROLE: return new RoleOverview();
-						}
-					}
-					break;
+				case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserOverview();
+				case AR_STRUCT_ITEM_XML_GROUP: return new GroupOverview();
+				case AR_STRUCT_ITEM_XML_ROLE: return new RoleOverview();
 				case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaOverview();
 				case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ObjectNameActiveLinkOverview();
 				case AR_STRUCT_ITEM_XML_FILTER: return new ObjectNameFilterOverview();
@@ -2384,17 +2341,17 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		}
 		break;
 
-		case PAGE_GROUP_SCHEMA_LIST: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new ObjectNameGroupSchemaList(static_cast<CARGroup*>(params.data1));
-		case PAGE_GROUP_FIELD_LIST: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new ObjectNameGroupFieldList(static_cast<CARGroup*>(params.data1));
-		case PAGE_GROUP_ACTIVELINK_LIST: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new ObjectNameGroupALList(static_cast<CARGroup*>(params.data1));
-		case PAGE_GROUP_USER_LIST: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new ObjectNameGroupUserList(static_cast<CARGroup*>(params.data1));
+		case PAGE_GROUP_SCHEMA_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupSchemaList(static_cast<const CARGroup*>(params.obj1));
+		case PAGE_GROUP_FIELD_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupFieldList(static_cast<const CARGroup*>(params.obj1));
+		case PAGE_GROUP_ACTIVELINK_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupALList(static_cast<const CARGroup*>(params.obj1));
+		case PAGE_GROUP_USER_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupUserList(static_cast<const CARGroup*>(params.obj1));
 		case PAGE_GROUP_CONTAINER_LIST: 
 			{
 				switch (params.uint1)
 				{
-				case ARCON_PACK: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new GroupPackListList(static_cast<CARGroup*>(params.data1));
-				case ARCON_GUIDE: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new GroupALGuideList(static_cast<CARGroup*>(params.data1));
-				case ARCON_WEBSERVICE: assert(params.data1 != NULL && params.data1->GetDataType() == DATA_TYPE_GROUP); return new GroupWebserviceList(static_cast<CARGroup*>(params.data1));
+				case ARCON_PACK: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new GroupPackListList(static_cast<const CARGroup*>(params.obj1));
+				case ARCON_GUIDE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new GroupALGuideList(static_cast<const CARGroup*>(params.obj1));
+				case ARCON_WEBSERVICE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new GroupWebserviceList(static_cast<const CARGroup*>(params.obj1));
 				}
 			}
 			break;
@@ -2439,16 +2396,9 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 	{
 		switch (params.uint1)
 		{
-			case AR_STRUCT_ITEM_XML_NONE:
-				{
-					switch (params.uint2)
-					{
-					case DATA_TYPE_USER: return new ObjectNameUserLetterOverview(params.page);
-					case DATA_TYPE_GROUP: return new GroupLetterOverview(params.page);
-					case DATA_TYPE_ROLE: return new RoleLetterOverview(params.page);
-					}
-				}
-				break;
+			case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserLetterOverview(params.page);
+			case AR_STRUCT_ITEM_XML_GROUP: return new GroupLetterOverview(params.page);
+			case AR_STRUCT_ITEM_XML_ROLE: return new RoleLetterOverview(params.page);
 			case AR_STRUCT_ITEM_XML_SCHEMA: return new SchemaLetterOverview(params.page);
 			case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return new ObjectNameActiveLinkLetterOverview(params.page);
 			case AR_STRUCT_ITEM_XML_FILTER: return new ObjectNameFilterLetterOverview(params.page);

@@ -18,8 +18,8 @@
 #include "DocGroupDetails.h"
 
 CDocGroupDetails::CDocGroupDetails(CARGroup &arGroup)
+: group(arGroup)
 {
-	this->pGroup = &arGroup;
 }
 
 CDocGroupDetails::~CDocGroupDetails(void)
@@ -28,17 +28,17 @@ CDocGroupDetails::~CDocGroupDetails(void)
 
 void CDocGroupDetails::Documentation()
 {
-	CPageParams file(PAGE_DETAILS, pGroup);
+	CPageParams file(PAGE_DETAILS, &group);
 	this->rootLevel = file->GetRootLevel();
 
 	try
 	{
-		CWebPage webPage(file->GetFileName(), this->pGroup->groupName, this->rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), this->group.GetName(), this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToGroupIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(pGroup->groupName) << endl;
-		contHeadStrm << " (Id: " << pGroup->groupId << ")";
+		contHeadStrm << CWebUtil::LinkToGroupIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->group.GetName()) << endl;
+		contHeadStrm << " (Id: " << group.GetGroupId() << ")";
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Group details
@@ -47,20 +47,20 @@ void CDocGroupDetails::Documentation()
 		tbl.AddColumn(70, "Value");
 
 		CTableRow tblRow("");
-		tblRow.AddCellList(CTableCell("Group Name"), CTableCell(this->pGroup->groupName));
+		tblRow.AddCellList(CTableCell("Group Name"), CTableCell(this->group.GetName()));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Long Group Name"), CTableCell(this->pGroup->longGroupName));
+		tblRow.AddCellList(CTableCell("Long Group Name"), CTableCell(this->group.GetLongName()));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Group Type"), CTableCell(CAREnum::GroupType(this->pGroup->groupType)));
+		tblRow.AddCellList(CTableCell("Group Type"), CTableCell(CAREnum::GroupType(this->group.GetType())));
 		tbl.AddRow(tblRow);
 
-		tblRow.AddCellList(CTableCell("Group Category"), CTableCell(CAREnum::GroupCategory(this->pGroup->groupCategory)));
+		tblRow.AddCellList(CTableCell("Group Category"), CTableCell(CAREnum::GroupCategory(this->group.GetCategory())));
 		tbl.AddRow(tblRow);
 
-		if (this->pGroup->groupCategory == AR_GROUP_CATEGORY_COMPUTED) {
-			tblRow.AddCellList(CTableCell("Computed Group Definition"), CTableCell(this->pGroup->groupDefinition));
+		if (this->group.GetCategory() == AR_GROUP_CATEGORY_COMPUTED) {
+			tblRow.AddCellList(CTableCell("Computed Group Definition"), CTableCell(this->group.GetComputedQualification()));
 			tbl.AddRow(tblRow);
 		}
 
@@ -74,13 +74,13 @@ void CDocGroupDetails::Documentation()
 		tbl.Clear();
 
 		//Histoy
-		webPage.AddContent(this->pInside->DataObjectHistory(this->pGroup, this->rootLevel));
+		webPage.AddContent(this->pInside->ServerObjectHistory(&this->group, this->rootLevel));
 
 		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_Documentation of '" << pGroup->name << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_Documentation of '" << group.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -101,7 +101,7 @@ string CDocGroupDetails::RoleReferences()
 
 		for (; curIt != endIt; ++curIt)
 		{
-			if(*curIt == this->pGroup->groupId)
+			if(*curIt == this->group.GetGroupId())
 			{
 				CTableRow row("");
 				row.AddCellList(CTableCell("Production"), CTableCell( role.GetURL(this->rootLevel)));
@@ -115,7 +115,7 @@ string CDocGroupDetails::RoleReferences()
 
 		for (; curIt != endIt; ++curIt)
 		{
-			if(*curIt == this->pGroup->groupId)
+			if(*curIt == this->group.GetGroupId())
 			{
 				CTableRow row("");
 				row.AddCellList(CTableCell("Test"), CTableCell( role.GetURL(this->rootLevel)));
@@ -141,7 +141,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Form Access");
 	else
-		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_GROUP_SCHEMA_LIST, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_GROUP_SCHEMA_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	CTableRow row("");		
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -154,7 +154,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Field Permission");
 	else
-		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_GROUP_FIELD_LIST, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_GROUP_FIELD_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -167,7 +167,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_GROUP_ACTIVELINK_LIST, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_GROUP_ACTIVELINK_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -180,7 +180,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Group Members");
 	else
-		strmTmp << CWebUtil::Link("Group Members", CPageParams(PAGE_GROUP_USER_LIST, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Group Members", CPageParams(PAGE_GROUP_USER_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -193,7 +193,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Packing List Permission");
 	else
-		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_PACK, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_PACK, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -206,7 +206,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Guide Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_GUIDE, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_GUIDE, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -219,7 +219,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Webservice Permission");
 	else
-		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_WEBSERVICE, pGroup), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_WEBSERVICE, &group), "", rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -230,19 +230,19 @@ string CDocGroupDetails::GroupPermissions()
 
 void CDocGroupDetails::UserDoc(int &nResult, string title)
 {
-	CPageParams file(PAGE_GROUP_USER_LIST, pGroup);
+	CPageParams file(PAGE_GROUP_USER_LIST, &group);
 
 	try
 	{
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pGroup->groupName, rootLevel, this->pInside->appConfig);	
+		CWebPage webPage(file->GetFileName(), title + " " +this->group.GetName(), rootLevel, this->pInside->appConfig);	
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToUserIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pGroup->groupName, CPageParams(PAGE_DETAILS, this->pGroup), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &this->group), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -259,7 +259,7 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 			CARUser user(userId);
 
 			const CARUser::GroupList& grpList = user.GetGroups();
-			CARUser::GroupList::const_iterator findIt = std::find(grpList.begin(), grpList.end(), this->pGroup->groupId);
+			CARUser::GroupList::const_iterator findIt = std::find(grpList.begin(), grpList.end(), this->group.GetGroupId());
 
 			if (findIt != grpList.end())
 			{
@@ -279,25 +279,25 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->group.GetName() << "': " << e.what() << endl;
 	}
 }
 
 void CDocGroupDetails::FormsDoc(int &nResult, string title)
 {
-	CPageParams file(PAGE_GROUP_SCHEMA_LIST, pGroup);
+	CPageParams file(PAGE_GROUP_SCHEMA_LIST, &group);
 
 	try
 	{
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pGroup->groupName, rootLevel, this->pInside->appConfig);	
+		CWebPage webPage(file->GetFileName(), title + " " +this->group.GetName(), rootLevel, this->pInside->appConfig);	
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pGroup->groupName, CPageParams(PAGE_DETAILS, pGroup), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -331,7 +331,7 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 
 			for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 			{
-				if (this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
+				if (this->group.GetGroupId() == groupList.permissionList[nGrp].groupId)
 				{
 					string visibleInfo;
 					if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
@@ -356,7 +356,7 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 
 			for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 			{
-				if(this->pGroup->groupId == admingrpList.internalIdList[nGrp])
+				if(this->group.GetGroupId() == admingrpList.internalIdList[nGrp])
 				{
 					CTableRow row("");
 					row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
@@ -380,25 +380,25 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->group.GetName() << "': " << e.what() << endl;
 	}
 }
 
 void CDocGroupDetails::AlPermissionDoc(int &nResult, string title)
 {
-	CPageParams file(PAGE_GROUP_ACTIVELINK_LIST, pGroup);
+	CPageParams file(PAGE_GROUP_ACTIVELINK_LIST, &group);
 
 	try
 	{
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pGroup->groupName, rootLevel, this->pInside->appConfig);	
+		CWebPage webPage(file->GetFileName(), title + " " +this->group.GetName(), rootLevel, this->pInside->appConfig);	
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pGroup->groupName, CPageParams(PAGE_DETAILS, pGroup), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -412,7 +412,7 @@ void CDocGroupDetails::AlPermissionDoc(int &nResult, string title)
 			CARActiveLink al(alIndex);
 			for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
 			{
-				if(this->pGroup->groupId == al.GetGroupList().internalIdList[nGrp])
+				if(this->group.GetGroupId() == al.GetGroupList().internalIdList[nGrp])
 				{
 					alTable->AddRow(alIndex, this->rootLevel);
 					nResult++;
@@ -428,25 +428,25 @@ void CDocGroupDetails::AlPermissionDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_ActiveLinkDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_ActiveLinkDoc of '" << this->group.GetName() << "': " << e.what() << endl;
 	}
 }
 
 void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int containerType)
 {
-	CPageParams file(PAGE_GROUP_CONTAINER_LIST, containerType, pGroup);
+	CPageParams file(PAGE_GROUP_CONTAINER_LIST, containerType, &group);
 
 	try
 	{
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
 
-		CWebPage webPage(file->GetFileName(), title + " " +this->pGroup->groupName, rootLevel, this->pInside->appConfig);	
+		CWebPage webPage(file->GetFileName(), title + " " +this->group.GetName(), rootLevel, this->pInside->appConfig);	
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pGroup->groupName, CPageParams(PAGE_DETAILS, pGroup), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -466,7 +466,7 @@ void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int co
 				const ARPermissionList& groupList = cont.GetPermissions();
 				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
+					if(this->group.GetGroupId() == groupList.permissionList[nGrp].groupId)
 					{
 						contTbl->AddRow(cont, this->rootLevel);
 						nResult++;
@@ -482,7 +482,7 @@ void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int co
 				const ARInternalIdList& admingrpList = cont.GetSubadmins();
 				for(unsigned int nGrp = 0; nGrp < admingrpList.numItems; nGrp++)
 				{
-					if(this->pGroup->groupId == admingrpList.internalIdList[nGrp])
+					if(this->group.GetGroupId() == admingrpList.internalIdList[nGrp])
 					{
 						subadminTbl->AddRow(cont, this->rootLevel);
 						nResult++;
@@ -506,7 +506,7 @@ void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int co
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_FormsDoc of '" << this->group.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -522,7 +522,7 @@ int CDocGroupDetails::NumAllowedFields(CARSchema& schema)
 			const ARPermissionList& permissions = field.GetPermissions();
 			for(unsigned int i = 0; i< permissions.numItems; i++)
 			{
-				if(permissions.permissionList[i].groupId == this->pGroup->groupId)
+				if(permissions.permissionList[i].groupId == this->group.GetGroupId())
 				{
 					nResult++;
 				}
@@ -531,25 +531,25 @@ int CDocGroupDetails::NumAllowedFields(CARSchema& schema)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_NumAllowedFields of '" << this->pGroup->groupName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_NumAllowedFields of '" << this->group.GetName() << "': " << e.what() << endl;
 	}
 	return nResult;
 }
 
 void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 {
-	CPageParams file(PAGE_GROUP_FIELD_LIST, pGroup);
+	CPageParams file(PAGE_GROUP_FIELD_LIST, &group);
 
 	try
 	{
 		rootLevel = file->GetRootLevel();
 		nResult = 0;
-		CWebPage webPage(file->GetFileName(), title + " " +this->pGroup->groupName, rootLevel, this->pInside->appConfig);
+		CWebPage webPage(file->GetFileName(), title + " " +this->group.GetName(), rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pGroup->name, CPageParams(PAGE_DETAILS, pGroup), "", rootLevel);
+		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -568,7 +568,7 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 
 				for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
 				{
-					if(this->pGroup->groupId == groupList.permissionList[nGrp].groupId)
+					if(this->group.GetGroupId() == groupList.permissionList[nGrp].groupId)
 					{
 						if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
 						{
@@ -610,7 +610,7 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 					const ARPermissionList& permissions = field.GetPermissions();
 					for(unsigned int i = 0; i < permissions.numItems; i++)
 					{
-						if(permissions.permissionList[i].groupId == this->pGroup->groupId)
+						if(permissions.permissionList[i].groupId == this->group.GetGroupId())
 						{
 							//We found a field that this group is allowed to access
 
@@ -639,6 +639,6 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION CDocGroupDetails_FieldsDoc of '" << this->pGroup->groupName << "': " << e.what() << endl;
+		cout << "EXCEPTION CDocGroupDetails_FieldsDoc of '" << this->group.GetName() << "': " << e.what() << endl;
 	}
 }

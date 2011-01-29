@@ -88,9 +88,9 @@ void CNavigationPage::Write()
 		fout << "<li>" << CWebUtil::Link("Applications"      , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP)         , "application.gif" , rootLevel, TARGET_MODE_PARENT) << "</li>";
 		fout << "<li>" << CWebUtil::Link("Packing Lists"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK)        , "packing_list.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 		fout << "<li>" << CWebUtil::Link("Webservices"       , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE)  , "webservice.gif"  , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Groups"            , CPageParams(PAGE_OVERVIEW, DATA_TYPE_GROUP)                                 , "group.gif"       , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Roles"             , CPageParams(PAGE_OVERVIEW, DATA_TYPE_ROLE)                                  , "doc.gif"         , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Users"             , CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER)                                  , "user.gif"        , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Groups"            , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP)                        , "group.gif"       , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Roles"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE)                         , "doc.gif"         , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << CWebUtil::Link("Users"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER)                         , "user.gif"        , rootLevel, TARGET_MODE_PARENT) << "</li>";
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		if (pInside->CompareServerVersion(7,5) >= 0)

@@ -15,8 +15,6 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
-#include "../core/ARDataObjectType.h"
-
 // forward declaration
 class CARServerObject;
 class CARDataObject;
@@ -60,11 +58,8 @@ public:
 	CPageParams(unsigned int page);
 	CPageParams(unsigned int page, unsigned int uParam1);
 	CPageParams(unsigned int page, unsigned int uParam1, unsigned int uParam2);
-	CPageParams(unsigned int page, CARDataObject* data1);
 	CPageParams(unsigned int page, const CARServerObject* obj1);
-	CPageParams(unsigned int page, unsigned int uParam1, CARDataObject* data1);
 	CPageParams(unsigned int page, unsigned int uParam1, const CARServerObject* obj1);
-	CPageParams(unsigned int page, DataObjectType dataType);
 	CPageParams(const CPageParams& val, unsigned int page); // copy constructor with overridable page
 	~CPageParams();
 
@@ -76,7 +71,6 @@ public:
 	unsigned int uint1;
 	unsigned int uint2;
 	const CARServerObject* obj1;
-	CARDataObject* data1; //TODO: should be obsolete if the CARDataObject is migrated to CARServerObject
 
 private:
 	IFileStructure* file;

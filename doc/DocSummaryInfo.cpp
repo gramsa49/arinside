@@ -129,8 +129,8 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->groupList.size()));
-		row.AddCell(CTableCell(CWebUtil::Link("Groups", CPageParams(PAGE_OVERVIEW, DATA_TYPE_GROUP), "", 0)));
+		row.AddCell(CTableCell((int)this->pInside->groupList.GetCount()));
+		row.AddCell(CTableCell(CWebUtil::Link("Groups", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
@@ -140,7 +140,7 @@ void CDocSummaryInfo::Documentation()
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->roleList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Roles", CPageParams(PAGE_OVERVIEW, DATA_TYPE_ROLE), "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Roles", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
@@ -150,7 +150,7 @@ void CDocSummaryInfo::Documentation()
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->userList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Users", CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER), "", 0)));
+		row.AddCell(CTableCell(CWebUtil::Link("Users", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -167,7 +167,7 @@ void CDocSummaryInfo::Documentation()
 		nNumTotalObjects += (unsigned int)this->pInside->containerList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->escalationList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->filterList.GetCount();
-		nNumTotalObjects += (unsigned int)this->pInside->groupList.size();
+		nNumTotalObjects += (unsigned int)this->pInside->groupList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->menuList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->roleList.GetCount();
 		nNumTotalObjects += (unsigned int)this->pInside->schemaList.GetCount();

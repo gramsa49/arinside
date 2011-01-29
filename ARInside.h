@@ -29,9 +29,11 @@ class IFileStructure;
 #include "core/ARField.h"
 #include "core/ARVui.h"
 #include "core/AREnum.h"
-#include "core/ARDataFactory.h"
 #include "core/ARServerInfo.h"
 #include "core/ARGlobalField.h"
+#include "core/ARUser.h"
+#include "core/ARGroup.h"
+#include "core/ARRole.h"
 #include "output/WebPage.h"
 #include "output/IFileStructure.h"
 #include "util/BlackListItem.h"
@@ -48,6 +50,7 @@ class IFileStructure;
 #include "lists/ARImageList.h"
 #include "lists/BlackList.h"
 #include "lists/ARUserList.h"
+#include "lists/ARGroupList.h"
 #include "lists/ARRoleList.h"
 
 extern const string AppVersion;
@@ -96,9 +99,9 @@ public:
 	CARContainerList containerList;
 	CARMenuList menuList;
 	CARUserList userList;
+	CARGroupList groupList;
 	CARRoleList roleList;
 
-	list<CARGroup> groupList;
 	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
 	CBlackList blackList;

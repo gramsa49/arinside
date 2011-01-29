@@ -51,7 +51,7 @@ CARServerObject* CARUser::Clone() const
 string CARUser::GetURL(int rootLevel, bool useImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(this->GetName(), file, (useImage ? "schema.gif" : ""), rootLevel);
+	return CWebUtil::Link(this->GetName(), file, (useImage ? "user.gif" : ""), rootLevel);
 }
 
 string CARUser::GetName()

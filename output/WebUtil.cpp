@@ -248,7 +248,7 @@ string CWebUtil::LinkToGroupIndex(int rootLevel)
 string CWebUtil::LinkToGroupIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1 ? "Groups" : "Group");
-	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, DATA_TYPE_GROUP), "group.gif", rootLevel);
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP), "group.gif", rootLevel);
 }
 
 string CWebUtil::LinkToMenuIndex(int rootLevel)
@@ -281,7 +281,7 @@ string CWebUtil::LinkToRoleIndex(int rootLevel)
 string CWebUtil::LinkToRoleIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1?"Roles":"Role");
-	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, DATA_TYPE_ROLE), "doc.gif", rootLevel);
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), "doc.gif", rootLevel);
 }
 
 string CWebUtil::LinkToSchemaIndex(int rootLevel)
@@ -303,7 +303,7 @@ string CWebUtil::LinkToUserIndex(int rootLevel)
 string CWebUtil::LinkToUserIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1?"Users":"User");
-	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, DATA_TYPE_USER), "user.gif", rootLevel);
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER), "user.gif", rootLevel);
 }
 
 string CWebUtil::LinkToWebServiceIndex(int rootLevel)

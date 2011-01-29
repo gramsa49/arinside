@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 #include "GroupTable.h"
+#include "../core/ARGroup.h"
+#include "../core/ARRole.h"
 
 using namespace OUTPUT;
 
@@ -75,29 +77,21 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 	}
 }
 
+// TODO: check calls to this function; maybe they have already found the group and this function searches again
 void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
-{	
-	CARGroup *insertGrp = NULL;
-	list<CARGroup>::iterator listIter;		
-	for ( listIter = this->pInside->groupList.begin(); listIter != this->pInside->groupList.end(); ++listIter )
-	{
-		CARGroup *grp = &(*listIter);
-		if(grp->groupId == groupId)
-		{
-			insertGrp = grp;
-			break;
-		}	
-	}
+{
+	// search group by id
+	CARGroup insertGrp(-1, groupId);
 
-	if(insertGrp != NULL)
+	if(insertGrp.Exists())
 	{
 		CTableRow tblRow("");
-		tblRow.AddCell( CTableCell(this->pInside->LinkToGroup(appRefName, insertGrp->GetInsideId(), rootLevel)));	
-		tblRow.AddCell( CTableCell(insertGrp->groupId));
-		tblRow.AddCell( CTableCell(CAREnum::GroupType(insertGrp->groupType)));
-		tblRow.AddCell( CTableCell(CAREnum::GroupCategory(insertGrp->groupCategory)));
-		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertGrp->modified)));
-		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertGrp->modifiedBy, rootLevel)));
+		tblRow.AddCell( CTableCell(this->pInside->LinkToGroup(appRefName, insertGrp.GetGroupId(), rootLevel)));	
+		tblRow.AddCell( CTableCell(insertGrp.GetGroupId()));
+		tblRow.AddCell( CTableCell(CAREnum::GroupType(insertGrp.GetType())));
+		tblRow.AddCell( CTableCell(CAREnum::GroupCategory(insertGrp.GetCategory())));
+		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(insertGrp.GetTimestamp())));
+		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(insertGrp.GetLastChanged(), rootLevel)));
 		this->tbl.AddRow(tblRow);
 	}
 	else
@@ -108,11 +102,12 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 		strmName << groupId << " (not loaded)";
 		strmId << groupId;
 
-		tblRow.AddCell( CTableCell("Group"));
-		tblRow.AddCell( CTableCell(strmName.str()));	
-		tblRow.AddCell( CTableCell(strmId.str()));
-		tblRow.AddCell( CTableCell(EmptyValue));		// Timestamp
-		tblRow.AddCell( CTableCell(EmptyValue));		// LastChangedBy
+		tblRow.AddCell( CTableCell(strmName.str()));// Name
+		tblRow.AddCell( CTableCell(strmId.str()));  // Id
+		tblRow.AddCell( CTableCell(EmptyValue));    // Type
+		tblRow.AddCell( CTableCell(EmptyValue));    // Category
+		tblRow.AddCell( CTableCell(EmptyValue));    // Timestamp
+		tblRow.AddCell( CTableCell(EmptyValue));    // LastChangedBy
 		this->tbl.AddRow(tblRow);
 	}	
 }

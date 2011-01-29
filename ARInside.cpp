@@ -77,7 +77,6 @@ CARInside* CARInside::pInsideInstance = NULL;
 CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
-	this->groupList.clear();
 	this->serverInfoList.clear();
 	this->globalFieldList.clear();
 
@@ -565,13 +564,8 @@ void CARInside::LoadFromServer(void)
 	if(appConfig.bLoadGroupList)
 	{
 		cout << endl << "Start loading Groups:" << endl;		
-
-		CARDataFactory *dataFactory = new CARDataFactory(this->arControl, this->arStatus);
-		dataFactory->GetListGroup(this->appConfig, groupList);
-
-		dataFactory->Sort(groupList);
-		cout << (unsigned int)groupList.size() << " Groups loaded" << endl;
-		delete dataFactory;
+		groupList.LoadFromServer();
+		cout << groupList.GetCount() << " Groups loaded" << endl;
 	}
 	else
 		cout << endl << "Loading Groups [SKIPPED]" << endl;
@@ -1075,18 +1069,16 @@ void CARInside::Documentation(void)
 
 
 	//Group Details
-	nTmpCnt=1;
-	list<CARGroup>::iterator groupIter;
 	cout << "Starting Group Documentation" << endl;
-	for ( groupIter = this->groupList.begin(); groupIter != this->groupList.end(); groupIter++ )
-	{
-		CARGroup *grp = &(*groupIter);
 
-		LOG << "Group [" << nTmpCnt << "-" << groupList.size() << "] '" << grp->name << "': ";
-		CDocGroupDetails *grpDetails = new CDocGroupDetails(*grp);
-		grpDetails->Documentation();
-		delete grpDetails;
-		nTmpCnt++;
+	tmpCount = groupList.GetCount();
+	for (unsigned int groupIndex = 0; groupIndex < tmpCount; ++groupIndex)
+	{
+		CARGroup grp(groupIndex);
+
+		LOG << "Group [" << (groupIndex + 1) << "-" << tmpCount << "] '" << grp.GetName() << "': ";
+		CDocGroupDetails grpDetails(grp);
+		grpDetails.Documentation();
 	}
 
 
@@ -1310,15 +1302,11 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 {	
 	if(permissionId >= 0)
 	{
-		list<CARGroup>::iterator group = this->groupList.begin();
-		list<CARGroup>::iterator endIt = this->groupList.end();
-		for ( ; group != endIt; ++group )
-		{	
-			if(group->groupId == permissionId)
-			{
-				return CWebUtil::Link(group->groupName, CPageParams(PAGE_DETAILS, &*group), "group.gif", rootLevel);
-			}		
-		}
+		CARGroup group(-1, permissionId);
+		if (group.Exists())
+		{
+			return CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "group.gif", rootLevel);
+		}		
 	}
 	else
 	{
@@ -2032,45 +2020,6 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 	}
 
 	return inText;
-}
-
-string CARInside::DataObjectHistory(CARDataObject *obj, int rootLevel)
-{		
-	stringstream strm;
-	strm.str("");
-
-	try
-	{				
-		CTable tbl("history", "TblObjectHistory");
-		tbl.AddColumn(20, "Description");
-		tbl.AddColumn(80, "Value");
-
-		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Change History";
-		stringstream strmTmp;	
-
-		//Created
-		strmTmp << CUtil::DateTimeToHTMLString(obj->created) << " " << this->LinkToUser(obj->createdBy, rootLevel);
-
-		CTableRow tblRow("");
-		tblRow.AddCellList(CTableCell("Created"), CTableCell(strmTmp.str()));
-		tbl.AddRow(tblRow);
-
-
-		//Modified
-		strmTmp.str("");
-		strmTmp << CUtil::DateTimeToHTMLString(obj->modified) << " " << this->LinkToUser(obj->modifiedBy, rootLevel);
-
-		tblRow.AddCellList(CTableCell("Modified"), CTableCell(strmTmp.str()));
-		tbl.AddRow(tblRow);
-
-		strm << tbl;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION writing dataobject history: " << e.what() << endl;
-	}	
-
-	return strm.str();		
 }
 
 string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)

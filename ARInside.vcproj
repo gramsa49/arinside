@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="9.00"
+	Version="9,00"
 	Name="ARInside"
 	ProjectGUID="{C4A5B46D-42BD-4AAB-BA88-8FCC37AE7639}"
 	RootNamespace="ARInside"
@@ -400,26 +400,6 @@
 			</File>
 			<File
 				RelativePath=".\Core\ARContainer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Core\ARDataFactory.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Core\ARDataFactory.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Core\ARDataObject.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Core\ARDataObject.h"
-				>
-			</File>
-			<File
-				RelativePath=".\core\ARDataObjectType.h"
 				>
 			</File>
 			<File
@@ -1629,6 +1609,14 @@
 			</File>
 			<File
 				RelativePath=".\lists\ARFilterList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARGroupList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARGroupList.h"
 				>
 			</File>
 			<File

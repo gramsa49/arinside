@@ -28,7 +28,7 @@ public:
 
 	void Documentation();
 private:
-	CARGroup *pGroup;
+	CARGroup &group;
 
 	string GroupPermissions();
 	void UserDoc(int &nResult, string title);
