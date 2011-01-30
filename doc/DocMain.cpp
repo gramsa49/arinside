@@ -1169,91 +1169,54 @@ void CDocMain::GlobalFieldList()
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-
-		//List of unique globoal fields
-		list<CARGlobalField> uiGlobalFieldList;
-
-		//Search all global fields
-		list<CARGlobalField>::iterator listIter;
-		for ( listIter = this->pInside->globalFieldList.begin(); listIter != this->pInside->globalFieldList.end(); listIter++ )
-		{	
-			CARGlobalField *glField = &(*listIter);
-
-			bool bInList = false;
-			list<CARGlobalField>::iterator tmpListIter;
-			CARGlobalField *tmpGlField;
-			for ( tmpListIter = uiGlobalFieldList.begin(); tmpListIter != uiGlobalFieldList.end(); tmpListIter++ )
-			{
-				tmpGlField = &(*tmpListIter);
-				if(tmpGlField->arGlobalFieldId == glField->arGlobalFieldId)
-				{				
-					bInList = true;
-				}
-			}		
-
-			//Add field to ui list if not exist
-			if(!bInList)
-			{
-				CARGlobalField uiGlobalField(glField->schemaInsideId, glField->fieldInsideId, glField->arGlobalFieldId);
-				uiGlobalFieldList.push_back(uiGlobalField);
-			}
-		}
-
-
 		CWebPage webPage(file->GetFileName(), "Global Fields", rootLevel, this->pInside->appConfig);	
 
-		if(uiGlobalFieldList.size() > 0)
-		{
-			Sort(uiGlobalFieldList);
+		// outer table
+		CTable tbl("fieldListAll", "TblObjectList");
+		tbl.AddColumn(20, "GlobalFieldId");
+		tbl.AddColumn(80, "References");
 
-			CTable tbl("fieldListAll", "TblObjectList");
-			tbl.AddColumn(20, "GlobalFieldId");
-			tbl.AddColumn(80, "References");
+		// inner table; reused per global field id
+		CTable innerTbl("refList", "TblObjectList");
+		innerTbl.AddColumn(50, "Schema Name");
+		innerTbl.AddColumn(50, "Field Name");
 
-			list<CARGlobalField>::iterator uiListIter;
-			CARGlobalField *uiField;
-			for ( uiListIter = uiGlobalFieldList.begin(); uiListIter != uiGlobalFieldList.end(); uiListIter++ )
+		int currentGlobalFieldId = 0;
+
+		//Search all global fields
+		list<CARGlobalField>::iterator listIter = this->pInside->globalFieldList.begin();
+		list<CARGlobalField>::iterator listEnd = this->pInside->globalFieldList.end();
+		for (; listIter != listEnd; ++listIter )
+		{	
+			CARGlobalField &glField = (*listIter);
+			CARField fld(glField.schemaInsideId, glField.fieldId);
+
+			if (currentGlobalFieldId != fld.GetFieldId())
 			{
-				uiField = &(*uiListIter);
+				// add the previous global field to the table before resetting
+				if (currentGlobalFieldId != 0)
+					AddGlobalFieldRow(tbl, currentGlobalFieldId, innerTbl);
 
-
-				CTable innerTbl("refList", "TblObjectList");
-				innerTbl.AddColumn(50, "Schema Name");
-				innerTbl.AddColumn(50, "Field Name");
-
-				list<CARGlobalField>::iterator glListIter;
-				for ( glListIter = this->pInside->globalFieldList.begin(); glListIter != this->pInside->globalFieldList.end(); glListIter++ )
-				{	
-					CARGlobalField *glField = &(*glListIter);
-
-					if(glField->arGlobalFieldId == uiField->arGlobalFieldId)
-					{
-						CTableRow innerTblRow("");
-						innerTblRow.AddCellList(CTableCell(this->pInside->LinkToSchema(glField->schemaInsideId, rootLevel)),
-							CTableCell(this->pInside->LinkToField(glField->schemaInsideId, glField->fieldInsideId, rootLevel) ));
-
-						innerTbl.AddRow(innerTblRow);
-
-					}
-				}
-
-				CTableRow tblRow("");
-				tblRow.AddCellList(CTableCell(uiField->arGlobalFieldId), CTableCell(innerTbl.ToXHtml()));
-
-				tbl.AddRow(tblRow);
+				// reset for current field
+				currentGlobalFieldId = fld.GetFieldId();
+				innerTbl.ClearRows();
 			}
 
-			stringstream strmTmp;
-			strmTmp << CWebUtil::ImageTag("doc.gif", rootLevel) << (unsigned int)this->pInside->globalFieldList.size() << " Global Fields" << endl;
-			tbl.description = strmTmp.str();
+			CTableRow innerTblRow("");
+			innerTblRow.AddCellList(
+				this->pInside->LinkToSchema(glField.schemaInsideId, rootLevel),
+				this->pInside->LinkToField(glField.schemaInsideId, fld.GetFieldId(), rootLevel));
 
-			webPage.AddContent(tbl.ToXHtml());
+			innerTbl.AddRow(innerTblRow);
 		}
-		else
-		{
-			webPage.AddContent("No global fields loaded.");
-		}
+		if (innerTbl.NumRows() > 0)
+			AddGlobalFieldRow(tbl, currentGlobalFieldId, innerTbl);
 
+		stringstream strmTmp;
+		strmTmp << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " Global Fields" << endl;
+		tbl.description = strmTmp.str();
+
+		webPage.AddContent(tbl.ToXHtml());
 		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
@@ -1262,14 +1225,12 @@ void CDocMain::GlobalFieldList()
 	}
 }
 
-void CDocMain::Sort(list<CARGlobalField> &listResult)
+void CDocMain::AddGlobalFieldRow(OUTPUT::CTable &tbl, int fieldId, OUTPUT::CTable &fields)
 {
-	listResult.sort(SortByGlobalFieldId);
-}
-
-bool CDocMain::SortByGlobalFieldId(const CARGlobalField& t1, const CARGlobalField& t2 )
-{	
-	return ( t1.arGlobalFieldId < t2.arGlobalFieldId);
+	CTableRow row("");
+	row.AddCell(CTableCell(fieldId));
+	row.AddCell(fields.ToXHtml());
+	tbl.AddRow(row);
 }
 
 void CDocMain::MessageList()

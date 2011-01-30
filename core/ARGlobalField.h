@@ -16,13 +16,16 @@
 
 #pragma once
 
+// forward declaration
+class CARField;
+
 class CARGlobalField
 {
 public:
-	CARGlobalField(int schemaInsideId, int fieldInsideId, int arGlobalFieldId);
+	CARGlobalField(const CARField& field);
 	~CARGlobalField(void);
+	bool operator < (const CARGlobalField& r);
 
-	int arGlobalFieldId;
 	int schemaInsideId;
-	int fieldInsideId;
+	int fieldId;
 };

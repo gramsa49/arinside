@@ -16,14 +16,27 @@
 
 #include "stdafx.h"
 #include "ARGlobalField.h"
+#include "ARField.h"
 
-CARGlobalField::CARGlobalField(int schemaInsideId, int fieldInsideId, int arGlobalFieldId)
+CARGlobalField::CARGlobalField(const CARField& field)
 {
-	this->schemaInsideId = schemaInsideId;
-	this->fieldInsideId = fieldInsideId;
-	this->arGlobalFieldId = arGlobalFieldId;
+	this->schemaInsideId = field.GetSchema().GetInsideId();
+	this->fieldId = field.GetFieldId();
 }
 
 CARGlobalField::~CARGlobalField(void)
 {
+}
+
+bool CARGlobalField::operator<(const CARGlobalField& r)
+{
+	CARField left(this->schemaInsideId, this->fieldId);
+	CARField right(r.schemaInsideId, r.fieldId);
+	int lfid = left.GetFieldId();
+	int rfid = right.GetFieldId();
+
+	if (lfid == rfid) return (this->schemaInsideId < r.schemaInsideId);
+	if (lfid < rfid) return true;
+
+	return false;
 }

@@ -135,7 +135,7 @@ string CWebUtil::ImageTag(const string& imgName, int rootLevel)
 	if(imgName == "edit.gif")       { width =18 ; height =18 ; }	
 	if(imgName == "hidden.gif")     { width =18 ; height =18 ; }
 
-	strm << "<img src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\">";
+	strm << "<img src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\" />";
 
 	return strm.str();
 }

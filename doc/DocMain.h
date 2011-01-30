@@ -67,8 +67,7 @@ private:
 	static void Sort(list<CMessageItem> &listResult);
 	static bool SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 );
 
-	static void Sort(list<CARGlobalField> &listResult);
-	static bool SortByGlobalFieldId(const CARGlobalField& t1, const CARGlobalField& t2 );
+	void AddGlobalFieldRow(OUTPUT::CTable& tbl, int fieldId, OUTPUT::CTable& fields);
 
 	static string ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter);
 };

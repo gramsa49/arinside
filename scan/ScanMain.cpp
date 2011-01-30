@@ -44,6 +44,11 @@ void CScanMain::BuildReferences()
 
 void CScanMain::SortReferences()
 {
-	CARInside::GetInstance()->schemaList.SortReferences();
+	CARInside *arIn = CARInside::GetInstance();
+	
+	arIn->schemaList.SortReferences();
+
+	// now sort the global field list (see CARGlobalField::operator< on how the list is sorted)
+	arIn->globalFieldList.sort();
 }
 

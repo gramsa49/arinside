@@ -32,12 +32,23 @@ CScanFields::~CScanFields(void)
 //Columns might be enumerated at a time when the datafield has been already saved to html file
 void CScanFields::Start(CARField &field)
 {
+	CARInside *arIn = CARInside::GetInstance();
+
 	try
 	{
 		int rootLevel = 2;
 
 		stringstream strm;
 		strm.str("");
+
+		// global field list generation
+		int fieldId = field.GetFieldId();
+
+		if (fieldId >= 1000000 && fieldId < 2000000)
+		{
+			arIn->globalFieldList.push_back(CARGlobalField(field));
+		}
+
 
 		const ARFieldLimitStruct& objLimits = field.GetLimits();
 		switch(objLimits.dataType)
@@ -57,7 +68,7 @@ void CScanFields::Start(CARField &field)
 				{
 					// if the columns source field exists, create a link (in the workflow references list) from the source field to the current column
 					CRefItem refItem(field, 0, fLimit.parent, REFM_TABLEFIELD_COLUMN);
-					CARInside::GetInstance()->AddFieldReference(columnSource.GetSchema().GetInsideId(), columnSource.GetInsideId(), refItem);
+					arIn->AddFieldReference(columnSource.GetSchema().GetInsideId(), columnSource.GetInsideId(), refItem);
 				}
 			}
 			break;
@@ -83,7 +94,7 @@ void CScanFields::Start(CARField &field)
 					stringstream strmQuery;
 					CRefItem refItem(field, REFM_TABLEFIELD_QUALIFICATION);
 
-					CARQualification arQual(*CARInside::GetInstance());
+					CARQualification arQual(*arIn);
 					int pFormId = field.GetSchema().GetInsideId();
 					int sFormId = tableSourceSchema.GetInsideId();
 
@@ -99,7 +110,7 @@ void CScanFields::Start(CARField &field)
 					CARCharMenu menu(fLimit.charMenu);
 
 					CRefItem refItem(field, REFM_FIELD_CHARMENU);
-					CARInside::GetInstance()->AddMenuReference(fLimit.charMenu, refItem);
+					arIn->AddMenuReference(fLimit.charMenu, refItem);
 				}
 			}
 			break;

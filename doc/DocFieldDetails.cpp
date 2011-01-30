@@ -18,6 +18,7 @@
 #include "DocFieldDetails.h"
 #include "../util/RefItem.h"
 #include "../core/ARImage.h"
+#include "../core/ARGlobalField.h"
 
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)
@@ -173,7 +174,7 @@ string CDocFieldDetails::WorkflowReferences()
 			if (iter->GetMessageId() == REFM_FOCUSFIELD || iter->GetMessageId() == REFM_CONTROLFIELD)
 				continue;
 
-			CTableRow row("cssStdRow");		
+			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(iter->GetObjectType()));				
 			row.AddCell(this->pInside->LinkToXmlObjType(iter->GetObjectType(), iter->GetObjectName(), iter->GetSubObjectId(), rootLevel));
 
@@ -191,6 +192,30 @@ string CDocFieldDetails::WorkflowReferences()
 			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
 			row.AddCell(iter->GetDescription(rootLevel));				
 			tblRef.AddRow(row);		
+		}
+
+		int curFieldId = this->field.GetFieldId();
+		if (curFieldId >= 1000000 && curFieldId < 2000000)
+		{
+			std::list<CARGlobalField>::iterator curIt = this->pInside->globalFieldList.begin();
+			std::list<CARGlobalField>::iterator endIt = this->pInside->globalFieldList.end();
+			for (; curIt != endIt; ++curIt)
+			{
+				if (curIt->fieldId == curFieldId && curIt->schemaInsideId != field.GetSchema().GetInsideId())
+				{
+					CARField fld(curIt->schemaInsideId, curIt->fieldId);
+
+					stringstream strm;
+					strm << "Field with same global field id in " << field.GetSchema().GetURL(rootLevel);
+
+					CTableRow row("cssStdRow");
+					row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FIELD));				
+					row.AddCell(fld.GetURL(rootLevel));
+					row.AddCell(CTableCell(""));
+					row.AddCell(strm.str());
+					tblRef.AddRow(row);		
+				}
+			}
 		}
 
 		stringstream tblDesc;
