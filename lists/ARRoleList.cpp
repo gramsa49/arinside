@@ -195,12 +195,12 @@ bool CARRoleList::LoadFromServer()
 			}
 			else // ARGetListEntryWithFields failed
 			{
-				arIn->GetARStatusError(&status);
+				cerr << arIn->GetARStatusError(&status);
 			}
 		}
 		else // ARLoadARQualifierStruct failed
 		{
-			arIn->GetARStatusError(&status);
+			cerr << arIn->GetARStatusError(&status);
 		}
 
 		delete[] fields.fieldsList;

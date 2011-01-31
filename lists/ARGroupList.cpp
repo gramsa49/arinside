@@ -52,12 +52,13 @@ bool CARGroupList::LoadFromServer()
 		fields.numItems = 10;
 		fields.fieldsList = (AREntryListFieldStruct*)new AREntryListFieldStruct[fields.numItems];
 		memset(fields.fieldsList,0,sizeof(AREntryListFieldStruct)*fields.numItems);
+		ARZeroMemory(&values);
 
 		int pos = 0;
 		fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_NAME;     //GroupName
 		fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_ID;       //GroupId
 		fields.fieldsList[pos++].fieldId = AR_RESERV_GROUP_TYPE;     //GroupType
-		fields.fieldsList[pos++].fieldId = AR_CORE_DESCRIPTION;      //LongGroupName
+		fields.fieldsList[pos++].fieldId = AR_CORE_SHORT_DESCRIPTION;//LongGroupName
 		fields.fieldsList[pos++].fieldId = AR_CORE_SUBMITTER;        //CreatedBy
 		fields.fieldsList[pos++].fieldId = AR_CORE_CREATE_DATE;      //Created
 		fields.fieldsList[pos++].fieldId = AR_CORE_LAST_MODIFIED_BY; //ModifiedBy
@@ -118,7 +119,7 @@ bool CARGroupList::LoadFromServer()
 							    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
 								types.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
 							break;
-						case AR_CORE_DESCRIPTION:
+						case AR_CORE_SHORT_DESCRIPTION:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
 								longNames.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
 							break;
@@ -177,12 +178,12 @@ bool CARGroupList::LoadFromServer()
 			}
 			else // ARGetListEntryWithFields failed
 			{
-				arIn->GetARStatusError(&status);
+				cerr << arIn->GetARStatusError(&status);
 			}
 		}
 		else // ARLoadARQualifierStruct failed
 		{
-			arIn->GetARStatusError(&status);
+			cerr << arIn->GetARStatusError(&status);
 		}
 
 		delete[] fields.fieldsList;

@@ -206,13 +206,13 @@ bool CARUserList::LoadFromServer()
 			}
 			else // ARGetListEntryWithFields failed
 			{
-				arIn->GetARStatusError(&status);
+				cerr << arIn->GetARStatusError(&status);
 			}
 			FreeARQualifierStruct(&qualifier, false);
 		}
 		else // ARLoadARQualifierStruct failed
 		{
-			arIn->GetARStatusError(&status);
+			cerr << arIn->GetARStatusError(&status);
 		}
 
 		delete[] fields.fieldsList;

@@ -32,8 +32,8 @@ IF(UNIX)
 ENDIF(UNIX)
 
 SET (ARINSIDE_SRCS
- core/ARContainer.cpp core/ARGlobalField.cpp core/ARDataObject.cpp core/ARServerObject.cpp core/ARMessageObject.cpp
- core/ARObject.cpp core/ARDataFactory.cpp core/ARProplistHelper.cpp core/ARGroup.cpp core/ARAssignHelper.cpp
+ core/ARContainer.cpp core/ARGlobalField.cpp core/ARServerObject.cpp core/ARMessageObject.cpp
+ core/ARObject.cpp core/ARProplistHelper.cpp core/ARGroup.cpp core/ARAssignHelper.cpp
  core/ARDayStructHelper.cpp core/ARFilter.cpp core/ARVui.cpp core/AREscalation.cpp core/ARQualification.cpp
  core/ARServerInfoItem.cpp core/ARSchema.cpp core/ChangeHistoryEntry.cpp core/ARField.cpp core/ARUser.cpp
  core/ARImage.cpp core/ARCharMenu.cpp core/ARRole.cpp core/ARActiveLink.cpp core/ARValue.cpp core/ARServerInfo.cpp
@@ -45,9 +45,9 @@ SET (ARINSIDE_SRCS
  doc/DocActionOpenWindowHelper.cpp doc/DocPacklistDetails.cpp doc/DocApplicationDetails.cpp
  doc/DocGroupDetails.cpp doc/MessageItem.cpp doc/DocEscalationDetails.cpp doc/DocSummaryInfo.cpp
  doc/DocAlGuideDetails.cpp
- lists/ARFieldList.cpp lists/ARVUIList.cpp lists/ARContainerList.cpp lists/ARMenuList.cpp  lists/ARSchemaList.cpp
- lists/ARImageList.cpp lists/AREscalationList.cpp lists/ARActiveLinkList.cpp lists/BlackList.cpp
- lists/ARFilterList.cpp
+ lists/ARActiveLinkList.cpp lists/ARContainerList.cpp lists/AREscalationList.cpp lists/ARFieldList.cpp
+ lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
+ lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp 
  output/Table.cpp output/TableCell.cpp output/WebControl.cpp output/AlTable.cpp output/EscalTable.cpp
  output/UList.cpp output/FilterTable.cpp output/IFileStructure.cpp output/CsvPage.cpp output/ObjectTable.cpp
  output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp

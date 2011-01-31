@@ -670,7 +670,6 @@ int CARInside::LoadContainer(void)
 	catch(exception& e)
 	{
 		cout << "EXCEPTION loading Container: " << e.what() << endl;
-		GetARStatusError();
 	}
 
 	return containerList.GetCount();
@@ -686,7 +685,6 @@ int CARInside::LoadCharMenus(void)
 	catch(exception& e)
 	{
 		cout << "EXCEPTION loading Menus: " << e.what() << endl;
-		GetARStatusError();
 	}
 
 	return menuList.GetCount();
