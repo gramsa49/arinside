@@ -1579,6 +1579,8 @@ string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
 
 void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref)
 {
+	if (ref.GetMessageId() == -1) return; // if no message id is specified, dont create a reference
+
 	CARSchema schema(schemaId);
 	CARField fld(schemaId, fieldId);
 

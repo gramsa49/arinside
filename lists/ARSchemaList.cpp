@@ -171,6 +171,26 @@ bool CARSchemaList::LoadFromServer()
 			sortedList.push_back(i);
 		}
 		funcResult = true;
+
+		// <APIBUG>
+		//
+		// This is just a workarround for a bug in ARAPI 7.6.03/7.6.04
+		// 
+		// Notes: ClientAPI 7.6.04 (32bit) => Server 7.6.04 (64bit) working
+		//        ClientAPI 7.5.00 (32bit) => Server 7.6.04 (64bit) failed
+		//        ClientAPI 7.6.04 (32bit) => Server 7.5.00 (32bit) failed
+		//        ClientAPI 7.6.04 (64bit) => Server 7.6.04 (64bit) working
+		//        ClientAPI 7.6.04 (64bit) => Server 7.5.00 (32bit) failed
+		// You can use the driver utility to reproduce the error. (Sequence: init, log, ssp, ver, gms => crash)
+		if (changedTimes.numItems == 0 && names.numItems > 0)
+		{
+			changedTimes.timestampList = new ARTimestamp[names.numItems];
+			changedTimes.numItems = names.numItems;
+			memset(changedTimes.timestampList, 0, sizeof(ARTimestamp) * names.numItems);
+
+			cout << "NOTE: ARAPI bug detected. Modify timestamps of schemas will not be available!" << endl;
+		}
+		// </APIBUG>
 	}
 	else
 	{

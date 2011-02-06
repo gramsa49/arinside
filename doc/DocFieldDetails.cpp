@@ -1054,12 +1054,15 @@ class SortRefItemByOrder
 public:
 	bool operator()(CRefItem& l, CRefItem& r) 
 	{
-		bool equal = l.GetObjectOrder() == r.GetObjectOrder();
-		if (equal)
+		if (l.GetObjectOrder() == r.GetObjectOrder())
 		{
-			equal = l.GetObjectName() < r.GetObjectName();
+			return l.GetObjectName() < r.GetObjectName();
 		}
-		return equal;
+		else if (l.GetObjectOrder() < r.GetObjectOrder())
+		{
+			return true;
+		}
+		return false;
 	}
 
 private:
