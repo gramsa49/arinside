@@ -165,9 +165,11 @@ int CWebPage::SaveInFolder(const string &path)
 		LOG << "Save file '" << fileName;
 
 		ostream *outStream;
+#ifdef ARINSIDE_ENABLE_ZLIB_SUPPORT
 		if (CARInside::GetInstance()->appConfig.bGZCompression)
 			outStream = new ogzstream(fileName.c_str(), ios::out);
-		else 
+		else
+#endif
 			outStream = new ofstream(fileName.c_str(), ios::out);
 
 		ostream &fout = *outStream;

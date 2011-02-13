@@ -1640,24 +1640,24 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 		if(inText.size() == 0)
 			return "";
 
-		stringstream strmTmp;
-		unsigned int curPos = 0;
-
-		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
-
 		CARSchema schema(schemaInsideId);
 		if (!schema.Exists())
 			return inText;
 
-		unsigned int startPos = 0;
-		unsigned int maxLen = (unsigned int)inText.length();
-		unsigned int fieldIdPos = 0;
+		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
+
+		stringstream strmTmp;
+
+		string::size_type curPos = 0;
+		string::size_type startPos = 0;
+		string::size_type maxLen = inText.length();
+		string::size_type fieldIdPos = 0;
 
 		char fieldId[20];
 		char *enumId;    // points to the enum part of status history within fieldId later
 		char *usrOrTime; // points to the "user or time" part of status history within fieldId later
 
-		while ((startPos = (unsigned int)inText.find(fieldSeparator.at(0),curPos)) != std::string::npos)
+		while ((startPos = inText.find(fieldSeparator.at(0),curPos)) != std::string::npos)
 		{
 			++startPos;
 			strmTmp << inText.substr(curPos,startPos - curPos);

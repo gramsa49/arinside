@@ -36,9 +36,11 @@ void CNavigationPage::Write()
 		LOG << "Save file '" << strmName.str();
 
 		ostream *outStream;
+#ifdef ARINSIDE_ENABLE_ZLIB_SUPPORT
 		if (pInside->appConfig.bGZCompression)
 			outStream = new ogzstream(strmName.str().c_str(), ios::out);
 		else 
+#endif
 			outStream = new ofstream(strmName.str().c_str(), ios::out);
 
 		ostream &fout = *outStream;

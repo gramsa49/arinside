@@ -27,6 +27,13 @@
 // ============================================================================
 
 #include "stdafx.h"
+
+// <ARINSIDE>
+// JLS17: ARInside uses gzstream only if ARINSIDE_ENABLE_ZLIB_SUPPORT is defined.
+//        So, if it's not defined, dont compile this file.
+#ifdef ARINSIDE_ENABLE_ZLIB_SUPPORT
+// </ARINSIDE>
+
 #include <gzstream.h>
 #include <iostream>
 #include <string.h>  // for memcpy
@@ -162,5 +169,10 @@ void gzstreambase::close() {
 } // namespace GZSTREAM_NAMESPACE
 #endif
 
+//// <ARINSIDE>
+#endif // ARINSIDE_ENABLE_ZLIB_SUPPORT
+//// </ARINSIDE>
+
 // ============================================================================
 // EOF //
+

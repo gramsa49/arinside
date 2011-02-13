@@ -38,3 +38,6 @@ using std::for_each;
 
 template<typename T>
 void SortAndRemoveDuplicates(vector<T>& v) { sort(v.begin(), v.end()); v.erase(unique(v.begin(), v.end()), v.end()); }
+
+// we use the zlibwapi.dll now to support 32- and 64-bit (http://www.winimage.com/zLibDll)
+#define ZLIB_WINAPI

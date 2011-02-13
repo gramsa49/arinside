@@ -29,6 +29,12 @@
 #ifndef GZSTREAM_H
 #define GZSTREAM_H 1
 
+// <ARINSIDE>
+// JLS17: ARInside uses gzstream only if ARINSIDE_ENABLE_ZLIB_SUPPORT is defined.
+//        So, if it's not defined, dont compile this file.
+#if defined(ARINSIDE_ENABLE_ZLIB_SUPPORT)
+// </ARINSIDE>
+
 // standard C++ with new header file names and std:: namespace
 #include <iostream>
 #include <fstream>
@@ -114,6 +120,8 @@ public:
 #ifdef GZSTREAM_NAMESPACE
 } // namespace GZSTREAM_NAMESPACE
 #endif
+
+#endif // ARINSIDE_ENABLE_ZLIB_SUPPORT
 
 #endif // GZSTREAM_H
 // ============================================================================

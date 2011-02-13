@@ -86,7 +86,8 @@ CARSchemaList::~CARSchemaList(void)
 			FreeARAuditInfoList(&audits,false);
 			FreeARNameList(&defaultVUIs,false);
 			FreeARTextStringList(&helpTexts,false);
-			FreeARTimestampList(&changedTimes,false);
+			if (changedTimes.numItems > 0 && changedTimes.timestampList[0] != 0) // <APIBUG>
+				FreeARTimestampList(&changedTimes,false);
 			FreeARAccessNameList(&owners,false);
 			FreeARAccessNameList(&changedUsers,false);
 			FreeARTextStringList(&changeDiary,false);
