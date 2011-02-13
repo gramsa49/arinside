@@ -492,14 +492,20 @@ void CARAssignHelper::AssignFunction(int targetFieldId, IfElseState ifElse, int 
 					if (i == 0 && v.parameterList[i].assignType == AR_ASSIGN_TYPE_VALUE)
 					{
 						int fieldId = 0;
+						stringstream tmpStrm;
+
 						switch (v.parameterList[i].u.value.dataType)
 						{
 						case AR_DATA_TYPE_INTEGER:
 							fieldId = v.parameterList[i].u.value.u.intVal;
+							tmpStrm << fieldId;
 							break;
 						case AR_DATA_TYPE_CHAR:
 							if (v.parameterList[i].u.value.u.charVal != NULL && v.parameterList[i].u.value.u.charVal[0] != 0)
+							{
 								fieldId = atoi(v.parameterList[i].u.value.u.charVal);
+								tmpStrm << "\"" << v.parameterList[i].u.value.u.charVal << "\"";
+							}
 							break;
 						}
 
@@ -523,7 +529,7 @@ void CARAssignHelper::AssignFunction(int targetFieldId, IfElseState ifElse, int 
 							}
 							CRefItem refItemHover(*this->object, ifElse, nAction, msgId);
 							arIn->AddFieldReference(this->schemaInsideId1, fieldId, refItemHover);
-							assignText << arIn->LinkToField(this->schemaInsideId1, fieldId, rootLevel);
+							assignText << arIn->LinkToField(this->schemaInsideId1, fieldId, tmpStrm.str(), rootLevel);
 							continue;
 						}
 					}

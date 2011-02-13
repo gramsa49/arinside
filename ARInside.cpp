@@ -1184,18 +1184,18 @@ string CARInside::LinkToField(const string& schemaName, int fieldInsideId, int f
 	return LinkToField(SchemaGetInsideId(schemaName), fieldInsideId, fromRootLevel);
 }
 
-string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel, bool needValidField)
+string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel)
 {	
 	CARField field(schemaInsideId, fieldInsideId);
 	if (field.Exists())
 	{
-		return field.GetURL(fromRootLevel);
+		return field.GetURL(linkText, fromRootLevel);
 	}
 
 	//Field has not been found
 	stringstream tmp;
 
-	if(needValidField && fieldInsideId > 0 && schemaInsideId > -1) //OpenWindow uses 0 what is no valid field
+	if(fieldInsideId > 0 && schemaInsideId > -1) //OpenWindow uses 0 what is no valid field
 	{
 		tmp << "<span class=\"fieldNotFound\">" << fieldInsideId << "</span>";
 	}
@@ -1207,10 +1207,15 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRoo
 	return tmp.str();
 }
 
+string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel)
+{
+	return LinkToField(schemaInsideId, fieldInsideId, "", fromRootLevel);
+}
+
 // TODO: maybe change callers to LinkToField and remove this function completely
 string CARInside::LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel)
 {
-	return LinkToField(schemaInsideId, fieldInsideId, fromRootLevel, false);
+	return LinkToField(schemaInsideId, fieldInsideId, fromRootLevel);
 }
 
 string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)

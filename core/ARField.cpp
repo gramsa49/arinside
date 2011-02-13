@@ -67,10 +67,15 @@ CARServerObject* CARField::Clone() const
 	return new CARField(*this);
 }
 
-string CARField::GetURL(int rootLevel, bool showImage) const
+string CARField::GetURL(const string& linkText, int rootLevel, bool showImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(GetName(), file, "", rootLevel);
+	return CWebUtil::Link((linkText.empty() ? GetName() : linkText), file, "", rootLevel);
+}
+
+string CARField::GetURL(int rootLevel, bool showImage) const
+{
+	return GetURL("", rootLevel, showImage);
 }
 
 string CARField::GetName()

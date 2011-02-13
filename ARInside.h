@@ -121,7 +121,8 @@ public:
 	string LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel);
 	string LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLevel);
 	string LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel);	
-	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel, bool needValidField = true);
+	string LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel);
+	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 
 	string LinkToContainer(string containerName, int rootLevel);

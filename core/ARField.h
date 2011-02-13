@@ -58,6 +58,7 @@ public:
 	const CARSchema& GetSchema() const;
 
 	// helpers
+	string GetURL(const string& linkText, int rootLevel, bool showImage = true) const;
 	string GetURL(int rootLevel, bool showImage = true) const;
 
 	// class type support
