@@ -56,7 +56,6 @@ void CDocFilterGuideDetails::Documentation()
 			delete contHelper;
 
 			//Object specific documentation
-			webPage.AddContent(FilterGuideInformation());
 			webPage.AddContent(FilterActions());
 
 			//History
@@ -70,54 +69,6 @@ void CDocFilterGuideDetails::Documentation()
 	{
 		cout << "EXCEPTION in FilterGuideDetails_GetPrimaryForm: " << e.what() << endl; 
 	}
-}
-
-string CDocFilterGuideDetails::FilterGuideInformation()
-{
-	//Container specific properties
-	CTable tblProp("specificPropList", "TblObjectList");
-	tblProp.AddColumn(20, "Label");
-	tblProp.AddColumn(80, "Filter in Guide");
-
-	try
-	{
-		const ARReferenceList& refs = pFilterGuide->GetReferences();
-		for(unsigned int i=0; i< refs.numItems; i++)
-		{
-			stringstream label, filter;
-			label.str("");
-			filter.str("");
-
-			switch(refs.referenceList[i].type)
-			{
-			case ARREF_FILTER:
-				{
-					filter << pInside->LinkToFilter(refs.referenceList[i].reference.u.name, rootLevel);
-				}
-				break;
-			case ARREF_NULL_STRING:
-				{
-					label << refs.referenceList[i].label;
-				}
-				break;			
-			}
-
-			CTableCell cellLabel(label.str(), "");
-			CTableCell cellFilter(filter.str(), "");
-
-			CTableRow row("");
-			row.AddCell(cellLabel);
-			row.AddCell(cellFilter);
-			tblProp.AddRow(row);
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in FilterGuideDetails: " << e.what() << endl; 
-	}
-
-	tblProp.description = "Filter in Guide";
-	return tblProp.ToXHtml();
 }
 
 string CDocFilterGuideDetails::FilterActions()
@@ -184,5 +135,6 @@ string CDocFilterGuideDetails::FilterActions()
 		cout << "EXCEPTION in FilterGuideDetails_FilterActions: " << e.what() << endl; 
 	}
 
+	tblPropEx.description = "Filters calling this guide";
 	return tblPropEx.ToXHtml();
 }

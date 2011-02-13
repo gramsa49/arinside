@@ -33,7 +33,6 @@ namespace OUTPUT
 
 		void ToXHtml(std::ostream& strm);
 		string ToXHtml();
-		string ToXHtmlNoHeader();
 		string ToCsv();
 
 		void Clear();

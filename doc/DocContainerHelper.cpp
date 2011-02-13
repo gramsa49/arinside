@@ -31,8 +31,8 @@ string CDocContainerHelper::BaseInfo()
 {
 	//Container specific properties
 	CTable tblProp("specificPropList", "TblObjectList");
-	tblProp.AddColumn(20, "Type");
-	tblProp.AddColumn(80, "Server Object");
+	tblProp.AddColumn(20, "Property");
+	tblProp.AddColumn(80, "Value");
 
 	try
 	{
@@ -67,12 +67,19 @@ string CDocContainerHelper::BaseInfo()
 
 
 		//Forms
-		if(type == ARCON_GUIDE || type == ARCON_FILTER_GUIDE)
+		if(type == ARCON_GUIDE || type == ARCON_FILTER_GUIDE || type == ARCON_WEBSERVICE)
 		{
 			row.AddCellList(CTableCell("Owner Object List"), CTableCell(this->ContainerForms()));	
 			tblProp.AddRow(row);	
 		}
 
+
+		// Content
+		if(type == ARCON_GUIDE || type == ARCON_FILTER_GUIDE)
+		{
+			row.AddCellList(CTableCell("Guide Content"), CTableCell(this->GuideContent()));
+			tblProp.AddRow(row);
+		}
 	}
 	catch(exception& e)
 	{
@@ -170,6 +177,58 @@ string CDocContainerHelper::ContainerForms()
 		cout << "EXCEPTION in ContainerForms: " << e.what() << endl; 
 	}
 
-	tbl.description = "Owner Forms";
-	return tbl.ToXHtml();	
+	tbl.DisableHeader();
+	return tbl.ToXHtml();
+}
+
+string CDocContainerHelper::GuideContent()
+{
+	//Container specific properties
+	CTable tblProp("specificPropList", "TblObjectList");
+	tblProp.AddColumn(20, "Label");
+	tblProp.AddColumn(80, "Object in Guide");
+
+	try
+	{
+		const ARReferenceList& refs = this->container.GetReferences();
+		for(unsigned int i=0; i< refs.numItems; i++)
+		{
+			stringstream label, object;
+			label.str("");
+			object.str("");
+
+			switch(refs.referenceList[i].type)
+			{
+			case ARREF_ACTLINK:
+				{
+					object << pInside->LinkToAl(refs.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_FILTER:
+				{
+					object << pInside->LinkToFilter(refs.referenceList[i].reference.u.name, rootLevel);
+				}
+				break;
+			case ARREF_NULL_STRING:
+				{
+					label << refs.referenceList[i].label;
+				}
+				break;			
+			}
+
+			CTableCell cellLabel(label.str(), "");
+			CTableCell cellObject(object.str(), "");
+
+			CTableRow row("");
+			row.AddCell(cellLabel);
+			row.AddCell(cellObject);
+			tblProp.AddRow(row);
+		}
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION in AlGuideInformation: " << e.what() << endl; 
+	}
+
+	return tblProp.ToXHtml();
 }

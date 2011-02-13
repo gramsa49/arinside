@@ -56,7 +56,6 @@ void CDocAlGuideDetails::Documentation()
 			delete contHelper;
 
 			//Object specific documentation
-			webPage.AddContent(AlGuideInformation());
 			webPage.AddContent(ActiveLinkActions());
 
 			//History
@@ -70,54 +69,6 @@ void CDocAlGuideDetails::Documentation()
 	{
 		cout << "EXCEPTION in DocAlGuideDetails::Documentation of '" << this->alGuide.GetName() << "': " << e.what() << endl;
 	}
-}
-
-string CDocAlGuideDetails::AlGuideInformation()
-{
-	//Container specific properties
-	CTable tblProp("specificPropList", "TblObjectList");
-	tblProp.AddColumn(20, "Label");
-	tblProp.AddColumn(80, "Active Link in Guide");
-
-	try
-	{
-		const ARReferenceList& refs = this->alGuide.GetReferences();
-		for(unsigned int i=0; i< refs.numItems; i++)
-		{
-			stringstream label, actLink;
-			label.str("");
-			actLink.str("");
-
-			switch(refs.referenceList[i].type)
-			{
-			case ARREF_ACTLINK:
-				{
-					actLink << pInside->LinkToAl(refs.referenceList[i].reference.u.name, rootLevel);
-				}
-				break;
-			case ARREF_NULL_STRING:
-				{
-					label << refs.referenceList[i].label;
-				}
-				break;			
-			}
-
-			CTableCell cellLabel(label.str(), "");
-			CTableCell cellAl(actLink.str(), "");
-
-			CTableRow row("");
-			row.AddCell(cellLabel);
-			row.AddCell(cellAl);
-			tblProp.AddRow(row);
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in AlGuideInformation: " << e.what() << endl; 
-	}
-
-	tblProp.description = "Active Links in Guide";
-	return tblProp.ToXHtml();
 }
 
 string CDocAlGuideDetails::ActiveLinkActions()
@@ -182,6 +133,6 @@ string CDocAlGuideDetails::ActiveLinkActions()
 		cout << "EXCEPTION in AlGuideDetailsEx: " << e.what() << endl; 
 	}
 
-	tblPropEx.description = "Active Links 'Call Guide' Action";
+	tblPropEx.description = "Active Links calling this guide";
 	return tblPropEx.ToXHtml();
 }

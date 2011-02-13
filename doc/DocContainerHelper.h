@@ -34,4 +34,5 @@ private:
 	string PermissionList();	
 	string SubadminList();
 	string ContainerForms();
+	string GuideContent();
 };

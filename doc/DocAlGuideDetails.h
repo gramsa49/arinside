@@ -29,6 +29,5 @@ public:
 
 private:
 	CARContainer& alGuide;
-	string AlGuideInformation();
 	string ActiveLinkActions();
 };

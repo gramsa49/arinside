@@ -30,6 +30,5 @@ public:
 private:
 	CARContainer *pFilterGuide;
 
-	string FilterGuideInformation();
 	string FilterActions();
 };
