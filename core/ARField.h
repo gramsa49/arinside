@@ -75,4 +75,23 @@ private:
 	CARSchema schema;
 	CARFieldList *fieldList;
 	int fieldIndex;
+
+#ifdef _DEBUG
+	ARNameType*	dbg_name;
+	ARInternalId dbg_fieldId;
+	ARFieldMappingStruct* dbg_fieldMap;
+	unsigned int dbg_dataType;
+	unsigned int dbg_option;
+	unsigned int dbg_createMode;
+	unsigned int dbg_fieldOption;
+	ARValueStruct* dbg_defaultValue;
+	ARPermissionList* dbg_permissions;
+	ARFieldLimitStruct* dbg_limits;
+	ARDisplayInstanceList* dbg_dinstList;
+	char* dbg_helpText;
+	ARTimestamp* dbg_timestamp;
+	ARAccessNameType* dbg_fieldOwner;
+	ARAccessNameType* dbg_modifiedBy;
+	const char* dbg_changeDiary;
+#endif
 };

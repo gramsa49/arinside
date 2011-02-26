@@ -289,7 +289,7 @@ string CDocFieldDetails::FieldLimits()
 
 	try
 	{
-		switch(this->field.GetDataType())
+		switch(this->field.GetLimits().dataType)
 		{			
 		case AR_DATA_TYPE_CHAR:
 			{

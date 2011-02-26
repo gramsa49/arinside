@@ -155,7 +155,7 @@ void CNavigationPage::Footer(ostream &strm)
 	strm << "</ul></body></html>";
 }
 
-void CNavigationPage::Image(ostream &strm, char *path, char *file, int width, int height)
+void CNavigationPage::Image(ostream &strm, const char *path, const char *file, int width, int height)
 {
 	strm << "<img src=\"" << path << file << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << file << "\" />";
 }

@@ -358,7 +358,7 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 			//Label Fields
 			for(int i=0; i< 5; i++)
 			{
-				if(menu.labelField[i] != NULL)
+				if(menu.labelField[i] != 0)
 				{
 					strm << "Label Field (" << i << ") : " << this->pInside->LinkToField(menu.schema, menu.labelField[i], rootLevel);
 					strm << " (FieldId: " << menu.labelField[i] << ")<br/>" << endl;

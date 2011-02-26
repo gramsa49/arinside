@@ -710,13 +710,28 @@ string CDocFilterActionStruct::FilterActionGotoAction(ARGotoActionStruct &action
 
 	try
 	{
-		if(action.fieldIdOrValue != NULL)
+		strm << "FieldId or Value: ";
+		switch (action.tag)
 		{
-			strm << "FieldId or Value: " << arIn->LinkToField(schemaInsideId, action.fieldIdOrValue, rootLevel) << endl;
-		}
-		else
-		{
-			strm << "FieldId or Value: " << EmptyValue << endl;
+		case AR_GOTO_FIELD_XREF:
+			{
+			// add new reference item to the field
+			CRefItem refItem(*this->obj, ifElse, nAction, REFM_GOTO);
+			arIn->AddFieldReference(schemaInsideId, action.fieldIdOrValue, refItem);
+
+			// link to field in current page
+			strm << arIn->LinkToField(schemaName, action.fieldIdOrValue, rootLevel) << endl;
+			break;
+			}
+		case AR_GOTO_ABSOLUTE_ORDER:
+			strm << action.fieldIdOrValue;
+			break;
+		case AR_GOTO_OFFSET_FORWARD:
+			strm << "+" << action.fieldIdOrValue;
+			break;
+		case AR_GOTO_OFFSET_BACKWARD:
+			strm << "-" << action.fieldIdOrValue;
+			break;
 		}
 	}
 	catch(exception& e)
@@ -891,7 +906,7 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		}
 
 		strm << "Request Id: ";
-		if (action.requestIdMap != NULL)
+		if (action.requestIdMap != 0)
 		{
 			strm << arIn->LinkToField(schemaName, action.requestIdMap, rootLevel);
 

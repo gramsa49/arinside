@@ -52,7 +52,7 @@ string CAREscalation::GetTimeCriteria()
 	try
 	{
 		const AREscalationTmStruct& escalationTm = this->GetTimeStruct();
-		if(escalationTm.escalationTmType == NULL)
+		if(escalationTm.escalationTmType == 0)
 		{
 			return "Unknown Escalation type";
 		}

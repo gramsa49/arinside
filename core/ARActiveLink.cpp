@@ -67,7 +67,7 @@ string CARActiveLink::GetExecuteOn(bool singleLine, CARProplistHelper* props)
 	{		
 		typedef	struct ARInsideExecOnStruct {
 			unsigned int exec;
-			char        *text;
+			const char   *text;
 		} ARInsideExecOnStruct;
 
 		const ARInsideExecOnStruct executeText[] = {

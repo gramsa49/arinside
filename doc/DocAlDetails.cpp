@@ -259,7 +259,7 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 
 		//Query
 		strmTmp.str("");
-		if(this->al.GetRunIf().operation != NULL)
+		if(this->al.GetRunIf().operation != AR_COND_OP_NONE)
 		{		
 			if (schemaInsideId == -2)
 				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);

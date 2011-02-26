@@ -64,7 +64,7 @@ string CARFilter::GetExecuteOn(bool singleLine)
 	{
 		typedef	struct ARInsideExecOnStruct {
 			unsigned int exec;
-			char        *text;
+			const char   *text;
 		} ARInsideExecOnStruct;
 
 		const ARInsideExecOnStruct executeText[] = {

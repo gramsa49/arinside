@@ -50,6 +50,32 @@ CARField::CARField(int SchemaInsideId, unsigned int fieldId, int SchemaFieldInde
 	{
 		fieldIndex = SchemaFieldIndex;
 	}
+
+#ifdef _DEBUG
+	if (Exists())
+	{
+		const ARNameType& tmp_name = fieldList->FieldGetName(fieldIndex);
+		const ARAccessNameType& tmp_own = fieldList->FieldGetOwner(fieldIndex);
+		const ARAccessNameType& tmp_mod = fieldList->FieldGetModifiedBy(fieldIndex);
+
+		this->dbg_name = (ARNameType*)&tmp_name;
+		this->dbg_fieldId = fieldList->FieldGetFieldId(fieldIndex);
+		this->dbg_fieldMap = (ARFieldMappingStruct*)&fieldList->FieldGetMapping(fieldIndex);
+		this->dbg_dataType = fieldList->FieldGetDataType(fieldIndex);
+		this->dbg_option = fieldList->FieldGetOption(fieldIndex);
+		this->dbg_createMode = fieldList->FieldGetCreateMode(fieldIndex);
+		this->dbg_fieldOption = fieldList->FieldGetFieldOption(fieldIndex);
+		this->dbg_defaultValue = (ARValueStruct*)&fieldList->FieldGetDefaultValue(fieldIndex);
+		this->dbg_permissions = (ARPermissionList*)&fieldList->FieldGetPermissions(fieldIndex);
+		this->dbg_limits = (ARFieldLimitStruct*)&fieldList->FieldGetLimits(fieldIndex);
+		this->dbg_dinstList = (ARDisplayInstanceList*)&fieldList->FieldGetDisplayInstances(fieldIndex);
+		this->dbg_helpText = fieldList->FieldGetHelptext(fieldIndex);
+		this->dbg_timestamp = (ARTimestamp*)&fieldList->FieldGetTimestamp(fieldIndex);
+		this->dbg_fieldOwner = (ARAccessNameType*)&tmp_own;
+		this->dbg_modifiedBy = (ARAccessNameType*)&tmp_mod;
+		this->dbg_changeDiary = fieldList->FieldGetChangeDiary(fieldIndex);
+	}
+#endif
 }
 
 bool CARField::Exists()

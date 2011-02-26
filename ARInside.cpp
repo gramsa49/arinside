@@ -1726,7 +1726,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 
 							// resolve user or time attribute
 							int iUsrOrTime = atoi(usrOrTime);
-							char* usrOrTimeStr = usrOrTime;
+							const char* usrOrTimeStr = usrOrTime;
 							switch (iUsrOrTime)
 							{
 							case AR_STAT_HISTORY_USER:
@@ -1767,191 +1767,210 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 		if (curPos < maxLen)
 			strmTmp << inText.substr(curPos,maxLen - curPos);
 
-		//write the current string back ot inText, then clear the stream for use with the application code
+		//write the current string back to inText, then clear the stream for use with the application code
 		inText = strmTmp.str();
 		strmTmp.clear();
 		strmTmp.str("");
 
-		//cout << refItem->fromName << endl;
+		// check for special run-process commands
+		bool specialFound = false;
+		string::size_type cmdStartPos = inText.find("Application-");
+		if (cmdStartPos != string::npos)
+		{
+			string::size_type nextSearchPos = cmdStartPos + 12; // add length("Application-")
+			specialFound = true;
 
-		if (getPos(inText,"Application-Copy-Field-Value "))
-		{
-			strmTmp << processTwoFields("Application-Copy-Field-Value", inText, schemaInsideId, rootLevel, refItem);
+			if (inText.compare(nextSearchPos, 17, "Copy-Field-Value ") == 0)
+			{
+				strmTmp << processTwoFields("Application-Copy-Field-Value", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 13, "Delete-Entry ") == 0)
+			{
+				strmTmp << processForm("Application-Delete-Entry", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 12, "Format-Qual ") == 0)
+			{
+				strmTmp << processForm("Application-Format-Qual", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 19, "Format-Qual-Filter ") == 0)
+			{
+				strmTmp << processForm("Application-Format-Qual-Filter", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 15, "Format-Qual-ID ") == 0)
+			{
+				strmTmp << processForm("Application-Format-Qual-ID", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 14, "Format-Qual-L ") == 0)
+			{
+				strmTmp << processForm("Application-Format-Qual-L", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 18, "Get-Approval-Join ") == 0)
+			{
+				strmTmp << processForm("Application-Get-Approval-Join", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 19, "Get-Approval-Join2 ") == 0)
+			{
+				strmTmp << processForm("Application-Get-Approval-Join2", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 16, "Get-DetSig-Join ") == 0)
+			{
+				strmTmp << processForm("Application-Get-DetSig-Join", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "Get-DetSig-Join2 ") == 0)
+			{
+				strmTmp << processForm("Application-Get-DetSig-Join2", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 15, "Get-Form-Alias ") == 0)
+			{
+				strmTmp << processForm("Application-Get-Form-Alias", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "Get-Locale-VuiID ") == 0)
+			{
+				strmTmp << processForm("Application-Get-Locale-VuiID", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 25, "Get-Next-Recurrence-Time ") == 0)
+			{
+				strmTmp << processForm("Application-Get-Next-Recurrence-Time", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "Map-Ids-To-Names ") == 0)
+			{
+				strmTmp << processForm("Application-Map-Ids-To-Names", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 19, "Map-Ids-To-Names-L ") == 0)
+			{
+				strmTmp << processForm("Application-Map-Ids-To-Names-L", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "Map-Names-To-Ids ") == 0)
+			{
+				strmTmp << processForm("Application-Map-Names-To-Ids", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 19, "Map-Names-To-Ids-L ") == 0)
+			{
+				strmTmp << processForm("Application-Map-Names-To-Ids-L", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 11, "Parse-Qual ") == 0)
+			{
+				strmTmp << processForm("Application-Parse-Qual", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 18, "Parse-Qual-Filter ") == 0)
+			{
+				strmTmp << processForm("Application-Parse-Qual-Filter", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 13, "Parse-Qual-L ") == 0)
+			{
+				strmTmp << processForm("Application-Parse-Qual-L", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 20, "Parse-Qual-SField-L ") == 0)
+			{
+				strmTmp << processForm("Application-Parse-Qual-SField-L", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "Parse-Val-SField ") == 0)
+			{
+				strmTmp << processForm("Application-Parse-Val-SField", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 19, "Query-Delete-Entry ") == 0)
+			{
+				strmTmp << processForm("Application-Query-Delete-Entry", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else
+			{
+				specialFound = false;
+			}
 		}
-		else if (getPos(inText,"Application-Delete-Entry "))
+		
+		cmdStartPos = inText.find("PERFORM-ACTION-");
+		if (cmdStartPos != string::npos)
 		{
-			strmTmp << processForm("Application-Delete-Entry", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Format-Qual "))
-		{
-			strmTmp << processForm("Application-Format-Qual", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Format-Qual-Filter "))
-		{
-			strmTmp << processForm("Application-Format-Qual-Filter", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Format-Qual-ID "))
-		{
-			strmTmp << processForm("Application-Format-Qual-ID", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Format-Qual-L "))
-		{
-			strmTmp << processForm("Application-Format-Qual-L", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-Approval-Join "))
-		{
-			strmTmp << processForm("Application-Get-Approval-Join", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-Approval-Join2 "))
-		{
-			strmTmp << processForm("Application-Get-Approval-Join2", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-DetSig-Join "))
-		{
-			strmTmp << processForm("Application-Get-DetSig-Join", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-DetSig-Join2 "))
-		{
-			strmTmp << processForm("Application-Get-DetSig-Join2", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-Form-Alias "))
-		{
-			strmTmp << processForm("Application-Get-Form-Alias", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-Locale-VuiID "))
-		{
-			strmTmp << processForm("Application-Get-Locale-VuiID", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Get-Next-Recurrence-Time "))
-		{
-			strmTmp << processForm("Application-Get-Next-Recurrence-Time", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Map-Ids-To-Names "))
-		{
-			strmTmp << processForm("Application-Map-Ids-To-Names", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Map-Ids-To-Names-L "))
-		{
-			strmTmp << processForm("Application-Map-Ids-To-Names-L", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Map-Names-To-Ids "))
-		{
-			strmTmp << processForm("Application-Map-Names-To-Ids", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Map-Names-To-Ids-L "))
-		{
-			strmTmp << processForm("Application-Map-Names-To-Ids-L", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Parse-Qual "))
-		{
-			strmTmp << processForm("Application-Parse-Qual", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Parse-Qual-Filter "))
-		{
-			strmTmp << processForm("Application-Parse-Qual-Filter", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Parse-Qual-L "))
-		{
-			strmTmp << processForm("Application-Parse-Qual-L", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Parse-Qual-SField-L "))
-		{
-			strmTmp << processForm("Application-Parse-Qual-SField-L", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Parse-Val-SField "))
-		{
-			strmTmp << processForm("Application-Parse-Val-SField", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"Application-Query-Delete-Entry "))
-		{
-			strmTmp << processForm("Application-Query-Delete-Entry", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-ACTIVE-LINK "))
-		{
-			strmTmp << processSecondParameter("PERFORM-ACTION-ACTIVE-LINK", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-ADD-ATTACHMENT "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-ADD-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-DELETE-ATTACHMENT "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-DELETE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-GET-FIELD-LABEL "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-GET-FIELD-LABEL", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-GET-PREFERENCE "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-GET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-OPEN-ATTACHMENT "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-OPEN-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-SAVE-ATTACHMENT "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-SAVE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-SET-PREFERENCE "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-SET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-CLEAR "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-DESELECTALL "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-DESELECTALL", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-IS-LEAF-SELECTED "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-IS-LEAF-SELECTED", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-NEXT-CHUNK "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-NEXT-CHUNK", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-PREV-CHUNK "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-PREV-CHUNK", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-REFRESH "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-REFRESH", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-REPORT "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-REPORT", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-SELECT-NODE "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECT-NODE", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else if (getPos(inText,"PERFORM-ACTION-TABLE-SELECTALL "))
-		{
-			strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECTALL", inText, schemaInsideId, rootLevel, refItem);
-		}
-		else
-		{
-			strmTmp << inText;
+			string::size_type nextSearchPos = cmdStartPos + 15; // add length("PERFORM-ACTION-")
+			specialFound = true;
+
+			if (inText.compare(nextSearchPos, 12, "ACTIVE-LINK ") == 0)
+			{
+				strmTmp << processSecondParameter("PERFORM-ACTION-ACTIVE-LINK", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 15, "ADD-ATTACHMENT ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-ADD-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 18, "DELETE-ATTACHMENT ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-DELETE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 16, "GET-FIELD-LABEL ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-GET-FIELD-LABEL", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 15, "GET-PREFERENCE ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-GET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 28, "NAV-FIELD-SET-SELECTED-ITEM ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 16, "OPEN-ATTACHMENT ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-OPEN-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 16, "SAVE-ATTACHMENT ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-SAVE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 15, "SET-PREFERENCE ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-SET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 12, "TABLE-CLEAR ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 23, "TABLE-CLEAR-ROWCHANGED ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 18, "TABLE-DESELECTALL ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-DESELECTALL", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 26, "TABLE-GET-SELECTED-COLUMN ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 23, "TABLE-IS-LEAF-SELECTED ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-IS-LEAF-SELECTED", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "TABLE-NEXT-CHUNK ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-NEXT-CHUNK", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 17, "TABLE-PREV-CHUNK ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-PREV-CHUNK", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 14, "TABLE-REFRESH ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-REFRESH", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 13, "TABLE-REPORT ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-REPORT", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 18, "TABLE-SELECT-NODE ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECT-NODE", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else if (inText.compare(nextSearchPos, 16, "TABLE-SELECTALL ") == 0)
+			{
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECTALL", inText, schemaInsideId, rootLevel, refItem);
+			}
+			else
+			{
+				specialFound = false;
+			}
 		}
 
-		return strmTmp.str();
+		return (specialFound ? strmTmp.str() : inText);
 	}
 	catch(exception& e)
 	{

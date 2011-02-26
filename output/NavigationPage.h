@@ -32,5 +32,5 @@ private:
 	void Header(ostream &strm);
 	void Footer(ostream &strm);
 
-	void Image(ostream &strm, char *path, char *file, int width, int height);
+	void Image(ostream &strm, const char *path, const char *file, int width, int height);
 };

@@ -1022,7 +1022,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		// qualification
 		if(ActionOpenDlgQualifier(action.windowMode))
 		{
-			if(action.query.operation != NULL)
+			if(action.query.operation != AR_COND_OP_NONE)
 			{
 				stringstream strmTmpQual;
 
@@ -1131,7 +1131,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 					CARField rField(rSchema.GetInsideId(), action.sortOrderList.sortList[i].fieldId);
 
 					strFieldId[0] = 0;
-					sprintf(strFieldId, "%d", action.sortOrderList.sortList[i].fieldId);
+					sprintf(strFieldId, "%d", static_cast<int>(action.sortOrderList.sortList[i].fieldId));
 
 					CTableRow row("cssStdRow");
 					row.AddCell(arIn->LinkToField(openWindowSchema, action.sortOrderList.sortList[i].fieldId, rootLevel));
@@ -1447,7 +1447,7 @@ void CDocAlActionStruct::ActionService(std::ostream& strm, const ARActiveLinkSvc
 		}
 
 		strm << "Request Id: ";
-		if (action.requestIdMap != NULL)
+		if (action.requestIdMap != 0)
 		{
 			strm << arIn->LinkToField(schemaName, action.requestIdMap, rootLevel);
 			

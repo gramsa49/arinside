@@ -1363,7 +1363,7 @@ string CDocSchemaDetails::TypeDetails()
 				else
 					strm << "Join Type: Outer" << "<br/>" << endl;
 
-				if(compSchema.u.join.joinQual.operation != NULL)
+				if(compSchema.u.join.joinQual.operation != AR_COND_OP_NONE)
 				{
 					stringstream strmQuery;
 					CRefItem refItem(this->schema, REFM_SCHEMA_JOIN_QUALIFICATION);
@@ -2031,7 +2031,7 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 		{
 			case AR_AUDIT_NONE:
 				{
-					if (audit.formName[0] != NULL)
+					if (audit.formName[0] != 0)
 					{
 						row.AddCell("Audited From Form");
 						row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
@@ -2143,7 +2143,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 			tbl.AddRow(row);
 		}
 
-		if (archive.archiveFrom[0] != NULL)
+		if (archive.archiveFrom[0] != 0)
 		{
 			row.ClearCells();
 			row.AddCell("Archive From Form");
