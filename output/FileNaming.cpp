@@ -1800,7 +1800,7 @@ class ObjectNameRoleDetail : public IFileStructure
 {
 public:
 	ObjectNameRoleDetail(const CARRole* role) : obj(role) { }
-	virtual string GetFileName() const { stringstream tmp; tmp << obj->GetRequestId(); return tmp.str(); }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()); return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_ROLE; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -2142,28 +2142,82 @@ private:
 	unsigned int page;
 };
 
-class ObjectNameRoleOverview : public IFileStructure
+////////////////////////////////////////////////////////////////////
+// for roles                                                      //
+class ObjectNameRoleSchemaList : public IFileStructure
 {
 public:
-	ObjectNameRoleOverview() { }
-	virtual string GetFileName() const { return "roles"; }
+	ObjectNameRoleSchemaList(const CARRole* role) : obj(role) { }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()) << "list_form"; return tmp.str(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return DIR_OVERVIEW; }
-	virtual unsigned int GetRootLevel() const { return 1; }
-};
-
-class ObjectNameRoleLetterOverview : public IFileStructure
-{
-public:
-	ObjectNameRoleLetterOverview(unsigned int dwPage) { page = dwPage; }
-	virtual string GetFileName() const { if (page != PAGE_OVERVIEW_OTHER) { stringstream strmTmp; strmTmp << "roles_" << ((char)page); return strmTmp.str(); } else return "roles_other"; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return DIR_OVERVIEW; }
+	virtual string GetPath() const { return DIR_ROLE; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 private:
-	unsigned int page;
+	const CARRole* obj;
 };
 
+class ObjectNameRoleFieldList : public IFileStructure
+{
+public:
+	ObjectNameRoleFieldList(const CARRole* role) : obj(role) { }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()) << "list_field"; return tmp.str(); }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_ROLE; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+private:
+	const CARRole* obj;
+};
+
+class ObjectNameRoleALList : public IFileStructure
+{
+public:
+	ObjectNameRoleALList(const CARRole* role) : obj(role) { }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()) << "list_active_link"; return tmp.str(); }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_ROLE; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+private:
+	const CARRole* obj;
+};
+
+class ObjectNameRolePackListList : public IFileStructure
+{
+public:
+	ObjectNameRolePackListList(const CARRole* role) : obj(role) { }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()) << "list_packing_list"; return tmp.str(); }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_ROLE; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+private:
+	const CARRole* obj;
+};
+
+class ObjectNameRoleALGuideList : public IFileStructure
+{
+public:
+	ObjectNameRoleALGuideList(const CARRole* role) : obj(role) { }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()) << "list_al_guide"; return tmp.str(); }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_ROLE; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+private:
+	const CARRole* obj;
+};
+
+class ObjectNameRoleWebserviceList : public IFileStructure
+{
+public:
+	ObjectNameRoleWebserviceList(const CARRole* role) : obj(role) { }
+	virtual string GetFileName() const { stringstream tmp; tmp << GetFileNameOfObjectName(obj->GetRequestId()) << "list_webservice"; return tmp.str(); }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_ROLE; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+private:
+	const CARRole* obj;
+};
+
+////////////////////////////////////////////////////////////////////
+// for images                                                     //
 class ObjectNameImageOverview : public IFileStructure
 {
 public:
@@ -2349,23 +2403,23 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 			{
 				switch (params.uint1)
 				{
-				case ARCON_PACK: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new GroupPackListList(static_cast<const CARGroup*>(params.obj1));
-				case ARCON_GUIDE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new GroupALGuideList(static_cast<const CARGroup*>(params.obj1));
-				case ARCON_WEBSERVICE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new GroupWebserviceList(static_cast<const CARGroup*>(params.obj1));
+				case ARCON_PACK: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupPackListList(static_cast<const CARGroup*>(params.obj1));
+				case ARCON_GUIDE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupALGuideList(static_cast<const CARGroup*>(params.obj1));
+				case ARCON_WEBSERVICE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_GROUP); return new ObjectNameGroupWebserviceList(static_cast<const CARGroup*>(params.obj1));
 				}
 			}
 			break;
 		
-		case PAGE_ROLE_SCHEMA_LIST: assert(params.obj1 != NULL); return new RoleSchemaList(params.obj1);
-		case PAGE_ROLE_FIELD_LIST: assert(params.obj1 != NULL); return new RoleFieldList(params.obj1);
-		case PAGE_ROLE_ACTIVELINK_LIST: assert(params.obj1 != NULL); return new RoleALList(params.obj1);
+		case PAGE_ROLE_SCHEMA_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_ROLE); return new ObjectNameRoleSchemaList(static_cast<const CARRole*>(params.obj1));
+		case PAGE_ROLE_FIELD_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_ROLE); return new ObjectNameRoleFieldList(static_cast<const CARRole*>(params.obj1));
+		case PAGE_ROLE_ACTIVELINK_LIST: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_ROLE); return new ObjectNameRoleALList(static_cast<const CARRole*>(params.obj1));
 		case PAGE_ROLE_CONTAINER_LIST:
 			{
 				switch(params.uint1)
 				{
-				case ARCON_PACK: assert(params.obj1 != NULL); return new RolePackListList(params.obj1);
-				case ARCON_GUIDE: assert(params.obj1 != NULL); return new RoleALGuideList(params.obj1);
-				case ARCON_WEBSERVICE: assert(params.obj1 != NULL); return new RoleWebserviceList(params.obj1);
+				case ARCON_PACK: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_ROLE); return new ObjectNameRolePackListList(static_cast<const CARRole*>(params.obj1));
+				case ARCON_GUIDE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_ROLE); return new ObjectNameRoleALGuideList(static_cast<const CARRole*>(params.obj1));
+				case ARCON_WEBSERVICE: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_ROLE); return new ObjectNameRoleWebserviceList(static_cast<const CARRole*>(params.obj1));
 				}
 			}
 			break;

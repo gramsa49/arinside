@@ -4,6 +4,47 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
+2011-03-01
+[3.0.2]
+E - Apache/zlib-Support added to generate compressed documentation
+E - improved readability of assignments (e.g. push fields, set fields)
+E - added container references to menus (#69)
+E - moved form-subpage-navigation from right side to the left (#73)
+E - visuals of letter-indexes improved (link only to pages with at least one object)
+E - now field overview lists show more details for join, view and vendor forms
+E - field-detail-pages of join, view and vendor forms show details about its base field/form
+E - 7.6.03 and 7.6.04 support added (not finished yet)
+E - support for table-columns of type 'Display' and 'Data' added
+E - field-detail-pages for table fields lists table-columns in a sortable column
+E - added support for more display properties and their values (7.5 / 7.6.03 / 7.6.04)
+E - new APITimeout option to avoid timeout-error during object-loading (#96)
+E - Support for field-patterns added
+E - complete redesign of the internal object referencing
+E - lots of performance improvements
+E - added webservice-references to schema-pages
+E - The Escalations-ByAction-page supports service action
+E - added page that lists all error handlers (#95)
+E - added separate "Attached Workflow" section to fields (e.g. to show workflow attached to buttons)
+E - removed duplicate workflow-references (e.g. if a field is used in multiple setfield-actions in the same workflow object)
+E - workflow-references table of a global field show workflow of other schemas with the same global-field-id now
+E - support for 64-bit platforms added
+E - experimental support for AIX platform added
+
+D - join member forms doesn't link to the join form (#91)
+D - column-field references showed wrong source table (#92)
+D - search-, sql- and dictonary-menus show their definitions per used form (e.g. search qualification) to display the correct field references (fixes #43)
+D - all links to any role pointed to the page of group-id 0
+D - link to the form on the forms "Indexes"-page was pointing to the all-forms-list
+D - function LENGTHC was documented as LENGTH
+D - fixed a bug in documentation of notify action, that was leading to missing field references on the wrong form
+D - coordinates are now documented completely, instead of just the top-left position
+D - fixed missing field bug in goto-action
+D - fixed some incorrect links on image-pages and on the missing-fields validator
+D - some values were directly written to the html-page without escaping
+D - fields in openwindow-actions were not resolved correctly
+D - invalid actions removed from escalations-byaction-page
+D - global fields feature was broken in version 3.0.1
+
 2010-09-01
 [3.0.1]
 E - All command line options except ini (-i) are now optional (all settings are configurable within the ini file)
