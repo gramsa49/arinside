@@ -206,7 +206,7 @@ string CDocFieldDetails::WorkflowReferences()
 					CARField fld(curIt->schemaInsideId, curIt->fieldId);
 
 					stringstream strm;
-					strm << "Field with same global field id in " << field.GetSchema().GetURL(rootLevel);
+					strm << "Field with same global field id in " << fld.GetSchema().GetURL(rootLevel);
 
 					CTableRow row("cssStdRow");
 					row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FIELD));				
