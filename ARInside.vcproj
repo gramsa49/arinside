@@ -2177,6 +2177,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\lists\ARListHelpers.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\lists\ARListHelpers.h"
 				>
 			</File>
