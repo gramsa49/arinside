@@ -247,6 +247,9 @@ int CARRoleList::Find(int iRoleId, const string& appName)
 void CARRoleList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByNameDataObj<CARRoleList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 }
 

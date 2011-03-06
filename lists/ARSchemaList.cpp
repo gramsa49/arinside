@@ -412,7 +412,10 @@ int CARSchemaList::Find(const char* name)
 void CARSchemaList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARSchemaList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 
 	// setup lookup map
 	if (!searchList.empty()) searchList.clear();

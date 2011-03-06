@@ -322,7 +322,10 @@ int CARContainerList::Find(const char* name)
 void CARContainerList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARContainerList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 
 	// setup lookup map
 	if (!searchList.empty()) searchList.clear();

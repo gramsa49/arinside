@@ -51,8 +51,6 @@ public:
 	const ARAccessNameType& UserGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
 	ARTimestamp UserGetModifiedDate(unsigned int index) { assert(index < modifiedDate.size()); return modifiedDate[sortedList[index]]; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByNameDataObj<CARUserList>;
 private:
 	vector<string> requestId;
 	vector<string> names;

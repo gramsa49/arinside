@@ -53,8 +53,6 @@ public:
 	const string& EscalationGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void EscalationSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CAREscalationList>;
 private:
 	// allocation state of internal structures
 	enum EscalationListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };

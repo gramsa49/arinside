@@ -250,7 +250,10 @@ int CARImageList::FindImage(const char* name)
 void CARImageList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(), SortByName<CARImageList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 
 	// setup lookup map
 	if (!searchList.empty()) searchList.clear();

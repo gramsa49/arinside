@@ -15,28 +15,33 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
-template<class CARListObject>
+class GenerateSortableList
+{
+public:
+	GenerateSortableList(ARNameList &list);
+	GenerateSortableList(vector<string> &list);
+	GenerateSortableList(ARFieldInfoList &list);
+	GenerateSortableList(ARVuiInfoList &list);
+	~GenerateSortableList();
+
+	ARNameList* GetList();
+
+private:
+	void InitList(unsigned int size);
+	ARNameList* theList;
+};
+
 class SortByName
 {
 public:
-	SortByName(const CARListObject &p) { list = &p; }
-	bool operator()(int l, int r) { return (strcoll(list->names.nameList[l], list->names.nameList[r]) < 0); }
+	SortByName(GenerateSortableList &p) { list = p.GetList(); }
+	bool operator()(int l, int r) { return (strcoll(list->nameList[l], list->nameList[r]) < 0); }
 private:
-	const CARListObject* list;
+	ARNameList* list;
 };
 
 template<class C>
 struct DeletePointer : unary_function<C*, void>
 {
 	void operator()(C* p) { delete p; }
-};
-
-template<class CARListObject>
-class SortByNameDataObj
-{
-public:
-	SortByNameDataObj(const CARListObject &p) {list = &p; }
-	bool operator()(int l, int r) { return (strcoll(list->names[l].c_str(), list->names[r].c_str()) < 0); }
-private:
-	const CARListObject* list;
 };

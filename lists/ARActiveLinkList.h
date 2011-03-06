@@ -59,8 +59,6 @@ public:
 	const string& ActiveLinkGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void ActiveLinkSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARActiveLinkList>;
 private:
 	// allocation state of internal structures
 	enum ActiveLinkListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };

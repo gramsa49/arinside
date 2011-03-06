@@ -231,5 +231,8 @@ int CARGroupList::Find(int groupId)
 void CARGroupList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByNameDataObj<CARGroupList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 }

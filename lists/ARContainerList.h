@@ -53,8 +53,6 @@ public:
 	const string& ContainerGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void ContainerSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARContainerList>;
 private:
 	// allocation state of internal structures
 	enum ContainerListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };

@@ -306,7 +306,10 @@ int CARFilterList::Find(const char* name)
 void CARFilterList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARFilterList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 
 	// setup lookup map
 	if (!searchList.empty()) searchList.clear();

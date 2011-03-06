@@ -734,35 +734,6 @@ int CARInside::LoadActiveLinks(void)
 	return alList.GetCount();
 }
 
-void CARInside::Sort(list<CARContainer> &listResult)
-{
-	listResult.sort(SortByName);
-}
-
-void CARInside::Sort(list<CARCharMenu> &listResult)
-{
-	listResult.sort(SortByName);
-}
-
-bool CARInside::SortByName(const CARServerObject& t1, const CARServerObject& t2 )
-{
-	string tmpStr1 = CUtil::String2Comp(t1.GetName());
-	string tmpStr2 = CUtil::String2Comp(t2.GetName());
-	return ( tmpStr1.compare(tmpStr2) < 0 );
-}
-
-// TODO: this method becomes obsolete when IFileNaming is finished
-string CARInside::ObjListFilename(string firstChar)
-{
-	string fName = "index_";
-	if(firstChar != "#")
-		fName += firstChar;
-	else
-		fName += "other";
-
-	return fName;
-}
-
 void CARInside::Documentation(void)
 {	
 	CAppTimer mTimer;

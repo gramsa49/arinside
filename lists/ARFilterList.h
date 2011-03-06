@@ -66,8 +66,6 @@ public:
 	void FilterSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 	vector<unsigned int> &FilterErrorCallers(unsigned int index) { assert(index < errorCallers.size()); return errorCallers[sortedList[index]]; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARFilterList>;
 private:
 	// allocation state of internal structures
 	enum FilterListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };

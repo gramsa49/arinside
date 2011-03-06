@@ -34,7 +34,10 @@ void CARVUIListXML::FinishLoading()
 void CARVUIListXML::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByVUINameXML(*this));
+	{
+		GenerateSortableList sortableContent(vuiList);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 }
 
 int CARVUIListXML::Find(unsigned int vuiId)
@@ -140,5 +143,8 @@ int CARVUIListServer::Find(unsigned int vuiId)
 void CARVUIListServer::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARVUIListServer>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 }

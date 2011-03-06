@@ -50,9 +50,6 @@ public:
 	const ARAccessNameType& RoleGetCreatedBy(unsigned int index) { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
 	const ARAccessNameType& RoleGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
 
-
-	// the sort class needs access the the "names" member variable
-	friend class SortByNameDataObj<CARRoleList>;
 private:
 	vector<string> requestId;
 	vector<string> applicationName;

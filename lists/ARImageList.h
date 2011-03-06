@@ -56,8 +56,6 @@ public:
 	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[sortedList[index]]; }
 	string ImageGetURL(unsigned int index, int rootLevel);
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARImageList>;
 private:
 	// allocation state of internal structures
 	enum ImageListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };

@@ -19,8 +19,6 @@
 #include "ARListHelpers.h"
 #include <assert.h>
 
-class SortByVUINameXML; // forward declaration
-
 ///////////////////////////////////////////////////////////////////////////////
 // CARFieldList - interface definition
 class CARVUIList : Uncopyable
@@ -78,7 +76,6 @@ public:
 	virtual const char* VUIGetChangeDiary(unsigned int index) const { return vuiList.vuiList[sortedList[index]].changeDiary; }
 	//virtual string VUIGetURL(unsigned int index, int rootLevel);
 
-	friend class SortByVUINameXML;
 	friend class CARSchemaList;
 private:
 	ARVuiInfoList vuiList;
@@ -113,9 +110,6 @@ public:
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const { return changedUsers.nameList[sortedList[index]]; }
 	virtual const char* VUIGetChangeDiary(unsigned int index) const { return changeDiary.stringList[sortedList[index]]; }
 
-	// the sort class needs access to the "names" member variable
-	friend class SortByName<CARVUIListServer>;
-
 private:
 	unsigned int schemaId;
 	
@@ -131,13 +125,4 @@ private:
 	ARTextStringList changeDiary;
 
 	vector<unsigned int> sortedList;
-};
-
-class SortByVUINameXML
-{
-public:
-	SortByVUINameXML(const CARVUIListXML &p) { list = &p; }
-	bool operator()(int l, int r) { return (strcmp(list->vuiList.vuiList[l].vuiName, list->vuiList.vuiList[r].vuiName) < 0); }
-private:
-	const CARVUIListXML* list;
 };

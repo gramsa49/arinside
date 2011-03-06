@@ -92,8 +92,6 @@ public:
 	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[sortedList[index]]; }
 	CARVUIList* SchemaGetVUIs(unsigned int index) { assert(index < vuiLists.size()); return vuiLists[sortedList[index]]; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARSchemaList>;
 private:
 	// allocation state of internal structures
 	enum SchemaListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };

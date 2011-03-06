@@ -74,7 +74,10 @@ void CARFieldListXML::FinishLoading()
 void CARFieldListXML::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByFieldNameXML(*this));
+	{
+		GenerateSortableList sortableContent(this->fieldInfo);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 }
 
 
@@ -240,5 +243,8 @@ int CARFieldListServer::Find(unsigned int fieldId)
 void CARFieldListServer::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARFieldListServer>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 }

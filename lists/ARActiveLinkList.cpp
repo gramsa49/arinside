@@ -319,7 +319,10 @@ int CARActiveLinkList::Find(const char* name)
 void CARActiveLinkList::Sort()
 {
 	if (GetCount() > 0)
-		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARActiveLinkList>(*this));
+	{
+		GenerateSortableList sortableContent(names);
+		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
 
 	// setup lookup map
 	if (!searchList.empty()) searchList.clear();

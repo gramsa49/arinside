@@ -167,11 +167,6 @@ private:
 	static CARInside*	pInsideInstance;
 private:	
 	string GetARStatusError();	
-	static bool SortByName(const CARServerObject& t1, const CARServerObject& t2 );	
-	string ObjListFilename(string firstChar);
-
-	void Sort(list<CARContainer> &listResult);
-	void Sort(list<CARCharMenu> &listResult);
 
 	int LoadActiveLinks(void);
 	int LoadFilters(void);

@@ -21,7 +21,6 @@
 #include <assert.h>
 
 // forward declarations
-class SortByFieldNameXML;
 class CARSchemaList;
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -106,7 +105,6 @@ public:
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const { return fieldInfo.fieldList[sortedList[index]].lastChanged; }
 	virtual const char* FieldGetChangeDiary(unsigned int index) const { return fieldInfo.fieldList[sortedList[index]].changeDiary; }
 
-	friend class SortByFieldNameXML;
 	friend class CARSchemaList;
 private:
 	ARFieldInfoList fieldInfo;
@@ -148,8 +146,6 @@ public:
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const { return changedUsers.nameList[sortedList[index]]; }
 	virtual const char* FieldGetChangeDiary(unsigned int index) const { return changeDiary.stringList[sortedList[index]]; }
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARFieldListServer>;
 private:
 	unsigned int schemaId;
 
@@ -171,13 +167,4 @@ private:
 	ARTextStringList changeDiary;
 
 	vector<unsigned int> sortedList;  // sorted by field name
-};
-
-class SortByFieldNameXML
-{
-public:
-	SortByFieldNameXML(const CARFieldListXML &p) { list = &p; }
-	bool operator()(int l, int r) { return (strcoll(list->fieldInfo.fieldList[l].fieldName, list->fieldInfo.fieldList[r].fieldName) < 0); }
-private:
-	const CARFieldListXML* list;
 };

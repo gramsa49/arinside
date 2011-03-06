@@ -55,8 +55,6 @@ public:
 	bool ReferenceExists(unsigned int index, const CRefItem& refItem);
 	const ReferenceList& GetReferences(unsigned int index);
 
-	// the sort class needs access the the "names" member variable
-	friend class SortByName<CARMenuList>;
 private:
 	// allocation state of internal structures
 	enum MenuListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
