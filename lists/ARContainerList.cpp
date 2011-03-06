@@ -314,26 +314,9 @@ int CARContainerList::AddContainerFromXML(ARXMLParsedStream &stream, const char*
 
 int CARContainerList::Find(const char* name)
 {
-#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	CMapType::const_iterator it = searchList.find(string(name));
 	if (it == searchList.end()) return -1;
 	return it->second;
-#else
-	unsigned int count = GetCount();
-	for (unsigned int i = 0; i < count; ++i)
-	{
-		int result = strcoll(names.nameList[sortedList[i]], name);
-		if (result == 0)
-		{
-			return i;
-		}
-		else if (result > 0)	
-			// the current string in the sorted list is greater as the string we are looking for.
-			// stop searching here.
-			break;
-	}
-	return -1;
-#endif
 }
 
 void CARContainerList::Sort()
@@ -341,12 +324,11 @@ void CARContainerList::Sort()
 	if (GetCount() > 0)
 		std::sort(sortedList.begin(),sortedList.end(),SortByName<CARContainerList>(*this));
 
-#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	// setup lookup map
 	if (!searchList.empty()) searchList.clear();
 	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
 		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
-#endif
 }
 

@@ -77,10 +77,8 @@ private:
 	ImageListState internalListState;
 	vector<int> sortedList;
 	vector<ReferenceItem> referenceList;
-#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;
-#endif
 };
 
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

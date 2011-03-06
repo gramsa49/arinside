@@ -247,26 +247,9 @@ void CARUserList::Reserve(unsigned int count)
 
 int CARUserList::Find(const string& name)
 {
-#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	CMapType::const_iterator it = searchList.find(name);
 	if (it == searchList.end()) return -1;
 	return it->second;
-#else
-	unsigned int count = GetCount();
-	for (unsigned int i = 0; i < count; ++i)
-	{
-		int result = strcoll(names[sortedList[i]].c_str(), name.c_str());
-		if (result == 0)
-		{
-			return i;
-		}
-		else if (result > 0)	
-			// the current string in the sorted list is greater as the string we are looking for.
-			// stop searching here.
-			break;
-	}
-	return -1;
-#endif
 }
 
 void CARUserList::Sort()
@@ -274,12 +257,11 @@ void CARUserList::Sort()
 	if (GetCount() > 0)
 		std::sort(sortedList.begin(),sortedList.end(),SortByNameDataObj<CARUserList>(*this));
 
-#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
+	// setup lookup map
 	if (!searchList.empty()) searchList.clear();
 	for (unsigned int i = 0; i < sortedList.size(); ++i)
 	{
 		searchList[names[sortedList[i]]] = i;
 	}
-#endif
 }
 

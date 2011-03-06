@@ -95,8 +95,6 @@ private:
 
 	FilterListState internalListState;
 	vector<int> sortedList;	// a index, sorted by filter names
-#ifdef ARINSIDE_USE_MAPS_FOR_LIST_ACCESS
 	typedef map<string,int> CMapType;
 	CMapType searchList;
-#endif
 };
