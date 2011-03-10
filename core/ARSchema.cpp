@@ -159,7 +159,7 @@ string CARSchema::GetName() const
 
 string CARSchema::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId()));
 }
 
 bool CARSchema::NameStandardFirstChar()

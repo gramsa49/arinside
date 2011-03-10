@@ -45,7 +45,28 @@ string CARObject::FileID(int insideId)
 string CARObject::GetNameFirstChar(const std::string &str)
 {
 	if (str.empty()) return str;
-	return CUtil::String2Comp(std::string(1, str.at(0)));
+	return GetNameFirstChar(str.c_str());
+}
+
+// this function returns the first none-space charater of the string in lower-case
+string CARObject::GetNameFirstChar(const char* str)
+{
+	if (str == NULL) return "";
+
+	unsigned int pos = 0;
+	char c;
+	while ((c = str[pos]) != 0)
+	{
+		if (c != ' ')
+		{
+			char result[4];
+			memset(&result, '\0', 4);
+			result[0] = tolower(c);
+			return result;
+		}
+		pos++;
+	}
+	return "";
 }
 
 bool CARObject::NameStandardFirstChar(char ch)

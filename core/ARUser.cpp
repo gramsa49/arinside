@@ -66,7 +66,7 @@ string CARUser::GetName() const
 
 string CARUser::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->userList.UserGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->userList.UserGetName(GetInsideId()));
 }
 
 bool CARUser::NameStandardFirstChar()

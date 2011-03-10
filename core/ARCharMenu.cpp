@@ -66,7 +66,7 @@ string CARCharMenu::GetName() const
 
 string CARCharMenu::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->menuList.MenuGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->menuList.MenuGetName(GetInsideId()));
 }
 
 bool CARCharMenu::NameStandardFirstChar()

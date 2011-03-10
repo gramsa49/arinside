@@ -69,7 +69,7 @@ string CARGroup::GetName() const
 
 string CARGroup::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->groupList.GroupGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->groupList.GroupGetName(GetInsideId()));
 }
 
 bool CARGroup::NameStandardFirstChar()

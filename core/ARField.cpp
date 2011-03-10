@@ -116,7 +116,7 @@ string CARField::GetName() const
 
 string CARField::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, fieldList->FieldGetName(fieldIndex)[0]));
+	return CARObject::GetNameFirstChar(fieldList->FieldGetName(fieldIndex));
 }
 
 bool CARField::NameStandardFirstChar()

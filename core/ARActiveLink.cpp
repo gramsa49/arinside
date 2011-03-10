@@ -160,7 +160,7 @@ string CARActiveLink::GetName() const
 
 string CARActiveLink::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->alList.ActiveLinkGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->alList.ActiveLinkGetName(GetInsideId()));
 }
 
 bool CARActiveLink::NameStandardFirstChar()

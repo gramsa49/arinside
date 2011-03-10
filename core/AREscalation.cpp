@@ -104,7 +104,7 @@ string CAREscalation::GetName() const
 
 string CAREscalation::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->escalationList.EscalationGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->escalationList.EscalationGetName(GetInsideId()));
 }
 
 bool CAREscalation::NameStandardFirstChar()

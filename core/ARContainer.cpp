@@ -72,7 +72,7 @@ string CARContainer::GetName() const
 
 string CARContainer::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->containerList.ContainerGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->containerList.ContainerGetName(GetInsideId()));
 }
 
 bool CARContainer::NameStandardFirstChar()

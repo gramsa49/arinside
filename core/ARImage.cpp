@@ -53,7 +53,7 @@ string CARImage::GetName() const
 
 string CARImage::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->imageList.ImageGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->imageList.ImageGetName(GetInsideId()));
 }
 
 bool CARImage::NameStandardFirstChar()

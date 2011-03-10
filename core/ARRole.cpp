@@ -68,7 +68,7 @@ string CARRole::GetName() const
 
 string CARRole::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->roleList.RoleGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->roleList.RoleGetName(GetInsideId()));
 }
 
 bool CARRole::NameStandardFirstChar()

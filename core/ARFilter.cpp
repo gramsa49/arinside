@@ -118,7 +118,7 @@ string CARFilter::GetName() const
 
 string CARFilter::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, CARInside::GetInstance()->filterList.FilterGetName(GetInsideId())[0]));
+	return CARObject::GetNameFirstChar(CARInside::GetInstance()->filterList.FilterGetName(GetInsideId()));
 }
 
 bool CARFilter::NameStandardFirstChar()

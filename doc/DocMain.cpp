@@ -87,7 +87,7 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std:
 	{
 		strm << "<table><tr>" << endl;
 
-		string strValue = "abcdefghijklmnopqrstuvwxyz0123456789#";
+		string strValue = objectNameFirstCharLetters; // "abcdefghijklmnopqrstuvwxyz0123456789#"
 		for (unsigned int i = 0; i < strValue.size(); ++i) 
 		{
 			if(std::string(1, strValue.at(i)) != curCharacter)

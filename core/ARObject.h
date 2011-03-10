@@ -17,6 +17,8 @@
 #pragma once
 #include "../ARApi.h"
 
+extern const char* objectNameFirstCharLetters;
+
 class CARObject
 {
 public:
@@ -38,6 +40,7 @@ public:
 
 	static string FileID(int insideId);
 	static string GetNameFirstChar(const string& str);
+	static string GetNameFirstChar(const char* str);
 	static bool NameStandardFirstChar(char ch);
 	static bool NameStandardFirstChar(const string &str);
 	static int GetFirstCharIndex(char ch);

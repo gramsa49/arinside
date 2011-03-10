@@ -163,7 +163,7 @@ string CARVui::GetName() const
 
 string CARVui::GetNameFirstChar()
 {
-	return CUtil::String2Comp(std::string(1, vuiList->VUIGetName(vuiIndex)[0]));
+	return CARObject::GetNameFirstChar(vuiList->VUIGetName(vuiIndex));
 }
 
 bool CARVui::NameStandardFirstChar()

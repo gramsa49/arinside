@@ -739,7 +739,7 @@ void CARInside::Documentation(void)
 	CAppTimer mTimer;
 	mTimer.StartTimer();
 
-	string strValue = "abcdefghijklmnopqrstuvwxyz0123456789#";
+	string strValue = objectNameFirstCharLetters; // "abcdefghijklmnopqrstuvwxyz0123456789#";
 	CDocMain *docMain = new CDocMain();
 
 	//Server information
