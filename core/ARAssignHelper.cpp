@@ -239,34 +239,52 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 			break;
 		case AR_ASSIGN_TYPE_FIELD:
 			{	
-				if(assignment.u.field->u.statHistory.userOrTime == 0)
+				switch (assignment.u.field->tag)
 				{
+				case AR_FIELD:
 					AssignField(ifElse, nAction, *assignment.u.field, assignText, refItem);
-				}
-				else
-				{
-					assignText << "$Status History.";
-
-					string tmp = arIn->GetFieldEnumValue(schemaInsideId2, 7, assignment.u.field->u.statHistory.enumVal);								
-					if(strcmp(tmp.c_str(), EmptyValue)!=0)
-						assignText << tmp;
-					else
-						assignText << assignment.u.field->u.statHistory.enumVal;
-
-					switch(assignment.u.field->u.statHistory.userOrTime)
-					{						
-					case AR_STAT_HISTORY_USER:
+					break;
+				case AR_STAT_HISTORY:
+					{
+						assignText << "$";
+						
+						int iFieldId = 15;
+						CARField statHistField(schemaInsideId2, iFieldId);
+						if (statHistField.Exists())
 						{
-							assignText << ".USER$";
+							assignText << statHistField.GetURL(rootLevel);
+							arIn->AddFieldReference(schemaInsideId2, iFieldId, refItem);
 						}
-						break;
-					case AR_STAT_HISTORY_TIME:
-						{
-							assignText << ".TIME$";
+						else
+							assignText << iFieldId;
+
+						assignText << ".";
+
+						string enumValue = arIn->GetFieldEnumValue(schemaInsideId2, 7, assignment.u.field->u.statHistory.enumVal);
+						if (enumValue.empty())
+							assignText << assignment.u.field->u.statHistory.enumVal;
+						else
+							assignText << enumValue;
+
+						assignText << ".";
+
+						switch(assignment.u.field->u.statHistory.userOrTime)
+						{						
+						case AR_STAT_HISTORY_USER:
+							{
+								assignText << "USER";
+							}
+							break;
+						case AR_STAT_HISTORY_TIME:
+							{
+								assignText << "TIME";
+							}
+							break;
 						}
-						break;
+						assignText << "$";
 					}
-				}				
+					break;
+				}
 			}
 			break;
 		case AR_ASSIGN_TYPE_PROCESS:
@@ -416,7 +434,7 @@ void CARAssignHelper::AssignValue(int targetFieldId, IfElseState ifElse, ARValue
 
 				string tmp = arIn->GetFieldEnumValue(nTmpActionSchemaId, targetFieldId, v.u.enumVal);
 
-				if(tmp != EmptyValue)
+				if(!tmp.empty())
 					strmValue << "\"" << tmp << "\"";
 				else
 					strmValue << v.u.enumVal;

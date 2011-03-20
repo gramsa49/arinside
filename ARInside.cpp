@@ -1119,20 +1119,21 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 			switch(limits.u.enumLimits.listStyle)
 			{
 			case AR_ENUM_STYLE_REGULAR:
-				return limits.u.enumLimits.u.regularList.nameList[enumPosition];
+				if (static_cast<unsigned int>(enumPosition) < limits.u.enumLimits.u.regularList.numItems)
+					return limits.u.enumLimits.u.regularList.nameList[enumPosition];
 				break;
 			case AR_ENUM_STYLE_CUSTOM:
 				for (unsigned int i=0; i < limits.u.enumLimits.u.customList.numItems; i++) { 
 					if (limits.u.enumLimits.u.customList.enumItemList[i].itemNumber == enumPosition) 
 						return limits.u.enumLimits.u.customList.enumItemList[i].itemName; 
 				} 
-				return "";
+				break;
 			case AR_ENUM_STYLE_QUERY:
 				return "QUERY";
 			}						
 		}
 	}
-	return EmptyValue;
+	return "";
 }
 
 string CARInside::LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel)
@@ -1710,13 +1711,19 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 
 							// handle status history
 							CARField fieldStatus(schemaInsideId,7);	// get status field
+							string enumValue;
 							if (fieldStatus.Exists())
 							{
 								int iEnumId = atoi(enumId);
-								strmTmp << "." << GetFieldEnumValue(schemaInsideId, fieldStatus.GetInsideId(), iEnumId) << "." << usrOrTimeStr;
+								enumValue = GetFieldEnumValue(schemaInsideId, fieldStatus.GetInsideId(), iEnumId);
 							}
+
+							strmTmp << ".";
+							if (enumValue.empty())
+								strmTmp << enumId;
 							else
-								strmTmp << "." << enumId << "." << usrOrTimeStr;
+								strmTmp << enumValue;
+							strmTmp << "." << usrOrTimeStr;
 						}
 						strmTmp << "$";
 						++curPos; // skip the $ so it isnt found again

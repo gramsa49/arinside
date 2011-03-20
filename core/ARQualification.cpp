@@ -182,7 +182,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 				int tmpFieldId = FindCurrentEnumFieldId(pFormId, sFormId);
 				string tmp = arIn->GetFieldEnumValue(tmpFormId, tmpFieldId, data->u.intVal);
 
-				if(tmp != EmptyValue)
+				if(!tmp.empty())
 					qText << "\"" << tmp << "\"";
 				else
 					qText << data->u.intVal;
@@ -306,7 +306,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 		}
 
 		string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
-		if(strcmp(tmp.c_str(), EmptyValue)!=0)
+		if(!tmp.empty())
 			qText << tmp;
 		else
 			qText << operand->u.statHistory.enumVal;
