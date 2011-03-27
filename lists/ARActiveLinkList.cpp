@@ -115,6 +115,7 @@ bool CARActiveLinkList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
+#ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the active links we need
 	if (ARGetMultipleActiveLinks(&arIn->arControl,
 		0,
@@ -144,21 +145,110 @@ bool CARActiveLinkList::LoadFromServer()
 		NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
 #endif
 		&status) == AR_RETURN_OK)
+#else // ARINSIDE_DISABLE_FAST_LOADING
+	if (false)
+#endif // ARINSIDE_DISABLE_FAST_LOADING
 	{
 		FreeARBooleanList(&alExists, false);
 		internalListState = CARActiveLinkList::ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			appRefNames.push_back("");
-			sortedList.push_back(i);
-		}
 		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt actlink that keeps us from getting all activelinks at once
+		cout << "WARN: switching to slow activelink loading!" << endl;
+
+		// first check if active link names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no activelink names loaded ... now get all names from server
+			memset(&objectNames, 0, sizeof(objectNames));
+
+			if (ARGetListActiveLink(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+			{
+				originalObjectNameCount = objectNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if an activelink can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each actlink
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading ActiveLink: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+				
+				if( ARGetActiveLink(&arIn->arControl, 
+					names.nameList[curListPos], 
+					&orders.intList[curListPos],
+					&schemas.workflowConnectList[curListPos],
+	#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+			NULL, // groupListList // TODO: support static inherited permissions
+	#endif
+					&groups.internalIdListList[curListPos],
+					&execMasks.intList[curListPos],
+					&controlFields.internalIdList[curListPos],
+					&focusFields.internalIdList[curListPos],
+					&enabledObjects.intList[curListPos],
+					&queries.qualifierList[curListPos],
+					&ifActions.actionListList[curListPos],
+					&elseActions.actionListList[curListPos],
+					&helpTexts.stringList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					owners.nameList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+	#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+					NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
+	#endif
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}		
+				else
+					cerr << arIn->GetARStatusError(&status);
+			}
+
+			// now update list counts
+			names.numItems = curListPos;
+			orders.numItems = curListPos;
+			schemas.numItems = curListPos;
+			groups.numItems = curListPos;
+			execMasks.numItems = curListPos;
+			controlFields.numItems = curListPos;
+			focusFields.numItems = curListPos;
+			enabledObjects.numItems = curListPos;
+			queries.numItems = curListPos;
+			ifActions.numItems = curListPos;
+			elseActions.numItems = curListPos;
+			helpTexts.numItems = curListPos;
+			changedTimes.numItems = curListPos;
+			owners.numItems = curListPos;
+			changedUsers.numItems = curListPos;
+			changeDiary.numItems = curListPos;
+			objProps.numItems = curListPos;
+
+			if (curListPos > 0 || objectsToLoad->numItems == 0)
+				funcResult = true;
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -168,6 +258,16 @@ bool CARActiveLinkList::LoadFromServer()
 		FreeARNameList(&objectNames, false);
 	}
 
+	if (funcResult)
+	{
+		// now allocate/initialize helper data and additional lists
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			appRefNames.push_back("");
+			sortedList.push_back(i);
+		}
+	}
 	return funcResult;
 }
 

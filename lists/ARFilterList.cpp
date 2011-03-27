@@ -112,6 +112,7 @@ bool CARFilterList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
+#ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the filters we need
 	if (ARGetMultipleFilters(&arIn->arControl,
 		0,
@@ -136,22 +137,103 @@ bool CARFilterList::LoadFromServer()
 		&errorHandlers,
 #endif
 		&status) == AR_RETURN_OK)
+#else // ARINSIDE_DISABLE_FAST_LOADING
+	if (false)
+#endif // ARINSIDE_DISABLE_FAST_LOADING
 	{
 		FreeARBooleanList(&fltExists, false);
 		internalListState = CARFilterList::ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			appRefNames.push_back("");
-			errorCallers.push_back(vector<unsigned int>());
-			sortedList.push_back(i);
-		}
 		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+		cout << "WARN: switching to slow filter loading!" << endl;
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt filter that keeps us from getting all filters at once
+
+		// first check if filter names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no filter names loaded ... now get all names from server
+			memset(&objectNames, 0, sizeof(objectNames));
+
+			if (ARGetListFilter(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+			{
+				originalObjectNameCount = objectNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if a filter can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each filter
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading Filter: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+				
+				if (ARGetFilter(&arIn->arControl,
+					names.nameList[curListPos],
+					&orders.intList[curListPos],
+					&schemas.workflowConnectList[curListPos],
+					&operationSets.intList[curListPos],
+					&enabledObjects.intList[curListPos],
+					&queries.qualifierList[curListPos],
+					&ifActions.actionListList[curListPos],
+					&elseActions.actionListList[curListPos],
+					&helpTexts.stringList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					owners.nameList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+					&errorOptions.intList[curListPos],
+					errorHandlers.nameList[curListPos],
+#endif
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}	
+				else
+					cerr << arIn->GetARStatusError(&status);
+			}
+
+			// now update list counts
+			names.numItems = curListPos;
+			orders.numItems = curListPos;
+			schemas.numItems = curListPos;
+			operationSets.numItems = curListPos;
+			enabledObjects.numItems = curListPos;
+			queries.numItems = curListPos;
+			ifActions.numItems = curListPos;
+			elseActions.numItems = curListPos;
+			helpTexts.numItems = curListPos;
+			changedTimes.numItems = curListPos;
+			owners.numItems = curListPos;
+			changedUsers.numItems = curListPos;
+			changeDiary.numItems = curListPos;
+			objProps.numItems = curListPos;
+			errorOptions.numItems = curListPos;
+			errorHandlers.numItems = curListPos;
+
+			if (curListPos > 0 || objectsToLoad->numItems == 0)
+				funcResult = true;
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -159,6 +241,17 @@ bool CARFilterList::LoadFromServer()
 	{
 		objectNames.numItems = originalObjectNameCount;
 		FreeARNameList(&objectNames, false);
+	}
+
+	if (funcResult)
+	{
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			appRefNames.push_back("");
+			errorCallers.push_back(vector<unsigned int>());
+			sortedList.push_back(i);
+		}
 	}
 
 	return funcResult;

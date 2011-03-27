@@ -133,6 +133,7 @@ bool CARSchemaList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
+#ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the schemas we need
 	if (ARGetMultipleSchemas(&arIn->arControl,
 		0, // changed since
@@ -161,16 +162,12 @@ bool CARSchemaList::LoadFromServer()
 		&changeDiary,
 		&objProps,
 		&status) == AR_RETURN_OK)
+#else // ARINSIDE_DISABLE_FAST_LOADING 
+	if (false)
+#endif // ARINSIDE_DISABLE_FAST_LOADING 
 	{
 		FreeARBooleanList(&schemaExists, false);
 		internalListState = CARSchemaList::ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			appRefNames.push_back("");
-			sortedList.push_back(i);
-		}
 		funcResult = true;
 
 		// <APIBUG>
@@ -196,6 +193,95 @@ bool CARSchemaList::LoadFromServer()
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+		cout << "WARN: switching to slow schema loading!" << endl;
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt schema that keeps us from getting all schemas at once
+
+		// first check if schema names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no filter names loaded ... now get all names from server
+			memset(&objectNames, 0, sizeof(objectNames));
+
+			if (ARGetListSchema(&arIn->arControl, NULL, AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+			{
+				originalObjectNameCount = objectNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if a schema can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each schema
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading Schema: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+
+				if(ARGetSchema(&arIn->arControl,
+					names.nameList[curListPos],
+					&compounds.compoundSchema[curListPos],
+					NULL,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+					NULL, // groupList // TODO: support static inherited permissions
+#endif
+					&permissions.permissionList[curListPos],
+					&subAdmins.internalIdListList[curListPos],
+					&resultFields.listFieldList[curListPos],
+					&sortings.sortListList[curListPos],
+					&indexes.indexListList[curListPos],
+					&archives.archiveInfoList[curListPos],
+					&audits.auditInfoList[curListPos],
+					defaultVUIs.nameList[curListPos],
+					&helpTexts.stringList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					owners.nameList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}
+				else
+					cerr << arIn->GetARStatusError(&status);
+			}
+
+			// now update list counts
+			names.numItems = curListPos;
+			compounds.numItems = curListPos;
+			permissions.numItems = curListPos;
+			subAdmins.numItems = curListPos;
+			resultFields.numItems = curListPos;
+			sortings.numItems = curListPos;
+			indexes.numItems = curListPos;
+			archives.numItems = curListPos;
+			audits.numItems = curListPos;
+			defaultVUIs.numItems = curListPos;
+			helpTexts.numItems = curListPos;
+			changedTimes.numItems = curListPos;
+			owners.numItems = curListPos;
+			changedUsers.numItems = curListPos;
+			changeDiary.numItems = curListPos;
+			objProps.numItems = curListPos;
+
+			// zero schemas to load? This shouldn't happen, but if it happens, then it might be correct
+			if (curListPos > 0 || objectsToLoad->numItems == 0)
+				funcResult = true;
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -203,6 +289,16 @@ bool CARSchemaList::LoadFromServer()
 	{
 		objectNames.numItems = originalObjectNameCount;
 		FreeARNameList(&objectNames, false);
+	}
+
+	if (funcResult)
+	{
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			appRefNames.push_back("");
+			sortedList.push_back(i);
+		}
 	}
 
 	// next, loading fields...	
