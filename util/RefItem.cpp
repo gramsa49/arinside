@@ -102,7 +102,7 @@ void CRefItem::Init(const CARServerObject &obj, int IfOrElse, int nAction, int d
 const char* CRefItem::IfElse() const
 {
 	int action = actionIndex & ACTIONMASK_INDEX;
-	if (actionIndex < 1000) 
+	if (action < 1000) 
 		return ::IfElse(IES_IF);
 	else
 		return ::IfElse(IES_ELSE);
@@ -127,10 +127,10 @@ const char* CRefItem::ServiceInfo() const
 int CRefItem::ActionIndex() const
 {
 	int action = actionIndex & ACTIONMASK_INDEX;
-	if (actionIndex < 1000)
-		return actionIndex;
+	if (action < 1000)
+		return action;
 	else
-		return actionIndex - 1000;
+		return action - 1000;
 }
 
 string CRefItem::LinkToSchemaIndex(int rootLevel) const

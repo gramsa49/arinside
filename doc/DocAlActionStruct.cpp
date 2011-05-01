@@ -773,6 +773,111 @@ bool CDocAlActionStruct::ActionOpenDlgQualifier(int nWindowType)
 	}
 }
 
+bool CDocAlActionStruct::ActionOpenDlgTargetLocation(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_SEARCH:
+	case AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT: 
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+#endif
+		return true;
+	default: return false;
+	}
+}
+
+bool CDocAlActionStruct::ActionOpenDlgCloseButton(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_DLG:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	case AR_ACTIVE_LINK_ACTION_OPEN_POPUP:
+#endif
+		return true;
+	default: return false;
+	}
+}
+
+bool CDocAlActionStruct::ActionOpenDlgSuppressEmptyList(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+#endif
+		return true;
+	default: return false;
+			
+	}
+}
+
+bool CDocAlActionStruct::ActionOpenDlgInputMapping(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_DLG:
+	case AR_ACTIVE_LINK_ACTION_OPEN_SEARCH:
+	case AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	case AR_ACTIVE_LINK_ACTION_OPEN_POPUP:
+#endif
+		return true;
+	default: return false;
+	}
+}
+
+bool CDocAlActionStruct::ActionOpenDlgOutputMapping(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_DLG:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	case AR_ACTIVE_LINK_ACTION_OPEN_POPUP:
+#endif
+		return true;
+	default: return false;
+	}
+}
+
+bool CDocAlActionStruct::ActionOpenDlgPoolingInterval(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
+#endif
+		return true;
+	default: return false;
+	}
+}
+
+bool CDocAlActionStruct::ActionOpenDlgMessage(int nWindowType)
+{
+	switch (nWindowType)
+	{
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
+#endif
+	case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
+		return true;
+	default: return false;
+	}
+}
+
 // AR_ACTIVE_LINK_ACTION_OPENDLG
 void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct &action, int nAction)
 {
@@ -833,12 +938,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 
 		// target location
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT ||
-		    windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-				|| windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT
-#endif
-				)
+		if (ActionOpenDlgTargetLocation(windowMode))
 		{
 			strm << "<br/>Target Location: ";
 
@@ -1041,17 +1141,13 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 
 		strm << "<p>";
 		// show close button
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DLG)
+		if (ActionOpenDlgCloseButton(windowMode))
 		{
 			strm << "<input type=\"checkbox\" name=\"closeWnd\" value=\"closeWndAll\" " << (action.closeBox ? "checked" : "") << ">Show Close Button in Dialog<br/>" << endl;
 		}
 
 		// suppres empty list
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			|| windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT
-#endif
-			)
+		if (ActionOpenDlgSuppressEmptyList(windowMode))
 		{
 			strm << "<input type=\"checkbox\" name=\"suprEmptyLst\" value=\"suprEmptyLstVal\" " << (action.suppressEmptyLst ? "checked" : "") << ">Suppress Empty List<br/>" << endl;		
 		}
@@ -1074,7 +1170,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 
 		// input mapping
-		if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DLG || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SEARCH || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT) && !setToDefault)
+		if (ActionOpenDlgInputMapping(windowMode) && !setToDefault)
 		{
 			CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, openWindowSchema, schemaName);
 			//assignHelper.pushFieldFlag = true;
@@ -1082,7 +1178,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 
 		// output mapping (dialog on close)
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DLG)
+		if (ActionOpenDlgOutputMapping(windowMode))
 		{
 			strm << "On Dialog Close Action:<br/>";
 
@@ -1091,11 +1187,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		}
 		strm << "</p>";
 
-		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY ||
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT ||
-#endif
-			windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
+		if (ActionOpenDlgMessage(windowMode))
 		{
 			// message
 			strm << "<p>If No Request Match: ";
@@ -1218,11 +1310,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			}
 
 			// polling interval
-			if ((windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-				|| windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT
-#endif
-				) && action.pollinginterval > 0)
+			if (ActionOpenDlgPoolingInterval(windowMode) && action.pollinginterval > 0)
 			{
 				strm << "<p>Polling interval: " << action.pollinginterval << "</p>" << endl;
 			}

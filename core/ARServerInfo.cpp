@@ -37,7 +37,12 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 		ARServerInfoRequestList requestList;
 		ARServerInfoList serverInfo;
 		CARInside* pInside = CARInside::GetInstance();
-
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if      (pInside->CompareServerVersion(7,6,4) >= 0) { requestList.numItems = 351; } else
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		if      (pInside->CompareServerVersion(7,6,3) >= 0) { requestList.numItems = 341; } else
+#endif
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		if      (pInside->CompareServerVersion(7,5,0) >= 0) { requestList.numItems = 324; } else
 #endif
@@ -66,6 +71,7 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 			switch (infoProp)
 			{
 			case AR_SERVER_INFO_DB_PASSWORD:
+			case AR_SERVER_INFO_RESTART_PLUGIN:
 				--requestList.numItems;
 				--i;
 				break;
