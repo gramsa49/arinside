@@ -71,7 +71,9 @@ void CARServerInfo::GetList(list<CARServerInfoItem> &listResult)
 			switch (infoProp)
 			{
 			case AR_SERVER_INFO_DB_PASSWORD:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			case AR_SERVER_INFO_RESTART_PLUGIN:
+#endif
 				--requestList.numItems;
 				--i;
 				break;
