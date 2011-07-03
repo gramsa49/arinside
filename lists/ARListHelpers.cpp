@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARListHelpers.h"
+#include "../ARInside.h"
 
 GenerateSortableList::GenerateSortableList(ARNameList &list)
 {
@@ -99,4 +100,100 @@ void GenerateSortableList::InitList(unsigned int size)
 ARNameList* GenerateSortableList::GetList()
 {
 	return theList;
+}
+
+/////// additional functions ///////
+void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps)
+{
+	// Since ARS 7.6.4 we have two workflow layers, like an object inherited from another. It
+	// uses layer-numbering, where 0 is the base layer mostly used for out-of-the-box stuff and
+	// 1 is the custom layer. You can switch the active layer on the server. If layer 0 is
+	// active only out of the box workflow is executed and visible to clients (WUT/midtier).
+	// If layer 1 is active (this is the default) all workflow is inherited from layer 0 and
+	// extended by custom workflow or overlaid ones contained in layer 1. ARInside should
+	// always document the current workflow execution model, so we have to take the Overlay-
+	// Mode into account.
+	// overlayMode 0 = only origin workflow should be visible (no custom, no overlay)
+	// overlayMode 1 = origin, custom and overlaid workflow should be visible
+	// In later version of ARSystem there might be more layers available.
+
+	// for overlays we need to rename the object names accordingly
+	unsigned int count = min(names.numItems, objProps.numItems);
+	for (unsigned int idx = 0; idx < count; ++idx)
+	{
+		ARValueStruct* val = CARProplistHelper::Find(objProps.propsList[idx], AR_SMOPROP_OVERLAY_PROPERTY);
+
+		if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			switch (val->u.intVal)
+			{
+			case AR_OVERLAID_OBJECT:
+				{
+					if (CARInside::GetInstance()->overlayMode == 1)
+					{
+						// add the AR_RESERVED_OVERLAY_STRING to the end of the name .. this becomes the original object: "__o" ;-)
+						strncat(names.nameList[idx], AR_RESERV_OVERLAY_STRING, AR_MAX_NAME_SIZE);
+						names.nameList[idx][AR_MAX_NAME_SIZE] = 0;
+					}
+				}
+				break;
+			case AR_OVERLAY_OBJECT:
+				{
+					if (CARInside::GetInstance()->overlayMode == 1)
+					{
+						// strip the AR_RESERVED_OVERLAY_STRING from end of the name, so it gets the real object name
+						size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
+						if (nameLen > 3)
+						{
+							nameLen -= 3;
+							if (strcmp(&names.nameList[idx][nameLen], AR_RESERV_OVERLAY_STRING) == 0)
+								names.nameList[idx][nameLen] = 0;
+						}
+					}
+				}
+			case AR_CUSTOM_OBJECT:
+				{
+					// strip the AR_RESERV_OVERLAY_CUSTOM_STRING from end of the name, so it gets the real object name
+					size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
+					if (nameLen > 3)
+					{
+						nameLen -= 3;
+						if (strcmp(&names.nameList[idx][nameLen], AR_RESERV_OVERLAY_CUSTOM_STRING) == 0)
+							names.nameList[idx][nameLen] = 0;
+					}
+				}
+				break;
+			}
+		}
+	}
+}
+
+void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps)
+{
+	// now make sure the real object names are used
+	unsigned int count = min(names.numItems, objProps.numItems);
+	for (unsigned int idx = 0; idx < count; ++idx)
+	{
+		ARValueStruct* val = CARProplistHelper::Find(objProps.propsList[idx], AR_SMOPROP_OVERLAY_PROPERTY);
+
+		if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			switch (val->u.intVal)
+			{
+			case AR_OVERLAID_OBJECT:  // this occurs if overlayMode = 1
+			case AR_OVERLAY_OBJECT:   // this occurs if overlayMode = 0
+				{
+					// strip the AR_RESERVED_OVERLAY_STRING again, so it gets the real object name
+					size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
+					if (nameLen > 3)
+					{
+						nameLen -= 3;
+						if (strcmp(&names.nameList[idx][nameLen], AR_RESERV_OVERLAY_STRING) == 0)
+							names.nameList[idx][nameLen] = 0;
+					}
+				}
+				break;
+			}
+		}
+	}
 }

@@ -79,6 +79,7 @@ CARInside::CARInside(AppConfig &appConfig)
 	this->appConfig = appConfig;
 	this->serverInfoList.clear();
 	this->globalFieldList.clear();
+	this->overlayMode = 1; // TODO: this is the default value for ars764. check for later versions
 
 	this->nDurationLoad = 0;
 	this->nDurationDocumentation = 0;
@@ -183,6 +184,9 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			CARServerInfo serverInfo(this->arControl, this->arStatus);
 			this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
 			this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			this->overlayMode = 1; //TODO: serverInfo.GetIntValue(AR_SERVER_INFO_OVERLAY_MODE);
+#endif
 			cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
 
 			blackList.LoadFromServer(appConfig.blackList);

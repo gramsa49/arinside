@@ -432,48 +432,7 @@ void CARActiveLinkList::Sort()
 	if (GetCount() > 0)
 	{
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		// for overlays we need to rename the object names accordingly
-		for (unsigned int idx = 0; idx < GetCount(); ++idx)
-		{
-			ARValueStruct* val = CARProplistHelper::Find(objProps.propsList[idx], AR_SMOPROP_OVERLAY_PROPERTY);
-
-			if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-			{
-				switch (val->u.intVal)
-				{
-				case AR_OVERLAID_OBJECT:
-					{
-						// add the AR_RESERVED_OVERLAY_STRING to the end of the name .. this becomes the original object: "__o" ;-)
-						strncat(names.nameList[idx], AR_RESERV_OVERLAY_STRING, AR_MAX_NAME_SIZE);
-						names.nameList[idx][AR_MAX_NAME_SIZE] = 0;
-					}
-					break;
-				case AR_OVERLAY_OBJECT:
-					{
-						// strip the AR_RESERVED_OVERLAY_STRING from end of the name, so it gets the real object name
-						size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
-						if (nameLen > 3)
-						{
-							nameLen -= 3;
-							if (strcmp(&names.nameList[idx][nameLen], AR_RESERV_OVERLAY_STRING) == 0)
-								names.nameList[idx][nameLen] = 0;
-						}
-					}
-				case AR_CUSTOM_OBJECT:
-					{
-						// strip the AR_RESERV_OVERLAY_CUSTOM_STRING from end of the name, so it gets the real object name
-						size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
-						if (nameLen > 3)
-						{
-							nameLen -= 3;
-							if (strcmp(&names.nameList[idx][nameLen], AR_RESERV_OVERLAY_CUSTOM_STRING) == 0)
-								names.nameList[idx][nameLen] = 0;
-						}
-					}
-					break;
-				}
-			}
-		}
+		NormalizeNameListForSorting(names, objProps);
 #endif
 
 		GenerateSortableList sortableContent(names);
@@ -488,33 +447,7 @@ void CARActiveLinkList::Sort()
 	}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-	if (GetCount() > 0)
-	{
-		// now make sure the real object names are used
-		for (unsigned int idx = 0; idx < GetCount(); ++idx)
-		{
-			ARValueStruct* val = CARProplistHelper::Find(objProps.propsList[idx], AR_SMOPROP_OVERLAY_PROPERTY);
-
-			if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-			{
-				switch (val->u.intVal)
-				{
-				case AR_OVERLAID_OBJECT:
-					{
-						// strip the AR_RESERVED_OVERLAY_STRING again, so it gets the real object name
-						size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
-						if (nameLen > 3)
-						{
-							nameLen -= 3;
-							if (strcmp(&names.nameList[idx][nameLen], AR_RESERV_OVERLAY_STRING) == 0)
-								names.nameList[idx][nameLen] = 0;
-						}
-					}
-					break;
-				}
-			}
-		}
-	}
+	NormalizeNameListToRealNames(names, objProps);
 #endif
 }
 

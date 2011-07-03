@@ -45,3 +45,6 @@ struct DeletePointer : unary_function<C*, void>
 {
 	void operator()(C* p) { delete p; }
 };
+
+void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps);
+void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps);

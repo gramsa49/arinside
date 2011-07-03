@@ -58,13 +58,13 @@ void CDocAlDetails::Documentation()
 				{
 				case AR_OVERLAID_OBJECT:
 					{
-						CARActiveLink ovAl(this->al.GetName());
+						CARActiveLink ovAl(this->al.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
 						strmHead << " (Overlaid by " << (ovAl.Exists() ? ovAl.GetURL(rootLevel, false) : "") << ")";
 					}
 					break;
 				case AR_OVERLAY_OBJECT:
 					{
-						CARActiveLink oriAl(this->al.GetName() + AR_RESERV_OVERLAY_STRING);
+						CARActiveLink oriAl(this->al.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
 						strmHead << " (Overlay of " << (oriAl.Exists() ? oriAl.GetURL(rootLevel, false) : "") << ")";
 					}
 					break;

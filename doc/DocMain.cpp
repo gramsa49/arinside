@@ -239,10 +239,15 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 			if (bInsert)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(pInside->alList.ActiveLinkGetPropList(alIdx), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER && val->u.intVal == AR_OVERLAID_OBJECT)
+				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
 				{
-					// if the object is overlaid, dont show it on the list
-					bInsert = false;
+					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
+						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+						bInsert = false;
+
+					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
+						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
+						bInsert = false;
 				}
 			}
 #endif
@@ -417,6 +422,23 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 				if(searchChar[0] == tolower(pInside->filterList.FilterGetName(filterIndex)[0]))
 					bInsert = true;
 			}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (bInsert)
+			{
+				ARValueStruct* val = CARProplistHelper::Find(pInside->filterList.FilterGetPropList(filterIndex), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+				{
+					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
+						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+						bInsert = false;
+
+					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
+						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
+						bInsert = false;
+				}
+			}
+#endif
 
 			if(bInsert)
 			{
@@ -624,6 +646,23 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 				if(searchChar[0] == tolower(pInside->escalationList.EscalationGetName(escalIndex)[0]))
 					bInsert = true;
 			}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (bInsert)
+			{
+				ARValueStruct* val = CARProplistHelper::Find(pInside->escalationList.EscalationGetPropList(escalIndex), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+				{
+					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
+						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+						bInsert = false;
+
+					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
+						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
+						bInsert = false;
+				}
+			}
+#endif
 
 			if(bInsert)
 			{

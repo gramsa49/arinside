@@ -92,6 +92,7 @@ public:
 
 	string srvHostName;
 	string srvFullHostName;
+	int overlayMode;
 	CARSchemaList schemaList;
 	CARFilterList filterList;
 	CAREscalationList escalationList;

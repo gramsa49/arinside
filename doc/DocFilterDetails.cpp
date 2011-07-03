@@ -45,6 +45,29 @@ void CDocFilterDetails::Documentation()
 			strmHead.str("");
 
 			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(filter.GetName());
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(this->filter.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CARFilter ovFlt(this->filter.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlaid by " << (ovFlt.Exists() ? ovFlt.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CARFilter oriFlt(this->filter.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlay of " << (oriFlt.Exists() ? oriFlt.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				}
+			}
+#endif
+
 			if(!filter.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(filter.GetAppRefName(), this->rootLevel);
 

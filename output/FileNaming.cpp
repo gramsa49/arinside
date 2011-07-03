@@ -1454,14 +1454,37 @@ string GetFileNameOfObjectName(const string &objName)
 
 ///////////////////////////////////////////////////////////////////////////////
 // object nameing helper functions
-bool IsObjectOverlaid(const CARActiveLink* obj)
+bool IsObjectOverlaid(ARValueStruct* val)
 {
+	// the goal is to give the executed worklow object the real filename. By default the
+	// overlay uses the real object name. If the Overlay-Mode is set to 0, only origin
+	// objects are executed. Those objects should get the real names as file name, not
+	// the overlays.
+
+	if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+	{
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-	ARValueStruct* val = CARProplistHelper::Find(obj->GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-	if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER && val->u.intVal == AR_OVERLAID_OBJECT)
-		return true;
+		CARInside* pInside = CARInside::GetInstance();
+		// if overlayMode is 1 the name of the overlaid-object (origin object) is extended with "__o"
+		if (pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
+			return true;
+
+		// if overlayMode is 0 the name of the overlay-object is extended with "__o"
+		if (pInside->overlayMode == 0 && val->u.intVal == AR_OVERLAY_OBJECT)
+			return true;
 #endif
+	}
+	
 	return false;
+}
+template<class T>
+bool IsObjectOverlaid(const T* obj)
+{
+	ARValueStruct* val = NULL;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	val = CARProplistHelper::Find(obj->GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+#endif
+	return IsObjectOverlaid(val);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1662,7 +1685,7 @@ class ObjectNameFilterDetail : public IFileStructure
 {
 public:
 	ObjectNameFilterDetail(const CARFilter* flt) : obj(flt) { }
-	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_FILTER; }
 	virtual unsigned int GetRootLevel() const { return 1; }
@@ -1674,7 +1697,7 @@ class ObjectNameEscalationDetail : public IFileStructure
 {
 public:
 	ObjectNameEscalationDetail(const CAREscalation* esc) : obj(esc) { }
-	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_ESCALATION; }
 	virtual unsigned int GetRootLevel() const { return 1; }

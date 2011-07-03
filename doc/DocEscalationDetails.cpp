@@ -46,6 +46,29 @@ void CDocEscalationDetails::Documentation()
 			strmHead.str("");
 
 			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName());
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(this->escalation.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CAREscalation ovEsc(this->escalation.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlaid by " << (ovEsc.Exists() ? ovEsc.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CAREscalation oriEsc(this->escalation.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlay of " << (oriEsc.Exists() ? oriEsc.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				}
+			}
+#endif
+
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 
