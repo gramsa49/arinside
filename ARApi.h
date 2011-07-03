@@ -29,6 +29,21 @@
 #endif
 #endif
 
+// this is just a workarround for a missing definition in ar.h version 7.6.04
+#ifdef AR_SESS_CONTROL_PROP_DESIGN_OVERLAYGROUP
+#undef AR_SESS_CONTROL_PROP_DESIGN_OVERLAYGROUP
+#endif
+#define AR_SESS_CONTROL_PROP_DESIGN_OVERLAYGROUP 1961
+
+#ifdef AR_SESS_CONTROL_PROP_API_OVERLAYGROUP
+#undef AR_SESS_CONTROL_PROP_API_OVERLAYGROUP
+#endif
+#define AR_SESS_CONTROL_PROP_API_OVERLAYGROUP 1962
+
+#ifndef AR_RESERV_OVERLAY_STRING
+#define AR_RESERV_OVERLAY_STRING "__o"
+#endif
+
 // to support our own xml object types used in lists
 #define AR_STRUCT_ITEM_USER    500
 #define AR_STRUCT_ITEM_GROUP   501

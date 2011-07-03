@@ -22,7 +22,10 @@ class CAREscalation :
 {
 public:
 	CAREscalation(int insideId);
+	CAREscalation(const string& name);
 	~CAREscalation(void);
+
+	bool Exists();
 
 	// implement functions inherited from CARObject
 	string GetName();

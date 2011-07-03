@@ -1425,7 +1425,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 
 ///////////////////////////////////////////////////////////////////////////////
 // object name file name generator
-string GetFileNameOfObjectName(const string &objName)
+string GetFileNameOfObjectName(const string &objName, bool isOverlaid)
 {
 	stringstream strmTmp;
 	strmTmp << hex;
@@ -1442,7 +1442,26 @@ string GetFileNameOfObjectName(const string &objName)
 			strmTmp << '~' << (int)c;
 		}
 	}
+	if (isOverlaid)
+		strmTmp << AR_RESERV_OVERLAY_STRING;
 	return strmTmp.str();
+}
+
+string GetFileNameOfObjectName(const string &objName)
+{
+	return GetFileNameOfObjectName(objName, false);
+}
+
+///////////////////////////////////////////////////////////////////////////////
+// object nameing helper functions
+bool IsObjectOverlaid(const CARActiveLink* obj)
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	ARValueStruct* val = CARProplistHelper::Find(obj->GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+	if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER && val->u.intVal == AR_OVERLAID_OBJECT)
+		return true;
+#endif
+	return false;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -1607,7 +1626,7 @@ class ObjectNameActiveLinkDetail : public IFileStructure
 {
 public:
 	ObjectNameActiveLinkDetail(const CARActiveLink* al) : obj(al) { }
-	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_ACTLINK; }
 	virtual unsigned int GetRootLevel() const { return 1; }

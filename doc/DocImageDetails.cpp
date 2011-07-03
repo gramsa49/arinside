@@ -143,7 +143,7 @@ string CDocImageDetails::WorkflowReferences()
 		{			
 			CTableRow row("cssStdRow");		
 			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
-			row.AddCell(pInside->LinkToXmlObjType(curIt->GetObjectType(), curIt->GetObjectName(), curIt->GetSubObjectId(), rootLevel));
+			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
 
 			string tmpEnabled = "";
 			string tmpCssEnabled = "";

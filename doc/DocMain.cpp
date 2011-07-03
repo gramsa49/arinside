@@ -235,6 +235,18 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 					bInsert = true;
 			}
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (bInsert)
+			{
+				ARValueStruct* val = CARProplistHelper::Find(pInside->alList.ActiveLinkGetPropList(alIdx), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER && val->u.intVal == AR_OVERLAID_OBJECT)
+				{
+					// if the object is overlaid, dont show it on the list
+					bInsert = false;
+				}
+			}
+#endif
+
 			if(bInsert)
 			{
 				tbl.AddRow(alIdx, rootLevel);

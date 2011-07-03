@@ -49,6 +49,29 @@ void CDocAlDetails::Documentation()
 			props = new CARProplistHelper(&this->al.GetPropList());
 
 			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName());
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(this->al.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CARActiveLink ovAl(this->al.GetName());
+						strmHead << " (Overlaid by " << (ovAl.Exists() ? ovAl.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CARActiveLink oriAl(this->al.GetName() + AR_RESERV_OVERLAY_STRING);
+						strmHead << " (Overlay of " << (oriAl.Exists() ? oriAl.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				}
+			}
+#endif
+
 			if(!this->al.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);
 

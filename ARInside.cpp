@@ -1301,9 +1301,9 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 	return strmTmp.str();
 }
 
-string CARInside::LinkToAlRef(const string &alName, int rootLevel)
+string CARInside::LinkToAlRef(const CRefItem& refItem, int rootLevel)
 {
-	CARActiveLink al(alName);
+	CARActiveLink al(refItem.GetObjectId());
 	if (!al.Exists())
 		return EmptyValue;
 
@@ -1333,25 +1333,22 @@ string CARInside::LinkToAl(int alInsideId, int rootLevel)
 
 string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
 {	
-	if (filterInsideId > -1)
+	CARFilter flt(filterInsideId);
+	if (flt.Exists())
 	{
-		CARFilter flt(filterInsideId);
 		return LinkToFilterRef(&flt, rootLevel);
 	}
 	return EmptyValue;
 }
 
-string CARInside::LinkToFilterRef(string fltName, int rootLevel)
+string CARInside::LinkToFilterRef(const CRefItem& refItem, int rootLevel)
 {
-	if (fltName.empty()) return fltName;
-
-	int fltInsideId = filterList.Find(fltName.c_str());
-	if (fltInsideId > -1)
+	CARFilter flt(refItem.GetObjectId());
+	if (flt.Exists())
 	{
-		CARFilter flt(fltInsideId);
 		return LinkToFilterRef(&flt, rootLevel);
 	}
-	return fltName;
+	return EmptyValue;
 }
 
 string CARInside::LinkToFilterRef(CARFilter* filter, int rootLevel)
@@ -1397,16 +1394,35 @@ string CARInside::LinkToMenu(string menuName, int fromRootLevel)
 	return "<span class=\"fieldNotFound\">" + menuName + "</span>";
 }
 
-string CARInside::LinkToEscalation(string escalationName, int fromRootLevel)
+string CARInside::LinkToMenu(const CRefItem& refItem, int rootLevel)
 {
-	int objInsideId = escalationList.Find(escalationName.c_str());
-
-	if (objInsideId > -1)
+	CARCharMenu menu(refItem.GetObjectId());
+	if (menu.Exists())
 	{
-		CAREscalation escal(objInsideId);
+		return menu.GetURL(rootLevel);
+	}
+
+	return EmptyValue;
+}
+
+string CARInside::LinkToEscalation(const string& escalationName, int fromRootLevel)
+{
+	CAREscalation escal(escalationName);
+	if (escal.Exists())
+	{
 		return escal.GetURL(fromRootLevel);
 	}
 	return escalationName;
+}
+
+string CARInside::LinkToEscalation(const CRefItem& refItem, int fromRootLevel)
+{
+	CAREscalation escal(refItem.GetObjectId());
+	if (escal.Exists())
+	{
+		return escal.GetURL(fromRootLevel);
+	}
+	return EmptyValue;
 }
 
 string CARInside::LinkToContainer(string containerName, int fromRootLevel)
@@ -1417,6 +1433,16 @@ string CARInside::LinkToContainer(string containerName, int fromRootLevel)
 		return cnt.GetURL(fromRootLevel);
 	}
 	return containerName;
+}
+
+string CARInside::LinkToContainer(const CRefItem& refItem, int rootLevel)
+{
+	CARContainer cnt(refItem.GetObjectId());
+	if (cnt.Exists())
+	{
+		return cnt.GetURL(rootLevel);
+	}
+	return EmptyValue;
 }
 
 string CARInside::LinkToServerInfo(string srvName, int rootLevel)
@@ -1440,55 +1466,50 @@ string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 	return result;
 }
 
-string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName, int rootLevel)
-{
-	return LinkToXmlObjType(arsStructItemType, objName, -1, rootLevel);
-}
-
-string CARInside::LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel)
+string CARInside::LinkToObjByRefItem(const CRefItem& refItem, int rootLevel)
 {
 	string result = EmptyValue;
 
-	switch(arsStructItemType)
+	switch(refItem.GetObjectType())
 	{
 	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
 		{
-			result = this->LinkToAlRef(objName, rootLevel);
+			result = this->LinkToAlRef(refItem, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_FILTER:
 		{
-			result = this->LinkToFilterRef(objName, rootLevel);
+			result = this->LinkToFilterRef(refItem, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_SCHEMA:
 		{
-			result = this->LinkToSchema(objName, rootLevel);
+			result = this->LinkToSchema(refItem.GetObjectName(), rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_FIELD:
 		{
-			result = this->LinkToField(objName, subObjId, rootLevel);
+			result = this->LinkToField(refItem.GetObjectId(), refItem.GetSubObjectId(), rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_VUI:
 		{
-			result = this->LinkToVui(objName, subObjId, rootLevel);
+			result = this->LinkToVui(refItem.GetObjectId(), refItem.GetSubObjectId(), rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_ESCALATION:
 		{
-			result = this->LinkToEscalation(objName, rootLevel);
+			result = this->LinkToEscalation(refItem, rootLevel);
 		}
 		break;
 	case AR_STRUCT_ITEM_XML_CHAR_MENU:
 		{
-			result = this->LinkToMenu(objName, rootLevel);
+			result = this->LinkToMenu(refItem, rootLevel);
 		}
 		break;		
 	case AR_STRUCT_ITEM_XML_CONTAINER:
 		{
-			result = this->LinkToContainer(objName, rootLevel);
+			result = this->LinkToContainer(refItem, rootLevel);
 		}
 		break;
 //#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750

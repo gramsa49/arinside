@@ -24,6 +24,12 @@ CAREscalation::CAREscalation(int insideId)
 {
 }
 
+CAREscalation::CAREscalation(const string& name)
+: CARServerObject(-1)
+{
+	insideId = CARInside::GetInstance()->escalationList.Find(name.c_str());
+}
+
 CAREscalation::~CAREscalation(void)
 {
 }
@@ -42,6 +48,11 @@ string CAREscalation::GetURL(int rootLevel, bool showImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
 	return CWebUtil::Link(this->GetName(), file, (showImage ? "escalation.gif" : ""), rootLevel);
+}
+
+bool CAREscalation::Exists()
+{
+	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->escalationList.GetCount());
 }
 
 string CAREscalation::GetTimeCriteria()

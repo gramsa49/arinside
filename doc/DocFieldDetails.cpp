@@ -176,7 +176,7 @@ string CDocFieldDetails::WorkflowReferences()
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(iter->GetObjectType()));				
-			row.AddCell(this->pInside->LinkToXmlObjType(iter->GetObjectType(), iter->GetObjectName(), iter->GetSubObjectId(), rootLevel));
+			row.AddCell(this->pInside->LinkToObjByRefItem(*iter, rootLevel));
 
 			bool hasEnabledFlag;
 			unsigned int enabled = iter->GetObjectEnabled(hasEnabledFlag);
@@ -1127,7 +1127,7 @@ string CDocFieldDetails::WorkflowAttached()
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(order));
-			row.AddCell(pInside->LinkToXmlObjType(curIt->GetObjectType(), curIt->GetObjectName(), curIt->GetSubObjectId(), rootLevel));
+			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
 			row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), cssEnabled));
 			row.AddCell(execution);
 			tblRef.AddRow(row);

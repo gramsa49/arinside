@@ -472,7 +472,7 @@ void CDocValidator::FieldReferenceValidator()
 						{
 							CTableRow row("cssStdRow");		
 							row.AddCell(CTableCell(CAREnum::XmlStructItem(curIt->second.GetObjectType())));
-							row.AddCell(CTableCell(this->pInside->LinkToXmlObjType(curIt->second.GetObjectType(), curIt->second.GetObjectName(), curIt->second.GetSubObjectId(), rootLevel)));
+							row.AddCell(CTableCell(this->pInside->LinkToObjByRefItem(curIt->second, rootLevel)));
 
 							bool supportsEnabled;
 							unsigned int enabled = curIt->second.GetObjectEnabled(supportsEnabled);
@@ -563,7 +563,7 @@ void CDocValidator::MenuReferenceValidator()
 
 						row.AddCell(curIt->first);
 						row.AddCell(CAREnum::XmlStructItem(arsObjectType));
-						row.AddCell(pInside->LinkToXmlObjType(arsObjectType, curRefIt->GetObjectName(), curRefIt->GetSubObjectId(), rootLevel));
+						row.AddCell(pInside->LinkToObjByRefItem(*curRefIt, rootLevel));
 
 						stringstream strm;
 						strm << curRefIt->GetDescription(rootLevel);

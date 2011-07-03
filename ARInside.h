@@ -111,8 +111,7 @@ public:
 #endif
 
 	string LinkToServerInfo(string srvName, int rootLevel);
-	string LinkToXmlObjType(int arsStructItemType, const string &objName, int subObjId, int rootLevel);
-	string LinkToXmlObjType(int arsStructItemType, const string &objName, int rootLevel);
+	string LinkToObjByRefItem(const CRefItem& refItem, int rootLevel);
 	string XmlObjEnabled(int arsStructItemType, string objName);
 	string XmlObjEnabled(CARServerObject *obj);
 
@@ -126,22 +125,25 @@ public:
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 
 	string LinkToContainer(string containerName, int rootLevel);
+	string LinkToContainer(const CRefItem& refItem, int rootLevel);
 	string LinkToAl(const string& alName, int rootLevel);
 	string LinkToAl(int alInsideId, int rootLevel);
-	string LinkToAlRef(const string &alName, int rootLevel);
+	string LinkToAlRef(const CRefItem& refItem, int rootLevel);
 	string LinkToFilter(string filterName, int rootLevel);	
 	string LinkToFilterRef(int filterInsideId, int rootLevel);	
-	string LinkToFilterRef(string fltName, int rootLevel);	
+	string LinkToFilterRef(const CRefItem& refItem, int rootLevel);
 	string LinkToFilterRef(CARFilter* filter, int rootLevel);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	string LinkToImage(unsigned int imageIndex, int rootLevel);
 	string LinkToImage(const string &imageName, int rootLevel);
 #endif
 	string LinkToMenu(string menuName, int rootLevel);
+	string LinkToMenu(const CRefItem& refItem, int rootLevel);
 	string LinkToSchema(const string& schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
 	string LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel);	
-	string LinkToEscalation(string escalationName, int rootLevel);
+	string LinkToEscalation(const string& escalationName, int fromRootLevel);
+	string LinkToEscalation(const CRefItem& refItem, int fromRootLevel);
 	string LinkToUser(string loginName, int rootLevel);	
 	string LinkToSchemaTypeList(int schemaType, int rootLevel);	
 	string LinkToGroup(const string& appRefName, int permissionId, int rootLevel);
