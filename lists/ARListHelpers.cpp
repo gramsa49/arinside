@@ -102,6 +102,7 @@ ARNameList* GenerateSortableList::GetList()
 	return theList;
 }
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 /////// additional functions ///////
 void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps)
 {
@@ -197,3 +198,4 @@ void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps)
 		}
 	}
 }
+#endif

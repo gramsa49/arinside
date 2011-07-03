@@ -46,5 +46,7 @@ struct DeletePointer : unary_function<C*, void>
 	void operator()(C* p) { delete p; }
 };
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps);
 void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps);
+#endif
