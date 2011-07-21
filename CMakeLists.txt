@@ -80,8 +80,8 @@ SET (ARINSIDE_SRCS
  core/ARContainer.cpp core/ARGlobalField.cpp core/ARServerObject.cpp core/ARMessageObject.cpp
  core/ARObject.cpp core/ARProplistHelper.cpp core/ARGroup.cpp core/ARAssignHelper.cpp
  core/ARDayStructHelper.cpp core/ARFilter.cpp core/ARVui.cpp core/AREscalation.cpp core/ARQualification.cpp
- core/ARServerInfoItem.cpp core/ARSchema.cpp core/ChangeHistoryEntry.cpp core/ARField.cpp core/ARUser.cpp
- core/ARImage.cpp core/ARCharMenu.cpp core/ARRole.cpp core/ARActiveLink.cpp core/ARValue.cpp core/ARServerInfo.cpp
+ core/ARServerInfo.cpp core/ARSchema.cpp core/ChangeHistoryEntry.cpp core/ARField.cpp core/ARUser.cpp
+ core/ARImage.cpp core/ARCharMenu.cpp core/ARRole.cpp core/ARActiveLink.cpp core/ARValue.cpp
  doc/DocFieldDetails.cpp doc/DocFilterActionStruct.cpp doc/DocAlActionStruct.cpp doc/DocBase.cpp 
  doc/DocUserDetails.cpp doc/DocVuiDetails.cpp doc/DocWebserviceDetails.cpp doc/DocMain.cpp
  doc/DocActionSetFieldsHelper.cpp doc/DocFilterGuideDetails.cpp doc/DocAlDetails.cpp
@@ -93,6 +93,7 @@ SET (ARINSIDE_SRCS
  lists/ARActiveLinkList.cpp lists/ARContainerList.cpp lists/AREscalationList.cpp lists/ARFieldList.cpp
  lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
  lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp lists/ARListHelpers.cpp
+ lists/ARServerInfoList.cpp
  output/Table.cpp output/TableCell.cpp output/WebControl.cpp output/AlTable.cpp output/EscalTable.cpp
  output/UList.cpp output/FilterTable.cpp output/IFileStructure.cpp output/CsvPage.cpp output/ObjectTable.cpp
  output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp

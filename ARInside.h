@@ -52,6 +52,7 @@ class IFileStructure;
 #include "lists/ARUserList.h"
 #include "lists/ARGroupList.h"
 #include "lists/ARRoleList.h"
+#include "lists/ARServerInfoList.h"
 
 extern const string AppVersion;
 
@@ -102,8 +103,8 @@ public:
 	CARUserList userList;
 	CARGroupList groupList;
 	CARRoleList roleList;
+	CARServerInfoList serverInfoList;
 
-	list<CARServerInfoItem> serverInfoList;
 	list<CARGlobalField> globalFieldList;
 	CBlackList blackList;
 	map<string, vector<CRefItem> > missingMenuReferences;

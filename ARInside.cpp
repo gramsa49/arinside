@@ -77,7 +77,6 @@ CARInside* CARInside::pInsideInstance = NULL;
 CARInside::CARInside(AppConfig &appConfig)
 {
 	this->appConfig = appConfig;
-	this->serverInfoList.clear();
 	this->globalFieldList.clear();
 	this->overlayMode = 1; // TODO: this is the default value for ars764. check for later versions
 
@@ -181,11 +180,15 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			}
 			FreeARStatusList(&this->arStatus, false);
 
-			CARServerInfo serverInfo(this->arControl, this->arStatus);
-			this->srvHostName = serverInfo.GetValue(AR_SERVER_INFO_HOSTNAME);
-			this->srvFullHostName = serverInfo.GetValue(AR_SERVER_INFO_FULL_HOSTNAME);
+			serverInfoList.LoadAndGetValue(AR_SERVER_INFO_HOSTNAME, StoreTo(this->srvHostName));
+			serverInfoList.LoadAndGetValue(AR_SERVER_INFO_FULL_HOSTNAME, StoreTo(this->srvFullHostName));
+			serverInfoList.LoadAndGetValue(AR_SERVER_INFO_VERSION, StoreTo(this->arServerVersion));
+
+			ParseVersionString(this->arServerVersion);
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			this->overlayMode = 1; //TODO: serverInfo.GetIntValue(AR_SERVER_INFO_OVERLAY_MODE);
+			if (CompareServerVersion(7,6,4) >= 0)
+				serverInfoList.LoadAndGetValue(AR_SERVER_INFO_OVERLAY_MODE, StoreTo(this->overlayMode));
 #endif
 			cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
 
@@ -536,19 +539,14 @@ void CARInside::LoadFromFile(void)
 void CARInside::LoadFromServer(void)
 {
 	cout << endl << "Loading objects from server '" << appConfig.serverName << "'" << endl;
-
-	CARServerInfo srvInfo(this->arControl, this->arStatus);
-	arServerVersion = srvInfo.GetValue(AR_SERVER_INFO_VERSION);
 	cout << "server version: " << arServerVersion << endl;
-	ParseVersionString(arServerVersion);
 
 	//LoadServerInfoList	
 	if(appConfig.bLoadServerInfoList)
 	{
 		cout << "Start loading Server Information:" << endl;
-		CARServerInfo serverInfo(this->arControl, this->arStatus);
-		serverInfo.GetList(serverInfoList);
-		cout << (unsigned int)serverInfoList.size() << " server settings loaded" << endl;
+		serverInfoList.Load();
+		cout << serverInfoList.GetCount() << " server settings loaded" << endl;
 	}
 	else
 		cout << endl << "Loading Server Informations [SKIPPED]" << endl;

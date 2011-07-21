@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocMain.h"
 #include "../output/IFileStructure.h"
+#include "../core/ARServerInfo.h"
 
 CDocMain::CDocMain()
 {
@@ -50,19 +51,18 @@ void CDocMain::ServerInfoList()
 		int rootLevel = file->GetRootLevel();
 		CWebPage webPage(file->GetFileName(), "Server details", rootLevel, this->pInside->appConfig);
 		CTable tbl("serverDetailList", "TblObjectList");
-		tbl.AddColumn(40, "API CALL");
-		tbl.AddColumn(60, "Result");
+		tbl.AddColumn(40, "Operation");
+		tbl.AddColumn(60, "Value");
 
-		list<CARServerInfoItem>::iterator listIter;
-		CARServerInfoItem *infoItem;
-
-		for ( listIter = this->pInside->serverInfoList.begin(); listIter != this->pInside->serverInfoList.end(); listIter++ )
+		unsigned int count = this->pInside->serverInfoList.GetCount();
+		for (unsigned int index = 0; index < count; ++index)
 		{	
-			infoItem = &(*listIter);
+			CARServerInfo srvInfo(index, CARServerInfo::INDEX);
+			ARValueStruct* val = srvInfo.GetValue();
 
-			CTableRow row("cssStdRow");		
-			row.AddCell(CTableCell(CAREnum::ServerInfoApiCall(infoItem->apiCall)));				
-			row.AddCell(CTableCell(infoItem->value));
+			CTableRow row("cssStdRow");
+			row.AddCell(CTableCell(CAREnum::ServerInfoApiCall(srvInfo.GetOperation())));
+			row.AddCell(CTableCell(CARValue::ValueToString(*val)));
 			tbl.AddRow(row);		
 		}
 

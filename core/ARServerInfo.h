@@ -1,4 +1,4 @@
-//Copyright (C) 2009 Stefan Nerlich | stefan.nerlich@hotmail.com
+//Copyright (C) 2011 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -12,23 +12,28 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "../ARApi.h"
-#include "AREnum.h"
-#include "ARServerInfoItem.h"
 
 class CARServerInfo
 {
 public:
-	CARServerInfo(ARControlStruct &arControl, ARStatusList &arStatus);
+	enum SearchMode
+	{
+		SERVER_INFO,
+		INDEX
+	};
+
+public:
+	CARServerInfo(int serverInfo, CARServerInfo::SearchMode mode = SERVER_INFO);
 	~CARServerInfo(void);
 
-	ARControlStruct arControl;
-	ARStatusList arStatus;
+	bool Exists();
 
-	string GetValue(int apiCall);
-
-	void GetList(list<CARServerInfoItem> &listResult);
+	unsigned int GetOperation();
+	ARValueStruct* GetValue();
+	
+protected:
+	int insideId;
 };

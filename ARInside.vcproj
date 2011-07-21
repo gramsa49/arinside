@@ -788,14 +788,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\Core\ARServerInfoItem.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\Core\ARServerInfoItem.h"
-				>
-			</File>
-			<File
 				RelativePath=".\Core\ARServerObject.cpp"
 				>
 			</File>
@@ -2206,6 +2198,14 @@
 			</File>
 			<File
 				RelativePath=".\lists\ARSchemaList.h"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARServerInfoList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\lists\ARServerInfoList.h"
 				>
 			</File>
 			<File

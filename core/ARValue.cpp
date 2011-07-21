@@ -184,3 +184,22 @@ string CARValue::ValueToString(const ARValueStruct &value)
 
 	return "";
 }
+
+int CARValue::ValueToInt(const ARValueStruct &value, bool* isIntegerValue)
+{
+
+	switch (value.dataType)
+	{
+	case AR_DATA_TYPE_KEYWORD:
+	case AR_DATA_TYPE_INTEGER:
+	case AR_DATA_TYPE_ENUM:
+	case AR_DATA_TYPE_ULONG:
+		if (isIntegerValue != NULL)
+			*isIntegerValue = true;
+		return value.u.intVal;
+	}
+
+	if (isIntegerValue != NULL) 
+		*isIntegerValue = false;
+	return 0;
+}

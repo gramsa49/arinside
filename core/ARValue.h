@@ -24,4 +24,5 @@ public:
 	~CARValue();
 
 	static string ValueToString(const ARValueStruct &value);
+	static int ValueToInt(const ARValueStruct &value, /* out */ bool* isIntegerValue = NULL );
 };
