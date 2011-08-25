@@ -102,7 +102,12 @@ void CWebPage::DynamicFooterText(ostream &strm)
 	strm << "<td>&nbsp;</td>" << endl;
 	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
-	strm << "<td>(Page created " << CurrentDateTime() <<" by <a href=\"http://arinside.org\" target=\"_blank\">ARInside v" << AppVersion <<"</a>)</td>";
+#if ARINSIDE_TEST_SUPPORT
+	if (appConfig.testMode)
+		strm << "<td>&nbsp;</td>";
+	else
+#endif
+		strm << "<td>(Page created " << CurrentDateTime() << " by <a href=\"http://arinside.org\" target=\"_blank\">ARInside v" << AppVersion <<"</a>)</td>";
 	strm << "</tr></table>" << endl;
 }
 

@@ -70,9 +70,15 @@ int main(int argc, char* argv[])
 	ValueArg<int> rpcArg("r", "rcp", "Rcp port", false, 0, "int");
 	ValueArg<string> outputFolder("o", "output", "Output folder", false, "", "string");
 	SwitchArg verboseArg("v","verbose","Verbose Output",false);
-	
+#if ARINSIDE_TEST_SUPPORT
+	SwitchArg testModeArg("","test", "", false);
+#endif	
 	try 
 	{  
+#if ARINSIDE_TEST_SUPPORT
+		cmd.add(testModeArg);
+#endif
+
 		// add it in reverse order. the "--help" output lists the arguments from the last to the first added.
 		cmd.add(verboseArg);
 		cmd.add(rpcArg);
@@ -123,6 +129,10 @@ int main(int argc, char* argv[])
 
 		if (rpcArg.isSet())
 			appConfig.rpcPort = rpc;
+
+#if ARINSIDE_TEST_SUPPORT
+		appConfig.testMode = testModeArg.getValue();
+#endif
 
 		// special checks for server mode
 		if (!appConfig.fileMode) 

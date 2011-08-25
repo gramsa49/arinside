@@ -50,6 +50,7 @@ public:
 	bool fileMode;
 	string objListXML;
 	bool oldNaming;
+	bool testMode;
 
 	// BlackList
 	string blackList;

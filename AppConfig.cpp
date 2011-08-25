@@ -37,6 +37,7 @@ AppConfig::AppConfig(void)
 	fileMode	= false;
 	objListXML	= "";
 	oldNaming = false;
+	testMode = false;
 
 	// BlackList
 	blackList = "";
