@@ -28,7 +28,7 @@ public:
 	void Documentation();
 
 private:
-	CARContainer *pFilterGuide;
+	CARContainer& filterGuide;
 
 	string FilterActions();
 };

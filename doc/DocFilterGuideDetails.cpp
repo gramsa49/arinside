@@ -17,9 +17,9 @@
 #include "stdafx.h"
 #include "DocFilterGuideDetails.h"
 
-CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &filterGuide)
+CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &fltGuide)
+: filterGuide(fltGuide)
 {
-	this->pFilterGuide = &filterGuide;
 }
 
 CDocFilterGuideDetails::~CDocFilterGuideDetails(void)
@@ -28,7 +28,7 @@ CDocFilterGuideDetails::~CDocFilterGuideDetails(void)
 
 void CDocFilterGuideDetails::Documentation()
 {	
-	CPageParams file(PAGE_DETAILS, pFilterGuide);
+	CPageParams file(PAGE_DETAILS, &filterGuide);
 	this->rootLevel = file->GetRootLevel();
 
 	try
@@ -38,20 +38,55 @@ void CDocFilterGuideDetails::Documentation()
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
-			CWebPage webPage(file->GetFileName(), pFilterGuide->GetName(), rootLevel, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), filterGuide.GetName(), rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pFilterGuide->GetName());
-			if(!this->pFilterGuide->GetAppRefName().empty())
-				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pFilterGuide->GetAppRefName(), this->rootLevel);
+			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->filterGuide.GetName());
+
+			bool placeOverlayNote = false;
+			CARContainer overlayObj;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(filterGuide.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CARContainer ovlFLG(filterGuide.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlaid by " << (ovlFLG.Exists() ? ovlFLG.GetURL(rootLevel, false) : "") << ")";
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovlFLG;
+						}
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CARContainer oriFLG(filterGuide.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlay of " << (oriFLG.Exists() ? oriFLG.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				}
+			}
+#endif
+
+			if(!this->filterGuide.GetAppRefName().empty())
+				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->filterGuide.GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
 
+			if (placeOverlayNote)
+				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+
 			//Container Base Informations
-			CDocContainerHelper *contHelper = new CDocContainerHelper(*this->pFilterGuide, this->rootLevel);
+			CDocContainerHelper *contHelper = new CDocContainerHelper(this->filterGuide, this->rootLevel);
 			webPage.AddContent(contHelper->BaseInfo());
 			delete contHelper;
 
@@ -59,7 +94,7 @@ void CDocFilterGuideDetails::Documentation()
 			webPage.AddContent(FilterActions());
 
 			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(this->pFilterGuide, this->rootLevel));
+			webPage.AddContent(this->pInside->ServerObjectHistory(&this->filterGuide, this->rootLevel));
 
 			//Save File
 			webPage.SaveInFolder(dir);
@@ -92,7 +127,7 @@ string CDocFilterGuideDetails::FilterActions()
 				const ARFilterActionStruct& action = IfActions.actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, pFilterGuide->GetName().c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, filterGuide.GetName().c_str())==0)
 					{
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
@@ -114,7 +149,7 @@ string CDocFilterGuideDetails::FilterActions()
 				ARFilterActionStruct action = ElseActions.actionList[nAction];
 				if(action.action == AR_FILTER_ACTION_CALLGUIDE)
 				{
-					if(strcmp(action.u.callGuide.guideName, pFilterGuide->GetName().c_str())==0)
+					if(strcmp(action.u.callGuide.guideName, filterGuide.GetName().c_str())==0)
 					{
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;

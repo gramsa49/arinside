@@ -27,6 +27,7 @@ class CARImage :
 	public CARServerObject
 {
 public:
+	CARImage();
 	CARImage(int insideId) : CARServerObject(insideId) { }
 	CARImage(const string& name);
 	~CARImage() { }

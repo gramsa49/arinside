@@ -49,8 +49,9 @@ void CWebPage::AddContent(const string &content)
 
 void CWebPage::AddContentHead(const string &description)
 {
+	AddContent("<p>");
 	AddContent(description);
-	AddContent("<br/><br/>");
+	AddContent("</p>");
 }
 
 void CWebPage::PageHeader(ostream &strm)

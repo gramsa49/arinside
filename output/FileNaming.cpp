@@ -1724,13 +1724,13 @@ private:
 class ObjectNameContainerDetail : public IFileStructure
 {
 public:
-	ObjectNameContainerDetail(const CARServerObject* alg, const char* path) : obj(alg), dir(path)  { }
-	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName()); }
+	ObjectNameContainerDetail(const CARContainer* cnt, const char* path) : obj(cnt), dir(path)  { }
+	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return dir; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 private:
-	const CARObject* obj;
+	const CARContainer* obj;
 	const char* dir;
 };
 
@@ -2345,11 +2345,11 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 						const CARContainer* cont = static_cast<const CARContainer*>(params.obj1);
 						switch (cont->GetType())
 						{
-						case ARCON_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_ALGUIDE);
-						case ARCON_APP: return new ObjectNameContainerDetail(params.obj1, DIR_APPLICATION);
-						case ARCON_FILTER_GUIDE: return new ObjectNameContainerDetail(params.obj1, DIR_FLTGUIDE);
-						case ARCON_PACK: return new ObjectNameContainerDetail(params.obj1, DIR_PACKINGLIST);
-						case ARCON_WEBSERVICE: return new ObjectNameContainerDetail(params.obj1, DIR_WEBSERVICE);
+						case ARCON_GUIDE: return new ObjectNameContainerDetail(static_cast<const CARContainer*>(params.obj1), DIR_ALGUIDE);
+						case ARCON_APP: return new ObjectNameContainerDetail(static_cast<const CARContainer*>(params.obj1), DIR_APPLICATION);
+						case ARCON_FILTER_GUIDE: return new ObjectNameContainerDetail(static_cast<const CARContainer*>(params.obj1), DIR_FLTGUIDE);
+						case ARCON_PACK: return new ObjectNameContainerDetail(static_cast<const CARContainer*>(params.obj1), DIR_PACKINGLIST);
+						case ARCON_WEBSERVICE: return new ObjectNameContainerDetail(static_cast<const CARContainer*>(params.obj1), DIR_WEBSERVICE);
 						}
 					}
 					break;

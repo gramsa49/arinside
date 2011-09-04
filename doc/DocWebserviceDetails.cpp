@@ -41,7 +41,44 @@ void CDocWebserviceDetails::Documentation()
 			CWebPage webPage(file->GetFileName(), ws.GetName(), rootLevel, pInside->appConfig);
 
 			//ContentHead informations
-			webPage.AddContentHead(CWebUtil::LinkToWebServiceIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->ws.GetName()) + " (Common Properties)");
+			stringstream strmHead;
+			strmHead << CWebUtil::LinkToWebServiceIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->ws.GetName());
+
+			bool placeOverlayNote = false;
+			CARContainer overlayObj;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(ws.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CARContainer ovlWS(ws.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlaid by " << (ovlWS.Exists() ? ovlWS.GetURL(rootLevel, false) : "") << ")";
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovlWS;
+						}
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CARContainer oriWS(ws.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlay of " << (oriWS.Exists() ? oriWS.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				}
+			}
+#endif
+
+			webPage.AddContentHead(strmHead.str());
+
+			if (placeOverlayNote)
+				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
 
 			//Container Base Informations
 			CDocContainerHelper *contHelper = new CDocContainerHelper(this->ws, this->rootLevel);

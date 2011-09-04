@@ -20,6 +20,11 @@
 #include "ARImage.h"
 #include "../ARInside.h"
 
+CARImage::CARImage()
+: CARServerObject(-1)
+{
+}
+
 CARImage::CARImage(const string& name)
 : CARServerObject(-1)
 {

@@ -21,6 +21,7 @@ class CARContainer :
 	public CARServerObject
 {
 public:
+	CARContainer();
 	CARContainer(int insideId);
 	CARContainer(const char* name);
 	CARContainer(const string& name);
@@ -49,7 +50,7 @@ public:
 	char* GetDescription() const;
 	unsigned int GetType() const;
 	const ARReferenceList& GetReferences() const;
-	const ARPropList& GetProps() const;
+	const ARPropList& GetPropList() const;
 
 	const string& GetAppRefName() const;
 	void SetAppRefName(const string& appName);

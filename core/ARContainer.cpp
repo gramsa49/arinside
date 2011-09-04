@@ -18,6 +18,11 @@
 #include "ARContainer.h"
 #include "../ARInside.h"
 
+CARContainer::CARContainer()
+: CARServerObject(-1)
+{
+}
+
 CARContainer::CARContainer(int insideId)
 : CARServerObject(insideId)
 {
@@ -143,6 +148,11 @@ char* CARContainer::GetLabel() const
 char* CARContainer::GetDescription() const
 {
 	return CARInside::GetInstance()->containerList.ContainerGetDescription(GetInsideId());
+}
+
+const ARPropList& CARContainer::GetPropList() const
+{
+	return CARInside::GetInstance()->containerList.ContainerGetPropList(GetInsideId());
 }
 
 unsigned int CARContainer::GetType() const
