@@ -65,7 +65,31 @@ void CDocSchemaDetails::Documentation()
 			stringstream contHeadStrm;
 			contHeadStrm << CWebUtil::LinkToSchemaIndex(rootLevel) << endl;
 			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
-			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->schema.GetName()) << endl;
+			contHeadStrm << MenuSeparator;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(this->schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CARSchema ovFrm(this->schema.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+						contHeadStrm << " Overlaid by " << (ovFrm.Exists() ? ovFrm.GetURL(rootLevel, false) : "");
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CARSchema oriFrm(this->schema.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+						contHeadStrm << " Overlay of " << (oriFrm.Exists() ? oriFrm.GetURL(rootLevel, false) : "");
+					}
+					break;
+				}
+			}
+			else
+#endif
+				contHeadStrm << CWebUtil::ObjName(this->schema.GetName()) << endl;
 
 			if(!this->schema.GetAppRefName().empty())
 				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), rootLevel);
@@ -1873,7 +1897,7 @@ string CDocSchemaDetails::ShowProperties()
 
 	try
 	{
-		const ARPropList& propList = this->schema.GetProps();
+		const ARPropList& propList = this->schema.GetPropList();
 		CARProplistHelper propIdx(&propList);
 
 		// doc basic properties

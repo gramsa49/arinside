@@ -133,6 +133,17 @@ bool CARSchemaList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	if (arIn->CompareServerVersion(7,6,4) >= 0)
+	{
+		ARValueStruct value;
+		value.dataType = AR_DATA_TYPE_CHAR;
+		value.u.charVal = AR_OVERLAY_CLIENT_MODE_FULL;
+		if (ARSetSessionConfiguration(&arIn->arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &status) != AR_RETURN_OK)
+			cerr << "SetSessionConfiguration failed: " << arIn->GetARStatusError(&status);
+	}
+#endif
+
 #ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the schemas we need
 	if (ARGetMultipleSchemas(&arIn->arControl,
@@ -509,6 +520,10 @@ void CARSchemaList::Sort()
 {
 	if (GetCount() > 0)
 	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		NormalizeNameListForSorting(names, objProps);
+#endif
+
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
 	}
@@ -519,6 +534,10 @@ void CARSchemaList::Sort()
 	{
 		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	NormalizeNameListToRealNames(names, objProps);
+#endif
 }
 
 void CARSchemaList::SchemaAddMissingFieldReference(unsigned int index, int fieldId, const CRefItem &refItem)

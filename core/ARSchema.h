@@ -59,7 +59,7 @@ public:
 	const ARArchiveInfoStruct& GetArchiveInfo() const;
 	const ARAuditInfoStruct& GetAuditInfo() const;
 	const ARNameType& GetDefaultVUI() const;
-	const ARPropList& GetProps() const;
+	const ARPropList& GetPropList() const;
 
 	const string& GetAppRefName() const;
 	void SetAppRefName(const string& appName);

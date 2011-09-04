@@ -167,6 +167,23 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 			}
 
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (bInsert)
+			{
+				ARValueStruct* val = CARProplistHelper::Find(schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+				{
+					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
+						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+						bInsert = false;
+
+					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
+						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
+						bInsert = false;
+				}
+			}
+#endif
+
 			if(bInsert)
 			{
 				tbl.AddRow(schema, rootLevel);

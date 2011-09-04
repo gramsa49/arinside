@@ -69,7 +69,7 @@ string CARSchema::WebAlias()
 
 	try
 	{
-		const ARPropList& propList = this->GetProps();
+		const ARPropList& propList = this->GetPropList();
 		for(unsigned int i=0; i < propList.numItems; ++i)
 		{
 			if (propList.props[i].prop == AR_OPROP_FORM_NAME_WEB_ALIAS)
@@ -242,7 +242,7 @@ const ARNameType& CARSchema::GetDefaultVUI() const
 	return CARInside::GetInstance()->schemaList.SchemaGetDefaultVUI(GetInsideId());
 }
 
-const ARPropList& CARSchema::GetProps() const
+const ARPropList& CARSchema::GetPropList() const
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetPropList(GetInsideId());
 }

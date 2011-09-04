@@ -1495,7 +1495,7 @@ public:
 	ObjectNameSchemaDetail(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
 	const CARSchema* obj;
@@ -1507,7 +1507,7 @@ public:
 	ObjectNameSchemaFieldDetail(const CARField* fld) : obj(fld) {  }
 	virtual string GetFileName() const { return "fld_" + obj->FileID(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName(), IsObjectOverlaid(&obj->GetSchema())); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
 	const CARField* obj;
@@ -1516,13 +1516,13 @@ private:
 class ObjectNameSchemaVUIOverview : public IFileStructure
 {
 public:
-	ObjectNameSchemaVUIOverview(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaVUIOverview(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_vui_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaVUIDetail : public IFileStructure
@@ -1531,7 +1531,7 @@ public:
 	ObjectNameSchemaVUIDetail(const CARVui* vui) : obj(vui) {  }
 	virtual string GetFileName() const { return "vui_"+obj->FileID(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName(), IsObjectOverlaid(&obj->GetSchema())); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
 	const CARVui* obj;
@@ -1543,7 +1543,7 @@ public:
 	ObjectNameSchemaVUIFieldsCSV(const CARVui* vui) : obj(vui) {  }
 	virtual string GetFileName() const { return "vui_"+obj->FileID(); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::CsvDocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName(), IsObjectOverlaid(&obj->GetSchema())); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
 	const CARVui* obj;
@@ -1552,97 +1552,97 @@ private:
 class ObjectNameSchemaActiveLinks : public IFileStructure
 {
 public:
-	ObjectNameSchemaActiveLinks(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaActiveLinks(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_al_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaEscalations : public IFileStructure
 {
 public:
-	ObjectNameSchemaEscalations(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaEscalations(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_escal_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaFilters : public IFileStructure
 {
 public:
-	ObjectNameSchemaFilters(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaFilters(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_filter_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaIndexes : public IFileStructure
 {
 public:
-	ObjectNameSchemaIndexes(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaIndexes(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_index_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaPermissions : public IFileStructure
 {
 public:
-	ObjectNameSchemaPermissions(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaPermissions(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_permission_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaResultList : public IFileStructure
 {
 public:
-	ObjectNameSchemaResultList(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaResultList(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_result_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaSortList : public IFileStructure
 {
 public:
-	ObjectNameSchemaSortList(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaSortList(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_sort_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaSubadmins : public IFileStructure
 {
 public:
-	ObjectNameSchemaSubadmins(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaSubadmins(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_subadmin_list"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameActiveLinkDetail : public IFileStructure
@@ -1660,22 +1660,22 @@ private:
 class ObjectNameSchemaWorkflow : public IFileStructure
 {
 public:
-	ObjectNameSchemaWorkflow(const CARObject* schema) : obj(schema) { }
+	ObjectNameSchemaWorkflow(const CARSchema* schema) : obj(schema) { }
 	virtual string GetFileName() const { return "form_workflow"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
-	const CARObject* obj;
+	const CARSchema* obj;
 };
 
 class ObjectNameSchemaFieldsCSV : public IFileStructure
 {
 public:
-	ObjectNameSchemaFieldsCSV(const CARSchema* vui) : obj(vui) {  }
+	ObjectNameSchemaFieldsCSV(const CARSchema* schema) : obj(schema) {  }
 	virtual string GetFileName() const { return "form_fields"; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::CsvDocName(GetFileName()); }
-	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
 	const CARSchema* obj;
@@ -2394,15 +2394,15 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		}
 		break;
 		
-		case PAGE_SCHEMA_PERMISSIONS: return new ObjectNameSchemaPermissions(params.obj1);
-		case PAGE_SCHEMA_WORKFLOW: return new ObjectNameSchemaWorkflow(params.obj1);
-		case PAGE_SCHEMA_INDEXES: return new ObjectNameSchemaIndexes(params.obj1);
-		case PAGE_SCHEMA_SORTLIST: return new ObjectNameSchemaSortList(params.obj1);
-		case PAGE_SCHEMA_RESULTLIST: return new ObjectNameSchemaResultList(params.obj1);
-		case PAGE_SCHEMA_SUBADMINS: return new ObjectNameSchemaSubadmins(params.obj1);
-		case PAGE_SCHEMA_ACTIVELINKS: return new ObjectNameSchemaActiveLinks(params.obj1);
-		case PAGE_SCHEMA_FILTERS: return new ObjectNameSchemaFilters(params.obj1);
-		case PAGE_SCHEMA_ESCALATIONS: return new ObjectNameSchemaEscalations(params.obj1);
+		case PAGE_SCHEMA_PERMISSIONS: return new ObjectNameSchemaPermissions(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_WORKFLOW: return new ObjectNameSchemaWorkflow(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_INDEXES: return new ObjectNameSchemaIndexes(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_SORTLIST: return new ObjectNameSchemaSortList(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_RESULTLIST: return new ObjectNameSchemaResultList(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_SUBADMINS: return new ObjectNameSchemaSubadmins(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_ACTIVELINKS: return new ObjectNameSchemaActiveLinks(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_FILTERS: return new ObjectNameSchemaFilters(static_cast<const CARSchema*>(params.obj1));
+		case PAGE_SCHEMA_ESCALATIONS: return new ObjectNameSchemaEscalations(static_cast<const CARSchema*>(params.obj1));
 
 		case PAGE_SCHEMA_REGULAR: return new SchemaRegular();
 		case PAGE_SCHEMA_JOIN: return new SchemaJoin();
