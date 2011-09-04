@@ -85,6 +85,7 @@ public:
 	void LoadServerObjects(int nMode);
 	void LoadFromServer(void);
 	void LoadFromFile(void);
+	void SetupOverlaySupport();
 
 	bool InBlacklist(int refType, const string &objName) { 	return blackList.Contains(refType, objName.c_str()); }
 	void Prepare(void);		

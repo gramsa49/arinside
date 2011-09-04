@@ -106,17 +106,6 @@ bool CAREscalationList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-	if (arIn->CompareServerVersion(7,6,4) >= 0)
-	{
-		ARValueStruct value;
-		value.dataType = AR_DATA_TYPE_CHAR;
-		value.u.charVal = AR_OVERLAY_CLIENT_MODE_FULL;
-		if (ARSetSessionConfiguration(&arIn->arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &status) != AR_RETURN_OK)
-			cerr << "SetSessionConfiguration failed: " << arIn->GetARStatusError(&status);
-	}
-#endif
-
 	// ok, now retrieve all informations of the escalations we need
 	if (ARGetMultipleEscalations(&arIn->arControl,
 		0,

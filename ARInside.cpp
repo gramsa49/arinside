@@ -551,6 +551,8 @@ void CARInside::LoadFromServer(void)
 	else
 		cout << endl << "Loading Server Informations [SKIPPED]" << endl;
 
+	SetupOverlaySupport();
+
 	//LoadUserList
 	if(appConfig.bLoadUserList)
 	{
@@ -2491,4 +2493,18 @@ bool CARInside::WriteHTAccess()
 		throw(AppException(erStrm.str(), "undefined", "FileIo"));
 	}
 	return true;
+}
+
+void CARInside::SetupOverlaySupport()
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	if (CompareServerVersion(7,6,4) >= 0)
+	{
+		ARValueStruct value;
+		value.dataType = AR_DATA_TYPE_CHAR;
+		value.u.charVal = AR_OVERLAY_CLIENT_MODE_FULL;
+		if (ARSetSessionConfiguration(&arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &arStatus) != AR_RETURN_OK)
+			cerr << "SetSessionConfiguration failed: " << GetARStatusError(&arStatus);
+	}
+#endif
 }
