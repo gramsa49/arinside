@@ -46,6 +46,9 @@ void CDocFilterDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(filter.GetName());
 
+			bool placeOverlayNote = false;
+			CARFilter overlayObj;
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			ARValueStruct* overlayProp = CARProplistHelper::Find(this->filter.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
@@ -56,6 +59,12 @@ void CDocFilterDetails::Documentation()
 					{
 						CARFilter ovFlt(this->filter.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
 						strmHead << " (Overlaid by " << (ovFlt.Exists() ? ovFlt.GetURL(rootLevel, false) : "") << ")";
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovFlt;
+						}
 					}
 					break;
 				case AR_OVERLAY_OBJECT:
@@ -71,7 +80,10 @@ void CDocFilterDetails::Documentation()
 			if(!filter.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(filter.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str());
+			if (placeOverlayNote)
+				strmHead << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
+
+			webPage.AddContent(strmHead.str());
 
 			//Filter Properties
 			stringstream strmTmp;

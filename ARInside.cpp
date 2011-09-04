@@ -2452,7 +2452,12 @@ int CARInside::LoadImages()
 
 string CARInside::LinkToImage(unsigned int imageIndex, int rootLevel)
 {
-	return imageList.ImageGetURL(imageIndex, rootLevel);
+	CARImage image(imageIndex);
+	if (image.Exists())
+	{
+		return image.GetURL(rootLevel);
+	}
+	return EmptyValue;
 }
 
 string CARInside::LinkToImage(const string &imageName, int rootLevel)
@@ -2507,4 +2512,15 @@ void CARInside::SetupOverlaySupport()
 			cerr << "SetSessionConfiguration failed: " << GetARStatusError(&arStatus);
 	}
 #endif
+}
+
+string CARInside::PlaceOverlaidNotice(const CARServerObject& obj, int rootLevel)
+{
+	stringstream tmp;
+
+	tmp << "<div id=\"ovlNote\">" << endl;
+	tmp << "This object is currently not executed/used because it is overlaid by " << obj.GetURL(rootLevel, false) << endl;
+	tmp << "</div>";
+
+	return tmp.str();
 }

@@ -19,6 +19,11 @@
 #include "AREscalation.h"
 #include "ARDayStructHelper.h"
 
+CAREscalation::CAREscalation()
+: CARServerObject(-1)
+{
+}
+
 CAREscalation::CAREscalation(int insideId)
 : CARServerObject(insideId)
 {

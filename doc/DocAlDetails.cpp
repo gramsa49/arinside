@@ -50,6 +50,9 @@ void CDocAlDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName());
 
+			bool placeOverlayNote = false;
+			CARActiveLink overlayObj;
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			ARValueStruct* overlayProp = CARProplistHelper::Find(this->al.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
@@ -60,6 +63,12 @@ void CDocAlDetails::Documentation()
 					{
 						CARActiveLink ovAl(this->al.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
 						strmHead << " (Overlaid by " << (ovAl.Exists() ? ovAl.GetURL(rootLevel, false) : "") << ")";
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovAl;
+						}
 					}
 					break;
 				case AR_OVERLAY_OBJECT:
@@ -75,7 +84,12 @@ void CDocAlDetails::Documentation()
 			if(!this->al.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str());
+			if (placeOverlayNote)
+			{
+				strmHead << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
+			}
+
+			webPage.AddContent(strmHead.str());
 
 			//ActiveLink Properties
 			stringstream strmTmp;

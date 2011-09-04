@@ -1477,6 +1477,10 @@ bool IsObjectOverlaid(ARValueStruct* val)
 	
 	return false;
 }
+
+// TODO: currently this template is needed, because it is used by multiple classes (CARSchema, CARFilter, etc).
+//       Later this should be replaced by a normal function with a CARServerObject parameter. If the GetPropList()
+//       method is part of abstract CARServerObject, some code duplication could be removed again.
 template<class T>
 bool IsObjectOverlaid(const T* obj)
 {
@@ -1853,13 +1857,13 @@ private:
 class ObjectNameImageDetail : public IFileStructure
 {
 public:
-	ObjectNameImageDetail(const CARObject* img) : obj(img) { }
-	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName()); }
+	ObjectNameImageDetail(const CARImage* img) : obj(img) { }
+	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_IMAGE; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 private:
-	const CARObject* obj;
+	const CARImage* obj;
 };
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -2350,7 +2354,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 					}
 					break;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-				case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageDetail(params.obj1);
+				case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageDetail(static_cast<const CARImage*>(params.obj1));
 #endif
 				case AR_STRUCT_ITEM_XML_USER: return new ObjectNameUserDetail(params.obj1);
 				case AR_STRUCT_ITEM_XML_GROUP: return new ObjectNameGroupDetail(static_cast<const CARGroup*>(params.obj1));

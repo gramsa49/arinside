@@ -341,3 +341,12 @@ td.disabledLetter
 {
     color: Silver;
 }
+
+#ovlNote
+{
+    text-align:center; 
+    margin: 3pt; 
+    padding: 2pt; 
+    border-top: 1pt red solid; 
+    border-bottom: 1pt red solid;
+}

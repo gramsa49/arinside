@@ -50,7 +50,33 @@ void CDocImageDetails::Documentation()
 		// contentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << endl;
-		webPage.AddContentHead(contHeadStrm.str());
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		ARValueStruct* overlayProp = CARProplistHelper::Find(image.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+		if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			switch (overlayProp->u.intVal)
+			{
+			case AR_OVERLAID_OBJECT:
+				{
+					CARImage ovlImg(image.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+					contHeadStrm << " (Overlaid by " << (ovlImg.Exists() ? ovlImg.GetURL(rootLevel, false) : "") << ")";
+
+					if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						contHeadStrm << pInside->PlaceOverlaidNotice(ovlImg, rootLevel);
+				}
+				break;
+			case AR_OVERLAY_OBJECT:
+				{
+					CARImage oriImg(image.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+					contHeadStrm << " (Overlay of " << (oriImg.Exists() ? oriImg.GetURL(rootLevel, false) : "") << ")";
+				}
+				break;
+			}
+		}
+#endif
+
+		webPage.AddContent(contHeadStrm.str());
 
 		// image details
 		CTable tbl("imageDetails", "TblObjectList");

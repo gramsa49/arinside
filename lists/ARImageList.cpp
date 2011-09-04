@@ -251,6 +251,10 @@ void CARImageList::Sort()
 {
 	if (GetCount() > 0)
 	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		NormalizeNameListForSorting(names, objProps);
+#endif
+
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
 	}
@@ -261,13 +265,10 @@ void CARImageList::Sort()
 	{
 		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
-}
 
-string CARImageList::ImageGetURL(unsigned int index, int rootLevel)
-{
-	CARImage img(index);
-	CPageParams file(PAGE_DETAILS, &img);
-	return CWebUtil::Link(ImageGetName(index), file, "image.gif", rootLevel); 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	NormalizeNameListToRealNames(names, objProps);
+#endif
 }
 
 void CARImageList::AddReference(unsigned int index, const CRefItem &referenceItem)

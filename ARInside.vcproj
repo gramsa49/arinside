@@ -107,7 +107,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
+				CommandLine="IF EXIST $(InputDir)\.svn\ SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -188,7 +188,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
+				CommandLine="IF EXIST $(InputDir)\.svn\ SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -268,7 +268,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
+				CommandLine="IF EXIST $(InputDir)\.svn\ SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -349,7 +349,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
+				CommandLine="IF EXIST $(InputDir)\.svn\ SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
@@ -429,7 +429,7 @@
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
-				CommandLine="SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
+				CommandLine="IF EXIST $(InputDir)\.svn\ SubWCRev.exe &quot;$(SolutionDir)\.&quot; &quot;$(ProjectDir)svnrev_template.h&quot; &quot;$(ProjectDir)svnrev.h&quot;"
 			/>
 			<Tool
 				Name="VCCustomBuildTool"

@@ -50,7 +50,8 @@ public:
 	char* GetType() const;
 	char* GetDescription() const;
 	const ARImageDataStruct& GetData() const;
-	
+	const ARPropList& GetPropList() const;
+
 	string GetURL(int rootLevel, bool showImage = true) const;
 	
 	// class type support

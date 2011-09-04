@@ -21,6 +21,7 @@ class CARFilter :
 	public CARServerObject
 {
 public:
+	CARFilter();
 	CARFilter(int insideId);
 	CARFilter(const string& name);
 	~CARFilter(void);

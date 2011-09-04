@@ -19,6 +19,11 @@
 #include "../ARInside.h"
 #include "../output/IFileStructure.h"
 
+CARActiveLink::CARActiveLink()
+: CARServerObject(-1)
+{
+}
+
 CARActiveLink::CARActiveLink(int insideId)
 : CARServerObject(insideId)
 {

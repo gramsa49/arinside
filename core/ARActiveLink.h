@@ -25,6 +25,7 @@ class CARActiveLink :
 	public CARServerObject
 {
 public:
+	CARActiveLink();
 	CARActiveLink(int insideId);
 	CARActiveLink(const string& name);
 	~CARActiveLink(void);

@@ -18,6 +18,11 @@
 #include "ARFilter.h"
 #include "../ARInside.h"
 
+CARFilter::CARFilter()
+: CARServerObject(-1)
+{
+}
+
 CARFilter::CARFilter(int insideId)
 : CARServerObject(insideId)
 {

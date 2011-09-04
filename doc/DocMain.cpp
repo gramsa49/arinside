@@ -151,18 +151,18 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 					bInsert = true;
 				}
 			}		
-			else if(searchChar != "#" && searchChar != "*")
-			{
-				if(schema.GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
 			else if(searchChar == "#")
 			{
 				if(!schema.NameStandardFirstChar())
 				{
 					bInsert = true;		
+				}
+			}
+			else
+			{
+				if(schema.GetNameFirstChar() == searchChar)
+				{
+					bInsert = true;
 				}
 			}
 
@@ -1050,13 +1050,15 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 		unsigned int len = this->pInside->imageList.GetCount();
 		for (unsigned int idx = 0; idx < len; ++idx)
 		{
+			CARImage img(idx);
+
 			bool bInsert = false;
 			
 			if (searchChar == "*") // All objects
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = CARObject::GetNameFirstChar(pInside->imageList.ImageGetName(idx));
+				string firstChar = img.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -1064,14 +1066,31 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 			}
 			else if (searchChar == "#")
 			{
-				if (!CARObject::NameStandardFirstChar(pInside->imageList.ImageGetName(idx)[0]))
+				if (!img.NameStandardFirstChar())
 					bInsert = true;
 			}
 			else 
 			{
-				if (searchChar[0] == tolower(pInside->imageList.ImageGetName(idx)[0]))
+				if (img.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (bInsert)
+			{
+				ARValueStruct* val = CARProplistHelper::Find(img.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+				{
+					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
+						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+						bInsert = false;
+
+					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
+						// if the server has overlayMode disabled and the current object is a overlay or custom, hide it.
+						bInsert = false;
+				}
+			}
+#endif
 
 			if (bInsert)
 				imgTable.AddRow(idx, rootLevel);

@@ -67,6 +67,9 @@ void CDocSchemaDetails::Documentation()
 			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
 			contHeadStrm << MenuSeparator;
 
+			bool placeOverlayNote = false;
+			CARSchema overlayObj;
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			ARValueStruct* overlayProp = CARProplistHelper::Find(this->schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
@@ -77,6 +80,12 @@ void CDocSchemaDetails::Documentation()
 					{
 						CARSchema ovFrm(this->schema.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
 						contHeadStrm << " Overlaid by " << (ovFrm.Exists() ? ovFrm.GetURL(rootLevel, false) : "");
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovFrm;
+						}
 					}
 					break;
 				case AR_OVERLAY_OBJECT:
@@ -95,6 +104,9 @@ void CDocSchemaDetails::Documentation()
 				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), rootLevel);
 
 			pgStrm << contHeadStrm.str();
+
+			if (placeOverlayNote)
+				pgStrm << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
 
 			//Add schema navigation menu	
 			webPage.SetNavigation(this->SchemaNavigation());

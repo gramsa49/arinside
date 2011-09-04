@@ -54,7 +54,7 @@ public:
 	inline const ARAccessNameType& ImageGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
 	inline char* ImageGetChangeDiary(unsigned int index) { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
 	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[sortedList[index]]; }
-	string ImageGetURL(unsigned int index, int rootLevel);
+	inline const ARPropList& ImageGetPropList(unsigned int index) { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
 
 private:
 	// allocation state of internal structures

@@ -47,6 +47,9 @@ void CDocEscalationDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName());
 
+			bool placeOverlayNote = false;
+			CAREscalation overlayObj;
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			ARValueStruct* overlayProp = CARProplistHelper::Find(this->escalation.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
@@ -57,6 +60,12 @@ void CDocEscalationDetails::Documentation()
 					{
 						CAREscalation ovEsc(this->escalation.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
 						strmHead << " (Overlaid by " << (ovEsc.Exists() ? ovEsc.GetURL(rootLevel, false) : "") << ")";
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovEsc;
+						}
 					}
 					break;
 				case AR_OVERLAY_OBJECT:
@@ -72,8 +81,10 @@ void CDocEscalationDetails::Documentation()
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str());
+			if (placeOverlayNote)
+				strmHead << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
 
+			webPage.AddContent(strmHead.str());
 
 			//Escalation Properties
 			stringstream strmTmp;

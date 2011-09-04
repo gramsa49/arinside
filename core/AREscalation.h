@@ -21,6 +21,7 @@ class CAREscalation :
 	public CARServerObject
 {
 public:
+	CAREscalation();
 	CAREscalation(int insideId);
 	CAREscalation(const string& name);
 	~CAREscalation(void);
