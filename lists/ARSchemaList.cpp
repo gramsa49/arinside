@@ -25,6 +25,7 @@ CARSchemaList::CARSchemaList(void)
 	internalListState = CARSchemaList::EMPTY;
 	reservedSize = 0;
 	names.numItems = 0;
+	apiBug = false;
 
 	ARZeroMemory(&names);
 	ARZeroMemory(&compounds);
@@ -86,7 +87,7 @@ CARSchemaList::~CARSchemaList(void)
 			FreeARAuditInfoList(&audits,false);
 			FreeARNameList(&defaultVUIs,false);
 			FreeARTextStringList(&helpTexts,false);
-			if (changedTimes.numItems > 0 && changedTimes.timestampList[0] != 0) // <APIBUG>
+			if (!apiBug) // <APIBUG>
 				FreeARTimestampList(&changedTimes,false);
 			FreeARAccessNameList(&owners,false);
 			FreeARAccessNameList(&changedUsers,false);
@@ -182,11 +183,70 @@ bool CARSchemaList::LoadFromServer()
 		// You can use the driver utility to reproduce the error. (Sequence: init, log, ssp, ver, gms => crash)
 		if (changedTimes.numItems == 0 && names.numItems > 0)
 		{
-			changedTimes.timestampList = new ARTimestamp[names.numItems];
-			changedTimes.numItems = names.numItems;
-			memset(changedTimes.timestampList, 0, sizeof(ARTimestamp) * names.numItems);
+			// <APIBUG-WORKAROUND>
+			// ok, as a workaround we can try to load the timestamps via direct sql.
+			// There is a "but" ...
+			//  if program is compiled using 7.6.03 or lower and is run against 7.6.04 server with some overlaid
+			//  schemas, those schemas show wrong timestamps (they show timestamps from their base objects). Why?
+			//  The overlay of form "User" is named "User__o" in arschema table. Loading the form via the API
+			//  returns the form as "User". So we get different names for the same schema and are "not able" to
+			//  match the timestamps together. (It might be possible, but because those API-versions doesn't know
+			//  anything about overlays, i don't want to start dealing with overlays in a workaround.)
+			//  In my mind, showing the timestamp of the base form is better than no timestamps at all.
 
-			cout << "NOTE: ARAPI bug detected. Modify timestamps of schemas will not be available!" << endl;
+			unsigned int numMatches = 0;
+			ARValueListList valueList;
+			ARZeroMemory(&valueList);
+
+			if (ARGetListSQL(&arIn->arControl, "select name, timestamp from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
+			{
+				if (numMatches > 0)
+				{
+					ARTimestamp* timestamps = new ARTimestamp[names.numItems];
+					unsigned int foundTimes = 0;
+					memset(timestamps, 0, sizeof(ARTimestamp) * names.numItems);
+
+					for (unsigned int i = 0; i < names.numItems; ++i)
+					{
+						for (unsigned int valPos = 0; valPos < valueList.numItems; ++valPos)
+						{
+							ARValueList& row = valueList.valueListList[valPos];
+							
+							if (row.numItems != 2 || row.valueList[0].dataType != AR_DATA_TYPE_CHAR || row.valueList[1].dataType != AR_DATA_TYPE_INTEGER)
+								continue;
+
+							if (strncmp(names.nameList[i], row.valueList[0].u.charVal, AR_MAX_NAME_SIZE) == 0)
+							{
+								timestamps[i] = row.valueList[1].u.intVal;
+								foundTimes++;
+							}
+						}
+					}
+
+					if (foundTimes > 0)
+					{
+						cout << "NOTE: ARAPI bug detected. Schema timestamps loaded via direct sql!" << endl;
+						changedTimes.timestampList = timestamps;
+						changedTimes.numItems = names.numItems;
+						apiBug = true;
+					}
+				}
+			}
+			else
+			{
+				cout << arIn->GetARStatusError(&status);
+			}
+			// </APIBUG-WORKAROUND>
+
+			if (changedTimes.numItems == 0)
+			{
+				cout << "NOTE: ARAPI bug detected. Modify timestamps of schemas will not be available!" << endl;
+
+				changedTimes.timestampList = new ARTimestamp[names.numItems];
+				changedTimes.numItems = names.numItems;
+				memset(changedTimes.timestampList, 0, sizeof(ARTimestamp) * names.numItems);
+				apiBug = true;
+			}
 		}
 		// </APIBUG>
 	}

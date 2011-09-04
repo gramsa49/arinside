@@ -95,6 +95,7 @@ public:
 private:
 	// allocation state of internal structures
 	enum SchemaListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
+	bool apiBug;
 
 	unsigned int reservedSize;
 	ARNameList names;
