@@ -22,6 +22,7 @@ class CARCharMenu :
 	public CARServerObject
 {
 public:
+	CARCharMenu();
 	CARCharMenu(int insideId);
 	CARCharMenu(const string& name);
 	~CARCharMenu(void);
@@ -45,7 +46,7 @@ public:
 	const ARNameType& GetARName() const;
 	unsigned int GetRefreshCode() const;
 	const ARCharMenuStruct& GetDefinition() const;
-	const ARPropList& GetProps() const;
+	const ARPropList& GetPropList() const;
 
 	const string& GetAppRefName() const;
 	void SetAppRefName(const string& appName);

@@ -1713,7 +1713,7 @@ class ObjectNameMenuDetail : public IFileStructure
 {
 public:
 	ObjectNameMenuDetail(const CARCharMenu* mnu) : obj(mnu) { }
-	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName()); }
+	virtual string GetFileName() const { return GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return DIR_MENU; }
 	virtual unsigned int GetRootLevel() const { return 1; }

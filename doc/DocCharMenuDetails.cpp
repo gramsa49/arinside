@@ -50,10 +50,45 @@ void CDocCharMenuDetails::Documentation()
 			strmHead.str("");
 
 			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->menu.GetName()) << " (" << CAREnum::MenuType(menuDef.menuType) << ")";
+
+			bool placeOverlayNote = false;
+			CARCharMenu overlayObj;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			ARValueStruct* overlayProp = CARProplistHelper::Find(this->menu.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			{
+				switch (overlayProp->u.intVal)
+				{
+				case AR_OVERLAID_OBJECT:
+					{
+						CARCharMenu ovlMnu(this->menu.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlaid by " << (ovlMnu.Exists() ? ovlMnu.GetURL(rootLevel, false) : "") << ")";
+
+						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+						{
+							placeOverlayNote = true;
+							overlayObj = ovlMnu;
+						}
+					}
+					break;
+				case AR_OVERLAY_OBJECT:
+					{
+						CARCharMenu oriMnu(this->menu.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+						strmHead << " (Overlay of " << (oriMnu.Exists() ? oriMnu.GetURL(rootLevel, false) : "") << ")";
+					}
+					break;
+				}
+			}
+#endif
+
 			if(!this->menu.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->menu.GetAppRefName(), this->rootLevel);
 
 			webPage.AddContentHead(strmHead.str());
+
+			if (placeOverlayNote)
+				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
 
 			//ActiveLink Properties
 			stringstream strmTmp;
@@ -124,7 +159,7 @@ void CDocCharMenuDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(this->menu.GetProps()));
+			webPage.AddContent(CARProplistHelper::GetList(this->menu.GetPropList()));
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(&menu, this->rootLevel));

@@ -18,6 +18,11 @@
 #include "ARCharMenu.h"
 #include "../ARInside.h"
 
+CARCharMenu::CARCharMenu()
+: CARServerObject(-1)
+{
+}
+
 CARCharMenu::CARCharMenu(int insideId)
 : CARServerObject(insideId)
 {
@@ -104,7 +109,7 @@ const ARNameType& CARCharMenu::GetARName() const
 	return CARInside::GetInstance()->menuList.MenuGetName(GetInsideId());
 }
 
-const ARPropList& CARCharMenu::GetProps() const
+const ARPropList& CARCharMenu::GetPropList() const
 {
 	return CARInside::GetInstance()->menuList.MenuGetPropList(GetInsideId());
 }

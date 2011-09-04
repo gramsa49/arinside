@@ -81,10 +81,11 @@ void CDocEscalationDetails::Documentation()
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 
-			if (placeOverlayNote)
-				strmHead << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
+			webPage.AddContentHead(strmHead.str());
 
-			webPage.AddContent(strmHead.str());
+			if (placeOverlayNote)
+				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+
 
 			//Escalation Properties
 			stringstream strmTmp;

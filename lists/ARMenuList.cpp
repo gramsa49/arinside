@@ -246,6 +246,10 @@ void CARMenuList::Sort()
 {
 	if (GetCount() > 0)
 	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		NormalizeNameListForSorting(names, objProps);
+#endif
+
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
 	}
@@ -256,6 +260,10 @@ void CARMenuList::Sort()
 	{
 		searchList[string(names.nameList[sortedList[i]])] = i;
 	}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	NormalizeNameListToRealNames(names, objProps);
+#endif
 }
 
 void CARMenuList::AddReference(unsigned int index, const CRefItem &refItem)
