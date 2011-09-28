@@ -281,13 +281,10 @@ string CDocFilterActionStruct::FilterActionNotify(ARFilterActionNotify &action, 
 			strm << "<br/>Include Fields: " << CAREnum::NotifyFieldList(action.fieldIdListType) << "<br/>" << endl;
 			for(unsigned int i=0; i<action.fieldIdList.numItems; i++)
 			{
-				if(i > 0)
-				{
-					CRefItem refItem(*this->obj, ifElse, nAction, REFM_NOTIFY_FIELDLIST);
-					arIn->AddFieldReference(schemaInsideId, action.fieldIdList.internalIdList[i], refItem);
+				CRefItem refItem(*this->obj, ifElse, nAction, REFM_NOTIFY_FIELDLIST);
+				arIn->AddFieldReference(schemaInsideId, action.fieldIdList.internalIdList[i], refItem);
 
-					strm << arIn->LinkToField(schemaInsideId, action.fieldIdList.internalIdList[i], rootLevel) << "<br/>" << endl;
-				}
+				strm << arIn->LinkToField(schemaInsideId, action.fieldIdList.internalIdList[i], rootLevel) << "<br/>" << endl;
 			}
 
 			//Messages
