@@ -159,7 +159,7 @@ string CDocContainerHelper::PermissionList()
 
 string CDocContainerHelper::ContainerForms()
 {	
-	CTable tbl("formList", "TblObjectList");
+	CTable tbl("formList", "TblOwnerList");
 	tbl.AddColumn(100, "Form Name");
 
 	try
