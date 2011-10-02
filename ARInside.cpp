@@ -2503,7 +2503,7 @@ bool CARInside::WriteHTAccess()
 void CARInside::SetupOverlaySupport()
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-	if (CompareServerVersion(7,6,4) >= 0)
+	if (CompareServerVersion(7,6,4) >= 0 && appConfig.bOverlaySupport)
 	{
 		ARValueStruct value;
 		value.dataType = AR_DATA_TYPE_CHAR;

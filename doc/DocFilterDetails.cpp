@@ -48,31 +48,37 @@ void CDocFilterDetails::Documentation()
 
 			bool placeOverlayNote = false;
 			CARFilter overlayObj;
+			stringstream overlayLink;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			ARValueStruct* overlayProp = CARProplistHelper::Find(this->filter.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			if (pInside->appConfig.bOverlaySupport)
 			{
-				switch (overlayProp->u.intVal)
+				ARValueStruct* overlayProp = CARProplistHelper::Find(this->filter.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
 				{
-				case AR_OVERLAID_OBJECT:
+					switch (overlayProp->u.intVal)
 					{
-						CARFilter ovFlt(this->filter.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-						strmHead << " (Overlaid by " << (ovFlt.Exists() ? ovFlt.GetURL(rootLevel, false) : "") << ")";
-
-						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+					case AR_OVERLAID_OBJECT:
 						{
-							placeOverlayNote = true;
-							overlayObj = ovFlt;
+							CARFilter ovFlt(this->filter.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+							strmHead << " (Base)";
+							overlayLink << "Overlay: " << (ovFlt.Exists() ? ovFlt.GetURL(rootLevel, false) : ovFlt.GetName());
+
+							if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+							{
+								placeOverlayNote = true;
+								overlayObj = ovFlt;
+							}
 						}
+						break;
+					case AR_OVERLAY_OBJECT:
+						{
+							CARFilter oriFlt(this->filter.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+							strmHead << " (Overlay)";
+							overlayLink << "Based on: " << (oriFlt.Exists() ? oriFlt.GetURL(rootLevel, false) : oriFlt.GetName());
+						}
+						break;
 					}
-					break;
-				case AR_OVERLAY_OBJECT:
-					{
-						CARFilter oriFlt(this->filter.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-						strmHead << " (Overlay of " << (oriFlt.Exists() ? oriFlt.GetURL(rootLevel, false) : "") << ")";
-					}
-					break;
 				}
 			}
 #endif
@@ -80,10 +86,10 @@ void CDocFilterDetails::Documentation()
 			if(!filter.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(filter.GetAppRefName(), this->rootLevel);
 
-			if (placeOverlayNote)
-				strmHead << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
+			webPage.AddContentHead(strmHead.str(), overlayLink.str());
 
-			webPage.AddContent(strmHead.str());
+			if (placeOverlayNote)
+				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
 
 			//Filter Properties
 			stringstream strmTmp;

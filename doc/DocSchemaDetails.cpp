@@ -27,6 +27,7 @@ CDocSchemaDetails::CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel)
 	this->uniqueAlList.clear();
 	this->uniqueEscalList.clear();
 	this->uniqueFilterList.clear();
+	this->overlayType = 0;
 }
 
 CDocSchemaDetails::~CDocSchemaDetails(void)
@@ -41,6 +42,7 @@ string CDocSchemaDetails::FormPageHeader(string description)
 	contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 	contHeadStrm << MenuSeparator <<this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
 	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel);
+	contHeadStrm << CAREnum::GetOverlayTypeString(overlayType);
 	contHeadStrm << MenuSeparator << CWebUtil::ObjName(description) << endl;
 	return contHeadStrm.str();
 }
@@ -61,52 +63,37 @@ void CDocSchemaDetails::Documentation()
 			
 			const ARCompoundSchema& compSchema = this->schema.GetCompound();
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			overlayType = GetOverlayType();
+#endif
+
 			//ContentHead informations
 			stringstream contHeadStrm;
 			contHeadStrm << CWebUtil::LinkToSchemaIndex(rootLevel) << endl;
 			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
-			contHeadStrm << MenuSeparator;
+			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->schema.GetName());
+			contHeadStrm << CAREnum::GetOverlayTypeString(overlayType);
 
-			bool placeOverlayNote = false;
 			CARSchema overlayObj;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			ARValueStruct* overlayProp = CARProplistHelper::Find(this->schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
 			{
-				switch (overlayProp->u.intVal)
-				{
-				case AR_OVERLAID_OBJECT:
-					{
-						CARSchema ovFrm(this->schema.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-						contHeadStrm << " Overlaid by " << (ovFrm.Exists() ? ovFrm.GetURL(rootLevel, false) : "");
-
-						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
-						{
-							placeOverlayNote = true;
-							overlayObj = ovFrm;
-						}
-					}
-					break;
-				case AR_OVERLAY_OBJECT:
-					{
-						CARSchema oriFrm(this->schema.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-						contHeadStrm << " Overlay of " << (oriFrm.Exists() ? oriFrm.GetURL(rootLevel, false) : "");
-					}
-					break;
-				}
+				string correspondingName = GetCorrespondingOverlayName(overlayType);
+				CARSchema correspondingObject(correspondingName);
+				overlayObj = correspondingObject;	
 			}
-			else
 #endif
-				contHeadStrm << CWebUtil::ObjName(this->schema.GetName()) << endl;
 
 			if(!this->schema.GetAppRefName().empty())
 				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), rootLevel);
 
-			pgStrm << contHeadStrm.str();
+			webPage.AddContentHead(contHeadStrm.str(), GetCorrespondingOverlayLink(overlayType, overlayObj));
 
-			if (placeOverlayNote)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
 				pgStrm << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
+#endif
 
 			//Add schema navigation menu	
 			webPage.SetNavigation(this->SchemaNavigation());
@@ -252,7 +239,6 @@ void CDocSchemaDetails::Documentation()
 			webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, rootLevel));
 
 			webPage.SaveInFolder(path);
-			pgStrm.str("");
 		}
 	}
 	catch(exception& e)
@@ -2217,5 +2203,56 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 	catch (...)
 	{
 		cerr << "EXCEPTION archive properties" << endl;
+	}
+}
+
+int CDocSchemaDetails::GetOverlayType()
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	ARValueStruct* overlayProp = CARProplistHelper::Find(this->schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+	if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER && pInside->appConfig.bOverlaySupport)
+	{
+		return overlayProp->u.intVal;
+	}
+#endif
+	return -1;
+}
+
+string CDocSchemaDetails::GetCorrespondingOverlayName(int currentType)
+{
+	switch (currentType)
+	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	case AR_OVERLAID_OBJECT:
+		return this->schema.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : "");
+	case AR_OVERLAY_OBJECT:
+		return this->schema.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : "");
+#endif
+	default: return "";
+	}
+}
+
+string CDocSchemaDetails::GetCorrespondingOverlayLink(int currentType, CARServerObject& target)
+{
+	switch (currentType)
+	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	case AR_OVERLAID_OBJECT:
+		{
+			stringstream tmpStrm;
+			tmpStrm << "Overlay: " << target.GetURL(rootLevel, false);
+			return tmpStrm.str();
+		}
+		break;
+	case AR_OVERLAY_OBJECT:
+		{
+			stringstream tmpStrm;
+			tmpStrm << "Based on: " << target.GetURL(rootLevel, false);
+			return tmpStrm.str();
+		}
+		break;
+#endif
+	default:
+		return "";
 	}
 }

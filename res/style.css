@@ -350,3 +350,16 @@ td.disabledLetter
     border-top: 1pt red solid; 
     border-bottom: 1pt red solid;
 }
+
+#locLeft
+{
+	float:left;
+	text-align: left;
+	line-height: 16px;
+}
+
+#locRight
+{
+	text-align: right;
+	line-height: 16px;
+}

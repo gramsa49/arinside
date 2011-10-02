@@ -28,7 +28,8 @@ namespace OUTPUT
 		~CWebPage(void);
 
 		void AddContent(const string &content);	
-		void AddContentHead(const string &description);
+		void AddContentHead(const string &description) { AddContentHead(description, ""); }
+		void AddContentHead(const string &description, const string &rightInfo);
 		void SetNavigation(const string &nav);
 
 		int SaveInFolder(const string &path);

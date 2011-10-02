@@ -45,35 +45,41 @@ void CDocPacklistDetails::Documentation()
 			stringstream strmHead;
 			strmHead.str("");
 
-			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName());
-
 			bool placeOverlayNote = false;
 			CARContainer overlayObj;
+			stringstream overlayLink;
+
+			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName());
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			ARValueStruct* overlayProp = CARProplistHelper::Find(pPackList.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			if (pInside->appConfig.bOverlaySupport)
 			{
-				switch (overlayProp->u.intVal)
+				ARValueStruct* overlayProp = CARProplistHelper::Find(pPackList.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
 				{
-				case AR_OVERLAID_OBJECT:
+					switch (overlayProp->u.intVal)
 					{
-						CARContainer ovlPkl(pPackList.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-						strmHead << " (Overlaid by " << (ovlPkl.Exists() ? ovlPkl.GetURL(rootLevel, false) : "") << ")";
-
-						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+					case AR_OVERLAID_OBJECT:
 						{
-							placeOverlayNote = true;
-							overlayObj = ovlPkl;
+							CARContainer ovlPkl(pPackList.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+							strmHead << " (Base)";
+							overlayLink << "Overlay: " << (ovlPkl.Exists() ? ovlPkl.GetURL(rootLevel, false) : pPackList.GetName());
+
+							if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+							{
+								placeOverlayNote = true;
+								overlayObj = ovlPkl;
+							}
 						}
+						break;
+					case AR_OVERLAY_OBJECT:
+						{
+							CARContainer oriPkl(pPackList.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+							strmHead << " (Overlay)";
+							overlayLink << "Based on: " << (oriPkl.Exists() ? oriPkl.GetURL(rootLevel, false) : pPackList.GetName());
+						}
+						break;
 					}
-					break;
-				case AR_OVERLAY_OBJECT:
-					{
-						CARContainer oriPkl(pPackList.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-						strmHead << " (Overlay of " << (oriPkl.Exists() ? oriPkl.GetURL(rootLevel, false) : "") << ")";
-					}
-					break;
 				}
 			}
 #endif
@@ -81,7 +87,7 @@ void CDocPacklistDetails::Documentation()
 			if(!this->pPackList.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pPackList.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str());
+			webPage.AddContentHead(strmHead.str(), overlayLink.str());
 
 			if (placeOverlayNote)
 				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));

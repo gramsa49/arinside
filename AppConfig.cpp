@@ -29,6 +29,7 @@ AppConfig::AppConfig(void)
 	groupQuery = "";
 	roleQuery = "";
 	maxRetrieve = 0;
+	overlayMode = "";
 
 	// Output and Layout configuration
 	companyName = "";
@@ -48,6 +49,7 @@ AppConfig::AppConfig(void)
 	bLoadGroupList = true;
 	bLoadRoleList = true;
 	bUseUtf8 = false;
+	bOverlaySupport;
 
 	serverName = "";
 	userName = "";

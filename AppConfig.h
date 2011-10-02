@@ -42,6 +42,7 @@ public:
 	string groupQuery;
 	string roleQuery;
 	int maxRetrieve;
+	string overlayMode;
 
 	// Output and Layout configuration
 	string companyName;
@@ -64,6 +65,7 @@ public:
 	bool bCompactFolder;
 	bool bGZCompression;
 	bool bDeleteExistingFiles;
+	bool bOverlaySupport;
 
 	string serverName;
 	string userName;

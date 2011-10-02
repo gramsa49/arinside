@@ -168,7 +168,7 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert)
+			if (bInsert && pInside->appConfig.bOverlaySupport)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
@@ -253,7 +253,7 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert)
+			if (bInsert && pInside->appConfig.bOverlaySupport)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(pInside->alList.ActiveLinkGetPropList(alIdx), AR_SMOPROP_OVERLAY_PROPERTY);
 				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
@@ -441,7 +441,7 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert)
+			if (bInsert && pInside->appConfig.bOverlaySupport)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(pInside->filterList.FilterGetPropList(filterIndex), AR_SMOPROP_OVERLAY_PROPERTY);
 				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
@@ -665,7 +665,7 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert)
+			if (bInsert && pInside->appConfig.bOverlaySupport)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(pInside->escalationList.EscalationGetPropList(escalIndex), AR_SMOPROP_OVERLAY_PROPERTY);
 				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
@@ -870,7 +870,7 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert)
+			if (bInsert && pInside->appConfig.bOverlaySupport)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(menu.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
@@ -955,7 +955,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 				}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-				if (bInsert)
+				if (bInsert && pInside->appConfig.bOverlaySupport)
 				{
 					ARValueStruct* val = CARProplistHelper::Find(cont.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 					if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
@@ -1110,7 +1110,7 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert)
+			if (bInsert && pInside->appConfig.bOverlaySupport)
 			{
 				ARValueStruct* val = CARProplistHelper::Find(img.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
 				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)

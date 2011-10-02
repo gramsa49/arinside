@@ -47,11 +47,13 @@ void CWebPage::AddContent(const string &content)
 	this->bodyContent.push_back(content);
 }
 
-void CWebPage::AddContentHead(const string &description)
+void CWebPage::AddContentHead(const string &description, const string &rightInfo)
 {
-	AddContent("<p>");
+	AddContent("<div id='locLeft'>");
 	AddContent(description);
-	AddContent("</p>");
+	AddContent("</div><div id='locRight'>");
+	AddContent(( !rightInfo.empty() ? rightInfo : "&nbsp;"));
+	AddContent("</div>");
 }
 
 void CWebPage::PageHeader(ostream &strm)

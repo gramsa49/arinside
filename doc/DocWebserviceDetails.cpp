@@ -46,36 +46,42 @@ void CDocWebserviceDetails::Documentation()
 
 			bool placeOverlayNote = false;
 			CARContainer overlayObj;
+			stringstream overlayLink;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			ARValueStruct* overlayProp = CARProplistHelper::Find(ws.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			if (pInside->appConfig.bOverlaySupport)
 			{
-				switch (overlayProp->u.intVal)
+				ARValueStruct* overlayProp = CARProplistHelper::Find(ws.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+				if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
 				{
-				case AR_OVERLAID_OBJECT:
+					switch (overlayProp->u.intVal)
 					{
-						CARContainer ovlWS(ws.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-						strmHead << " (Overlaid by " << (ovlWS.Exists() ? ovlWS.GetURL(rootLevel, false) : "") << ")";
-
-						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+					case AR_OVERLAID_OBJECT:
 						{
-							placeOverlayNote = true;
-							overlayObj = ovlWS;
+							CARContainer ovlWS(ws.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
+							strmHead << " (Base)";
+							overlayLink << "Overlay: " << (ovlWS.Exists() ? ovlWS.GetURL(rootLevel, false) : ws.GetName());
+
+							if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
+							{
+								placeOverlayNote = true;
+								overlayObj = ovlWS;
+							}
 						}
+						break;
+					case AR_OVERLAY_OBJECT:
+						{
+							CARContainer oriWS(ws.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
+							strmHead << " (Overlay)";
+							overlayLink << "Based on: " << (oriWS.Exists() ? oriWS.GetURL(rootLevel, false) : ws.GetName());
+						}
+						break;
 					}
-					break;
-				case AR_OVERLAY_OBJECT:
-					{
-						CARContainer oriWS(ws.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-						strmHead << " (Overlay of " << (oriWS.Exists() ? oriWS.GetURL(rootLevel, false) : "") << ")";
-					}
-					break;
 				}
 			}
 #endif
 
-			webPage.AddContentHead(strmHead.str());
+			webPage.AddContentHead(strmHead.str(), overlayLink.str());
 
 			if (placeOverlayNote)
 				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));

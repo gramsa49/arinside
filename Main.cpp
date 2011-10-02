@@ -322,6 +322,7 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 		config.readInto<string>(cfg.userName, "Username", "");
 		config.readInto<string>(cfg.password, "Password", "");
 		config.readInto<int>(cfg.apiTimeout, "APITimeout", 0);
+		config.readInto<string>(cfg.overlayMode, "OverlayMode", "TRUE");
 		cout << endl;
 
 		LOG << "UserForm: " << cfg.userForm << endl;		
@@ -353,6 +354,19 @@ void LoadConfigFile(string fileName, AppConfig &cfg)
 			CWebUtil::webpageFileExtension = CWebUtil::HtmlGZPageSuffix();
 		else
 			CWebUtil::webpageFileExtension = CWebUtil::HtmlPageSuffix();
+
+		// later we can support configuring specific layer documentation
+		if (cfg.overlayMode != "FALSE" && cfg.overlayMode != "TRUE")
+		{
+			cfg.overlayMode = "TRUE";
+		}
+
+		// should overlay support be disable completely?
+		if (cfg.overlayMode == "FALSE")
+			cfg.bOverlaySupport = false;
+		else
+			cfg.bOverlaySupport = true;
+
 	}
 	catch(exception& e)
 	{
