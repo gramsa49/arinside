@@ -1854,6 +1854,7 @@ private:
 	const CARRole* obj;
 };
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 class ObjectNameImageDetail : public IFileStructure
 {
 public:
@@ -1866,7 +1867,6 @@ private:
 	const CARImage* obj;
 };
 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 class ObjectNameImageData : public IFileStructure
 {
 public:

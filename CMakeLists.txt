@@ -24,6 +24,28 @@ PROJECT(arinside)
 
 MESSAGE(STATUS "System Name: ${CMAKE_SYSTEM_NAME}")
 
+## *** taken from http://stackoverflow.com/questions/148570/using-pre-compiled-headers-with-cmake ***
+## To use it, the PrecompiledSource file shouldn't be specified in SourceVar array. Otherwise the
+## file specific precompiled properties will get overwritten.
+MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
+  IF(MSVC)
+	MESSAGE(STATUS "Setting up precompiler header support")
+    GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
+    SET(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
+    SET(Sources ${${SourcesVar}})
+
+    SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
+                                PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
+                                           OBJECT_OUTPUTS "${PrecompiledBinary}")
+										   
+    SET_SOURCE_FILES_PROPERTIES(${Sources}
+                                PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledBinary}\" /FI\"${PrecompiledBinary}\" /Fp\"${PrecompiledBinary}\""
+                                           OBJECT_DEPENDS "${PrecompiledBinary}")  
+    # Add precompiled header to SourcesVar
+    LIST(APPEND ${SourcesVar} ${PrecompiledSource})
+  ENDIF(MSVC)
+ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
+
 # configurable variables for cmakegui
 IF(NOT DEFINED ARINSIDE_ENABLE_ZLIB_SUPPORT)
 	SET(ARINSIDE_ENABLE_ZLIB_SUPPORT CACHE BOOL "Enables zlib-compression support. See documentation for more details")
@@ -34,7 +56,7 @@ IF(NOT DEFINED ARINSIDE_BETA)
 ENDIF(NOT DEFINED ARINSIDE_BETA)	
 
 IF (NOT DEFINED AR_INCLUDE_PATH)
-	SET(AR_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../api750" CACHE PATH "Path to the arapi root dir where 'include' and 'lib' is located.")
+	SET(AR_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../api764" CACHE PATH "Path to the arapi root dir where 'include' and 'lib' is located.")
 ENDIF(NOT DEFINED AR_INCLUDE_PATH)
 
 IF(NOT EXISTS ${AR_INCLUDE_PATH})
@@ -103,7 +125,7 @@ SET (ARINSIDE_SRCS
  scan/ScanMain.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
  util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp
- AppConfig.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp stdafx.cpp WindowsUtil.cpp
+ AppConfig.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp WindowsUtil.cpp
 )
 SET (ARINSIDE_SRC_GIFS
  res/active_link.gif res/al_guide.gif res/application.gif res/ars_edit.gif res/chapter.gif res/disabled.gif
@@ -259,6 +281,8 @@ IF(UNIX)
 ELSE(UNIX)
 	SET(ARINSIDE_SRCS ${ARINSIDE_SRCS} "ARInside.rc")
 ENDIF(UNIX)
+
+ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS)
 
 # generate svnrev.h file
 FIND_PACKAGE(Subversion)

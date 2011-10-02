@@ -2358,13 +2358,13 @@ public:
 
 	static const char* GetOverlayTypeString(int overlayType)
 	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		switch (overlayType)
 		{
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		case AR_OVERLAID_OBJECT: return " (Base) ";
 		case AR_OVERLAY_OBJECT: return " (Overlay) ";
-#endif
-		default: return "";
 		}
+#endif
+		return "";
 	}
 };
