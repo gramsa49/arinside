@@ -101,6 +101,11 @@ const char* CARRole::GetChangeDiary() const
 	return NULL;
 }
 
+const ARPropList& CARRole::GetPropList() const
+{
+	return CARRoleList::RoleGetPropList();
+}
+
 const string& CARRole::GetRequestId() const
 {
 	return CARInside::GetInstance()->roleList.RoleGetRequestId(GetInsideId());

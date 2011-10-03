@@ -110,6 +110,15 @@ int CARFieldListXML::Find(unsigned int fieldId)
 	return -1;
 }
 
+const ARPropList& CARFieldListXML::FieldGetPropList(unsigned int index) const
+{
+#if AR_CURRENT_API_VERSION < AR_API_VERSION_763
+	return emptyPropList;
+#else
+	return fieldInfo.fieldList[sortedList[index]].objPropList; 
+#endif
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 // CARFieldListServer implementation
 CARFieldListServer::CARFieldListServer(unsigned int schemaInsideId)
@@ -188,7 +197,7 @@ bool CARFieldListServer::LoadFromServer()
 		&changedUsers,
 		&changeDiary,
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-		NULL, // objPropListList // TODO: support new prop list
+		&objProps,
 #endif
 		&status) == AR_RETURN_OK)
 	{
@@ -247,4 +256,13 @@ void CARFieldListServer::Sort()
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
 	}
+}
+
+const ARPropList& CARFieldListServer::FieldGetPropList(unsigned int index) const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	return objProps.propsList[sortedList[index]];
+#else
+	return emptyPropList;
+#endif
 }

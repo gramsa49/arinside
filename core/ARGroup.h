@@ -38,6 +38,7 @@ public:
 	const ARAccessNameType& GetOwner() const;
 	const ARAccessNameType& GetLastChanged() const;
 	const char* GetChangeDiary() const;
+	const ARPropList& GetPropList() const;
 
 	// data-access functions
 	const string& GetRequestId() const;

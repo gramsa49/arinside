@@ -112,7 +112,7 @@ string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
 	for (unsigned int vuiIndex = 0; vuiIndex < vuiCount; ++vuiIndex)
 	{
 		CARVui vui(GetInsideId(), 0, vuiIndex);
-		const ARPropList& propList = vui.GetProps();
+		const ARPropList& propList = vui.GetDisplayProps();
 
 		for(unsigned int i=0; i < propList.numItems; ++i)
 		{

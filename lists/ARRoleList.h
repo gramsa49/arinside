@@ -49,6 +49,7 @@ public:
 	ARTimestamp RoleGetModifiedDate(unsigned int index) { assert(index < modifiedDate.size()); return modifiedDate[sortedList[index]]; }
 	const ARAccessNameType& RoleGetCreatedBy(unsigned int index) { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
 	const ARAccessNameType& RoleGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
+	static const ARPropList& RoleGetPropList(/*unsigned int index*/) { return emptyPropList; }
 
 private:
 	vector<string> requestId;

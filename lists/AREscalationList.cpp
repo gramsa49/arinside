@@ -22,9 +22,21 @@
 
 CAREscalationList::CAREscalationList(void)
 {
+	ARZeroMemory(&names);
+	ARZeroMemory(&times);
+	ARZeroMemory(&schemas);
+	ARZeroMemory(&enabledObjects);
+	ARZeroMemory(&queries);
+	ARZeroMemory(&ifActions);
+	ARZeroMemory(&elseActions);
+	ARZeroMemory(&helpTexts);
+	ARZeroMemory(&changedTimes);
+	ARZeroMemory(&owners);
+	ARZeroMemory(&changedUsers);
+	ARZeroMemory(&changeDiary);
+	ARZeroMemory(&objProps);
 	internalListState = CAREscalationList::EMPTY;
 	reservedSize = 0;
-	names.numItems = 0;
 }
 
 CAREscalationList::~CAREscalationList(void)

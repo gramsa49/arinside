@@ -38,12 +38,13 @@ public:
 	virtual const ARNameType& VUIGetName(unsigned int index) const = 0;
 	virtual const ARLocaleType& VUIGetLocale(unsigned int index) const = 0;
 	virtual int VUIGetType(unsigned int index) = 0;
-	virtual const ARPropList& VUIGetProps(unsigned int index) const = 0;
+	virtual const ARPropList& VUIGetDisplayProps(unsigned int index) const = 0;
 	virtual const char* VUIGetHelptext(unsigned int index) const = 0;
 	virtual const ARTimestamp& VUIGetTimestamp(unsigned int index) const = 0;
 	virtual const ARAccessNameType& VUIGetOwner(unsigned int index) const = 0;
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const = 0;
 	virtual const char* VUIGetChangeDiary(unsigned int index) const = 0;
+	virtual const ARPropList& VUIGetPropList(unsigned int index) const = 0;
 	//virtual string VUIGetURL(unsigned int index, int rootLevel);
 };
 
@@ -68,12 +69,13 @@ public:
 	virtual const ARNameType& VUIGetName(unsigned int index) const { return vuiList.vuiList[sortedList[index]].vuiName; }
 	virtual const ARLocaleType& VUIGetLocale(unsigned int index) const { return vuiList.vuiList[sortedList[index]].locale; }
 	virtual int VUIGetType(unsigned int index) { return vuiList.vuiList[sortedList[index]].vuiType; }
-	virtual const ARPropList& VUIGetProps(unsigned int index) const { return vuiList.vuiList[sortedList[index]].props; }
+	virtual const ARPropList& VUIGetDisplayProps(unsigned int index) const { return vuiList.vuiList[sortedList[index]].props; }
 	virtual const char* VUIGetHelptext(unsigned int index) const { return vuiList.vuiList[sortedList[index]].helpText; }
 	virtual const ARTimestamp& VUIGetTimestamp(unsigned int index) const { return vuiList.vuiList[sortedList[index]].timestamp; }
 	virtual const ARAccessNameType& VUIGetOwner(unsigned int index) const { return vuiList.vuiList[sortedList[index]].owner; }
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const { return vuiList.vuiList[sortedList[index]].lastChanged; }
 	virtual const char* VUIGetChangeDiary(unsigned int index) const { return vuiList.vuiList[sortedList[index]].changeDiary; }
+	virtual const ARPropList& VUIGetPropList(unsigned int index) const;
 	//virtual string VUIGetURL(unsigned int index, int rootLevel);
 
 	friend class CARSchemaList;
@@ -103,12 +105,13 @@ public:
 	virtual const ARNameType& VUIGetName(unsigned int index) const { return names.nameList[sortedList[index]]; }
 	virtual const ARLocaleType& VUIGetLocale(unsigned int index) const { return locales.localeList[sortedList[index]]; }
 	virtual int VUIGetType(unsigned int index) { return types.intList[sortedList[index]]; }
-	virtual const ARPropList& VUIGetProps(unsigned int index) const { return props.propsList[sortedList[index]]; }
+	virtual const ARPropList& VUIGetDisplayProps(unsigned int index) const { return dispProps.propsList[sortedList[index]]; }
 	virtual const char* VUIGetHelptext(unsigned int index) const { return helpTexts.stringList[sortedList[index]]; }
 	virtual const ARTimestamp& VUIGetTimestamp(unsigned int index) const { return changedTimes.timestampList[sortedList[index]]; }
 	virtual const ARAccessNameType& VUIGetOwner(unsigned int index) const { return owners.nameList[sortedList[index]]; }
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const { return changedUsers.nameList[sortedList[index]]; }
 	virtual const char* VUIGetChangeDiary(unsigned int index) const { return changeDiary.stringList[sortedList[index]]; }
+	virtual const ARPropList& VUIGetPropList(unsigned int index) const;
 
 private:
 	unsigned int schemaId;
@@ -117,12 +120,15 @@ private:
 	ARNameList names;
 	ARLocaleList locales;
 	ARUnsignedIntList types;
-	ARPropListList props;
+	ARPropListList dispProps;
 	ARTextStringList helpTexts;
 	ARTimestampList changedTimes;
 	ARAccessNameList owners;
 	ARAccessNameList changedUsers;
 	ARTextStringList changeDiary;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	ARPropListList objProps;
+#endif
 
 	vector<unsigned int> sortedList;
 };

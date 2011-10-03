@@ -102,6 +102,11 @@ const char* CARGroup::GetChangeDiary() const
 	return NULL;
 }
 
+const ARPropList& CARGroup::GetPropList() const
+{
+	return CARGroupList::GroupGetPropList();
+}
+
 const string& CARGroup::GetRequestId() const
 {
 	return CARInside::GetInstance()->groupList.GroupGetRequestId(GetInsideId());

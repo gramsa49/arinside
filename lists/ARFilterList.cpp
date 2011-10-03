@@ -22,9 +22,24 @@
 
 CARFilterList::CARFilterList(void)
 {
+	ARZeroMemory(&names);
+	ARZeroMemory(&orders);
+	ARZeroMemory(&schemas);
+	ARZeroMemory(&operationSets);
+	ARZeroMemory(&enabledObjects);
+	ARZeroMemory(&queries);
+	ARZeroMemory(&ifActions);
+	ARZeroMemory(&elseActions);
+	ARZeroMemory(&helpTexts);
+	ARZeroMemory(&changedTimes);
+	ARZeroMemory(&owners);
+	ARZeroMemory(&changedUsers);
+	ARZeroMemory(&changeDiary);
+	ARZeroMemory(&objProps);
+	ARZeroMemory(&errorOptions);
+	ARZeroMemory(&errorHandlers);
 	internalListState = CARFilterList::EMPTY;
 	reservedSize = 0;
-	names.numItems = 0;
 }
 
 CARFilterList::~CARFilterList(void)

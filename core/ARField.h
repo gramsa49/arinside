@@ -56,6 +56,7 @@ public:
 	const ARFieldLimitStruct& GetLimits() const;
 	const ARDisplayInstanceList& GetDisplayInstances() const;
 	const CARSchema& GetSchema() const;
+	const ARPropList& GetPropList() const;
 
 	// helpers
 	string GetURL(const string& linkText, int rootLevel, bool showImage = true) const;

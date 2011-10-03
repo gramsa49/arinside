@@ -149,6 +149,11 @@ const char* CARField::GetChangeDiary() const
 	return fieldList->FieldGetChangeDiary(fieldIndex);
 }
 
+const ARPropList& CARField::GetPropList() const
+{
+	return fieldList->FieldGetPropList(fieldIndex);
+}
+
 ARInternalId CARField::GetFieldId() const
 {
 	return fieldList->FieldGetFieldId(fieldIndex); 

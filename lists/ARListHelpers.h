@@ -50,3 +50,7 @@ struct DeletePointer : unary_function<C*, void>
 void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps);
 void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps);
 #endif
+
+// the following prop list should be used in CARServerObject derived classes if
+// they don't have their own propList available. It's initialized in CARInside.
+extern ARPropList emptyPropList;

@@ -40,6 +40,7 @@ public:
 	const ARAccessNameType& GetOwner() const;
 	const ARAccessNameType& GetLastChanged() const;
 	const char* GetChangeDiary() const;
+	const ARPropList& GetPropList() const;
 
 	// needed typedefs
 	typedef CARUserList::GroupList GroupList;

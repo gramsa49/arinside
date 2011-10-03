@@ -95,6 +95,8 @@ CARInside::CARInside(AppConfig &appConfig)
 
 	if (CARInside::pInsideInstance == NULL) 
 		CARInside::pInsideInstance = this;
+
+	ARZeroMemory(&emptyPropList); // init struct; see lists/ARListHelpers.h
 }
 
 CARInside::~CARInside(void)

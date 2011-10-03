@@ -69,7 +69,7 @@ CARVui::CARVui(unsigned int schemaInsideId, const string& vuiLabel)
 
 	for (unsigned int vuiPos = 0; vuiPos < vuiList->GetCount(); ++vuiPos)
 	{
-		ARValueStruct* val = CARProplistHelper::Find(vuiList->VUIGetProps(vuiPos), AR_DPROP_LABEL);
+		ARValueStruct* val = CARProplistHelper::Find(vuiList->VUIGetDisplayProps(vuiPos), AR_DPROP_LABEL);
 		if (val != NULL && val->dataType == AR_DATA_TYPE_CHAR && vuiLabel == val->u.charVal)
 		{
 			vuiIndex = vuiPos;
@@ -106,7 +106,7 @@ string CARVui::webAlias()
 {
 	try
 	{
-		const ARPropList& propList = GetProps();
+		const ARPropList& propList = GetDisplayProps();
 
 		for(unsigned int i=0; i< propList.numItems; ++i)
 		{
@@ -132,7 +132,7 @@ string CARVui::Label()
 
 	try
 	{
-		const ARPropList& propList = GetProps();
+		const ARPropList& propList = GetDisplayProps();
 
 		for(unsigned int i=0; i< propList.numItems; ++i)
 		{
@@ -196,6 +196,11 @@ const char* CARVui::GetChangeDiary() const
 	return vuiList->VUIGetChangeDiary(vuiIndex);
 }
 
+const ARPropList& CARVui::GetPropList() const
+{
+	return vuiList->VUIGetPropList(vuiIndex);
+}
+
 ARInternalId CARVui::GetId()
 {
 	return vuiList->VUIGetId(vuiIndex);
@@ -211,9 +216,9 @@ int CARVui::GetType()
 	return vuiList->VUIGetType(vuiIndex);
 }
 
-const ARPropList& CARVui::GetProps() const
+const ARPropList& CARVui::GetDisplayProps() const
 {
-	return vuiList->VUIGetProps(vuiIndex);
+	return vuiList->VUIGetDisplayProps(vuiIndex);
 }
 
 const CARSchema& CARVui::GetSchema() const

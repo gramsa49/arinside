@@ -51,6 +51,14 @@ int CARVUIListXML::Find(unsigned int vuiId)
 	return -1;
 }
 
+const ARPropList& CARVUIListXML::VUIGetPropList(unsigned int index) const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	return vuiList.vuiList[sortedList[index]].smObjProp;
+#else
+	return emptyPropList;
+#endif
+}
 ///////////////////////////////////////////////////////////////////////////////
 // CARVUIListServer - implementation
 CARVUIListServer::CARVUIListServer(unsigned int schemaInsideId) 
@@ -60,12 +68,15 @@ CARVUIListServer::CARVUIListServer(unsigned int schemaInsideId)
 	ARZeroMemory(&names);
 	ARZeroMemory(&locales);
 	ARZeroMemory(&types);
-	ARZeroMemory(&props);
+	ARZeroMemory(&dispProps);
 	ARZeroMemory(&helpTexts);
 	ARZeroMemory(&changedTimes);
 	ARZeroMemory(&owners);
 	ARZeroMemory(&changedUsers);
 	ARZeroMemory(&changeDiary);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	ARZeroMemory(&objProps);
+#endif
 }
 
 CARVUIListServer::~CARVUIListServer()
@@ -74,12 +85,15 @@ CARVUIListServer::~CARVUIListServer()
 	FreeARNameList(&names, false);
 	FreeARLocaleList(&locales, false);
 	FreeARUnsignedIntList(&types, false);
-	FreeARPropListList(&props, false);
+	FreeARPropListList(&dispProps, false);
 	FreeARTextStringList(&helpTexts, false);
 	FreeARTimestampList(&changedTimes, false);
 	FreeARAccessNameList(&owners, false);
 	FreeARAccessNameList(&changedUsers, false);
 	FreeARTextStringList(&changeDiary, false);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	FreeARPropListList(&objProps, false);
+#endif
 }
 
 bool CARVUIListServer::LoadFromServer()
@@ -102,14 +116,14 @@ bool CARVUIListServer::LoadFromServer()
 		&names,
 		&locales,
 		&types,
-		&props,
+		&dispProps,
 		&helpTexts,
 		&changedTimes,
 		&owners,
 		&changedUsers,
 		&changeDiary,
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-		NULL, // objPropListList// TODO: support new prop list
+		&objProps,
 #endif
 		&status) == AR_RETURN_OK)
 	{
@@ -147,4 +161,13 @@ void CARVUIListServer::Sort()
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
 	}
+}
+
+const ARPropList& CARVUIListServer::VUIGetPropList(unsigned int index) const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	return objProps.propsList[sortedList[index]];
+#else
+	return emptyPropList;
+#endif
 }

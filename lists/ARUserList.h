@@ -50,6 +50,7 @@ public:
 	ARTimestamp UserGetCreateDate(unsigned int index) { assert(index < createDate.size()); return createDate[sortedList[index]]; }
 	const ARAccessNameType& UserGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
 	ARTimestamp UserGetModifiedDate(unsigned int index) { assert(index < modifiedDate.size()); return modifiedDate[sortedList[index]]; }
+	static const ARPropList& UserGetPropList() { return emptyPropList; }
 
 private:
 	vector<string> requestId;

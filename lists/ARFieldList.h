@@ -56,6 +56,7 @@ public:
 	virtual const ARAccessNameType& FieldGetOwner(unsigned int index) const = 0;
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const = 0;
 	virtual const char* FieldGetChangeDiary(unsigned int index) const = 0;
+	virtual const ARPropList& FieldGetPropList(unsigned int index) const = 0;
 	//virtual string FieldGetURL(unsigned int index, int rootLevel) = 0;
 
 	// types used for workflow references
@@ -104,7 +105,8 @@ public:
 	virtual const ARAccessNameType& FieldGetOwner(unsigned int index) const { return fieldInfo.fieldList[sortedList[index]].owner; }
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const { return fieldInfo.fieldList[sortedList[index]].lastChanged; }
 	virtual const char* FieldGetChangeDiary(unsigned int index) const { return fieldInfo.fieldList[sortedList[index]].changeDiary; }
-
+	virtual const ARPropList& FieldGetPropList(unsigned int index) const;
+	
 	friend class CARSchemaList;
 private:
 	ARFieldInfoList fieldInfo;
@@ -145,6 +147,7 @@ public:
 	virtual const ARAccessNameType& FieldGetOwner(unsigned int index) const { return owners.nameList[sortedList[index]]; }
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const { return changedUsers.nameList[sortedList[index]]; }
 	virtual const char* FieldGetChangeDiary(unsigned int index) const { return changeDiary.stringList[sortedList[index]]; }
+	virtual const ARPropList& FieldGetPropList(unsigned int index) const;
 
 private:
 	unsigned int schemaId;
@@ -165,6 +168,9 @@ private:
 	ARAccessNameList owners;
 	ARAccessNameList changedUsers;
 	ARTextStringList changeDiary;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	ARPropListList objProps;
+#endif
 
 	vector<unsigned int> sortedList;  // sorted by field name
 };

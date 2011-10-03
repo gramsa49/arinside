@@ -99,6 +99,11 @@ const char* CARUser::GetChangeDiary() const
 	return NULL;
 }
 
+const ARPropList& CARUser::GetPropList() const
+{
+	return CARUserList::UserGetPropList();
+}
+
 const string& CARUser::GetRequestId() const
 {
 	return CARInside::GetInstance()->userList.UserGetRequestId(GetInsideId());

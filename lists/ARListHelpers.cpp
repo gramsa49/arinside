@@ -18,6 +18,8 @@
 #include "ARListHelpers.h"
 #include "../ARInside.h"
 
+ARPropList emptyPropList;
+
 GenerateSortableList::GenerateSortableList(ARNameList &list)
 {
 	InitList(list.numItems);

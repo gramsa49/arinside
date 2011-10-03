@@ -48,7 +48,7 @@ void CDocVuiDetails::Documentation()
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Properties
-		webPage.AddContent(CARProplistHelper::GetList(this->vui.GetProps(), this));
+		webPage.AddContent(CARProplistHelper::GetList(this->vui.GetDisplayProps(), this));
 
 		webPage.AddContent(this->FieldProperties().ToXHtml());
 

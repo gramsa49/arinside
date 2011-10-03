@@ -40,12 +40,13 @@ public:
 	const ARAccessNameType& GetOwner() const;
 	const ARAccessNameType& GetLastChanged() const;
 	const char* GetChangeDiary() const;
+	const ARPropList& GetPropList() const;
 
 	// other data access functions
 	ARInternalId GetId();
 	const ARLocaleType& GetLocale() const;
 	int GetType();
-	const ARPropList& GetProps() const;
+	const ARPropList& GetDisplayProps() const;
 	const CARSchema& GetSchema() const;
 
 	// some helpers
