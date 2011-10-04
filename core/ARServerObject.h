@@ -36,4 +36,11 @@ public:
 
 	virtual CARServerObject* Clone() const = 0;
 	virtual bool IsClonable() const = 0;
+
+	// declarations for overlay support
+
+	virtual int GetOverlayType() const;        // returns the type of the overlay (AR_OVERLAID_OBJECT, AR_OVERLAY_OBJECT, AR_CUSTOM_OBJECT)
+	virtual int GetOverlayGroup() const;       // returns the level of the overlay (as of 7.6.04 there are: -1 (base), 0 (overlaid) and 1 (custom/overlay))
+	virtual string GetOverlayBaseName() const; // returns the "internal" object name overlayed by the current object
+	virtual string GetOverlayName() const;     // returns the "internal" object name, which overlays this object 
 };

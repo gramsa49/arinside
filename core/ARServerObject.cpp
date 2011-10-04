@@ -17,6 +17,55 @@
 #include "stdafx.h"
 #include "ARServerObject.h"
 #include "../output/WebUtil.h"
+#include "../ARInside.h"
 
 using namespace OUTPUT;
 
+int CARServerObject::GetOverlayType() const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	if (CARInside::GetInstance()->appConfig.bOverlaySupport)
+	{
+		ARValueStruct* overlayProp = CARProplistHelper::Find(GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
+		if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			return overlayProp->u.intVal;
+		}
+	}
+#endif
+	return 0; // AR_ORIGINAL_OBJECT
+}
+
+int CARServerObject::GetOverlayGroup() const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	if (CARInside::GetInstance()->appConfig.bOverlaySupport)
+	{
+		ARValueStruct* overlayProp = CARProplistHelper::Find(GetPropList(), AR_SMOPROP_OVERLAY_GROUP);
+		if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			return overlayProp->u.intVal;
+		}
+	}
+#endif
+	return -1; // No Overlay Group / Base
+}
+
+// NOTE: those functions couldn't be used for sub-objects like fields or views.
+string CARServerObject::GetOverlayBaseName() const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	return GetName() + (CARInside::GetInstance()->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : "");
+#else
+	return "";
+#endif
+}
+
+string CARServerObject::GetOverlayName() const
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	return GetName() + (CARInside::GetInstance()->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : "");
+#else
+	return "";
+#endif
+}
