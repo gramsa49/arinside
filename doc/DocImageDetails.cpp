@@ -49,49 +49,36 @@ void CDocImageDetails::Documentation()
 
 		// contentHead informations
 		stringstream contHeadStrm;
+		int overlayType = image.GetOverlayType();
 		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << endl;
 
-		bool placeOverlayNote = false;
 		CARImage overlayObj;
-		stringstream overlayLink;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->appConfig.bOverlaySupport)
+		if (pInside->appConfig.bOverlaySupport && overlayType > 0)
 		{
-			ARValueStruct* overlayProp = CARProplistHelper::Find(image.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-			if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+			string correspondingName;
+			switch (overlayType)
 			{
-				switch (overlayProp->u.intVal)
-				{
-				case AR_OVERLAID_OBJECT:
-					{
-						CARImage ovlImg(image.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-						contHeadStrm << " (Base)";
-						overlayLink << "Overlay: " << (ovlImg.Exists() ? ovlImg.GetURL(rootLevel, false) : image.GetName());
-
-						if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
-						{
-							placeOverlayNote = true;
-							overlayObj = ovlImg;
-						}
-					}
-					break;
-				case AR_OVERLAY_OBJECT:
-					{
-						CARImage oriImg(image.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-						contHeadStrm << " (Overlay)";
-						overlayLink << "Based on: " << (oriImg.Exists() ? oriImg.GetURL(rootLevel, false) : image.GetName());
-					}
-					break;
-				}
+			case AR_OVERLAID_OBJECT:
+				correspondingName = image.GetOverlayName();
+				break;
+			case AR_OVERLAY_OBJECT:
+				correspondingName = image.GetOverlayBaseName();
+				break;
 			}
+
+			CARImage correspondingObject(correspondingName);
+			overlayObj = correspondingObject;	
 		}
 #endif
 
-		webPage.AddContentHead(contHeadStrm.str(), overlayLink.str());
+		webPage.AddContentHead(contHeadStrm.str(), PlaceOverlayLink(overlayType, overlayObj));
 
-		if (placeOverlayNote)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
 			webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+#endif
 
 		// image details
 		CTable tbl("imageDetails", "TblObjectList");

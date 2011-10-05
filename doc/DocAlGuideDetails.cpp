@@ -43,53 +43,40 @@ void CDocAlGuideDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
+			int overlayType = this->alGuide.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) << MenuSeparator << CWebUtil::ObjName(this->alGuide.GetName());
+			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) << MenuSeparator << CWebUtil::ObjName(this->alGuide.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
-			bool placeOverlayNote = false;
 			CARContainer overlayObj;
-			stringstream overlayLink;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport)
+			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
 			{
-				ARValueStruct* overlayProp = CARProplistHelper::Find(alGuide.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+				string correspondingName;
+				switch (overlayType)
 				{
-					switch (overlayProp->u.intVal)
-					{
-					case AR_OVERLAID_OBJECT:
-						{
-							CARContainer ovlALG(alGuide.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-							strmHead << " (Base)";
-							overlayLink << "Overlay: " << (ovlALG.Exists() ? ovlALG.GetURL(rootLevel, false) : alGuide.GetName());
-
-							if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
-							{
-								placeOverlayNote = true;
-								overlayObj = ovlALG;
-							}
-						}
-						break;
-					case AR_OVERLAY_OBJECT:
-						{
-							CARContainer oriALG(alGuide.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-							strmHead << " (Overlay)";
-							overlayLink << "Based on: " << (oriALG.Exists() ? oriALG.GetURL(rootLevel, false) : alGuide.GetName());
-						}
-						break;
-					}
+				case AR_OVERLAID_OBJECT:
+					correspondingName = this->alGuide.GetOverlayName();
+					break;
+				case AR_OVERLAY_OBJECT:
+					correspondingName = this->alGuide.GetOverlayBaseName();
+					break;
 				}
+
+				CARContainer correspondingObject(correspondingName);
+				overlayObj = correspondingObject;	
 			}
 #endif
 
 			if(!this->alGuide.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), overlayLink.str());
+			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
 
-			if (placeOverlayNote)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
 				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+#endif
 
 			//Container Base Informations
 			CDocContainerHelper *contHelper = new CDocContainerHelper(this->alGuide, this->rootLevel);

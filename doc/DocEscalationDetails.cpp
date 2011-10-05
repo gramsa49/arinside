@@ -44,54 +44,40 @@ void CDocEscalationDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
+			int overlayType = this->escalation.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName());
+			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
-			bool placeOverlayNote = false;
 			CAREscalation overlayObj;
-			stringstream overlayLink;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport)
+			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
 			{
-				ARValueStruct* overlayProp = CARProplistHelper::Find(this->escalation.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+				string correspondingName;
+				switch (overlayType)
 				{
-					switch (overlayProp->u.intVal)
-					{
-					case AR_OVERLAID_OBJECT:
-						{
-							CAREscalation ovEsc(this->escalation.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-							strmHead << " (Base)";
-							overlayLink << "Overlay: " << (ovEsc.Exists() ? ovEsc.GetURL(rootLevel, false) : ovEsc.GetName());
-
-							if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
-							{
-								placeOverlayNote = true;
-								overlayObj = ovEsc;
-							}
-						}
-						break;
-					case AR_OVERLAY_OBJECT:
-						{
-							CAREscalation oriEsc(this->escalation.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-							strmHead << " (Overlay)";
-							overlayLink << "Based on: " << (oriEsc.Exists() ? oriEsc.GetURL(rootLevel, false) : oriEsc.GetName());
-						}
-						break;
-					}
+				case AR_OVERLAID_OBJECT:
+					correspondingName = this->escalation.GetOverlayName();
+					break;
+				case AR_OVERLAY_OBJECT:
+					correspondingName = this->escalation.GetOverlayBaseName();
+					break;
 				}
+
+				CAREscalation correspondingObject(correspondingName);
+				overlayObj = correspondingObject;	
 			}
 #endif
 
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), overlayLink.str());
+			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
 
-			if (placeOverlayNote)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
 				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-
+#endif
 
 			//Escalation Properties
 			stringstream strmTmp;

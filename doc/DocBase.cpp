@@ -25,3 +25,28 @@ CDocBase::CDocBase(void)
 CDocBase::~CDocBase(void)
 {
 }
+
+string CDocBase::PlaceOverlayLink(int currentType, CARServerObject& target)
+{
+	switch (currentType)
+	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	case AR_OVERLAID_OBJECT:
+		{
+			stringstream tmpStrm;
+			tmpStrm << "Overlay: " << target.GetURL(rootLevel, false);
+			return tmpStrm.str();
+		}
+		break;
+	case AR_OVERLAY_OBJECT:
+		{
+			stringstream tmpStrm;
+			tmpStrm << "Based on: " << target.GetURL(rootLevel, false);
+			return tmpStrm.str();
+		}
+		break;
+#endif
+	default:
+		return "";
+	}
+}

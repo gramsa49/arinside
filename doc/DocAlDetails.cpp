@@ -47,53 +47,41 @@ void CDocAlDetails::Documentation()
 
 			// temp list to output only infos that arent already displayed
 			props = new CARProplistHelper(&this->al.GetPropList());
+			int overlayType = this->al.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName());
-
-			bool placeOverlayNote = false;
+			// generate location info ("your are here")
+			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
+ 
 			CARActiveLink overlayObj;
-			stringstream overlayLink;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport)
+			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
 			{
-				ARValueStruct* overlayProp = CARProplistHelper::Find(this->al.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (overlayProp != NULL && overlayProp->dataType == AR_DATA_TYPE_INTEGER)
+				string correspondingName;
+				switch (overlayType)
 				{
-					switch (overlayProp->u.intVal)
-					{
-					case AR_OVERLAID_OBJECT:
-						{
-							CARActiveLink ovAl(this->al.GetName() + (this->pInside->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : ""));
-							strmHead << " (Base)";
-							overlayLink << "Overlay: " << (ovAl.Exists() ? ovAl.GetURL(rootLevel, false) : al.GetName());
-
-							if (pInside->overlayMode == 1) // only if the server does execute custom- and overlay-objects
-							{
-								placeOverlayNote = true;
-								overlayObj = ovAl;
-							}
-						}
-						break;
-					case AR_OVERLAY_OBJECT:
-						{
-							CARActiveLink oriAl(this->al.GetName() + (this->pInside->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : ""));
-							strmHead << " (Overlay)";
-							overlayLink << "Based on: " << (oriAl.Exists() ? oriAl.GetURL(rootLevel, false) : al.GetName());
-						}
-						break;
-					}
+				case AR_OVERLAID_OBJECT:
+					correspondingName = this->al.GetOverlayName();
+					break;
+				case AR_OVERLAY_OBJECT:
+					correspondingName = this->al.GetOverlayBaseName();
+					break;
 				}
+
+				CARActiveLink correspondingObject(correspondingName);
+				overlayObj = correspondingObject;	
 			}
 #endif
 
 			if(!this->al.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), overlayLink.str());
+			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
 
-			if (placeOverlayNote)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
 				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+#endif
 
 			//ActiveLink Properties
 			stringstream strmTmp;

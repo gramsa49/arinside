@@ -68,6 +68,7 @@ private:
 	static bool SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 );
 
 	void AddGlobalFieldRow(OUTPUT::CTable& tbl, int fieldId, OUTPUT::CTable& fields);
+	bool IsVisibleOverlay(const CARServerObject& obj);
 
 	static string ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter);
 };

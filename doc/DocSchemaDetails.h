@@ -84,8 +84,4 @@ private:
 	void AddTableRow(CTable& tbl, CARFilter& flt);
 	void AddTableRow(CTable& tbl, CAREscalation& esc);
 	void AddTableRow(CTable& tbl, CARContainer& cont);
-
-	int GetOverlayType();
-	string GetCorrespondingOverlayName(int currentType);
-	string GetCorrespondingOverlayLink(int currentType, CARServerObject& target);
 };

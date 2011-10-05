@@ -169,19 +169,7 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-			{
-				ARValueStruct* val = CARProplistHelper::Find(schema.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-				{
-					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-						bInsert = false;
-
-					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
-						bInsert = false;
-				}
-			}
+				bInsert = IsVisibleOverlay(schema);
 #endif
 
 			if(bInsert)
@@ -229,13 +217,14 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 		unsigned int alCount = this->pInside->alList.GetCount();
 		
 		for (unsigned int alIdx = 0; alIdx < alCount; ++alIdx)
-		{	
+		{
+			CARActiveLink actLink(alIdx);
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = CARObject::GetNameFirstChar(pInside->alList.ActiveLinkGetName(alIdx));
+				string firstChar = actLink.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -243,30 +232,18 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 			}
 			else if(searchChar == "#")
 			{
-				if (!CARObject::NameStandardFirstChar(pInside->alList.ActiveLinkGetName(alIdx)[0]))
+				if (!actLink.NameStandardFirstChar())
 					bInsert = true;
 			}
 			else
 			{
-				if (searchChar[0] == tolower(pInside->alList.ActiveLinkGetName(alIdx)[0]))
+				if (actLink.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-			{
-				ARValueStruct* val = CARProplistHelper::Find(pInside->alList.ActiveLinkGetPropList(alIdx), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-				{
-					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-						bInsert = false;
-
-					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
-						bInsert = false;
-				}
-			}
+				bInsert = IsVisibleOverlay(actLink);
 #endif
 
 			if(bInsert)
@@ -417,13 +394,15 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 		unsigned int filterCount = this->pInside->filterList.GetCount();
 
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
-		{	
+		{
+			CARFilter filter(filterIndex);
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = CARObject::GetNameFirstChar(pInside->filterList.FilterGetName(filterIndex));
+				string firstChar = filter.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -431,30 +410,18 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 			}
 			else if(searchChar == "#")
 			{
-				if(!CARObject::NameStandardFirstChar(pInside->filterList.FilterGetName(filterIndex)[0]))
+				if(filter.NameStandardFirstChar())
 					bInsert = true;		
 			}
 			else
 			{
-				if(searchChar[0] == tolower(pInside->filterList.FilterGetName(filterIndex)[0]))
+				if(filter.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-			{
-				ARValueStruct* val = CARProplistHelper::Find(pInside->filterList.FilterGetPropList(filterIndex), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-				{
-					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-						bInsert = false;
-
-					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
-						bInsert = false;
-				}
-			}
+				bInsert = IsVisibleOverlay(filter);
 #endif
 
 			if(bInsert)
@@ -641,13 +608,15 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 
 		unsigned int escalCount = pInside->escalationList.GetCount();
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
-		{	
+		{
+			CAREscalation escalation(escalIndex);
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
-				string firstChar = CARObject::GetNameFirstChar(pInside->escalationList.EscalationGetName(escalIndex));
+				string firstChar = escalation.GetNameFirstChar();
 				if (firstChar.empty()) firstChar = "*";
 				int index = CARObject::GetFirstCharIndex(firstChar[0]);
 				++(objCountPerLetter[index]);
@@ -655,30 +624,18 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 			}
 			else if(searchChar == "#")
 			{
-				if(!CARObject::NameStandardFirstChar(pInside->escalationList.EscalationGetName(escalIndex)[0]))
+				if(!escalation.NameStandardFirstChar())
 					bInsert = true;		
 			}
 			else
 			{
-				if(searchChar[0] == tolower(pInside->escalationList.EscalationGetName(escalIndex)[0]))
+				if(escalation.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-			{
-				ARValueStruct* val = CARProplistHelper::Find(pInside->escalationList.EscalationGetPropList(escalIndex), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-				{
-					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-						bInsert = false;
-
-					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
-						bInsert = false;
-				}
-			}
+				bInsert = IsVisibleOverlay(escalation);
 #endif
 
 			if(bInsert)
@@ -871,19 +828,7 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-			{
-				ARValueStruct* val = CARProplistHelper::Find(menu.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-				{
-					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-						bInsert = false;
-
-					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-						// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
-						bInsert = false;
-				}
-			}
+				bInsert = IsVisibleOverlay(menu);
 #endif
 
 			if(bInsert)
@@ -956,19 +901,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 				if (bInsert && pInside->appConfig.bOverlaySupport)
-				{
-					ARValueStruct* val = CARProplistHelper::Find(cont.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-					if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-					{
-						if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-							// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-							bInsert = false;
-
-						if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-							// if the server has overlayMode disabled and the current object is a overlay or custom, hide it.
-							bInsert = false;
-					}
-				}
+					bInsert = IsVisibleOverlay(cont);
 #endif
 
 				if(bInsert)
@@ -1111,19 +1044,7 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-			{
-				ARValueStruct* val = CARProplistHelper::Find(img.GetPropList(), AR_SMOPROP_OVERLAY_PROPERTY);
-				if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
-				{
-					if (this->pInside->overlayMode == 1 && val->u.intVal == AR_OVERLAID_OBJECT)
-						// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-						bInsert = false;
-
-					if (this->pInside->overlayMode == 0 && (val->u.intVal == AR_OVERLAY_OBJECT || val->u.intVal == AR_CUSTOM_OBJECT))
-						// if the server has overlayMode disabled and the current object is a overlay or custom, hide it.
-						bInsert = false;
-				}
-			}
+				bInsert = IsVisibleOverlay(img);
 #endif
 
 			if (bInsert)
@@ -1522,4 +1443,19 @@ void CDocMain::Sort(list<CMessageItem> &listResult)
 bool CDocMain::SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 )
 {	
 	return ( t1.msgNumber < t2.msgNumber);
+}
+
+bool CDocMain::IsVisibleOverlay(const CARServerObject& obj)
+{
+	int overlayType = obj.GetOverlayType();
+
+	if (this->pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
+		// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+		return false;
+
+	if (this->pInside->overlayMode == 0 && (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT))
+		// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
+		return false;
+
+	return true;
 }

@@ -30,6 +30,9 @@ public:
 	CDocBase(void);
 	~CDocBase(void);
 
+	// some helper functions
+	string CDocBase::PlaceOverlayLink(int currentType, CARServerObject& target);
+
 protected:
 	CARInside *pInside;
 	string path; // TODO: this should be remove completly. This is an abstract class .. derived class can use IFileStructure

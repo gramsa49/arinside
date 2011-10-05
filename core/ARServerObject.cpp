@@ -55,7 +55,7 @@ int CARServerObject::GetOverlayGroup() const
 string CARServerObject::GetOverlayBaseName() const
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-	return GetName() + (CARInside::GetInstance()->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : "");
+	return GetName() + (CARInside::GetInstance()->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : "");
 #else
 	return "";
 #endif
@@ -64,7 +64,7 @@ string CARServerObject::GetOverlayBaseName() const
 string CARServerObject::GetOverlayName() const
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-	return GetName() + (CARInside::GetInstance()->overlayMode == 1 ? AR_RESERV_OVERLAY_STRING : "");
+	return GetName() + (CARInside::GetInstance()->overlayMode == 0 ? AR_RESERV_OVERLAY_STRING : "");
 #else
 	return "";
 #endif
