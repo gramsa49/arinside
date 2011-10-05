@@ -702,12 +702,17 @@ string CDocFieldDetails::DefaultValue()
 	{
 		switch(this->field.GetDefaultValue().dataType)
 		{
-		case AR_DATA_TYPE_INTEGER:
+		case AR_DATA_TYPE_KEYWORD:
 			{
-				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
+				strm << "$" << CARValue::ValueToString(this->field.GetDefaultValue()) << "$" << endl;
 			}
 			break;
+		case AR_DATA_TYPE_INTEGER:
 		case AR_DATA_TYPE_REAL:
+		case AR_DATA_TYPE_ENUM:
+		case AR_DATA_TYPE_TIME:
+		case AR_DATA_TYPE_DATE:
+		case AR_DATA_TYPE_TIME_OF_DAY:
 			{
 				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
@@ -728,16 +733,6 @@ string CDocFieldDetails::DefaultValue()
 				}
 			}
 			break;	
-		case AR_DATA_TYPE_ENUM:
-			{
-				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
-			}
-			break;
-		case AR_DATA_TYPE_TIME:
-			{
-				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
-			}
-			break;
 		case AR_DATA_TYPE_DECIMAL:
 			{
 				if(this->field.GetDefaultValue().u.decimalVal != NULL)
@@ -752,16 +747,6 @@ string CDocFieldDetails::DefaultValue()
 				{
 					strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 				}
-			}
-			break;
-		case AR_DATA_TYPE_DATE:
-			{
-				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
-			}
-			break;
-		case AR_DATA_TYPE_TIME_OF_DAY:
-			{
-				strm << CARValue::ValueToString(this->field.GetDefaultValue()) << endl;
 			}
 			break;
 		}
