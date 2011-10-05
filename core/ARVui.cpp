@@ -19,6 +19,13 @@
 #include "../lists/ARVUIList.h"
 #include "ARProplistHelper.h"
 
+CARVui::CARVui()
+: CARServerObject(-1)
+{
+	vuiList = NULL;
+	vuiIndex = -1;
+}
+
 // TODO: write a description about how to use both types of calling this constructor
 CARVui::CARVui(unsigned int SchemaInsideId, unsigned int vuiId, int SchemaVuiIndex)
 : CARServerObject(vuiId), schema(SchemaInsideId)

@@ -38,6 +38,8 @@ void CDocFieldDetails::Documentation()
 
 		CWebPage webPage(file->GetFileName(), this->field.GetName(), rootLevel, this->pInside->appConfig);
 
+		int overlayType = field.GetOverlayType();
+
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
@@ -45,8 +47,36 @@ void CDocFieldDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field",  CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->field.GetName()) << endl;
-		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << endl;
-		webPage.AddContentHead(contHeadStrm.str());
+		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << CAREnum::GetOverlayTypeString(overlayType) << endl;
+		
+		CARField overlayObj;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->appConfig.bOverlaySupport && overlayType > 0)
+		{
+			string correspondingName;
+			switch (overlayType)
+			{
+			case AR_OVERLAID_OBJECT:
+				correspondingName = this->schema.GetOverlayName();
+				break;
+			case AR_OVERLAY_OBJECT:
+				correspondingName = this->schema.GetOverlayBaseName();
+				break;
+			}
+
+			CARSchema correspondingSchema(correspondingName);
+			CARField correspondingObject(correspondingSchema.GetInsideId(), field.GetFieldId());
+			overlayObj = correspondingObject;	
+		}
+#endif
+		
+		webPage.AddContentHead(contHeadStrm.str(), PlaceOverlayLink(overlayType, overlayObj));
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
+			webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+#endif
 
 		//Field property table
 		CTable tblFieldprops("commonPropList", "TblObjectList");

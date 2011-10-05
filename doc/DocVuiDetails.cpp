@@ -37,6 +37,8 @@ void CDocVuiDetails::Documentation()
 
 		CWebPage webPage(file->GetFileName(), this->vui.GetName(), this->rootLevel, this->pInside->appConfig);
 
+		int overlayType = this->vui.GetOverlayType();
+
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
@@ -44,8 +46,36 @@ void CDocVuiDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), "", rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->vui.GetName()) << endl;
-		contHeadStrm << " (Id: " << this->vui.GetInsideId() << ")" << endl;
-		webPage.AddContentHead(contHeadStrm.str());
+		contHeadStrm << " (Id: " << this->vui.GetInsideId() << ")" << CAREnum::GetOverlayTypeString(overlayType) << endl;
+		
+		CARVui overlayObj;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->appConfig.bOverlaySupport && overlayType > 0)
+		{
+			string correspondingName;
+			switch (overlayType)
+			{
+			case AR_OVERLAID_OBJECT:
+				correspondingName = this->schema.GetOverlayName();
+				break;
+			case AR_OVERLAY_OBJECT:
+				correspondingName = this->schema.GetOverlayBaseName();
+				break;
+			}
+
+			CARSchema correspondingSchema(correspondingName);
+			CARVui correspondingObject(correspondingSchema.GetInsideId(), vui.GetInsideId());
+			overlayObj = correspondingObject;	
+		}
+#endif
+		
+		webPage.AddContentHead(contHeadStrm.str(), PlaceOverlayLink(overlayType, overlayObj));
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
+			webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
+#endif
 
 		//Properties
 		webPage.AddContent(CARProplistHelper::GetList(this->vui.GetDisplayProps(), this));
