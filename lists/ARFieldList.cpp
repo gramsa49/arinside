@@ -261,6 +261,8 @@ void CARFieldListServer::Sort()
 const ARPropList& CARFieldListServer::FieldGetPropList(unsigned int index) const
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	if (objProps.numItems == 0)
+		return emptyPropList;
 	return objProps.propsList[sortedList[index]];
 #else
 	return emptyPropList;

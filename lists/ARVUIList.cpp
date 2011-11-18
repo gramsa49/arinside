@@ -54,6 +54,8 @@ int CARVUIListXML::Find(unsigned int vuiId)
 const ARPropList& CARVUIListXML::VUIGetPropList(unsigned int index) const
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	if (vuiList.numItems == 0)
+		return emptyPropList;
 	return vuiList.vuiList[sortedList[index]].smObjProp;
 #else
 	return emptyPropList;
@@ -166,6 +168,8 @@ void CARVUIListServer::Sort()
 const ARPropList& CARVUIListServer::VUIGetPropList(unsigned int index) const
 {
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	if (objProps.numItems == 0)
+		return emptyPropList;
 	return objProps.propsList[sortedList[index]];
 #else
 	return emptyPropList;
