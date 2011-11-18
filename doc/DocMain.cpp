@@ -1435,6 +1435,123 @@ void CDocMain::MessageList()
 	}
 }
 
+void CDocMain::NotificationList()
+{
+	CPageParams file(PAGE_NOTIFICATIONS);
+
+	try
+	{
+		int rootLevel = file->GetRootLevel();
+
+		//Print all Messages		
+		CTable tbl("fieldListAll", "TblObjectList");
+		tbl.AddColumn(25, "Object Name");
+		tbl.AddColumn(5, "Details");
+		tbl.AddColumn(5, "Type");	
+		tbl.AddColumn(60, "Text");
+
+		//Search all filter
+		unsigned int filterCount = pInside->filterList.GetCount();
+		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
+		{
+			CARFilter flt(filterIndex);
+			CARSchema schema(flt.GetSchemaList().u.schemaList[0].nameList[0]);
+
+			for (unsigned int ifElse = 0; ifElse < 2; ++ifElse)
+			{
+				const ARFilterActionList &actions = (ifElse == 0 ? flt.GetIfActions() : flt.GetElseActions());
+
+				//actionList
+				for(unsigned int nAction=0; nAction < actions.numItems; ++nAction)
+				{
+					if(actions.actionList[nAction].action == AR_FILTER_ACTION_NOTIFY)
+					{
+						if (!schema.Exists()) 
+							continue;
+
+						const ARFilterActionNotify& notifyAction = actions.actionList[nAction].u.notify;
+
+						stringstream strm;
+						strm << (ifElse == 0 ? "If" : "Else") << "-Action " << nAction;
+
+						stringstream text;
+						if (notifyAction.subjectText != NULL)
+							text << pInside->TextFindFields(notifyAction.subjectText, "$", schema.GetInsideId(), rootLevel, true, NULL) << "<BR/>";
+						if (notifyAction.notifyText != NULL)
+							text << pInside->TextFindFields(notifyAction.notifyText, "$", schema.GetInsideId(), rootLevel, true, NULL);
+
+						CTableRow row("");
+						row.AddCell(flt.GetURL(rootLevel));
+						row.AddCell(strm.str());
+						row.AddCell(CAREnum::NotifyMechanism(notifyAction.notifyMechanism)); // Type of Notifcation
+						row.AddCell(text.str());
+
+						tbl.AddRow(row);
+					}
+				}
+			}
+		}
+
+		//Search all escalations
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
+		{
+			CAREscalation esc(escalIndex);
+			CARSchema schema(esc.GetSchemaList().u.schemaList[0].nameList[0]);
+
+			for (unsigned int ifElse = 0; ifElse < 2; ++ifElse)
+			{
+				const ARFilterActionList &actions = (ifElse == 0 ? esc.GetIfActions() : esc.GetElseActions());
+
+				//actionList
+				for(unsigned int nAction=0; nAction < actions.numItems; ++nAction)
+				{
+					if(actions.actionList[nAction].action == AR_FILTER_ACTION_NOTIFY)
+					{
+						if (!schema.Exists()) 
+							continue;
+
+						const ARFilterActionNotify& notifyAction = actions.actionList[nAction].u.notify;
+
+						stringstream strm;
+						strm << (ifElse == 0 ? "If" : "Else") << "-Action " << nAction;
+
+						stringstream text;
+						if (notifyAction.subjectText != NULL)
+							text << pInside->TextFindFields(notifyAction.subjectText, "$", schema.GetInsideId(), rootLevel, true, NULL) << "<BR/>";
+						if (notifyAction.notifyText != NULL)
+							text << pInside->TextFindFields(notifyAction.notifyText, "$", schema.GetInsideId(), rootLevel, true, NULL);
+
+						CTableRow row("");
+						row.AddCell(esc.GetURL(rootLevel));
+						row.AddCell(strm.str());
+						row.AddCell(CAREnum::NotifyMechanism(notifyAction.notifyMechanism)); // Type of Notifcation
+						row.AddCell(text.str());
+
+						tbl.AddRow(row);
+					}
+				}
+			}
+		}
+
+		CWebPage webPage(file->GetFileName(), "Notifications", rootLevel, this->pInside->appConfig);
+		if(tbl.NumRows() > 0)
+		{
+			webPage.AddContent(tbl.ToXHtml());
+		}
+		else
+		{
+			webPage.AddContent("No notifications loaded.");
+		}
+
+		webPage.SaveInFolder(file->GetPath());
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION NotificationList: " << e.what() << endl;
+	}
+}
+
 void CDocMain::Sort(list<CMessageItem> &listResult)
 {
 	listResult.sort(SortByMsgNum);

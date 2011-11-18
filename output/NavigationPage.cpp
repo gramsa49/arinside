@@ -105,6 +105,7 @@ void CNavigationPage::Write()
 			Image(fout, "../img/", "folder.gif", 16, 13); fout << "Information:";
 			fout << "<ul>";
 				fout << "<li>" << CWebUtil::Link("Messages"          , CPageParams(PAGE_MESSAGES)      , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << CWebUtil::Link("Notifications"     , CPageParams(PAGE_NOTIFICATIONS) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 				fout << "<li>" << CWebUtil::Link("Global&nbsp;Fields", CPageParams(PAGE_GLOBALFIELS)   , "doc.gif", rootLevel, false, TARGET_MODE_PARENT) << "</li>";
 				fout << "<li>" << CWebUtil::Link("Validator"         , CPageParams(PAGE_VALIDATOR_MAIN), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 				fout << "<li>" << CWebUtil::Link("Analyzer"          , CPageParams(PAGE_ANALYZER_MAIN) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";

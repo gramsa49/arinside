@@ -208,10 +208,11 @@ const unsigned int PAGE_ROLE_CONTAINER_LIST = 1204;       // CPageParams: uParam
 // CPageParams: obj1 = imageObj
 const unsigned int PAGE_IMAGE_DATA = 1301;
 
-const unsigned int PAGE_FILTER_ERRORHANDLERS = 1999; // CPageParams: none
-const unsigned int PAGE_MESSAGES = 2000;    // CPageParams: none
-const unsigned int PAGE_GLOBALFIELS = 2001; // CPageParams: none
-const unsigned int PAGE_SERVER_INFO = 2002; // CPageParams: none
+const unsigned int PAGE_FILTER_ERRORHANDLERS = 1999;      // CPageParams: none
+const unsigned int PAGE_MESSAGES = 2000;                  // CPageParams: none
+const unsigned int PAGE_GLOBALFIELS = 2001;               // CPageParams: none
+const unsigned int PAGE_SERVER_INFO = 2002;               // CPageParams: none
+const unsigned int PAGE_NOTIFICATIONS = 2003;             // CPageParams: none
 
 const unsigned int PAGE_VALIDATOR_MAIN = 2100;
 const unsigned int PAGE_VALIDATOR_MISSING_FIELDS = 2101;

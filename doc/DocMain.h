@@ -46,6 +46,7 @@ public:
 	void ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter);
 	void GlobalFieldList();
 	void MessageList();
+	void NotificationList();
 
 	void ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter);	
 	void ActiveLinkActionList();

@@ -1022,6 +1022,9 @@ void CARInside::Documentation(void)
 	//MessageList
 	docMain->MessageList();	
 
+	//NotificationList
+	docMain->NotificationList();
+
 	//Analyzer
 	CDocAnalyzer *analyzer = new CDocAnalyzer();
 	analyzer->Documentation();

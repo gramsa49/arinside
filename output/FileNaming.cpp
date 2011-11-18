@@ -1075,6 +1075,17 @@ public:
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
 
+// for notifications page
+class Notifications : public IFileStructure
+{
+public:
+	Notifications() { }
+	virtual string GetFileName() const { return "notification_list"; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_OTHER; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+};
+
 ////////////////////////////////////////////////////////////////////
 // analyzer main page                                             //
 class AnalyzerMain : public IFileStructure
@@ -1373,6 +1384,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_SERVER_INFO: return new ServerInfo();
 		case PAGE_GLOBALFIELS: return new GlobalFields();
 		case PAGE_MESSAGES: return new Messages();
+		case PAGE_NOTIFICATIONS: return new Notifications();
 
 		case PAGE_ANALYZER_MAIN: return new AnalyzerMain();
 		case PAGE_ANALYZER_QBE_CHECK: return new AnalyzerQBEChecker();
@@ -2476,6 +2488,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_SERVER_INFO: return new ServerInfo();
 		case PAGE_GLOBALFIELS: return new GlobalFields();
 		case PAGE_MESSAGES: return new Messages();
+		case PAGE_NOTIFICATIONS: return new Notifications();
 
 		case PAGE_ANALYZER_MAIN: return new AnalyzerMain();
 		case PAGE_ANALYZER_QBE_CHECK: return new AnalyzerQBEChecker();
