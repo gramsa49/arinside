@@ -1289,50 +1289,38 @@ void CDocMain::MessageList()
 		unsigned int alCount = pInside->alList.GetCount();
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
-			const ARActiveLinkActionList &ifActions = pInside->alList.ActiveLinkGetIfActions(alIndex);
-			const ARActiveLinkActionList &elseActions = pInside->alList.ActiveLinkGetElseActions(alIndex);
+			CARActiveLink al(alIndex);
 
-			//actionList
-			for(unsigned int nAction=0; nAction < ifActions.numItems; nAction++)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(al))
+				continue;
+#endif
+
+			CARSchema schema(al.GetSchemaList().u.schemaList[0].nameList[0]);
+
+			for (unsigned int ifElse = 0; ifElse < 2; ++ifElse)
 			{
-				if(ifActions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
+				const ARActiveLinkActionList &actions = (ifElse == 0 ? al.GetIfActions() : al.GetElseActions());
+
+				//actionList
+				for(unsigned int nAction=0; nAction < actions.numItems; nAction++)
 				{
-					stringstream strmTmp;
-					strmTmp.str("");
-					strmTmp << "If-Action "<<nAction;
+					if(actions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
+					{
+						stringstream strmTmp;
+						strmTmp.str("");
+						strmTmp << (ifElse == 0 ? "If" : "Else") << "-Action " << nAction;
 
-					ARMessageStruct &msg = ifActions.actionList[nAction].u.message;
+						ARMessageStruct &msg = actions.actionList[nAction].u.message;
 
-					CMessageItem *msgItem = new CMessageItem();
-					msgItem->msgDetails = strmTmp.str();
-					msgItem->msgNumber = msg.messageNum;
-					msgItem->msgText = msg.messageText;
-					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = pInside->alList.ActiveLinkGetURL(alIndex, rootLevel);
-					listMsgItem.push_back(*msgItem);
-					delete msgItem;
-				}
-			}
-
-			//elseList
-			for(unsigned int nAction=0; nAction < elseActions.numItems; nAction++)
-			{
-				if(elseActions.actionList[nAction].action == AR_ACTIVE_LINK_ACTION_MESSAGE)
-				{
-					stringstream strmTmp;
-					strmTmp.str("");
-					strmTmp << "Else-Action "<<nAction;
-
-					ARMessageStruct &msg = elseActions.actionList[nAction].u.message;
-
-					CMessageItem *msgItem = new CMessageItem();
-					msgItem->msgDetails = strmTmp.str();
-					msgItem->msgNumber = msg.messageNum;
-					msgItem->msgText = msg.messageText;
-					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = pInside->alList.ActiveLinkGetURL(alIndex, rootLevel);
-					listMsgItem.push_back(*msgItem);
-					delete msgItem;
+						CMessageItem msgItem;
+						msgItem.msgDetails = strmTmp.str();
+						msgItem.msgNumber = msg.messageNum;
+						msgItem.msgText = (schema.Exists() ? pInside->TextFindFields(msg.messageText, "$", schema.GetInsideId(), rootLevel, true, NULL) : msg.messageText);
+						msgItem.msgType = msg.messageType;
+						msgItem.objectLink = al.GetURL(rootLevel);
+						listMsgItem.push_back(msgItem);
+					}
 				}
 			}
 		}
@@ -1342,50 +1330,38 @@ void CDocMain::MessageList()
 		unsigned int filterCount = pInside->filterList.GetCount();
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
-			const ARFilterActionList &ifActions = pInside->filterList.FilterGetIfActions(filterIndex);
-			const ARFilterActionList &elseActions = pInside->filterList.FilterGetElseActions(filterIndex);
+			CARFilter flt(filterIndex);
 
-			//actionList
-			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+				continue;
+#endif
+
+			CARSchema schema(flt.GetSchemaList().u.schemaList[0].nameList[0]);
+
+			for (unsigned int ifElse = 0; ifElse < 2; ++ifElse)
 			{
-				if(ifActions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
+				const ARFilterActionList &actions = (ifElse == 0 ? flt.GetIfActions() : flt.GetElseActions());
+
+				//actionList
+				for(unsigned int nAction=0; nAction < actions.numItems; ++nAction)
 				{
-					stringstream strmTmp;
-					strmTmp.str("");
-					strmTmp << "If-Action " << nAction;
+					if(actions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
+					{
+						stringstream strmTmp;
+						strmTmp.str("");
+						strmTmp << (ifElse == 0 ? "If" : "Else") << "-Action " << nAction;
 
-					const ARFilterStatusStruct &msg = ifActions.actionList[nAction].u.message;
+						const ARFilterStatusStruct &msg = actions.actionList[nAction].u.message;
 
-					CMessageItem *msgItem = new CMessageItem();
-					msgItem->msgDetails = strmTmp.str();
-					msgItem->msgNumber = msg.messageNum;
-					msgItem->msgText = msg.messageText;
-					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = pInside->filterList.FilterGetURL(filterIndex, rootLevel);
-					listMsgItem.push_back(*msgItem);
-					delete msgItem;
-				}
-			}
-
-			//elseList
-			for(unsigned int nAction=0; nAction < elseActions.numItems; ++nAction)
-			{
-				if(elseActions.actionList[nAction].action == AR_FILTER_ACTION_MESSAGE)
-				{
-					stringstream strmTmp;
-					strmTmp.str("");
-					strmTmp << "Else-Action "<<nAction;
-
-					const ARFilterStatusStruct &msg = elseActions.actionList[nAction].u.message;
-
-					CMessageItem *msgItem = new CMessageItem();
-					msgItem->msgDetails = strmTmp.str();
-					msgItem->msgNumber = msg.messageNum;
-					msgItem->msgText = msg.messageText;
-					msgItem->msgType = msg.messageType;
-					msgItem->objectLink = pInside->filterList.FilterGetURL(filterIndex, rootLevel);
-					listMsgItem.push_back(*msgItem);
-					delete msgItem;
+						CMessageItem msgItem;
+						msgItem.msgDetails = strmTmp.str();
+						msgItem.msgNumber = msg.messageNum;
+						msgItem.msgText = (schema.Exists() ? pInside->TextFindFields(msg.messageText, "$", schema.GetInsideId(), rootLevel, true, NULL) : msg.messageText);
+						msgItem.msgType = msg.messageType;
+						msgItem.objectLink = flt.GetURL(rootLevel);
+						listMsgItem.push_back(msgItem);
+					}
 				}
 			}
 		}
