@@ -336,9 +336,17 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 		unsigned int alCount = pInside->alList.GetCount();
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex )
 		{
+			CARActiveLink al(alIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// Hide overlaid objects on the list
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(al))
+				continue;
+#endif
+
 			int nActionExists = 0;
-			const ARActiveLinkActionList &ifActions = pInside->alList.ActiveLinkGetIfActions(alIndex);
-			const ARActiveLinkActionList &elseActions = pInside->alList.ActiveLinkGetElseActions(alIndex);
+			const ARActiveLinkActionList &ifActions = al.GetIfActions();
+			const ARActiveLinkActionList &elseActions = al.GetElseActions();
 
 			//actionList
 			for(unsigned int nAction=0; nAction < ifActions.numItems; nAction++)
@@ -516,9 +524,17 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 		unsigned int filterCount = pInside->filterList.GetCount();
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{	
+			CARFilter flt(filterIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// Hide overlaid objects on the list
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+				continue;
+#endif
+
 			int nActionExists = 0;
-			const ARFilterActionList &ifActions = pInside->filterList.FilterGetIfActions(filterIndex);
-			const ARFilterActionList &elseActions = pInside->filterList.FilterGetElseActions(filterIndex);
+			const ARFilterActionList &ifActions = flt.GetIfActions();
+			const ARFilterActionList &elseActions = flt.GetElseActions();
 
 			//actionList
 			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
@@ -577,6 +593,12 @@ void CDocMain::FilterErrorHandlers()
 		{
 			CARFilter flt(filterIndex);
 			
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// Hide overlaid objects on the list
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+				continue;
+#endif
+
 			if (flt.ErrorCallers().size() > 0)
 			{
 				tbl.AddRow(filterIndex, rootLevel);
@@ -740,9 +762,17 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 		unsigned int escalCount = pInside->escalationList.GetCount();
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{	
+			CAREscalation esc(escalIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// Hide overlaid objects on the list
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(esc))
+				continue;
+#endif
+
 			int nActionExists = 0;
-			const ARFilterActionList &ifActions = pInside->escalationList.EscalationGetIfActions(escalIndex);
-			const ARFilterActionList &elseActions = pInside->escalationList.EscalationGetElseActions(escalIndex);
+			const ARFilterActionList &ifActions = esc.GetIfActions();
+			const ARFilterActionList &elseActions = esc.GetElseActions();
 
 			//actionList
 			for(unsigned int nAction=0; nAction < ifActions.numItems; ++nAction)
@@ -1431,6 +1461,13 @@ void CDocMain::NotificationList()
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
 		{
 			CARFilter flt(filterIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// Hide overlaid objects on the list
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+				continue;
+#endif
+
 			CARSchema schema(flt.GetSchemaList().u.schemaList[0].nameList[0]);
 
 			for (unsigned int ifElse = 0; ifElse < 2; ++ifElse)
@@ -1473,6 +1510,13 @@ void CDocMain::NotificationList()
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{
 			CAREscalation esc(escalIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// Hide overlaid objects on the list
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(esc))
+				continue;
+#endif
+
 			CARSchema schema(esc.GetSchemaList().u.schemaList[0].nameList[0]);
 
 			for (unsigned int ifElse = 0; ifElse < 2; ++ifElse)
