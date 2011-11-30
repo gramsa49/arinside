@@ -31,10 +31,14 @@ void CScanEscalations::Start()
 {
 	cout << "Checking escalation references";
 
-	unsigned int escalCount = CARInside::GetInstance()->escalationList.GetCount();
+	CARInside* pInside = CARInside::GetInstance();
+	unsigned int escalCount = pInside->escalationList.GetCount();
 	for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 	{
 		CAREscalation	escal(escalIndex);
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(escal))
+			continue;
+
 		CScanEscalations scanEsc(escal);
 		scanEsc.Scan();
 	}

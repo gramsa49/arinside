@@ -35,10 +35,14 @@ void CScanFilters::Start()
 
 		cout << "Checking filter references";
 
-		unsigned int filterCount = CARInside::GetInstance()->filterList.GetCount();
+		CARInside* pInside = CARInside::GetInstance();
+		unsigned int filterCount = pInside->filterList.GetCount();
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; filterIndex++)
 		{
 			CARFilter filter(filterIndex);
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(filter))
+				continue;
+
 			CScanFilters scanFlt(filter, errCalls);
 			scanFlt.Scan();
 		}

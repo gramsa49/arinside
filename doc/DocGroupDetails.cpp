@@ -109,7 +109,7 @@ string CDocGroupDetails::RoleReferences()
 			}
 		}
 
-		const CARRole::GroupList groupsTest = role.GetGroupsTest();
+		const CARRole::GroupList& groupsTest = role.GetGroupsTest();
 		curIt = groupsTest.begin();
 		endIt = groupsTest.end();
 

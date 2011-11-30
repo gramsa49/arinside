@@ -44,3 +44,5 @@ public:
 	virtual string GetOverlayBaseName() const; // returns the "internal" object name overlayed by the current object
 	virtual string GetOverlayName() const;     // returns the "internal" object name, which overlays this object 
 };
+
+bool IsVisibleOverlay(const CARServerObject& obj);

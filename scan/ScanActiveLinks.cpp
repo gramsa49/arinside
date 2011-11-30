@@ -34,10 +34,14 @@ void CScanActiveLinks::Start()
 {
 	cout << "Checking active link references";
 
-	unsigned int actlinkCount = CARInside::GetInstance()->alList.GetCount();
+	CARInside* pInside = CARInside::GetInstance();
+	unsigned int actlinkCount = pInside->alList.GetCount();
 	for (unsigned int actlinkIndex = 0; actlinkIndex < actlinkCount; actlinkIndex++)
 	{
 		CARActiveLink al(actlinkIndex);
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(al))
+			continue;
+
 		CScanActiveLinks scanAl(al);
 		scanAl.Scan();
 	}

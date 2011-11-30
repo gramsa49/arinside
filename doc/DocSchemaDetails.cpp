@@ -1230,23 +1230,14 @@ void CDocSchemaDetails::SchemaFilterDoc()
 
 		CFilterTable *tbl = new CFilterTable(*this->pInside);
 
-		unsigned int filterCount = pInside->filterList.GetCount();
-		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
-		{
-			CARFilter filter(filterIndex);
+		const CARSchemaList::ObjectRefList& fltList = this->schema.GetFilters();
+		CARSchemaList::ObjectRefList::const_iterator curIt = fltList.begin();
+		CARSchemaList::ObjectRefList::const_iterator endIt = fltList.end();
 
-			const ARWorkflowConnectStruct &schemas = filter.GetSchemaList();
-			if (schemas.u.schemaList != NULL)
-			{
-				for(unsigned int i=0; i < schemas.u.schemaList->numItems; i++)
-				{
-					// using schemaList.SchemaGetName instead of schema.GetName() avoids converting ARNameType to string object
-					if(strcmp(schemas.u.schemaList->nameList[i], this->pInside->schemaList.SchemaGetName(schema.GetInsideId())) == 0)
-					{
-						tbl->AddRow(filterIndex, rootLevel);
-					}
-				}
-			}
+		for (; curIt != endIt; ++curIt)
+		{
+			CARFilter filter(*curIt);
+			tbl->AddRow(*curIt, rootLevel);
 		}
 
 		stringstream tblDesc;
@@ -1284,23 +1275,14 @@ void CDocSchemaDetails::SchemaAlDoc()
 
 		CAlTable *tbl = new CAlTable(*this->pInside);
 
-		unsigned int alCount = pInside->alList.GetCount();
-		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
-		{
-			CARActiveLink enumObj(alIndex);
-			
-			ARNameList* alSchemas = enumObj.GetSchemaList().u.schemaList;
+		const CARSchemaList::ObjectRefList& alList = this->schema.GetActiveLinks();
+		CARSchemaList::ObjectRefList::const_iterator curIt = alList.begin();
+		CARSchemaList::ObjectRefList::const_iterator endIt = alList.end();
 
-			if(alSchemas != NULL)
-			{
-				for(unsigned int i=0; i < alSchemas->numItems; i++)
-				{
-					if(strcmp(alSchemas->nameList[i], this->pInside->schemaList.SchemaGetName(schema.GetInsideId())) == 0)
-					{
-						tbl->AddRow(alIndex, rootLevel);
-					}
-				}
-			}
+		for (; curIt != endIt; ++curIt)
+		{
+			CARActiveLink enumObj(*curIt);
+			tbl->AddRow(*curIt, rootLevel);
 		}
 
 		stringstream tblDesc;
@@ -1339,22 +1321,14 @@ void CDocSchemaDetails::SchemaEscalDoc()
 
 		CEscalTable *tbl = new CEscalTable(*this->pInside);
 
-		unsigned int escalCount = pInside->escalationList.GetCount();
-		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
-		{
-			CAREscalation escalation(escalIndex);
+		const CARSchemaList::ObjectRefList& escList = this->schema.GetEscalations();
+		CARSchemaList::ObjectRefList::const_iterator curIt = escList.begin();
+		CARSchemaList::ObjectRefList::const_iterator endIt = escList.end();
 
-			const ARWorkflowConnectStruct &schemas = escalation.GetSchemaList();
-			if(schemas.u.schemaList != NULL)
-			{
-				for(unsigned int i=0; i < schemas.u.schemaList->numItems; i++)
-				{
-					if(strcmp(schemas.u.schemaList->nameList[i], this->pInside->schemaList.SchemaGetName(schema.GetInsideId())) == 0)
-					{
-						tbl->AddRow(escalIndex, rootLevel);
-					}
-				}
-			}
+		for (; curIt != endIt; ++curIt)
+		{
+			CAREscalation escalation(*curIt);
+			tbl->AddRow(*curIt, rootLevel);
 		}
 
 		stringstream tblDesc;
@@ -1603,6 +1577,9 @@ string CDocSchemaDetails::SearchMenuReferences()
 		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{
 			CARCharMenu menu(menuIndex);
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(menu))
+				continue;
+
 			const ARCharMenuStruct& menuDefn = menu.GetDefinition();
 			if(menuDefn.menuType == AR_CHAR_MENU_QUERY)
 			{

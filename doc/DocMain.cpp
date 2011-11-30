@@ -1581,18 +1581,3 @@ bool CDocMain::SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 )
 {	
 	return ( t1.msgNumber < t2.msgNumber);
 }
-
-bool CDocMain::IsVisibleOverlay(const CARServerObject& obj)
-{
-	int overlayType = obj.GetOverlayType();
-
-	if (this->pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-		// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
-		return false;
-
-	if (this->pInside->overlayMode == 0 && (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT))
-		// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
-		return false;
-
-	return true;
-}

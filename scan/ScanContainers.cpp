@@ -31,10 +31,14 @@ void CScanContainers::Start()
 {
 	cout << "Checking container references";
 
-	unsigned int cntCount = CARInside::GetInstance()->containerList.GetCount();
+	CARInside* pInside = CARInside::GetInstance();
+	unsigned int cntCount = pInside->containerList.GetCount();
 	for (unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex)
 	{
 		CARContainer cnt(cntIndex);
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(cnt))
+			continue;
+
 		CScanContainers scanCont(cnt);
 		scanCont.Scan();
 	}

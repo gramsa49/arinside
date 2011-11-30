@@ -69,3 +69,19 @@ string CARServerObject::GetOverlayName() const
 	return "";
 #endif
 }
+
+bool IsVisibleOverlay(const CARServerObject& obj)
+{
+	int overlayType = obj.GetOverlayType();
+	CARInside* pInside = CARInside::GetInstance();
+
+	if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
+		// if the server has overlayMode enabled and the current object is overlaid, dont show it on the list
+		return false;
+
+	if (pInside->overlayMode == 0 && (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT))
+		// if the serve has overlayMode disabled and the current object is a overlay or custom, hide it.
+		return false;
+
+	return true;
+}
