@@ -39,7 +39,7 @@ void CScanSchema::Start()
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{			
 			CARSchema schema(schemaIndex);
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(schema))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
 				continue;
 
 			CScanSchema scanSchema(schema);

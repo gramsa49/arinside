@@ -169,7 +169,7 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleOverlay(schema);
+				bInsert = IsVisibleObject(schema);
 #endif
 
 			if(bInsert)
@@ -243,7 +243,7 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleOverlay(actLink);
+				bInsert = IsVisibleObject(actLink);
 #endif
 
 			if(bInsert)
@@ -340,7 +340,7 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			// Hide overlaid objects on the list
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(al))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
 				continue;
 #endif
 
@@ -429,7 +429,7 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleOverlay(filter);
+				bInsert = IsVisibleObject(filter);
 #endif
 
 			if(bInsert)
@@ -528,7 +528,7 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			// Hide overlaid objects on the list
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(flt))
 				continue;
 #endif
 
@@ -595,7 +595,7 @@ void CDocMain::FilterErrorHandlers()
 			
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			// Hide overlaid objects on the list
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(flt))
 				continue;
 #endif
 
@@ -657,7 +657,7 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleOverlay(escalation);
+				bInsert = IsVisibleObject(escalation);
 #endif
 
 			if(bInsert)
@@ -766,7 +766,7 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			// Hide overlaid objects on the list
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(esc))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(esc))
 				continue;
 #endif
 
@@ -858,7 +858,7 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleOverlay(menu);
+				bInsert = IsVisibleObject(menu);
 #endif
 
 			if(bInsert)
@@ -931,7 +931,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 				if (bInsert && pInside->appConfig.bOverlaySupport)
-					bInsert = IsVisibleOverlay(cont);
+					bInsert = IsVisibleObject(cont);
 #endif
 
 				if(bInsert)
@@ -1074,7 +1074,7 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleOverlay(img);
+				bInsert = IsVisibleObject(img);
 #endif
 
 			if (bInsert)
@@ -1322,7 +1322,7 @@ void CDocMain::MessageList()
 			CARActiveLink al(alIndex);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(al))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
 				continue;
 #endif
 
@@ -1363,7 +1363,7 @@ void CDocMain::MessageList()
 			CARFilter flt(filterIndex);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(flt))
 				continue;
 #endif
 
@@ -1464,7 +1464,7 @@ void CDocMain::NotificationList()
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			// Hide overlaid objects on the list
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(flt))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(flt))
 				continue;
 #endif
 
@@ -1513,7 +1513,7 @@ void CDocMain::NotificationList()
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			// Hide overlaid objects on the list
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(esc))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(esc))
 				continue;
 #endif
 

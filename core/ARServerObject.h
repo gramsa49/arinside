@@ -45,4 +45,4 @@ public:
 	virtual string GetOverlayName() const;     // returns the "internal" object name, which overlays this object 
 };
 
-bool IsVisibleOverlay(const CARServerObject& obj);
+bool IsVisibleObject(const CARServerObject& obj); // checks if the object is visible; by default overlaid objects are hidden

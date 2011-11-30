@@ -40,7 +40,7 @@ void CScanFilters::Start()
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; filterIndex++)
 		{
 			CARFilter filter(filterIndex);
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(filter))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
 				continue;
 
 			CScanFilters scanFlt(filter, errCalls);

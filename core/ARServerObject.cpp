@@ -70,7 +70,17 @@ string CARServerObject::GetOverlayName() const
 #endif
 }
 
-bool IsVisibleOverlay(const CARServerObject& obj)
+// ===== IsVisibleObject =====
+// This function checks if a object should be visible on lists and such.
+// Normally overlaid objects are hidden on lists (e.g. list of all actlinks). Because those objects
+// aren't executed it's not helpful to have those on board.
+// With the servers OverlayMode-property you can define up to which layer workflow is executed.
+// The default value is 1 (as of ARS 7.6.04) and means all objects of layer 0 (base-layer) and 1
+// (custom/overlay) are executed, except those of layer 0 which are overlaid by objects in layer 1.
+// On the other hand, if you set OverlayMode to 0, only objects of layer 0 are executed. In that
+// case ARInside will hide all objects of layer 1.
+// 
+bool IsVisibleObject(const CARServerObject& obj)
 {
 	int overlayType = obj.GetOverlayType();
 	CARInside* pInside = CARInside::GetInstance();

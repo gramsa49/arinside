@@ -1577,7 +1577,7 @@ string CDocSchemaDetails::SearchMenuReferences()
 		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
 		{
 			CARCharMenu menu(menuIndex);
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(menu))
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
 				continue;
 
 			const ARCharMenuStruct& menuDefn = menu.GetDefinition();

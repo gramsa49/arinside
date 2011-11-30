@@ -39,7 +39,7 @@ void CScanActiveLinks::Start()
 	for (unsigned int actlinkIndex = 0; actlinkIndex < actlinkCount; actlinkIndex++)
 	{
 		CARActiveLink al(actlinkIndex);
-		if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(al))
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
 			continue;
 
 		CScanActiveLinks scanAl(al);

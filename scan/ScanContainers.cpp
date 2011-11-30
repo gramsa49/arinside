@@ -36,7 +36,7 @@ void CScanContainers::Start()
 	for (unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex)
 	{
 		CARContainer cnt(cntIndex);
-		if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(cnt))
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cnt))
 			continue;
 
 		CScanContainers scanCont(cnt);

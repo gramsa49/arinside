@@ -36,7 +36,7 @@ void CScanEscalations::Start()
 	for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 	{
 		CAREscalation	escal(escalIndex);
-		if (pInside->appConfig.bOverlaySupport && !IsVisibleOverlay(escal))
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escal))
 			continue;
 
 		CScanEscalations scanEsc(escal);
