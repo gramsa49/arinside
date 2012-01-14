@@ -56,67 +56,34 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 
 int CMenuTable::NumRelatedFields(CARCharMenu &obj)
 {	
-	int nCnt = 0;
+	int count = 0;
 
-	unsigned int schemaCount = this->pInside->schemaList.GetCount();
-	for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
-	{			
-		CARSchema schema(schemaIndex);
-		
-		unsigned int fieldCount = schema.GetFields()->GetCount();		
-		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
-		{
-			CARField field(schemaIndex, 0, fieldIndex);
+	const CARCharMenu::ReferenceList& refs = obj.GetReferences();
+	CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
+	CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
 
-			if(field.GetDataType() == AR_DATA_TYPE_CHAR)
-			{
-				if (strcmp(field.GetLimits().u.charLimits.charMenu, obj.GetARName()) == 0)
-				{
-					nCnt++;
-				}
-			}
-		}		
+	for (; curIt != endIt; ++curIt)
+	{
+		if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_FIELD && curIt->GetMessageId() == REFM_FIELD_CHARMENU)
+			count++;
 	}
-	return nCnt;
+
+	return count;
 }
 
 int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
 {
-	int nCnt = 0;
+	int count = 0;
 
-	unsigned int alCount = this->pInside->alList.GetCount();
-	for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
-	{			
-		CARActiveLink al(alIndex);
-		for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
-		{
-			const ARActiveLinkActionStruct &action = al.GetIfActions().actionList[nAction];
-			if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
-			{
-				if(action.u.characteristics.charMenu != NULL)
-				{
-					if(strcmp(action.u.characteristics.charMenu, obj.GetARName())==0)
-					{
-						nCnt++;
-					}
-				}
-			}
-		}
+	const CARCharMenu::ReferenceList& refs = obj.GetReferences();
+	CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
+	CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
 
-		for(unsigned int nAction = 0; nAction < al.GetElseActions().numItems; nAction++)
-		{
-			const ARActiveLinkActionStruct &action = al.GetElseActions().actionList[nAction];
-			if(action.action == AR_ACTIVE_LINK_ACTION_SET_CHAR)
-			{
-				if(action.u.characteristics.charMenu != NULL)
-				{
-					if(strcmp(action.u.characteristics.charMenu, obj.GetARName())==0)
-					{
-						nCnt++;
-					}
-				}
-			}
-		}		
+	for (; curIt != endIt; ++curIt)
+	{
+		if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
+			count++;
 	}
-	return nCnt;
+
+	return count;
 }

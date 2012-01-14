@@ -223,6 +223,9 @@ string CDocAlDetails::ContainerReferences()
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{
 			CARContainer cont(cntIndex);
+			
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+				continue;
 
 			if(cont.GetType() != ARCON_APP)
 			{

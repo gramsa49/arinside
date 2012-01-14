@@ -66,6 +66,12 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	this->tbl.AddRow(tblRow);
 }
 
+// TODO: optimize related workflow scanning
+// The following two methods scan for activelinks and filters calling the current container, just to add a sign
+// to unused containers. The same scanning is done during the container documentation to show all objects calling
+// this guide. The code should be moved to the scanning phase to add all callers to the container. Later we can
+// check if there are no callers an put the sign in front of the object link.
+
 int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 {
 	int nResult = 0;
@@ -75,6 +81,10 @@ int CContainerTable::NumRelatedActiveLinks(CARContainer &obj)
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex )
 		{
 			CARActiveLink al(alIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+				continue;
 
 			//Search if-actions
 			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
@@ -120,6 +130,10 @@ int CContainerTable::NumRelatedFilters(CARContainer &obj)
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
 			CARFilter filter(filterIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
+				continue;
 
 			//Search if-actions
 			for(unsigned int nAction = 0; nAction < filter.GetIfActions().numItems; nAction++)

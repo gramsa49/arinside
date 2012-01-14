@@ -194,6 +194,9 @@ string CDocEscalationDetails::ContainerReferences()
 		{
 			CARContainer cont(cntIndex);
 			
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+				continue;
+
 			if(cont.GetType() != ARCON_APP)
 			{
 				const ARReferenceList& refs = cont.GetReferences();

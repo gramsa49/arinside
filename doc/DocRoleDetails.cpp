@@ -221,6 +221,10 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 		{	
 			CARSchema schema(schemaIndex);
 
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+
 			if(schema.GetAppRefName() == this->pRole->GetApplicationName())
 			{
 				const ARPermissionList& groupList = schema.GetPermissions();
@@ -303,6 +307,11 @@ void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{	
 			CARActiveLink al(alIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+				continue;
+
 			if(al.GetAppRefName() == this->pRole->GetApplicationName())
 			{
 				for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
@@ -355,6 +364,11 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
 			CARContainer cont(cntIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+				continue;
+
 			if(cont.GetType() == containerType)
 			{
 				if(cont.GetAppRefName() == this->pRole->GetApplicationName())
@@ -387,6 +401,11 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 			for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 			{	
 				CARContainer cont(cntIndex);
+
+				// skip this object in case it's overlaid (hidden)
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+					continue;
+
 				if(cont.GetAppRefName() == this->pRole->GetApplicationName())
 				{
 					const ARInternalIdList& admingrpList = cont.GetSubadmins();
@@ -463,6 +482,11 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
 			CARSchema schema(schemaIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+
 			if(NumAllowedFields(schema) > 0)
 			{
 				const ARPermissionList& groupList = schema.GetPermissions();

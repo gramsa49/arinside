@@ -887,10 +887,18 @@ string CDocFieldDetails::JoinFormReferences()
 
 	try
 	{
+		// TODO: each schema does the exact same scanning (see CDocSchemaDetails::JoinFormReferences), and each field
+		// scans for current schemas join-form references again. Maybe its possible to move this scanning to the
+		// scan-phase (so its executed only once per form) or we can temporarily store the result from the 
+		// CDocSchemaDetails class and use it here again.
 		unsigned int schemaCount = this->pInside->schemaList.GetCount();
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{			
 			CARSchema tmpSchema(schemaIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(tmpSchema))
+				continue;
 
 			const ARCompoundSchema& comp = tmpSchema.GetCompound();
 			if(comp.schemaType == AR_SCHEMA_JOIN)

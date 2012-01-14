@@ -205,7 +205,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp1\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -226,7 +226,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp1\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				LargeAddressAware="2"

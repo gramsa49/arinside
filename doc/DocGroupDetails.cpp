@@ -327,6 +327,11 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{	
 			CARSchema schema(schemaIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+
 			const ARPermissionList& groupList = schema.GetPermissions();
 
 			for(unsigned int nGrp = 0; nGrp < groupList.numItems; nGrp++)
@@ -410,6 +415,11 @@ void CDocGroupDetails::AlPermissionDoc(int &nResult, string title)
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{	
 			CARActiveLink al(alIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+				continue;
+
 			for(unsigned int nGrp = 0; nGrp < al.GetGroupList().numItems; nGrp++)
 			{
 				if(this->group.GetGroupId() == al.GetGroupList().internalIdList[nGrp])
@@ -461,6 +471,11 @@ void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int co
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
 			CARContainer cont(cntIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+				continue;
+
 			if(cont.GetType() == containerType)
 			{
 				const ARPermissionList& groupList = cont.GetPermissions();
@@ -558,6 +573,11 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 		for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 		{			
 			CARSchema schema(schemaIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+
 			if(NumAllowedFields(schema) > 0)
 			{
 				const ARPermissionList& groupList = schema.GetPermissions();

@@ -108,10 +108,15 @@ string CDocFilterGuideDetails::FilterActions()
 
 	try
 	{
+		// TODO: Move this loop to the scan phase
 		unsigned int filterCount = pInside->filterList.GetCount();
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
 			CARFilter filter(filterIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
+				continue;
 
 			//Search if-actions
 			const ARFilterActionList& IfActions =	filter.GetIfActions();

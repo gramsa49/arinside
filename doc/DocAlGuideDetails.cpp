@@ -113,6 +113,9 @@ string CDocAlGuideDetails::ActiveLinkActions()
 		{
 			CARActiveLink al(alIndex);
 
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+				continue;
+
 			//Search if-actions
 			for(unsigned int nAction = 0; nAction < al.GetIfActions().numItems; nAction++)
 			{

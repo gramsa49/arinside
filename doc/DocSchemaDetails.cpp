@@ -1485,6 +1485,10 @@ string CDocSchemaDetails::JoinFormReferences()
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 		{
 			CARSchema schema(schemaIndex);
+
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+
 			const ARCompoundSchema& compSchema = schema.GetCompound();
 
 			if(compSchema.schemaType == AR_SCHEMA_JOIN)
@@ -1530,6 +1534,9 @@ string CDocSchemaDetails::TableFieldReferences()
 		{			
 			CARSchema searchSchema(schemaIndex);
 			
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(searchSchema))
+				continue;
+
 			unsigned int fieldCount = searchSchema.GetFields()->GetCount();
 			for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 			{
@@ -1620,6 +1627,10 @@ string CDocSchemaDetails::AlPushFieldsReferences()
 		{
 			CARActiveLink al(alIndex);
 
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+				continue;
+
 			bool bPushToForm = false;
 
 			//If-Actions
@@ -1705,6 +1716,10 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 		{
 			CARActiveLink al(alIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+				continue;
 
 			bool bPushToForm = false;
 
@@ -1797,6 +1812,10 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
 			CARFilter filter(filterIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
+				continue;
 
 			bool bPushToForm = false;
 

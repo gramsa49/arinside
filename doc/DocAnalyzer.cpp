@@ -90,6 +90,10 @@ void CDocAnalyzer::IndexAnalyzer()
 			for ( unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex )
 			{			
 				CARSchema schema(schemaIndex);
+
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+					continue;
+
 				const ARIndexList& indexes = schema.GetIndexList();
 
 				for(unsigned int nIndex = 0; nIndex < indexes.numItems; nIndex++)

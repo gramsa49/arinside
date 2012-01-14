@@ -170,6 +170,10 @@ void CDocValidator::ContainerGroupValidator()
 			{			
 				CARContainer cont(cntIndex);
 
+				// skip this object in case it's overlaid (hidden)
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+					continue;
+
 				unsigned int type = cont.GetType();
 				if(type == ARCON_WEBSERVICE || type == ARCON_GUIDE || type == ARCON_APP)
 				{
@@ -224,6 +228,10 @@ void CDocValidator::AlGroupValidator()
 			for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
 			{			
 				CARActiveLink al(alIndex);
+
+				// skip this object in case it's overlaid (hidden)
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
+					continue;
 
 				if(al.GetGroupList().numItems == 0)		//Check if the al has no access group
 				{
@@ -327,6 +335,10 @@ void CDocValidator::FieldGroupValidator()
 			{			
 				CARSchema schema(schemaIndex);
 
+				// skip this object in case it's overlaid (hidden)
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+					continue;
+
 				int nEmptyFields = 0;
 				unsigned int fieldCount = schema.GetFields()->GetCount();
 				for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
@@ -390,6 +402,10 @@ void CDocValidator::FormGroupValidator()
 			{			
 				CARSchema schema(schemaIndex);
 
+				// skip this object in case it's overlaid (hidden)
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+					continue;
+
 				if(schema.GetPermissions().numItems == 0)      //Check if the form has no access group
 				{
 					//Form has no access group
@@ -438,10 +454,16 @@ void CDocValidator::FieldReferenceValidator()
 			tbl.AddColumn(30, "Form");		
 			tbl.AddColumn(60, "Workflow Items");
 
+			// TODO: check if there is workflow, that creates missing field references to overlaid forms. That's not necessary.
 			unsigned int schemaCount = pInside->schemaList.GetCount();
 			for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
 			{
 				CARSchema schema(schemaIndex);
+				
+				// skip this object in case it's overlaid (hidden)
+				if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+					continue;
+
 				const CARSchema::MissingReferenceList* missingList = schema.GetMissingReferences();
 				if (missingList == NULL) continue;
 				if (missingList->size() == 0) continue;
