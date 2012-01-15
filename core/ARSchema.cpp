@@ -346,3 +346,18 @@ const CARSchemaList::ObjectRefList& CARSchema::GetWebservices()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetWebserviceReferences(GetInsideId());
 }
+
+void CARSchema::AddReference(const CRefItem &refItem)
+{
+	return CARInside::GetInstance()->schemaList.AddReference(GetInsideId(), refItem);
+}
+
+bool CARSchema::ReferenceExists(const CRefItem &refItem) const
+{
+	return CARInside::GetInstance()->schemaList.ReferenceExists(GetInsideId(), refItem);
+}
+
+const CARSchema::ReferenceList& CARSchema::GetReferences() const
+{
+	return CARInside::GetInstance()->schemaList.GetReferences(GetInsideId());
+}

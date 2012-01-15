@@ -88,6 +88,11 @@ public:
 	void AddPackingList(const CARContainer& packList);
 	void AddWebservice(const CARContainer& webservice);
 
+	typedef CARSchemaList::ReferenceList ReferenceList;
+	void AddReference(const CRefItem& refItem);
+	bool ReferenceExists(const CRefItem& refItem) const;
+	const ReferenceList& GetReferences() const;
+
 	typedef CARSchemaList::MissingReferenceItem MissingReferenceItem;
 	typedef CARSchemaList::MissingReferenceList MissingReferenceList;
 	void AddMissingFieldReference(int fieldId, const CRefItem& refItem);

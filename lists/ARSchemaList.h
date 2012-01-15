@@ -65,6 +65,12 @@ public:
 	const string& SchemaGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	// referencing
+	typedef vector<CRefItem> ReferenceList;
+	void AddReference(unsigned int index, const CRefItem& refItem);
+	bool ReferenceExists(unsigned int index, const CRefItem& refItem);
+	const ReferenceList& GetReferences(unsigned int index);
+
 	// workflow reference functions
 	typedef pair<int, CRefItem> MissingReferenceItem;
 	typedef vector<MissingReferenceItem> MissingReferenceList;
@@ -123,6 +129,7 @@ private:
 	SchemaListState internalListState;
 	vector<int> sortedList;	// a index, sorted by schema names
 	vector<MissingReferenceList*> missingFieldReferences;
+	vector<ReferenceList> references;
 
 	vector<ObjectRefList> activeLinks;
 	vector<ObjectRefList> filters;

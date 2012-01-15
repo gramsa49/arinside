@@ -359,6 +359,7 @@ bool CARSchemaList::LoadFromServer()
 			appRefNames.push_back("");
 			sortedList.push_back(i);
 		}
+		references.resize(names.numItems);
 	}
 
 	// next, loading fields...	
@@ -462,6 +463,7 @@ void CARSchemaList::Reserve(unsigned int size)
 	vuiLists.reserve(size);
 
 	// reserve reference lists
+	references.resize(size);
 	activeLinks.resize(size);
 	filters.resize(size);
 	escalations.resize(size);
@@ -664,4 +666,27 @@ void CARSchemaList::SchemaAddPackingList(unsigned int index, const CARContainer 
 void CARSchemaList::SchemaAddWebservice(unsigned int index, const CARContainer &webservice)
 {
 	webservices[index].push_back(webservice.GetInsideId());
+}
+
+void CARSchemaList::AddReference(unsigned int index, const CRefItem &refItem)
+{
+	references[sortedList[index]].push_back(refItem);
+}
+
+bool CARSchemaList::ReferenceExists(unsigned int index, const CRefItem &refItem)
+{
+	ReferenceList::iterator curIt = references[sortedList[index]].begin();
+	ReferenceList::iterator endIt = references[sortedList[index]].end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (*curIt == refItem)
+			return true;
+	}
+	return false;
+}
+
+const CARSchemaList::ReferenceList& CARSchemaList::GetReferences(unsigned int index)
+{
+	return references[sortedList[index]];
 }
