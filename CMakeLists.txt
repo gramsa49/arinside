@@ -138,6 +138,10 @@ SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js)
 SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
 
+IF(NOT MSVC)
+	SET (ARINSIDE_SRCS ${ARINSIDE_SRCS} stdafx.cpp)
+ENDIF(NOT MSVC)
+
 # set link libraries for project
 IF(UNIX)
 	FIND_PACKAGE(Threads)

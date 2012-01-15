@@ -202,7 +202,7 @@ ARValueStruct* CARServerInfoList::GetValueByIndex(int index)
 	return &serverInfo.serverInfoList[index].value;
 }
 
-template<> virtual bool CStoreTo<string>::operator ()(ARValueStruct* val) const
+template<> bool CStoreTo<string>::operator ()(ARValueStruct* val) const
 {
 	if (val != NULL)
 	{

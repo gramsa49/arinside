@@ -31,7 +31,7 @@ public:
 	~CDocBase(void);
 
 	// some helper functions
-	string CDocBase::PlaceOverlayLink(int currentType, CARServerObject& target);
+	string PlaceOverlayLink(int currentType, CARServerObject& target);
 
 protected:
 	CARInside *pInside;
