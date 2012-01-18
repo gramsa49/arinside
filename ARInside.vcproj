@@ -796,6 +796,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARSetFieldHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARSetFieldHelper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\ARUser.cpp"
 				>
 			</File>

@@ -104,6 +104,7 @@ SET (ARINSIDE_SRCS
  core/ARDayStructHelper.cpp core/ARFilter.cpp core/ARVui.cpp core/AREscalation.cpp core/ARQualification.cpp
  core/ARServerInfo.cpp core/ARSchema.cpp core/ChangeHistoryEntry.cpp core/ARField.cpp core/ARUser.cpp
  core/ARImage.cpp core/ARCharMenu.cpp core/ARRole.cpp core/ARActiveLink.cpp core/ARValue.cpp
+ core/ARSetFieldHelper.cpp
  doc/DocFieldDetails.cpp doc/DocFilterActionStruct.cpp doc/DocAlActionStruct.cpp doc/DocBase.cpp 
  doc/DocUserDetails.cpp doc/DocVuiDetails.cpp doc/DocWebserviceDetails.cpp doc/DocMain.cpp
  doc/DocActionSetFieldsHelper.cpp doc/DocFilterGuideDetails.cpp doc/DocAlDetails.cpp
