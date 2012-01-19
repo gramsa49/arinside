@@ -1537,7 +1537,7 @@ void CDocMain::NotificationList()
 						strm << (ifElse == 0 ? "If" : "Else") << "-Action " << nAction;
 
 						stringstream text;
-						if (notifyAction.subjectText != NULL)
+						if (notifyAction.subjectText != NULL && notifyAction.subjectText[0] != 0)
 							text << pInside->TextFindFields(notifyAction.subjectText, "$", schema.GetInsideId(), rootLevel, true, NULL) << "<BR/>";
 						if (notifyAction.notifyText != NULL)
 							text << pInside->TextFindFields(notifyAction.notifyText, "$", schema.GetInsideId(), rootLevel, true, NULL);
