@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocActionSetFieldsHelper.h"
+#include "../core/ARSetFieldHelper.h"
 
 CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction)
 : arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(ifElseMode)
@@ -29,176 +30,102 @@ CDocActionSetFieldsHelper::~CDocActionSetFieldsHelper(void)
 }
 
 void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSchema, int rootLevel, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
-{	
-	for(unsigned int i=0; i < setFieldsStruct.fieldList.numItems; ++i)
+{
+	CARSchema wfSchema(fromSchema);
+	if (wfSchema.Exists())
 	{
-		if (this->CheckAssignment(setFieldsStruct.fieldList.fieldAssignList[i].assignment, fromSchema, rootLevel, strmSchema, strmSchemaDisplay, strmServer, strmQual))
-			return;
-	}
+		CARSetFieldHelper sfh(*CARInside::GetInstance(), wfSchema, setFieldsStruct, ifElse, nAction);
 
-	strmSchema << fromSchema;
-	
-	if (arStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
-	{
-		strmSchemaDisplay << "CURRENT SCREEN";
-		strmServer << arIn.LinkToServerInfo(arIn.appConfig.serverName, rootLevel);
-	}
-	else
-	{
-		strmSchemaDisplay << "CURRENT TRANSACTION";
-		// for filter/escalations no server needed?
-	}
-}
-
-bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment, const string& fromSchema, int rootLevel, stringstream &assignSchema, stringstream &assignSchemaDisplay, stringstream &assignServer, stringstream &assignQual)
-{	
-	try
-	{
-		switch(assignment.assignType)
+		switch (sfh.GetType())
 		{
-		case AR_ASSIGN_TYPE_FIELD:
+		case SFT_CURRENT:
+			strmServer << arIn.LinkToServerInfo(arIn.appConfig.serverName, rootLevel);
+			strmSchemaDisplay << "CURRENT SCREEN";
+			break;
+		case SFT_SERVER:
+		case SFT_SAMPLEDATA:
 			{
-				if((assignment.u.field->schema[0] == '@' ||  // AR_CURRENT_SCHEMA_TAG
-				    assignment.u.field->schema[0] == '*') && // AR_CURRENT_SCREEN_TAG / AR_CURRENT_TRAN_TAG
-				    assignment.u.field->schema[1] == 0)
-				{
-					// if this assignment uses a field from current screen, we are not interested
-					return false;
-				}
-
-				// *************************************************************************
-				// now check schema and form for keyword/fieldid and use sample data instead
-				string readSchema;
-				string readServer;
 				int pFormId = arIn.SchemaGetInsideId(fromSchema);
 				int sFormId = -1;
+				string readServer = sfh.GetServerName();
+				string readSchema = sfh.GetSchemaName();
 
-				if (assignment.u.field->schema[0] == '$' && setFieldsStruct.sampleSchema[0] != 0)
+				if (readSchema.compare("@") == 0)
 				{
-					int fieldId = atoi(&assignment.u.field->schema[1]);
+					readSchema = fromSchema;
+				}
 
-					if (setFieldsStruct.sampleSchema[0] == '@' && setFieldsStruct.sampleSchema[1] == 0)
-					{
-						readSchema = fromSchema;
-					}
-					else
-					{
-						readSchema = setFieldsStruct.sampleSchema;
-					}
-					assignSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
-					assignSchema << setFieldsStruct.sampleSchema;
+				if (sfh.GetType() == SFT_SAMPLEDATA)
+				{
+					int fieldId = sfh.GetServerFieldId();
+					strmServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
 
-					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
-					arIn.AddFieldReference(pFormId, fieldId, refItem);
+					CRefItem refItemServer(obj, ifElse, nAction, REFM_SETFIELDS_SERVER);
+					arIn.AddFieldReference(pFormId, fieldId, refItemServer);
+
+					fieldId = sfh.GetSchemaFieldId();
+					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
+					strmSchema << readSchema;
+
+					CRefItem refItemForm(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
+					arIn.AddFieldReference(pFormId, fieldId, refItemForm);
 				}
 				else
 				{
-					readSchema = assignment.u.field->schema;
-					assignSchemaDisplay << assignment.u.field->schema;
-					assignSchema << assignment.u.field->schema;
+					strmServer << arIn.LinkToServerInfo(readServer, rootLevel);
+
+					strmSchemaDisplay << readSchema;
+					strmSchema << readSchema;
 				}
 
-				if (assignment.u.field->server[0]== '$' && setFieldsStruct.sampleServer[0] != 0)
-				{
-					int fieldId = atoi(&assignment.u.field->server[1]);
-
-					readServer = setFieldsStruct.sampleServer;
-					assignServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
-
-					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_SERVER);
-					arIn.AddFieldReference(pFormId, fieldId, refItem);
-				}
-				else
-				{
-					readServer = assignment.u.field->server;
-					assignServer << arIn.LinkToServerInfo(assignment.u.field->server, rootLevel);
-				}
 				// *************************************************************************
 
 				sFormId = arIn.SchemaGetInsideId(readSchema);
 
-				assignQual << "<br/>Set Field If<br/>" << endl;
+				strmQual << "<br/>Set Field If<br/>" << endl;
 				stringstream strmTmpQual;
 				CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_QUALIFICATION);
 
 				CARQualification arQual(arIn);
 				arQual.arsStructItemType = arStructItemType;
-				arQual.CheckQuery(&assignment.u.field->qualifier, refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
+				arQual.CheckQuery(sfh.GetQualifier(), refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
 
 				if(strmTmpQual.str().length() > 0)
 				{
-					assignQual << strmTmpQual.str() << "<br/><br/>" << endl;
+					strmQual << strmTmpQual.str() << "<br/><br/>" << endl;
 				}
 				else
 				{
-					assignQual << EmptyValue << "<br/><br/>" << endl;
+					strmQual << EmptyValue << "<br/><br/>" << endl;
 				}
 
-				assignQual << "If No Requests Match: " << CAREnum::NoMatchRequest(assignment.u.field->noMatchOption) << "<br/>" << endl;
-				assignQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(assignment.u.field->multiMatchOption) << "<br/><br/>" << endl;
-				return true;
-			}
-		case AR_ASSIGN_TYPE_ARITH:
-			{			
-				switch (assignment.u.arithOp->operation) 
-				{
-				case AR_ARITH_OP_ADD:			
-					if (CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					if (CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					break;
-				case AR_ARITH_OP_SUBTRACT:						
-					if (CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					if (CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					break;
-				case AR_ARITH_OP_MULTIPLY:						
-					if (CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					if (CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					break;
-				case AR_ARITH_OP_DIVIDE:						
-					if (CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					if (CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					break;
-				case AR_ARITH_OP_MODULO:						
-					if (CheckAssignment(assignment.u.arithOp->operandLeft, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					if (CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					break;
-				case AR_ARITH_OP_NEGATE:						
-					if (CheckAssignment(assignment.u.arithOp->operandRight, fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual)) return true;
-					break;
-				}
-
+				strmQual << "If No Requests Match: " << CAREnum::NoMatchRequest(sfh.GetNoMatchOption()) << "<br/>" << endl;
+				strmQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(sfh.GetMultiMatchOption()) << "<br/><br/>" << endl;
 			}
 			break;
-		case AR_ASSIGN_TYPE_FUNCTION:
+		case SFT_SQL:
 			{
-				for(unsigned int i=0; i< assignment.u.function->numItems; ++i)
-				{
-					if (CheckAssignment(assignment.u.function->parameterList[i], fromSchema, rootLevel, assignSchema, assignSchemaDisplay, assignServer, assignQual))
-						return true;
-				}
-			}
-			break;
-		case AR_ASSIGN_TYPE_SQL:
-			{							
-				assignSchema << AR_ASSIGN_SQL_SCHEMA_NAME;
-				assignSchemaDisplay << "SQL";
-				assignServer << arIn.LinkToServerInfo(assignment.u.sql->server, rootLevel);
+				strmServer << arIn.LinkToServerInfo(sfh.GetServerName(), rootLevel);
+				strmSchema << AR_ASSIGN_SQL_SCHEMA_NAME;
+				strmSchemaDisplay << "SQL";
 
-				assignQual << "<br/>SQL command<br/>" << endl;
+				strmQual << "<br/>SQL command<br/>" << endl;
 
-				if(assignment.u.sql->sqlCommand[0] != 0)
+				if(!sfh.GetSqlCommand().empty())
 				{
 					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_SQL_QUALIFICATION);
-					assignQual << arIn.TextFindFields(assignment.u.sql->sqlCommand, "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, &refItem) << "<br/><br/>" << endl;
+					strmQual << arIn.TextFindFields(sfh.GetSqlCommand(), "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, &refItem) << "<br/><br/>" << endl;
 				}
 				else
-					assignQual << EmptyValue << "<br/><br/>" << endl;
+					strmQual << EmptyValue << "<br/><br/>" << endl;
 
-				assignQual << "If No Requests Match: " << CAREnum::NoMatchRequest(assignment.u.sql->noMatchOption) << "<br/>" << endl;
-				assignQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(assignment.u.sql->multiMatchOption) << "<br/><br/>" << endl;	
-				return true;
+				strmQual << "If No Requests Match: " << CAREnum::NoMatchRequest(sfh.GetNoMatchOption()) << "<br/>" << endl;
+				strmQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(sfh.GetMultiMatchOption()) << "<br/><br/>" << endl;	
 			}
-		case AR_ASSIGN_TYPE_FILTER_API:
+			break;
+		case SFT_FILTERAPI:
+		case SFT_WEBSERVICE:
+		case SFT_ATRIUM_ORCHESTRATOR:
 			{
 				// TODO: implement documenting of filter-api actions correctly
 				// normally we should set assignSchemaDisplay to "FILTER API" but CDocFilterActionStruct checks 
@@ -207,17 +134,11 @@ bool CDocActionSetFieldsHelper::CheckAssignment(const ARAssignStruct &assignment
 				//
 				// Note: serviceName can hold a fieldId which is used to read the plugin-name from. add a 
 				// reference tho this field later.
-				assignSchema << fromSchema;
-				assignSchemaDisplay << assignment.u.filterApi->serviceName;
-				assignServer << arIn.LinkToServerInfo(AR_CURRENT_SERVER_TAG, rootLevel);
-				return true;
+				strmServer << arIn.LinkToServerInfo(AR_CURRENT_SERVER_TAG, rootLevel);
+				strmSchema << sfh.GetSchemaName();
+				strmSchemaDisplay << sfh.GetSchemaName();
 			}
-		}	
+			break;
+		}
 	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in CheckAssignment of '" << obj.GetName() << "': " << e.what() << endl;
-	}
-	return false;
 }
-

@@ -33,6 +33,4 @@ private:
 	int arStructItemType;
 	IfElseState ifElse;
 	int nAction;
-
-	bool CheckAssignment(const ARAssignStruct &assignment, const string& fromSchema, int rootLevel, stringstream &assignSchema, stringstream &assignSchemaDisplay, stringstream &assignServer, stringstream &assignQual);
 };

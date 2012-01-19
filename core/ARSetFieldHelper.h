@@ -40,10 +40,14 @@ public:
 	~CARSetFieldHelper(void);
 
 	SetFieldType GetType();
-	string GetServerName();          // only for activelinks
-	string GetSchemaName();          // the schema used in this action (in case GetType == SFT_CURRENT, this is the same as wfConnectSchema
-	int GetSchemaFieldId();          // schema from fieldid or keyword
-	int GetServerFieldId();          // server from fieldid or keyword
+	const string& GetServerName() const;    // only for activelinks
+	const string& GetSchemaName() const;    // the schema used in this action (in case GetType == SFT_CURRENT, this is the same as wfConnectSchema
+	int GetSchemaFieldId();                 // schema from fieldid or keyword
+	int GetServerFieldId();                 // server from fieldid or keyword
+	int GetNoMatchOption();                 // noMatch option for supported actions (SERVER, SQL)
+	int GetMultiMatchOption();              // multiMatch option for supported actions (SERVER, SQL)
+	ARQualifierStruct* GetQualifier();      // qualifier struct
+	const string& GetSqlCommand() const;    // the sql command in case type = SFT_SQL
 
 private:
 	void Parse();

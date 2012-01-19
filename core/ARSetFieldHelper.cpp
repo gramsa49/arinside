@@ -141,8 +141,8 @@ bool CARSetFieldHelper::CheckAssignment(const ARAssignStruct &assignment)
 				else 
 				{
 					type = SFT_FILTERAPI;
-					this->schemaName = assignment.u.filterApi->serviceName;
 				}
+				this->schemaName = assignment.u.filterApi->serviceName;
 				return true;
 			}
 		}	
@@ -159,12 +159,12 @@ SetFieldType CARSetFieldHelper::GetType()
 	return type;
 }
 
-string CARSetFieldHelper::GetServerName()
+const string& CARSetFieldHelper::GetServerName() const
 {
 	return serverName;
 }
 
-string CARSetFieldHelper::GetSchemaName()
+const string& CARSetFieldHelper::GetSchemaName() const
 {
 	return schemaName;
 }
@@ -177,4 +177,24 @@ int CARSetFieldHelper::GetServerFieldId()
 int CARSetFieldHelper::GetSchemaFieldId()
 {
 	return schemaFromFieldId;
+}
+
+int CARSetFieldHelper::GetNoMatchOption()
+{
+	return noMatchValue;
+}
+
+int CARSetFieldHelper::GetMultiMatchOption()
+{
+	return multiMatchValue;
+}
+
+ARQualifierStruct* CARSetFieldHelper::GetQualifier()
+{
+	return qualifier;
+}
+
+const string& CARSetFieldHelper::GetSqlCommand() const
+{
+	return sqlCommand;
 }
