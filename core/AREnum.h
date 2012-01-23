@@ -415,6 +415,16 @@ public:
 		case AR_DPROP_PANEL_MARGIN_BOTTOM: return "Margin Bottom";
 		case AR_DPROP_AUTO_RESIZE: return "Auto Resize";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		case AR_DPROP_FIELD_FLOAT_STYLE: return "Float Style";
+		case AR_DPROP_FIELD_FLOAT_EFFECT: return "Float Effect";
+		case AR_DPROP_PANELHOLDER_SHRINKTOFIT: return "Shrink To Fit";
+		case AR_DPROP_PANEL_BORDER_THICKNESS: return "Border Thickness";
+		case AR_DPROP_AUTO_COMPLETE_AFTER_KEYSTROKES: return "Auto-Complete After Keystrokes";
+		case AR_DPROP_AUTO_COMPLETE_HIDE_MENU_BUTTON: return "Auto-Complete Hide Menu Button";
+		case AR_DPROP_ROW_LABEL: return "Row Label";
+		case AR_DPROP_ROW_LABEL_PLURAL: return "Label Plural";
+#endif
 		case AR_DPROP_PREFIX_NEW: return "Prefix New";
 		case AR_DPROP_PREFIX_SEARCH: return "Prefix Search";
 		case AR_DPROP_PREFIX_MODIFY: return "Prefix Modify";
@@ -487,6 +497,10 @@ public:
 		case AR_DPROP_ATTACH_FIELD_IMAGE_CACHE: return "Attach Field Image Cache";
 		case AR_DPROP_LOCALIZE_FIELD_DATA: return "Localize Data";
 		case AR_DPROP_FIELD_PROCESS_ENTRY_MODE: return "Process Entry Mode";
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		case AR_DPROP_SORT_GROUP: return "Sort Group";
+		case AR_DPROP_SORT_AGGREGATION_TYPE: return "Sort Aggregation Type";
 #endif
 		case AR_SMOPROP_OBJECT_VERSION: return "Object Version";
 		case AR_SMOPROP_APP_OWNER: return "App Owner";
@@ -1022,6 +1036,9 @@ public:
 				{
 				case AR_DVAL_ORIENTATION_HORIZONTAL: return "Horizontal";
 				case AR_DVAL_ORIENTATION_VERTICAL: return "Vertical";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+				case AR_DVAL_ORIENTATION_VERTICAL_UP: return "Vertical Reverse";
+#endif
 				}
 			}
 			break;
@@ -1117,7 +1134,40 @@ public:
 				}
 			}
 			break;
-#endif
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		case AR_DPROP_FIELD_FLOAT_STYLE:
+			{
+				switch (nVal)
+				{
+				case AR_DVAL_FLOAT_STYLE_NONE: return "None";
+				case AR_DVAL_FLOAT_STYLE_MODELESS: return "Modeless";
+				case AR_DVAL_FLOAT_STYLE_DIALOG: return "Dialog";
+				case AR_DVAL_FLOAT_STYLE_TOOLTIP: return "Tooltip";
+				}
+			}
+			break;
+		case AR_DPROP_FIELD_FLOAT_EFFECT:
+			{
+				switch (nVal)
+				{
+				case AR_DVAL_FLOAT_EFFECT_NONE: return "None";
+				case AR_DVAL_FLOAT_EFFECT_APPEAR_DISAPPEAR: return "Appear/Disappear";
+				case AR_DVAL_FLOAT_EFFECT_GROW_SHRINK: return "Grow/Shrink";
+				case AR_DVAL_FLOAT_EFFECT_FADEIN_FADEOUT: return "Fadein/Fadeout";
+				}
+			}
+			break;
+		case AR_DPROP_SORT_AGGREGATION_TYPE:
+			{
+				switch (nVal)
+				{
+				case AR_DVAL_SORT_AGGREGATION_NONE: return "None";
+				case AR_DVAL_SORT_AGGREGATION_COUNT: return "Count";
+				}
+			}
+			break;
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		}
 		return "";
 	}
@@ -1604,6 +1654,19 @@ public:
 		case AR_KEYWORD_ERRNO: return "ERRNO";
 		case AR_KEYWORD_ERRMSG: return "ERRMSG";
 		case AR_KEYWORD_ERRAPPENDMSG: return "ERRAPPENDMSG";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_KEYWORD_INCLNTMANAGEDTRANS: return "INCLIENTTRANSACTION";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_KEYWORD_DRAGSRCFIELDID: return "DRAGSRCFIELDID";
+		case AR_KEYWORD_DROPTGTFIELDID: return "DROPTGTFIELDID";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		case AR_KEYWORD_SHIFT_KEY: return "SHIFT_KEY";
+		case AR_KEYWORD_CTRL_KEY: return "CTRL_KEY";
+		case AR_KEYWORD_ALT_KEY: return "ALT_KEY";
+		case AR_KEYWORD_AUTHSTRING: return "AUTHSTRING";
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
 		// pattern support
 		case AR_PATTERN_KEY_DIGIT: return "DIGIT";
