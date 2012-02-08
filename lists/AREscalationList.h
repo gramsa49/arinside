@@ -35,6 +35,9 @@ public:
 	void Reserve(unsigned int size);
 	void Sort();
 
+	// referencing
+	typedef vector<int> ObjectRefList;
+
 	// data-access functions
 	const ARNameType& EscalationGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
 	const AREscalationTmStruct& EscalationGetTime(unsigned int index) const { assert(index < times.numItems); return times.escalationTmList[sortedList[index]]; }
@@ -53,6 +56,8 @@ public:
 	const string& EscalationGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void EscalationSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
 private:
 	// allocation state of internal structures
 	enum EscalationListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -78,4 +83,5 @@ private:
 	vector<int> sortedList;	// a index, sorted by escalation names
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };

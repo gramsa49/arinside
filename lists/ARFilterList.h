@@ -30,6 +30,7 @@ public:
 	int AddFilterFromXML(ARXMLParsedStream& stream, const char* filterName, unsigned int *arDocVersion = NULL);
 
 	// referencing... do we need it? maybe for error handler references or containers?
+	typedef vector<int> ObjectRefList;
 
 	// list functions
 	inline unsigned int GetCount() { return names.numItems; }
@@ -66,6 +67,8 @@ public:
 	void FilterSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 	vector<unsigned int> &FilterErrorCallers(unsigned int index) { assert(index < errorCallers.size()); return errorCallers[sortedList[index]]; }
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
 private:
 	// allocation state of internal structures
 	enum FilterListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -95,4 +98,5 @@ private:
 	vector<int> sortedList;	// a index, sorted by filter names
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };

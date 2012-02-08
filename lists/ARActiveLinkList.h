@@ -37,6 +37,9 @@ public:
 	void Reserve(unsigned int size);
 	void Sort();
 
+	// referencing
+	typedef vector<int> ObjectRefList;
+
 	const ARNameType& ActiveLinkGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
 	unsigned int ActiveLinkGetOrder(unsigned int index) const { assert(index < orders.numItems); return orders.intList[sortedList[index]]; }
 	const ARWorkflowConnectStruct& ActiveLinkGetSchemaList(unsigned int index) const { assert(index < schemas.numItems); return schemas.workflowConnectList[sortedList[index]]; }
@@ -59,6 +62,9 @@ public:
 	const string& ActiveLinkGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void ActiveLinkSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
+	
 private:
 	// allocation state of internal structures
 	enum ActiveLinkListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -88,4 +94,5 @@ private:
 	vector<int> sortedList;
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };

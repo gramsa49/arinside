@@ -920,6 +920,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocCustomWorkflow.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocCustomWorkflow.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocEscalationDetails.cpp"
 				>
 			</File>
@@ -2285,11 +2293,27 @@
 				>
 			</File>
 			<File
+				RelativePath=".\scan\ScanImages.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanImages.h"
+				>
+			</File>
+			<File
 				RelativePath=".\scan\ScanMain.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\scan\ScanMain.h"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanMenus.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\scan\ScanMenus.h"
 				>
 			</File>
 			<File

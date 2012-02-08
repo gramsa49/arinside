@@ -43,6 +43,12 @@ void CScanFilters::Start()
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
 				continue;
 
+			int overlayType = filter.GetOverlayType();
+			if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+			{
+				pInside->filterList.AddOverlayOrCustom(filter.GetInsideId());
+			}
+
 			CScanFilters scanFlt(filter, errCalls);
 			scanFlt.Scan();
 		}

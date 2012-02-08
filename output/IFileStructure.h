@@ -226,6 +226,8 @@ const unsigned int PAGE_VALIDATOR_CONTAINER_GROUPS = 2107;
 const unsigned int PAGE_ANALYZER_MAIN = 2200; // CPageParams: none
 const unsigned int PAGE_ANALYZER_QBE_CHECK = 2201; // CPageParams: none
 
+const unsigned int PAGE_CUSTOMWORKFLOW = 2300;            // CPageParams: none
+
 
 ///////////////////////////////////////////////////////////////////////////////
 // the strategy interface

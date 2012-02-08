@@ -50,6 +50,7 @@ const char* DIR_ROLE = "role";
 const char* DIR_OTHER = "other";
 const char* DIR_OVERVIEW = "overview";
 const char* FILE_ERROR_HANDLER = "error_handler";
+const char* FILE_CUSTOM_WORKFLOW = "custom_workflow";
 
 const char* FILE_INDEX = "index";
 const char* FILE_INDEX_REGULAR = "index_regular";
@@ -1206,6 +1207,15 @@ public:
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
 
+class CustomWorkflow : public IFileStructure
+{
+public:
+	virtual string GetFileName() const { return FILE_CUSTOM_WORKFLOW; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return DIR_OTHER; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+};
+
 ///////////////////////////////////////////////////////////////////////////////
 // DefaultFileNamingStrategy implementation
 
@@ -1397,6 +1407,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_VALIDATOR_FIELD_GROUP_DETAILS: assert(params.obj1 != NULL); return new ValidatorFieldGroupDetails(params.obj1);
 		case PAGE_VALIDATOR_ACTIVELINKS_GROUPS: return new ValidatorActiveLinkGroups();
 		case PAGE_VALIDATOR_CONTAINER_GROUPS: return new ValidatorContainerGroups();
+		case PAGE_CUSTOMWORKFLOW: return new CustomWorkflow();
 	}
 
 	if (params.page >= PAGE_OVERVIEW_LETTER_A && params.page <= PAGE_OVERVIEW_LETTER_Z || 
@@ -2501,6 +2512,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_VALIDATOR_FIELD_GROUP_DETAILS: assert(params.obj1 != NULL); return new ValidatorFieldGroupDetails(params.obj1);
 		case PAGE_VALIDATOR_ACTIVELINKS_GROUPS: return new ValidatorActiveLinkGroups();
 		case PAGE_VALIDATOR_CONTAINER_GROUPS: return new ValidatorContainerGroups();
+		case PAGE_CUSTOMWORKFLOW: return new CustomWorkflow();
 	}
 
 	if (params.page >= PAGE_OVERVIEW_LETTER_A && params.page <= PAGE_OVERVIEW_LETTER_Z || 

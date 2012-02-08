@@ -343,3 +343,12 @@ void CARContainerList::Sort()
 #endif
 }
 
+void CARContainerList::AddOverlayOrCustom(unsigned int index)
+{
+	overlayAndCustomList.push_back(index);
+}
+
+const CARContainerList::ObjectRefList& CARContainerList::GetOverlayAndCustomWorkflow()
+{
+	return overlayAndCustomList;
+}

@@ -307,3 +307,13 @@ void CAREscalationList::Sort()
 	NormalizeNameListToRealNames(names, objProps);
 #endif
 }
+
+void CAREscalationList::AddOverlayOrCustom(unsigned int index)
+{
+	overlayAndCustomList.push_back(index);
+}
+
+const CAREscalationList::ObjectRefList& CAREscalationList::GetOverlayAndCustomWorkflow()
+{
+	return overlayAndCustomList;
+}

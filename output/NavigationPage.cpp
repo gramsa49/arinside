@@ -107,6 +107,10 @@ void CNavigationPage::Write()
 				fout << "<li>" << CWebUtil::Link("Messages"          , CPageParams(PAGE_MESSAGES)      , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 				fout << "<li>" << CWebUtil::Link("Notifications"     , CPageParams(PAGE_NOTIFICATIONS) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 				fout << "<li>" << CWebUtil::Link("Global&nbsp;Fields", CPageParams(PAGE_GLOBALFIELS)   , "doc.gif", rootLevel, false, TARGET_MODE_PARENT) << "</li>";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+				if (pInside->CompareServerVersion(7,6,4) >= 0 || (pInside->appConfig.fileMode == true && pInside->CompareServerVersion(7,5) >= 0))
+					fout << "<li>" << CWebUtil::Link("Customizations"    , CPageParams(PAGE_CUSTOMWORKFLOW), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+#endif
 				fout << "<li>" << CWebUtil::Link("Validator"         , CPageParams(PAGE_VALIDATOR_MAIN), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 				fout << "<li>" << CWebUtil::Link("Analyzer"          , CPageParams(PAGE_ANALYZER_MAIN) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
 			fout << "</ul>";

@@ -50,11 +50,14 @@ public:
 	void MenuSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
 	// referencing
+	typedef vector<int> ObjectRefList;
 	typedef vector<CRefItem> ReferenceList;
 	void AddReference(unsigned int index, const CRefItem& refItem);
 	bool ReferenceExists(unsigned int index, const CRefItem& refItem);
 	const ReferenceList& GetReferences(unsigned int index);
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
 private:
 	// allocation state of internal structures
 	enum MenuListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -77,4 +80,5 @@ private:
 	vector<ReferenceList> references;
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };

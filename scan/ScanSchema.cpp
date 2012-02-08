@@ -42,6 +42,12 @@ void CScanSchema::Start()
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
 				continue;
 
+			int overlayType = schema.GetOverlayType();
+			if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+			{
+				pInside->schemaList.AddOverlayOrCustom(schema.GetInsideId());
+			}
+
 			CScanSchema scanSchema(schema);
 			scanSchema.Scan();
 		}

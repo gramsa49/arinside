@@ -39,6 +39,12 @@ void CScanContainers::Start()
 		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cnt))
 			continue;
 
+		int overlayType = cnt.GetOverlayType();
+		if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+		{
+			pInside->containerList.AddOverlayOrCustom(cnt.GetInsideId());
+		}
+
 		CScanContainers scanCont(cnt);
 		scanCont.Scan();
 	}

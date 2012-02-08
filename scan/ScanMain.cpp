@@ -22,6 +22,7 @@
 #include "ScanFilters.h"
 #include "ScanEscalations.h"
 #include "ScanContainers.h"
+#include "ScanImages.h"
 
 CScanMain::CScanMain(void)
 {
@@ -38,6 +39,7 @@ void CScanMain::BuildReferences()
 	CScanFilters::Start();
 	CScanEscalations::Start();
 	CScanContainers::Start();
+	CScanImages::Start();
 
 	SortReferences();
 }

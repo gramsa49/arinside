@@ -447,7 +447,12 @@ string CARActiveLinkList::ActiveLinkGetURL(unsigned int index, int rootLevel)
 	return CWebUtil::Link(ActiveLinkGetName(index), file, "active_link.gif", rootLevel); 
 }
 
-//void CARActiveLinkList::AddReference(const CImageRefItem &referenceItem)
-//{
-//	referenceList.push_back(referenceItem);
-//}
+void CARActiveLinkList::AddOverlayOrCustom(unsigned int index)
+{
+	overlayAndCustomList.push_back(index);
+}
+
+const CARActiveLinkList::ObjectRefList& CARActiveLinkList::GetOverlayAndCustomWorkflow()
+{
+	return overlayAndCustomList;
+}

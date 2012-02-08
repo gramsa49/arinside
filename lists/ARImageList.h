@@ -43,6 +43,9 @@ public:
 	void Reserve(unsigned int size);
 	void Sort();
 
+	// referencing
+	typedef vector<int> ObjectRefList;
+
 	// The following functions give access to the data. But in most cases its easier
 	// to use the CARImage object.
 	inline const ARNameType& ImageGetName(unsigned int index) { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
@@ -56,6 +59,8 @@ public:
 	inline const ARImageDataStruct& ImageGetData(unsigned int index) { assert(index < data.numItems); return data.imageList[sortedList[index]]; }
 	inline const ARPropList& ImageGetPropList(unsigned int index) { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
 private:
 	// allocation state of internal structures
 	enum ImageListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -77,6 +82,7 @@ private:
 	vector<ReferenceItem> referenceList;
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };
 
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

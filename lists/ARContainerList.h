@@ -35,6 +35,9 @@ public:
 	void Reserve(unsigned int size);
 	void Sort();
 
+	// referencing
+	typedef vector<int> ObjectRefList;
+
 	// data access
 	const ARNameType& ContainerGetName(unsigned int index) const { assert(index < names.numItems); return names.nameList[sortedList[index]]; }
 	const ARPermissionList& ContainerGetPermissions(unsigned int index) const { assert(index < permissions.numItems); return permissions.permissionList[sortedList[index]]; }
@@ -53,6 +56,8 @@ public:
 	const string& ContainerGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void ContainerSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
 private:
 	// allocation state of internal structures
 	enum ContainerListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -79,4 +84,5 @@ private:
 	vector<int> sortedList;
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };

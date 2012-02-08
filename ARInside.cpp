@@ -40,6 +40,7 @@
 #include "doc/DocRoleDetails.h"
 #include "doc/DocSummaryInfo.h"
 #include "doc/DocImageDetails.h"
+#include "doc/DocCustomWorkflow.h"
 
 #include "output/Table.h"
 #include "output/WebUtil.h"
@@ -1034,6 +1035,11 @@ void CARInside::Documentation(void)
 	CDocValidator *validator = new CDocValidator();
 	validator->Main();
 	delete validator;
+
+	{
+		CDocCustomWorkflow customWF;
+		customWF.Documentation();
+	}
 
 	// group count per first char
 	vector<int> grpObjCount; grpObjCount.resize(38);

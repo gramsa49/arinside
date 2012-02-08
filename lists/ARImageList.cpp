@@ -280,4 +280,15 @@ const CARImageList::ReferenceItem& CARImageList::GetReferences(unsigned int inde
 {
 	return referenceList[sortedList[index]];
 }
+
+void CARImageList::AddOverlayOrCustom(unsigned int index)
+{
+	overlayAndCustomList.push_back(index);
+}
+
+const CARImageList::ObjectRefList& CARImageList::GetOverlayAndCustomWorkflow()
+{
+	return overlayAndCustomList;
+}
+
 #endif

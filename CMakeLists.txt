@@ -112,7 +112,7 @@ SET (ARINSIDE_SRCS
  doc/DocSchemaDetails.cpp doc/DocValidator.cpp doc/DocFilterDetails.cpp doc/DocImageDetails.cpp
  doc/DocActionOpenWindowHelper.cpp doc/DocPacklistDetails.cpp doc/DocApplicationDetails.cpp
  doc/DocGroupDetails.cpp doc/MessageItem.cpp doc/DocEscalationDetails.cpp doc/DocSummaryInfo.cpp
- doc/DocAlGuideDetails.cpp
+ doc/DocAlGuideDetails.cpp doc/DocCustomWorkflow.cpp
  lists/ARActiveLinkList.cpp lists/ARContainerList.cpp lists/AREscalationList.cpp lists/ARFieldList.cpp
  lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
  lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp lists/ARListHelpers.cpp
@@ -123,7 +123,7 @@ SET (ARINSIDE_SRCS
  output/WebPage.cpp output/TableColumn.cpp output/NavigationPage.cpp output/GroupTable.cpp output/ImageTable.cpp
  output/UListItem.cpp output/MenuTable.cpp output/UserTable.cpp output/WebUtil.cpp 
  scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
- scan/ScanMain.cpp scan/ScanSchema.cpp
+ scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
  util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp
  AppConfig.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp WindowsUtil.cpp

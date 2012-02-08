@@ -690,3 +690,13 @@ const CARSchemaList::ReferenceList& CARSchemaList::GetReferences(unsigned int in
 {
 	return references[sortedList[index]];
 }
+
+void CARSchemaList::AddOverlayOrCustom(unsigned int index)
+{
+	overlayAndCustomList.push_back(index);
+}
+
+const CARSchemaList::ObjectRefList& CARSchemaList::GetOverlayAndCustomWorkflow()
+{
+	return overlayAndCustomList;
+}

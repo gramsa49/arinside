@@ -288,3 +288,13 @@ const CARMenuList::ReferenceList& CARMenuList::GetReferences(unsigned int index)
 {
 	return references[sortedList[index]];
 }
+
+void CARMenuList::AddOverlayOrCustom(unsigned int index)
+{
+	overlayAndCustomList.push_back(index);
+}
+
+const CARMenuList::ObjectRefList& CARMenuList::GetOverlayAndCustomWorkflow()
+{
+	return overlayAndCustomList;
+}

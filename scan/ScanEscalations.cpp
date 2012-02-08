@@ -39,6 +39,12 @@ void CScanEscalations::Start()
 		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escal))
 			continue;
 
+		int overlayType = escal.GetOverlayType();
+		if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+		{
+			pInside->escalationList.AddOverlayOrCustom(escal.GetInsideId());
+		}
+
 		CScanEscalations scanEsc(escal);
 		scanEsc.Scan();
 	}

@@ -98,6 +98,9 @@ public:
 	CARFieldList* SchemaGetFields(unsigned int index) { assert(index < fieldLists.size()); return fieldLists[sortedList[index]]; }
 	CARVUIList* SchemaGetVUIs(unsigned int index) { assert(index < vuiLists.size()); return vuiLists[sortedList[index]]; }
 
+	void AddOverlayOrCustom(unsigned int index);
+	const ObjectRefList& GetOverlayAndCustomWorkflow();
+
 private:
 	// allocation state of internal structures
 	enum SchemaListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
@@ -141,4 +144,5 @@ private:
 
 	typedef map<string,int> CMapType;
 	CMapType searchList;
+	vector<int> overlayAndCustomList;
 };

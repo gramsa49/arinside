@@ -2430,4 +2430,17 @@ public:
 #endif
 		return "";
 	}
+
+	static const char* GetOverlayType(int overlayType)
+	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		switch (overlayType)
+		{
+		case AR_OVERLAID_OBJECT: return "Original";
+		case AR_OVERLAY_OBJECT: return "Overlay";
+		case AR_CUSTOM_OBJECT: return "Custom";
+		}
+#endif
+		return "";
+	}
 };
