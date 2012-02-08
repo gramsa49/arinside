@@ -342,8 +342,8 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = schemaName2;
 
-		strm << "Server Name: " << serverRaw.str() << "<br/>" << endl;
-		strm << "Read Value for Field from: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
+		strm << "Server: " << serverRaw.str() << "<br/>" << endl;
+		strm << "From: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
 		//Qualification
 		strm << qualification.str() << endl;		

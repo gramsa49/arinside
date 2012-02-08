@@ -515,7 +515,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		}
 		else
 		{
-			strm << "Read Value for Field from: ";
+			strm << "From: ";
 			if (schemaName2.size()>0 && schemaName2[0] == '$' && action.sampleSchema[0] != 0)
 			{
 				int fieldId = atoi(&schemaName2[1]);
