@@ -41,6 +41,7 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 		case SFT_CURRENT:
 			strmServer << arIn.LinkToServerInfo(arIn.appConfig.serverName, rootLevel);
 			strmSchemaDisplay << "CURRENT SCREEN";
+			strmSchema << sfh.GetSchemaName();
 			break;
 		case SFT_SERVER:
 		case SFT_SAMPLEDATA:
