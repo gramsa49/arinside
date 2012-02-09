@@ -59,6 +59,7 @@ string CARValue::ValueToString(const ARValueStruct &value)
 		}
 		break;
 	case AR_DATA_TYPE_CHAR:
+	case AR_DATA_TYPE_VIEW:	// older versions used this data type (e.g. to assign URL-string to view-field)
 		{
 			if(value.u.charVal != NULL)
 			{
