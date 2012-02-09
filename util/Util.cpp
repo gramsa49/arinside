@@ -31,6 +31,10 @@ string CUtil::DateTimeToHTMLString(ARTimestamp ts)
 	struct tm *stm;
 	static char dest[100];
 
+	// a value of "1970-01-01T01:00:00+01:00" in a diary field timestamp loaded from xml (changeHistory of a field)
+	// resulted in a negative value and strftime crashed afterwards
+	if (ts < 0) ts = 0;
+
 	time_t dtime = (time_t) ts;
 	stm = localtime(&dtime);
 	strftime(dest, 100, "%Y-%m-%d&nbsp;%H:%M:%S", stm);
