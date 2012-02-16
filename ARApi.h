@@ -44,6 +44,20 @@
 #define AR_RESERV_OVERLAY_STRING "__o"
 #endif
 
+#ifndef AR_ORIGINAL_OBJECT
+#define AR_ORIGINAL_OBJECT 0
+#endif
+#ifndef AR_OVERLAID_OBJECT
+#define AR_OVERLAID_OBJECT 1
+#endif
+#ifndef AR_OVERLAY_OBJECT
+#define AR_OVERLAY_OBJECT 2
+#endif
+#ifndef AR_CUSTOM_OBJECT
+#define AR_CUSTOM_OBJECT 4
+#endif
+
+
 // to support our own xml object types used in lists
 #define AR_STRUCT_ITEM_USER    500
 #define AR_STRUCT_ITEM_GROUP   501

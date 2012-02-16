@@ -39,7 +39,9 @@ void CScanMain::BuildReferences()
 	CScanFilters::Start();
 	CScanEscalations::Start();
 	CScanContainers::Start();
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	CScanImages::Start();
+#endif
 
 	SortReferences();
 }

@@ -15,6 +15,8 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+
 // forward declarations
 class CARImage;
 
@@ -32,3 +34,5 @@ public:
 private:
 	CARImage& img;
 };
+
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

@@ -187,11 +187,38 @@ public:
 		case AR_OPROP_INTERVAL_VALUE: return "Interval Value";
 		case AR_OPROP_INTEGRITY_KEY: return "Integrity Key";
 		case AR_OPROP_NEXT_ID_BLOCK_SIZE: return "Next ID block size";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_OPROP_FT_SCAN_TIME_MONTH_MASK: return "FT Scan Time Month Mask";
+		case AR_OPROP_FT_SCAN_TIME_WEEKDAY_MASK: return "FT Scan Time Weekday Mask";
+		case AR_OPROP_FT_SCAN_TIME_HOUR_MASK: return "FT Scan Time Hour Mask";
+		case AR_OPROP_FT_SCAN_TIME_MINUTE: return "FT Scan Time Minute";
+		case AR_OPROP_FT_SCAN_TIME_INTERVAL: return "FT Scan Time Interval";
+#endif
 		case AR_OPROP_GUIDE_PARAMETERS: return "Guide Parameters";
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 		case AR_OPROP_CACHE_DISP_PROP: return "Cache Display Prop";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_OPROP_TRANSACTION_HANDLE_ID: return "Transaction Handle Id";
+		case AR_OPROP_MAX_VENDOR_TEMP_TABLES: return "Max Vendor Temp Tables";
+#endif
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		case AR_OPROP_STATIC_PERMISSION_INHERITED: return "Static Permission Inherited";
+		case AR_OPROP_DYNAMIC_PERMISSION_INHERITED: return "Dynamic Permission Inherited";
+		case AR_OPROP_MFS_OPTION_MASK: return "MultiFormSearch Option Mask";
+		case AR_OPROP_FORM_ALLOW_DELETE: return "Form Allow Delete";
+		case AR_OPROP_TABLE_PERSIST_DIRTY_ROWS: return "Table Persist Dirty Rows";
+		case AR_OPROP_MFS_WEIGHTED_RELEVANCY_FIELDS: return "MultiFormSearch Weighted Relevancy Fields";
+		case AR_OPROP_APP_INTEGRATION_WORKFLOW: return "App Integration Workflow";
+		case AR_OPROP_LOCALIZE_FORM_VIEWS: return "Localize Form Views";
+		case AR_OPROP_LOCALIZE_FORM_DATA: return "Localize Form Data";
+		case AR_OPROP_LOCALIZE_FIELD_DATA: return "Localize Field Data";
+		case AR_OPROP_FT_MFS_CATEGORY_NAME: return "MultiFormSearch Category Name";
+		case AR_OPROP_FT_MFS_INDEX_TABLE_FIELD: return "MultiFormSearch Index Table Field";
+		case AR_OPROP_OBJECT_MODE: return "Object Mode";
+		case AR_OPROP_OVERLAY_GROUP: return "Overlay Group";
+		case AR_OPROP_OVERLAY_DESIGN_GROUP: return "Overlay Design Group";
+		case AR_OPROP_OVERLAY_PROP: return "Overlay Property";
 		case AR_OPROP_DRILL_DOWN_IN_WEB_REPORTS: return "Drill Down in Web Reports";
 		case AR_OPROP_FT_STRIP_TAGS: return "FT Strip Tags";
 		case AR_OPROP_DISPLAY_FORM_SINGLETON: return "Display Form Singleton";

@@ -18,6 +18,7 @@
 #include "ScanImages.h"
 #include "../ARInside.h"
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 CScanImages::CScanImages(CARImage& image)
 : img(image)
 {
@@ -55,3 +56,4 @@ void CScanImages::Start()
 void CScanImages::Scan()
 {
 }
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
