@@ -189,6 +189,9 @@ void CDocSchemaDetails::Documentation()
 			pgStrm << tblObjProp;
 			tblObjProp.Clear();
 
+			pgStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
+			pgStrm << this->SetFieldReferences();
+
 			//Fields
 			switch(compSchema.schemaType)
 			{
@@ -2207,4 +2210,55 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 	{
 		cerr << "EXCEPTION archive properties" << endl;
 	}
+}
+
+string CDocSchemaDetails::SetFieldReferences()
+{
+	stringstream strm;
+	strm.str("");
+	try
+	{
+		CTable tab("setFieldReferences", "TblObjectList");
+		tab.AddColumn(50, "Object Name");
+		tab.AddColumn(10, "Enabled");
+		tab.AddColumn(20, "Execute On");
+		tab.AddColumn(20, "Description");
+
+		const CARSchema::ReferenceList &refList = schema.GetReferences();
+		CARSchema::ReferenceList::const_iterator curIt = refList.begin();
+		CARSchema::ReferenceList::const_iterator endIt = refList.end();
+
+		for (; curIt != endIt; ++curIt)
+		{
+			if (curIt->GetMessageId() == REFM_SETFIELDS_FORM)
+			{
+				bool hasEnabledFlag;
+				string tmpEnabled = "";
+				string tmpCssEnabled = "";
+
+				unsigned int enabled = curIt->GetObjectEnabled(hasEnabledFlag);
+
+				if (hasEnabledFlag)
+				{
+					tmpEnabled = CAREnum::ObjectEnable(enabled);
+					if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
+				}
+
+				CTableRow row;
+				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
+				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
+				row.AddCell(curIt->GetDescription(rootLevel));
+				tab.AddRow(row);
+			}
+		}
+
+		tab.ToXHtml(strm);
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION enumerating filter push fields references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
+	}
+
+	return strm.str();
 }

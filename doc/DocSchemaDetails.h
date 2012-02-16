@@ -63,6 +63,7 @@ private:
 	string AlWindowOpenReferences();
 	string JoinFormReferences();
 	string SearchMenuReferences();
+	string SetFieldReferences();
 	
 	string ShowProperties();
 	void ShowBasicProperties(std::ostream& strm, CARProplistHelper* propIndex);

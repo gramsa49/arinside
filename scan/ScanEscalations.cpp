@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ScanEscalations.h"
 #include "../ARInside.h"
+#include "../core/ARSetFieldHelper.h"
 
 CScanEscalations::CScanEscalations(CAREscalation& escalation)
 : escal(escalation)
@@ -67,5 +68,50 @@ void CScanEscalations::Scan()
 			}
 		}
 	}
+
+	ScanActions(escal.GetIfActions(), IES_IF);
+	ScanActions(escal.GetElseActions(), IES_ELSE);
 }
 
+void CScanEscalations::ScanActions(const ARFilterActionList& actions, IfElseState ifElse)
+{
+	for (unsigned int actionIndex = 0; actionIndex < actions.numItems; ++actionIndex)
+	{
+		switch (actions.actionList[actionIndex].action)
+		{
+		case AR_FILTER_ACTION_FIELDS:
+			{
+				const ARSetFieldsActionStruct& setFieldAction = actions.actionList[actionIndex].u.setFields;
+
+				const ARWorkflowConnectStruct &wfConnList = this->escal.GetSchemaList();
+				if (wfConnList.type == AR_WORKFLOW_CONN_SCHEMA_LIST && wfConnList.u.schemaList->numItems > 0)
+				{
+					// we simply use the first schema here, thats enough
+					CARSchema schema(wfConnList.u.schemaList->nameList[0]);
+					if (schema.Exists())
+					{
+						CARSetFieldHelper sfh(*CARInside::GetInstance(), schema, setFieldAction, ifElse, actionIndex);
+
+						SetFieldType sfType = sfh.GetType();
+						switch (sfType)
+						{
+						case SFT_SERVER:
+						case SFT_SAMPLEDATA:
+							{
+								CARSchema readSchema(sfh.GetSchemaName());
+								if (readSchema.Exists())
+								{
+									CRefItem ref(escal, ifElse, actionIndex, REFM_SETFIELDS_FORM);
+									if (!readSchema.ReferenceExists(ref))
+										readSchema.AddReference(ref);
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+			break;
+		}
+	}	
+}

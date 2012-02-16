@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ScanFilters.h"
 #include "../ARInside.h"
+#include "../core/ARSetFieldHelper.h"
 
 CScanFilters::CScanFilters(CARFilter& filter, ErrorCallMap& errCalls)
 : flt(filter), errorCalls(errCalls)
@@ -70,23 +71,6 @@ void CScanFilters::Start()
 				std::copy(curIt->second.begin(), curIt->second.end(), flt.ErrorCallers().begin());
 			}
 		}
-			//for (unsigned int filterIndex = 0; filterIndex < filterCount; filterIndex++)
-			//{
-			//	CARFilter filter(filterIndex);
-			//	ErrorCallMap::iterator item = errorCalls.find(filter.GetName());
-			//	if (item != errorCalls.end())
-			//	{
-			//		if (!item->second.empty())
-			//		{
-			//			filter.ErrorCallers().reserve(item->second.size());
-			//			list<string>::iterator callerEnd = item->second.end();
-			//			for (list<string>::iterator caller = item->second.begin(); caller != callerEnd; ++caller)
-			//			{
-			//				filter.ErrorCallers().push_back(*caller);
-			//			}
-			//		}
-			//	}
-			//}
 
 		cout << endl;
 	}
@@ -131,4 +115,50 @@ void CScanFilters::Scan()
 			}
 		}
 	}
+
+	ScanActions(flt.GetIfActions(), IES_IF);
+	ScanActions(flt.GetElseActions(), IES_ELSE);
+}
+
+void CScanFilters::ScanActions(const ARFilterActionList &actions, IfElseState ifElse)
+{
+	for (unsigned int actionIndex = 0; actionIndex < actions.numItems; ++actionIndex)
+	{
+		switch (actions.actionList[actionIndex].action)
+		{
+		case AR_FILTER_ACTION_FIELDS:
+			{
+				const ARSetFieldsActionStruct& setFieldAction = actions.actionList[actionIndex].u.setFields;
+
+				const ARWorkflowConnectStruct &wfConnList = this->flt.GetSchemaList();
+				if (wfConnList.type == AR_WORKFLOW_CONN_SCHEMA_LIST && wfConnList.u.schemaList->numItems > 0)
+				{
+					// we simply use the first schema here, thats enough
+					CARSchema schema(wfConnList.u.schemaList->nameList[0]);
+					if (schema.Exists())
+					{
+						CARSetFieldHelper sfh(*CARInside::GetInstance(), schema, setFieldAction, ifElse, actionIndex);
+
+						SetFieldType sfType = sfh.GetType();
+						switch (sfType)
+						{
+						case SFT_SERVER:
+						case SFT_SAMPLEDATA:
+							{
+								CARSchema readSchema(sfh.GetSchemaName());
+								if (readSchema.Exists())
+								{
+									CRefItem ref(flt, ifElse, actionIndex, REFM_SETFIELDS_FORM);
+									if (!readSchema.ReferenceExists(ref))
+										readSchema.AddReference(ref);
+								}
+							}
+							break;
+						}
+					}
+				}
+			}
+			break;
+		}
+	}	
 }

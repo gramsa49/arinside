@@ -19,6 +19,7 @@
 #include "../ARInside.h"
 #include "../core/ARSchema.h"
 #include "../core/ARActiveLink.h"
+#include "../core/ARSetFieldHelper.h"
 
 
 CScanActiveLinks::CScanActiveLinks(CARActiveLink& actlink)
@@ -99,6 +100,40 @@ void CScanActiveLinks::ScanActions(CARActiveLink& al, const ARActiveLinkActionLi
 					// add a reference to the menu or save as a missing menu reference
 					CRefItem refItem(al, ifElse, actionIndex, REFM_CHANGEFIELD);
 					CARInside::GetInstance()->AddMenuReference(action.charMenu, refItem);
+				}
+			}
+			break;
+		case AR_ACTIVE_LINK_ACTION_FIELDS:
+			{
+				const ARSetFieldsActionStruct& setFieldAction = actions.actionList[actionIndex].u.setFields;
+
+				const ARWorkflowConnectStruct &wfConnList = this->al.GetSchemaList();
+				if (wfConnList.type == AR_WORKFLOW_CONN_SCHEMA_LIST && wfConnList.u.schemaList->numItems > 0)
+				{
+					// we simply use the first schema here, thats enough, because we are mainly 
+					// interested in setfields loading data from different (not current) form
+					CARSchema schema(wfConnList.u.schemaList->nameList[0]);
+					if (schema.Exists())
+					{
+						CARSetFieldHelper sfh(*CARInside::GetInstance(), schema, setFieldAction, ifElse, actionIndex);
+
+						SetFieldType sfType = sfh.GetType();
+						switch (sfType)
+						{
+						case SFT_SERVER:
+						case SFT_SAMPLEDATA:
+							{
+								CARSchema readSchema(sfh.GetSchemaName());
+								if (readSchema.Exists())
+								{
+									CRefItem ref(al, ifElse, actionIndex, REFM_SETFIELDS_FORM);
+									if (!readSchema.ReferenceExists(ref))
+										readSchema.AddReference(ref);
+								}
+							}
+							break;
+						}
+					}
 				}
 			}
 			break;

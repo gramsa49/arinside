@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "../util/RefItem.h"
+
 // forward declarations
 class CAREscalation;
 
@@ -33,4 +35,5 @@ private:
 
 private:
 	void Scan();
+	void ScanActions(const ARFilterActionList& actions, IfElseState ifElse);
 };
