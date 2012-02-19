@@ -41,7 +41,7 @@ CARSchema::~CARSchema(void)
 {
 }
 
-bool CARSchema::Exists()
+bool CARSchema::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->schemaList.GetCount());
 }

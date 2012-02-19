@@ -26,7 +26,7 @@ public:
 	CAREscalation(const string& name);
 	~CAREscalation(void);
 
-	bool Exists();
+	bool Exists() const;
 
 	// implement functions inherited from CARObject
 	string GetName();

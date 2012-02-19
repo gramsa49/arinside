@@ -24,7 +24,7 @@ public:
 	CARGroup(int insideId, int groupId = -1);
 	~CARGroup(void);
 
-	bool Exists();
+	bool Exists() const;
 	
 	// implement functions inherited from CARObject
 	string GetName();

@@ -25,6 +25,8 @@ class CARServerObject : public CARObject
 public:
 	CARServerObject(int insideId) : CARObject(insideId) {}
 
+	virtual bool Exists() const = 0;
+
 	virtual const char* GetHelpText() const = 0;
 	virtual ARTimestamp GetTimestamp() = 0;
 	virtual const ARAccessNameType& GetOwner() const = 0;

@@ -38,7 +38,7 @@ CARCharMenu::~CARCharMenu(void)
 {
 }
 
-bool CARCharMenu::Exists()
+bool CARCharMenu::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->menuList.GetCount());
 }

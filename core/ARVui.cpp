@@ -89,7 +89,7 @@ CARVui::~CARVui(void)
 {
 }
 
-bool CARVui::Exists()
+bool CARVui::Exists() const
 {
 	return (vuiIndex >= 0 && (unsigned int)vuiIndex < vuiList->GetCount());
 }

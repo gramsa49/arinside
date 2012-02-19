@@ -30,7 +30,7 @@ public:
 	CARActiveLink(const string& name);
 	~CARActiveLink(void);
 
-	bool Exists();
+	bool Exists() const;
 
 	// implement functions inherited from CARObject
 	string GetName();

@@ -78,7 +78,7 @@ CARField::CARField(int SchemaInsideId, unsigned int fieldId, int SchemaFieldInde
 #endif
 }
 
-bool CARField::Exists()
+bool CARField::Exists() const
 {
 	return (fieldIndex >= 0 && (unsigned int)fieldIndex < fieldList->GetCount());
 }

@@ -33,7 +33,7 @@ public:
 	CARSchema(const string& schemaName);
 	~CARSchema(void);
 
-	bool Exists();
+	bool Exists() const;
 
 	// implement functions inherited from CARObject
 	string GetName();

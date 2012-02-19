@@ -40,7 +40,7 @@ CARContainer::CARContainer(const char* name)
 	insideId = CARInside::GetInstance()->containerList.Find(name);
 }
 
-bool CARContainer::Exists()
+bool CARContainer::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->containerList.GetCount());
 }

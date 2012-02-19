@@ -33,7 +33,7 @@ CARUser::~CARUser(void)
 {
 }
 
-bool CARUser::Exists()
+bool CARUser::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->userList.GetCount());
 }

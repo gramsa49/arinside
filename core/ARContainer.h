@@ -27,7 +27,7 @@ public:
 	CARContainer(const string& name);
 	~CARContainer(void);
 
-	bool Exists();
+	bool Exists() const;
 
 	// implement functions inherited from CARObject
 	string GetName();

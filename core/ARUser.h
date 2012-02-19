@@ -26,7 +26,7 @@ public:
 	CARUser(const string& userName);
 	~CARUser(void);
 
-	bool Exists();
+	bool Exists() const;
 	
 	// implement functions inherited from CARObject
 	string GetName();

@@ -35,7 +35,7 @@ CARRole::~CARRole(void)
 {
 }
 
-bool CARRole::Exists()
+bool CARRole::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->roleList.GetCount());
 }

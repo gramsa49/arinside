@@ -54,7 +54,7 @@ string CARFilter::GetURL(int rootLevel, bool showImage) const
 	return CWebUtil::Link(this->GetName(), file, (showImage ? "filter.gif" : ""), rootLevel);
 }
 
-bool CARFilter::Exists()
+bool CARFilter::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->filterList.GetCount());
 }

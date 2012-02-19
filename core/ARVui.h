@@ -27,7 +27,7 @@ public:
 	CARVui(unsigned int schemaInsideId, const std::string& vuiLabel);
 	~CARVui(void);
 
-	bool Exists();
+	bool Exists() const;
 
 	// implement functions inherited from CARObject
 	string GetName();

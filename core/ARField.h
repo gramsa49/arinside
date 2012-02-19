@@ -29,7 +29,7 @@ public:
 	~CARField(void) {}
 
 	// use this function after calling the constructor with just a fieldId and no index specified.
-	bool Exists();
+	bool Exists() const;
 
 	// implement functions inherited from CARObject
 	string GetName();

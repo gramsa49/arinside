@@ -32,7 +32,7 @@ public:
 	CARImage(const string& name);
 	~CARImage() { }
 
-	bool Exists();
+	bool Exists() const;
 
 	// implement function inherited from CARObject
 	string GetName();

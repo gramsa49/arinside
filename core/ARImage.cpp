@@ -31,7 +31,7 @@ CARImage::CARImage(const string& name)
 	insideId = CARInside::GetInstance()->imageList.FindImage(name.c_str());
 }
 
-bool CARImage::Exists()
+bool CARImage::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->imageList.GetCount());
 }

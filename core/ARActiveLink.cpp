@@ -56,7 +56,7 @@ CARActiveLink::~CARActiveLink(void)
 {
 }
 
-bool CARActiveLink::Exists()
+bool CARActiveLink::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->alList.GetCount());
 }

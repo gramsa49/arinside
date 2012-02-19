@@ -36,7 +36,7 @@ CARGroup::~CARGroup(void)
 {
 }
 
-bool CARGroup::Exists()
+bool CARGroup::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->groupList.GetCount());
 }

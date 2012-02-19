@@ -55,7 +55,7 @@ string CAREscalation::GetURL(int rootLevel, bool showImage) const
 	return CWebUtil::Link(this->GetName(), file, (showImage ? "escalation.gif" : ""), rootLevel);
 }
 
-bool CAREscalation::Exists()
+bool CAREscalation::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->escalationList.GetCount());
 }
