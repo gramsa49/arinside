@@ -54,7 +54,13 @@ int main(int argc, char* argv[])
 	int tcp = 0;
 	int rpc = 0;
 
-	cout << "ARInside Version " << AppVersion << endl << endl;
+	char* platform = "";
+	if (sizeof(platform) == 4)
+		platform = "32bit";
+	if (sizeof(platform) == 8)
+		platform = "64bit";
+
+	cout << "ARInside Version " << AppVersion << " " << platform << endl << endl;
 
 	CmdLine cmd("ARInside -- http://arinside.org\n"
 		          "Copyright (C) 2011 Stefan Nerlich, LJ Longwing, John Luthgers\n"
