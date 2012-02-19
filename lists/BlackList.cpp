@@ -241,14 +241,30 @@ void CBlackList::Exclude(unsigned int nType, ARNameList *objNames)
 	default: return;
 	}
 
+	CARInside* pInside = CARInside::GetInstance();
 	BlacklistIterator blEndIt = list->end();
 	BlacklistIterator blBegIt = list->begin();
 	unsigned int curObjWriteIndex = 0;
 	unsigned int curObjReadIndex = 0;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	size_t reservedLen = strlen(AR_RESERV_OVERLAY_STRING);
+	bool checkForOverlayAndCustomName = (pInside->appConfig.bOverlaySupport && pInside->CompareServerVersion(7,6) >= 0);
+#endif
 
 	while (curObjWriteIndex < objNames->numItems)
 	{
 		string searchFor(objNames->nameList[curObjReadIndex]);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		// In version 7.6.04 it's not allowed to create objects with "__o" and "__c"
+		// at the end (see ARERR8858). Thats great, because now we don't need to
+		// check, if this is really a custom- or overlay-object. Simply check if the
+		// object name ends with that.
+		if (checkForOverlayAndCustomName && (CUtil::StrEndsWith(searchFor, AR_RESERV_OVERLAY_STRING) || CUtil::StrEndsWith(searchFor, AR_RESERV_OVERLAY_CUSTOM_STRING)))
+		{
+			searchFor.resize(searchFor.length() - reservedLen);
+		}
+#endif
 
 		// lets see if we could find the current object name in the blacklist
 		BlacklistIterator blFindIt = lower_bound(blBegIt, blEndIt, searchFor);
