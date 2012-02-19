@@ -28,20 +28,30 @@ CDocBase::~CDocBase(void)
 
 string CDocBase::PlaceOverlayLink(int currentType, CARServerObject& target)
 {
+	const char* missing_note = "object missing";
+
 	switch (currentType)
 	{
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 	case AR_OVERLAID_OBJECT:
 		{
 			stringstream tmpStrm;
-			tmpStrm << "Overlay: " << target.GetURL(rootLevel, false);
+			tmpStrm << "Overlay: ";
+			if (target.Exists())
+				tmpStrm << target.GetURL(rootLevel, false);
+			else
+				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;
 			return tmpStrm.str();
 		}
 		break;
 	case AR_OVERLAY_OBJECT:
 		{
 			stringstream tmpStrm;
-			tmpStrm << "Based on: " << target.GetURL(rootLevel, false);
+			tmpStrm << "Based on: ";
+			if (target.Exists())
+				tmpStrm << target.GetURL(rootLevel, false);
+			else
+				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;				
 			return tmpStrm.str();
 		}
 		break;
