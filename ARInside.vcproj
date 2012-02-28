@@ -514,6 +514,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARHandle.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ARInside.cpp"
 				>
 			</File>
@@ -605,6 +609,10 @@
 			</File>
 			<File
 				RelativePath=".\ARApi.h"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARHandle.h"
 				>
 			</File>
 			<File

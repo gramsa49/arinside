@@ -18,6 +18,7 @@
 #include "ARInside.h"
 
 #include "core/ChangeHistoryEntry.h"
+#include "core/ARHandle.h"
 
 #include "doc/DocMain.h"
 #include "doc/DocUserDetails.h"
@@ -1594,6 +1595,10 @@ void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref
 {
 	if (ref.GetMessageId() == -1) return; // if no message id is specified, dont create a reference
 
+	CARHandle<> hObj(ref);
+	if (appConfig.bOverlaySupport && hObj.Exists() && !IsVisibleObject(*hObj))
+		return;
+
 	CARSchema schema(schemaId);
 	CARField fld(schemaId, fieldId);
 
@@ -2534,8 +2539,9 @@ string CARInside::PlaceOverlaidNotice(const CARServerObject& obj, int rootLevel)
 	if (obj.Exists())
 		tmp << obj.GetURL(rootLevel, false);
 	else
-		tmp << endl;
-	tmp << "<span class=\"fieldNotFound\">" << "object missing" << "</span>" << "</div>";
+		tmp << "<span class=\"fieldNotFound\">" << "object missing" << "</span>";
+	
+	tmp << "</div>";
 
 	return tmp.str();
 }
