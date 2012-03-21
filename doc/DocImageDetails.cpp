@@ -50,7 +50,7 @@ void CDocImageDetails::Documentation()
 		// contentHead informations
 		stringstream contHeadStrm;
 		int overlayType = image.GetOverlayType();
-		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << endl;
+		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << CAREnum::GetOverlayTypeString(overlayType) << endl;
 
 		CARImage overlayObj;
 

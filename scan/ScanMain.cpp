@@ -21,6 +21,7 @@
 #include "ScanActiveLinks.h"
 #include "ScanFilters.h"
 #include "ScanEscalations.h"
+#include "ScanMenus.h"
 #include "ScanContainers.h"
 #include "ScanImages.h"
 
@@ -38,6 +39,7 @@ void CScanMain::BuildReferences()
 	CScanActiveLinks::Start();
 	CScanFilters::Start();
 	CScanEscalations::Start();
+	CScanMenus::Start();
 	CScanContainers::Start();
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	CScanImages::Start();

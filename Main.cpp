@@ -63,7 +63,7 @@ int main(int argc, char* argv[])
 	cout << "ARInside Version " << AppVersion << " " << platform << endl << endl;
 
 	CmdLine cmd("ARInside -- http://arinside.org\n"
-		          "Copyright (C) 2011 Stefan Nerlich, LJ Longwing, John Luthgers\n"
+		          "Copyright (C) 2012 Stefan Nerlich, LJ Longwing, John Luthgers\n"
 							"This program comes with ABSOLUTELY NO WARRANTY, is free software, and you are welcome to "
 							"redistribute it under certain conditions; see COPYING file for more details.", 
 							' ', AppVersion);

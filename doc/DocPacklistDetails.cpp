@@ -48,7 +48,7 @@ void CDocPacklistDetails::Documentation()
 
 			CARContainer overlayObj;
 
-			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName());
+			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && overlayType > 0)

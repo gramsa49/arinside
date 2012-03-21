@@ -547,6 +547,10 @@ public:
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 		case AR_SMOPROP_FILTER_GET_DATA_AS_USER: return "Filter Get Data As User";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		case AR_SMOPROP_OVERLAY_PROPERTY: return "Overlay Property";
+		case AR_SMOPROP_OVERLAY_GROUP: return "Overlay Group";
+#endif
 		default: 
 #ifdef _DEBUG
 			stringstream tmpLabel; tmpLabel.str(""); tmpLabel << "Unknown (" << nType << ")"; return tmpLabel.str();
@@ -1194,6 +1198,8 @@ public:
 				}
 			}
 			break;
+		case AR_SMOPROP_OVERLAY_PROPERTY:
+			return GetOverlayType(nVal);
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		}
 		return "";
