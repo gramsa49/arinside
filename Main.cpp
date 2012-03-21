@@ -41,7 +41,7 @@ string LoadFromFile(string fileName);
 int nFilesCreated;
 
 bool IsDots(const char* str);
-bool DeleteDirectory(const char* sPath);
+bool DeleteDirectory(const char* sPath, bool topLevel = false);
 
 
 int main(int argc, char* argv[])
@@ -191,7 +191,8 @@ int main(int argc, char* argv[])
 		if(appConfig.bDeleteExistingFiles)
 		{
 			cout << "Deleting existing files" << endl;
-			DeleteDirectory(appConfig.targetFolder.c_str());
+			if (!DeleteDirectory(appConfig.targetFolder.c_str(), true))
+				cout << "Deletion failed!" << endl;			
 		}
 
 		//Create the target directory specified in the configuration files
@@ -418,7 +419,7 @@ bool IsDots(const char* str)
 	return true;
 }
 
-bool DeleteDirectory(const char* sPath)
+bool DeleteDirectory(const char* sPath, bool topLevel)
 {
 #ifdef WIN32
 	try
@@ -426,8 +427,8 @@ bool DeleteDirectory(const char* sPath)
 		HANDLE hFind; // file handle
 		WIN32_FIND_DATA FindFileData;
 
-		char DirPath[MAX_PATH];
-		char FileName[MAX_PATH];
+		char DirPath[MAX_PATH+1];
+		char FileName[MAX_PATH+1];
 
 		strncpy(DirPath, sPath, MAX_PATH);
 		strncat(DirPath, "/", MAX_PATH);
@@ -475,7 +476,7 @@ bool DeleteDirectory(const char* sPath)
 		cout << "EXCEPTION in DeleteDirectory: " << e.what() << endl; 
 	}	
 
-	return (_rmdir(sPath)==0 ? true : false); // remove the empty (maybe not) directory
+	return (topLevel || _rmdir(sPath)==0 ? true : false); // remove the empty (maybe not) directory
 #else
 	if (strlen(sPath) == 0) return false;
 
@@ -512,7 +513,7 @@ bool DeleteDirectory(const char* sPath)
 
 	// finally, let's clean up
 	closedir(pdir); // close the directory
-	if (!rmdir(sPath)) return false; // delete the directory
+	if (!topLevel && !rmdir(sPath)) return false; // delete the directory
 	return true;
 #endif
 }

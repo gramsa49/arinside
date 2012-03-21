@@ -183,7 +183,7 @@ bool CWindowsUtil::CreateAppDirectory()
 #else
 	mkdir(appConfig.targetFolder.c_str(), S_IRWXU|S_IRWXG|S_IRWXO);
 #endif
-	cout << "Create target directory: " << appConfig.targetFolder << " [" << nResult <<"]" << endl;	
+	cout << "Create target directory: " << appConfig.targetFolder << " [" << (nResult == 0 ? "OK" : strerror(errno)) <<"]" << endl;	
 
 	return (nResult==0);
 }
