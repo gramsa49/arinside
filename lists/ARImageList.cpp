@@ -19,6 +19,7 @@
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
 #include "../core/ARImage.h"
+#include "../core/ARHandle.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -273,6 +274,10 @@ void CARImageList::Sort()
 
 void CARImageList::AddReference(unsigned int index, const CRefItem &referenceItem)
 {
+	CARHandle<> hObj(referenceItem);
+	if (CARInside::GetInstance()->appConfig.bOverlaySupport && hObj.Exists() && !IsVisibleObject(*hObj))
+		return;
+
 	referenceList[sortedList[index]].push_back(referenceItem);
 }
 

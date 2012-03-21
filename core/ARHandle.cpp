@@ -129,3 +129,4 @@ template class CARHandle<>;
 //template CARHandle<CARActiveLink>::CARHandle(const CARHandle<CARServerObject> &);
 //template CARHandle<CARServerObject>::CARHandle(const CARHandle<CARActiveLink> &);
 //template class CARHandle<CARFilter>;
+template class CARHandle<CARCharMenu>;

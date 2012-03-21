@@ -54,4 +54,25 @@ void CScanMenus::Start()
 
 void CScanMenus::Scan()
 {
+	const ARCharMenuStruct& menuDefn = mnu.GetDefinition();
+	if(menuDefn.menuType == AR_CHAR_MENU_QUERY)
+	{
+		if(strcmp(menuDefn.u.menuQuery.schema, AR_CURRENT_SCHEMA_TAG) != 0 && 
+		   strcmp(menuDefn.u.menuQuery.server, AR_CURRENT_SERVER_TAG)==0)
+		{
+			string schemaName;
+
+			if (menuDefn.u.menuQuery.schema[0] == '$' && menuDefn.u.menuQuery.sampleSchema != NULL)
+				schemaName = menuDefn.u.menuQuery.sampleSchema;
+			else
+				schemaName = menuDefn.u.menuQuery.schema;
+
+			CARSchema schema(schemaName);
+			if (schema.Exists())
+			{
+				CRefItem refItem(mnu, REFM_CHARMENU_FORM);
+				schema.AddReference(refItem);
+			}
+		}
+	}
 }

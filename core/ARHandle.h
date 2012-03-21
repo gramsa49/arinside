@@ -61,8 +61,8 @@ public:
 	~CARHandle(void);
 
 	bool Exists() const;
-	inline const C* operator ->() const { return m_pObj; }
-	inline const C& operator *() const { return *m_pObj; }
+	inline C* operator ->() const { return m_pObj; }
+	inline C& operator *() const { return *m_pObj; }
 
 private:
 	C *m_pObj;

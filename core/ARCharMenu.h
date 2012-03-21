@@ -55,7 +55,8 @@ public:
 	string GetURL(int rootLevel, bool showImage = true) const;
 
 	// class type support
-	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_CHAR_MENU; }
+	static const unsigned int XmlTypeDef = AR_STRUCT_ITEM_XML_CHAR_MENU ;
+	int GetServerObjectTypeXML() const { return XmlTypeDef; }
 	bool IsClonable() const;
 	CARServerObject* Clone() const;
 

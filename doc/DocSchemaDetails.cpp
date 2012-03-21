@@ -20,6 +20,7 @@
 #include "../output/CsvPage.h"
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
+#include "../core/ARHandle.h"
 
 CDocSchemaDetails::CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel)
 : schema(schemaInsideId)
@@ -1583,24 +1584,18 @@ string CDocSchemaDetails::SearchMenuReferences()
 	{
 		CMenuTable *menuTable = new CMenuTable(*this->pInside);
 
-		unsigned int menuCount = this->pInside->menuList.GetCount();
-		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
+		const CARSchema::ReferenceList &refList = schema.GetReferences();
+		CARSchema::ReferenceList::const_iterator curIt = refList.begin();
+		CARSchema::ReferenceList::const_iterator endIt = refList.end();
+
+		for (; curIt != endIt; ++curIt)
 		{
-			CARCharMenu menu(menuIndex);
-			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
-				continue;
-
-			const ARCharMenuStruct& menuDefn = menu.GetDefinition();
-			if(menuDefn.menuType == AR_CHAR_MENU_QUERY)
+			if (curIt->GetMessageId() == REFM_CHARMENU_FORM && curIt->GetObjectType() == AR_STRUCT_ITEM_XML_CHAR_MENU)
 			{
-				if(strcmp(menuDefn.u.menuQuery.schema, schema.GetARName()) == 0 && 
-				   strcmp(menuDefn.u.menuQuery.server, AR_CURRENT_SERVER_TAG)==0)
-				{
-					menuTable->AddRow(menu, rootLevel);
-				}
+				CARHandle<CARCharMenu> hMenu(*curIt);
+				menuTable->AddRow(*hMenu, rootLevel);
 			}
-		}		
-
+		}
 
 		if(menuTable->NumRows() > 0)
 			strm << *menuTable;
