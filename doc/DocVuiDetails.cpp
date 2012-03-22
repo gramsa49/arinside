@@ -38,12 +38,15 @@ void CDocVuiDetails::Documentation()
 		CWebPage webPage(file->GetFileName(), this->vui.GetName(), this->rootLevel, this->pInside->appConfig);
 
 		int overlayType = this->vui.GetOverlayType();
+		int schemaOverlayType = this->schema.GetOverlayType();
 
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
 		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, this->rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), "", rootLevel);
+		if (overlayType == AR_ORIGINAL_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+			contHeadStrm << CAREnum::GetOverlayTypeString(schemaOverlayType);
 		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->vui.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->vui.GetInsideId() << ")" << CAREnum::GetOverlayTypeString(overlayType) << endl;
