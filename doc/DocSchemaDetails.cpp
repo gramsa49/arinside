@@ -170,6 +170,14 @@ void CDocSchemaDetails::Documentation()
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);
 
+			//Escalation PushFIelds References
+			row.ClearCells();
+			cellProp.content = "Escalation \"Push Field Action\" to this form";
+			cellPropValue.content = this->EscalationPushFieldsReferences();
+			row.AddCell(cellProp);
+			row.AddCell(cellPropValue);
+			tblObjProp.AddRow(row);
+
 			//Join References
 			row.ClearCells();
 			cellProp.content = "Join Form References";
@@ -1883,6 +1891,96 @@ string CDocSchemaDetails::FilterPushFieldsReferences()
 	catch(exception& e)
 	{
 		cout << "EXCEPTION enumerating filter push fields references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
+	}
+
+	return strm.str();
+}
+
+string CDocSchemaDetails::EscalationPushFieldsReferences()
+{
+	stringstream strm;
+	strm.str("");
+	try
+	{
+		CEscalTable *escalTable = new CEscalTable(*this->pInside);
+
+		unsigned int escalCount = pInside->escalationList.GetCount();
+		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex )
+		{
+			CAREscalation escalation(escalIndex);
+
+			// skip this object in case it's overlaid (hidden)
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escalation))
+				continue;
+
+			bool bPushToForm = false;
+
+			//If-Actions
+			for(unsigned int i = 0; i < escalation.GetIfActions().numItems; ++i)
+			{
+				if(escalation.GetIfActions().actionList[i].action == AR_FILTER_ACTION_FIELDP)
+				{
+					ARPushFieldsActionStruct &action = escalation.GetIfActions().actionList[i].u.pushFields;
+					if (action.pushFieldsList.numItems > 0)
+					{
+						char *pushSchema;
+						if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
+							pushSchema = action.sampleSchema;
+						else
+							pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+
+						if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(escalation.GetSchemaList())) || strcmp(schema.GetARName(), pushSchema) == 0)
+						{
+							bPushToForm = true;
+							break;
+						}
+					}
+				}
+			}	
+
+			//Else Actions
+			if(bPushToForm == false) // Only search the else actions if the escalation is still false
+			{
+				for(unsigned int i = 0; i < escalation.GetElseActions().numItems; ++i)
+				{
+					if(escalation.GetElseActions().actionList[i].action == AR_FILTER_ACTION_FIELDP)
+					{
+						ARPushFieldsActionStruct &action = escalation.GetElseActions().actionList[i].u.pushFields;
+
+						if (action.pushFieldsList.numItems > 0)
+						{
+							char *pushSchema;
+							if (action.pushFieldsList.pushFieldsList[0].field.schema[0] == '$')
+								pushSchema = action.sampleSchema;
+							else
+								pushSchema = action.pushFieldsList.pushFieldsList[0].field.schema;
+
+							if ((pushSchema[0] == '@' && IsSchemaInWFConnectStruct(escalation.GetSchemaList())) || strcmp(schema.GetARName(), pushSchema) == 0)
+							{
+								bPushToForm = true;
+								break;
+							}
+						}
+					}
+				}
+			}
+
+			if(bPushToForm == true)
+			{
+				escalTable->AddRow(escalIndex, rootLevel);
+			}
+		}
+
+		if(escalTable->NumRows() > 0)
+			strm << *escalTable;
+		else
+			strm << EmptyValue;
+
+		delete escalTable;
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION enumerating escalation push fields references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 
 	return strm.str();
