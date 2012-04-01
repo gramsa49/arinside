@@ -46,85 +46,44 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddColumn(10, "Objects");		
 		tblListObjectInfo.AddColumn(90, "Description");
 
-		unsigned int nWebservice = 0;
-		unsigned int nAlGuide = 0;
-		unsigned int nFilterGuide = 0;
-		unsigned int nPacklist = 0;
-		unsigned int nApplication = 0;
-
-		unsigned int cntCount = this->pInside->containerList.GetCount();
-		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
-		{
-			CARContainer cont(cntIndex);
-
-			switch(cont.GetType())
-			{
-			case ARCON_WEBSERVICE:
-				{
-					nWebservice++;
-				}
-				break;
-			case ARCON_GUIDE:
-				{
-					nAlGuide++;
-				}
-				break;
-			case ARCON_FILTER_GUIDE:
-				{
-					nFilterGuide++;
-				}
-				break;
-			case ARCON_PACK:
-				{
-					nPacklist++;
-				}
-				break;
-			case ARCON_APP:
-				{
-					nApplication++;
-				}
-				break;
-			}
-		}
-
 		CTableRow row("cssStdRow");
-		row.AddCell(CTableCell((int)this->pInside->alList.GetCount()));
+		row.AddCell(CTableCell((int)this->activelinkCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK) , "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 
 		row.ClearCells();
-		row.AddCell(CTableCell(nWebservice));
+		row.AddCell(CTableCell((int)this->webserviceCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Web Services", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(nAlGuide));
+		row.AddCell(CTableCell((int)this->alguideCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(nFilterGuide));
+		row.AddCell(CTableCell((int)this->fltguideCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Filter Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(nPacklist));
+		row.AddCell(CTableCell((int)this->packlistCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Packing Lists", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell(nApplication));
+		row.AddCell(CTableCell((int)this->applicationCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Applications", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->escalationList.GetCount()));
+		row.AddCell(CTableCell((int)this->escalationCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->filterList.GetCount()));
+		row.AddCell(CTableCell((int)this->filterCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -134,7 +93,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->menuList.GetCount()));
+		row.AddCell(CTableCell((int)this->menuCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Menus", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -144,7 +103,7 @@ void CDocSummaryInfo::Documentation()
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
-		row.AddCell(CTableCell((int)this->pInside->schemaList.GetCount()));
+		row.AddCell(CTableCell((int)this->schemaCount));
 		row.AddCell(CTableCell(CWebUtil::Link("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "", 0)));
 		tblListObjectInfo.AddRow(row);
 
@@ -157,7 +116,7 @@ void CDocSummaryInfo::Documentation()
 		if (pInside->CompareServerVersion(7,5) >= 0)
 		{
 			row.ClearCells();
-			row.AddCell(CTableCell(this->pInside->imageList.GetCount()));
+			row.AddCell(CTableCell(this->imageCount));
 			row.AddCell(CTableCell(CWebUtil::Link("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "", 0)));
 			tblListObjectInfo.AddRow(row);
 		}

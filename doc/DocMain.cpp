@@ -121,8 +121,10 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std:
 	return strm.str();
 }
 
-void CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter)
 {
+	unsigned int objCount = 0;
+
 	try
 	{
 		int rootLevel = file->GetRootLevel();
@@ -137,6 +139,8 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
 				continue;
 #endif
+
+			objCount++;
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
@@ -199,13 +203,15 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 	{
 		cout << "EXCEPTION SchemaList: " << e.what() << endl;
 	}
+	return objCount;
 }
 
-void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter)
 {
-	if (searchChar.size() != 1) return;
+	if (searchChar.size() != 1) return 0;
 
 	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_ACTIVE_LINK);
+	unsigned int objCount = 0;
 
 	try
 	{
@@ -224,6 +230,8 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(actLink))
 				continue;
 #endif
+
+			objCount++;
 
 			if(searchChar == "*")  //All objecte
 			{
@@ -269,6 +277,7 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 	{
 		cout << "EXCEPTION ActiveLinkList: " << e.what() << endl;
 	}
+	return objCount;
 }
 
 void CDocMain::ActiveLinkActionList()
@@ -390,9 +399,10 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file((unsigned int)searchChar.at(0), AR_STRUCT_ITEM_XML_FILTER);
+	unsigned int objCount = 0;
 
 	try
 	{
@@ -409,6 +419,8 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
 				continue;
 #endif
+
+			objCount++;
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
@@ -455,6 +467,7 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 	{
 		cout << "EXCEPTION FilterList: " << e.what() << endl;
 	}
+	return objCount;
 }
 
 void CDocMain::FilterActionList()
@@ -619,9 +632,10 @@ void CDocMain::FilterErrorHandlers()
 	}
 }
 
-void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file(searchChar.at(0), AR_STRUCT_ITEM_XML_ESCALATION);
+	unsigned int objCount = 0;
 
 	try
 	{
@@ -637,6 +651,8 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escalation))
 				continue;
 #endif
+
+			objCount++;
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
@@ -683,6 +699,7 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 	{
 		cout << "EXCEPTION EscalationList: " << e.what() << endl;
 	}
+	return objCount;
 }
 
 void CDocMain::EscalationActionList()
@@ -816,9 +833,10 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLetter)
 {
 	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_CHAR_MENU);
+	unsigned int objCount = 0;
 
 	try
 	{
@@ -834,6 +852,8 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
 				continue;
 #endif
+
+			objCount++;
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
@@ -885,11 +905,13 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 	{
 		cout << "EXCEPTION CharMenuList: " << e.what() << endl;
 	}
+	return objCount;
 }
 
-void CDocMain::ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter)
 {
 	unsigned int page = (unsigned int)searchChar[0];
+	unsigned int objCount = 0;
 	CPageParams file(page, AR_STRUCT_ITEM_XML_CONTAINER, nType);
 	try
 	{
@@ -908,6 +930,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 
 			if (cont.GetType() == nType)	// the type must match
 			{
+				objCount++;
 				bool bInsert = false;
 				if(searchChar == "*")  //All objecte
 				{
@@ -961,6 +984,7 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 	{
 		cout << "EXCEPTION ContainerList: " << e.what() << endl;
 	}
+	return objCount;
 }
 
 void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
@@ -1029,12 +1053,13 @@ void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 	}
 }
 
-void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 {
+	unsigned int objCount = 0;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// server version older than 7.5 ?? then there are no files to generate
-	if (pInside->CompareServerVersion(7,5) < 0) return;
-	if (searchChar.size() != 1) return;
+	if (pInside->CompareServerVersion(7,5) < 0) return 0;
+	if (searchChar.size() != 1) return 0;
 
 	unsigned int page = (unsigned int)searchChar[0];
 	CPageParams file(page, AR_STRUCT_ITEM_XML_IMAGE);
@@ -1053,6 +1078,8 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(img))
 				continue;
 #endif
+
+			objCount++;
 
 			bool bInsert = false;
 			
@@ -1100,6 +1127,7 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 		cout << "EXCEPTION ImageList: " << e.what() << endl;
 	}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	return objCount;
 }
 
 void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)

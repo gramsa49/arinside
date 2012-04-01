@@ -760,12 +760,14 @@ void CARInside::Documentation(void)
 	vector<int> ftgObjCount; ftgObjCount.resize(38);
 	vector<int> wbsObjCount; wbsObjCount.resize(38);
 
+	CDocSummaryInfo indexSummary(*this, "");	// this is the object for the summary start page (it's written at the end of this function)
+
 	//ContainerList
-	docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*", algObjCount);
-	docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*", appObjCount);
-	docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*", pklObjCount);
-	docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*", ftgObjCount);
-	docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*", wbsObjCount);
+	indexSummary.alguideCount = docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*", algObjCount);
+	indexSummary.applicationCount = docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*", appObjCount);
+	indexSummary.packlistCount = docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*", pklObjCount);
+	indexSummary.fltguideCount = docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*", ftgObjCount);
+	indexSummary.webserviceCount = docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*", wbsObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
 		docMain->ContainerList(ARCON_GUIDE, "GuideList", std::string(1, strValue.at(i)), algObjCount);
@@ -854,7 +856,7 @@ void CARInside::Documentation(void)
 	vector<int> alObjCount; alObjCount.resize(38);
 
 	//ActiveLink List
-	docMain->ActiveLinkList("*", alObjCount);
+	indexSummary.activelinkCount = docMain->ActiveLinkList("*", alObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
 		docMain->ActiveLinkList(std::string(1, strValue.at(i)), alObjCount);
@@ -877,7 +879,7 @@ void CARInside::Documentation(void)
 	vector<int> fltObjCount; fltObjCount.resize(38);
 
 	//Filter List
-	docMain->FilterList("*", fltObjCount);
+	indexSummary.filterCount = docMain->FilterList("*", fltObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
 		docMain->FilterList(std::string(1, strValue.at(i)), fltObjCount);
@@ -900,7 +902,7 @@ void CARInside::Documentation(void)
 	vector<int> escObjCount; escObjCount.resize(38);
 
 	//Escalation List
-	docMain->EscalationList("*", escObjCount);
+	indexSummary.escalationCount = docMain->EscalationList("*", escObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
 		docMain->EscalationList(std::string(1, strValue.at(i)), escObjCount);
@@ -922,7 +924,7 @@ void CARInside::Documentation(void)
 	vector<int> mnuObjCount; mnuObjCount.resize(38);
 
 	//CharMenus
-	docMain->CharMenuList("*", mnuObjCount);
+	indexSummary.menuCount = docMain->CharMenuList("*", mnuObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
 		docMain->CharMenuList(std::string(1, strValue.at(i)), mnuObjCount);
@@ -942,7 +944,7 @@ void CARInside::Documentation(void)
 	vector<int> allObjCount; allObjCount.resize(38);
 
 	//Schema List
-	docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*", allObjCount);
+	indexSummary.schemaCount = docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*", allObjCount);
 	docMain->SchemaList(AR_SCHEMA_REGULAR, CPageParams(PAGE_SCHEMA_REGULAR, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (Regular)", "*", allObjCount);
 	docMain->SchemaList(AR_SCHEMA_JOIN,    CPageParams(PAGE_SCHEMA_JOIN, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (Join)"   , "*", allObjCount);
 	docMain->SchemaList(AR_SCHEMA_VIEW,    CPageParams(PAGE_SCHEMA_VIEW, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (View)"   , "*", allObjCount);
@@ -1000,7 +1002,7 @@ void CARInside::Documentation(void)
 	vector<int> imgObjCount; imgObjCount.resize(38);
 
 	// Image
-	docMain->ImageList("*", imgObjCount);
+	indexSummary.imageCount = docMain->ImageList("*", imgObjCount);
 	for (unsigned int i = 0; i < strValue.size(); ++i)
 	{		
 		docMain->ImageList(std::string(1, strValue.at(i)), imgObjCount);
@@ -1118,7 +1120,6 @@ void CARInside::Documentation(void)
 	mTimer.EndTimer();
 	this->nDurationDocumentation = mTimer.GetDuration();
 
-	CDocSummaryInfo indexSummary(*this, "");
 	indexSummary.Documentation();
 
 	delete docMain;

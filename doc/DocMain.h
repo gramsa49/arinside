@@ -41,28 +41,28 @@ public:
 
 	int Index();
 	void ServerInfoList();
-	void SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter);	
-	void CharMenuList(string searchChar, std::vector<int> &objCountPerLetter);
-	void ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter);
+	unsigned int SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter);	
+	unsigned int CharMenuList(string searchChar, std::vector<int> &objCountPerLetter);
+	unsigned int ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter);
 	void GlobalFieldList();
 	void MessageList();
 	void NotificationList();
 
-	void ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter);	
+	unsigned int ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter);	
 	void ActiveLinkActionList();
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
-	void FilterList(string searchChar, std::vector<int> &objCountPerLetter);	
+	unsigned int FilterList(string searchChar, std::vector<int> &objCountPerLetter);	
 	void FilterActionList();
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void FilterErrorHandlers();
-	void EscalationList(string searchChar, std::vector<int> &objCountPerLetter);
+	unsigned int EscalationList(string searchChar, std::vector<int> &objCountPerLetter);
 	void EscalationActionList();
 	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 
 	void GroupList(string searchChar, std::vector<int>& objCountPerLetter);
 	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
 	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
-	void ImageList(string searchChar, std::vector<int> &objCountPerLetter);
+	unsigned int ImageList(string searchChar, std::vector<int> &objCountPerLetter);
 
 private:
 	static void Sort(list<CMessageItem> &listResult);

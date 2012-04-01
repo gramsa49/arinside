@@ -25,4 +25,20 @@ public:
 	~CDocSummaryInfo(void);
 
 	void Documentation();
+
+public:
+	// the following variables count the objects without taking the overlaid base objects into account
+	unsigned int schemaCount;
+	unsigned int activelinkCount;
+	unsigned int filterCount;
+	unsigned int escalationCount;
+	unsigned int menuCount;
+	unsigned int applicationCount;
+	unsigned int webserviceCount;
+	unsigned int alguideCount;
+	unsigned int packlistCount;
+	unsigned int fltguideCount;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	unsigned int imageCount;
+#endif
 };
