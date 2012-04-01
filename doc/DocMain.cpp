@@ -133,6 +133,11 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 		{	
 			CARSchema schema(schemaIndex);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+#endif
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
@@ -165,12 +170,6 @@ void CDocMain::SchemaList(int nType, const CPageParams &file, string title, stri
 					bInsert = true;
 				}
 			}
-
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleObject(schema);
-#endif
 
 			if(bInsert)
 			{
@@ -220,6 +219,12 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 		{
 			CARActiveLink actLink(alIdx);
 			bool bInsert = false;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(actLink))
+				continue;
+#endif
+
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
@@ -240,11 +245,6 @@ void CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLe
 				if (actLink.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleObject(actLink);
-#endif
 
 			if(bInsert)
 			{
@@ -405,6 +405,11 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 		{
 			CARFilter filter(filterIndex);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
+				continue;
+#endif
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
@@ -426,11 +431,6 @@ void CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter
 				if(filter.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleObject(filter);
-#endif
 
 			if(bInsert)
 			{
@@ -633,6 +633,11 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 		{
 			CAREscalation escalation(escalIndex);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escalation))
+				continue;
+#endif
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
@@ -654,11 +659,6 @@ void CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLe
 				if(escalation.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleObject(escalation);
-#endif
 
 			if(bInsert)
 			{
@@ -830,6 +830,11 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 		{	
 			CARCharMenu menu(menuIndex);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
+				continue;
+#endif
+
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
@@ -855,11 +860,6 @@ void CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLett
 					bInsert = true;
 				}
 			}
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleObject(menu);
-#endif
 
 			if(bInsert)
 			{
@@ -901,6 +901,11 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 		{	
 			CARContainer cont(cntIndex);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
+				continue;
+#endif
+
 			if (cont.GetType() == nType)	// the type must match
 			{
 				bool bInsert = false;
@@ -928,11 +933,6 @@ void CDocMain::ContainerList(int nType, string title, string searchChar, std::ve
 						bInsert = true;
 					}
 				}
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-				if (bInsert && pInside->appConfig.bOverlaySupport)
-					bInsert = IsVisibleObject(cont);
-#endif
 
 				if(bInsert)
 				{
@@ -1049,6 +1049,11 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 		{
 			CARImage img(idx);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(img))
+				continue;
+#endif
+
 			bool bInsert = false;
 			
 			if (searchChar == "*") // All objects
@@ -1071,11 +1076,6 @@ void CDocMain::ImageList(string searchChar, std::vector<int> &objCountPerLetter)
 				if (img.GetNameFirstChar() == searchChar)
 					bInsert = true;
 			}
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (bInsert && pInside->appConfig.bOverlaySupport)
-				bInsert = IsVisibleObject(img);
-#endif
 
 			if (bInsert)
 				imgTable.AddRow(idx, rootLevel);
