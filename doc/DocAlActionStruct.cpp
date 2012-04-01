@@ -402,6 +402,13 @@ void CDocAlActionStruct::ActionMessage(std::ostream& strm, const ARMessageStruct
 			CRefItem refItemTmp(*this->obj, ifElse, nAction, REFM_MESSAGE);
 			strm << "Message Text:<br/>" << arIn->TextFindFields(action.messageText, "$", this->schemaInsideId, rootLevel, true, &refItemTmp) << "<br/>" << endl;
 		}
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		if (this->arIn->CompareServerVersion(7,6) >= 0 || (this->arIn->appConfig.fileMode == true && this->arIn->CompareServerVersion(7,5) >= 0))
+		{
+			strm << "<input type=\"checkbox\" name=\"showInPromptPane\" value=\"showInPromptPane\"" << (action.usePromptingPane ? " checked" : "") << ">Show Message in Prompt Bar" << "<br/>" << endl;
+		}
+#endif
 	}
 	catch(exception& e)
 	{
