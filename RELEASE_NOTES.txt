@@ -4,6 +4,25 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
+2012-??-??
+[3.0.3]
+E - Support for overlay feature (#102)
+E - New ini-setting to disable overlay support
+E - Improved support for 7.6.04 servers (keywords, display-props, server-infos)
+E - Added again slow object loading for ActiveLinks, Filters and Schemas as a fallback
+E - keywords used in default-values of fields are documented now (#116)
+E - New page showing all notification texts
+E - New page showing overlay- and custom-objects
+
+D - in notification actions first field from "select-field-list" wasn't documented (#113)
+D - objectOwner in a webservice was not linking to the forms page (#115)
+D - some value assignments to view-fields were not documented at all
+D - object-list sorting is case-insensitiv again (#105)
+D - function-value assigned to enum field could lead to crash (#108)
+D - references to fields in OpenWindow's Close-Mapping show "Else-Action 1048" (#109)
+D - "PushFields to *this* form" section is missing escalations (#103)
+
+
 2011-03-01
 [3.0.2]
 E - Apache/zlib-Support added to generate compressed documentation
