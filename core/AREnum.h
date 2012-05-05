@@ -1955,6 +1955,9 @@ public:
 		case AR_STRUCT_ITEM_XML_APP: return "Application";
 		case AR_STRUCT_ITEM_XML_SCHEMA_DATA: return "Data";
 		case AR_STRUCT_ITEM_XML_LOCK_BLOCK: return "Block";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+		case AR_STRUCT_ITEM_XML_IMAGE: return "Image";
+#endif
 		default: return EnumDefault;
 		}
 	}
