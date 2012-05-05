@@ -31,6 +31,8 @@ private:
 
 private:
 	void AddTableRow(CTable& tbl, CARSchema& schema);
+	void AddTableRow(CTable& tbl, CARField& field);
+	void AddTableRow(CTable& tbl, CARVui& vui);
 	void AddTableRow(CTable& tbl, CARActiveLink& al);
 	void AddTableRow(CTable& tbl, CARFilter& flt);
 	void AddTableRow(CTable& tbl, CAREscalation& escal);

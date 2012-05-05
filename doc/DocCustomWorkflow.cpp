@@ -59,6 +59,37 @@ void CDocCustomWorkflow::Documentation()
 		{
 			CARSchema schema(*curIt);
 			AddTableRow(tblRef, schema);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			// If the schema is a custom schema, it should be listed only once. That means it's not necessary
+			// to list each field/view of this schema here. The schema is already added to list due to the
+			// lines above. Now just check the overlay forms.
+			int schemaOverlayType = schema.GetOverlayType();
+			if (schemaOverlayType == AR_OVERLAY_OBJECT)
+			{
+				unsigned int fieldCount = schema.GetFields()->GetCount();
+				for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; fieldIndex++)
+				{
+					CARField fld(schema.GetInsideId(), 0, fieldIndex);
+					int overlayType = fld.GetOverlayType();
+					if (overlayType == AR_CUSTOM_OBJECT || overlayType == AR_OVERLAY_OBJECT)
+					{
+						AddTableRow(tblRef, fld);
+					}
+				}
+
+				unsigned int vuiCount = schema.GetVUIs()->GetCount();
+				for (unsigned int vuiIndex = 0; vuiIndex < vuiCount; vuiIndex++)
+				{
+					CARVui vui(schema.GetInsideId(), 0, vuiIndex);
+					int overlayType = vui.GetOverlayType();
+					if (overlayType == AR_CUSTOM_OBJECT || overlayType == AR_OVERLAY_OBJECT)
+					{
+						AddTableRow(tblRef, vui);
+					}
+				}
+			}
+#endif
 		}
 
 		curIt = customActlinks.begin();
@@ -130,6 +161,34 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARSchema& schema)
 	row.AddCell(""); // Enabled
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
+	tbl.AddRow(row);
+}
+
+void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARField& field)
+{
+	stringstream tmpStrm;
+	tmpStrm << field.GetSchema().GetURL(rootLevel) << MenuSeparator << field.GetURL(rootLevel);
+	CTableRow row("cssStdRow");
+	row.AddCell(CAREnum::GetOverlayType(field.GetOverlayType()));
+	row.AddCell(CAREnum::XmlStructItem(field.GetServerObjectTypeXML()));
+	row.AddCell(tmpStrm.str());
+	row.AddCell(""); // Enabled
+	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(field.GetTimestamp())));
+	row.AddCell(CTableCell(this->pInside->LinkToUser(field.GetLastChanged(), rootLevel)));
+	tbl.AddRow(row);
+}
+
+void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARVui& vui)
+{
+	stringstream tmpStrm;
+	tmpStrm << vui.GetSchema().GetURL(rootLevel) << MenuSeparator << vui.GetURL(rootLevel);
+	CTableRow row("cssStdRow");
+	row.AddCell(CAREnum::GetOverlayType(vui.GetOverlayType()));
+	row.AddCell(CAREnum::XmlStructItem(vui.GetServerObjectTypeXML()));
+	row.AddCell(tmpStrm.str());
+	row.AddCell(""); // Enabled
+	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(vui.GetTimestamp())));
+	row.AddCell(CTableCell(this->pInside->LinkToUser(vui.GetLastChanged(), rootLevel)));
 	tbl.AddRow(row);
 }
 
