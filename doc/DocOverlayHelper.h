@@ -1,4 +1,4 @@
-//Copyright (C) 2010 John Luthgers | jls17
+//Copyright (C) 2012 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -12,7 +12,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
