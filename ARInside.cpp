@@ -2530,19 +2530,3 @@ void CARInside::SetupOverlaySupport()
 	}
 #endif
 }
-
-string CARInside::PlaceOverlaidNotice(const CARServerObject& obj, int rootLevel)
-{
-	stringstream tmp;
-
-	tmp << "<div id=\"ovlNote\">" << endl;
-	tmp << "This object is currently not executed/used because it is overlaid by ";
-	if (obj.Exists())
-		tmp << obj.GetURL(rootLevel, false);
-	else
-		tmp << "<span class=\"fieldNotFound\">" << "object missing" << "</span>";
-	
-	tmp << "</div>";
-
-	return tmp.str();
-}

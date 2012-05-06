@@ -21,6 +21,7 @@
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
 #include "../core/ARHandle.h"
+#include "DocOverlayHelper.h"
 
 CDocSchemaDetails::CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel)
 : schema(schemaInsideId)
@@ -61,6 +62,7 @@ void CDocSchemaDetails::Documentation()
 		{
 			stringstream pgStrm;	
 			CWebPage webPage(file->GetFileName(), this->schema.GetName(), rootLevel, this->pInside->appConfig);
+			CDocOverlayHelper overlayHelper(schema, rootLevel);
 			
 			const ARCompoundSchema& compSchema = this->schema.GetCompound();
 			overlayType = schema.GetOverlayType();
@@ -72,36 +74,11 @@ void CDocSchemaDetails::Documentation()
 			contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->schema.GetName());
 			contHeadStrm << CAREnum::GetOverlayTypeString(overlayType);
 
-			CARSchema overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = schema.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = schema.GetOverlayBaseName();
-					break;
-				}
-
-				CARSchema correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
 			if(!this->schema.GetAppRefName().empty())
 				contHeadStrm << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->schema.GetAppRefName(), rootLevel);
 
-			webPage.AddContentHead(contHeadStrm.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				pgStrm << pInside->PlaceOverlaidNotice(overlayObj, rootLevel);
-#endif
+			webPage.AddContentHead(contHeadStrm.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Add schema navigation menu	
 			webPage.SetNavigation(this->SchemaNavigation());

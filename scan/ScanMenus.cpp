@@ -39,8 +39,7 @@ void CScanMenus::Start()
 		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
 			continue;
 
-		int overlayType = menu.GetOverlayType();
-		if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+		if (IsOverlayOrCustom(menu))
 		{
 			pInside->menuList.AddOverlayOrCustom(menu.GetInsideId());
 		}

@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocWebserviceDetails.h"
+#include "DocOverlayHelper.h"
 
 CDocWebserviceDetails::CDocWebserviceDetails(CARContainer &obj)
 : ws(obj)
@@ -39,39 +40,15 @@ void CDocWebserviceDetails::Documentation()
 		if(winUtil.CreateSubDirectory(dir)>=0)	// TODO: depending on the file structure there might be more or less directories to create .. move this to an Init function in IFileStructure
 		{
 			CWebPage webPage(file->GetFileName(), ws.GetName(), rootLevel, pInside->appConfig);
-			int overlayType = ws.GetOverlayType();
+			CDocOverlayHelper overlayHelper(ws, rootLevel);
 
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead << CWebUtil::LinkToWebServiceIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->ws.GetName());
+			strmHead << CAREnum::GetOverlayTypeString(ws.GetOverlayType());
 
-			CARContainer overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = ws.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = ws.GetOverlayBaseName();
-					break;
-				}
-
-				CARContainer correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Container Base Informations
 			CDocContainerHelper *contHelper = new CDocContainerHelper(this->ws, this->rootLevel);

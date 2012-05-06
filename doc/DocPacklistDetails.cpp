@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocPacklistDetails.h"
 #include "../core/ARImage.h"
+#include "DocOverlayHelper.h"
 
 CDocPacklistDetails::CDocPacklistDetails(CARContainer &packList)
 : pPackList(packList)
@@ -40,44 +41,20 @@ void CDocPacklistDetails::Documentation()
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), this->pPackList.GetName(), this->rootLevel, this->pInside->appConfig);
-
+			CDocOverlayHelper overlayHelper(this->pPackList, rootLevel);
+			
 			//ContentHead informations
 			stringstream strmHead;
 			strmHead.str("");
 			int overlayType = pPackList.GetOverlayType();
 
-			CARContainer overlayObj;
-
 			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = pPackList.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = pPackList.GetOverlayBaseName();
-					break;
-				}
-
-				CARContainer correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
 
 			if(!this->pPackList.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pPackList.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Container Base Informations
 			CDocContainerHelper *contHelper = new CDocContainerHelper(this->pPackList, this->rootLevel);

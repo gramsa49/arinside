@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocImageDetails.h"
 #include "../core/ARImage.h"
+#include "DocOverlayHelper.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -46,39 +47,15 @@ void CDocImageDetails::Documentation()
 
 		// now create the page
 		CWebPage webPage(file->GetFileName(), image.GetName(), rootLevel, pInside->appConfig);
+		CDocOverlayHelper overlayHelper(image, rootLevel);
 
 		// contentHead informations
 		stringstream contHeadStrm;
 		int overlayType = image.GetOverlayType();
 		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << CAREnum::GetOverlayTypeString(overlayType) << endl;
 
-		CARImage overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-		{
-			string correspondingName;
-			switch (overlayType)
-			{
-			case AR_OVERLAID_OBJECT:
-				correspondingName = image.GetOverlayName();
-				break;
-			case AR_OVERLAY_OBJECT:
-				correspondingName = image.GetOverlayBaseName();
-				break;
-			}
-
-			CARImage correspondingObject(correspondingName);
-			overlayObj = correspondingObject;	
-		}
-#endif
-
-		webPage.AddContentHead(contHeadStrm.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-			webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+		webPage.AddContentHead(contHeadStrm.str(), overlayHelper.PlaceOverlayLink());
+		webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 		// image details
 		CTable tbl("imageDetails", "TblObjectList");

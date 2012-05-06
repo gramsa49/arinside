@@ -112,7 +112,7 @@ SET (ARINSIDE_SRCS
  doc/DocSchemaDetails.cpp doc/DocValidator.cpp doc/DocFilterDetails.cpp doc/DocImageDetails.cpp
  doc/DocActionOpenWindowHelper.cpp doc/DocPacklistDetails.cpp doc/DocApplicationDetails.cpp
  doc/DocGroupDetails.cpp doc/MessageItem.cpp doc/DocEscalationDetails.cpp doc/DocSummaryInfo.cpp
- doc/DocAlGuideDetails.cpp doc/DocCustomWorkflow.cpp
+ doc/DocAlGuideDetails.cpp doc/DocCustomWorkflow.cpp doc/DocOverlayHelper.cpp
  lists/ARActiveLinkList.cpp lists/ARContainerList.cpp lists/AREscalationList.cpp lists/ARFieldList.cpp
  lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
  lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp lists/ARListHelpers.cpp

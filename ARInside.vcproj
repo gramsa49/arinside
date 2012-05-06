@@ -1000,6 +1000,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocOverlayHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocOverlayHelper.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocPacklistDetails.cpp"
 				>
 			</File>

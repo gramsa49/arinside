@@ -40,8 +40,7 @@ void CScanImages::Start()
 		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(img))
 			continue;
 
-		int overlayType = img.GetOverlayType();
-		if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+		if (IsOverlayOrCustom(img))
 		{
 			pInside->imageList.AddOverlayOrCustom(img.GetInsideId());
 		}

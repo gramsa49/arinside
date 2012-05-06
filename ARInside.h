@@ -166,7 +166,6 @@ public:
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);
 	bool ValidateGroup(const string& appRefName, int permissionId);
 	int CompareServerVersion(int major, int minor = -1, int revision = -1);
-	string PlaceOverlaidNotice(const CARServerObject& obj, int rootLevel);
 
 	float nDurationLoad;
 	float nDurationDocumentation;

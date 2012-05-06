@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFilterGuideDetails.h"
+#include "DocOverlayHelper.h"
 
 CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &fltGuide)
 : filterGuide(fltGuide)
@@ -39,6 +40,7 @@ void CDocFilterGuideDetails::Documentation()
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), filterGuide.GetName(), rootLevel, this->pInside->appConfig);
+			CDocOverlayHelper overlayHelper(filterGuide, rootLevel);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -47,36 +49,11 @@ void CDocFilterGuideDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToFilterGuideIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->filterGuide.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
-			CARContainer overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = this->filterGuide.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = this->filterGuide.GetOverlayBaseName();
-					break;
-				}
-
-				CARContainer correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
 			if(!this->filterGuide.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->filterGuide.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Container Base Informations
 			CDocContainerHelper *contHelper = new CDocContainerHelper(this->filterGuide, this->rootLevel);

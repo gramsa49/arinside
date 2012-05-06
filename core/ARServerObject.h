@@ -48,3 +48,4 @@ public:
 };
 
 bool IsVisibleObject(const CARServerObject& obj); // checks if the object is visible; by default overlaid objects are hidden
+bool IsOverlayOrCustom(const CARServerObject& obj); // returns true if the object's overlay type is AR_CUSTOM_OBJECT or AR_OVERLAY_OBJECT

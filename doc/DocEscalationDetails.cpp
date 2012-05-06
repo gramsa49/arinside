@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocEscalationDetails.h"
+#include "DocOverlayHelper.h"
 
 CDocEscalationDetails::CDocEscalationDetails(unsigned int escalInsideId)
 : escalation(escalInsideId)
@@ -40,6 +41,7 @@ void CDocEscalationDetails::Documentation()
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), this->escalation.GetName(), this->rootLevel, this->pInside->appConfig);
 			CARProplistHelper props(&this->escalation.GetPropList());
+			CDocOverlayHelper overlayHelper(escalation, rootLevel);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -48,36 +50,11 @@ void CDocEscalationDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
-			CAREscalation overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = this->escalation.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = this->escalation.GetOverlayBaseName();
-					break;
-				}
-
-				CAREscalation correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Escalation Properties
 			stringstream strmTmp;

@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFilterDetails.h"
+#include "DocOverlayHelper.h"
 
 CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId)
 : filter(filterInsideId)
@@ -39,6 +40,7 @@ void CDocFilterDetails::Documentation()
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), filter.GetName(), this->rootLevel, this->pInside->appConfig);
+			CDocOverlayHelper overlayHelper(filter, rootLevel);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -47,36 +49,11 @@ void CDocFilterDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(filter.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
-			CARFilter overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = this->filter.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = this->filter.GetOverlayBaseName();
-					break;
-				}
-
-				CARFilter correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
 			if(!filter.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(filter.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Filter Properties
 			stringstream strmTmp;

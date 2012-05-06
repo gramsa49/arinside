@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocAlDetails.h"
+#include "DocOverlayHelper.h"
 #include "../output/IFileStructure.h"
 
 CDocAlDetails::CDocAlDetails(int alInsideId)
@@ -40,6 +41,7 @@ void CDocAlDetails::Documentation()
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), this->al.GetName(), this->rootLevel, this->pInside->appConfig);
+			CDocOverlayHelper overlayHelper(al, rootLevel);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -51,37 +53,12 @@ void CDocAlDetails::Documentation()
 
 			// generate location info ("your are here")
 			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
- 
-			CARActiveLink overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = this->al.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = this->al.GetOverlayBaseName();
-					break;
-				}
-
-				CARActiveLink correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
 
 			if(!this->al.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//ActiveLink Properties
 			stringstream strmTmp;

@@ -43,8 +43,7 @@ void CScanActiveLinks::Start()
 		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
 			continue;
 
-		int overlayType = al.GetOverlayType();
-		if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+		if (IsOverlayOrCustom(al))
 		{
 			pInside->alList.AddOverlayOrCustom(al.GetInsideId());
 		}

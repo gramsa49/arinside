@@ -96,3 +96,20 @@ bool IsVisibleObject(const CARServerObject& obj)
 #endif
 	return true;
 }
+
+bool IsOverlayOrCustom(const CARServerObject& obj)
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+	// TODO: 
+	// We check directly for overlay or custom, but overlayType is a bitmask, and with more
+	// overlay layers in mind, the overlayType of an object could be:
+	//   AR_CUSTOM_OBJECT | AR_OVERLAID_OBJECT
+	// ARInside has to be able to deal with such situations, but currently it isn't.
+	int overlayType = obj.GetOverlayType();
+	if ((overlayType & AR_CUSTOM_OBJECT) || (overlayType & AR_OVERLAY_OBJECT))
+	{
+		return true;
+	}
+#endif
+	return false;
+}

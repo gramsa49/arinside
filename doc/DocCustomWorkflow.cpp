@@ -71,8 +71,8 @@ void CDocCustomWorkflow::Documentation()
 				for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; fieldIndex++)
 				{
 					CARField fld(schema.GetInsideId(), 0, fieldIndex);
-					int overlayType = fld.GetOverlayType();
-					if (overlayType == AR_CUSTOM_OBJECT || overlayType == AR_OVERLAY_OBJECT)
+					
+					if (IsOverlayOrCustom(fld))
 					{
 						AddTableRow(tblRef, fld);
 					}
@@ -82,8 +82,8 @@ void CDocCustomWorkflow::Documentation()
 				for (unsigned int vuiIndex = 0; vuiIndex < vuiCount; vuiIndex++)
 				{
 					CARVui vui(schema.GetInsideId(), 0, vuiIndex);
-					int overlayType = vui.GetOverlayType();
-					if (overlayType == AR_CUSTOM_OBJECT || overlayType == AR_OVERLAY_OBJECT)
+					
+					if (IsOverlayOrCustom(vui))
 					{
 						AddTableRow(tblRef, vui);
 					}

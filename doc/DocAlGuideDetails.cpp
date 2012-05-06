@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocAlGuideDetails.h"
+#include "DocOverlayHelper.h"
 
 CDocAlGuideDetails::CDocAlGuideDetails(CARContainer &container)
 : alGuide(container)
@@ -39,6 +40,7 @@ void CDocAlGuideDetails::Documentation()
 		if(winUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), alGuide.GetName(), this->rootLevel, pInside->appConfig);
+			CDocOverlayHelper overlayHelper(alGuide, rootLevel);
 
 			//ContentHead informations
 			stringstream strmHead;
@@ -47,36 +49,11 @@ void CDocAlGuideDetails::Documentation()
 
 			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) << MenuSeparator << CWebUtil::ObjName(this->alGuide.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
-			CARContainer overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = this->alGuide.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = this->alGuide.GetOverlayBaseName();
-					break;
-				}
-
-				CARContainer correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
 			if(!this->alGuide.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Container Base Informations
 			CDocContainerHelper *contHelper = new CDocContainerHelper(this->alGuide, this->rootLevel);

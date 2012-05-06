@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocCharMenuDetails.h"
 #include "../output/ContainerTable.h"
+#include "DocOverlayHelper.h"
 
 const char* MenuDefinitionText = "Menu Definition";
 
@@ -43,6 +44,7 @@ void CDocCharMenuDetails::Documentation()
 		if(winUtil.CreateSubDirectory(this->path)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), this->menu.GetName(), this->rootLevel, this->pInside->appConfig);
+			CDocOverlayHelper overlayHelper(menu, rootLevel);
 
 			const ARCharMenuStruct& menuDef = menu.GetDefinition();
 			//ContentHead informations
@@ -53,36 +55,11 @@ void CDocCharMenuDetails::Documentation()
 			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->menu.GetName()) 
 				<< " (" << CAREnum::MenuType(menuDef.menuType) << ")" << CAREnum::GetOverlayTypeString(overlayType);
 
-			CARCharMenu overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-			{
-				string correspondingName;
-				switch (overlayType)
-				{
-				case AR_OVERLAID_OBJECT:
-					correspondingName = this->menu.GetOverlayName();
-					break;
-				case AR_OVERLAY_OBJECT:
-					correspondingName = this->menu.GetOverlayBaseName();
-					break;
-				}
-
-				CARCharMenu correspondingObject(correspondingName);
-				overlayObj = correspondingObject;	
-			}
-#endif
-
 			if(!this->menu.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->menu.GetAppRefName(), this->rootLevel);
 
-			webPage.AddContentHead(strmHead.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-			if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-				webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
+			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//ActiveLink Properties
 			stringstream strmTmp;

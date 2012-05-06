@@ -43,7 +43,7 @@ void CScanSchema::Start()
 				continue;
 
 			int overlayType = schema.GetOverlayType();
-			if (overlayType == AR_OVERLAY_OBJECT || overlayType == AR_CUSTOM_OBJECT)
+			if (IsOverlayOrCustom(schema))
 			{
 				pInside->schemaList.AddOverlayOrCustom(schema.GetInsideId());
 			}

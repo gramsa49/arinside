@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFieldDetails.h"
+#include "DocOverlayHelper.h"
 #include "../util/RefItem.h"
 #include "../core/ARImage.h"
 #include "../core/ARGlobalField.h"
@@ -37,6 +38,7 @@ void CDocFieldDetails::Documentation()
 		rootLevel = file->GetRootLevel();
 
 		CWebPage webPage(file->GetFileName(), this->field.GetName(), rootLevel, this->pInside->appConfig);
+		CDocOverlayHelper overlayHelper(field, rootLevel);
 
 		int overlayType = field.GetOverlayType();
 		int schemaOverlayType = this->schema.GetOverlayType();
@@ -52,34 +54,8 @@ void CDocFieldDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->field.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << CAREnum::GetOverlayTypeString(overlayType) << endl;
 		
-		CARField overlayObj;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->appConfig.bOverlaySupport && overlayType > 0)
-		{
-			string correspondingName;
-			switch (overlayType)
-			{
-			case AR_OVERLAID_OBJECT:
-				correspondingName = this->schema.GetOverlayName();
-				break;
-			case AR_OVERLAY_OBJECT:
-				correspondingName = this->schema.GetOverlayBaseName();
-				break;
-			}
-
-			CARSchema correspondingSchema(correspondingName);
-			CARField correspondingObject(correspondingSchema.GetInsideId(), field.GetFieldId());
-			overlayObj = correspondingObject;	
-		}
-#endif
-		
-		webPage.AddContentHead(contHeadStrm.str(), PlaceOverlayLink(overlayType, overlayObj));
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->overlayMode == 1 && overlayType == AR_OVERLAID_OBJECT)
-			webPage.AddContent(pInside->PlaceOverlaidNotice(overlayObj, rootLevel));
-#endif
+		webPage.AddContentHead(contHeadStrm.str(), overlayHelper.PlaceOverlayLink());
+		webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 		//Field property table
 		CTable tblFieldprops("commonPropList", "TblObjectList");
