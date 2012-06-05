@@ -119,7 +119,7 @@ bool CAREscalationList::LoadFromServer()
 	}
 
 	// ok, now retrieve all informations of the escalations we need
-	if (ARGetMultipleEscalations(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleEscalations(&arIn->arControl,
 		0,
 		objectsToLoad,
 		&escExists,
@@ -140,18 +140,93 @@ bool CAREscalationList::LoadFromServer()
 	{
 		FreeARBooleanList(&escExists, false);
 		internalListState = CAREscalationList::ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			appRefNames.push_back("");
-			sortedList.push_back(i);
-		}
 		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+
+		// ok, fallback to slow data retrieval
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow escalation loading!" << endl;
+
+		// first check if container names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no names loaded ... now get all names from server
+			ARZeroMemory(&objectNames);
+			
+			ARContainerInfoList contNames;			
+			ARZeroMemory(&contNames);
+
+			if (ARGetListEscalation(&arIn->arControl, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+			{
+				originalObjectNameCount = objectNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if an object can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each object
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading Escalation: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+
+				if (ARGetEscalation(&arIn->arControl,
+					names.nameList[curListPos],
+					&times.escalationTmList[curListPos],
+					&schemas.workflowConnectList[curListPos],
+					&enabledObjects.intList[curListPos],
+					&queries.qualifierList[curListPos],
+					&ifActions.actionListList[curListPos],
+					&elseActions.actionListList[curListPos],
+					&helpTexts.stringList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					owners.nameList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}
+				else
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+
+				// now update list counts
+				names.numItems = curListPos;
+				times.numItems = curListPos;
+				schemas.numItems = curListPos;
+				enabledObjects.numItems = curListPos;
+				queries.numItems = curListPos;
+				ifActions.numItems = curListPos;
+				elseActions.numItems = curListPos;
+				helpTexts.numItems = curListPos;
+				changedTimes.numItems = curListPos;
+				owners.numItems = curListPos;
+				changedUsers.numItems = curListPos;
+				changeDiary.numItems = curListPos;
+				objProps.numItems = curListPos;
+
+				if (curListPos > 0)
+					funcResult = true;				
+			}
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -161,6 +236,15 @@ bool CAREscalationList::LoadFromServer()
 		FreeARNameList(&objectNames, false);
 	}
 
+	if (funcResult)
+	{
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			appRefNames.push_back("");
+			sortedList.push_back(i);
+		}
+	}
 	return funcResult;
 }
 

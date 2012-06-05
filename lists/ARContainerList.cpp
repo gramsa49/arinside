@@ -99,18 +99,10 @@ bool CARContainerList::LoadFromServer()
 	ARNameList      objectNames;
 	unsigned int    originalObjectNameCount = 0;
 	bool            funcResult = false;
-	ARContainerTypeList cntTypes;	int cntType = ARCON_ALL;
-	ARReferenceTypeList refTypes;	int refType = ARREF_ALL;
 
 	ARZeroMemory(&cntExists);
 	ARZeroMemory(&status);
 	
-	cntTypes.numItems = 1;
-	cntTypes.type = &cntType;
-
-	refTypes.numItems = 1;
-	refTypes.refType = &refType;
-
 	objectNames.numItems = 0;
 
 	// if the blacklist contains containers, we should first load all names
@@ -145,10 +137,10 @@ bool CARContainerList::LoadFromServer()
 	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleContainers(&arIn->arControl,
 		0,
 		objectsToLoad,
-		&cntTypes,
+		NULL,
 		AR_HIDDEN_INCREMENT,
 		NULL, // owners list
-		&refTypes,
+		NULL,
 		&cntExists,
 		&names,
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
@@ -179,7 +171,7 @@ bool CARContainerList::LoadFromServer()
 
 		// ok, fallback to slow data retrieval
 		if (!arIn->appConfig.slowObjectLoading)
-			cout << "WARN: switching to slow activelink loading!" << endl;
+			cout << "WARN: switching to slow container loading!" << endl;
 
 		// first check if container names are already loaded
 		if (objectsToLoad == NULL)
