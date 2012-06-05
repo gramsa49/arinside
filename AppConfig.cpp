@@ -30,6 +30,7 @@ AppConfig::AppConfig(void)
 	roleQuery = "";
 	maxRetrieve = 0;
 	overlayMode = "";
+	slowObjectLoading = false;
 
 	// Output and Layout configuration
 	companyName = "";

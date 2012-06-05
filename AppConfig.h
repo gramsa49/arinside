@@ -43,6 +43,7 @@ public:
 	string roleQuery;
 	int maxRetrieve;
 	string overlayMode;
+	bool slowObjectLoading;
 
 	// Output and Layout configuration
 	string companyName;

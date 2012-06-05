@@ -75,6 +75,7 @@ int main(int argc, char* argv[])
 	ValueArg<int> tcpArg("t", "tcp", "Tcp port", false, 0, "int");
 	ValueArg<int> rpcArg("r", "rcp", "Rcp port", false, 0, "int");
 	ValueArg<string> outputFolder("o", "output", "Output folder", false, "", "string");
+	SwitchArg slowArg("", "slow", "Uses slow object loading", false);
 	SwitchArg verboseArg("v","verbose","Verbose Output",false);
 #if ARINSIDE_TEST_SUPPORT
 	SwitchArg testModeArg("","test", "", false);
@@ -87,6 +88,7 @@ int main(int argc, char* argv[])
 
 		// add it in reverse order. the "--help" output lists the arguments from the last to the first added.
 		cmd.add(verboseArg);
+		cmd.add(slowArg);
 		cmd.add(rpcArg);
 		cmd.add(tcpArg);
 		cmd.add(pwdArg);
@@ -135,6 +137,8 @@ int main(int argc, char* argv[])
 
 		if (rpcArg.isSet())
 			appConfig.rpcPort = rpc;
+
+		appConfig.slowObjectLoading = slowArg.getValue();
 
 #if ARINSIDE_TEST_SUPPORT
 		appConfig.testMode = testModeArg.getValue();

@@ -545,6 +545,11 @@ void CARInside::LoadFromServer(void)
 	cout << endl << "Loading objects from server '" << appConfig.serverName << "'" << endl;
 	cout << "server version: " << arServerVersion << endl;
 
+	if (appConfig.slowObjectLoading)
+	{
+		cout << "NOTE: Fast object loading disabled!" << endl;
+	}
+
 	//LoadServerInfoList	
 	if(appConfig.bLoadServerInfoList)
 	{
