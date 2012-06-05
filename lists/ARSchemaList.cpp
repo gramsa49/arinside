@@ -134,9 +134,8 @@ bool CARSchemaList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-#ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the schemas we need
-	if (ARGetMultipleSchemas(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleSchemas(&arIn->arControl,
 		0, // changed since
 		NULL, // schema type list
 		objectsToLoad,
@@ -163,9 +162,6 @@ bool CARSchemaList::LoadFromServer()
 		&changeDiary,
 		&objProps,
 		&status) == AR_RETURN_OK)
-#else // ARINSIDE_DISABLE_FAST_LOADING 
-	if (false)
-#endif // ARINSIDE_DISABLE_FAST_LOADING 
 	{
 		FreeARBooleanList(&schemaExists, false);
 		internalListState = CARSchemaList::ARAPI_ALLOC;
@@ -253,9 +249,11 @@ bool CARSchemaList::LoadFromServer()
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
-		cout << "WARN: switching to slow schema loading!" << endl;
+
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt schema that keeps us from getting all schemas at once
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow schema loading!" << endl;
 
 		// first check if schema names are already loaded
 		if (objectsToLoad == NULL)

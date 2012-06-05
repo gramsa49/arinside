@@ -99,7 +99,7 @@ bool CARMenuList::LoadFromServer()
 	}
 
 	// ok, now retrieve all informations of the menus we need
-	if (ARGetMultipleCharMenus(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleCharMenus(&arIn->arControl,
 		0,
 		objectsToLoad,
 		&mnuExists,
@@ -116,20 +116,83 @@ bool CARMenuList::LoadFromServer()
 	{
 		FreeARBooleanList(&mnuExists, false);
 		internalListState = CARMenuList::ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			appRefNames.push_back("");
-			sortedList.push_back(i);
-		}
 		funcResult = true;
-
-		references.resize(names.numItems);
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt object that keeps us from getting all at once
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow menu loading!" << endl;
+
+		// first check if object names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no object names loaded ... now get all names from server
+			memset(&objectNames, 0, sizeof(objectNames));
+
+			if (ARGetListCharMenu(&arIn->arControl, 0, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+			{
+				originalObjectNameCount = objectNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if a filter can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each filter
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading Menu: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+
+				if (ARGetCharMenu(&arIn->arControl,
+					names.nameList[curListPos],
+					&refreshCodes.intList[curListPos],
+					&definitions.list[curListPos],
+					&helpTexts.stringList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					owners.nameList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}	
+				else
+					cerr << arIn->GetARStatusError(&status);
+
+				// now update list counts
+				names.numItems = curListPos;
+				refreshCodes.numItems = curListPos;
+				definitions.numItems = curListPos;
+				helpTexts.numItems = curListPos;
+				changedTimes.numItems = curListPos;
+				owners.numItems = curListPos;
+				changedUsers.numItems = curListPos;
+				changeDiary.numItems = curListPos;
+				objProps.numItems = curListPos;
+
+				if (curListPos > 0 || objectsToLoad->numItems == 0)
+					funcResult = true;
+			}
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -137,6 +200,17 @@ bool CARMenuList::LoadFromServer()
 	{
 		objectNames.numItems = originalObjectNameCount;
 		FreeARNameList(&objectNames, false);
+	}
+
+	if (funcResult)
+	{
+		references.resize(names.numItems);
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			appRefNames.push_back("");
+			sortedList.push_back(i);
+		}
 	}
 
 	return funcResult;
