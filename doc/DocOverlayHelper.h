@@ -16,6 +16,8 @@
 
 #pragma once
 
+#include "../ARApi.h"
+
 // forward declarations
 class CARServerObject;
 class CARInside;

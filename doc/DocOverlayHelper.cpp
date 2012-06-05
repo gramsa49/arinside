@@ -195,10 +195,12 @@ CARServerObject* CDocOverlayHelper::GetNextObject(OverlayLinkDirection direction
 		{
 			return new CARContainer(correspondingName);
 		}
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	case AR_STRUCT_ITEM_XML_IMAGE:
 		{
 			return new CARImage(correspondingName);
 		}
+#endif
 	default:
 #if _DEBUG
 		cerr << "object type " << objectType << " not supported int GetNextObject" << endl;
