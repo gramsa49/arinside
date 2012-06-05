@@ -384,7 +384,8 @@ bool CARSchemaList::LoadFromServer()
 	}
 
 	missingFieldReferences.resize(count);
-	memset(&missingFieldReferences[0], 0, sizeof(MissingReferenceList*) * count);
+	if (count > 0)
+		memset(&missingFieldReferences[0], 0, sizeof(MissingReferenceList*) * count);
 
 	// reserve reference lists
 	activeLinks.resize(count);
