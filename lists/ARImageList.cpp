@@ -84,6 +84,9 @@ bool CARImageList::LoadFromServer()
 	unsigned int    originalObjectNameCount = 0;
 	bool            funcResult = false;
 
+	ARZeroMemory(&status);
+	ARZeroMemory(&imgExists);
+
 	// if the blacklist contains images, we should first load all image names from 
 	// the server and remove those that are contained in the blacklist. after that 
 	// call ARGetMultipleImages to retrieve just the needed images.
@@ -101,7 +104,7 @@ bool CARImageList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-	if (ARGetMultipleImages(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleImages(&arIn->arControl,
 		0,
 		objectsToLoad,
 		&imgExists,
@@ -120,19 +123,86 @@ bool CARImageList::LoadFromServer()
 	{
 		FreeARBooleanList(&imgExists, false);
 		internalListState = CARImageList::ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			sortedList.push_back(i);
-		}
 		funcResult = true;
-
-		referenceList.resize(names.numItems);
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt object that keeps us from getting all at once
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow image loading!" << endl;
+
+		// first check if object names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no object names loaded ... now get all names from server
+			memset(&objectNames, 0, sizeof(objectNames));
+
+			if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+			{
+				originalObjectNameCount = objectNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if a filter can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each filter
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading Image: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+				
+				if (ARGetImage(&arIn->arControl,
+					names.nameList[curListPos],
+					&data.imageList[curListPos],
+					&types.stringList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					NULL,
+					&descriptions.stringList[curListPos],
+					&helpTexts.stringList[curListPos],
+					owners.nameList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}	
+				else
+					cerr << arIn->GetARStatusError(&status);
+
+				// now update list counts
+				names.numItems = curListPos;
+				types.numItems = curListPos;
+				changedTimes.numItems = curListPos;
+				descriptions.numItems = curListPos;
+				helpTexts.numItems = curListPos;
+				owners.numItems = curListPos;
+				changedUsers.numItems = curListPos;
+				changeDiary.numItems = curListPos;
+				objProps.numItems = curListPos;
+				data.numItems = curListPos;
+
+				if (curListPos > 0 || objectsToLoad->numItems == 0)
+					funcResult = true;
+			}
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -142,6 +212,15 @@ bool CARImageList::LoadFromServer()
 		FreeARNameList(&objectNames, false);
 	}
 
+	if (funcResult)
+	{
+		referenceList.resize(names.numItems);
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			sortedList.push_back(i);
+		}
+	}
 	return funcResult;
 }
 
