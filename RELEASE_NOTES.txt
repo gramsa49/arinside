@@ -4,12 +4,13 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
-2012-??-??
+2012-06-06
 [3.0.3]
 E - Support for overlay feature (#102)
 E - New ini-setting to disable overlay support
 E - Improved support for 7.6.04 servers (keywords, display-props, server-infos)
-E - Added again slow object loading for ActiveLinks, Filters and Schemas as a fallback
+E - Added again slow object loading as a fallback
+E - New --slow command line argument to disable fast object loading completely
 E - keywords used in default-values of fields are documented now (#116)
 E - New page showing all notification texts
 E - New page showing overlay- and custom-objects

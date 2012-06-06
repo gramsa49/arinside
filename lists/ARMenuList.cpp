@@ -176,7 +176,7 @@ bool CARMenuList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}	
 				else
-					cerr << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
 
 				// now update list counts
 				names.numItems = curListPos;
