@@ -12,7 +12,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 #include "ARActiveLinkList.h"
@@ -115,9 +115,8 @@ bool CARActiveLinkList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-#ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the active links we need
-	if (ARGetMultipleActiveLinks(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleActiveLinks(&arIn->arControl,
 		0,
 		objectsToLoad,
 		&alExists,
@@ -145,9 +144,6 @@ bool CARActiveLinkList::LoadFromServer()
 		NULL,NULL,  // as of version 7.5 this two parameters should be NULL; reserverd for future use
 #endif
 		&status) == AR_RETURN_OK)
-#else // ARINSIDE_DISABLE_FAST_LOADING
-	if (false)
-#endif // ARINSIDE_DISABLE_FAST_LOADING
 	{
 		FreeARBooleanList(&alExists, false);
 		internalListState = CARActiveLinkList::ARAPI_ALLOC;
@@ -159,7 +155,8 @@ bool CARActiveLinkList::LoadFromServer()
 
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt actlink that keeps us from getting all activelinks at once
-		cout << "WARN: switching to slow activelink loading!" << endl;
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow activelink loading!" << endl;
 
 		// first check if active link names are already loaded
 		if (objectsToLoad == NULL)

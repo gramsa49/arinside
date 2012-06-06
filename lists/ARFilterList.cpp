@@ -127,9 +127,8 @@ bool CARFilterList::LoadFromServer()
 			cerr << arIn->GetARStatusError(&status);
 	}
 
-#ifndef ARINSIDE_DISABLE_FAST_LOADING 
 	// ok, now retrieve all informations of the filters we need
-	if (ARGetMultipleFilters(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleFilters(&arIn->arControl,
 		0,
 		objectsToLoad,
 		&fltExists,
@@ -152,9 +151,6 @@ bool CARFilterList::LoadFromServer()
 		&errorHandlers,
 #endif
 		&status) == AR_RETURN_OK)
-#else // ARINSIDE_DISABLE_FAST_LOADING
-	if (false)
-#endif // ARINSIDE_DISABLE_FAST_LOADING
 	{
 		FreeARBooleanList(&fltExists, false);
 		internalListState = CARFilterList::ARAPI_ALLOC;
@@ -163,14 +159,16 @@ bool CARFilterList::LoadFromServer()
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
-		cout << "WARN: switching to slow filter loading!" << endl;
-		// ok, fallback to slow data retrieval
-		// this could be necessaray if there is a corrupt filter that keeps us from getting all filters at once
 
-		// first check if filter names are already loaded
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt object that keeps us from getting all at once
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow filter loading!" << endl;
+
+		// first check if object names are already loaded
 		if (objectsToLoad == NULL)
 		{
-			// no filter names loaded ... now get all names from server
+			// no object names loaded ... now get all names from server
 			memset(&objectNames, 0, sizeof(objectNames));
 
 			if (ARGetListFilter(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)

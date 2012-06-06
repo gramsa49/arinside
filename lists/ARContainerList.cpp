@@ -99,18 +99,10 @@ bool CARContainerList::LoadFromServer()
 	ARNameList      objectNames;
 	unsigned int    originalObjectNameCount = 0;
 	bool            funcResult = false;
-	ARContainerTypeList cntTypes;	int cntType = ARCON_ALL;
-	ARReferenceTypeList refTypes;	int refType = ARREF_ALL;
 
 	ARZeroMemory(&cntExists);
 	ARZeroMemory(&status);
 	
-	cntTypes.numItems = 1;
-	cntTypes.type = &cntType;
-
-	refTypes.numItems = 1;
-	refTypes.refType = &refType;
-
 	objectNames.numItems = 0;
 
 	// if the blacklist contains containers, we should first load all names
@@ -142,13 +134,13 @@ bool CARContainerList::LoadFromServer()
 	}
 
 	// ok, now retrieve all informations of the containers we need
-	if (ARGetMultipleContainers(&arIn->arControl,
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleContainers(&arIn->arControl,
 		0,
 		objectsToLoad,
-		&cntTypes,
+		NULL,
 		AR_HIDDEN_INCREMENT,
 		NULL, // owners list
-		&refTypes,
+		NULL,
 		&cntExists,
 		&names,
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
@@ -171,18 +163,109 @@ bool CARContainerList::LoadFromServer()
 	{
 		FreeARBooleanList(&cntExists, false);
 		internalListState = ARAPI_ALLOC;
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
-		{
-			appRefNames.push_back("");
-			sortedList.push_back(i);
-		}
 		funcResult = true;
 	}
 	else
 	{
 		cerr << arIn->GetARStatusError(&status);
+
+		// ok, fallback to slow data retrieval
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow container loading!" << endl;
+
+		// first check if container names are already loaded
+		if (objectsToLoad == NULL)
+		{
+			// no names loaded ... now get all names from server
+			memset(&objectNames, 0, sizeof(objectNames));
+			
+			ARContainerInfoList contNames;			
+			ARZeroMemory(&contNames);
+
+			if (ARGetListContainer(&arIn->arControl, NULL, NULL, AR_HIDDEN_INCREMENT, NULL, NULL, &contNames, &status) == AR_RETURN_OK)
+			{
+				// create a temporate ARNameList
+				objectNames.numItems = contNames.numItems;
+				objectNames.nameList = new ARNameType[contNames.numItems];
+				for (unsigned int index = 0; index < contNames.numItems; ++index)
+					memcpy(&objectNames.nameList[index], contNames.conInfoList[index].name, sizeof(ARNameType));
+
+				// clean up the structs we dont need anymore
+				FreeARContainerInfoList(&contNames, false);
+
+				// backup count
+				originalObjectNameCount = contNames.numItems;
+				objectsToLoad = &objectNames;
+			}
+			else
+				cerr << arIn->GetARStatusError(&status);
+		}
+
+		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
+		{
+			// allocate needed size for internal lists
+			this->Reserve(objectsToLoad->numItems);
+
+			// use a separate counter for the store index, because if an object can't be loaded, this index is not incremented
+			unsigned int curListPos = 0; 
+
+			// now load each object
+			for (unsigned int i=0; i < objectsToLoad->numItems; ++i)
+			{
+				LOG << "Loading Container: " << objectsToLoad->nameList[i] << " ";
+
+				strncpy(names.nameList[curListPos], objectsToLoad->nameList[i], AR_MAX_NAME_SIZE);
+				names.nameList[curListPos][AR_MAX_NAME_SIZE] = 0;
+				
+				if(ARGetContainer(&arIn->arControl,
+					names.nameList[curListPos],
+					NULL,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+					NULL, // groupListList // TODO: support static inherited permissions
+#endif
+					&permissions.permissionList[curListPos],
+					&subadmins.internalIdListList[curListPos],
+					&ownerObjects.ownerObjListList[curListPos],
+					&labels.stringList[curListPos],
+					&descriptions.stringList[curListPos],
+					&types.intList[curListPos],
+					&references.referenceListList[curListPos],
+					&helpTexts.stringList[curListPos],
+					owners.nameList[curListPos],
+					&changedTimes.timestampList[curListPos],
+					changedUsers.nameList[curListPos],
+					&changeDiary.stringList[curListPos],
+					&objProps.propsList[curListPos],
+					&status) == AR_RETURN_OK)
+				{
+					LOG << " (InsideID: " << curListPos << ") [OK]" << endl;						
+					curListPos++;
+
+					FreeARStatusList(&status, false);
+				}
+				else
+					cerr << arIn->GetARStatusError(&status);
+
+				// now update list counts
+				names.numItems = curListPos;
+				permissions.numItems = curListPos;
+				subadmins.numItems = curListPos;
+				ownerObjects.numItems = curListPos;
+				labels.numItems = curListPos;
+				descriptions.numItems = curListPos;
+				types.numItems = curListPos;
+				references.numItems = curListPos;
+				helpTexts.numItems = curListPos;
+				changedTimes.numItems = curListPos;
+				owners.numItems = curListPos;
+				changedUsers.numItems = curListPos;
+				changeDiary.numItems = curListPos;
+				objProps.numItems = curListPos;
+
+				if (curListPos > 0)
+					funcResult = true;
+			}
+		}
 	}
 
 	// check if we have to clean up the name list
@@ -190,6 +273,16 @@ bool CARContainerList::LoadFromServer()
 	{
 		objectNames.numItems = originalObjectNameCount;
 		delete[] objectNames.nameList;
+	}
+
+	if (funcResult)
+	{
+		sortedList.reserve(names.numItems);
+		for (unsigned int i=0; i<names.numItems; ++i)
+		{
+			appRefNames.push_back("");
+			sortedList.push_back(i);
+		}
 	}
 
 	return funcResult;
