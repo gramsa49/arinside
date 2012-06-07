@@ -69,8 +69,11 @@ void CWebPage::PageHeader(ostream &strm)
 	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << endl;
 	strm << "<meta name=\"author\" content=\"ARInside\" />" << endl;
 	AddStyleSheetReference(strm, "img/style.css");
+	AddStyleSheetReference(strm, "img/jquery-ui-custom.css");
 	AddScriptReference(strm, "img/sortscript.js");
 	AddScriptReference(strm, "img/tabscript.js");
+	AddScriptReference(strm, "img/jquery.js");
+	AddScriptReference(strm, "img/jquery-ui.js");
 	strm << "</head>" << endl;
 }
 

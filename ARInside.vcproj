@@ -1196,6 +1196,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\TabControl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\TabControl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Output\Table.cpp"
 				>
 			</File>

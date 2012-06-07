@@ -18,6 +18,7 @@
 #include "DocSchemaDetails.h"
 #include "DocFieldDetails.h"
 #include "../output/CsvPage.h"
+#include "../output/TabControl.h"
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
 #include "../core/ARHandle.h"
@@ -60,7 +61,7 @@ void CDocSchemaDetails::Documentation()
 		CWindowsUtil winUtil(this->pInside->appConfig);
 		if(winUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStrm;	
+			//stringstream pgStrm;	
 			CWebPage webPage(file->GetFileName(), this->schema.GetName(), rootLevel, this->pInside->appConfig);
 			CDocOverlayHelper overlayHelper(schema, rootLevel);
 			
@@ -83,25 +84,44 @@ void CDocSchemaDetails::Documentation()
 			//Add schema navigation menu	
 			webPage.SetNavigation(this->SchemaNavigation());
 
-			// Add table with all references to the page
-			pgStrm << GenerateReferencesTable(compSchema);
+			// now the content
+			CTabControl tabControl;
+
+			// Add general schema informations to the page
+			tabControl.AddTab("General", this->pInside->ServerObjectHistory(&this->schema, rootLevel));
+
+			// Add list of all fields to the page
+			tabControl.AddTab("Fields", (IsJoinViewOrVendorForm(compSchema) ? this->AllFieldsSpecial() : this->AllFields()) );
+
+			// Add schemas properties (like Entrypoint-, Archiv- and Audit-settings) to the page
+			tabControl.AddTab("Properties", ShowProperties());
 
 			// Add a section which lists workflow thats reading data from this form
-			pgStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
-			pgStrm << this->SetFieldReferences();
+			tabControl.AddTab("Workflow", this->SetFieldReferences());
 
-			//Fields
-			switch(compSchema.schemaType)
-			{
-			case AR_SCHEMA_JOIN:
-			case AR_SCHEMA_VIEW:
-			case AR_SCHEMA_VENDOR:
-				pgStrm << this->AllFieldsSpecial();
-				break;
-			default:	
-				pgStrm << this->AllFields();
-				break;
-			}
+			// Add table with all references to the page
+			tabControl.AddTab("References", GenerateReferencesTable(compSchema));
+
+			webPage.AddContent(tabControl.ToXHtml());
+
+			//pgStrm << GenerateReferencesTable(compSchema);
+
+			//// Add a section which lists workflow thats reading data from this form
+			//pgStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
+			//pgStrm << this->SetFieldReferences();
+
+			////Fields
+			//switch(compSchema.schemaType)
+			//{
+			//case AR_SCHEMA_JOIN:
+			//case AR_SCHEMA_VIEW:
+			//case AR_SCHEMA_VENDOR:
+			//	pgStrm << this->AllFieldsSpecial();
+			//	break;
+			//default:	
+			//	pgStrm << this->AllFields();
+			//	break;
+			//}
 
 			//indexes
 			this->IndexDoc();
@@ -135,16 +155,16 @@ void CDocSchemaDetails::Documentation()
 			this->SchemaEscalDoc();
 
 
-			webPage.AddContent(pgStrm.str());
+			//webPage.AddContent(pgStrm.str());
 
-			// Basics / Entry Points
-			webPage.AddContent(ShowProperties());
+			//// Basics / Entry Points
+			//webPage.AddContent(ShowProperties());
 
 			//Properties
 			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
 
-			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, rootLevel));
+			////History
+			//webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, rootLevel));
 
 			webPage.SaveInFolder(path);
 		}
@@ -2235,6 +2255,7 @@ string CDocSchemaDetails::SetFieldReferences()
 			}
 		}
 
+		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
 		tab.ToXHtml(strm);
 	}
 	catch(exception& e)
@@ -2335,4 +2356,17 @@ string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSc
 	tblObjProp.AddRow(row);
 
 	return tblObjProp.ToXHtml();
+}
+
+bool CDocSchemaDetails::IsJoinViewOrVendorForm(const ARCompoundSchema &compSchema)
+{
+	switch(compSchema.schemaType)
+	{
+	case AR_SCHEMA_JOIN:
+	case AR_SCHEMA_VIEW:
+	case AR_SCHEMA_VENDOR:
+		return true;
+	default:	
+		return false;
+	}
 }

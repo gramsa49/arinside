@@ -363,3 +363,11 @@ td.disabledLetter
 	text-align: right;
 	line-height: 16px;
 }
+
+#MainObjectTabCtrl .inner-tab
+{
+    background: none; 
+    background-color: white; 
+    border: 
+    solid 1px #BBB;
+}
