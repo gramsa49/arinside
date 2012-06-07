@@ -51,5 +51,7 @@ namespace OUTPUT
 		void DynamicHeaderText(ostream &strm);
 		void DynamicFooterText(ostream &strm);
 		string CurrentDateTime();
+
+		void AddScriptReference(ostream &strm, const std::string &scriptPath);
 	};
 }

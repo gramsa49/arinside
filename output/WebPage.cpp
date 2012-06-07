@@ -69,8 +69,8 @@ void CWebPage::PageHeader(ostream &strm)
 	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << endl;
 	strm << "<meta name=\"author\" content=\"ARInside\" />" << endl;
 	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << CWebUtil::RootPath(rootLevel) << "img/style.css\" />" << endl;
-	strm << "<script src=\"" << CWebUtil::RootPath(rootLevel) << "img/sortscript.js\" type=\"text/javascript\"></script>" << endl;
-	strm <<	"<script src=\"" << CWebUtil::RootPath(rootLevel) << "img/tabscript.js\" type=\"text/javascript\"></script>" << endl;
+	AddScriptReference(strm, "img/sortscript.js");
+	AddScriptReference(strm, "img/tabscript.js");
 	strm << "</head>" << endl;
 }
 
@@ -200,4 +200,9 @@ int CWebPage::SaveInFolder(const string &path)
 	}
 
 	return result;
+}
+
+void CWebPage::AddScriptReference(std::ostream &strm, const std::string &scriptPath)
+{
+	strm << "<script src=\"" << CWebUtil::RootPath(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
 }
