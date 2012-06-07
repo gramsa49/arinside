@@ -80,6 +80,7 @@ CARVui::CARVui(unsigned int schemaInsideId, const string& vuiLabel)
 		if (val != NULL && val->dataType == AR_DATA_TYPE_CHAR && vuiLabel == val->u.charVal)
 		{
 			vuiIndex = vuiPos;
+			insideId = GetId();
 			break;
 		}
 	}	
@@ -91,7 +92,7 @@ CARVui::~CARVui(void)
 
 bool CARVui::Exists() const
 {
-	return (vuiIndex >= 0 && (unsigned int)vuiIndex < vuiList->GetCount());
+	return (vuiIndex >= 0 && (unsigned int)vuiIndex < vuiList->GetCount() && insideId > 0);
 }
 
 bool CARVui::IsClonable() const
