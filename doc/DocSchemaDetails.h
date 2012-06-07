@@ -49,6 +49,7 @@ private:
 	void SchemaSubadminDoc();
 	void WorkflowDoc();
 
+	std::string GenerateReferencesTable(const ARCompoundSchema &compSchema);
 
 	string AllFields();
 	void AllFieldsCsv();

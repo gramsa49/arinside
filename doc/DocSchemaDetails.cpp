@@ -83,98 +83,10 @@ void CDocSchemaDetails::Documentation()
 			//Add schema navigation menu	
 			webPage.SetNavigation(this->SchemaNavigation());
 
+			// Add table with all references to the page
+			pgStrm << GenerateReferencesTable(compSchema);
 
-			//Schema Properties
-			stringstream strmTmp;
-			CTable tblObjProp("objProperties", "TblObjectList");
-			tblObjProp.AddColumn(0, "Property");
-			tblObjProp.AddColumn(0, "Value");
-
-			//Schema type informations
-			CTableRow row("cssStdRow");	
-			CTableCell cellProp("");				
-			CTableCell cellPropValue("");    
-
-
-			if(compSchema.schemaType == AR_SCHEMA_JOIN
-				|| compSchema.schemaType == AR_SCHEMA_VIEW
-				|| compSchema.schemaType == AR_SCHEMA_VENDOR)
-			{
-				cellProp.content = "Schema Type Details";				
-				cellPropValue.content = this->TypeDetails();    
-				row.AddCell(cellProp);
-				row.AddCell(cellPropValue);
-				tblObjProp.AddRow(row);	
-			}
-
-			//Container References
-			row.ClearCells();
-			cellProp.content = "Container References";
-			cellPropValue.content = this->ContainerReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);			
-
-			//TableField References
-			row.ClearCells();
-			cellProp.content = "Table Fields datasource form";
-			cellPropValue.content = this->TableFieldReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
-
-			//AL window open references
-			row.ClearCells();
-			cellProp.content = "Active Link \"Open Window Action\"";
-			cellPropValue.content = this->AlWindowOpenReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);
-
-			//ActiveLink PushFields References
-			row.ClearCells();
-			cellProp.content = "Active Link \"Push Field Action\" to this form";
-			cellPropValue.content = this->AlPushFieldsReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
-
-			//Filter PushFields References
-			row.ClearCells();
-			cellProp.content = "Filter \"Push Field Action\" to this form";
-			cellPropValue.content = this->FilterPushFieldsReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);
-
-			//Escalation PushFIelds References
-			row.ClearCells();
-			cellProp.content = "Escalation \"Push Field Action\" to this form";
-			cellPropValue.content = this->EscalationPushFieldsReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);
-
-			//Join References
-			row.ClearCells();
-			cellProp.content = "Join Form References";
-			cellPropValue.content = this->JoinFormReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);
-
-			//Menu References
-			row.ClearCells();
-			cellProp.content = "Search Menu References";
-			cellPropValue.content = this->SearchMenuReferences();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);
-
-			//Add table to page
-			pgStrm << tblObjProp;
-			tblObjProp.Clear();
-
+			// Add a section which lists workflow thats reading data from this form
 			pgStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
 			pgStrm << this->SetFieldReferences();
 
@@ -2331,4 +2243,96 @@ string CDocSchemaDetails::SetFieldReferences()
 	}
 
 	return strm.str();
+}
+
+string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSchema)
+{
+	//Schema Properties
+	stringstream strmTmp;
+	CTable tblObjProp("objProperties", "TblObjectList");
+	tblObjProp.AddColumn(0, "Property");
+	tblObjProp.AddColumn(0, "Value");
+
+	//Schema type informations
+	CTableRow row("cssStdRow");	
+	CTableCell cellProp("");				
+	CTableCell cellPropValue("");    
+
+
+	if(compSchema.schemaType == AR_SCHEMA_JOIN
+		|| compSchema.schemaType == AR_SCHEMA_VIEW
+		|| compSchema.schemaType == AR_SCHEMA_VENDOR)
+	{
+		cellProp.content = "Schema Type Details";				
+		cellPropValue.content = this->TypeDetails();    
+		row.AddCell(cellProp);
+		row.AddCell(cellPropValue);
+		tblObjProp.AddRow(row);	
+	}
+
+	//Container References
+	row.ClearCells();
+	cellProp.content = "Container References";
+	cellPropValue.content = this->ContainerReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);			
+
+	//TableField References
+	row.ClearCells();
+	cellProp.content = "Table Fields datasource form";
+	cellPropValue.content = this->TableFieldReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);	
+
+	//AL window open references
+	row.ClearCells();
+	cellProp.content = "Active Link \"Open Window Action\"";
+	cellPropValue.content = this->AlWindowOpenReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);
+
+	//ActiveLink PushFields References
+	row.ClearCells();
+	cellProp.content = "Active Link \"Push Field Action\" to this form";
+	cellPropValue.content = this->AlPushFieldsReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);	
+
+	//Filter PushFields References
+	row.ClearCells();
+	cellProp.content = "Filter \"Push Field Action\" to this form";
+	cellPropValue.content = this->FilterPushFieldsReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);
+
+	//Escalation PushFIelds References
+	row.ClearCells();
+	cellProp.content = "Escalation \"Push Field Action\" to this form";
+	cellPropValue.content = this->EscalationPushFieldsReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);
+
+	//Join References
+	row.ClearCells();
+	cellProp.content = "Join Form References";
+	cellPropValue.content = this->JoinFormReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);
+
+	//Menu References
+	row.ClearCells();
+	cellProp.content = "Search Menu References";
+	cellPropValue.content = this->SearchMenuReferences();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);
+
+	return tblObjProp.ToXHtml();
 }
