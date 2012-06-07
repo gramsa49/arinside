@@ -68,7 +68,7 @@ void CWebPage::PageHeader(ostream &strm)
 	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" << endl;
 	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << endl;
 	strm << "<meta name=\"author\" content=\"ARInside\" />" << endl;
-	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << CWebUtil::RootPath(rootLevel) << "img/style.css\" />" << endl;
+	AddStyleSheetReference(strm, "img/style.css");
 	AddScriptReference(strm, "img/sortscript.js");
 	AddScriptReference(strm, "img/tabscript.js");
 	strm << "</head>" << endl;
@@ -205,4 +205,9 @@ int CWebPage::SaveInFolder(const string &path)
 void CWebPage::AddScriptReference(std::ostream &strm, const std::string &scriptPath)
 {
 	strm << "<script src=\"" << CWebUtil::RootPath(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
+}
+
+void CWebPage::AddStyleSheetReference(std::ostream &strm, const std::string &cssPath)
+{
+	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << CWebUtil::RootPath(rootLevel) << cssPath << "\" />" << endl;
 }

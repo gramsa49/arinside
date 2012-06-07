@@ -53,5 +53,6 @@ namespace OUTPUT
 		string CurrentDateTime();
 
 		void AddScriptReference(ostream &strm, const std::string &scriptPath);
+		void AddStyleSheetReference(std::ostream &strm, const std::string &cssPath);
 	};
 }
