@@ -56,6 +56,7 @@ private:
 	string AllFieldsSpecial();
 	void AllFieldsSpecialCsv();
 
+	string ShowGeneralInfo();
 	string TypeDetails();
 	string ContainerReferences();
 	string TableFieldReferences();

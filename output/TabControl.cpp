@@ -72,7 +72,7 @@ namespace OUTPUT
 
 		for (; curIt != endIt; ++curIt)
 		{
-			strm << "<div id=\"" << curIt->htmlId << "\" class=\"inner-tab\">" << endl;
+			strm << "<div id=\"" << curIt->htmlId << "\">" << endl;
 			strm << curIt->content << endl;
 			strm << "</div>" << endl;
 		}
@@ -80,6 +80,6 @@ namespace OUTPUT
 
 	void CTabControl::RenderTabInit(ostream &strm)
 	{
-		strm << "<script>$(function() {	$(\"#MainObjectTabCtrl\").tabs(); });</script>" << endl;
+		strm << "<script>$(function() {	$(\"#MainObjectTabCtrl\").tabs(); $(\"#MainObjectTabCtrl div\").addClass(\"inner-tab\"); });</script>" << endl;
 	}
 };

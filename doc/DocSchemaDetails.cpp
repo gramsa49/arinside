@@ -88,7 +88,7 @@ void CDocSchemaDetails::Documentation()
 			CTabControl tabControl;
 
 			// Add general schema informations to the page
-			tabControl.AddTab("General", this->pInside->ServerObjectHistory(&this->schema, rootLevel));
+			tabControl.AddTab("General", ShowGeneralInfo());
 
 			// Add list of all fields to the page
 			tabControl.AddTab("Fields", (IsJoinViewOrVendorForm(compSchema) ? this->AllFieldsSpecial() : this->AllFields()) );
@@ -2369,4 +2369,57 @@ bool CDocSchemaDetails::IsJoinViewOrVendorForm(const ARCompoundSchema &compSchem
 	default:	
 		return false;
 	}
+}
+
+string CDocSchemaDetails::ShowGeneralInfo()
+{
+	stringstream strm;
+
+	CTable tbl("general", "TblNoBorder");
+	tbl.AddColumn(20, "");
+	tbl.AddColumn(20, "");
+	tbl.AddColumn(20, "");
+	tbl.AddColumn(20, "");
+	tbl.AddColumn(20, "");
+	tbl.DisableHeader();
+
+	CTableRow row;
+	row.AddCell("Name");
+	row.AddCell(this->schema.GetName());
+	tbl.AddRow(row);	
+	row.ClearCells();
+
+	row.AddCell("Type");
+	row.AddCell(CAREnum::SchemaType(this->schema.GetCompound().schemaType));
+	tbl.AddRow(row);
+	row.ClearCells();
+
+	// search for the default vui
+	CARVui defaultVUI(this->schema.GetInsideId(), this->schema.GetDefaultVUI());
+
+	row.AddCell("Default View");
+	row.AddCell((defaultVUI.Exists() ? defaultVUI.GetURL(rootLevel) : this->schema.GetDefaultVUI()));
+	tbl.AddRow(row);
+	row.ClearCells();
+
+	strm << tbl.ToXHtml();
+	tbl.ClearRows();
+
+	row.AddCell("DB Table ID");
+	row.AddCell(""); // TODO: load db infos and add it here
+	tbl.AddRow(row);
+	row.ClearCells();
+
+	row.AddCell("DB Table View");
+	row.AddCell(""); // TODO: load db infos and add it here
+	tbl.AddRow(row);
+	row.ClearCells();
+
+	strm << tbl.ToXHtml();
+
+	strm << "<hr/>" << endl;
+
+	strm << this->pInside->ServerObjectHistory(&this->schema, rootLevel);
+
+	return strm.str();
 }

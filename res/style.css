@@ -145,6 +145,26 @@ table.TblObjectList td {
  vertical-align: top;
 }
 
+/* Table without border */
+table.TblNoBorder {
+ width: 100%;
+ border-width: 0px;
+ border-collapse: collapse;
+ padding: 0px;
+ margin: 5px 0px 10px 0px;
+}
+table.TblNoBorder th {
+ font-weight:normal;
+ text-align: left;
+ border-width: 0px;
+ background-color: #efefef;
+ color: #000000;
+}
+
+table.TblNoBorder td {
+ border-width: 0px;
+ vertical-align: top;
+}
 
 /* Table Object List Hidden*/
 table.TblHidden {
