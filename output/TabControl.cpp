@@ -32,6 +32,13 @@ namespace OUTPUT
 		m_Tabs.push_back(Tab(name, content, GetNextTabId()));
 	}
 
+	string CTabControl::GetNextTabId()
+	{
+		stringstream id;
+		id << "tab-" << (m_Tabs.size() + 1);
+		return id.str();
+	}
+
 	string CTabControl::ToXHtml()
 	{
 		stringstream strm;
@@ -43,13 +50,6 @@ namespace OUTPUT
 		strm << "</div>" << endl;
 
 		return strm.str();
-	}
-
-	string CTabControl::GetNextTabId()
-	{
-		stringstream id;
-		id << "tab-" << (m_Tabs.size() + 1);
-		return id.str();
 	}
 
 	void CTabControl::RenderTabList(ostream &strm)
@@ -80,6 +80,10 @@ namespace OUTPUT
 
 	void CTabControl::RenderTabInit(ostream &strm)
 	{
-		strm << "<script>$(function() {	$(\"#MainObjectTabCtrl\").tabs(); $(\"#MainObjectTabCtrl div\").addClass(\"inner-tab\"); });</script>" << endl;
+		//strm << "<script src=\"" << CWebUtil::RootPath(rootLevel) << "schema_page.js" << "\" type=\"text/javascript\"></script>";
+		//strm << "<script>$(function() {	$(\"#MainObjectTabCtrl\").tabs(); $(\"#MainObjectTabCtrl div\").addClass(\"inner-tab\"); });"
+		//	"$('document').ready(function() { $.address.change(function(event){ $(\"#MainObjectTabCtrl\").tabs( \"select\" , window.location.hash )"
+		//	"}); $(\"#MainObjectTabCtrl\").bind(\"tabsselect\", function(event, ui) { window.location.hash = ui.tab.hash; });});"
+		//	"</script>" << endl;
 	}
 };

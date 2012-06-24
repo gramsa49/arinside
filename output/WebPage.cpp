@@ -74,6 +74,8 @@ void CWebPage::PageHeader(ostream &strm)
 	AddScriptReference(strm, "img/tabscript.js");
 	AddScriptReference(strm, "img/jquery.js");
 	AddScriptReference(strm, "img/jquery-ui.js");
+	AddScriptReference(strm, "img/jquery.address.min.js");
+	AddScriptReference(strm, "img/schema_page.js");
 	strm << "</head>" << endl;
 }
 

@@ -70,6 +70,7 @@ ID_EDIT                 RCDATA                  "res/edit.gif"
 ID_HIDDEN               RCDATA                  "res/hidden.gif"
 ID_INFO                 RCDATA                  "res/info.gif"
 ID_IMAGE                RCDATA                  "res/image.gif"
+ID_SCHEMAPAGE_JS        RCDATA                  "res/schema_page.js"
 /////////////////////////////////////////////////////////////////////////////
 #endif    // English (U.S.) resources
 

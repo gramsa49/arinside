@@ -133,7 +133,7 @@ SET (ARINSIDE_SRC_GIFS
  res/doc.gif res/down.gif res/edit.gif res/empty_list.gif res/escalation.gif res/filter.gif res/filter_guide.gif
  res/folder.gif res/group.gif res/hidden.gif res/image.gif res/info.gif res/menu.gif res/next.gif
  res/packing_list.gif res/prev.gif res/schema.gif res/search.gif res/server.gif res/sort_asc.gif res/sort_desc.gif
- res/up.gif res/user.gif res/visible.gif res/webservice.gif
+ res/up.gif res/user.gif res/visible.gif res/webservice.gif res/schema_page.js
 )
 SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js)
 SET (ARINSIDE_SRC_CSS res/style.css)

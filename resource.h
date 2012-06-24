@@ -37,6 +37,7 @@
 #define ID_USER                         133
 #define ID_VISIBLE                      134
 #define ID_WEBSERVICE                   135
+#define ID_SCHEMAPAGE_JS                136
 
 // Next default values for new objects
 // 

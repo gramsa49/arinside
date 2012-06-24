@@ -74,4 +74,5 @@ private:
 	extern unsigned char _binary_res_user_gif_start[]; extern unsigned int _binary_res_user_gif_size;
 	extern unsigned char _binary_res_visible_gif_start[]; extern unsigned int _binary_res_visible_gif_size;
 	extern unsigned char _binary_res_webservice_gif_start[]; extern unsigned int _binary_res_webservice_gif_size;
+	extern unsigned char _binary_res_schema_page_js_start[]; extern unsigned int _binary_res_schema_page_js_size;
 #endif

@@ -81,6 +81,7 @@ void CWindowsUtil::Load()
 	LoadFromResource(ID_HIDDEN, "hidden.gif", strm.str());
 	LoadFromResource(ID_INFO, "info.gif", strm.str());
 	LoadFromResource(ID_IMAGE, "image.gif", strm.str());
+	LoadFromResource(ID_SCHEMAPAGE_JS, "schema_page.js", strm.str());
 }
 
 void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string path)
@@ -139,6 +140,7 @@ void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string pa
 		case ID_USER: data = _binary_res_user_gif_start; len = (unsigned int)_binary_res_user_gif_size; break;
 		case ID_VISIBLE: data = _binary_res_visible_gif_start; len = (unsigned int)_binary_res_visible_gif_size; break;
 		case ID_WEBSERVICE: data = _binary_res_webservice_gif_start; len = (unsigned int)_binary_res_webservice_gif_size; break;
+		case ID_SCHEMAPAGE_JS: data = _binary_res_schema_page_js_start; len = (unsigned int)_binary_res_schema_page_js_size; break;
 	}
 #endif
 
