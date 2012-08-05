@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="ARInside"
-	ProjectGUID="{CC93BDAD-DDFA-4F9F-8E08-A2CAC06C5120}"
-	RootNamespace="ARInsideMain"
+	Name="ARInsideTest"
+	ProjectGUID="{2CE7795F-1C22-4914-BC19-F498AC93CFDB}"
+	RootNamespace="ARInsideTest"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -44,13 +44,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="ARInsideMain.h"
+				PrecompiledHeaderThrough="ARInsideTest.h"
 				WarningLevel="3"
 				DebugInformationFormat="4"
 			/>
@@ -65,12 +65,11 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtestd.lib arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api764sp2\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
-				OptimizeReferences="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -93,6 +92,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="$(TargetPath)"
 			/>
 		</Configuration>
 		<Configuration
@@ -121,13 +121,13 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
 				UsePrecompiledHeader="2"
-				PrecompiledHeaderThrough="ARInsideMain.h"
+				PrecompiledHeaderThrough="ARInsideTest.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -142,9 +142,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtestd.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\Api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="17"
@@ -184,6 +184,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
+				AdditionalDependencies=""
+				Outputs=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -198,11 +201,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="ARInsideTest.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -217,9 +221,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -246,6 +250,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="$(TargetPath)"
 			/>
 		</Configuration>
 		<Configuration
@@ -261,6 +266,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="$(TargetPath)&#x0D;&#x0A;"
+				AdditionalDependencies="$(TargetPath)"
+				Outputs="true"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -276,11 +284,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="ARInsideTest.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -295,9 +304,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -324,6 +333,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 		<Configuration
@@ -339,6 +349,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine=""
+				AdditionalDependencies=""
+				Outputs=""
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -353,11 +366,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="ARInsideTest.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -372,9 +386,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -401,6 +415,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine="$(TargetPath)"
 			/>
 		</Configuration>
 		<Configuration
@@ -416,6 +431,9 @@
 			/>
 			<Tool
 				Name="VCCustomBuildTool"
+				CommandLine="$(TargetPath)&#x0D;&#x0A;"
+				AdditionalDependencies="$(TargetPath)"
+				Outputs="true"
 			/>
 			<Tool
 				Name="VCXMLDataGeneratorTool"
@@ -431,11 +449,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="ARInsideTest.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -450,9 +469,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -479,6 +498,7 @@
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
+				CommandLine=""
 			/>
 		</Configuration>
 	</Configurations>
@@ -486,11 +506,7 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\ARInside.rc"
-			>
-		</File>
-		<File
-			RelativePath=".\ARInsideMain.cpp"
+			RelativePath=".\ARInsideTest.cpp"
 			>
 			<FileConfiguration
 				Name="Debug|Win32"
@@ -514,7 +530,6 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
-					PrecompiledHeaderThrough="ARInsideMain.h"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -523,7 +538,6 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
-					PrecompiledHeaderThrough="ARInsideMain.h"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -532,7 +546,6 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
-					PrecompiledHeaderThrough="ARInsideMain.h"
 				/>
 			</FileConfiguration>
 			<FileConfiguration
@@ -541,12 +554,11 @@
 				<Tool
 					Name="VCCLCompilerTool"
 					UsePrecompiledHeader="1"
-					PrecompiledHeaderThrough="ARInsideMain.h"
 				/>
 			</FileConfiguration>
 		</File>
 		<File
-			RelativePath=".\ARInsideMain.h"
+			RelativePath=".\ARInsideTest.h"
 			>
 		</File>
 	</Files>

@@ -139,6 +139,9 @@ SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js)
 SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
 
+SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
+SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h)
+
 IF(NOT MSVC)
 	SET (ARINSIDE_SRCS ${ARINSIDE_SRCS} stdafx.cpp)
 ENDIF(NOT MSVC)
@@ -285,6 +288,7 @@ IF(UNIX)
 	SET(ARINSIDE_SRCS ${ARINSIDE_SRCS} ${ARINSIDE_GENERATED_RESOURCE_SRC_FILES})
 ELSE(UNIX)
 	SET(ARINSIDE_SRCS ${ARINSIDE_SRCS} "ARInside.rc")
+	SET(ARINSIDE_MAIN_SRCS ${ARINSIDE_MAIN_SRCS} "ARInside.rc")
 ENDIF(UNIX)
 
 ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS)
@@ -301,8 +305,55 @@ STRING(REPLACE "$WCREV$" ${ARINSIDE_WC_REVISION} SVNREV_TEMPLATE "${SVNREV_TEMPL
 FILE(WRITE ${CMAKE_CURRENT_BINARY_DIR}/svnrev.h ${SVNREV_TEMPLATE})
 INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
-# setup output target
-ADD_EXECUTABLE(arinside ${ARINSIDE_SRCS} ${ARINSIDE_RESOURCE_OBJECTS})
-TARGET_LINK_LIBRARIES(arinside ${ARS_API_LIB} ${ZLIB_LIB})
+# now setup testing ... http://stackoverflow.com/questions/9689183/cmake-googletest
+INCLUDE(ExternalProject)
+SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/thirdparty)
+ExternalProject_Add(
+	googletest
+	URL http://googletest.googlecode.com/files/gtest-1.6.0.zip
+	TIMEOUT 10
+	# Force separate output paths for debug and release builds to allow easy
+	# identification of correct lib in subsequent TARGET_LINK_LIBRARIES commands
+	CMAKE_ARGS -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_DEBUG:PATH=DebugLibs
+			   -DCMAKE_ARCHIVE_OUTPUT_DIRECTORY_RELEASE:PATH=ReleaseLibs
+			   -Dgtest_force_shared_crt=ON
+	# Disable install step
+	INSTALL_COMMAND ""
+	# Wrap download, configure and build steps in a script to log output
+	###These LOG_XXX params are only supported in cmake2.8.3+ and are disabled here to get backwards compatibility with 2.8.0
+	#LOG_DOWNLOAD ON
+	#LOG_CONFIGURE ON
+	#LOG_BUILD ON
+)
+	
+ExternalProject_Get_Property(googletest source_dir)
+INCLUDE_DIRECTORIES(${source_dir}/include)
+ExternalProject_Get_Property(googletest binary_dir)
+SET(GTEST_BINARY_DIR ${binary_dir})
+ENABLE_TESTING()
 
+LINK_DIRECTORIES(${GTEST_BINARY_DIR})
+
+# setup output target
+ADD_LIBRARY(arinsidelib ${ARINSIDE_SRCS} ${ARINSIDE_RESOURCE_OBJECTS})
+ADD_EXECUTABLE(arinside ${ARINSIDE_MAIN_SRCS})
+ADD_EXECUTABLE(arinsidetest ${ARINSIDE_TEST_SRCS})
+
+# dependencies
+ADD_DEPENDENCIES(arinsidetest arinsidelib googletest)
+ADD_DEPENDENCIES(arinside arinsidelib)
+
+# reference the needed libraries
+TARGET_LINK_LIBRARIES(arinside ${ARS_API_LIB} ${ZLIB_LIB} arinsidelib)
+TARGET_LINK_LIBRARIES(arinsidetest ${ARS_API_LIB} ${ZLIB_LIB} arinsidelib)
+IF(MSVC)
+	TARGET_LINK_LIBRARIES(arinsidetest
+		debug ${GTEST_BINARY_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
+		optimized ${GTEST_BINARY_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
+	)
+ELSE(MSVC)
+	TARGET_LINK_LIBRARIES(arinsidetest gtest)
+ENDIF(MSVC)
+
+ADD_TEST(NAME test COMMAND arinsidetest)
 #INSTALL(TARGETS arinside DESTINATION bin)
