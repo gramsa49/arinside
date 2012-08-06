@@ -505,6 +505,14 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="util"
+			>
+			<File
+				RelativePath=".\util\CommandLineValidatorTest.cpp"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ARInsideTest.cpp"
 			>

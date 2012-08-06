@@ -37,5 +37,4 @@ private:
 
 private:
 	CAppTimer mTimer;
-
 };

@@ -16,6 +16,11 @@
 
 #include "stdafx.h"
 #include "AppConfig.h"
+#include "WindowsUtil.h"
+#include "tclap/CmdLine.h"
+#include "util/CommandLineValidator.h"
+
+using namespace TCLAP;
 
 bool AppConfig::verboseMode = false;
 
@@ -68,4 +73,84 @@ AppConfig::AppConfig(void)
 
 AppConfig::~AppConfig(void)
 {
+}
+
+void AppConfig::Validate(CommandLineValidator& cmdLine)
+{
+	OverrideSettingsByCommandLine(cmdLine);
+
+	// special checks for server mode
+	if (!fileMode) 
+	{
+		string missingArgs;
+		unsigned int missingCount = 0;
+
+		if (!fileMode && serverName.empty())
+		{
+			missingCount++;
+			missingArgs = "server / ServerName";
+		}
+		if (userName.empty())
+		{
+			missingCount++;
+			if (!missingArgs.empty()) missingArgs += ", ";
+			missingArgs += "login / Username";
+		}
+
+		if (!missingArgs.empty())
+		{
+			string msg;
+			StdOutput _output;
+			msg = "Required argument(s) missing: " + missingArgs;
+			
+			cout << endl;
+			CmdLineParseException parseErr(msg);
+			_output.failure(cmdLine.GetCmdLine(), parseErr);
+		}
+	}
+
+	// validate the path of the target folder
+	if (targetFolder.empty())
+	{
+		cout << "[ERR] Target folder setting is missing or not setup correctly!" << endl;
+		throw ExitException(1);
+	}
+
+	// Just in case someone has set "DeleteExistingFiles" on and specified the root of the file system.
+	// For security reasons we disallow the root directory.
+	string fullOutputPath = CWindowsUtil::GetRealPathName(targetFolder);
+	if (CUtil::StrEndsWith(fullOutputPath, ":\\") || CUtil::StrEndsWith(fullOutputPath, ":/") || fullOutputPath == "/")
+	{
+		cout << "[ERR] The target directory points to the root of the device. This is not allowed!" << endl;
+		throw ExitException(1);
+	}
+}
+
+void AppConfig::OverrideSettingsByCommandLine(CommandLineValidator& cmdLine)
+{
+	// override settings with values specified by the command line 
+	if (cmdLine.isServerSet())
+		serverName = cmdLine.GetServer();
+
+	if (cmdLine.isOutputFolderSet())
+		targetFolder = cmdLine.GetOutputFolder();
+
+	if (cmdLine.isUsernameSet())
+		userName = cmdLine.GetUsername();
+
+	if (cmdLine.isPasswordSet())
+		password = cmdLine.GetPassword();
+
+	if (cmdLine.isTcpPortSet())
+		tcpPort = cmdLine.GetTcpPort();
+
+	if (cmdLine.isRpcPortSet())
+		rpcPort = cmdLine.GetRpcPort();
+
+	// the following settings are set by command line only 
+	slowObjectLoading = cmdLine.GetSlowObjectLoading();
+
+#if ARINSIDE_TEST_SUPPORT
+	testMode = cmdLine.GetTestMode();
+#endif
 }

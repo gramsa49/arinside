@@ -25,6 +25,9 @@ using namespace std;
  */ 
 #define LOG if(AppConfig::verboseMode) cout
 
+// forward declarations
+class CommandLineValidator;
+
 class AppConfig
 {
 public:
@@ -76,4 +79,9 @@ public:
 	int apiTimeout;
 
 	string runNotes;
+
+public:
+	void Validate(CommandLineValidator& cmdLine);
+private:
+	void OverrideSettingsByCommandLine(CommandLineValidator& cmdLine);
 };

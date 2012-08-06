@@ -125,7 +125,7 @@ SET (ARINSIDE_SRCS
  scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
- util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp
+ util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp
  AppConfig.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp WindowsUtil.cpp
 )
 SET (ARINSIDE_SRC_GIFS
@@ -140,7 +140,7 @@ SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
 
 SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
-SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h)
+SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h util/CommandLineValidatorTest.cpp)
 
 IF(NOT MSVC)
 	SET (ARINSIDE_SRCS ${ARINSIDE_SRCS} stdafx.cpp)

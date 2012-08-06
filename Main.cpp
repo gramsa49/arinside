@@ -22,6 +22,7 @@
 #include "tclap/CmdLine.h"
 #include "AppException.h"
 #include "WindowsUtil.h"
+#include "util/CommandLineValidator.h"
 
 using namespace TCLAP;
 
@@ -258,56 +259,15 @@ int CMain::Run(int argc, char* argv[])
 	mTimer.StartTimer();
 	int result = AR_RETURN_ERROR;
 
-	string server, login, pwd, settingsIni, output;
-	int tcp = 0;
-	int rpc = 0;
-
 	OutputARInsideBanner();
 
-	CmdLine cmd("ARInside -- http://arinside.org\n"
-		          "Copyright (C) 2012 Stefan Nerlich, LJ Longwing, John Luthgers\n"
-							"This program comes with ABSOLUTELY NO WARRANTY, is free software, and you are welcome to "
-							"redistribute it under certain conditions; see COPYING file for more details.", 
-							' ', AppVersion);
+	try
+	{
+		CommandLineValidator cmdLineValidator(argc, argv);
+		if (!cmdLineValidator.Validate())
+			return cmdLineValidator.GetExitCode();
 
-	ValueArg<string> iniArg("i", "ini", "Application settings filename", true, "settings.ini", "string");
-	ValueArg<string> serverArg("s","server","ARSystem server",false,"","string");
-	ValueArg<string> loginArg("l", "login", "Login name", false, "", "string");
-	ValueArg<string> pwdArg("p", "pwd", "Password", false, "", "string");
-	ValueArg<int> tcpArg("t", "tcp", "Tcp port", false, 0, "int");
-	ValueArg<int> rpcArg("r", "rcp", "Rcp port", false, 0, "int");
-	ValueArg<string> outputFolder("o", "output", "Output folder", false, "", "string");
-	SwitchArg slowArg("", "slow", "Uses slow object loading", false);
-	SwitchArg verboseArg("v","verbose","Verbose Output",false);
-#if ARINSIDE_TEST_SUPPORT
-	SwitchArg testModeArg("","test", "", false);
-#endif	
-	try 
-	{  
-#if ARINSIDE_TEST_SUPPORT
-		cmd.add(testModeArg);
-#endif
-
-		// add it in reverse order. the "--help" output lists the arguments from the last to the first added.
-		cmd.add(verboseArg);
-		cmd.add(slowArg);
-		cmd.add(rpcArg);
-		cmd.add(tcpArg);
-		cmd.add(pwdArg);
-		cmd.add(loginArg);
-		cmd.add(outputFolder);
-		cmd.add(serverArg);
-		cmd.add(iniArg);
-		cmd.parse( argc, argv );
-
-		server = serverArg.getValue();
-		output = outputFolder.getValue();
-		login = loginArg.getValue();
-		pwd = pwdArg.getValue();
-		tcp = tcpArg.getValue();
-		rpc = rpcArg.getValue();
-		settingsIni = iniArg.getValue();
-		AppConfig::verboseMode = verboseArg.getValue();
+		string settingsIni = cmdLineValidator.GetIniFilename();
 
 		std::ifstream in(settingsIni.c_str());		
 		if(!in)
@@ -321,75 +281,9 @@ int CMain::Run(int argc, char* argv[])
 		AppConfig appConfig;
 		LoadConfigFile(settingsIni, appConfig);
 
-		// override settings with values specified by the command line 
-		if (serverArg.isSet())
-			appConfig.serverName = server;
-
-		if (outputFolder.isSet())
-			appConfig.targetFolder = output;
-
-		if (loginArg.isSet())
-			appConfig.userName = login;
-
-		if (pwdArg.isSet())
-			appConfig.password = pwd;
-
-		if (tcpArg.isSet())
-			appConfig.tcpPort = tcp;
-
-		if (rpcArg.isSet())
-			appConfig.rpcPort = rpc;
-
-		appConfig.slowObjectLoading = slowArg.getValue();
-
-#if ARINSIDE_TEST_SUPPORT
-		appConfig.testMode = testModeArg.getValue();
-#endif
-
-		// special checks for server mode
-		if (!appConfig.fileMode) 
-		{
-			string missingArgs;
-			unsigned int missingCount = 0;
-
-			if (!appConfig.fileMode && appConfig.serverName.empty())
-			{
-				missingCount++;
-				missingArgs = "server / ServerName";
-			}
-			if (appConfig.userName.empty())
-			{
-				missingCount++;
-				if (!missingArgs.empty()) missingArgs += ", ";
-				missingArgs += "login / Username";
-			}
-
-			if (!missingArgs.empty())
-			{
-				string msg;
-				StdOutput _output;
-				msg = "Required argument(s) missing: " + missingArgs;
-				
-				cout << endl;
-				CmdLineParseException parseErr(msg);
-				_output.failure(cmd, parseErr);
-			}
-		}
-
-		// validate the path of the target folder
-		if (appConfig.targetFolder.empty())
-		{
-			cout << "[ERR] Target folder setting is missing or not setup correctly!" << endl;
-			throw ExitException(1);
-		}
+		// validate throws exceptions if configuration isnt valid
+		appConfig.Validate(cmdLineValidator);
 		
-		string fullOutputPath = CWindowsUtil::GetRealPathName(appConfig.targetFolder);
-		if (CUtil::StrEndsWith(fullOutputPath, ":\\") || CUtil::StrEndsWith(fullOutputPath, ":/") || fullOutputPath == "/")
-		{
-			cout << "[ERR] The target directory points to the root of the device. This is not allowed!" << endl;
-			throw ExitException(1);
-		}
-
 		CWindowsUtil winUtil(appConfig);		
 		CARInside arInside(appConfig);
 
@@ -513,9 +407,4 @@ char* CMain::GetPlatformString()
 void CMain::OutputARInsideBanner()
 {
 	cout << "ARInside Version " << AppVersion << " " << GetPlatformString() << endl << endl;
-}
-
-bool CMain::ParseCommandLine()
-{
-	return false;
 }

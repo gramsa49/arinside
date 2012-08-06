@@ -2028,6 +2028,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\CommandLineValidator.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\CommandLineValidator.h"
+				>
+			</File>
+			<File
 				RelativePath=".\util\RefItem.cpp"
 				>
 			</File>
