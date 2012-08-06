@@ -28,6 +28,18 @@
 #include <stdio.h>
 #include <memory>
 
+#ifdef WIN32 // JLS17 LINUX
+#include <windows.h>
+#include <io.h>
+#include <direct.h>
+#else // WIN32
+#include <sys/types.h>
+#include <dirent.h>
+#include <unistd.h>
+#endif // WIN32
+
+#include <sys/stat.h>
+
 #include "util/Util.h"
 
 extern const char* MenuSeparator;
