@@ -255,7 +255,6 @@ bool CMain::DeleteDirectory(const char* sPath, bool topLevel)
 
 int CMain::Run(int argc, char* argv[])
 {
-	CAppTimer mTimer;
 	mTimer.StartTimer();
 	int result = AR_RETURN_ERROR;
 
@@ -263,13 +262,7 @@ int CMain::Run(int argc, char* argv[])
 	int tcp = 0;
 	int rpc = 0;
 
-	char* platform = "";
-	if (sizeof(platform) == 4)
-		platform = "32bit";
-	if (sizeof(platform) == 8)
-		platform = "64bit";
-
-	cout << "ARInside Version " << AppVersion << " " << platform << endl << endl;
+	OutputARInsideBanner();
 
 	CmdLine cmd("ARInside -- http://arinside.org\n"
 		          "Copyright (C) 2012 Stefan Nerlich, LJ Longwing, John Luthgers\n"
@@ -505,4 +498,24 @@ int CMain::Run(int argc, char* argv[])
 	}
 
 	return result;
+}
+
+char* CMain::GetPlatformString()
+{
+	char* platform;
+	if (sizeof(platform) == 4)
+		return "32bit";
+	if (sizeof(platform) == 8)
+		return "64bit";
+	return "";
+}
+
+void CMain::OutputARInsideBanner()
+{
+	cout << "ARInside Version " << AppVersion << " " << GetPlatformString() << endl << endl;
+}
+
+bool CMain::ParseCommandLine()
+{
+	return false;
 }
