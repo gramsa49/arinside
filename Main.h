@@ -32,7 +32,6 @@ private:
 	bool DeleteDirectory(const char* sPath, bool topLevel = false);
 	char* GetPlatformString();
 	void OutputARInsideBanner();
-	bool ParseCommandLine();
 
 private:
 	CAppTimer mTimer;

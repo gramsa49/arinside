@@ -522,6 +522,10 @@
 			</File>
 		</Filter>
 		<File
+			RelativePath=".\AppConfigReaderTest.cpp"
+			>
+		</File>
+		<File
 			RelativePath=".\ARInsideTest.cpp"
 			>
 			<FileConfiguration

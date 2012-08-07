@@ -25,3 +25,8 @@ AppConfigReader::AppConfigReader(const std::string &filename)
 AppConfigReader::~AppConfigReader(void)
 {
 }
+
+void AppConfigReader::LoadTo(AppConfig &appConfig)
+{
+
+}

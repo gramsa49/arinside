@@ -16,11 +16,15 @@
 
 #pragma once
 
+class AppConfig;
+
 class AppConfigReader
 {
 public:
 	AppConfigReader(const std::string &filename);
 	~AppConfigReader(void);
+
+	void LoadTo(AppConfig &appConfig);
 
 private:
 	std::string configFile;
