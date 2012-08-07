@@ -117,38 +117,6 @@ void CMain::LoadConfigFile(string fileName, AppConfig &cfg)
 	}
 }
 
-string CMain::LoadFromFile(string fileName)
-{
-	string result = "";
-
-	try
-	{
-		stringstream strm;			
-		ifstream fin(fileName.c_str());
-
-		if( !fin ) 
-		{
-			strm << "Error loading file '"<< fileName <<"'." << endl; 
-			throw(AppException(strm.str(), "undefined", "AppInitialization"));
-			return 0;
-		}
-
-		string tmp;
-		while( getline(fin, tmp))
-			strm << tmp << endl;
-		fin.close();
-		result = strm.str();
-	}
-	catch(exception& e)
-	{
-		stringstream strm;
-		strm << "Error loading file '"<< fileName <<"'. Error: " << e.what() << endl; 
-		throw(AppException(strm.str(), "undefined", "AppInitialization"));
-	}	
-
-	return result;
-}
-
 bool CMain::IsDots(const char* str) 
 {
 	if(strcmp(str,".") && strcmp(str,"..")) return false;

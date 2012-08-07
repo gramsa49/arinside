@@ -433,6 +433,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\AppConfigReader.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\ARInside.cpp"
 				>
 			</File>
@@ -512,6 +516,10 @@
 			>
 			<File
 				RelativePath=".\AppConfig.h"
+				>
+			</File>
+			<File
+				RelativePath=".\AppConfigReader.h"
 				>
 			</File>
 			<File

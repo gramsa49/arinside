@@ -16,24 +16,12 @@
 
 #pragma once
 
-#include "util/AppTimer.h"
-
-// forward declarations
-class AppConfig;
-
-class CMain
+class AppConfigReader
 {
 public:
-	int Run(int argc, char* argv[]);
+	AppConfigReader(const std::string &filename);
+	~AppConfigReader(void);
 
 private:
-	void LoadConfigFile(string fileName, AppConfig &cfg);
-	bool IsDots(const char* str);
-	bool DeleteDirectory(const char* sPath, bool topLevel = false);
-	char* GetPlatformString();
-	void OutputARInsideBanner();
-	bool ParseCommandLine();
-
-private:
-	CAppTimer mTimer;
+	std::string configFile;
 };

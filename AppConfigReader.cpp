@@ -14,26 +14,14 @@
 //    You should have received a copy of the GNU General Public License
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "stdafx.h"
+#include "AppConfigReader.h"
 
-#include "util/AppTimer.h"
-
-// forward declarations
-class AppConfig;
-
-class CMain
+AppConfigReader::AppConfigReader(const std::string &filename)
 {
-public:
-	int Run(int argc, char* argv[]);
+	configFile = filename;
+}
 
-private:
-	void LoadConfigFile(string fileName, AppConfig &cfg);
-	bool IsDots(const char* str);
-	bool DeleteDirectory(const char* sPath, bool topLevel = false);
-	char* GetPlatformString();
-	void OutputARInsideBanner();
-	bool ParseCommandLine();
-
-private:
-	CAppTimer mTimer;
-};
+AppConfigReader::~AppConfigReader(void)
+{
+}
