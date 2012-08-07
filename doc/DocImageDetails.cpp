@@ -42,8 +42,8 @@ void CDocImageDetails::Documentation()
 		rootLevel = file->GetRootLevel();
 
 		// create a directory for each image
-		CWindowsUtil winUtil(pInside->appConfig);
-		if(winUtil.CreateSubDirectory(file->GetPath())<0) return;
+		FileSystemUtil fsUtil(pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(file->GetPath())<0) return;
 
 		// now create the page
 		CWebPage webPage(file->GetFileName(), image.GetName(), rootLevel, pInside->appConfig);

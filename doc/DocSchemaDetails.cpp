@@ -58,8 +58,8 @@ void CDocSchemaDetails::Documentation()
 		rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			//stringstream pgStrm;	
 			CWebPage webPage(file->GetFileName(), this->schema.GetName(), rootLevel, this->pInside->appConfig);

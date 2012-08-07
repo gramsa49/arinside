@@ -37,8 +37,8 @@ void CDocPacklistDetails::Documentation()
 	{
 		string dir = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(dir)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), this->pPackList.GetName(), this->rootLevel, this->pInside->appConfig);
 			CDocOverlayHelper overlayHelper(this->pPackList, rootLevel);

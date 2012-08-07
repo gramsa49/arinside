@@ -36,8 +36,8 @@ void CDocAlGuideDetails::Documentation()
 
 	try
 	{
-		CWindowsUtil winUtil(pInside->appConfig);
-		if(winUtil.CreateSubDirectory(dir)>=0)
+		FileSystemUtil fsUtil(pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), alGuide.GetName(), this->rootLevel, pInside->appConfig);
 			CDocOverlayHelper overlayHelper(alGuide, rootLevel);

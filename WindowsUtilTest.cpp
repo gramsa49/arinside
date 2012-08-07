@@ -1,13 +1,13 @@
 #include "ARInsideTest.h"
 #include "WindowsUtil.h"
 
-TEST(WindowsUtil, IsDots_WithDots_Test)
+TEST(FileSystemUtil, IsDots_WithDots_Test)
 {
-	ASSERT_EQ(true, CWindowsUtil::IsDots("."));
-	ASSERT_EQ(true, CWindowsUtil::IsDots(".."));
+	ASSERT_EQ(true, FileSystemUtil::IsDots("."));
+	ASSERT_EQ(true, FileSystemUtil::IsDots(".."));
 }
 
-TEST(WindowsUtil, IsDots_WithoutDots_Test)
+TEST(FileSystemUtil, IsDots_WithoutDots_Test)
 {
-	ASSERT_EQ(false, CWindowsUtil::IsDots("testfile"));
+	ASSERT_EQ(false, FileSystemUtil::IsDots("testfile"));
 }

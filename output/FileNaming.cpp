@@ -1221,25 +1221,25 @@ public:
 
 void DefaultFileNamingStrategy::InitStructure()
 {
-	CWindowsUtil wUtil(CARInside::GetInstance()->appConfig);
+	FileSystemUtil fsUtil(CARInside::GetInstance()->appConfig);
 
-	wUtil.CreateSubDirectory(DIR_ACTLINK);
-	wUtil.CreateSubDirectory(DIR_ALGUIDE);
-	wUtil.CreateSubDirectory(DIR_APPLICATION);
-	wUtil.CreateSubDirectory(DIR_ESCALATION);
-	wUtil.CreateSubDirectory(DIR_FILTER);
-	wUtil.CreateSubDirectory(DIR_FLTGUIDE);
-	wUtil.CreateSubDirectory(DIR_GROUP);
-	wUtil.CreateSubDirectory(DIR_IMAGE);
-	wUtil.CreateSubDirectory("img");
-	wUtil.CreateSubDirectory(DIR_MENU);
-	wUtil.CreateSubDirectory(DIR_OTHER);
-	wUtil.CreateSubDirectory(DIR_PACKINGLIST);
-	wUtil.CreateSubDirectory(DIR_SCHEMA);
-	wUtil.CreateSubDirectory("template");
-	wUtil.CreateSubDirectory(DIR_USER);
-	wUtil.CreateSubDirectory(DIR_ROLE);
-	wUtil.CreateSubDirectory(DIR_WEBSERVICE);
+	fsUtil.CreateSubDirectory(DIR_ACTLINK);
+	fsUtil.CreateSubDirectory(DIR_ALGUIDE);
+	fsUtil.CreateSubDirectory(DIR_APPLICATION);
+	fsUtil.CreateSubDirectory(DIR_ESCALATION);
+	fsUtil.CreateSubDirectory(DIR_FILTER);
+	fsUtil.CreateSubDirectory(DIR_FLTGUIDE);
+	fsUtil.CreateSubDirectory(DIR_GROUP);
+	fsUtil.CreateSubDirectory(DIR_IMAGE);
+	fsUtil.CreateSubDirectory("img");
+	fsUtil.CreateSubDirectory(DIR_MENU);
+	fsUtil.CreateSubDirectory(DIR_OTHER);
+	fsUtil.CreateSubDirectory(DIR_PACKINGLIST);
+	fsUtil.CreateSubDirectory(DIR_SCHEMA);
+	fsUtil.CreateSubDirectory("template");
+	fsUtil.CreateSubDirectory(DIR_USER);
+	fsUtil.CreateSubDirectory(DIR_ROLE);
+	fsUtil.CreateSubDirectory(DIR_WEBSERVICE);
 }
 
 IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
@@ -2324,26 +2324,26 @@ public:
 
 void ObjectNameFileNamingStrategy::InitStructure()
 {
-	CWindowsUtil wUtil(CARInside::GetInstance()->appConfig);
+	FileSystemUtil fsUtil(CARInside::GetInstance()->appConfig);
 
-	wUtil.CreateSubDirectory(DIR_ACTLINK);
-	wUtil.CreateSubDirectory(DIR_ALGUIDE);
-	wUtil.CreateSubDirectory(DIR_APPLICATION);
-	wUtil.CreateSubDirectory(DIR_ESCALATION);
-	wUtil.CreateSubDirectory(DIR_FILTER);
-	wUtil.CreateSubDirectory(DIR_FLTGUIDE);
-	wUtil.CreateSubDirectory(DIR_GROUP);
-	wUtil.CreateSubDirectory(DIR_IMAGE);
-	wUtil.CreateSubDirectory("img");
-	wUtil.CreateSubDirectory(DIR_MENU);
-	wUtil.CreateSubDirectory(DIR_OTHER);
-	wUtil.CreateSubDirectory(DIR_PACKINGLIST);
-	wUtil.CreateSubDirectory(DIR_SCHEMA);
-	wUtil.CreateSubDirectory("template");
-	wUtil.CreateSubDirectory(DIR_USER);
-	wUtil.CreateSubDirectory(DIR_ROLE);
-	wUtil.CreateSubDirectory(DIR_WEBSERVICE);
-	wUtil.CreateSubDirectory(DIR_OVERVIEW);
+	fsUtil.CreateSubDirectory(DIR_ACTLINK);
+	fsUtil.CreateSubDirectory(DIR_ALGUIDE);
+	fsUtil.CreateSubDirectory(DIR_APPLICATION);
+	fsUtil.CreateSubDirectory(DIR_ESCALATION);
+	fsUtil.CreateSubDirectory(DIR_FILTER);
+	fsUtil.CreateSubDirectory(DIR_FLTGUIDE);
+	fsUtil.CreateSubDirectory(DIR_GROUP);
+	fsUtil.CreateSubDirectory(DIR_IMAGE);
+	fsUtil.CreateSubDirectory("img");
+	fsUtil.CreateSubDirectory(DIR_MENU);
+	fsUtil.CreateSubDirectory(DIR_OTHER);
+	fsUtil.CreateSubDirectory(DIR_PACKINGLIST);
+	fsUtil.CreateSubDirectory(DIR_SCHEMA);
+	fsUtil.CreateSubDirectory("template");
+	fsUtil.CreateSubDirectory(DIR_USER);
+	fsUtil.CreateSubDirectory(DIR_ROLE);
+	fsUtil.CreateSubDirectory(DIR_WEBSERVICE);
+	fsUtil.CreateSubDirectory(DIR_OVERVIEW);
 }
 
 IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)

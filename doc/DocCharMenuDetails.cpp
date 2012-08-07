@@ -40,8 +40,8 @@ void CDocCharMenuDetails::Documentation()
 
 	try
 	{
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(this->path)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), this->menu.GetName(), this->rootLevel, this->pInside->appConfig);
 			CDocOverlayHelper overlayHelper(menu, rootLevel);

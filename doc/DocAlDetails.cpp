@@ -36,8 +36,8 @@ void CDocAlDetails::Documentation()
 
 	try
 	{
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(file->GetPath())>=0)
+		FileSystemUtil filesysUtil(this->pInside->appConfig);
+		if(filesysUtil.CreateSubDirectory(file->GetPath())>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), this->al.GetName(), this->rootLevel, this->pInside->appConfig);

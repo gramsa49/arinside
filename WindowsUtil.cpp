@@ -22,16 +22,16 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-CWindowsUtil::CWindowsUtil(AppConfig &appConfig)
+FileSystemUtil::FileSystemUtil(AppConfig &appConfig)
 : appConfig(appConfig)
 {
 }
 
-CWindowsUtil::~CWindowsUtil(void)
+FileSystemUtil::~FileSystemUtil(void)
 {
 }
 
-void CWindowsUtil::Load()
+void FileSystemUtil::Load()
 {
 	stringstream strm;	
 
@@ -75,7 +75,7 @@ void CWindowsUtil::Load()
 	LoadFromResource(ID_SCHEMAPAGE_JS, "schema_page.js", strm.str());
 }
 
-void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string path)
+void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string path)
 {
 	void* data;
 	//HANDLE hfile;
@@ -168,7 +168,7 @@ void CWindowsUtil::LoadFromResource(unsigned int res, string fileName, string pa
 	}
 }
 
-bool CWindowsUtil::CreateAppDirectory()
+bool FileSystemUtil::CreateAppDirectory()
 {
 	int nResult = 
 #ifdef WIN32
@@ -181,7 +181,7 @@ bool CWindowsUtil::CreateAppDirectory()
 	return (nResult==0);
 }
 
-int CWindowsUtil::CreateSubDirectory(string name)
+int FileSystemUtil::CreateSubDirectory(string name)
 {	
 	stringstream strm;
 	strm << appConfig.targetFolder << "/" << name;
@@ -202,7 +202,7 @@ int CWindowsUtil::CreateSubDirectory(string name)
 	return 0;
 }
 
-string CWindowsUtil::GetRealPathName(const std::string &path)
+string FileSystemUtil::GetRealPathName(const std::string &path)
 {
 #ifdef WIN32
 	char buffer[MAX_PATH]; buffer[0] = 0;
@@ -231,7 +231,7 @@ string CWindowsUtil::GetRealPathName(const std::string &path)
 	return buffer;
 }
 
-bool CWindowsUtil::FileExistsAndReadable(const std::string &filename)
+bool FileSystemUtil::FileExistsAndReadable(const std::string &filename)
 {
 	bool result = false;
 
@@ -250,7 +250,7 @@ bool CWindowsUtil::FileExistsAndReadable(const std::string &filename)
 	return result;
 }
 
-bool CWindowsUtil::DeleteDirectory(const char* sPath, bool topLevel)
+bool FileSystemUtil::DeleteDirectory(const char* sPath, bool topLevel)
 {
 #ifdef WIN32
 	try
@@ -349,13 +349,13 @@ bool CWindowsUtil::DeleteDirectory(const char* sPath, bool topLevel)
 #endif
 }
 
-bool CWindowsUtil::IsDots(const char* str) 
+bool FileSystemUtil::IsDots(const char* str) 
 {
 	if(strcmp(str,".") && strcmp(str,"..")) return false;
 	return true;
 }
 
-int CWindowsUtil::ValidateTargetDir(string targetFolder)
+int FileSystemUtil::ValidateTargetDir(string targetFolder)
 {		
 	int nResult = -1;
 	try
@@ -379,7 +379,7 @@ int CWindowsUtil::ValidateTargetDir(string targetFolder)
 	return nResult;
 }
 
-void CWindowsUtil::CompactFolder(string path)
+void FileSystemUtil::CompactFolder(string path)
 {
 #ifdef WIN32
 	string compactCmd = "compact /C /I /Q /S:" + path;

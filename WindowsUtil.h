@@ -17,11 +17,11 @@
 #pragma once
 #include "AppConfig.h"
 
-class CWindowsUtil
+class FileSystemUtil
 {
 public:
-	CWindowsUtil(AppConfig &appConfig);
-	~CWindowsUtil(void);
+	FileSystemUtil(AppConfig &appConfig);
+	~FileSystemUtil(void);
 
 	void Load();
 	bool CreateAppDirectory();

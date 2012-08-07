@@ -36,8 +36,8 @@ void CDocFilterGuideDetails::Documentation()
 	{
 		string dir = file->GetPath(); // CAREnum::ContainerDir(ARCON_FILTER_GUIDE)+"/"+pFilterGuide->FileID();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(dir)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), filterGuide.GetName(), rootLevel, this->pInside->appConfig);
 			CDocOverlayHelper overlayHelper(filterGuide, rootLevel);

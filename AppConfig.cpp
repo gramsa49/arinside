@@ -120,7 +120,7 @@ void AppConfig::Validate(CommandLineValidator& cmdLine)
 
 	// Just in case someone has set "DeleteExistingFiles" on and specified the root of the file system.
 	// For security reasons we disallow the root directory.
-	string fullOutputPath = CWindowsUtil::GetRealPathName(targetFolder);
+	string fullOutputPath = FileSystemUtil::GetRealPathName(targetFolder);
 	if (CUtil::StrEndsWith(fullOutputPath, ":\\") || CUtil::StrEndsWith(fullOutputPath, ":/") || fullOutputPath == "/")
 	{
 		cout << "[ERR] The target directory points to the root of the device. This is not allowed!" << endl;

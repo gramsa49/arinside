@@ -36,8 +36,8 @@ void CDocWebserviceDetails::Documentation()
 	{
 		string dir = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(dir)>=0)	// TODO: depending on the file structure there might be more or less directories to create .. move this to an Init function in IFileStructure
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(dir)>=0)	// TODO: depending on the file structure there might be more or less directories to create .. move this to an Init function in IFileStructure
 		{
 			CWebPage webPage(file->GetFileName(), ws.GetName(), rootLevel, pInside->appConfig);
 			CDocOverlayHelper overlayHelper(ws, rootLevel);

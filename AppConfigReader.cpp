@@ -50,7 +50,7 @@ void AppConfigReader::LoadTo(AppConfig &appConfig)
 
 bool AppConfigReader::ConfigFileExistsAndIsReadable()
 {
-	return CWindowsUtil::FileExistsAndReadable(configFile);
+	return FileSystemUtil::FileExistsAndReadable(configFile);
 }
 
 ConfigFile* AppConfigReader::CreateConfigFileObject()

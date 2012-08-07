@@ -35,8 +35,8 @@ void CDocFilterDetails::Documentation()
 
 	try
 	{
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(this->path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(this->path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), filter.GetName(), this->rootLevel, this->pInside->appConfig);

@@ -81,8 +81,8 @@ void CDocValidator::Main()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Validator", rootLevel, this->pInside->appConfig);
@@ -148,8 +148,8 @@ void CDocValidator::ContainerGroupValidator()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Container access group validation", rootLevel, this->pInside->appConfig);
@@ -208,8 +208,8 @@ void CDocValidator::AlGroupValidator()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Active Link access group validation", rootLevel, this->pInside->appConfig);
@@ -262,8 +262,8 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema)
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Field access group validation", rootLevel, this->pInside->appConfig);
@@ -312,8 +312,8 @@ void CDocValidator::FieldGroupValidator()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Field access group validation", rootLevel, this->pInside->appConfig);
@@ -381,8 +381,8 @@ void CDocValidator::FormGroupValidator()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Form access group validation", rootLevel, this->pInside->appConfig);
@@ -435,8 +435,8 @@ void CDocValidator::FieldReferenceValidator()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Field validator", rootLevel, this->pInside->appConfig);
@@ -548,8 +548,8 @@ void CDocValidator::MenuReferenceValidator()
 		int rootLevel = file->GetRootLevel();
 		string path = file->GetPath();
 
-		CWindowsUtil winUtil(this->pInside->appConfig);
-		if(winUtil.CreateSubDirectory(path)>=0)
+		FileSystemUtil fsUtil(this->pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
 			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Menu validator", rootLevel, this->pInside->appConfig);

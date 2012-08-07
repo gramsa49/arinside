@@ -244,7 +244,7 @@ string CARInside::GetARStatusError()
 
 bool CARInside::FileExists(string fName)
 {
-	bool result = CWindowsUtil::FileExistsAndReadable(fName);
+	bool result = FileSystemUtil::FileExistsAndReadable(fName);
 	if (result)
 		cout << fName << " exists" << endl;
 	return result;
@@ -2109,11 +2109,11 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 void CARInside::DoWork(int nMode)
 {
-	CWindowsUtil winUtil(appConfig);
+	FileSystemUtil fsUtil(appConfig);
 
 	// first step is to create directory structure and resources (images, css and js)
 	Prepare();
-	winUtil.Load();
+	fsUtil.Load();
 
 	// now load the object either from server or from file
 	LoadServerObjects(nMode);

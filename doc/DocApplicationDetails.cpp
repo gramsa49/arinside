@@ -35,8 +35,8 @@ void CDocApplicationDetails::Documentation()
 		this->rootLevel = file->GetRootLevel();
 		string dir = file->GetPath();
 
-		CWindowsUtil winUtil(pInside->appConfig);
-		if(winUtil.CreateSubDirectory(dir)>=0)
+		FileSystemUtil fsUtil(pInside->appConfig);
+		if(fsUtil.CreateSubDirectory(dir)>=0)
 		{
 			CWebPage webPage(file->GetFileName(), this->pApp.GetName(), rootLevel, pInside->appConfig);
 			CDocOverlayHelper overlayHelper(pApp, rootLevel);

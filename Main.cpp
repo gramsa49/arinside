@@ -66,16 +66,16 @@ int CMain::Run(int argc, char* argv[])
 		//Create the target directory specified in the configuration files
 		//TODO: CreateAppDirectory returns false if the directory already exists .. this should be changed so
 		//      we can check if there is something going wrong and stop the process!!
-		CWindowsUtil winUtil(appConfig);		
-		winUtil.CreateAppDirectory();
+		FileSystemUtil fsUtil(appConfig);		
+		fsUtil.CreateAppDirectory();
 
-		if(winUtil.ValidateTargetDir(appConfig.targetFolder) == 0)
+		if(fsUtil.ValidateTargetDir(appConfig.targetFolder) == 0)
 		{
 			nFilesCreated = 0;
 
 			if(appConfig.bCompactFolder) // Compact folder
 			{
-				CWindowsUtil::CompactFolder(appConfig.targetFolder);
+				FileSystemUtil::CompactFolder(appConfig.targetFolder);
 			}
 
 			if(!appConfig.fileMode)	//ServerMode
@@ -193,6 +193,6 @@ int CMain::StartFileMode(AppConfig &appConfig)
 void CMain::DoDeleteExistingFiles(string path)
 {
 	cout << "Deleting existing files" << endl;
-	if (!CWindowsUtil::DeleteDirectory(path.c_str()))
+	if (!FileSystemUtil::DeleteDirectory(path.c_str()))
 		cout << "Deletion failed!" << endl;			
 }
