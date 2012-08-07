@@ -582,7 +582,7 @@
 			>
 		</File>
 		<File
-			RelativePath=".\WindowsUtilTest.cpp"
+			RelativePath=".\FileSystemUtilTest.cpp"
 			>
 		</File>
 	</Files>

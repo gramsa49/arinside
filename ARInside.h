@@ -38,7 +38,7 @@ class IFileStructure;
 #include "output/WebPage.h"
 #include "output/IFileStructure.h"
 #include "util/BlackListItem.h"
-#include "WindowsUtil.h"
+#include "FileSystemUtil.h"
 #include "AppConfig.h"
 #include "util/RefItem.h"
 #include "util/AppTimer.h"

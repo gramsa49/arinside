@@ -16,7 +16,7 @@
 
 #include "stdafx.h"
 #include "AppConfig.h"
-#include "WindowsUtil.h"
+#include "FileSystemUtil.h"
 #include "tclap/CmdLine.h"
 #include "util/CommandLineValidator.h"
 #include "output/WebUtil.h"

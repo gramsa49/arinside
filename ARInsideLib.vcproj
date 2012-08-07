@@ -445,6 +445,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FileSystemUtil.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\gzstream.cpp"
 				>
 			</File>
@@ -504,10 +508,6 @@
 					/>
 				</FileConfiguration>
 			</File>
-			<File
-				RelativePath=".\WindowsUtil.cpp"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -539,6 +539,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\FileSystemUtil.h"
+				>
+			</File>
+			<File
 				RelativePath=".\gzstream.h"
 				>
 			</File>
@@ -552,10 +556,6 @@
 			</File>
 			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\WindowsUtil.h"
 				>
 			</File>
 		</Filter>
