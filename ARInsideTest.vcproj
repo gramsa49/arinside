@@ -513,6 +513,14 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="lists"
+			>
+			<File
+				RelativePath=".\lists\ARListHelpersTest.cpp"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ARInsideTest.cpp"
 			>

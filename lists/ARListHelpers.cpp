@@ -71,14 +71,10 @@ GenerateSortableList::GenerateSortableList(vector<string> &list)
 		size_t maxSourceLength = list[i].length();
 		memset(theList->nameList[i], '\0', AR_MAX_NAME_SIZE + 1);
 		
-		for (unsigned int j = 0; j < AR_MAX_NAME_SIZE; ++j)
+		for (unsigned int j = 0; j < maxSourceLength; ++j)
 		{
 			if (list[i][j] == ' ' && curWritePos == 0) continue;	// skip space at the beginning
-
-			if (j < maxSourceLength)
-				theList->nameList[i][j] = tolower(list[i][j]);
-			else
-				break; // copy only the length of the source .. the other bytes are already filled with nulls
+			theList->nameList[i][curWritePos++] = tolower(list[i][j]);
 		}
 	}
 }

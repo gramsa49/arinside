@@ -140,7 +140,10 @@ SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
 
 SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
-SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h util/CommandLineValidatorTest.cpp)
+SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h 
+ lists/ARListHelpersTest.cpp 
+ util/CommandLineValidatorTest.cpp
+)
 
 IF(NOT MSVC)
 	SET (ARINSIDE_SRCS ${ARINSIDE_SRCS} stdafx.cpp)

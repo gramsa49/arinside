@@ -162,7 +162,7 @@ bool CDocActionOpenWindowHelper::GetReportData(char *reportStr, std::string &rep
 		if (value != NULL)
 		{
 			value->resize(len);
-			strncpy(&(*value)[0], report, len);
+			if (len > 0) strncpy(&(*value)[0], report, len);
 		}
 		report += len + 1;
 	}
