@@ -28,6 +28,8 @@ public:
 	int CreateSubDirectory(string name);
 	static std::string GetRealPathName(const std::string &path);
 	static bool FileExistsAndReadable(const std::string &filename);
+	static bool DeleteDirectory(const char* sPath, bool topLevel = true);
+	static bool IsDots(const char* str);
 
 private:
 	void LoadFromResource(unsigned int res, string fileName, string path);

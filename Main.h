@@ -28,8 +28,6 @@ public:
 
 private:
 	void LoadConfigFile(string fileName, AppConfig &cfg);
-	bool IsDots(const char* str);
-	bool DeleteDirectory(const char* sPath, bool topLevel = false);
 	char* GetPlatformString();
 	void OutputARInsideBanner();
 

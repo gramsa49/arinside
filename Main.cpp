@@ -117,111 +117,6 @@ void CMain::LoadConfigFile(string fileName, AppConfig &cfg)
 	}
 }
 
-bool CMain::IsDots(const char* str) 
-{
-	if(strcmp(str,".") && strcmp(str,"..")) return false;
-	return true;
-}
-
-bool CMain::DeleteDirectory(const char* sPath, bool topLevel)
-{
-#ifdef WIN32
-	try
-	{
-		HANDLE hFind; // file handle
-		WIN32_FIND_DATA FindFileData;
-
-		char DirPath[MAX_PATH+1];
-		char FileName[MAX_PATH+1];
-
-		strncpy(DirPath, sPath, MAX_PATH);
-		strncat(DirPath, "/", MAX_PATH);
-		DirPath[MAX_PATH] = 0;
-
-		strncpy(FileName, sPath, MAX_PATH);
-		strncat(FileName, "/*", MAX_PATH); // searching all files
-		FileName[MAX_PATH] = 0;
-
-		hFind = FindFirstFile(FileName, &FindFileData); // find the first file
-		if (hFind != INVALID_HANDLE_VALUE)
-		{
-			do
-			{
-				if (IsDots(FindFileData.cFileName))
-					continue;
-
-				strcpy(FileName + strlen(DirPath), FindFileData.cFileName);
-				if((FindFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
-				{
-					// we have found a directory, recurse
-					LOG << "Delete " << FileName << endl;
-
-					if( !DeleteDirectory(FileName) )
-						break; // directory couldn't be deleted
-				}
-				else
-				{
-					if(FindFileData.dwFileAttributes & FILE_ATTRIBUTE_READONLY)
-						_chmod(FileName, _S_IWRITE); // change read-only file mode
-
-					LOG << "Delete " << FileName << endl;
-					if( !DeleteFile(FileName) )
-						break; // file couldn't be deleted
-				}
-			}
-
-			while( FindNextFile(hFind,&FindFileData) );	
-			FindClose(hFind); // closing file handle
-
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in DeleteDirectory: " << e.what() << endl; 
-	}	
-
-	return (topLevel || _rmdir(sPath)==0 ? true : false); // remove the empty (maybe not) directory
-#else
-	if (strlen(sPath) == 0) return false;
-
-	// first off, we need to create a pointer to a directory
-	DIR *pdir;
-	pdir = opendir(sPath);
-	
-	struct dirent *pent = NULL;
-	if (pdir == NULL)
-		return false; // return false to say "we couldn't do it"
-
-	string file;
-	struct stat stats;
-
-	while (pent = readdir(pdir)) { // while there is still something in the directory to list
-		if (!IsDots(pent->d_name))
-		{
-			file = sPath;
-			char lastChar = file.at(file.length()-1);
-		  if (lastChar != '/' || lastChar != '\\') file += "/";
-			file += pent->d_name;		
-
-			if (stat(file.c_str(), &stats) != 0)
-				return false;
-
-			LOG << "Delete " << file << endl;
-
-			if (S_ISDIR(stats.st_mode))
-				DeleteDirectory(file.c_str());
-		else
-				remove(file.c_str());
-		}
-	}
-
-	// finally, let's clean up
-	closedir(pdir); // close the directory
-	if (!topLevel && !rmdir(sPath)) return false; // delete the directory
-	return true;
-#endif
-}
-
 int CMain::Run(int argc, char* argv[])
 {
 	mTimer.StartTimer();
@@ -258,7 +153,7 @@ int CMain::Run(int argc, char* argv[])
 		if(appConfig.bDeleteExistingFiles)
 		{
 			cout << "Deleting existing files" << endl;
-			if (!DeleteDirectory(appConfig.targetFolder.c_str(), true))
+			if (!CWindowsUtil::DeleteDirectory(appConfig.targetFolder.c_str(), true))
 				cout << "Deletion failed!" << endl;			
 		}
 

@@ -581,6 +581,10 @@
 			RelativePath=".\ARInsideTest.h"
 			>
 		</File>
+		<File
+			RelativePath=".\WindowsUtilTest.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>
