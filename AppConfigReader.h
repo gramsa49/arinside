@@ -17,15 +17,26 @@
 #pragma once
 
 class AppConfig;
+class ConfigFile;
 
 class AppConfigReader
 {
 public:
 	AppConfigReader(const std::string &filename);
-	~AppConfigReader(void);
+	virtual ~AppConfigReader(void);
 
 	void LoadTo(AppConfig &appConfig);
 
 private:
+	void MapConfigFileToAppConfig(ConfigFile &config, AppConfig& cfg);
+	void IncFound(bool wasFound);
+
+	virtual bool ConfigFileExistsAndIsReadable();
+	virtual ConfigFile* CreateConfigFileObject();
+
+	void ThrowNotFoundException();
+	void ThrowInvalidConfigFileException();
+private:
 	std::string configFile;
+	unsigned int settingsFoundCount;
 };
