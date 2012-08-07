@@ -27,6 +27,7 @@ public:
 	bool CreateAppDirectory();
 	int CreateSubDirectory(string name);
 	static std::string GetRealPathName(const std::string &path);
+	static bool FileExistsAndReadable(const std::string &filename);
 
 private:
 	void LoadFromResource(unsigned int res, string fileName, string path);

@@ -268,26 +268,9 @@ int CARInside::ValidateTargetDir(string targetFolder)
 
 bool CARInside::FileExists(string fName)
 {
-	bool result = false;
-
-	try
-	{
-		bool flag = false;
-		fstream fin;
-		fin.open(fName.c_str(),ios::in);
-		if( fin.is_open() )
-		{
-			cout << fName << " exists" << endl;
-			result =true;
-		}
-		fin.close();
-
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION An error occured validating the target path: " << e.what() << endl;
-	}
-
+	bool result = CWindowsUtil::FileExistsAndReadable(fName);
+	if (result)
+		cout << fName << " exists" << endl;
 	return result;
 }
 

@@ -239,3 +239,22 @@ string CWindowsUtil::GetRealPathName(const std::string &path)
 #endif
 	return buffer;
 }
+
+bool CWindowsUtil::FileExistsAndReadable(const std::string &filename)
+{
+	bool result = false;
+
+	try
+	{
+		fstream fin;
+		fin.open(filename.c_str(),ios::in);
+		result = fin.is_open();
+		fin.close();
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION An error occured while checking file exists: " << e.what() << endl;
+	}
+
+	return result;
+}

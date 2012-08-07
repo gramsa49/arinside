@@ -237,8 +237,7 @@ int CMain::Run(int argc, char* argv[])
 
 		string settingsIni = cmdLineValidator.GetIniFilename();
 
-		std::ifstream in(settingsIni.c_str());		
-		if(!in)
+		if(CWindowsUtil::FileExistsAndReadable(settingsIni))
 		{
 			stringstream strm;
 			strm << "File '" << settingsIni.c_str() << "' not found.";
