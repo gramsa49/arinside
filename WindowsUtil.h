@@ -26,14 +26,17 @@ public:
 	void Load();
 	bool CreateAppDirectory();
 	int CreateSubDirectory(string name);
+
+	static int ValidateTargetDir(std::string targetFolder);
 	static std::string GetRealPathName(const std::string &path);
 	static bool FileExistsAndReadable(const std::string &filename);
 	static bool DeleteDirectory(const char* sPath, bool topLevel = true);
 	static bool IsDots(const char* str);
+	static void CompactFolder(std::string path);
 
 private:
 	void LoadFromResource(unsigned int res, string fileName, string path);
-	AppConfig appConfig;
+	AppConfig &appConfig;
 };
 
 #ifndef WIN32

@@ -27,9 +27,13 @@ public:
 	int Run(int argc, char* argv[]);
 
 private:
-	void LoadConfigFile(string fileName, AppConfig &cfg);
 	char* GetPlatformString();
 	void OutputARInsideBanner();
+
+	int StartServerMode(AppConfig &appConfig);
+	int StartFileMode(AppConfig &appConfig);
+
+	static void DoDeleteExistingFiles(std::string path);
 
 private:
 	CAppTimer mTimer;

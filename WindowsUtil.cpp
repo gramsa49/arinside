@@ -22,16 +22,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#ifdef WIN32
-#include <windows.h>
-#include <direct.h>
-#else
-#include <errno.h>
-#endif // WIN32
-
 CWindowsUtil::CWindowsUtil(AppConfig &appConfig)
+: appConfig(appConfig)
 {
-	this->appConfig = appConfig;
 }
 
 CWindowsUtil::~CWindowsUtil(void)
@@ -41,8 +34,6 @@ CWindowsUtil::~CWindowsUtil(void)
 void CWindowsUtil::Load()
 {
 	stringstream strm;	
-	//strm << appConfig.targetFolder << "/" << "template" << "/";
-	//LoadFromResource("NAVIGATION_HTM", "navigation.htm", strm.str());
 
 	strm.str("");
 	strm << appConfig.targetFolder << "/" << "img" << "/";	
@@ -364,3 +355,36 @@ bool CWindowsUtil::IsDots(const char* str)
 	return true;
 }
 
+int CWindowsUtil::ValidateTargetDir(string targetFolder)
+{		
+	int nResult = -1;
+	try
+	{
+		cout << "Validating target folder: " << targetFolder << endl;
+
+		stringstream fName;
+		fName << targetFolder << "/valid.txt";
+
+		ofstream fout( fName.str().c_str(), ios::out);
+		fout << "arinside" << endl;
+		fout.close();
+
+		nResult = remove(fName.str().c_str());
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION ValidateTargetDir '" << targetFolder << "' -- " << e.what() << endl;
+	}
+
+	return nResult;
+}
+
+void CWindowsUtil::CompactFolder(string path)
+{
+#ifdef WIN32
+	string compactCmd = "compact /C /I /Q /S:" + path;
+	WinExec(compactCmd.c_str(), SW_SHOWNORMAL);
+#else
+	cout << "[WARN] CompactFolder is only supported on windows platform!" << endl;
+#endif
+}

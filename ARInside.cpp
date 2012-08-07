@@ -242,30 +242,6 @@ string CARInside::GetARStatusError()
 	return errorText;
 }
 
-int CARInside::ValidateTargetDir(string targetFolder)
-{		
-	int nResult = -1;
-	try
-	{
-		cout << "Validating target folder: " << targetFolder << endl;
-
-		stringstream fName;
-		fName << targetFolder << "/valid.txt";
-
-		ofstream fout( fName.str().c_str(), ios::out);
-		fout << "arinside" << endl;
-		fout.close();
-
-		nResult = remove(fName.str().c_str());
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION ValidateTargetDir '" << targetFolder << "' -- " << e.what() << endl;
-	}
-
-	return nResult;
-}
-
 bool CARInside::FileExists(string fName)
 {
 	bool result = CWindowsUtil::FileExistsAndReadable(fName);

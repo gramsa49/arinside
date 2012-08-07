@@ -82,7 +82,6 @@ public:
 	string GetARStatusError(ARStatusList* status);	
 
 	bool FileExists(string fName);
-	int ValidateTargetDir(string targetFolder);
 	void LoadServerObjects(int nMode);
 	void LoadFromServer(void);
 	void LoadFromFile(void);

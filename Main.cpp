@@ -17,11 +17,12 @@
 #include "stdafx.h"
 
 #include "Main.h"
+#include "AppConfigReader.h"
+#include "AppException.h"
 #include "ARInside.h"
 #include "ConfigFile.h"
-#include "tclap/CmdLine.h"
-#include "AppException.h"
 #include "WindowsUtil.h"
+#include "tclap/CmdLine.h"
 #include "util/CommandLineValidator.h"
 
 using namespace TCLAP;
@@ -29,93 +30,6 @@ using namespace TCLAP;
 // this variable counts all generated files and as such is defined globally and referenced in other files
 // TODO: remote this global dependency
 int nFilesCreated;
-
-void CMain::LoadConfigFile(string fileName, AppConfig &cfg)
-{
-	try
-	{
-		cout << endl << "Load application configuration settings: '" << fileName << "' ";
-		ConfigFile config(fileName);
-		config.readInto<string>(cfg.userForm, "UserForm", "User");
-		config.readInto<string>(cfg.userQuery, "UserQuery", "1=1");
-		config.readInto<string>(cfg.groupForm, "GroupForm", "Group");
-		config.readInto<string>(cfg.groupQuery, "GroupQuery", "1=1");
-		config.readInto<string>(cfg.roleForm, "RoleForm", "Roles");
-		config.readInto<string>(cfg.roleQuery, "RoleQuery", "1=1");
-		config.readInto<int>(cfg.maxRetrieve, "MaxRetrieve", 0);
-		config.readInto<string>(cfg.companyName, "CompanyName", "");
-		config.readInto<string>(cfg.companyUrl, "CompanyUrl", "");
-		config.readInto<string>(cfg.targetFolder, "TargetFolder", "");
-		config.readInto<bool>(cfg.fileMode, "FileMode", false);
-		config.readInto<string>(cfg.objListXML, "ObjListXML", "");
-		config.readInto<bool>(cfg.oldNaming, "OldNaming", false);
-		config.readInto<string>(cfg.blackList, "BlackList", "");
-		config.readInto<bool>(cfg.bLoadServerInfoList, "LoadServerInfoList", true);
-		config.readInto<bool>(cfg.bLoadUserList, "LoadUserList", true);
-		config.readInto<bool>(cfg.bLoadGroupList, "LoadGroupList", true);
-		config.readInto<bool>(cfg.bLoadRoleList, "LoadRoleList", true);
-		config.readInto<bool>(cfg.bUseUtf8, "Utf-8", false);
-		config.readInto<bool>(cfg.bCompactFolder, "CompactFolder", false);
-		config.readInto<bool>(cfg.bGZCompression, "GZCompression", false);
-		config.readInto<bool>(cfg.bDeleteExistingFiles, "DeleteExistingFiles", false);
-		config.readInto<string>(cfg.runNotes, "RunNotes", "");
-		config.readInto<string>(cfg.serverName, "ServerName", "");
-		config.readInto<int>(cfg.tcpPort, "TCPPort", 0);
-		config.readInto<int>(cfg.rpcPort, "RPCPort", 0);
-		config.readInto<string>(cfg.userName, "Username", "");
-		config.readInto<string>(cfg.password, "Password", "");
-		config.readInto<int>(cfg.apiTimeout, "APITimeout", 0);
-		config.readInto<string>(cfg.overlayMode, "OverlayMode", "TRUE");
-		cout << endl;
-
-		LOG << "UserForm: " << cfg.userForm << endl;		
-		LOG << "UserQuery: " << cfg.userQuery << endl;
-		LOG << "GroupForm: " << cfg.groupForm << endl;
-		LOG << "GroupQuery: " << cfg.groupQuery << endl;
-		LOG << "RoleForm: " << cfg.roleForm << endl;
-		LOG << "RoleQuery: " << cfg.roleQuery << endl;
-		LOG << "MaxRetrieve: " << cfg.maxRetrieve << endl;
-		LOG << "CompanyName: " << cfg.companyName << endl;
-		LOG << "CompanyUrl: " << cfg.companyUrl << endl;
-		LOG << "TargetFolder: " << cfg.targetFolder << endl;
-		LOG << "FileMode: " << cfg.fileMode << endl;
-		LOG << "ObjListXML: " << cfg.objListXML << endl;
-		LOG << "OldNaming: " << cfg.oldNaming << endl;
-		LOG << "BlackList: " << cfg.blackList << endl;
-		LOG << "LoadServerInfoList: " << cfg.bLoadServerInfoList << endl;
-		LOG << "LoadUserList: " << cfg.bLoadUserList << endl;
-		LOG << "LoadGroupList: " << cfg.bLoadGroupList << endl;
-		LOG << "LoadRoleList: " << cfg.bLoadRoleList << endl;
-		LOG << "Utf-8: " << cfg.bUseUtf8 << endl;
-		LOG << "CompactFolder: " << cfg.bCompactFolder << endl;
-		LOG << "GZCompression: " << cfg.bGZCompression << endl;
-		LOG << "DeleteExistingFiles: " << cfg.bDeleteExistingFiles << endl;
-		LOG << "RunNotes: " << cfg.runNotes << endl;
-		LOG << endl;
-
-		if (cfg.bGZCompression)
-			CWebUtil::webpageFileExtension = CWebUtil::HtmlGZPageSuffix();
-		else
-			CWebUtil::webpageFileExtension = CWebUtil::HtmlPageSuffix();
-
-		// later we can support configuring specific layer documentation
-		if (cfg.overlayMode != "FALSE" && cfg.overlayMode != "TRUE")
-		{
-			cfg.overlayMode = "TRUE";
-		}
-
-		// should overlay support be disable completely?
-		if (cfg.overlayMode == "FALSE")
-			cfg.bOverlaySupport = false;
-		else
-			cfg.bOverlaySupport = true;
-
-	}
-	catch(exception& e)
-	{
-		throw(AppException(e.what(), "Error in LoadConfigFile().", "AppInitialization"));
-	}
-}
 
 int CMain::Run(int argc, char* argv[])
 {
@@ -132,83 +46,47 @@ int CMain::Run(int argc, char* argv[])
 
 		string settingsIni = cmdLineValidator.GetIniFilename();
 
-		if(CWindowsUtil::FileExistsAndReadable(settingsIni))
-		{
-			stringstream strm;
-			strm << "File '" << settingsIni.c_str() << "' not found.";
-			throw(AppException(strm.str(), "undefined", "FileNotFound"));
-		}
-
-		//Load application settings
+		cout << endl << "Load application configuration settings: '" << settingsIni << "' " << endl;
+		AppConfigReader reader(settingsIni);
 		AppConfig appConfig;
-		LoadConfigFile(settingsIni, appConfig);
+		reader.LoadTo(appConfig);
 
 		// validate throws exceptions if configuration isnt valid
 		appConfig.Validate(cmdLineValidator);
-		
-		CWindowsUtil winUtil(appConfig);		
-		CARInside arInside(appConfig);
 
+		if (AppConfig::verboseMode)
+			appConfig.Dump();
+		
 		//Delete existing files
 		if(appConfig.bDeleteExistingFiles)
 		{
-			cout << "Deleting existing files" << endl;
-			if (!CWindowsUtil::DeleteDirectory(appConfig.targetFolder.c_str(), true))
-				cout << "Deletion failed!" << endl;			
+			DoDeleteExistingFiles(appConfig.targetFolder);
 		}
 
 		//Create the target directory specified in the configuration files
 		//TODO: CreateAppDirectory returns false if the directory already exists .. this should be changed so
 		//      we can check if there is something going wrong and stop the process!!
+		CWindowsUtil winUtil(appConfig);		
 		winUtil.CreateAppDirectory();
 
-		if(arInside.ValidateTargetDir(appConfig.targetFolder) == 0)
+		if(winUtil.ValidateTargetDir(appConfig.targetFolder) == 0)
 		{
 			nFilesCreated = 0;
 
 			if(appConfig.bCompactFolder) // Compact folder
 			{
-#ifdef WIN32
-				string compactCmd = "compact /C /I /Q /S:" + appConfig.targetFolder;
-				WinExec(compactCmd.c_str(), SW_SHOWNORMAL);
-#else
-				cout << "[WARN] CompactFolder is only supported on windows platform!" << endl;
-#endif
+				CWindowsUtil::CompactFolder(appConfig.targetFolder);
 			}
 
 			if(!appConfig.fileMode)	//ServerMode
 			{
-				if(arInside.Init(appConfig.userName, appConfig.password, appConfig.serverName, appConfig.tcpPort, appConfig.rpcPort) == AR_RETURN_OK)
-				{
-					arInside.DoWork(0);
-					result = AR_RETURN_OK;
-				}
+				result = StartServerMode(appConfig);
 			}
 			else //FileMode
 			{
-				if(!appConfig.objListXML.empty())
-				{		
-					if(arInside.FileExists(appConfig.objListXML) == true)
-					{
-						if(arInside.Init("", "", "", 0, 0) == AR_RETURN_OK)
-						{
-							arInside.DoWork(1);
-							result = AR_RETURN_OK;
-						}
-					}
-					else
-					{
-						cout << "Could not find file '" << appConfig.objListXML << "'" << endl;
-						result = AR_RETURN_ERROR;
-					}
-				}
-				else
-				{
-					cout << "No 'ObjListXML' file specified in the application configuration file!" << endl;
-					result = AR_RETURN_ERROR;
-				}
+				result = StartFileMode(appConfig);
 			}
-		}			
+		}
 		else
 		{
 			// TODO: ValidateTargetDir returns 0 on success. On error there is no information about the error
@@ -217,17 +95,14 @@ int CMain::Run(int argc, char* argv[])
 			result = AR_RETURN_ERROR;
 		}
 
-		arInside.Terminate();		
-
 		if(result == AR_RETURN_OK)
 		{
 			mTimer.EndTimer();
 			float nTotalDuration = mTimer.GetDuration();
 
 			cout << endl << nFilesCreated << " files created in " << nTotalDuration << " seconds." << endl;
-			//cout << endl << nFilesCreated << " files created in " << arInside.nDurationLoad + arInside.nDurationDocumentation << " seconds." << endl;
 			cout << "Documentation successfully saved. The application will now exit." << endl;
-			result =  AR_RETURN_OK;		
+			result =  AR_RETURN_OK;
 		}
 		else
 		{
@@ -237,7 +112,7 @@ int CMain::Run(int argc, char* argv[])
 	}
 	catch(AppException &e)
 	{
-		cout << endl << "AppException: " << e.typeDescription() << endl << "Description: " << e.error() << endl;	
+		cout << endl << "AppException: " << e.typeDescription() << " -- " << e.error() << endl;	
 	}
 	catch (ArgException &e)
 	{ 
@@ -269,4 +144,55 @@ char* CMain::GetPlatformString()
 void CMain::OutputARInsideBanner()
 {
 	cout << "ARInside Version " << AppVersion << " " << GetPlatformString() << endl << endl;
+}
+
+int CMain::StartServerMode(AppConfig &appConfig)
+{
+	int result = AR_RETURN_ERROR;
+	CARInside arInside(appConfig);
+	if(arInside.Init(appConfig.userName, appConfig.password, appConfig.serverName, appConfig.tcpPort, appConfig.rpcPort) == AR_RETURN_OK)
+	{
+		arInside.DoWork(0);
+		result = AR_RETURN_OK;
+	}
+	arInside.Terminate();
+	return result;
+}
+
+int CMain::StartFileMode(AppConfig &appConfig)
+{
+	int result = AR_RETURN_ERROR;
+	CARInside arInside(appConfig);
+
+	if(!appConfig.objListXML.empty())
+	{		
+		if(arInside.FileExists(appConfig.objListXML) == true)
+		{
+			if(arInside.Init("", "", "", 0, 0) == AR_RETURN_OK)
+			{
+				arInside.DoWork(1);
+				result = AR_RETURN_OK;
+			}
+		}
+		else
+		{
+			cout << "Could not find file '" << appConfig.objListXML << "'" << endl;
+			result = AR_RETURN_ERROR;
+		}
+	}
+	else
+	{
+		cout << "No 'ObjListXML' file specified in the application configuration file!" << endl;
+		result = AR_RETURN_ERROR;
+	}
+
+	arInside.Terminate();
+	return result;
+}
+
+void CMain::DoDeleteExistingFiles(string path)
+{
+	cout << "Deleting existing files" << endl;
+	if (!CWindowsUtil::DeleteDirectory(path.c_str()))
+		cout << "Deletion failed!" << endl;			
 }

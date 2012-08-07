@@ -19,8 +19,10 @@
 #include "WindowsUtil.h"
 #include "tclap/CmdLine.h"
 #include "util/CommandLineValidator.h"
+#include "output/WebUtil.h"
 
 using namespace TCLAP;
+using namespace OUTPUT;
 
 bool AppConfig::verboseMode = false;
 
@@ -124,6 +126,25 @@ void AppConfig::Validate(CommandLineValidator& cmdLine)
 		cout << "[ERR] The target directory points to the root of the device. This is not allowed!" << endl;
 		throw ExitException(1);
 	}
+
+	// now configure the environment
+	if (bGZCompression)
+		CWebUtil::webpageFileExtension = CWebUtil::HtmlGZPageSuffix();
+	else
+		CWebUtil::webpageFileExtension = CWebUtil::HtmlPageSuffix();
+
+	// later we can support configuring specific layer documentation
+	if (overlayMode != "FALSE" && overlayMode != "TRUE")
+	{
+		overlayMode = "TRUE";
+	}
+
+	// should overlay support be disabled completely?
+	if (overlayMode == "FALSE")
+		bOverlaySupport = false;
+	else
+		bOverlaySupport = true;
+
 }
 
 void AppConfig::OverrideSettingsByCommandLine(CommandLineValidator& cmdLine)
@@ -154,3 +175,33 @@ void AppConfig::OverrideSettingsByCommandLine(CommandLineValidator& cmdLine)
 	testMode = cmdLine.GetTestMode();
 #endif
 }
+
+void AppConfig::Dump()
+{
+	cout << "UserForm: " << userForm << endl;		
+	cout << "UserQuery: " << userQuery << endl;
+	cout << "GroupForm: " << groupForm << endl;
+	cout << "GroupQuery: " << groupQuery << endl;
+	cout << "RoleForm: " << roleForm << endl;
+	cout << "RoleQuery: " << roleQuery << endl;
+	cout << "MaxRetrieve: " << maxRetrieve << endl;
+	cout << "CompanyName: " << companyName << endl;
+	cout << "CompanyUrl: " << companyUrl << endl;
+	cout << "TargetFolder: " << targetFolder << endl;
+	cout << "FileMode: " << fileMode << endl;
+	cout << "ObjListXML: " << objListXML << endl;
+	cout << "OldNaming: " << oldNaming << endl;
+	cout << "BlackList: " << blackList << endl;
+	cout << "LoadServerInfoList: " << bLoadServerInfoList << endl;
+	cout << "LoadUserList: " << bLoadUserList << endl;
+	cout << "LoadGroupList: " << bLoadGroupList << endl;
+	cout << "LoadRoleList: " << bLoadRoleList << endl;
+	cout << "Utf-8: " << bUseUtf8 << endl;
+	cout << "CompactFolder: " << bCompactFolder << endl;
+	cout << "GZCompression: " << bGZCompression << endl;
+	cout << "DeleteExistingFiles: " << bDeleteExistingFiles << endl;
+	cout << "OverlayMode: " << overlayMode << endl;
+	cout << "RunNotes: " << runNotes << endl;
+	cout << endl;
+}
+

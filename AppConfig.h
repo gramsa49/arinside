@@ -82,6 +82,7 @@ public:
 
 public:
 	void Validate(CommandLineValidator& cmdLine);
+	void Dump();
 private:
 	void OverrideSettingsByCommandLine(CommandLineValidator& cmdLine);
 };
