@@ -126,7 +126,7 @@ SET (ARINSIDE_SRCS
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
  util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp
- AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp gzstream.cpp Main.cpp WindowsUtil.cpp
+ AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp FileSystemUtil.cpp gzstream.cpp Main.cpp
 )
 SET (ARINSIDE_SRC_GIFS
  res/active_link.gif res/al_guide.gif res/application.gif res/ars_edit.gif res/chapter.gif res/disabled.gif
@@ -140,7 +140,8 @@ SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
 
 SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
-SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h 
+SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
+ AppConfigReaderTest.cpp FileSystemUtilTest.cpp
  lists/ARListHelpersTest.cpp 
  util/CommandLineValidatorTest.cpp
 )
