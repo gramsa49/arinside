@@ -521,6 +521,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="output"
+			>
+			<Filter
+				Name="webpage"
+				>
+				<File
+					RelativePath=".\output\webpage\HtmlReferenceListImplTest.cpp"
+					>
+				</File>
+			</Filter>
+		</Filter>
 		<File
 			RelativePath=".\AppConfigReaderTest.cpp"
 			>

@@ -122,6 +122,7 @@ SET (ARINSIDE_SRCS
  output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp
  output/WebPage.cpp output/TableColumn.cpp output/NavigationPage.cpp output/GroupTable.cpp output/ImageTable.cpp
  output/UListItem.cpp output/MenuTable.cpp output/UserTable.cpp output/WebUtil.cpp output/TabControl.cpp
+ output/webpage/HtmlReferenceList.cpp output/webpage/HtmlReferenceListImpl.cpp
  scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
@@ -133,9 +134,9 @@ SET (ARINSIDE_SRC_GIFS
  res/doc.gif res/down.gif res/edit.gif res/empty_list.gif res/escalation.gif res/filter.gif res/filter_guide.gif
  res/folder.gif res/group.gif res/hidden.gif res/image.gif res/info.gif res/menu.gif res/next.gif
  res/packing_list.gif res/prev.gif res/schema.gif res/search.gif res/server.gif res/sort_asc.gif res/sort_desc.gif
- res/up.gif res/user.gif res/visible.gif res/webservice.gif res/schema_page.js
+ res/up.gif res/user.gif res/visible.gif res/webservice.gif
 )
-SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js)
+SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js res/schema_page.js)
 SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
 
@@ -143,6 +144,7 @@ SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
 SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
  AppConfigReaderTest.cpp FileSystemUtilTest.cpp
  lists/ARListHelpersTest.cpp 
+ output/webpage/HtmlReferenceListImplTest.cpp
  util/CommandLineValidatorTest.cpp
 )
 

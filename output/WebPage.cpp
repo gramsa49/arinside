@@ -19,8 +19,10 @@
 #include "WebUtil.h"
 #include "../ARInside.h"
 #include "../gzstream.h"
+#include "webpage/HtmlReferenceListImpl.h"
 
 using namespace OUTPUT;
+using namespace OUTPUT::WebPage;
 
 extern int nFilesCreated;
 
@@ -31,10 +33,13 @@ CWebPage::CWebPage(const string &fileName, const string &title, int dirLevel, co
 	this->fileName = fileName;	
 	this->title = title;
 	this->rootLevel = dirLevel;
+	this->htmlReferences = NULL;
 }
 
 CWebPage::~CWebPage(void)
 {
+	if (htmlReferences != NULL)
+		delete htmlReferences;
 }
 
 void CWebPage::SetNavigation(const string &nav)
@@ -68,14 +73,7 @@ void CWebPage::PageHeader(ostream &strm)
 	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" << endl;
 	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << endl;
 	strm << "<meta name=\"author\" content=\"ARInside\" />" << endl;
-	AddStyleSheetReference(strm, "img/style.css");
-	AddStyleSheetReference(strm, "img/jquery-ui-custom.css");
-	AddScriptReference(strm, "img/sortscript.js");
-	AddScriptReference(strm, "img/tabscript.js");
-	AddScriptReference(strm, "img/jquery.js");
-	AddScriptReference(strm, "img/jquery-ui.js");
-	AddScriptReference(strm, "img/jquery.address.min.js");
-	AddScriptReference(strm, "img/schema_page.js");
+	strm << GetReferenceManager() << endl;
 	strm << "</head>" << endl;
 }
 
@@ -208,4 +206,25 @@ void CWebPage::AddScriptReference(std::ostream &strm, const std::string &scriptP
 void CWebPage::AddStyleSheetReference(std::ostream &strm, const std::string &cssPath)
 {
 	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << CWebUtil::RootPath(rootLevel) << cssPath << "\" />" << endl;
+}
+
+HtmlReferenceList& CWebPage::GetReferenceManager()
+{
+	if (htmlReferences == NULL)
+	{
+		htmlReferences = new HtmlReferenceListImpl(rootLevel);
+		SetupDefaultReferences(*htmlReferences);
+	}
+	return *htmlReferences;
+}
+
+void CWebPage::SetupDefaultReferences(WebPage::HtmlReferenceList &inst)
+{
+	inst.AddStyleSheetReference("img/style.css");
+	inst.AddStyleSheetReference("img/jquery-ui-custom.css");
+	inst.AddScriptReference("img/sortscript.js");
+	inst.AddScriptReference("img/tabscript.js");
+	inst.AddScriptReference("img/jquery.js");
+	inst.AddScriptReference("img/jquery-ui.js");
+	inst.AddScriptReference("img/jquery.address.min.js");
 }

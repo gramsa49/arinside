@@ -84,6 +84,9 @@ void CDocSchemaDetails::Documentation()
 			//Add schema navigation menu	
 			webPage.SetNavigation(this->SchemaNavigation());
 
+			// add the javascript we need for this page to display correctly
+			webPage.GetReferenceManager().AddScriptReference("img/schema_page.js");
+
 			// now the content
 			CTabControl tabControl;
 

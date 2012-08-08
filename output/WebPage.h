@@ -17,6 +17,7 @@
 #pragma once
 #include "../AppConfig.h"
 #include "../AppException.h"
+#include "webpage/HtmlReferenceList.h"
 
 namespace OUTPUT
 {
@@ -34,6 +35,8 @@ namespace OUTPUT
 
 		int SaveInFolder(const string &path);
 
+		WebPage::HtmlReferenceList& GetReferenceManager();
+
 	private:
 		vector<string> bodyContent;
 		string navContent;
@@ -42,6 +45,7 @@ namespace OUTPUT
 		int rootLevel;
 
 		const AppConfig &appConfig;
+		WebPage::HtmlReferenceList *htmlReferences;
 		
 		void WriteContent(ostream &strm);
 
@@ -51,6 +55,8 @@ namespace OUTPUT
 		void DynamicHeaderText(ostream &strm);
 		void DynamicFooterText(ostream &strm);
 		string CurrentDateTime();
+
+		void SetupDefaultReferences(WebPage::HtmlReferenceList &inst);
 
 		void AddScriptReference(ostream &strm, const std::string &scriptPath);
 		void AddStyleSheetReference(std::ostream &strm, const std::string &cssPath);
