@@ -29,7 +29,7 @@ string CUtil::DateTimeToHTMLString(ARTimestamp ts)
 {
 	string result = "";
 	struct tm *stm;
-	static char dest[100];
+	char dest[100];
 
 	// a value of "1970-01-01T01:00:00+01:00" in a diary field timestamp loaded from xml (changeHistory of a field)
 	// resulted in a negative value and strftime crashed afterwards
@@ -43,12 +43,18 @@ string CUtil::DateTimeToHTMLString(ARTimestamp ts)
 	return result;
 }
 
+string CUtil::CurrentDateTimeToHTMLString()
+{
+	time_t curseconds;
+	time(&curseconds);
+	return DateTimeToHTMLString(static_cast<ARTimestamp>(curseconds));
+}
 
 string CUtil::DateTimeToString(ARTimestamp ts)
 {
 	string result = "";
 	struct tm *stm;
-	static char dest[100];
+	char dest[100];
 
 	time_t dtime = (time_t) ts;
 	stm = localtime(&dtime);

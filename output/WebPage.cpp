@@ -93,14 +93,7 @@ void CWebPage::DynamicHeaderText(ostream &strm)
 
 string CWebPage::CurrentDateTime()
 {
-	struct tm *curtime;
-	time_t curseconds;
-	char string[80];
-
-	time(&curseconds);
-	curtime = localtime(&curseconds);
-	strftime(string, 80, "%Y-%m-%d %H:%M:%S",curtime);
-	return string;
+	return CUtil::CurrentDateTimeToHTMLString();
 }
 
 void CWebPage::DynamicFooterText(ostream &strm)

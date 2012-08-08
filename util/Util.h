@@ -36,6 +36,7 @@ public:
 	static string DateTimeToString(ARTimestamp ts);
 	static string DateTimeToHTMLString(ARTimestamp ts);
 	static string DateToString(int dateInt);
+	static string CurrentDateTimeToHTMLString();
 	static string TimeOfDayToString(ARTime time);
 	static string ClearSpaces(const string &strIn);
 	static string String2Comp(string strIn);
