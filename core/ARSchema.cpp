@@ -257,6 +257,21 @@ void CARSchema::SetAppRefName(const string& appName)
 	return CARInside::GetInstance()->schemaList.SchemaSetAppRefName(GetInsideId(), appName);
 }
 
+int CARSchema::GetDbTableId() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetDbTableId(GetInsideId());
+}
+
+const ARNameType& CARSchema::GetDbViewName() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetDbViewName(GetInsideId());
+}
+
+const ARNameType& CARSchema::GetDbShViewName() const
+{
+	return CARInside::GetInstance()->schemaList.SchemaGetDbShViewName(GetInsideId());
+}
+
 CARFieldList* CARSchema::GetFields()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetFields(GetInsideId());

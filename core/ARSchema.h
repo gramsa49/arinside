@@ -64,6 +64,10 @@ public:
 	const string& GetAppRefName() const;
 	void SetAppRefName(const string& appName);
 
+	int GetDbTableId() const;
+	const ARNameType& GetDbViewName() const;
+	const ARNameType& GetDbShViewName() const;
+
 	CARFieldList* GetFields();
 	CARVUIList* GetVUIs();
 

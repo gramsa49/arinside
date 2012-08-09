@@ -27,6 +27,13 @@ class CARFilter;
 class CAREscalation;
 class CARContainer;
 
+struct ARSchemaDbValues
+{
+	unsigned int schemaId;
+	ARNameType viewName;
+	ARNameType shViewName;
+};
+
 class CARSchemaList : Uncopyable
 {
 public:
@@ -65,6 +72,10 @@ public:
 	const string& SchemaGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void SchemaSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	int SchemaGetDbTableId(unsigned int index) const { assert(index < schemaDbValues.size()); return schemaDbValues[sortedList[index]].schemaId; }
+	const ARNameType& SchemaGetDbViewName(unsigned int index) const { assert(index < schemaDbValues.size()); return schemaDbValues[sortedList[index]].viewName; }
+	const ARNameType& SchemaGetDbShViewName(unsigned int index) const { assert(index < schemaDbValues.size()); return schemaDbValues[sortedList[index]].shViewName; }
+
 	// referencing
 	typedef vector<CRefItem> ReferenceList;
 	void AddReference(unsigned int index, const CRefItem& refItem);
@@ -102,6 +113,10 @@ public:
 	const ObjectRefList& GetOverlayAndCustomWorkflow();
 
 private:
+	void InitDatabaseDetails();
+	void LoadDatabaseDetails();
+
+private:
 	// allocation state of internal structures
 	enum SchemaListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
 	bool apiBug;
@@ -125,6 +140,7 @@ private:
 	ARTextStringList changeDiary;
 	ARPropListList objProps;
 	vector<string> appRefNames;
+	vector<ARSchemaDbValues> schemaDbValues;
 
 	vector<CARFieldList*> fieldLists;
 	vector<CARVUIList*> vuiLists;

@@ -167,6 +167,7 @@ bool CARSchemaList::LoadFromServer()
 		internalListState = CARSchemaList::ARAPI_ALLOC;
 		funcResult = true;
 
+
 		// <APIBUG>
 		//
 		// This is just a workarround for a bug in ARAPI 7.6.03/7.6.04
@@ -342,6 +343,8 @@ bool CARSchemaList::LoadFromServer()
 		}
 	}
 
+	LoadDatabaseDetails();
+
 	// check if we have to clean up the name list
 	if (originalObjectNameCount > 0)
 	{
@@ -400,6 +403,76 @@ bool CARSchemaList::LoadFromServer()
 	Sort();
 
 	return funcResult;
+}
+
+void CARSchemaList::InitDatabaseDetails()
+{
+	schemaDbValues.resize(names.numItems);
+	memset(&schemaDbValues[0], 0, sizeof(ARSchemaDbValues) * schemaDbValues.size());
+}
+
+void CARSchemaList::LoadDatabaseDetails()
+{
+	ARStatusList    status;
+	CARInside*      arIn = CARInside::GetInstance();
+	unsigned int    numMatches = 0;
+	ARValueListList valueList;
+
+	// if there was no schema loaded, we skip this method
+	if (names.numItems == 0) return;
+
+	InitDatabaseDetails();
+
+	// the needed columns in arschema are available since 7.1 only
+	if (arIn->CompareServerVersion(7,1) < 0)
+		return;
+
+	ARZeroMemory(&valueList);	
+
+	if (ARGetListSQL(&arIn->arControl, "select schemaId, name, viewName, shViewName from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
+	{
+		if (numMatches > 0)
+		{
+			for (unsigned int idx = 0; idx < names.numItems; ++idx)
+			{
+				for (unsigned int valPos = 0; valPos < valueList.numItems; ++valPos)
+				{
+					ARValueList& row = valueList.valueListList[valPos];
+					bool foundRow = false;
+					
+					if (row.numItems < 2 || row.valueList[1].dataType != AR_DATA_TYPE_CHAR)
+						continue;
+
+					if (strncmp(names.nameList[idx], row.valueList[1].u.charVal, AR_MAX_NAME_SIZE) == 0)
+					{
+						ARSchemaDbValues &dbValues = schemaDbValues[idx];
+
+						if (row.valueList[0].dataType == AR_DATA_TYPE_INTEGER)
+							dbValues.schemaId = row.valueList[0].u.ulongVal;
+
+						if (row.valueList[2].dataType == AR_DATA_TYPE_CHAR)
+						{
+							strncpy(dbValues.viewName, row.valueList[2].u.charVal, AR_MAX_NAME_SIZE);
+							dbValues.viewName[AR_MAX_NAME_SIZE] = 0;
+						}
+
+						if (row.valueList[3].dataType == AR_DATA_TYPE_CHAR)
+						{
+							strncpy(dbValues.shViewName, row.valueList[3].u.charVal, AR_MAX_NAME_SIZE);
+							dbValues.shViewName[AR_MAX_NAME_SIZE] = 0;
+						}
+						break;
+					}
+				}
+			}
+		}
+		FreeARValueListList(&valueList, false);
+		FreeARStatusList(&status, false);
+	}
+	else
+	{
+		cout << arIn->GetARStatusError(&status);
+	}
 }
 
 void CARSchemaList::Reserve(unsigned int size)
@@ -470,6 +543,8 @@ void CARSchemaList::Reserve(unsigned int size)
 	fltGuides.resize(size);
 	packLists.resize(size);
 	webservices.resize(size);
+
+	InitDatabaseDetails();
 
 	reservedSize = size;
 	internalListState = CARSchemaList::INTERNAL_ALLOC;

@@ -2408,17 +2408,29 @@ string CDocSchemaDetails::ShowGeneralInfo()
 	strm << tbl.ToXHtml();
 	tbl.ClearRows();
 
-	row.AddCell("DB Table ID");
-	row.AddCell(""); // TODO: load db infos and add it here
-	tbl.AddRow(row);
-	row.ClearCells();
+	if (pInside->CompareServerVersion(7,1) >= 0)
+	{
+		stringstream numberConverter;
+		if (schema.GetDbTableId() > 0)
+			numberConverter << schema.GetDbTableId();
 
-	row.AddCell("DB Table View");
-	row.AddCell(""); // TODO: load db infos and add it here
-	tbl.AddRow(row);
-	row.ClearCells();
+		row.AddCell("DB Table ID");
+		row.AddCell(numberConverter.str());
+		tbl.AddRow(row);
+		row.ClearCells();
 
-	strm << tbl.ToXHtml();
+		row.AddCell("DB Table View");
+		row.AddCell(schema.GetDbViewName());
+		tbl.AddRow(row);
+		row.ClearCells();
+
+		row.AddCell("DB Table SH Views");
+		row.AddCell(schema.GetDbShViewName());
+		tbl.AddRow(row);
+		row.ClearCells();
+
+		strm << tbl.ToXHtml();
+	}
 
 	strm << "<hr/>" << endl;
 
