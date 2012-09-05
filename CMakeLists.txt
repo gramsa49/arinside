@@ -72,7 +72,7 @@ IF(NOT DEFINED ARINSIDE_TARGET_ARCHITECTURE)
 	SET(ARINSIDE_TARGET_ARCHITECTURE ${CMAKE_SIZEOF_VOID_P})
 ENDIF(NOT DEFINED ARINSIDE_TARGET_ARCHITECTURE)
 
-INCLUDE_DIRECTORIES(${AR_INCLUDE_PATH}/include tinyxml/ tclap/ ./ ${ZLIB_INCLUDE_PATH}/include)
+INCLUDE_DIRECTORIES(${AR_INCLUDE_PATH}/include tinyxml/ tclap/ thirdparty/ ./ ${ZLIB_INCLUDE_PATH}/include)
 
 INCLUDE (CheckIncludeFiles)
 CHECK_INCLUDE_FILES("unistd.h" HAVE_UNISTD_H)
@@ -142,7 +142,7 @@ SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_C
 
 SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
 SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
- AppConfigReaderTest.cpp FileSystemUtilTest.cpp
+ AppConfigReaderTest.cpp FileSystemUtilTest.cpp RapidJSONTests.cpp
  lists/ARListHelpersTest.cpp 
  output/webpage/HtmlReferenceListImplTest.cpp
  util/CommandLineValidatorTest.cpp

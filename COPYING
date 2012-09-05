@@ -45,3 +45,9 @@ License:  LGPL (see ./gzstream.cpp)
 
 Gzstream is a small C++ library, basically just a wrapper, that provides the
 functionality of the zlib C-library in a C++ iostream.
+
+== rapidjson ==
+Homepage: http://code.google.com/p/rapidjson/
+License:  MIT (see thirdparty/rapidjson/license.txt
+
+rapidjson is a fast JSON parser/generator for C++ with both SAX/DOM style API

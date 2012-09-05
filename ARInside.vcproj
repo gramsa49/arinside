@@ -295,9 +295,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
