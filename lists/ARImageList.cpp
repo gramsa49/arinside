@@ -94,7 +94,11 @@ bool CARImageList::LoadFromServer()
 	{
 		memset(&objectNames, 0, sizeof(objectNames));
 
-		if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+		if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+			NULL, // objPropList
+#endif
+			&objectNames, &status) == AR_RETURN_OK)
 		{
 			originalObjectNameCount = objectNames.numItems;
 			arIn->blackList.Exclude(ARREF_IMAGE, &objectNames);
@@ -140,7 +144,11 @@ bool CARImageList::LoadFromServer()
 			// no object names loaded ... now get all names from server
 			memset(&objectNames, 0, sizeof(objectNames));
 
-			if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
+			if (ARGetListImage(&arIn->arControl, NULL, 0, NULL, 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+				NULL, // objPropList
+#endif
+				&objectNames, &status) == AR_RETURN_OK)
 			{
 				originalObjectNameCount = objectNames.numItems;
 				objectsToLoad = &objectNames;

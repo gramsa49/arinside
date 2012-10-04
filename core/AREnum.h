@@ -155,6 +155,9 @@ public:
 		case AR_FUNCTION_LISTSIZE: return "LISTSIZE";
 		case AR_FUNCTION_STRIPHTML: return "STRIPHTML";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		case AR_FUNCTION_VISIBLEROWS: return "VISIBLEROWS";
+#endif
 		default: return EnumDefault;
 		}
 	}
@@ -223,6 +226,10 @@ public:
 		case AR_OPROP_FT_STRIP_TAGS: return "FT Strip Tags";
 		case AR_OPROP_DISPLAY_FORM_SINGLETON: return "Display Form Singleton";
 		case AR_OPROP_FT_FILTER_SEARCH: return "FT Filter Search";
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		case AR_OPROP_FORM_TAG_NAME: return "Tag Name";
+		case AR_OPROP_VUI_OVERLAY_CHANGED_FIELD_LIST: return "Overlaid Field List";
 #endif
 		case AR_DPROP_NONE: return "None";
 		case AR_DPROP_TRIM_TYPE: return "Trim Type";
@@ -451,6 +458,12 @@ public:
 		case AR_DPROP_AUTO_COMPLETE_HIDE_MENU_BUTTON: return "Auto-Complete Hide Menu Button";
 		case AR_DPROP_ROW_LABEL: return "Row Label";
 		case AR_DPROP_ROW_LABEL_PLURAL: return "Label Plural";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		case AR_DPROP_TABLE_COLUMN_HEADER_ALIGNMENT: return "Header Alignment";
+		case AR_DPROP_MOUSEOVER_EFFECT: return "Mouseover Effect";
+		case AR_DPROP_DVF_INLINE: return "DataVisalizationField Inline";
+		case AR_DPROP_EXTERNAL_LINK_BUTTON: return "External Link Button";
+#endif
 #endif
 		case AR_DPROP_PREFIX_NEW: return "Prefix New";
 		case AR_DPROP_PREFIX_SEARCH: return "Prefix Search";
@@ -528,6 +541,32 @@ public:
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		case AR_DPROP_SORT_GROUP: return "Sort Group";
 		case AR_DPROP_SORT_AGGREGATION_TYPE: return "Sort Aggregation Type";
+#endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		case AR_DPROP_TABLE_HDRFTR_GRADTYPE: return "Header/Footer Gradient Type";
+		case AR_DPROP_TABLE_COLUMN_HEADER_TEXT_COLOR: return "Header Text Color";
+		case AR_DPROP_TABLE_HDRFTR_GRADCOLOR: return "Header/Footer Gradient Color";
+		case AR_DPROP_TABLE_HDRFTR_GRADBKGCOLOR: return "Header/Footer Gradient Background Color";
+		case AR_DPROP_VIEW_BORDER_COLOR: return "Border Color";
+		case AR_DPROP_VERTNAV_SUBLEVELTWO_COLOR: return "SublevelTwo Color";
+		case AR_DPROP_TABLE_CONTENT_CLIPPED: return "Content Clipped";
+		case AR_DPROP_COL_HEADBKG_GRADTYPE: return "Background Gradient Type";
+		case AR_DPROP_COL_HEADBKG_GRADCOLOR: return "Background Gradient Color";
+		case AR_DPROP_COL_HEADBKG_GRADBKGCOLOR: return "Background Gradient Bkg Color";
+		case AR_DPROP_DROP_SHADOW: return "Drop Shadow";
+		case AR_DPROP_ATTACH_FTRGRAD_COLOR: return "Footer Gradient Color";
+		case AR_DPROP_ATTACH_FTRGRADBKG_COLOR: return "Footer Gradient Bkg Color";
+		case AR_DPROP_ATTACH_FTRGRAD_TYPE: return "Footer Gradient Type";
+		case AR_DPROP_ATTACH_COLGRAD_COLOR: return "Column Gradient Color";
+		case AR_DPROP_ATTACH_COLGRADBKG_COLOR: return "Column Gradient Bkg Color";
+		case AR_DPROP_ATTACH_COLGRAD_TYPE: return "Column Gradient Type";
+		case AR_DPROP_ATTACH_COLHDRTXT_COLOR: return "Column Header Text Color";
+		case AR_DPROP_MENU_BOX:return "Menu Box";
+		case AR_DPROP_CHARFIELD_BORDER: return "Char Field Border";
+		case AR_DPROP_DISABLED_IMAGE: return "Disabled Image";
+		case AR_DPROP_APPLIST_TOP_BKG_COLOR: return "AppList Top-Level Background Color";
+		case AR_DPROP_APPLIST_SUB_EVEN_LVL_BKG_COLOR: return "AppList Even-Level Background Color";
+		case AR_DPROP_APPLIST_SUB_ODD_LVL_BKG_COLOR: return "AppList Odd-Level Background Color";
 #endif
 		case AR_SMOPROP_OBJECT_VERSION: return "Object Version";
 		case AR_SMOPROP_APP_OWNER: return "App Owner";
@@ -1097,6 +1136,9 @@ public:
 				{
 				case AR_DVAL_SPLITTER_SHOW: return "Show";
 				case AR_DVAL_SPLITTER_HIDE: return "Hide";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+				case AR_DVAL_SPLITTER_INVISIBLE: return "Invisible";
+#endif
 				}
 			}
 			break;
@@ -1135,6 +1177,11 @@ public:
 				{
 				case AR_DVAL_RESIZE_NONE: return "None";
 				case AR_DVAL_RESIZE_VERT: return "Vertical";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+				case AR_DVAL_RESIZE_HORZ: return "Horizontal";
+				case AR_DVAL_RESIZE_BOTH: return "Both";
+#endif
+
 				}
 			}
 			break;
@@ -1200,6 +1247,28 @@ public:
 			break;
 		case AR_SMOPROP_OVERLAY_PROPERTY:
 			return GetOverlayType(nVal);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		case AR_DPROP_TABLE_COLUMN_HEADER_ALIGNMENT:
+			{
+				switch (nVal)
+				{
+				case AR_DVAL_TABLE_COLUMN_ALIGNMENT_RIGHT: return "Right";
+				case AR_DVAL_TABLE_COLUMN_ALIGNMENT_CENTER: return "Center";
+				case AR_DVAL_TABLE_COLUMN_ALIGNMENT_LEFT: return "Left";
+				}
+			}
+			break;
+		case AR_DPROP_MOUSEOVER_EFFECT:
+			{
+				switch (nVal)
+				{
+				case AR_DVAL_MOUSEOVER_EFFECT_NONE: return "None";
+				case AR_DVAL_MOUSEOVER_EFFECT_CURSOR: return "Cursor";
+				case AR_DVAL_MOUSEOVER_EFFECT_HIGHLIGHT: return "Highlight";
+				}
+			}
+			break;
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_800
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		}
 		return "";
@@ -1697,6 +1766,9 @@ public:
 		case AR_KEYWORD_CTRL_KEY: return "CTRL_KEY";
 		case AR_KEYWORD_ALT_KEY: return "ALT_KEY";
 		case AR_KEYWORD_AUTHSTRING: return "AUTHSTRING";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		case AR_KEYWORD_ROWVISIBLE: return "ROWVISIBLE";
+#endif
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
