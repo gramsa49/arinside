@@ -545,7 +545,7 @@ string CDocFieldDetails::FieldLimits()
 					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
 						tableSchema = schema.GetARName();
 
-					strm << "Schema: " << this->pInside->LinkToSchema(tableSchema, rootLevel);
+					strm << this->pInside->LinkToSchema(tableSchema, rootLevel);
 				}
 				strm << "<p/>" << endl;
 

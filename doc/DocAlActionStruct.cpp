@@ -1367,6 +1367,7 @@ void CDocAlActionStruct::ActionCallGuide(std::ostream& strm, const ARCallGuideSt
 {
 	try
 	{
+		strm << "<p>";
 		if (action.serverName[0] == '$' /*&& action.sampleServer[0] != 0*/)
 		{
 			int fieldId = atoi(&action.serverName[1]);
@@ -1392,18 +1393,15 @@ void CDocAlActionStruct::ActionCallGuide(std::ostream& strm, const ARCallGuideSt
 		{
 			strm << "Guide: " << arIn->LinkToContainer(action.guideName, rootLevel) << "<br/>" << endl;
 		}
+		strm << "</p>";
 
 		if(action.guideTableId > 0)
 		{
-			strm << "Table Loop: " << arIn->LinkToField(schemaName, action.guideTableId, rootLevel) << "<br/>" << endl;
-
-			if(action.guideMode == AR_CALL_GUIDE_LOOP_SELECTED_ONLY)
-				strm << "<input type=\"checkbox\" name=\"tblLoopInGuide\" value=\"loopTbl\" checked>Table Loop Selected Rows Only" << endl;
-			else
-				strm << "<input type=\"checkbox\" name=\"tblLoopInGuide\" value=\"loopTbl\">Table Loop Selected Rows Only" << endl;
-
+			strm << "<p class='last'>" << "Table Loop: " << CAREnum::CallGuideMode(action.guideMode) << "<br/>" << endl;
+			strm << "Table Field: " <<  arIn->LinkToField(schemaName, action.guideTableId, rootLevel);
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_CALLGUIDE_TABLELOOP);
 			arIn->AddFieldReference(schemaInsideId, action.guideTableId, refItem);
+			strm << "</p>";
 		}
 	}
 	catch(exception& e)

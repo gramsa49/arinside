@@ -353,6 +353,12 @@ p
     margin-bottom: 6px;
 }
 
+p.last
+{
+    margin-top: 0px;
+    margin-bottom: 0px;
+}
+
 .form_navigation {
   margin-left: 9px;
 }
