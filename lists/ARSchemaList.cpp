@@ -408,7 +408,8 @@ bool CARSchemaList::LoadFromServer()
 void CARSchemaList::InitDatabaseDetails()
 {
 	schemaDbValues.resize(names.numItems);
-	memset(&schemaDbValues[0], 0, sizeof(ARSchemaDbValues) * schemaDbValues.size());
+	if (names.numItems > 0)
+		memset(&schemaDbValues[0], 0, sizeof(ARSchemaDbValues) * schemaDbValues.size());
 }
 
 void CARSchemaList::LoadDatabaseDetails()
@@ -651,6 +652,9 @@ void CARSchemaList::Sort()
 
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+
+		if (GetCount() > schemaDbValues.size())
+			InitDatabaseDetails();
 	}
 
 	// setup lookup map
