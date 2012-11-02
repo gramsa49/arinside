@@ -144,6 +144,8 @@ SET (ARINSIDE_JQUERY_RES
 	thirdparty/jquery/jquery.address.min.js
 	thirdparty/jquery/jquery.js
 	thirdparty/jquery/jquery.timers.js
+	thirdparty/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png
+	thirdparty/jquery/images/ui-bg_glass_65_ffffff_1x400.png
 )
 SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS} ${ARINSIDE_JQUERY_RES})
 

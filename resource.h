@@ -43,6 +43,8 @@
 #define ID_JQUERY_UI_CUSTOM_CSS         139
 #define ID_JQUERY_ADDRESS_JS            140
 #define ID_JQUERY_TIMER_JS              141
+#define ID_JQUERY_UI_IMAGE_BGGLASS_E6   142
+#define ID_JQUERY_UI_IMAGE_BGGLASS_FF   143
 
 // Next default values for new objects
 // 

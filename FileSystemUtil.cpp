@@ -78,6 +78,16 @@ void FileSystemUtil::Load()
 	LoadFromResource(ID_JQUERY_UI_CUSTOM_CSS, "jquery-ui-custom.css", strm.str());
 	LoadFromResource(ID_JQUERY_ADDRESS_JS, "jquery.address.js", strm.str());
 	LoadFromResource(ID_JQUERY_TIMER_JS, "jquery.timer.js", strm.str());
+
+	// specical subfolder "image" for jquery-ui
+	strm.str("");
+	strm << "img" << "/" << "images" << "/";
+	this->CreateSubDirectory(strm.str());
+
+	strm.str("");
+	strm << appConfig.targetFolder << "/" << "img" << "/" << "images" << "/";	
+	LoadFromResource(ID_JQUERY_UI_IMAGE_BGGLASS_E6, "ui-bg_glass_75_e6e6e6_1x400.png", strm.str());
+	LoadFromResource(ID_JQUERY_UI_IMAGE_BGGLASS_FF, "ui-bg_glass_65_ffffff_1x400.png", strm.str());
 }
 
 void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string path)
@@ -135,11 +145,13 @@ void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string 
 		case ID_VISIBLE: data = _binary_res_visible_gif_start; len = (unsigned int)_binary_res_visible_gif_size; break;
 		case ID_WEBSERVICE: data = _binary_res_webservice_gif_start; len = (unsigned int)_binary_res_webservice_gif_size; break;
 		case ID_SCHEMAPAGE_JS: data = _binary_res_schema_page_js_start; len = (unsigned int)_binary_res_schema_page_js_size; break;
-		case ID_JQUERY_JS: data = _binary_thirdparty_jquery_jquery_js_start; len = _binary_thirdparty_jquery_jquery_js_size;
-		case ID_JQUERY_UI_JS: data = _binary_thirdparty_jquery_jquery_ui_js_start; len = _binary_thirdparty_jquery_jquery_ui_js_size;
+		case ID_JQUERY_JS: data = _binary_thirdparty_jquery_jquery_js_start; len = _binary_thirdparty_jquery_jquery_js_size; break;
+		case ID_JQUERY_UI_JS: data = _binary_thirdparty_jquery_jquery_ui_js_start; len = _binary_thirdparty_jquery_jquery_ui_js_size; break;
 		case ID_JQUERY_UI_CUSTOM_CSS: data = _binary_thirdparty_jquery_jquery_ui_custom_css_start; len = _binary_thirdparty_jquery_jquery_ui_custom_css_size; break;
-		case ID_JQUERY_ADDRESS_JS: data = _binary_thirdparty_jquery_jquery_address_min_js_start; len = _binary_thirdparty_jquery_jquery_address_min_js_size;
-		case ID_JQUERY_TIMER_JS: data = _binary_thirdparty_jquery_jquery_timers_js_start; len = _binary_thirdparty_jquery_jquery_timers_js_size;
+		case ID_JQUERY_ADDRESS_JS: data = _binary_thirdparty_jquery_jquery_address_min_js_start; len = _binary_thirdparty_jquery_jquery_address_min_js_size; break;
+		case ID_JQUERY_TIMER_JS: data = _binary_thirdparty_jquery_jquery_timers_js_start; len = _binary_thirdparty_jquery_jquery_timers_js_size; break;
+		case ID_JQUERY_UI_IMAGE_BGGLASS_E6: data = _binary_thirdparty_jquery_images_ui_bg_glass_75_e6e6e6_1x400_png_start; len = _binary_thirdparty_jquery_images_ui_bg_glass_75_e6e6e6_1x400_png_size; break;
+		case ID_JQUERY_UI_IMAGE_BGGLASS_FF: data = _binary_thirdparty_jquery_images_ui_bg_glass_65_ffffff_1x400_png_start; len = _binary_thirdparty_jquery_images_ui_bg_glass_65_ffffff_1x400_png_size; break;
 	}
 #endif
 
