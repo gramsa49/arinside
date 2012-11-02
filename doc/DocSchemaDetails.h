@@ -53,6 +53,7 @@ private:
 
 	string AllFields();
 	void AllFieldsCsv();
+	void AllFieldsJson(std::ostream &out);
 	string AllFieldsSpecial();
 	void AllFieldsSpecialCsv();
 

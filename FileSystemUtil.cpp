@@ -78,6 +78,7 @@ void FileSystemUtil::Load()
 	LoadFromResource(ID_JQUERY_UI_CUSTOM_CSS, "jquery-ui-custom.css", strm.str());
 	LoadFromResource(ID_JQUERY_ADDRESS_JS, "jquery.address.js", strm.str());
 	LoadFromResource(ID_JQUERY_TIMER_JS, "jquery.timer.js", strm.str());
+	LoadFromResource(ID_ARSHELPER_JS, "arshelper.js", strm.str());
 
 	// specical subfolder "image" for jquery-ui
 	strm.str("");
@@ -152,6 +153,7 @@ void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string 
 		case ID_JQUERY_TIMER_JS: data = _binary_thirdparty_jquery_jquery_timers_js_start; len = _binary_thirdparty_jquery_jquery_timers_js_size; break;
 		case ID_JQUERY_UI_IMAGE_BGGLASS_E6: data = _binary_thirdparty_jquery_images_ui_bg_glass_75_e6e6e6_1x400_png_start; len = _binary_thirdparty_jquery_images_ui_bg_glass_75_e6e6e6_1x400_png_size; break;
 		case ID_JQUERY_UI_IMAGE_BGGLASS_FF: data = _binary_thirdparty_jquery_images_ui_bg_glass_65_ffffff_1x400_png_start; len = _binary_thirdparty_jquery_images_ui_bg_glass_65_ffffff_1x400_png_size; break;
+		case ID_ARSHELPER_JS: data = _binary_res_arshelper_js_start; len = _binary_res_arshelper_js_size; break;
 	}
 #endif
 

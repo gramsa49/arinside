@@ -88,4 +88,5 @@ private:
 	extern unsigned char _binary_thirdparty_jquery_jquery_timers_js_start[]; extern unsigned int _binary_thirdparty_jquery_jquery_timers_js_size;
 	extern unsigned char _binary_thirdparty_jquery_images_ui_bg_glass_75_e6e6e6_1x400_png_start[]; extern unsigned int _binary_thirdparty_jquery_images_ui_bg_glass_75_e6e6e6_1x400_png_size;
 	extern unsigned char _binary_thirdparty_jquery_images_ui_bg_glass_65_ffffff_1x400_png_start[]; extern unsigned int _binary_thirdparty_jquery_images_ui_bg_glass_65_ffffff_1x400_png_size;
+	extern unsigned char _binary_res_arshelper_js_start[]; extern unsigned int _binary_res_arshelper_js_size;
 #endif

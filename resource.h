@@ -45,6 +45,7 @@
 #define ID_JQUERY_TIMER_JS              141
 #define ID_JQUERY_UI_IMAGE_BGGLASS_E6   142
 #define ID_JQUERY_UI_IMAGE_BGGLASS_FF   143
+#define ID_ARSHELPER_JS                 144
 
 // Next default values for new objects
 // 

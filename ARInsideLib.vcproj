@@ -1294,6 +1294,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\arshelper.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\chapter.gif"
 				>
 				<FileConfiguration

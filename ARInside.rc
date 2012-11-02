@@ -78,6 +78,7 @@ ID_JQUERY_ADDRESS_JS    RCDATA                  "thirdparty/jquery/jquery.addres
 ID_JQUERY_TIMER_JS      RCDATA                  "thirdparty/jquery/jquery.timers.js"
 ID_JQUERY_UI_IMAGE_BGGLASS_E6     RCDATA        "thirdparty/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png"
 ID_JQUERY_UI_IMAGE_BGGLASS_FF     RCDATA        "thirdparty/jquery/images/ui-bg_glass_65_ffffff_1x400.png"
+ID_ARSHELPER_JS         RCDATA                  "res/arshelper.js"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // English (U.S.) resources

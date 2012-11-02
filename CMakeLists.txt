@@ -136,7 +136,7 @@ SET (ARINSIDE_SRC_GIFS
  res/packing_list.gif res/prev.gif res/schema.gif res/search.gif res/server.gif res/sort_asc.gif res/sort_desc.gif
  res/up.gif res/user.gif res/visible.gif res/webservice.gif
 )
-SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js res/schema_page.js)
+SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js res/schema_page.js res/arshelper.js)
 SET (ARINSIDE_SRC_CSS res/style.css)
 SET (ARINSIDE_JQUERY_RES 
 	thirdparty/jquery/jquery-ui-custom.css

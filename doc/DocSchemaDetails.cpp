@@ -24,6 +24,12 @@
 #include "../core/ARHandle.h"
 #include "DocOverlayHelper.h"
 
+#include "rapidjson/document.h"
+#include "rapidjson/genericwritestream.h"
+#include "rapidjson/writer.h"
+
+using namespace rapidjson;
+
 CDocSchemaDetails::CDocSchemaDetails(unsigned int schemaInsideId, int rootLevel)
 : schema(schemaInsideId)
 {
@@ -85,7 +91,9 @@ void CDocSchemaDetails::Documentation()
 			webPage.SetNavigation(this->SchemaNavigation());
 
 			// add the javascript we need for this page to display correctly
-			webPage.GetReferenceManager().AddScriptReference("img/schema_page.js");
+			webPage.GetReferenceManager()
+				.AddScriptReference("img/schema_page.js")
+				.AddScriptReference("img/jquery.timers.js");
 
 			// now the content
 			CTabControl tabControl;
@@ -268,9 +276,12 @@ string CDocSchemaDetails::AllFields()
 			tbl.AddRow(row);
 		}
 
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
-		tbl.description = tblDesc.str();
+		stringstream outputStrm;
+		AllFieldsJson(outputStrm);
+		outputStrm << "<div><input type=\"text\" id=\"fieldNameFilter\"/><button id=\"execFieldFilter\">Filter</button></div>" << endl;
+		outputStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
+		outputStrm << "<div id=\"result\"></div>";
+		tbl.description = outputStrm.str();
 
 		AllFieldsCsv();
 	}
@@ -329,6 +340,55 @@ void CDocSchemaDetails::AllFieldsCsv()
 	}
 }
 
+void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
+{
+	try
+	{
+		Document document;
+		Document::AllocatorType &alloc = document.GetAllocator();
+		document.SetArray();
+
+		CARFieldList* fields = schema.GetFields();
+		unsigned int fieldCount = fields->GetCount();
+		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
+		{
+			CARField field(schema.GetInsideId(), 0, fieldIndex);
+			CPageParams fieldLink(PAGE_DETAILS, &field);
+
+			Value item;
+			item.SetArray();
+
+			string strName = field.GetName();
+			string strDate = CUtil::DateTimeToString(field.GetTimestamp());
+			string strLink = CWebUtil::DocName(fieldLink->GetFileName());
+
+			Value name(strName.c_str(), strName.size(), alloc);
+			Value modified(strDate.c_str(), strDate.size(), alloc);
+			Value link(strLink.c_str(), strLink.size(), alloc);
+
+			item.PushBack(static_cast<int>(field.GetFieldId()), alloc);
+			item.PushBack(name, alloc);
+			item.PushBack(field.GetDataType(), alloc);
+			item.PushBack(field.GetDisplayInstances().numItems, alloc);
+			item.PushBack(modified, alloc);
+			item.PushBack(field.GetLastChanged(), alloc);
+			item.PushBack(link, alloc);
+
+			document.PushBack(item, alloc);
+		}
+
+		GenericWriteStream output(out);
+		Writer<GenericWriteStream> writer(output);
+
+		out << endl << "<script type=\"text/javascript\">" << endl;
+		out << "var schemaFieldList = "; document.Accept(writer); out << ";" << endl;
+		out << "</script>" << endl;
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION schema all fields json of '" << this->schema.GetName() << "': " << e.what() << endl;
+	}
+}
 
 //Create a page with all fields of a joinform
 string CDocSchemaDetails::AllFieldsSpecial()
@@ -414,7 +474,7 @@ string CDocSchemaDetails::AllFieldsSpecial()
 		}
 
 		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
+		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
 		tbl.description = tblDesc.str();
 
 		AllFieldsSpecialCsv();

@@ -59,3 +59,35 @@ TEST(RapidJSONTests, CreateInMemoryStream)
 	string result = strm.str();
 	ASSERT_EQ("[\"Test1\",\"Test2\",{\"Id\":1,\"Name\":\"ARInside\"}]", result);
 }
+
+string generateRapidJsonValueString(int num)
+{
+	stringstream strm;
+	strm << "Value" << num;
+	return strm.str();
+}
+
+TEST(RapidJSONTests, AllocatorTest)
+{
+	Document document;
+	Document::AllocatorType& allocator = document.GetAllocator();
+
+	document.SetArray();
+	ASSERT_TRUE(document.IsArray());
+
+	for (int i = 0; i < 3; i++)
+	{
+		string value = generateRapidJsonValueString(i);
+		Value item(value.c_str(), value.size(), allocator);
+		document.PushBack(item, allocator);
+	}
+
+	stringstream strm;
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+	document.Accept(writer);
+
+	string result = strm.str();
+	ASSERT_EQ("[\"Value0\",\"Value1\",\"Value2\"]",result);
+}
+
