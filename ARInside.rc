@@ -71,6 +71,12 @@ ID_HIDDEN               RCDATA                  "res/hidden.gif"
 ID_INFO                 RCDATA                  "res/info.gif"
 ID_IMAGE                RCDATA                  "res/image.gif"
 ID_SCHEMAPAGE_JS        RCDATA                  "res/schema_page.js"
+ID_JQUERY_JS            RCDATA                  "thirdparty/jquery/jquery.js"
+ID_JQUERY_UI_JS         RCDATA                  "thirdparty/jquery/jquery-ui.js"
+ID_JQUERY_UI_CUSTOM_CSS RCDATA                  "thirdparty/jquery/jquery-ui-custom.min.css"
+ID_JQUERY_ADDRESS_JS    RCDATA                  "thirdparty/jquery/jquery.address.min.js"
+ID_JQUERY_TIMER_JS      RCDATA                  "thirdparty/jquery/jquery.timers.js"
+
 /////////////////////////////////////////////////////////////////////////////
 #endif    // English (U.S.) resources
 

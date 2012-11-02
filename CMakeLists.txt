@@ -138,7 +138,14 @@ SET (ARINSIDE_SRC_GIFS
 )
 SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js res/schema_page.js)
 SET (ARINSIDE_SRC_CSS res/style.css)
-SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS})
+SET (ARINSIDE_JQUERY_RES 
+	thirdparty/jquery/jquery-ui-custom.css
+	thirdparty/jquery/jquery-ui.js
+	thirdparty/jquery/jquery.address.min.js
+	thirdparty/jquery/jquery.js
+	thirdparty/jquery/jquery.timers.js
+)
+SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS} ${ARINSIDE_JQUERY_RES})
 
 SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
 SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h

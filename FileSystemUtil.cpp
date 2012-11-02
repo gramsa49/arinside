@@ -73,6 +73,11 @@ void FileSystemUtil::Load()
 	LoadFromResource(ID_INFO, "info.gif", strm.str());
 	LoadFromResource(ID_IMAGE, "image.gif", strm.str());
 	LoadFromResource(ID_SCHEMAPAGE_JS, "schema_page.js", strm.str());
+	LoadFromResource(ID_JQUERY_JS, "jquery.js", strm.str());
+	LoadFromResource(ID_JQUERY_UI_JS, "jquery-ui.js", strm.str());
+	LoadFromResource(ID_JQUERY_UI_CUSTOM_CSS, "jquery-ui-custom.css", strm.str());
+	LoadFromResource(ID_JQUERY_ADDRESS_JS, "jquery.address.js", strm.str());
+	LoadFromResource(ID_JQUERY_TIMER_JS, "jquery.timer.js", strm.str());
 }
 
 void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string path)
@@ -92,8 +97,6 @@ void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string 
 		ExitProcess(0);
 	}
 #else
-	// TODO: implement loading of resources for *nix-systems. Use objcopy and
-	// a table to find out the mem-address of the id given via res-parameter.
 	switch (res)
 	{
 		case ID_ACTIVE_LINK: data = _binary_res_active_link_gif_start; len = (unsigned int)_binary_res_active_link_gif_size; break;
@@ -132,6 +135,11 @@ void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string 
 		case ID_VISIBLE: data = _binary_res_visible_gif_start; len = (unsigned int)_binary_res_visible_gif_size; break;
 		case ID_WEBSERVICE: data = _binary_res_webservice_gif_start; len = (unsigned int)_binary_res_webservice_gif_size; break;
 		case ID_SCHEMAPAGE_JS: data = _binary_res_schema_page_js_start; len = (unsigned int)_binary_res_schema_page_js_size; break;
+		case ID_JQUERY_JS: data = _binary_thirdparty_jquery_jquery_js_start; len = _binary_thirdparty_jquery_jquery_js_size;
+		case ID_JQUERY_UI_JS: data = _binary_thirdparty_jquery_jquery_ui_js_start; len = _binary_thirdparty_jquery_jquery_ui_js_size;
+		case ID_JQUERY_UI_CUSTOM_CSS: data = _binary_thirdparty_jquery_jquery_ui_custom_css_start; len = _binary_thirdparty_jquery_jquery_ui_custom_css_size; break;
+		case ID_JQUERY_ADDRESS_JS: data = _binary_thirdparty_jquery_jquery_address_min_js_start; len = _binary_thirdparty_jquery_jquery_address_min_js_size;
+		case ID_JQUERY_TIMER_JS: data = _binary_thirdparty_jquery_jquery_timers_js_start; len = _binary_thirdparty_jquery_jquery_timers_js_size;
 	}
 #endif
 
@@ -152,14 +160,6 @@ void FileSystemUtil::LoadFromResource(unsigned int res, string fileName, string 
 			erStrm << "Error saving file '" << fullFileName.str() << "' to disk. Error: " << e.what();
 		}
 		fout.close();
-
-		//if (!(hfile=CreateFile(fullFileName.str().c_str(), GENERIC_WRITE,0,NULL,CREATE_ALWAYS,FILE_ATTRIBUTE_TEMPORARY,NULL))) 
-		//{
-		//	ExitProcess(0);
-		//}
-
-		//WriteFile(hfile,data,len,&c,NULL);
-		//CloseHandle(hfile);	
 	}
 	catch (exception e)
 	{

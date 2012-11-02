@@ -498,10 +498,6 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\thirdparty\rapidjson\allocators.h"
-				>
-			</File>
-			<File
 				RelativePath=".\AppConfig.h"
 				>
 			</File>
@@ -526,39 +522,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\thirdparty\rapidjson\document.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\encodedstream.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\encodings.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\filereadstream.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\filestream.h"
-				>
-			</File>
-			<File
 				RelativePath=".\FileSystemUtil.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\filewritestream.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\genericreadstream.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\genericwritestream.h"
 				>
 			</File>
 			<File
@@ -570,43 +534,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\thirdparty\rapidjson\internal\pow10.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\prettywriter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\rapidjson.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\reader.h"
-				>
-			</File>
-			<File
 				RelativePath=".\resource.h"
 				>
 			</File>
 			<File
-				RelativePath=".\thirdparty\rapidjson\internal\stack.h"
-				>
-			</File>
-			<File
 				RelativePath=".\stdafx.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\internal\strfunc.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\stringbuffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\thirdparty\rapidjson\writer.h"
 				>
 			</File>
 		</Filter>
@@ -1747,6 +1679,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\schema_page.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\script.js"
 				>
 				<FileConfiguration
@@ -2350,6 +2286,110 @@
 				RelativePath=".\scan\ScanSchema.h"
 				>
 			</File>
+		</Filter>
+		<Filter
+			Name="thirdparty"
+			>
+			<Filter
+				Name="jquery"
+				>
+				<File
+					RelativePath=".\thirdparty\jquery\jquery-ui-custom.css"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\jquery\jquery-ui-custom.min.css"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\jquery\jquery-ui.js"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\jquery\jquery.address.min.js"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\jquery\jquery.js"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\jquery\jquery.timers.js"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="rapidjson"
+				>
+				<File
+					RelativePath=".\thirdparty\rapidjson\allocators.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\document.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\encodedstream.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\encodings.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\filereadstream.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\filestream.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\filewritestream.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\genericreadstream.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\genericwritestream.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\internal\pow10.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\prettywriter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\rapidjson.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\reader.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\internal\stack.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\internal\strfunc.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\stringbuffer.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\rapidjson\writer.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\ARInside.rc"

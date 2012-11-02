@@ -38,6 +38,11 @@
 #define ID_VISIBLE                      134
 #define ID_WEBSERVICE                   135
 #define ID_SCHEMAPAGE_JS                136
+#define ID_JQUERY_JS                    137
+#define ID_JQUERY_UI_JS                 138
+#define ID_JQUERY_UI_CUSTOM_CSS         139
+#define ID_JQUERY_ADDRESS_JS            140
+#define ID_JQUERY_TIMER_JS              141
 
 // Next default values for new objects
 // 
