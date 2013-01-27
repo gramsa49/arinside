@@ -29,6 +29,7 @@ TEST(RapidJSONTests, GenerateArray)
 	FileStream f(stdout);
 	Writer<FileStream> writer(f);
 	document.Accept(writer);
+	cout << endl;
 }
 
 TEST(RapidJSONTests, CreateInMemoryStream)

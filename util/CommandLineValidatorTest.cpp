@@ -42,7 +42,7 @@ TEST(CommandLineValidatorTest, MissingArgument)
 	ASSERT_EXIT(validator.Validate(), ::testing::ExitedWithCode(1), "Required argument missing");
 }
 
-TEST(CommandLineValidatorTest, InvalidNumericArgument)
+TEST(CommandLineValidatorTest, DISABLED_InvalidNumericArgument)
 {
 	int argc = 5;
 	char* argv[] = { "program", 

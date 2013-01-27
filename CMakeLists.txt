@@ -126,7 +126,7 @@ SET (ARINSIDE_SRCS
  scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
- util/RefItem.cpp util/AppTimer.cpp util/Util.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp
+ util/AppTimer.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp util/RefItem.cpp util/UntarStream.cpp util/Util.cpp
  AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp FileSystemUtil.cpp gzstream.cpp Main.cpp
 )
 SET (ARINSIDE_SRC_GIFS
@@ -154,7 +154,8 @@ SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
  AppConfigReaderTest.cpp FileSystemUtilTest.cpp RapidJSONTests.cpp
  lists/ARListHelpersTest.cpp 
  output/webpage/HtmlReferenceListImplTest.cpp
- util/CommandLineValidatorTest.cpp
+ util/CommandLineValidatorTest.cpp util/UntarStreamTest.cpp util/UntarStreamTest.h
+ gzstream.cpp
 )
 
 IF(NOT MSVC)

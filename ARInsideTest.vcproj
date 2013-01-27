@@ -513,6 +513,14 @@
 				RelativePath=".\util\CommandLineValidatorTest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\util\UntarStreamTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\UntarStreamTest.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="lists"

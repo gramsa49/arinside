@@ -28,6 +28,7 @@
 #include <stdio.h>
 #include <memory>
 #include <iterator>
+#include <algorithm>
 
 #ifdef WIN32 // JLS17 LINUX
 #include <windows.h>
@@ -37,8 +38,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <unistd.h>
-#include <errno.h>
 #endif // WIN32
+#include <errno.h>
 
 #include <sys/stat.h>
 
