@@ -586,6 +586,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\AREnum.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\AREnum.h"
 				>
 			</File>
