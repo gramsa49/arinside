@@ -200,13 +200,17 @@ public:
 class UntarStreamToMemory : public UntarStream
 {
 public:
-	UntarStreamToMemory(std::istream &stream) : UntarStream(stream) {}
+	UntarStreamToMemory(std::istream &stream) : UntarStream(stream) { theFilesAlreadyExist = false; }
 
 	std::vector< std::string > dirNames;
 	std::vector< std::string > fileNames;
 	std::vector< std::string > fileContent;
+
+	bool theFilesAlreadyExist;
+
 protected:
 	virtual ostream* CreateOutputStream(const char* fileName) { fileNames.push_back(fileName); return new std::ostringstream(ios_base::out | ios_base::binary); }
 	virtual bool CreateOutputDirectory(const char* dirName) { dirNames.push_back(dirName); return true; }
 	virtual void CloseOutputStream(std::ostream &strm) { fileContent.push_back(reinterpret_cast<std::ostringstream&>(strm).str()); }
+	virtual bool FileExists(const char* fileName) { errno = 0; return theFilesAlreadyExist; }
 };

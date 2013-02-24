@@ -87,7 +87,7 @@ bool UntarStream::ReadHeader()
 
 bool UntarStream::FileExists(const char* fileName)
 {
-	return false;
+	return (access(fileName, 0) != -1);
 }
 
 ostream* UntarStream::CreateOutputStream(const char* fileName)
@@ -208,7 +208,7 @@ void untar_exception::init()
 
 	if (error_no > 0)
 	{
-		strm << ": code=" << errno << ", " << strerror(errno);
+		strm << ": code=" << error_no << ", " << strerror(error_no);
 	}
 
 	msg = strm.str();

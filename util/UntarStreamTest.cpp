@@ -45,12 +45,31 @@ TEST(UntarStreamTests, ExtractTest)
 	ASSERT_STREQ("Content of file 2\n", untar.fileContent[1].c_str());
 }
 
+TEST(UntarStreamTests, DISABLED_ExtractFailTest)
+{
+	fixed_size_memory_buf buf(test_tar_file_content, sizeof test_tar_file_content);
+	istream input(&buf);
+
+	UntarStreamToMemory untar(input);
+	untar.theFilesAlreadyExist = true;
+
+	try
+	{
+		untar.ExtractAllTo("memory");
+	}
+	catch (untar_exception &untarEx)
+	{
+		ASSERT_STREQ("writing destination file failed: code=17, File exists", untarEx.what());
+	}
+}
+
 TEST(UntarStreamTests, ExtractFilesystem)
 {
 	fixed_size_memory_buf buf(test_tar_file_content, sizeof test_tar_file_content);
 	istream input(&buf);
 
-	UntarStream untar(input);
+	UntarStreamToMemory untar(input);
+	untar.theFilesAlreadyExist = true;
 	untar.ExtractAllTo(".", UntarStream::SKIP);
 }
 
