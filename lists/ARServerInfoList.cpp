@@ -36,8 +36,11 @@ void CARServerInfoList::FillRequest()
 	{
 		CARInside* pInside = CARInside::GetInstance();
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_810
+		if      (pInside->CompareServerVersion(8,1,0) >= 0) { requestList.numItems = 353 /*358*/; } else
+#endif
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
-		if      (pInside->CompareServerVersion(8,0,0) >= 0) { requestList.numItems = 352; } else
+		if      (pInside->CompareServerVersion(8,0,0) >= 0) { requestList.numItems = 353; } else
 #endif
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 		if      (pInside->CompareServerVersion(7,6,4) >= 0) { requestList.numItems = 351; } else

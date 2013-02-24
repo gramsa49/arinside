@@ -44,7 +44,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories=".\Tclap;..\..\api810\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -65,9 +65,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="1"
@@ -142,9 +142,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\Api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="17"
@@ -198,7 +198,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -217,9 +217,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -276,7 +276,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -295,9 +295,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -372,9 +372,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -450,9 +450,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

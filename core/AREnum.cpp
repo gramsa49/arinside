@@ -225,6 +225,11 @@ string CAREnum::FieldPropertiesLabel(int nType)
 	case AR_OPROP_FORM_TAG_NAME: return "Tag Name";
 	case AR_OPROP_VUI_OVERLAY_CHANGED_FIELD_LIST: return "Overlaid Field List";
 #endif
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_810
+	case AR_OPROP_GRANULAR_OVERLAY_MODE: return "Granular Overlay Mode";
+	case AR_OPROP_OVERLAY_EXTEND_MASK: return "Overlay Extend Mask";
+	case AR_OPROP_OVERLAY_INHERIT_MASK: return "Overlay Inherit Mask";
+#endif
 	case AR_DPROP_NONE: return "None";
 	case AR_DPROP_TRIM_TYPE: return "Trim Type";
 	case AR_DPROP_CNTL_TYPE: return "Control Type";
@@ -561,6 +566,9 @@ string CAREnum::FieldPropertiesLabel(int nType)
 	case AR_DPROP_APPLIST_TOP_BKG_COLOR: return "AppList Top-Level Background Color";
 	case AR_DPROP_APPLIST_SUB_EVEN_LVL_BKG_COLOR: return "AppList Even-Level Background Color";
 	case AR_DPROP_APPLIST_SUB_ODD_LVL_BKG_COLOR: return "AppList Odd-Level Background Color";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_810
+	case AR_DPROP_COLUMN_INITIAL_STATE: return "Column Initial State";
+#endif
 #endif
 	case AR_SMOPROP_OBJECT_VERSION: return "Object Version";
 	case AR_SMOPROP_APP_OWNER: return "App Owner";
@@ -1262,6 +1270,17 @@ string CAREnum::FieldPropertiesValue(int nProp, int nVal)
 			}
 		}
 		break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_810
+	case AR_DPROP_COLUMN_INITIAL_STATE:
+		{
+			switch (nVal)
+			{
+			case AR_DVAL_COLUMN_INITIAL_STATE_REMOVED: return "Removed";
+			case AR_DVAL_COLUMN_INITIAL_STATE_SHOWN: return "Shown";
+			}
+		}
+		break;
+#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_810
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_800
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 	}
@@ -2421,6 +2440,17 @@ string CAREnum::ServerInfoApiCall(int nType)
 	case AR_SERVER_INFO_USE_PROMPT_BAR_FOR: return "AR_SERVER_INFO_USE_PROMPT_BAR_FOR";
 	case AR_SERVER_INFO_ATRIUMSSO_KEYSTORE_PATH: return "AR_SERVER_INFO_ATRIUMSSO_KEYSTORE_PATH";
 	case AR_SERVER_INFO_ATRIUMSSO_KEYSTORE_PASSWORD: return "AR_SERVER_INFO_ATRIUMSSO_KEYSTORE_PASSWORD";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+	case AR_SERVER_INFO_MAX_LOG_HISTORY: return "AR_SERVER_INFO_MAX_LOG_HISTORY";
+	case AR_SERVER_INFO_SUPRESS_LOGOFF_SIGNALS: "AR_SERVER_INFO_SUPRESS_LOGOFF_SIGNALS";
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_810
+	case AR_SERVER_INFO_DB_FUNCTIONAL_INDEX: return "AR_SERVER_INFO_DB_FUNCTIONAL_INDEX";
+	case AR_SERVER_INFO_UPGRADE_MODE: return "AR_SERVER_INFO_UPGRADE_MODE";
+	case AR_SERVER_INFO_UPGRADE_RESERVED: return "AR_SERVER_INFO_UPGRADE_RESERVED";
+	case AR_SERVER_INFO_UPGRADE_ADMIN_USER: return "AR_SERVER_INFO_UPGRADE_ADMIN_USER";
+	case AR_SERVER_INFO_UPGRADE_DUAL_DATA_FORMS: return "AR_SERVER_INFO_UPGRADE_DUAL_DATA_FORMS";
+#endif // AR_API_VERSION_810
+#endif // AR_API_VERSION_800
 #endif // AR_API_VERSION_764
 #endif // AR_API_VERSION_763
 #endif // AR_API_VERSION_750

@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\Tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -175,7 +175,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -239,7 +239,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -302,7 +302,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -366,7 +366,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\Api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"

@@ -65,9 +65,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtestd.lib arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtestd.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="1"
@@ -142,9 +142,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtestd.lib arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtestd.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				TargetMachine="17"
@@ -222,9 +222,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -285,7 +285,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -305,9 +305,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -387,9 +387,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi7604_build002.lib arxmlutil7604_build002.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api764sp2\lib;..\..\libs\zlib\lib"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"
@@ -470,9 +470,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi7604_build002_win64.lib arxmlutil7604_build002_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api764sp2\lib;..\..\libs\zlib\lib64"
+				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
 				SubSystem="1"
 				OptimizeReferences="2"

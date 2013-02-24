@@ -56,7 +56,7 @@ IF(NOT DEFINED ARINSIDE_BETA)
 ENDIF(NOT DEFINED ARINSIDE_BETA)	
 
 IF (NOT DEFINED AR_INCLUDE_PATH)
-	SET(AR_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../api764" CACHE PATH "Path to the arapi root dir where 'include' and 'lib' is located.")
+	SET(AR_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../api810" CACHE PATH "Path to the arapi root dir where 'include' and 'lib' is located.")
 ENDIF(NOT DEFINED AR_INCLUDE_PATH)
 
 IF(NOT EXISTS ${AR_INCLUDE_PATH})
@@ -155,7 +155,6 @@ SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
  lists/ARListHelpersTest.cpp 
  output/webpage/HtmlReferenceListImplTest.cpp
  util/CommandLineValidatorTest.cpp util/UntarStreamTest.cpp util/UntarStreamTest.h
- gzstream.cpp
 )
 
 IF(NOT MSVC)
@@ -185,7 +184,7 @@ SET(ARINSIDE_ARAPI_ICUDATABMC_LIBNAME "icudatabmc")
 SET(ARINSIDE_ARAPI_ICUI18NBMC_LIBNAME "icui18nbmc")
 SET(ARINSIDE_ARAPI_ICUUCBMC_LIBNAME "icuucbmc")
 IF(WIN32)
-	SET(ARINSIDE_ARAPI_LIB arapi7604_build002 arapi7603_build001 arapi75 arapi71 arapi70)
+	SET(ARINSIDE_ARAPI_LIB arapi81_build001 arapi80_build001 arapi7604_build002 arapi7603_build001 arapi75 arapi71 arapi70)
 	SET(ZLIB_LIBNAMES zlibwapi)
 ELSE(WIN32)
 	SET(ARINSIDE_ARAPI_LIB ar)
