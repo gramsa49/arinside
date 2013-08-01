@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CMAKE_INTDIR=\&quot;Debug\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -122,7 +122,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;CMAKE_INTDIR=\&quot;x64\\Debug\&quot;"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -203,7 +203,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CMAKE_INTDIR=\&quot;Release\&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -286,7 +286,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CMAKE_INTDIR=\&quot;x64\\Release\&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -368,7 +368,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CMAKE_INTDIR=\&quot;ReleaseBeta\&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -451,7 +451,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\libs\gtest\include;.\Tclap;..\..\api764sp2\include;.\;..\..\libs\zlib\include;thirdparty"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;CMAKE_INTDIR=\&quot;x64\\ReleaseBeta\&quot;"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -604,6 +604,10 @@
 		</File>
 		<File
 			RelativePath=".\FileSystemUtilTest.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\FileSystemUtilTest.h.in"
 			>
 		</File>
 		<File
