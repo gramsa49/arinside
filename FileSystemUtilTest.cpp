@@ -11,3 +11,10 @@ TEST(FileSystemUtil, IsDots_WithoutDots_Test)
 {
 	ASSERT_EQ(false, FileSystemUtil::IsDots("testfile"));
 }
+
+TEST(FileSystemUtil, GetExecutableDirectory)
+{
+	string directory = FileSystemUtil::GetExecutableDirectory(argv_0);
+	directory = FileSystemUtil::GetRealPathName(directory);
+	cout << "CurrentDir: " << directory << endl;
+}

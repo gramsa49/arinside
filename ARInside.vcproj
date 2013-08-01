@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
@@ -217,7 +217,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
@@ -295,7 +295,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
@@ -372,7 +372,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
@@ -450,7 +450,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
+				AdditionalDependencies="arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"

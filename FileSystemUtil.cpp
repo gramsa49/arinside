@@ -18,6 +18,7 @@
 #include "resource.h"
 #include "FileSystemUtil.h"
 #include "AppException.h"
+#include "ARApi.h"
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -402,3 +403,100 @@ void FileSystemUtil::CompactFolder(string path)
 	cout << "[WARN] CompactFolder is only supported on windows platform!" << endl;
 #endif
 }
+
+string FileSystemUtil::GetExecutableDirectory(const char* argv_0)
+{
+	// http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
+#if WIN32
+	DWORD size = 1024;
+	LPTSTR buffer = (LPTSTR)malloc(size * sizeof(TCHAR));
+ged_start:
+	if (realloc(buffer, size) == NULL)
+	{
+		cerr << "GetExecutableDirectory: Failed to realloc memory buffer to " << size << "!" << endl;
+	}
+	
+	if (GetModuleFileName(NULL, buffer, size) == 0)
+	{
+		cerr << "Failed to get executable directory" << GetFormattedMessage(GetLastError()) << endl;
+		return "";
+	}
+	
+	if (GetLastError() == ERROR_INSUFFICIENT_BUFFER)
+	{
+		size = size << 1;
+		goto ged_start;
+	}
+
+	PathRemoveFileSpec(buffer);
+	string path = buffer;
+	free(buffer);
+
+	return path;
+#else
+	// first, we want to make sure we did get a valid argument
+	if (argv_0 == NULL || argv_0[0] == 0)
+	{
+		return "";
+	}
+
+	string path;
+
+	// if the program name starts with an '/', there is an absolute path specified
+	if (argv_0[0] == '/')
+	{
+		path = argv_0;
+		
+		string::size_type pos = path.find_last_of("/");
+		if (pos != -1)
+		{
+			path.resize(pos+1);  // keep the slash at the end, it's safer.
+		}
+	}
+
+	// otherwise we use the current working directory or an additional relative path
+	else
+	{
+		char cwd[PATH_MAX+1];
+		ARZeroMemory(cwd);
+
+		if (getcwd(cwd, PATH_MAX) == NULL)
+		{
+			// error while getting current working directory
+			return "";
+		}
+		path = cwd;
+
+		// ok, do we have some relative path informations?
+		if (strchr(argv_0, '/') != NULL)
+		{
+			if (path.length() > 0 && path[path.length()-1] != '/')
+			{
+				path += '/';
+			}
+
+			path += argv_0;
+			string::size_type pos = path.find_last_of("/");
+			if (pos != -1)
+			{
+				path.resize(pos+1);  // keep the slash at the end, it's safer.
+			}
+		}
+	}
+	return path;
+#endif
+}
+
+#if WIN32
+string FileSystemUtil::GetFormattedMessage(unsigned int error)
+{
+	LPSTR buffer = NULL;
+	if (FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM, NULL, error, 0, buffer, 200, NULL) == 0)
+	{
+		return "failed to get error message";
+	}
+	string errMessage = buffer;
+	LocalFree(buffer);
+	return errMessage;
+}
+#endif

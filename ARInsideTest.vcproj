@@ -65,7 +65,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtestd.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
+				AdditionalDependencies="gtestd.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
@@ -142,7 +142,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtestd.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtestd.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="2"
 				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
@@ -222,7 +222,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
@@ -305,7 +305,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"
@@ -387,7 +387,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001.lib arxmlutil81_build001.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\libs\gtest\lib;..\..\api810\lib;..\..\libs\zlib\lib"
 				GenerateDebugInformation="true"
@@ -470,7 +470,7 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="gtest.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib"
+				AdditionalDependencies="gtest.lib arapi81_build001_win64.lib arxmlutil81_build001_win64.lib zlibwapi.lib shlwapi.lib"
 				LinkIncremental="1"
 				AdditionalLibraryDirectories="..\..\libs\gtest\lib64;..\..\api810\lib;..\..\libs\zlib\lib64"
 				GenerateDebugInformation="true"

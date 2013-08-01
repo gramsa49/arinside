@@ -29,11 +29,13 @@
 #include <memory>
 #include <iterator>
 #include <algorithm>
+#include <assert.h>
 
 #ifdef WIN32 // JLS17 LINUX
 #include <windows.h>
 #include <io.h>
 #include <direct.h>
+#include <shlwapi.h>
 #else // WIN32
 #include <sys/types.h>
 #include <dirent.h>

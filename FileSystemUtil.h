@@ -33,6 +33,10 @@ public:
 	static bool DeleteDirectory(const char* sPath, bool topLevel = true);
 	static bool IsDots(const char* str);
 	static void CompactFolder(std::string path);
+	static std::string GetExecutableDirectory(const char* argv_0);
+#if WIN32
+	static std::string GetFormattedMessage(unsigned int error);
+#endif
 
 private:
 	void LoadFromResource(unsigned int res, string fileName, string path);

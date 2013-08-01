@@ -2055,6 +2055,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\ResourceFileLocatorAndExtractor.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\ResourceFileLocatorAndExtractor.h"
+				>
+			</File>
+			<File
 				RelativePath=".\util\Uncopyable.h"
 				>
 			</File>

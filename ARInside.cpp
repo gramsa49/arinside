@@ -2108,8 +2108,10 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 }
 
 void CARInside::DoWork(int nMode)
-{
+{	
 	FileSystemUtil fsUtil(appConfig);
+	
+	string directory = FileSystemUtil::GetExecutableDirectory(NULL);
 
 	// first step is to create directory structure and resources (images, css and js)
 	Prepare();
