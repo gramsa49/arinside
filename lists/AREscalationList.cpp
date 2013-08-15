@@ -159,7 +159,7 @@ bool CAREscalationList::LoadFromServer()
 			ARContainerInfoList contNames;			
 			ARZeroMemory(&contNames);
 
-			if (ARGetListEscalation(&arIn->arControl, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+			if (ARGetListEscalation(&arIn->arControl, NULL, 0, NULL, &objectNames, &status) == AR_RETURN_OK)
 			{
 				originalObjectNameCount = objectNames.numItems;
 				objectsToLoad = &objectNames;

@@ -319,7 +319,7 @@ void CARProplistHelper::UnusedPropertiesToHTML(std::ostream& strm)
 
 CARProplistHelper::PropHelpData::PropHelpData(void)
 {
-	pId = NULL;
+	pId = 0;
 	Value = NULL;
 	isUsed = false;
 }

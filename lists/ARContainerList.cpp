@@ -182,7 +182,7 @@ bool CARContainerList::LoadFromServer()
 			ARContainerInfoList contNames;			
 			ARZeroMemory(&contNames);
 
-			if (ARGetListContainer(&arIn->arControl, NULL, NULL, AR_HIDDEN_INCREMENT, NULL, NULL, &contNames, &status) == AR_RETURN_OK)
+			if (ARGetListContainer(&arIn->arControl, 0, NULL, AR_HIDDEN_INCREMENT, NULL, NULL, &contNames, &status) == AR_RETURN_OK)
 			{
 				// create a temporate ARNameList
 				objectNames.numItems = contNames.numItems;

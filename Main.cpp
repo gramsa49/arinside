@@ -134,7 +134,7 @@ int CMain::Run(int argc, char* argv[])
 	return result;
 }
 
-char* CMain::GetPlatformString()
+const char* CMain::GetPlatformString() const
 {
 	char* platform;
 	if (sizeof(platform) == 4)

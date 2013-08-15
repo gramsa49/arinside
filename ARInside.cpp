@@ -2490,7 +2490,7 @@ void CARInside::SetupOverlaySupport()
 	{
 		ARValueStruct value;
 		value.dataType = AR_DATA_TYPE_CHAR;
-		value.u.charVal = AR_OVERLAY_CLIENT_MODE_FULL;
+		value.u.charVal = (char*)AR_OVERLAY_CLIENT_MODE_FULL;
 		if (ARSetSessionConfiguration(&arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &arStatus) != AR_RETURN_OK)
 			cerr << "SetSessionConfiguration failed: " << GetARStatusError(&arStatus);
 	}

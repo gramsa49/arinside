@@ -124,7 +124,7 @@ bool CARSchemaList::LoadFromServer()
 	{
 		memset(&objectNames, 0, sizeof(objectNames));
 
-		if (ARGetListSchema(&arIn->arControl, NULL, AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+		if (ARGetListSchema(&arIn->arControl, 0, AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
 		{
 			originalObjectNameCount = objectNames.numItems;
 			arIn->blackList.Exclude(ARREF_SCHEMA, &objectNames);
@@ -195,7 +195,7 @@ bool CARSchemaList::LoadFromServer()
 			ARValueListList valueList;
 			ARZeroMemory(&valueList);
 
-			if (ARGetListSQL(&arIn->arControl, "select name, timestamp from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
+			if (ARGetListSQL(&arIn->arControl, (char*)"select name, timestamp from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
 			{
 				if (numMatches > 0)
 				{
@@ -262,7 +262,7 @@ bool CARSchemaList::LoadFromServer()
 			// no filter names loaded ... now get all names from server
 			memset(&objectNames, 0, sizeof(objectNames));
 
-			if (ARGetListSchema(&arIn->arControl, NULL, AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+			if (ARGetListSchema(&arIn->arControl, 0, AR_LIST_SCHEMA_ALL | AR_HIDDEN_INCREMENT, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
 			{
 				originalObjectNameCount = objectNames.numItems;
 				objectsToLoad = &objectNames;
@@ -430,7 +430,7 @@ void CARSchemaList::LoadDatabaseDetails()
 
 	ARZeroMemory(&valueList);	
 
-	if (ARGetListSQL(&arIn->arControl, "select schemaId, name, viewName, shViewName from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
+	if (ARGetListSQL(&arIn->arControl, (char*)"select schemaId, name, viewName, shViewName from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
 	{
 		if (numMatches > 0)
 		{

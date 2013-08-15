@@ -88,7 +88,7 @@ bool CARMenuList::LoadFromServer()
 	{
 		memset(&objectNames, 0, sizeof(objectNames));
 
-		if (ARGetListCharMenu(&arIn->arControl, NULL, 0, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
+		if (ARGetListCharMenu(&arIn->arControl, 0, NULL, NULL, NULL, &objectNames, &status) == AR_RETURN_OK)
 		{
 			originalObjectNameCount = objectNames.numItems;
 			arIn->blackList.Exclude(ARREF_CHAR_MENU, &objectNames);

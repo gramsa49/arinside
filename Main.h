@@ -27,7 +27,7 @@ public:
 	int Run(int argc, char* argv[]);
 
 private:
-	char* GetPlatformString();
+	const char* GetPlatformString() const;
 	void OutputARInsideBanner();
 
 	int StartServerMode(AppConfig &appConfig);
