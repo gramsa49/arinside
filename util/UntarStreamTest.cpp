@@ -33,6 +33,18 @@ TEST(UntarStreamTests, ExtractTest)
 	UntarStreamToMemory untar(input);
 	untar.ExtractAllTo("memory");
 
+#ifdef WIN32
+	ASSERT_EQ(1, untar.dirNames.size());
+	ASSERT_STREQ("memory\\test/", untar.dirNames[0].c_str());
+
+	ASSERT_EQ(2, untar.fileNames.size());
+	ASSERT_STREQ("memory\\test/file1.txt", untar.fileNames[0].c_str());
+	ASSERT_STREQ("memory\\test/file2.txt", untar.fileNames[1].c_str());
+
+	ASSERT_EQ(2, untar.fileContent.size());
+	ASSERT_STREQ("Content of file 1", untar.fileContent[0].c_str());
+	ASSERT_STREQ("Content of file 2\n", untar.fileContent[1].c_str());
+#else
 	ASSERT_EQ(1, untar.dirNames.size());
 	ASSERT_STREQ("memory/test/", untar.dirNames[0].c_str());
 
@@ -43,6 +55,7 @@ TEST(UntarStreamTests, ExtractTest)
 	ASSERT_EQ(2, untar.fileContent.size());
 	ASSERT_STREQ("Content of file 1", untar.fileContent[0].c_str());
 	ASSERT_STREQ("Content of file 2\n", untar.fileContent[1].c_str());
+#endif
 }
 
 TEST(UntarStreamTests, DISABLED_ExtractFailTest)

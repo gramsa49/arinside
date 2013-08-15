@@ -500,3 +500,40 @@ string FileSystemUtil::GetFormattedMessage(unsigned int error)
 	return errMessage;
 }
 #endif
+
+string FileSystemUtil::CombinePath(const std::string &path1, const std::string &path2)
+{
+	// if the second path points to the root (starts with PATH_SEPARATOR, we just return the 2nd path)
+	if (path2.length() > 0 && 
+#ifdef WIN32
+		(path2[0] == '/' || path2[0] == '\\')
+#else
+		path2[0] == '/'
+#endif
+		)
+	{
+		return path2;
+	}
+
+	stringstream result;
+
+	// add first part
+	result << path1;
+
+	// check if we need to add PATH_SEPARATOR
+	if (path1.length() > 0)
+	{
+		char lastPathChar = path1[path1.length()-1];
+#ifdef WIN32
+		if (lastPathChar != '/' && lastPathChar != '\\')
+#else
+		if (lastPathChar != '/')
+#endif
+		{
+			result << ARINSIDE_PATH_SEPARATOR;
+		}
+	}
+
+	result << path2;
+	return result.str();
+}

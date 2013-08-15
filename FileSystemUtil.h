@@ -17,6 +17,12 @@
 #pragma once
 #include "AppConfig.h"
 
+#ifdef WIN32
+#define ARINSIDE_PATH_SEPARATOR "\\"
+#else
+#define ARINSIDE_PATH_SEPARATOR "/"
+#endif
+
 class FileSystemUtil
 {
 public:
@@ -34,6 +40,7 @@ public:
 	static bool IsDots(const char* str);
 	static void CompactFolder(std::string path);
 	static std::string GetExecutableDirectory(const char* argv_0);
+	static std::string CombinePath(const std::string &path1, const std::string &path2);
 #if WIN32
 	static std::string GetFormattedMessage(unsigned int error);
 #endif

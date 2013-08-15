@@ -1,22 +1,7 @@
 #include "stdafx.h"
 #include "UntarStream.h"
+#include "../FileSystemUtil.h"
 #include "../ARApi.h"
-
-/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helper
-void BuildFileName(const std::string &destPath, tar_header &header, /*out*/ stringstream &output)
-{
-	output << destPath;
-	if (!destPath.empty())
-	{
-		char last = destPath[destPath.length()];
-		if (last != '\\' && last != '/')
-		{
-			output << "/";
-		}
-	}
-	output << header.name;
-}
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 UntarStream::UntarStream(std::istream &stream)
@@ -46,11 +31,7 @@ void UntarStream::ExtractAllTo(const std::string path, IfFileExists onFileExists
 		{
 		case DIRTYPE:
 			{
-				//cout << "Directory: " << header.name << endl;
-				stringstream dirNameStrm;
-				BuildFileName(destPath, header, dirNameStrm);
-				
-				string dirName(dirNameStrm.str());
+				string dirName = FileSystemUtil::CombinePath(destPath, header.name);
 				if (!this->CreateOutputDirectory(dirName.c_str()))
 				{
 					if (errno != EEXIST || (ifFileExists != SKIP && ifFileExists != REPLACE))
@@ -111,9 +92,7 @@ bool UntarStream::CreateOutputDirectory(const char* dirName)
 
 void UntarStream::ExtractFile()
 {
-	stringstream tmpStrm;
-	BuildFileName(destPath, header, tmpStrm);
-	string fileName = tmpStrm.str();
+	string fileName = FileSystemUtil::CombinePath(destPath, header.name);
 
 	if (FileExists(fileName.c_str()))
 	{
