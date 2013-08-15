@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../tclap/CmdLine.h"
+#include <tclap/CmdLine.h>
 
 class CommandLineValidator
 {

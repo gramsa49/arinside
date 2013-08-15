@@ -27,5 +27,4 @@
 #include <unistd.h>
 #endif // WIN32
 
-#include "tclap/CmdLine.h"
 #include <sys/stat.h>

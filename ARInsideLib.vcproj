@@ -45,7 +45,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\Tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\thirdparty\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -110,7 +110,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\thirdparty\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;_WINDOWS;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -175,7 +175,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\thirdparty\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -239,7 +239,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\thirdparty\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -302,7 +302,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\thirdparty\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -366,7 +366,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="2"
-				AdditionalIncludeDirectories=".\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
+				AdditionalIncludeDirectories=".\thirdparty\tclap;..\..\api810\include;.\;..\..\libs\zlib\include;thirdparty"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;_ARINSIDE_BETA;AR_STRICT_ANSI;ARINSIDE_ENABLE_ZLIB_SUPPORT"
 				RuntimeLibrary="2"
 				UsePrecompiledHeader="2"
@@ -1932,94 +1932,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="tclap"
-			>
-			<File
-				RelativePath=".\Tclap\Arg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\ArgException.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\CmdLine.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\CmdLineInterface.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\CmdLineOutput.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\Constraint.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\DocBookOutput.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\HelpVisitor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\IgnoreRestVisitor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\MultiArg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\MultiSwitchArg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\OptionalUnlabeledTracker.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\StdOutput.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\SwitchArg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\UnlabeledMultiArg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\UnlabeledValueArg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\ValueArg.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\ValuesConstraint.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\VersionVisitor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\Visitor.h"
-				>
-			</File>
-			<File
-				RelativePath=".\Tclap\XorHandler.h"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="util"
 			>
 			<File
@@ -2467,6 +2379,110 @@
 				</File>
 				<File
 					RelativePath=".\thirdparty\rapidjson\writer.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="tclap"
+				>
+				<File
+					RelativePath=".\thirdparty\tclap\Arg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\ArgException.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\ArgTraits.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\CmdLine.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\CmdLineInterface.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\CmdLineOutput.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\Constraint.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\DocBookOutput.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\HelpVisitor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\IgnoreRestVisitor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\LICENSE"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\MultiArg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\MultiSwitchArg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\OptionalUnlabeledTracker.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\StandardTraits.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\StdOutput.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\SwitchArg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\UnlabeledMultiArg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\UnlabeledValueArg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\ValueArg.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\ValuesConstraint.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\VersionVisitor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\Visitor.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\XorHandler.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tclap\ZshCompletionOutput.h"
 					>
 				</File>
 			</Filter>
