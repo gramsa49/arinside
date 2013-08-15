@@ -486,10 +486,6 @@
 	</References>
 	<Files>
 		<File
-			RelativePath=".\ARInside.rc"
-			>
-		</File>
-		<File
 			RelativePath=".\ARInsideMain.cpp"
 			>
 			<FileConfiguration

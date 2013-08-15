@@ -124,25 +124,6 @@ SET (ARINSIDE_SRCS
  util/ResourceFileLocatorAndExtractor.cpp util/UntarStream.cpp util/Util.cpp 
  AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp FileSystemUtil.cpp gzstream.cpp Main.cpp
 )
-SET (ARINSIDE_SRC_GIFS
- res/active_link.gif res/al_guide.gif res/application.gif res/ars_edit.gif res/chapter.gif res/disabled.gif
- res/doc.gif res/down.gif res/edit.gif res/empty_list.gif res/escalation.gif res/filter.gif res/filter_guide.gif
- res/folder.gif res/group.gif res/hidden.gif res/image.gif res/info.gif res/menu.gif res/next.gif
- res/packing_list.gif res/prev.gif res/schema.gif res/search.gif res/server.gif res/sort_asc.gif res/sort_desc.gif
- res/up.gif res/user.gif res/visible.gif res/webservice.gif
-)
-SET (ARINSIDE_SRC_JS res/script.js res/sortscript.js res/tabscript.js res/schema_page.js res/arshelper.js)
-SET (ARINSIDE_SRC_CSS res/style.css)
-SET (ARINSIDE_JQUERY_RES 
-	thirdparty/jquery/jquery-ui-custom.css
-	thirdparty/jquery/jquery-ui.js
-	thirdparty/jquery/jquery.address.min.js
-	thirdparty/jquery/jquery.js
-	thirdparty/jquery/jquery.timers.js
-	thirdparty/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png
-	thirdparty/jquery/images/ui-bg_glass_65_ffffff_1x400.png
-)
-SET (ARINSIDE_RESOURCES ${ARINSIDE_SRC_GIFS} ${ARINSIDE_SRC_JS} ${ARINSIDE_SRC_CSS} ${ARINSIDE_JQUERY_RES})
 
 SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
 SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
@@ -261,47 +242,6 @@ IF(ARS_API_ICUUCBMC_LIB)
 ENDIF(ARS_API_ICUUCBMC_LIB)
 
 # now generate and import resources
-IF(UNIX)
-	IF(NOT DEFINED ARINSIDE_RESOURCES_ALREADY_BUILD)
-		INCLUDE_DIRECTORIES(${arinside_BINARY_DIR}/res)
-		FILE(MAKE_DIRECTORY ${arinside_BINARY_DIR}/res)
-		SET(ARINSIDE_GENERATED_RESOURCE_SRC_FILES "")
-		FOREACH(res ${ARINSIDE_RESOURCES})
-			MESSAGE(STATUS "Generating ${res}.cpp ...")
-			FILE(READ ${res} ARINSIDE_RES_OBJECT HEX)
-			STRING(LENGTH ${ARINSIDE_RES_OBJECT} ARINSIDE_RES_OBJECT_LENGTH)
-			SET(ARINSIDE_RES_OBJECT_CONTENT "")
-			SET(ARINSIDE_RES_OBJECT_POSITION 0)
-			WHILE(${ARINSIDE_RES_OBJECT_POSITION} LESS ${ARINSIDE_RES_OBJECT_LENGTH})
-				STRING(SUBSTRING ${ARINSIDE_RES_OBJECT} ${ARINSIDE_RES_OBJECT_POSITION} 2 RES_CHAR)
-				MATH(EXPR ARINSIDE_RES_OBJECT_POSITION "${ARINSIDE_RES_OBJECT_POSITION}+2")
-
-				IF(NOT ${ARINSIDE_RES_OBJECT_CONTENT} STREQUAL "")
-					SET(ARINSIDE_RES_OBJECT_CONTENT "${ARINSIDE_RES_OBJECT_CONTENT},")
-				ENDIF(NOT ${ARINSIDE_RES_OBJECT_CONTENT} STREQUAL "")
-
-				SET(ARINSIDE_RES_OBJECT_CONTENT "${ARINSIDE_RES_OBJECT_CONTENT}0x${RES_CHAR}")
-			ENDWHILE(${ARINSIDE_RES_OBJECT_POSITION} LESS ${ARINSIDE_RES_OBJECT_LENGTH})
-			
-			STRING(REGEX REPLACE "[^A-Za-z0-9]" "_" RES_OBJECT_NAME "${res}")
-			SET(RES_OBJECT_NAME "_binary_${RES_OBJECT_NAME}")
-			MATH(EXPR ARINSIDE_RES_REAL_OBJECT_LENGTH "${ARINSIDE_RES_OBJECT_LENGTH}/2")
-			SET(ARINSIDE_RES_OBJECT_CONTENT "unsigned char ${RES_OBJECT_NAME}_start[] = {${ARINSIDE_RES_OBJECT_CONTENT}};\nunsigned int ${RES_OBJECT_NAME}_size = ${ARINSIDE_RES_REAL_OBJECT_LENGTH};\n\n")
-			
-			SET(RES_OUTPUT_NAME "${arinside_BINARY_DIR}/${res}.cpp")
-			FILE(WRITE ${RES_OUTPUT_NAME} "${ARINSIDE_RES_OBJECT_CONTENT}")
-			
-			LIST(APPEND ARINSIDE_GENERATED_RESOURCE_SRC_FILES ${res}.cpp)
-		ENDFOREACH(res)
-		SET(ARINSIDE_RESOURCES_ALREADY_BUILD 1 CACHE INTERNAL "to remember resources are already build")
-		SET(ARINSIDE_GENERATED_RESOURCE_SRC_FILES ${ARINSIDE_GENERATED_RESOURCE_SRC_FILES} CACHE INTERNAL "to remember build source files")
-	ENDIF(NOT DEFINED ARINSIDE_RESOURCES_ALREADY_BUILD)
-	SET(ARINSIDE_SRCS ${ARINSIDE_SRCS} ${ARINSIDE_GENERATED_RESOURCE_SRC_FILES})
-ELSE(UNIX)
-	SET(ARINSIDE_SRCS ${ARINSIDE_SRCS} "ARInside.rc")
-	SET(ARINSIDE_MAIN_SRCS ${ARINSIDE_MAIN_SRCS} "ARInside.rc")
-ENDIF(UNIX)
-
 ADD_CUSTOM_TARGET(arinsideresdir ALL
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/img
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/active_link.gif ${CMAKE_BINARY_DIR}/img
