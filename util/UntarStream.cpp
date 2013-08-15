@@ -55,7 +55,11 @@ bool UntarStream::ReadHeader()
 {
 	input.read(reinterpret_cast<char*>(&header), sizeof(tar_header));
 	
-	if (input.fail()) return false;
+	if (input.fail())
+	{
+		throw untar_exception(untar_exception::READ, 0);
+		return false;
+	}
 
 	if ((header.typeflag == REGTYPE || header.typeflag == AREGTYPE) && header.name[0] == 0)
 	{

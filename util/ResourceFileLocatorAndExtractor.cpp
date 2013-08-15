@@ -16,7 +16,11 @@
 
 #include "stdafx.h"
 #include "ResourceFileLocatorAndExtractor.h"
+#include "UntarStream.h"
+#include "../AppException.h"
 #include "../FileSystemUtil.h"
+#include "../gzstream.h"
+
 
 ResourceFileLocatorAndExtractor::ResourceFileLocatorAndExtractor(const std::string &resourceFilename)
 : resFile(resourceFilename)
@@ -29,14 +33,39 @@ ResourceFileLocatorAndExtractor::~ResourceFileLocatorAndExtractor()
 
 bool ResourceFileLocatorAndExtractor::ExtractTo(const std::string &targetDir)
 {
-	string directory = FileSystemUtil::GetExecutableDirectory(NULL);
-	directory = FileSystemUtil::GetRealPathName(directory);
+	char* envInstallDir = getenv("ARINSIDE_INSTALL_DIR");
 
+	string directory;
+
+	// if the environment var is set, use it and check if it is a real path
+	if (envInstallDir != NULL && envInstallDir[0] != 0)
+	{
+		directory = FileSystemUtil::GetRealPathName(envInstallDir);
+	}
+	
+	// if the directory variable is still empty, try to use the path to the current executable
 	if (directory.empty())
 	{
-		return false;
+		directory = FileSystemUtil::GetRealPathName(FileSystemUtil::GetExecutableDirectory(NULL));
 	}
 
+	// still empty, then we don't know where to look
+	if (directory.empty())
+	{
+		throw AppException("Couldn't detect directory of resource file!");
+	}
 
-	return false;
+	// check if the file to extract exists
+	string resourceFile = FileSystemUtil::CombinePath(directory, resFile);
+	if (!FileSystemUtil::FileExistsAndReadable(resourceFile))
+	{
+		throw untar_exception(untar_exception::READ);
+	}
+
+	// now extract the content
+	igzstream unzipStrm(resourceFile.c_str());
+	UntarStream untarStrm(unzipStrm);
+	untarStrm.ExtractAllTo(targetDir, UntarStream::REPLACE);
+
+	return true;
 }

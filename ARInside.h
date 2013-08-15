@@ -89,6 +89,7 @@ public:
 
 	bool InBlacklist(int refType, const string &objName) { 	return blackList.Contains(refType, objName.c_str()); }
 	void Prepare(void);		
+	void ExtractResources(void);
 	void Documentation(void);
 
 

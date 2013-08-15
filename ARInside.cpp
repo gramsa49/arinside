@@ -52,6 +52,8 @@
 
 #include "scan/ScanMain.h"
 
+#include "util/ResourceFileLocatorAndExtractor.h"
+
 /////////
 // the following file is generated via a pre-build step using "svnrev_template.h" as template. 
 // The $WCREV$ keyword of the template is replaced with the revision number.
@@ -2109,13 +2111,11 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 
 void CARInside::DoWork(int nMode)
 {	
-	FileSystemUtil fsUtil(appConfig);
-	
-	string directory = FileSystemUtil::GetExecutableDirectory(NULL);
-
-	// first step is to create directory structure and resources (images, css and js)
+	// first step is to create directory structure
 	Prepare();
-	fsUtil.Load();
+
+	// now extract resources (images, css, js and so on)
+	ExtractResources();
 
 	// now load the object either from server or from file
 	LoadServerObjects(nMode);
@@ -2495,4 +2495,17 @@ void CARInside::SetupOverlaySupport()
 			cerr << "SetSessionConfiguration failed: " << GetARStatusError(&arStatus);
 	}
 #endif
+}
+
+void CARInside::ExtractResources()
+{
+	try
+	{
+		ResourceFileLocatorAndExtractor resExtractor("arires.tgz");
+		resExtractor.ExtractTo(appConfig.targetFolder);
+	}
+	catch (std::exception &ex)
+	{
+		cerr << "Error while extracting resources: " << ex.what() << endl;
+	}
 }

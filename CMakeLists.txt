@@ -47,10 +47,6 @@ MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar
 ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
 
 # configurable variables for cmakegui
-IF(NOT DEFINED ARINSIDE_ENABLE_ZLIB_SUPPORT)
-	SET(ARINSIDE_ENABLE_ZLIB_SUPPORT CACHE BOOL "Enables zlib-compression support. See documentation for more details")
-ENDIF(NOT DEFINED ARINSIDE_ENABLE_ZLIB_SUPPORT)
-
 IF(NOT DEFINED ARINSIDE_BETA)
 	SET(ARINSIDE_BETA CACHE BOOL "When enabled, appends 'Beta' to the version string.")
 ENDIF(NOT DEFINED ARINSIDE_BETA)	
@@ -65,7 +61,7 @@ use 'cmake -DAR_INCLUDE_PATH=/path/to/ars/api/dir'")
 ENDIF(NOT EXISTS ${AR_INCLUDE_PATH})
 
 if (NOT DEFINED ZLIB_INCLUDE_PATH)
-  SET(ZLIB_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../libs/zlib" CACHE PATH "Path to the zlib directory. Only used if ARINSIDE_ENABLE_ZLIB_SUPPORT ist enabled.")
+  SET(ZLIB_INCLUDE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/../../libs/zlib" CACHE PATH "Path to the zlib include/lib directories.")
 ENDIF(NOT DEFINED ZLIB_INCLUDE_PATH)
 
 IF(NOT DEFINED ARINSIDE_TARGET_ARCHITECTURE)
@@ -82,9 +78,6 @@ CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in ${CMAKE_CURRENT_BINARY_DI
 CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/FileSystemUtilTest.h.in ${CMAKE_CURRENT_BINARY_DIR}/FileSystemUtilTest.h)
 
 ADD_DEFINITIONS(-DAR_STRICT_ANSI -D_CRT_SECURE_NO_DEPRECATE)
-IF(ARINSIDE_ENABLE_ZLIB_SUPPORT)
-	ADD_DEFINITIONS(-DARINSIDE_ENABLE_ZLIB_SUPPORT)
-ENDIF(ARINSIDE_ENABLE_ZLIB_SUPPORT)
 IF(ARINSIDE_BETA)
 	ADD_DEFINITIONS(-D_ARINSIDE_BETA)
 ENDIF(ARINSIDE_BETA)
@@ -128,7 +121,7 @@ SET (ARINSIDE_SRCS
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
  util/AppTimer.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp util/RefItem.cpp 
- util/ResourceFileLocatorAndExtractor.h util/UntarStream.cpp util/Util.cpp 
+ util/ResourceFileLocatorAndExtractor.cpp util/UntarStream.cpp util/Util.cpp 
  AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp FileSystemUtil.cpp gzstream.cpp Main.cpp
 )
 SET (ARINSIDE_SRC_GIFS
@@ -248,9 +241,9 @@ IF (NOT ARS_API_LIB)
 	MESSAGE(FATAL_ERROR "Could not find ${ARINSIDE_ARAPI_LIB} in '${AR_INCLUDE_PATH}'! Please check or specify AR_INCLUDE_PATH variable")
 ENDIF (NOT ARS_API_LIB)
 
-IF (ARINSIDE_ENABLE_ZLIB_SUPPORT AND NOT ZLIB_LIB)
+IF (NOT ZLIB_LIB)
 	MESSAGE(FATAL_ERROR "Could not find ${ZLIB_LIBNAMES} in '${ZLIB_LIB_PATH}'! Please check or specify ZLIB_INCLUDE_PATH variable")
-ENDIF (ARINSIDE_ENABLE_ZLIB_SUPPORT AND NOT ZLIB_LIB)
+ENDIF (NOT ZLIB_LIB)
 
 MESSAGE(STATUS "icudatabmc: (${ARINSIDE_ARAPI_ICUDATABMC_LIBNAME}) -- ${ARS_API_ICUDATABMC_LIB}")
 IF(ARS_API_ICUDATABMC_LIB)
@@ -309,6 +302,58 @@ ELSE(UNIX)
 	SET(ARINSIDE_MAIN_SRCS ${ARINSIDE_MAIN_SRCS} "ARInside.rc")
 ENDIF(UNIX)
 
+ADD_CUSTOM_TARGET(arinsideresdir ALL
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/active_link.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/al_guide.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/application.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/ars_edit.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/chapter.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/disabled.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/doc.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/down.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/edit.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/empty_list.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/escalation.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/filter.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/filter_guide.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/folder.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/group.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/hidden.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/image.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/info.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/menu.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/next.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/packing_list.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/prev.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/schema.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/search.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/server.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/sort_asc.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/sort_desc.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/up.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/user.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/visible.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/webservice.gif ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/script.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/sortscript.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/tabscript.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/schema_page.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/arshelper.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/jquery-ui-custom.css ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/jquery-ui.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/jquery.address.min.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/jquery.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/jquery.timers.js ${CMAKE_BINARY_DIR}/img
+	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/img/images
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/images/ui-bg_glass_75_e6e6e6_1x400.png ${CMAKE_BINARY_DIR}/img/images
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/images/ui-bg_glass_65_ffffff_1x400.png ${CMAKE_BINARY_DIR}/img/images
+)
+
+ADD_CUSTOM_TARGET(arinsideres ALL 
+	COMMAND ${CMAKE_COMMAND} -E tar "czf" "${arinside_BINARY_DIR}/arires.tgz" img WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" DEPENDS arinsideresdir
+)
+
 ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS)
 
 # generate svnrev.h file
@@ -359,7 +404,7 @@ ADD_EXECUTABLE(arinsidetest ${ARINSIDE_TEST_SRCS})
 
 # dependencies
 ADD_DEPENDENCIES(arinsidetest arinsidelib googletest)
-ADD_DEPENDENCIES(arinside arinsidelib)
+ADD_DEPENDENCIES(arinside arinsidelib arinsideres)
 
 # reference the needed libraries
 TARGET_LINK_LIBRARIES(arinside ${ARS_API_LIB} ${ZLIB_LIB} ${ARINSIDE_ADDITIONAL_LIBS} arinsidelib)
