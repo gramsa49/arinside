@@ -71,6 +71,7 @@ AppConfig::AppConfig(void)
 
 	//Notes to be displayed on home page
 	runNotes = "";
+	argv_0 = "";
 }
 
 AppConfig::~AppConfig(void)

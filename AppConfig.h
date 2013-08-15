@@ -79,6 +79,7 @@ public:
 	int apiTimeout;
 
 	string runNotes;
+	string argv_0;
 
 public:
 	void Validate(CommandLineValidator& cmdLine);

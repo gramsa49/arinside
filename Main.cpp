@@ -53,6 +53,9 @@ int CMain::Run(int argc, char* argv[])
 
 		// validate throws exceptions if configuration isnt valid
 		appConfig.Validate(cmdLineValidator);
+		
+		// store executable for later directory detection
+		appConfig.argv_0 = argv[0];
 
 		if (AppConfig::verboseMode)
 			appConfig.Dump();

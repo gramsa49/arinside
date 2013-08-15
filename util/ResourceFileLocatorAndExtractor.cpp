@@ -18,6 +18,7 @@
 #include "ResourceFileLocatorAndExtractor.h"
 #include "UntarStream.h"
 #include "../AppException.h"
+#include "../ARInside.h"
 #include "../FileSystemUtil.h"
 #include "../gzstream.h"
 
@@ -46,7 +47,7 @@ bool ResourceFileLocatorAndExtractor::ExtractTo(const std::string &targetDir)
 	// if the directory variable is still empty, try to use the path to the current executable
 	if (directory.empty())
 	{
-		directory = FileSystemUtil::GetRealPathName(FileSystemUtil::GetExecutableDirectory(NULL));
+		directory = FileSystemUtil::GetRealPathName(FileSystemUtil::GetExecutableDirectory(CARInside::GetInstance()->appConfig.argv_0.c_str()));
 	}
 
 	// still empty, then we don't know where to look
