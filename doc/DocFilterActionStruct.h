@@ -18,7 +18,7 @@
 #include "DocActionSetFieldsHelper.h"
 #include "../core/ARAssignHelper.h"
 #include "../core/ARQualification.h"
-#include "../tinyxml/tinyxml.h"
+#include <tinyxml/tinyxml.h>
 
 using namespace OUTPUT;
 

@@ -68,7 +68,7 @@ IF(NOT DEFINED ARINSIDE_TARGET_ARCHITECTURE)
 	SET(ARINSIDE_TARGET_ARCHITECTURE ${CMAKE_SIZEOF_VOID_P})
 ENDIF(NOT DEFINED ARINSIDE_TARGET_ARCHITECTURE)
 
-INCLUDE_DIRECTORIES(${AR_INCLUDE_PATH}/include tinyxml/ thirdparty/ ./ ${ZLIB_INCLUDE_PATH}/include)
+INCLUDE_DIRECTORIES(${AR_INCLUDE_PATH}/include thirdparty/ ./ ${ZLIB_INCLUDE_PATH}/include)
 
 INCLUDE (CheckIncludeFiles)
 CHECK_INCLUDE_FILES("unistd.h" HAVE_UNISTD_H)
@@ -119,7 +119,8 @@ SET (ARINSIDE_SRCS
  output/webpage/HtmlReferenceList.cpp output/webpage/HtmlReferenceListImpl.cpp
  scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
- tinyxml/tinyxml.cpp tinyxml/tinystr.cpp tinyxml/tinyxmlerror.cpp tinyxml/tinyxmlparser.cpp
+ thirdparty/tinyxml/tinyxml.cpp thirdparty/tinyxml/tinystr.cpp thirdparty/tinyxml/tinyxmlerror.cpp 
+ thirdparty/tinyxml/tinyxmlparser.cpp
  util/AppTimer.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp util/RefItem.cpp 
  util/ResourceFileLocatorAndExtractor.cpp util/UntarStream.cpp util/Util.cpp 
  AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp FileSystemUtil.cpp gzstream.cpp Main.cpp

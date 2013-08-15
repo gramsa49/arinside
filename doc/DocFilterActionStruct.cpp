@@ -16,7 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFilterActionStruct.h"
-#include "../tinyxml/tinyxml.h"
+#include <tinyxml/tinyxml.h>
 
 CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType)
 {

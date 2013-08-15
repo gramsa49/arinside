@@ -1996,34 +1996,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="tinyxml"
-			>
-			<File
-				RelativePath=".\tinyxml\tinystr.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\tinyxml\tinystr.h"
-				>
-			</File>
-			<File
-				RelativePath=".\tinyxml\tinyxml.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\tinyxml\tinyxml.h"
-				>
-			</File>
-			<File
-				RelativePath=".\tinyxml\tinyxmlerror.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\tinyxml\tinyxmlparser.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="lists"
 			>
 			<File
@@ -2483,6 +2455,34 @@
 				</File>
 				<File
 					RelativePath=".\thirdparty\tclap\ZshCompletionOutput.h"
+					>
+				</File>
+			</Filter>
+			<Filter
+				Name="tinyxml"
+				>
+				<File
+					RelativePath=".\thirdparty\tinyxml\tinystr.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tinyxml\tinystr.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tinyxml\tinyxml.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tinyxml\tinyxml.h"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tinyxml\tinyxmlerror.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\thirdparty\tinyxml\tinyxmlparser.cpp"
 					>
 				</File>
 			</Filter>
