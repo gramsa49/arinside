@@ -93,7 +93,8 @@ void CDocSchemaDetails::Documentation()
 			// add the javascript we need for this page to display correctly
 			webPage.GetReferenceManager()
 				.AddScriptReference("img/schema_page.js")
-				.AddScriptReference("img/jquery.timers.js");
+				.AddScriptReference("img/jquery.timers.js")
+				.AddScriptReference("img/jquery.address.min.js");
 
 			// now the content
 			CTabControl tabControl;
