@@ -397,3 +397,35 @@ td.disabledLetter
     border: 
     solid 1px #BBB;
 }
+
+.clearable{
+    position:relative;
+	padding: 3px;
+}
+.data_field{
+    padding-right:17px; /* add space for the 'x' icon*/
+}
+.data_field::-ms-clear {
+	width: 0;
+	height: 0;
+	display: none;
+}
+.icon_clear{
+    position:absolute;
+	top: 0px;
+    right:0px;
+    display:none;
+	text-align: center;
+	vertical-align: center;
+	border: none;
+	background: none;
+    
+    /* now go with the styling */
+    cursor:pointer;
+    font: bold 1em sans-serif;
+    color:#38468F;
+}
+.icon_clear:hover{
+	color:#f52;
+}
+

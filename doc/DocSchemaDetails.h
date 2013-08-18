@@ -56,6 +56,7 @@ private:
 	void AllFieldsJson(std::ostream &out);
 	string AllFieldsSpecial();
 	void AllFieldsSpecialCsv();
+	string GenerateFieldTableDescription(CTable &tbl);
 
 	string ShowGeneralInfo();
 	string TypeDetails();

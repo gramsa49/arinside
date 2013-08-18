@@ -277,12 +277,7 @@ string CDocSchemaDetails::AllFields()
 			tbl.AddRow(row);
 		}
 
-		stringstream outputStrm;
-		AllFieldsJson(outputStrm);
-		outputStrm << "<div><input type=\"text\" id=\"fieldNameFilter\"/><button id=\"execFieldFilter\">Filter</button></div>" << endl;
-		outputStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
-		outputStrm << "<div id=\"result\"></div>";
-		tbl.description = outputStrm.str();
+		tbl.description = GenerateFieldTableDescription(tbl);
 
 		AllFieldsCsv();
 	}
@@ -474,9 +469,7 @@ string CDocSchemaDetails::AllFieldsSpecial()
 			tbl.AddRow(row);
 		}
 
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
-		tbl.description = tblDesc.str();
+		tbl.description = GenerateFieldTableDescription(tbl);
 
 		AllFieldsSpecialCsv();
 	}
@@ -567,6 +560,16 @@ void CDocSchemaDetails::AllFieldsSpecialCsv()
 	{
 		cout << "EXCEPTION schema all fields join csv of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
+}
+
+string CDocSchemaDetails::GenerateFieldTableDescription(CTable &tbl)
+{
+	stringstream outputStrm;
+	AllFieldsJson(outputStrm);
+	outputStrm << "<div><span class='clearable'><input type=\"text\" class='data_field' id=\"fieldNameFilter\"/><button class='icon_clear'>x</button></span><button id=\"execFieldFilter\">Filter</button></div>" << endl;
+	outputStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
+	outputStrm << "<div id=\"result\"></div>";
+	return outputStrm.str();
 }
 
 bool CDocSchemaDetails::InAlList(string objName)

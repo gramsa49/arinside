@@ -2,6 +2,12 @@ $(function() {
     $("#MainObjectTabCtrl").tabs();
     $('#MainObjectTabCtrl div[id^="tab"]').addClass("inner-tab");
 });
+
+function showHideClearButton(obj) {
+	var visible = $(obj).val().length ? 1 : 0 ;
+	return $(obj).next('.icon_clear').stop().fadeTo(300,visible);
+}
+
 $('document').ready(function() {
     $.address.change(function(event) {
         $("#MainObjectTabCtrl").tabs("select", window.location.hash);
@@ -9,12 +15,15 @@ $('document').ready(function() {
     $("#MainObjectTabCtrl").bind("tabsselect", function(event, ui) {
         window.location.hash = ui.tab.hash;
     });
-    $("#fieldNameFilter").keyup(function() {
-        $(this).stopTime();
-        $(this).oneTime(300, function() {
+    $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(){
+		showHideClearButton(this).stopTime().oneTime(300, function() {
             $("#execFieldFilter").click();
         });
-    });
+	}).on('click', '.icon_clear', function() {
+		$(this).delay(300).fadeTo(300,0).prev('input').val('').focus().stopTime().oneTime(300, function() {
+            $("#execFieldFilter").click();
+        });
+	});
 
     $("#execFieldFilter").click(function() {
         if (schemaFieldList != null) {
@@ -38,4 +47,8 @@ $('document').ready(function() {
             $('#fieldListFilterResultCount').text((search != null && search.length > 0 ? "showing " + matches + " out of " : ""));
         }
     });
+	if ($("#fieldNameFilter").val() != "") {
+		showHideClearButton($("#fieldNameFilter"));
+		$("#execFieldFilter").click();
+	}
 });
