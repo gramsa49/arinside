@@ -566,7 +566,7 @@ string CDocSchemaDetails::GenerateFieldTableDescription(CTable &tbl)
 {
 	stringstream outputStrm;
 	AllFieldsJson(outputStrm);
-	outputStrm << "<div><span class='clearable'><input type=\"text\" class='data_field' id=\"fieldNameFilter\"/><button id=\"execFieldFilter\">Filter</button></div>" << endl;
+	outputStrm << "<div><span class='clearable'><input type=\"text\" class='data_field' id=\"fieldNameFilter\"/></span><button id=\"execFieldFilter\">Filter</button></div>" << endl;
 	outputStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
 	outputStrm << "<div id=\"result\"></div>";
 	return outputStrm.str();
