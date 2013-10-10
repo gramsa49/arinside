@@ -3,18 +3,32 @@ $(function() {
     $('#MainObjectTabCtrl div[id^="tab"]').addClass("inner-tab");
 });
 
+$.fn.appendText = function(text) {
+    this.each(function() {
+        var textNode = document.createTextNode(text);
+        $(this).append(textNode);
+    });
+};
+
 var schemaFieldManager = {
     view_vendor_RFR: function(row) {
         return (schemaFieldList[row].length > 7 ? schemaFieldList[row][7] : "");
     },
     join_RFR: function(row) {
         var pos = 7;
-        var result = "";
+        var div = $("<div>");
+        var first = 0;
         for (pos; pos + 3 < schemaFieldList[row].length; pos += 4) {
-            if (result.length > 0) { result += "<br/>"; }
-            result += "<a href='" + schemaFieldList[row][pos + 1] + "'>" + schemaFieldList[row][pos] + "</a>&nbsp;-&gt;&nbsp;<img width=16 height=16 alt='schema.gif' src='../../img/schema.gif'/><a href='" + schemaFieldList[row][pos + 3] + "'>" + schemaFieldList[row][pos + 2] + "</a>";
+            if (first > 0) { div.append($("<br/>")); }
+
+            div.append($("<a>").attr("href", schemaFieldList[row][pos + 1]).text(schemaFieldList[row][pos]));
+            div.appendText("\u00a0 -> \u00a0");
+            div.append($("<img>").attr("width", 16).attr("height", 16).attr("alt", "schema.gif").attr("src", "../../img/schema.gif"));
+            div.append($("<a>").attr("href", schemaFieldList[row][pos + 3]).text(schemaFieldList[row][pos + 2]));
+
+            first++;
         }
-        if (result) return result;
+        if (first > 0) return div;
         return (schemaFieldList[row].length > 7 ? schemaFieldList[row][7] : "");
     },
     renderRealField: function(row) {
@@ -37,9 +51,9 @@ $('document').ready(function() {
     $("#MainObjectTabCtrl").bind("tabsselect", function(event, ui) {
         window.location.hash = ui.tab.hash;
     });
-    $("#fieldNameFilter").keyup(function() {
-        $(this).stopTime();
-        $(this).oneTime(300, function() {
+    $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {
+        if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
+        $(this).stopTime().oneTime(300, function() {
             $("#execFieldFilter").click();
         });
     });
@@ -60,13 +74,27 @@ $('document').ready(function() {
                 var r = new RegExp(search, "i");
                 if (schemaFieldList[i][1].match(r) || (numSearch == 0 && ("" + schemaFieldList[i][0]).match(search))) {
                     matches++;
-                    table.append("<tr><td><a href='" + schemaFieldList[i][6] + "'>" + schemaFieldList[i][1] + "</a></td><td>" + schemaFieldList[i][0] + "</td><td>" + ARFieldDataTypeToString(schemaFieldList[i][2]) + (hasRealFieldColumn ? "<td>" + schemaFieldManager.renderRealField(i) + "</td>" : "") + "<td>" + schemaFieldList[i][3] + "</td><td>" + schemaFieldList[i][4] + "</td><td>" + schemaFieldList[i][5] + "</td></tr>");
+                    var row = ($("<tr>")
+						.append($("<td>")
+							.append($("<a>").attr("href", schemaFieldList[i][6]).text(schemaFieldList[i][1]))
+						)
+						.append($("<td>").text(schemaFieldList[i][0]))
+						.append($("<td>").text(ARFieldDataTypeToString(schemaFieldList[i][2])))
+					);
+                    if (hasRealFieldColumn)
+                        row.append($("<td>").append(schemaFieldManager.renderRealField(i)));
+
+                    row.append($("<td>").text(schemaFieldList[i][3]))
+					   .append($("<td>").text(schemaFieldList[i][4]))
+					   .append($("<td>").text(schemaFieldList[i][5]));
+
+                    table.append(row);
                 }
             });
             $('#fieldListFilterResultCount').text((search != null && search.length > 0 ? "showing " + matches + " out of " : ""));
         }
     });
-	if ($("#fieldNameFilter").val() != "") {
-		$("#execFieldFilter").click();
-	}
+    if ($("#fieldNameFilter").val() != "") {
+        $("#execFieldFilter").click();
+    }
 });
