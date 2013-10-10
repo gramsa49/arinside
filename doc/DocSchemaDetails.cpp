@@ -103,7 +103,7 @@ void CDocSchemaDetails::Documentation()
 			tabControl.AddTab("General", ShowGeneralInfo());
 
 			// Add list of all fields to the page
-			tabControl.AddTab("Fields", (IsJoinViewOrVendorForm(compSchema) ? this->AllFieldsSpecial() : this->AllFields()) );
+			tabControl.AddTab("Fields", (IsJoinViewOrVendorForm() ? this->AllFieldsSpecial() : this->AllFields()) );
 
 			// Add schemas properties (like Entrypoint-, Archiv- and Audit-settings) to the page
 			tabControl.AddTab("Properties", ShowProperties());
@@ -346,6 +346,8 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 
 		CARFieldList* fields = schema.GetFields();
 		unsigned int fieldCount = fields->GetCount();
+		bool isSpecialForm = IsJoinViewOrVendorForm();
+
 		for (unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
 			CARField field(schema.GetInsideId(), 0, fieldIndex);
@@ -369,6 +371,110 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 			item.PushBack(modified, alloc);
 			item.PushBack(field.GetLastChanged(), alloc);
 			item.PushBack(link, alloc);
+			
+			// for special forms, we need some more details for the real-field column
+			if (isSpecialForm)
+			{
+				switch (field.GetMapping().fieldType)
+				{
+				case AR_FIELD_JOIN:
+					{
+						if(field.GetFieldId() == 1) // RequestID 1 in Joinform = ReqId1 | ReqId2
+						{
+							const ARCompoundSchema& compSchema = this->schema.GetCompound();
+							CARSchema schemaLeft(compSchema.u.join.memberA);
+							CARSchema schemaRight(compSchema.u.join.memberB);
+
+							CARField fldLeft(schemaLeft.GetInsideId(), 1);
+							CARField fldRight(schemaRight.GetInsideId(), 1);
+
+							CPageParams schemaLeftLink(PAGE_DETAILS, &schemaLeft);
+							CPageParams schemaRightLink(PAGE_DETAILS, &schemaRight);
+							CPageParams fldLeftLink(PAGE_DETAILS, &fldLeft);
+							CPageParams fldRightLink(PAGE_DETAILS, &fldRight);
+
+							string leftFieldName = fldLeft.GetName();
+							string leftFieldLink = CWebUtil::GetRelativeURL(rootLevel, fldLeftLink);
+							string leftSchemaName = schemaLeft.GetName();
+							string leftSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaLeftLink);
+							
+							string rightFieldName = fldRight.GetName();
+							string rightFieldLink = CWebUtil::GetRelativeURL(rootLevel, fldRightLink);
+							string rightSchemaName = schemaRight.GetName();
+							string rightSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaRightLink);
+
+							Value leftNameVal(leftFieldName.c_str(), leftFieldName.size(), alloc);
+							Value leftLinkVal(leftFieldLink.c_str(), leftFieldLink.size(), alloc);
+							Value leftSchemaVal(leftSchemaName.c_str(), leftSchemaName.size(), alloc);
+							Value leftSchemaLinkVal(leftSchemaLink.c_str(), leftSchemaLink.size(), alloc);
+
+							Value rightNameVal(rightFieldName.c_str(), rightFieldName.size(), alloc);
+							Value rightLinkVal(rightFieldLink.c_str(), rightFieldLink.size(), alloc);
+							Value rightSchemaVal(rightSchemaName.c_str(), rightSchemaName.size(), alloc);
+							Value rightSchemaLinkVal(rightSchemaLink.c_str(), rightSchemaLink.size(), alloc);
+
+							item.PushBack(leftNameVal, alloc);
+							item.PushBack(leftLinkVal, alloc);
+							item.PushBack(leftSchemaVal, alloc);
+							item.PushBack(leftSchemaLinkVal, alloc);
+
+							item.PushBack(rightNameVal, alloc);
+							item.PushBack(rightLinkVal, alloc);
+							item.PushBack(rightSchemaVal, alloc);
+							item.PushBack(rightSchemaLinkVal, alloc);
+						}
+						else
+						{
+							if(field.GetMapping().u.join.realId > 0)
+							{
+								const ARCompoundSchema& compSchema = this->schema.GetCompound();
+
+								string baseSchemaName = (field.GetMapping().u.join.schemaIndex == 0 ? compSchema.u.join.memberA : compSchema.u.join.memberB);
+								
+								CARSchema baseSchema(baseSchemaName);
+								CPageParams baseSchemaPage(PAGE_DETAILS, &baseSchema);
+
+								CARField baseField(baseSchema.GetInsideId(), field.GetMapping().u.join.realId);
+								CPageParams baseFieldPage(PAGE_DETAILS, &baseField);
+
+								string baseFieldName = baseField.GetName();
+								string baseFieldLink = CWebUtil::GetRelativeURL(rootLevel, baseFieldPage);
+								string baseSchemaLink = CWebUtil::GetRelativeURL(rootLevel, baseSchemaPage);
+								
+								Value baseFileNameVal(baseFieldName.c_str(), baseFieldName.size(), alloc);
+								Value baseFileLinkVal(baseFieldLink.c_str(), baseFieldLink.size(), alloc);
+								Value baseSchemaNameVal(baseSchemaName.c_str(), baseSchemaName.size(), alloc);
+								Value baseSchemaLinkVal(baseSchemaLink.c_str(), baseSchemaLink.size(), alloc);
+
+								item.PushBack(baseFileNameVal, alloc);
+								item.PushBack(baseFileLinkVal, alloc);
+								item.PushBack(baseSchemaNameVal, alloc);
+								item.PushBack(baseSchemaLinkVal, alloc);
+
+								//strmTmp << this->pInside->LinkToField(tmpBaseSchema, field.GetMapping().u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
+							}
+							//else
+							//	strmTmp << "&nbsp;";
+						}
+					}
+					break;
+				case AR_FIELD_VIEW:
+					{
+						string val = field.GetMapping().u.view.fieldName;
+						Value itemVal(val.c_str(), val.size(), alloc);
+						item.PushBack(itemVal, alloc);
+					}
+					break;
+				case AR_FIELD_VENDOR:
+					{
+						string val = field.GetMapping().u.vendor.fieldName;
+						Value itemVal(val.c_str(), val.size(), alloc);
+						item.PushBack(itemVal, alloc);
+					}
+					break;
+				}
+
+			}
 
 			document.PushBack(item, alloc);
 		}
@@ -377,7 +483,28 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 		Writer<GenericWriteStream> writer(output);
 
 		out << endl << "<script type=\"text/javascript\">" << endl;
-		out << "var schemaFieldList = "; document.Accept(writer); out << ";" << endl;
+		out << "var schemaFieldList = "; document.Accept(writer); out << ";";
+		if (isSpecialForm)
+		{
+			string type;
+			switch (this->schema.GetCompound().schemaType)
+			{
+			case AR_SCHEMA_VIEW:
+				type = "view";
+				break;
+			case AR_SCHEMA_VENDOR:
+				type = "vendor";
+				break;
+			case AR_SCHEMA_JOIN:
+				type = "join";
+				break;
+			}
+			if (!type.empty())
+			{
+				out << "schemaFieldManager.setRenderer(\"" << type << "\");";
+			}
+		}
+		out << endl;
 		out << "</script>" << endl;
 	}
 	catch(exception& e)
@@ -2425,9 +2552,9 @@ string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSc
 	return tblObjProp.ToXHtml();
 }
 
-bool CDocSchemaDetails::IsJoinViewOrVendorForm(const ARCompoundSchema &compSchema)
+bool CDocSchemaDetails::IsJoinViewOrVendorForm()
 {
-	switch(compSchema.schemaType)
+	switch(this->schema.GetCompound().schemaType)
 	{
 	case AR_SCHEMA_JOIN:
 	case AR_SCHEMA_VIEW:

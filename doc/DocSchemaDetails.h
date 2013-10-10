@@ -82,7 +82,7 @@ private:
 	bool InFilterList(string objName);
 	bool InEscalList(string objName);
 	bool IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct& wfCS);
-	bool IsJoinViewOrVendorForm(const ARCompoundSchema &compSchema);
+	bool IsJoinViewOrVendorForm();
 	list<string> uniqueAlList;
 	list<string> uniqueFilterList;
 	list<string> uniqueEscalList;

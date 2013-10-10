@@ -87,6 +87,7 @@ namespace OUTPUT
 		static string LinkToContainer(int objectCount, int rootLevel, int containerType);
 
 		static string LinkToHelper(string name, int objectCount, const CPageParams& page, string image, int rootLevel);
+		static string GetRelativeURL(int rootLevel, const CPageParams& page);
 
 		static string webpageFileExtension;
 	};

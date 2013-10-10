@@ -409,3 +409,8 @@ string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, cons
 
 	return strmTmp.str();
 }
+
+string CWebUtil::GetRelativeURL(int rootLevel, const CPageParams& page)
+{
+	return RootPath(rootLevel) + page->GetFullFileName();
+}
