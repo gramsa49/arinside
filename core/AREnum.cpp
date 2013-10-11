@@ -1394,6 +1394,16 @@ string CAREnum::SchemaType(int nType)
 	}
 }
 
+const char* CAREnum::JoinType(int nType)
+{
+	switch (nType)
+	{
+	case AR_JOIN_OPTION_NONE: return "Inner";
+	case AR_JOIN_OPTION_OUTER: return "Outer";
+	default: return EnumDefault;
+	}
+}
+
 string CAREnum::ContainerType(int nType)
 {
 	switch (nType)

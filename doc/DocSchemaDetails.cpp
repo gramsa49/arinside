@@ -1474,12 +1474,7 @@ string CDocSchemaDetails::TypeDetails()
 		{
 		case AR_SCHEMA_JOIN:
 			{
-				strm << "Primary Form: " << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel) << " <-> Secondary Form: " << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel) << "<br/>";
-
-				if(compSchema.u.join.option == 0)
-					strm << "Join Type: Inner" << "<br/>" << endl;
-				else
-					strm << "Join Type: Outer" << "<br/>" << endl;
+				strm << "(" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel) << " <-> " << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel) << ")" << "<br/>";
 
 				if(compSchema.u.join.joinQual.operation != AR_COND_OP_NONE)
 				{
@@ -1492,20 +1487,20 @@ string CDocSchemaDetails::TypeDetails()
 
 					arQual.CheckQuery(&compSchema.u.join.joinQual, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
 
-					strm << "Join Qualification: " << strmQuery.str();
+					strm << "Qualification: " << strmQuery.str();
 				}
 			}
 			break;
 		case AR_SCHEMA_VIEW:
 			{
-				strm << "Table Name: " << compSchema.u.view.tableName << "<br/>" << endl;
-				strm << "Key Field: " << compSchema.u.view.keyField << "<br/>" << endl;
+				strm << "<span class='additionalInfo'>" << "(" << "Table&nbsp;Name: " << compSchema.u.view.tableName << " &nbsp;&nbsp;&nbsp; "
+				     << "Key&nbsp;Field: " << compSchema.u.view.keyField << ")" << "</span>";
 			}
 			break;			
 		case AR_SCHEMA_VENDOR:
 			{
-				strm << "Vendor Name: " << compSchema.u.vendor.vendorName << "<br/>";
-				strm << "Table Name: " << compSchema.u.vendor.tableName << "<br/>" << endl;
+				strm << "<span class='additionalInfo'>" << "(" << "Plugin:&nbsp;" << compSchema.u.vendor.vendorName << " &nbsp;&nbsp;&nbsp; ";
+				strm << "Table: " << compSchema.u.vendor.tableName << ")" << "</span>";
 			}
 			break;
 		default:
@@ -2473,18 +2468,6 @@ string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSc
 	CTableCell cellProp("");				
 	CTableCell cellPropValue("");    
 
-
-	if(compSchema.schemaType == AR_SCHEMA_JOIN
-		|| compSchema.schemaType == AR_SCHEMA_VIEW
-		|| compSchema.schemaType == AR_SCHEMA_VENDOR)
-	{
-		cellProp.content = "Schema Type Details";				
-		cellPropValue.content = this->TypeDetails();    
-		row.AddCell(cellProp);
-		row.AddCell(cellPropValue);
-		tblObjProp.AddRow(row);	
-	}
-
 	//Container References
 	row.ClearCells();
 	cellProp.content = "Container References";
@@ -2567,14 +2550,12 @@ bool CDocSchemaDetails::IsJoinViewOrVendorForm()
 
 string CDocSchemaDetails::ShowGeneralInfo()
 {
+	const ARCompoundSchema &compSchema = this->schema.GetCompound();
 	stringstream strm;
 
 	CTable tbl("general", "TblNoBorder");
 	tbl.AddColumn(20, "");
-	tbl.AddColumn(20, "");
-	tbl.AddColumn(20, "");
-	tbl.AddColumn(20, "");
-	tbl.AddColumn(20, "");
+	tbl.AddColumn(80, "");
 	tbl.DisableHeader();
 
 	CTableRow row;
@@ -2583,10 +2564,25 @@ string CDocSchemaDetails::ShowGeneralInfo()
 	tbl.AddRow(row);	
 	row.ClearCells();
 
+	// generate the schema type row (and with additional details for special form types like join, view and vendor)
+	if (compSchema.schemaType == AR_SCHEMA_JOIN)
+	{
+		strm << CAREnum::JoinType(compSchema.u.join.option) << "-";
+	}
+	strm << CAREnum::SchemaType(compSchema.schemaType);
+
+	if(compSchema.schemaType == AR_SCHEMA_JOIN
+		|| compSchema.schemaType == AR_SCHEMA_VIEW
+		|| compSchema.schemaType == AR_SCHEMA_VENDOR)
+	{
+		strm << " " << this->TypeDetails();
+	}
+
 	row.AddCell("Type");
-	row.AddCell(CAREnum::SchemaType(this->schema.GetCompound().schemaType));
+	row.AddCell(strm.str());
 	tbl.AddRow(row);
 	row.ClearCells();
+	strm.str("");
 
 	// search for the default vui
 	CARVui defaultVUI(this->schema.GetInsideId(), this->schema.GetDefaultVUI());
