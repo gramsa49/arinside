@@ -106,7 +106,7 @@ void CDocSchemaDetails::Documentation()
 			tabControl.AddTab("Fields", (IsJoinViewOrVendorForm() ? this->AllFieldsSpecial() : this->AllFields()) );
 
 			// Add schemas properties (like Entrypoint-, Archiv- and Audit-settings) to the page
-			tabControl.AddTab("Properties", ShowProperties());
+			tabControl.AddTab("Properties", "");
 
 			// Add a section which lists workflow thats reading data from this form
 			tabControl.AddTab("Workflow", this->SetFieldReferences());
@@ -2095,6 +2095,8 @@ string CDocSchemaDetails::ShowProperties()
 		const ARPropList& propList = this->schema.GetPropList();
 		CARProplistHelper propIdx(&propList);
 
+		strm << "<div id='schemaProperties'>";
+
 		// doc basic properties
 		ShowBasicProperties(strm, &propIdx);
 
@@ -2112,6 +2114,8 @@ string CDocSchemaDetails::ShowProperties()
 
 		// doc properties left
 		propIdx.UnusedPropertiesToHTML(strm);
+
+		strm << "</div>";
 	}
 	catch(exception& e)
 	{
@@ -2210,8 +2214,8 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 #endif
 
 		// now write the table
-		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Basic / EntryPoints:";
-		strm << tbl;
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Basic / EntryPoints:" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
 	{
@@ -2294,8 +2298,8 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Audit Settings:";
-		strm << tbl;
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) + "Audit Settings:" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
 	{
@@ -2340,7 +2344,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		row.ClearCells();
 		row.AddCell("Archive State");
 		row.AddCell((archive.enable==0?"Disabled":"Enabled"));
-		tbl.AddRow(row);		
+		tbl.AddRow(row);
 
 		row.ClearCells();
 		if (archiveToFile)
@@ -2394,8 +2398,8 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Archive Settings:";
-		strm << tbl;
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) + "Archive Settings:" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
 	{
@@ -2618,6 +2622,10 @@ string CDocSchemaDetails::ShowGeneralInfo()
 
 		strm << tbl.ToXHtml();
 	}
+
+	strm << "<hr/>" << endl;
+
+	strm << ShowProperties();
 
 	strm << "<hr/>" << endl;
 

@@ -57,6 +57,7 @@ $('document').ready(function() {
             $("#execFieldFilter").click();
         });
     });
+    $("#schemaProperties").accordion({ heightStyle: "content", collapsible: true, active: false, animate: false });
 
     $("#execFieldFilter").click(function() {
         if (schemaFieldList != null) {
