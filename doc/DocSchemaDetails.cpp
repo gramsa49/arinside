@@ -2099,6 +2099,7 @@ string CDocSchemaDetails::ShowProperties()
 
 		// doc basic properties
 		ShowBasicProperties(strm, &propIdx);
+		ShowEntryPointProperties(strm, &propIdx);
 
 		if (this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
 		{
@@ -2130,35 +2131,11 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 
 	try
 	{
-		CTable tbl("displayPropList", "TblObjectList");
+		stringstream tmpStrm;
+		CTable tbl("basicProps", "TblNoBorder");
 		tbl.AddColumn(20, "Description");
 		tbl.AddColumn(80, "Value");
-
-		// entry points
-		ARLong32 entryPointNewOrder = -1;
-		ARLong32 entryPointSearchOrder = -1;
-
-		propVal = propIndex->GetAndUseValue(AR_SMOPROP_ENTRYPOINT_DEFAULT_NEW_ORDER);
-		if (propVal != NULL) 
-			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
-				entryPointNewOrder = propVal->u.intVal;
-
-		propVal = propIndex->GetAndUseValue(AR_SMOPROP_ENTRYPOINT_DEFAULT_SEARCH_ORDER);
-		if (propVal != NULL) 
-			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
-				entryPointSearchOrder = propVal->u.intVal;
-
-		stringstream tmpStrm; tmpStrm.str("");
-		tmpStrm << "New Mode: " << (entryPointNewOrder >= 0 ? "Enabled" : "Disabled") << "<br/>";
-		tmpStrm << "Application List Order: "; if (entryPointNewOrder >=0) tmpStrm << entryPointNewOrder; tmpStrm << "<br/><br/>";
-
-		tmpStrm << "Search Mode: " << (entryPointSearchOrder >= 0 ? "Enabled":"Disabled") << "<br/>";
-		tmpStrm << "Application List Order: "; if (entryPointSearchOrder >= 0) tmpStrm << entryPointSearchOrder; tmpStrm << endl;
-		
-		CTableRow rowEP("");
-		rowEP.AddCell(CTableCell("Entry Points"));
-		rowEP.AddCell(tmpStrm.str());
-		tbl.AddRow(rowEP);
+		tbl.DisableHeader();
 
 		// entry id block size
 		ARLong32 nextIDBlockSize = -1;
@@ -2178,7 +2155,7 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 		rowBS.AddCell(tmpStrm.str());
 		tbl.AddRow(rowBS);
 
-#if AR_CURRENT_API_VERSION > 12 // Version 7.1 and higher
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 		// cache properties
 		ARLong32 cacheDisplayProps = -1;
 
@@ -2201,6 +2178,8 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 		rowOC.AddCell(tmpStrm.str());
 		tbl.AddRow(rowOC);
 
+		/////////////////////////////////////////////////////////////////////////////////////
+
 		ARLong32 disableStatusHistory = 0;
 		propVal = propIndex->GetAndUseValue(AR_OPROP_CORE_FIELDS_OPTION_MASK);
 		if (propVal != NULL)
@@ -2211,10 +2190,127 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 		disSH.AddCell("Disable Status History");
 		disSH.AddCell((disableStatusHistory & AR_CORE_FIELDS_OPTION_DISABLE_STATUS_HISTORY ? "Yes" : "No"));
 		tbl.AddRow(disSH);
-#endif
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		ARLong32 allowDelete = 0;
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FORM_ALLOW_DELETE);
+		if (propVal != NULL)
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				allowDelete = propVal->u.intVal;
+
+		CTableRow row("");
+		row.AddCell("Allow Delete");
+		row.AddCell((allowDelete == 1 ? "Yes" : "No"));
+		tbl.AddRow(row);
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		ARLong32 allowDrillDownWebReports = 0;
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FORM_ALLOW_DELETE);
+		if (propVal != NULL)
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				allowDrillDownWebReports = propVal->u.intVal;
+
+		row.ClearCells();
+		row.AddCell("Allow Drill Down in Web Reports");
+		row.AddCell((allowDrillDownWebReports == 1 ? "Yes" : "No"));
+		tbl.AddRow(row);
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		ARLong32 value = 0;
+		propVal = propIndex->GetAndUseValue(AR_OPROP_LOCALIZE_FORM_VIEWS);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			value = propVal->u.intVal;
+		}
+		else
+			value = AR_LOCALIZE_FORM_VIEWS_ALL;	// default, if property isn't present
+
+		char* strState = "Disabled";
+		if (value == AR_LOCALIZE_FORM_VIEWS_ALL) strState = "All";
+		if (value == AR_LOCALIZE_FORM_VIEWS_ALIASES) strState = "Only for selection field aliases";
+
+		row.ClearCells();
+		row.AddCell(CAREnum::FieldPropertiesLabel(AR_OPROP_LOCALIZE_FORM_VIEWS));
+		row.AddCell(strState);
+		tbl.AddRow(row);
+
+		/////////////////////////////////////////////////////////////////////////////////////
+
+		value = 0;
+		propVal = propIndex->GetAndUseValue(AR_OPROP_LOCALIZE_FORM_DATA);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+		{
+			value = propVal->u.intVal;
+		}
+		else
+			value = AR_LOCALIZE_FORM_DATA_ALL; // default, if property isn't present
+
+		row.ClearCells();
+		row.AddCell(CAREnum::FieldPropertiesLabel(AR_OPROP_LOCALIZE_FORM_DATA));
+		row.AddCell((value == 1 ? "Yes" : "No"));
+		tbl.AddRow(row);
+
+#endif //AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+#endif //AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 
 		// now write the table
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Basic / EntryPoints:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Basic" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION enumerating basic properties: " << e.what() << endl;
+	}
+}
+
+void CDocSchemaDetails::ShowEntryPointProperties(std::ostream &strm, CARProplistHelper *propIndex)
+{
+	ARValueStruct* propVal;
+
+	try
+	{
+		stringstream tmpStrm;
+		CTable tbl("entryPoints", "TblNoBorder");
+		tbl.AddColumn(20, "Description");
+		tbl.AddColumn(80, "Value");
+		tbl.DisableHeader();
+
+		// entry points
+		ARLong32 entryPointNewOrder = -1;
+		ARLong32 entryPointSearchOrder = -1;
+
+		propVal = propIndex->GetAndUseValue(AR_SMOPROP_ENTRYPOINT_DEFAULT_NEW_ORDER);
+		if (propVal != NULL) 
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				entryPointNewOrder = propVal->u.intVal;
+
+		propVal = propIndex->GetAndUseValue(AR_SMOPROP_ENTRYPOINT_DEFAULT_SEARCH_ORDER);
+		if (propVal != NULL) 
+			if (propVal->dataType == AR_DATA_TYPE_INTEGER)
+				entryPointSearchOrder = propVal->u.intVal;
+
+
+		tmpStrm << CWebUtil::ChkBoxInput("" ,(entryPointNewOrder >= 0)) << "Enable Entry Point" << "<br/>";
+		tmpStrm << "Application List Display Order: "; if (entryPointNewOrder >=0) tmpStrm << entryPointNewOrder; tmpStrm << "<br/>" << "<br/>";
+
+		CTableRow row;
+		row.AddCell("New Mode");
+		row.AddCell(tmpStrm.str());
+		tbl.AddRow(row);
+		
+		tmpStrm.str("");
+		tmpStrm << CWebUtil::ChkBoxInput("", (entryPointSearchOrder >= 0)) << "Enable Entry Point" << "<br/>";
+		tmpStrm << "Application List Display Order: "; if (entryPointSearchOrder >= 0) tmpStrm << entryPointSearchOrder; tmpStrm << endl;
+
+		row.ClearCells();
+		row.AddCell("Search Mode");
+		row.AddCell(tmpStrm.str());
+		tbl.AddRow(row);
+		
+		// now write the table
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "EntryPoints" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)

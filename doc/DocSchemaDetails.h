@@ -72,6 +72,7 @@ private:
 	
 	string ShowProperties();
 	void ShowBasicProperties(std::ostream& strm, CARProplistHelper* propIndex);
+	void ShowEntryPointProperties(std::ostream& strm, CARProplistHelper* propIndex);
 	void ShowAuditProperties(std::ostream& strm);
 	void ShowArchiveProperties(std::ostream& strm);
 
