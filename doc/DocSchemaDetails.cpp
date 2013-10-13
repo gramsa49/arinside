@@ -136,7 +136,7 @@ void CDocSchemaDetails::Documentation()
 			//}
 
 			//indexes
-			this->IndexDoc();
+			//this->IndexDoc();
 
 			//sortlist
 			//this->SortListDoc();
@@ -1049,21 +1049,14 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 }
 
 //Create a page that shows a list of all indexes
-void CDocSchemaDetails::IndexDoc()
+void CDocSchemaDetails::ShowIndexProperties(std::ostream &strm, CARProplistHelper *propIndex)
 {
 	try
 	{
-		CPageParams file(PAGE_SCHEMA_INDEXES, &this->schema);
-		int rootLevel = file->GetRootLevel();
+		//CPageParams file(PAGE_SCHEMA_INDEXES, &this->schema);
 
-		string title = "Schema " +this->schema.GetName() +" (Indexes)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Indexes"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Indexes" << "</h2>";
+		strm << "<div>";
 
 		const ARIndexList& indexList = this->schema.GetIndexList();
 		for(unsigned int nIndex=0; nIndex < indexList.numItems; ++nIndex)
@@ -1103,10 +1096,10 @@ void CDocSchemaDetails::IndexDoc()
 				}
 			}
 
-			webPage.AddContent(tbl.ToXHtml());
+			strm << tbl;
 		}
 
-		webPage.SaveInFolder(file->GetPath());
+		strm << "</div>";
 	}
 	catch(exception& e)
 	{
@@ -2054,6 +2047,7 @@ string CDocSchemaDetails::ShowProperties()
 			}
 		}
 
+		ShowIndexProperties(strm, &propIdx);
 		ShowPermissionProperties(strm, &propIdx);
 
 		// doc properties left

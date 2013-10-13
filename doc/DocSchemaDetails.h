@@ -38,7 +38,7 @@ private:
 	CARSchema schema;
 	int overlayType;
 
-	void IndexDoc();
+	void ShowIndexProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void ShowResultListProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void ShowSortListProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void VuiListDoc();
