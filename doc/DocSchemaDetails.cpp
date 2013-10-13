@@ -148,13 +148,13 @@ void CDocSchemaDetails::Documentation()
 			this->VuiListDoc();
 
 			//permissions
-			this->SchemaPermissionDoc();
+			//this->SchemaPermissionDoc();
 
 			//Workflow
 			this->WorkflowDoc();
 
 			//subadmins
-			this->SchemaSubadminDoc();
+			//this->SchemaSubadminDoc();
 
 			//active links
 			this->SchemaAlDoc();
@@ -928,27 +928,16 @@ void CDocSchemaDetails::WorkflowDoc()
 }
 
 //list of groups with access rights
-void CDocSchemaDetails::SchemaPermissionDoc()
+void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplistHelper *propIndex)
 {
 	try
 	{
-		CPageParams file(PAGE_SCHEMA_PERMISSIONS, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Indexes)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Permissions"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
+		//CPageParams file(PAGE_SCHEMA_PERMISSIONS, &this->schema);
 
 		CTable tbl("permissionList", "TblObjectList");
-		tbl.AddColumn(5, "Permission");
-		tbl.AddColumn(10, "Description");
-		tbl.AddColumn(75, "Group Name");
-		tbl.AddColumn(10, "Group Id");
+		tbl.AddColumn(60, "Group Name");
+		tbl.AddColumn(20, "Group Id");
+		tbl.AddColumn(20, "Permission");
 
 		const ARPermissionList& perms = this->schema.GetPermissions();
 		for(unsigned int i = 0; i < perms.numItems; ++i)
@@ -956,31 +945,43 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 			if(this->pInside->ValidateGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId))
 			{
 				CTableRow row("");
-
-				string img;
+				stringstream perm;
 
 				if(perms.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
-					img = CWebUtil::ImageTag("hidden.gif", rootLevel);
+					perm << CWebUtil::ImageTag("hidden.gif", rootLevel);
 				else
-					img = CWebUtil::ImageTag("visible.gif", rootLevel);
+					perm << CWebUtil::ImageTag("visible.gif", rootLevel);
 
-				row.AddCell(CTableCell(img));
-				row.AddCell(CTableCell(CAREnum::ObjectPermission(perms.permissionList[i].permissions)));
-				row.AddCell(CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId, rootLevel)));
+				perm << CAREnum::ObjectPermission(perms.permissionList[i].permissions);
+
 				row.AddCell(CTableCell(perms.permissionList[i].groupId));
+				row.AddCell(CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId, rootLevel)));
+				row.AddCell(perm.str());
 				tbl.AddRow(row);
 			}
-		}	    
-		webPage.AddContent(tbl.ToXHtml());
+		}
 
+		//CPageParams file(PAGE_SCHEMA_SUBADMINS, &this->schema); //////////////////////////////////
+		CTable tblSubAdm("fieldListAll", "TblObjectList");
+		tblSubAdm.AddColumn(90, "Group Name");
+		tblSubAdm.AddColumn(10, "Group Id");
+
+		const ARInternalIdList& subAdmins = schema.GetSubadmins();
+		for(unsigned int i = 0; i < subAdmins.numItems; ++i)
+		{
+			CTableRow row("");
+			row.AddCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), subAdmins.internalIdList[i], rootLevel));
+			row.AddCell(subAdmins.internalIdList[i]);
+			tblSubAdm.AddRow(row);
+		}
 
 		//Show all fields with all group permissions
-		CTable fieldTbl("fieldList", "TblObjectList");
+		CTable tblFieldPerm("fieldList", "TblObjectList");
 
-		fieldTbl.AddColumn(40, "Field Name");
-		fieldTbl.AddColumn(10, "Field ID");	
-		fieldTbl.AddColumn(10, "Datatype");		
-		fieldTbl.AddColumn(40, "Permissions");
+		tblFieldPerm.AddColumn(40, "Field Name");
+		tblFieldPerm.AddColumn(10, "Field ID");	
+		tblFieldPerm.AddColumn(10, "Datatype");		
+		tblFieldPerm.AddColumn(40, "Permissions");
 
 
 		CARFieldList* fields = schema.GetFields();
@@ -997,24 +998,24 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 			if(fldPerms.numItems > 0)
 			{
 				CTable tblFieldPermissionDetails("PermissionFieldList", "TblHidden");
-				tblFieldPermissionDetails.AddColumn(5, "Permission");
-				tblFieldPermissionDetails.AddColumn(20, "Description");
-				tblFieldPermissionDetails.AddColumn(75, "Group Name");
+				tblFieldPermissionDetails.AddColumn(50, "Group Name");
+				tblFieldPermissionDetails.AddColumn(50, "Permission");
 				tblFieldPermissionDetails.DisableHeader();
 
 				for(unsigned int i = 0; i < fldPerms.numItems; ++i)
 				{
-					string img;
+					stringstream perm;
 					
 					if(fldPerms.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
-						img = CWebUtil::ImageTag("edit.gif", rootLevel);
+						perm << CWebUtil::ImageTag("edit.gif", rootLevel);
 					else
-						img = CWebUtil::ImageTag("visible.gif", rootLevel);
+						perm << CWebUtil::ImageTag("visible.gif", rootLevel);
+
+					perm << CAREnum::FieldPermission(fldPerms.permissionList[i].permissions);
 
 					CTableRow row("");
-					row.AddCell(CTableCell(img));
-					row.AddCell(CTableCell(CAREnum::FieldPermission(fldPerms.permissionList[i].permissions)));
-					row.AddCell(CTableCell(this->pInside->LinkToGroup(schema.GetAppRefName(), fldPerms.permissionList[i].groupId, rootLevel)));
+					row.AddCell(this->pInside->LinkToGroup(schema.GetAppRefName(), fldPerms.permissionList[i].groupId, rootLevel));
+					row.AddCell(perm.str());
 					tblFieldPermissionDetails.AddRow(row);
 				}
 
@@ -1031,55 +1032,19 @@ void CDocSchemaDetails::SchemaPermissionDoc()
 			row.AddCell(CTableCell(field.GetFieldId()));
 			row.AddCell(CTableCell(CAREnum::DataType(field.GetDataType())));
 			row.AddCell(CTableCell(strmFieldPermissions.str()));
-			fieldTbl.AddRow(row);
+			tblFieldPerm.AddRow(row);
 		}
 
-		webPage.AddContent(fieldTbl.ToXHtml());	
-		webPage.SaveInFolder(file->GetPath());
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Permissions" << "</h2>";
+		strm << "<div id='schemaPermissions'>" 
+		         << "<h2>" << "Group Permissions" << "</h2>" << "<div>" << tbl << "</div>"
+             << "<h2>" << "Subadministrator Permissions" << "</h2>" << "<div>" << tblSubAdm << "</div>"
+             << "<h2>" << "Field Permissions" << "</h2>" << "<div>" << tblFieldPerm << "</div>"
+		     << "</div>";
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION schema permission doc of '" << this->schema.GetName() << "': " << e.what() << endl;
-	}
-}
-
-//list of groups with subadministrator access to this form
-void CDocSchemaDetails::SchemaSubadminDoc()
-{
-	try
-	{
-		CPageParams file(PAGE_SCHEMA_SUBADMINS, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Indexes)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Subadministrator Permission"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
-
-		CTable tbl("fieldListAll", "TblObjectList");
-		tbl.AddColumn(10, "Group Id");
-		tbl.AddColumn(90, "Group Name");
-
-		const ARInternalIdList& subAdmins = schema.GetSubadmins();
-		for(unsigned int i = 0; i < subAdmins.numItems; ++i)
-		{
-			CTableRow row("");					
-			row.AddCell(CTableCell(subAdmins.internalIdList[i]));
-			row.AddCell(CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), subAdmins.internalIdList[i], rootLevel)));		
-			tbl.AddRow(row);
-		}
-
-		webPage.AddContent(tbl.ToXHtml());
-		webPage.SaveInFolder(file->GetPath());
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION schema subadmin doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -2088,6 +2053,8 @@ string CDocSchemaDetails::ShowProperties()
 				ShowAuditProperties(strm);
 			}
 		}
+
+		ShowPermissionProperties(strm, &propIdx);
 
 		// doc properties left
 		propIdx.UnusedPropertiesToHTML(strm);

@@ -45,7 +45,7 @@ private:
 	void SchemaFilterDoc();
 	void SchemaAlDoc();
 	void SchemaEscalDoc();
-	void SchemaPermissionDoc();
+	void ShowPermissionProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void SchemaSubadminDoc();
 	void WorkflowDoc();
 

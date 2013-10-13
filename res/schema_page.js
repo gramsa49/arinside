@@ -58,6 +58,7 @@ $('document').ready(function() {
         });
     });
     $("#schemaProperties").accordion({ heightStyle: "content", collapsible: true, active: false, animate: false });
+    $("#schemaPermissions").accordion({ heightStyle: "content", collapsible: true, active: false, animate: false });
 
     $("#execFieldFilter").click(function() {
         if (schemaFieldList != null) {
