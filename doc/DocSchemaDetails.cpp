@@ -139,7 +139,7 @@ void CDocSchemaDetails::Documentation()
 			this->IndexDoc();
 
 			//sortlist
-			this->SortListDoc();
+			//this->SortListDoc();
 
 			//resultlist link
 			//this->ResultListDoc();
@@ -1196,22 +1196,11 @@ void CDocSchemaDetails::ShowResultListProperties(std::ostream &strm, CARProplist
 }
 
 //Create a page that shows the page sortslist
-void CDocSchemaDetails::SortListDoc()
+void CDocSchemaDetails::ShowSortListProperties(std::ostream &strm, CARProplistHelper *propIndex)
 {
 	try
 	{
-		CPageParams file(PAGE_SCHEMA_SORTLIST, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Results Lists Fields)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Sortlist"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
+		//CPageParams file(PAGE_SCHEMA_SORTLIST, &this->schema);
 
 		CTable tbl("fieldListIndex", "TblObjectList");
 		tbl.AddColumn(10, "Sort Order");
@@ -1252,9 +1241,8 @@ void CDocSchemaDetails::SortListDoc()
 			}
 		}
 
-		webPage.AddContent(tbl.ToXHtml());
-
-		webPage.SaveInFolder(file->GetPath());
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Sort" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
 	{
@@ -2087,6 +2075,7 @@ string CDocSchemaDetails::ShowProperties()
 		ShowBasicProperties(strm, &propIdx);
 		ShowEntryPointProperties(strm, &propIdx);
 		ShowResultListProperties(strm, &propIdx);
+		ShowSortListProperties(strm, &propIdx);
 
 		if (this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
 		{
