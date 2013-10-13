@@ -962,7 +962,7 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 		}
 
 		//CPageParams file(PAGE_SCHEMA_SUBADMINS, &this->schema); //////////////////////////////////
-		CTable tblSubAdm("fieldListAll", "TblObjectList");
+		CTable tblSubAdm("subadminPerms", "TblObjectList");
 		tblSubAdm.AddColumn(90, "Group Name");
 		tblSubAdm.AddColumn(10, "Group Id");
 
@@ -976,7 +976,7 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 		}
 
 		//Show all fields with all group permissions
-		CTable tblFieldPerm("fieldList", "TblObjectList");
+		CTable tblFieldPerm("fieldPerms", "TblObjectList");
 
 		tblFieldPerm.AddColumn(40, "Field Name");
 		tblFieldPerm.AddColumn(10, "Field ID");	
@@ -1061,7 +1061,7 @@ void CDocSchemaDetails::ShowIndexProperties(std::ostream &strm, CARProplistHelpe
 		const ARIndexList& indexList = this->schema.GetIndexList();
 		for(unsigned int nIndex=0; nIndex < indexList.numItems; ++nIndex)
 		{		
-			CTable tbl("fieldListAll", "TblObjectList");
+			CTable tbl("indexTbl", "TblObjectList");
 			tbl.AddColumn(0, "Field Name");
 			tbl.AddColumn(0, "Field ID");
 			tbl.AddColumn(0, "Datatype");
