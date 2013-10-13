@@ -88,4 +88,5 @@ public:
 	static const char* GetOverlayTypeString(int overlayType);
 	static const char* GetOverlayType(int overlayType);
 	static const char* CallGuideMode(int mode);
+	static const char* WeightedRelevancyFieldType(int nType);
 };

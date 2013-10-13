@@ -523,14 +523,6 @@
 			</File>
 		</Filter>
 		<Filter
-			Name="lists"
-			>
-			<File
-				RelativePath=".\lists\ARListHelpersTest.cpp"
-				>
-			</File>
-		</Filter>
-		<Filter
 			Name="output"
 			>
 			<Filter
@@ -541,6 +533,22 @@
 					>
 				</File>
 			</Filter>
+		</Filter>
+		<Filter
+			Name="core"
+			>
+			<File
+				RelativePath=".\core\ARDayStructHelperTest.cpp"
+				>
+			</File>
+		</Filter>
+		<Filter
+			Name="lists"
+			>
+			<File
+				RelativePath=".\lists\ARListHelpersTest.cpp"
+				>
+			</File>
 		</Filter>
 		<File
 			RelativePath=".\AppConfigReaderTest.cpp"

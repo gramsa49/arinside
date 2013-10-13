@@ -75,6 +75,7 @@ private:
 	void ShowEntryPointProperties(std::ostream& strm, CARProplistHelper* propIndex);
 	void ShowAuditProperties(std::ostream& strm);
 	void ShowArchiveProperties(std::ostream& strm);
+	void ShowFTSMTSProperties(std::ostream& strm, CARProplistHelper *propIndex);
 
 	string SchemaNavigation();	
 	string FormPageHeader(string description);

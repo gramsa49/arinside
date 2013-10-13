@@ -21,4 +21,5 @@ class CARDayStructHelper
 {
 public:
 	static string DayStructToHTMLString(const ARDayStruct* dayStruct);
+	static void SplitInterval(unsigned int interval, unsigned int &days, unsigned int &hours, unsigned int &minutes, unsigned int &seconds);
 };

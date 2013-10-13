@@ -77,3 +77,17 @@ string CARDayStructHelper::DayStructToHTMLString(const ARDayStruct* dayStruct)
 	}
 	return strm.str();
 }
+
+void CARDayStructHelper::SplitInterval(unsigned int interval, unsigned int &days, unsigned int &hours, unsigned int &minutes, unsigned int &seconds)
+{
+	days = interval / (3600 * 24);
+	if (days > 0)
+		interval -= (days * (3600 * 24));
+	hours = interval / 3600;
+	if (hours > 0)
+		interval -= (hours * 3600);
+	minutes = interval / 60;
+	if (minutes > 0)
+		interval -= minutes * 60;
+	seconds = interval;
+}

@@ -954,8 +954,8 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 
 				perm << CAREnum::ObjectPermission(perms.permissionList[i].permissions);
 
-				row.AddCell(CTableCell(perms.permissionList[i].groupId));
 				row.AddCell(CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId, rootLevel)));
+				row.AddCell(CTableCell(perms.permissionList[i].groupId));
 				row.AddCell(perm.str());
 				tbl.AddRow(row);
 			}
@@ -2021,7 +2021,8 @@ string CDocSchemaDetails::ShowProperties()
 	stringstream strm;
 	strm.str("");
 	map<ARLong32,ARValueStruct*> propIdx;
-
+	int schemaType = this->schema.GetCompound().schemaType;
+	
 	try
 	{
 		const ARPropList& propList = this->schema.GetPropList();
@@ -2032,25 +2033,26 @@ string CDocSchemaDetails::ShowProperties()
 		// doc basic properties
 		ShowBasicProperties(strm, &propIdx);
 		ShowEntryPointProperties(strm, &propIdx);
-		ShowResultListProperties(strm, &propIdx);
-		ShowSortListProperties(strm, &propIdx);
 
-		if (this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
+		if (schemaType != AR_SCHEMA_DIALOG)
 		{
-			// doc archive properties
+			ShowResultListProperties(strm, &propIdx);
+			ShowSortListProperties(strm, &propIdx);
 			ShowArchiveProperties(strm);
 
 			if (pInside->CompareServerVersion(7,0) >= 0) 
 			{
-				// doc audit properties
 				ShowAuditProperties(strm);
 			}
+			
+			if (schemaType != AR_SCHEMA_VENDOR && schemaType != AR_SCHEMA_VIEW)
+				ShowIndexProperties(strm, &propIdx);
+
+			ShowFTSMTSProperties(strm, &propIdx);
 		}
 
-		ShowIndexProperties(strm, &propIdx);
 		ShowPermissionProperties(strm, &propIdx);
 
-		// doc properties left
 		propIdx.UnusedPropertiesToHTML(strm);
 
 		strm << "</div>";
@@ -2665,4 +2667,155 @@ string CDocSchemaDetails::ShowGeneralInfo()
 	strm << this->pInside->ServerObjectHistory(&this->schema, rootLevel);
 
 	return strm.str();
+}
+
+void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelper *propIndex)
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	if (pInside->CompareServerVersion(7,6,3) < 0)
+		return;
+
+	ARValueStruct* propVal;
+	int iValue;
+
+	try
+	{
+		stringstream tmpStrm;
+		CTable tbl("ftsProps", "TblNoBorder");
+		tbl.AddColumn(20, "Description");
+		tbl.AddColumn(80, "Value");
+		tbl.DisableHeader();
+
+		///////////////////////////////////////////////////////////////////////////////////////
+
+		CTableRow	row("");
+		iValue = 0;
+		propVal = propIndex->GetAndUseValue(AR_OPROP_MFS_OPTION_MASK);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+			iValue = propVal->u.intVal;
+		
+		row.AddCell("Exclude from multi-form search");
+		row.AddCell((iValue & AR_MULTI_FORM_SEARCH_OPTION_EXCLUDE ? "Yes" : "No"));		
+		tbl.AddRow(row);
+
+		///////////////////////////////////////////////////////////////////////////////////////
+
+		row.ClearCells();
+		char* strValue = NULL;
+		vector<int> weightedRelevancyFields; weightedRelevancyFields.resize(4);
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_MFS_WEIGHTED_RELEVANCY_FIELDS);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_CHAR)
+			strValue = propVal->u.charVal;
+
+
+		if (strValue != NULL && strValue[0] != 0)
+		{
+			int numFields = atoi(strValue);
+			char* newPos = strchr(strValue, ';');
+			if (newPos)
+			{
+				strValue = newPos + 1;
+				for (int fieldPos = 0; fieldPos < numFields; fieldPos++)
+				{
+					int fieldTag = atoi(strValue);
+					
+					newPos = strchr(strValue, ';');
+					if (newPos)
+					{
+						strValue = newPos + 1;
+						int fieldId = atoi(strValue);
+						
+						if (fieldTag > 0 && fieldTag <= AR_MFS_WEIGHTED_RELEVANCY_KEYWORDS_FIELD_TAG)
+						{
+							weightedRelevancyFields[fieldTag-1] = fieldId;
+						}
+					}
+				}
+			}
+		}
+
+		CTable weightedRelFields("WRFields", "TblNoBorder");
+		weightedRelFields.AddColumn(0, "");
+		weightedRelFields.AddColumn(80, "");
+		weightedRelFields.DisableHeader();
+
+		for (unsigned int wrfPos = 0; wrfPos < AR_MFS_WEIGHTED_RELEVANCY_KEYWORDS_FIELD_TAG; wrfPos++)
+		{
+			int fieldId = weightedRelevancyFields[wrfPos];
+
+			CTableRow wrfRow("");
+			wrfRow.AddCell(CAREnum::WeightedRelevancyFieldType(wrfPos+1));
+			wrfRow.AddCell((fieldId > 0 ? pInside->LinkToField(this->schema.GetInsideId(), fieldId, rootLevel) : ""));
+			weightedRelFields.AddRow(wrfRow);
+
+			if (fieldId > 0)
+			{
+				CRefItem ref(schema, REFM_SCHEMA_FTS_WEIGHTED_RELEVANCY_FIELD);
+				pInside->AddFieldReference(schema.GetInsideId(), fieldId, ref);
+			}
+		}
+
+		row.AddCell("Weighted relevancy fields");
+		row.AddCell(weightedRelFields.ToXHtml());
+		tbl.AddRow(row);
+
+		///////////////////////////////////////////////////////////////////////////////////////
+
+		row.ClearCells();
+		ARDayStruct timeValue;
+		unsigned int intervalValue = 0;
+
+		ARZeroMemory(&timeValue);
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FT_SCAN_TIME_MONTH_MASK);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+			timeValue.monthday = propVal->u.intVal;
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FT_SCAN_TIME_WEEKDAY_MASK);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+			timeValue.weekday = propVal->u.intVal;
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FT_SCAN_TIME_HOUR_MASK);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+			timeValue.hourmask = propVal->u.intVal;
+		
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FT_SCAN_TIME_MINUTE);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_INTEGER)
+			timeValue.minute = propVal->u.intVal;
+
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FT_SCAN_TIME_INTERVAL);
+		if (propVal != NULL && (propVal->dataType == AR_DATA_TYPE_INTEGER || propVal->dataType == AR_DATA_TYPE_ULONG))
+			intervalValue = propVal->u.ulongVal;
+		
+		row.AddCell("FT-indexed field updates");
+		if (timeValue.monthday != 0 || timeValue.weekday != 0 || timeValue.hourmask != 0 || timeValue.minute != 0)
+		{
+			row.AddCell(CARDayStructHelper::DayStructToHTMLString(&timeValue));
+		}
+		else if (intervalValue != 0)
+		{
+			unsigned int days, hours, minutes, seconds;
+			CARDayStructHelper::SplitInterval(intervalValue, days, hours, minutes, seconds);
+
+			tmpStrm.str("");
+			tmpStrm << days << " Days " << hours << " Hours " << minutes << " Minutes";
+			row.AddCell(tmpStrm.str());
+		}
+		else
+		{
+			row.AddCell("No Time specified");
+		}
+		tbl.AddRow(row);
+
+		///////////////////////////////////////////////////////////////////////////////////////
+
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) + "Full Text Search:" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
+	}
+	catch (exception &e)
+	{
+		cerr << "EXCEPTION in ShowFTSMTSProperties: " << e.what() << endl;
+	}
+#endif
 }

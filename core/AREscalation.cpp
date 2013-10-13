@@ -76,15 +76,8 @@ string CAREscalation::GetTimeCriteria()
 		//Check if the Escalation runs On Intervall		
 		if (escalationTm.escalationTmType == AR_ESCALATION_TYPE_INTERVAL)
 		{
-			unsigned int interval, days, hours, minutes;
-			interval = escalationTm.u.interval;
-			days = interval / (3600 * 24);
-			if (days > 0)
-				interval -= (days * (3600 * 24));
-			hours = interval / 3600;
-			if (hours > 0)
-				interval -= (hours * 3600);
-			minutes = interval / 60;
+			unsigned int days, hours, minutes, seconds;
+			CARDayStructHelper::SplitInterval(escalationTm.u.interval, days, hours, minutes, seconds);
 			strm << days << " Days " << hours << " Hours " << minutes << " Minutes";
 		}
 		else
