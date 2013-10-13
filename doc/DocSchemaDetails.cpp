@@ -142,7 +142,7 @@ void CDocSchemaDetails::Documentation()
 			this->SortListDoc();
 
 			//resultlist link
-			this->ResultListDoc();
+			//this->ResultListDoc();
 
 			//views
 			this->VuiListDoc();
@@ -1150,23 +1150,10 @@ void CDocSchemaDetails::IndexDoc()
 }
 
 //Create a page that shows the form resultlist
-void CDocSchemaDetails::ResultListDoc()
+void CDocSchemaDetails::ShowResultListProperties(std::ostream &strm, CARProplistHelper *propIndex)
 {
 	try
 	{
-		CPageParams file(PAGE_SCHEMA_RESULTLIST, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Results Lists Fields)";
-		CWebPage webPage("form_result_list", title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Resultlist"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
-
 		CTable tbl("fieldListIndex", "TblObjectList");
 		tbl.AddColumn(25, "Field Name");
 		tbl.AddColumn(10, "Field Id");
@@ -1199,9 +1186,8 @@ void CDocSchemaDetails::ResultListDoc()
 			}
 		}
 
-		webPage.AddContent(tbl.ToXHtml());
-
-		webPage.SaveInFolder(file->GetPath());
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Result List Fields" << "</h2>";
+		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
 	{
@@ -2100,6 +2086,7 @@ string CDocSchemaDetails::ShowProperties()
 		// doc basic properties
 		ShowBasicProperties(strm, &propIdx);
 		ShowEntryPointProperties(strm, &propIdx);
+		ShowResultListProperties(strm, &propIdx);
 
 		if (this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
 		{

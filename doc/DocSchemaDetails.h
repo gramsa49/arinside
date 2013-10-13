@@ -39,7 +39,7 @@ private:
 	int overlayType;
 
 	void IndexDoc();
-	void ResultListDoc();
+	void ShowResultListProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void SortListDoc();
 	void VuiListDoc();
 	void SchemaFilterDoc();
