@@ -207,21 +207,6 @@ string CDocSchemaDetails::SchemaNavigation()
 
 		//Escalations
 		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CPageParams(PAGE_SCHEMA_ESCALATIONS, &this->schema), "", rootLevel)));
-
-		//ResultList
-		uList.AddItem(CUListItem(CWebUtil::Link("Resultlist", CPageParams(PAGE_SCHEMA_RESULTLIST, &this->schema), "", rootLevel)));
-
-		//Indexes
-		uList.AddItem(CUListItem(CWebUtil::Link("Indexes", CPageParams(PAGE_SCHEMA_INDEXES, &this->schema), "", rootLevel)));
-
-		//SortList
-		uList.AddItem(CUListItem(CWebUtil::Link("Sortlist", CPageParams(PAGE_SCHEMA_SORTLIST, &this->schema), "", rootLevel)));
-
-		//Permissions
-		uList.AddItem(CUListItem(CWebUtil::Link("Permission", CPageParams(PAGE_SCHEMA_PERMISSIONS, &this->schema), "", rootLevel)));
-
-		//Subadministrator
-		uList.AddItem(CUListItem(CWebUtil::Link("Subadministrator", CPageParams(PAGE_SCHEMA_SUBADMINS, &this->schema), "", rootLevel)));
 	}
 	catch(exception& e)
 	{
