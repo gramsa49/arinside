@@ -105,6 +105,9 @@ void CDocSchemaDetails::Documentation()
 			// Add list of all fields to the page
 			tabControl.AddTab("Fields", (IsJoinViewOrVendorForm() ? this->AllFieldsSpecial() : this->AllFields()) );
 
+			// Add list of all views to the page
+			tabControl.AddTab("Views", this->ShowVuiList());
+
 			// Add schemas properties (like Entrypoint-, Archiv- and Audit-settings) to the page
 			tabControl.AddTab("Properties", "");
 
@@ -145,7 +148,7 @@ void CDocSchemaDetails::Documentation()
 			//this->ResultListDoc();
 
 			//views
-			this->VuiListDoc();
+			//this->VuiListDoc();
 
 			//permissions
 			//this->SchemaPermissionDoc();
@@ -193,9 +196,6 @@ string CDocSchemaDetails::SchemaNavigation()
 
 	try
 	{
-		//Views
-		uList.AddItem(CUListItem(CWebUtil::Link("Views", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel)));
-
 		//Workflow		
 		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CPageParams(PAGE_SCHEMA_WORKFLOW, &this->schema), "", rootLevel)));
 
@@ -1194,21 +1194,11 @@ void CDocSchemaDetails::ShowSortListProperties(std::ostream &strm, CARProplistHe
 }
 
 //Create a page with a list of all views
-void CDocSchemaDetails::VuiListDoc()
+string CDocSchemaDetails::ShowVuiList()
 {	
 	try
 	{
-		CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Views)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Views"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
+		//CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema);
 
 		CTable tbl("vuiList", "TblObjectList");
 		tbl.AddColumn(30, "Vui Name");
@@ -1233,9 +1223,9 @@ void CDocSchemaDetails::VuiListDoc()
 			tbl.AddRow(row);
 		}
 
-		webPage.AddContent(tbl.ToXHtml());
-
-		webPage.SaveInFolder(file->GetPath());
+		stringstream strm;
+		strm << tbl;
+		return strm.str();
 	}
 	catch(exception& e)
 	{

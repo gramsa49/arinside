@@ -41,7 +41,7 @@ private:
 	void ShowIndexProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void ShowResultListProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void ShowSortListProperties(std::ostream &strm, CARProplistHelper *propIndex);
-	void VuiListDoc();
+	string ShowVuiList();
 	void SchemaFilterDoc();
 	void SchemaAlDoc();
 	void SchemaEscalDoc();
