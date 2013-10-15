@@ -109,7 +109,7 @@ void CDocSchemaDetails::Documentation()
 			tabControl.AddTab("Views", this->ShowVuiList());
 
 			// Add a section which lists workflow thats reading data from this form
-			tabControl.AddTab("Workflow", this->SetFieldReferences());
+			tabControl.AddTab("Workflow", "");
 
 			// Add table with all references to the page
 			tabControl.AddTab("References", GenerateReferencesTable(compSchema));
@@ -2414,10 +2414,8 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 	}
 }
 
-string CDocSchemaDetails::SetFieldReferences()
+void CDocSchemaDetails::SetFieldReferences(std::ostream &strm)
 {
-	stringstream strm;
-	strm.str("");
 	try
 	{
 		CTable tab("setFieldReferences", "TblObjectList");
@@ -2462,14 +2460,14 @@ string CDocSchemaDetails::SetFieldReferences()
 	{
 		cout << "EXCEPTION enumerating filter push fields references in schema '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
-
-	return strm.str();
 }
 
 string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSchema)
 {
-	//Schema Properties
 	stringstream strmTmp;
+	this->SetFieldReferences(strmTmp);
+
+	//Schema Properties
 	CTable tblObjProp("objProperties", "TblObjectList");
 	tblObjProp.AddColumn(0, "Property");
 	tblObjProp.AddColumn(0, "Value");
@@ -2543,7 +2541,8 @@ string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSc
 	row.AddCell(cellPropValue);
 	tblObjProp.AddRow(row);
 
-	return tblObjProp.ToXHtml();
+	strmTmp << tblObjProp;
+	return strmTmp.str();
 }
 
 bool CDocSchemaDetails::IsJoinViewOrVendorForm()
