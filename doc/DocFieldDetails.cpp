@@ -50,7 +50,7 @@ void CDocFieldDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schemaOverlayType);
-		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field",  CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field",  CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FIELD, &field), "", rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->field.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << CAREnum::GetOverlayTypeString(overlayType) << endl;
 		

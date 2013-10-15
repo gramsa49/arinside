@@ -313,6 +313,18 @@ private:
 
 ////////////////////////////////////////////////////////////////////
 // for schema fields                                              //
+class SchemaFieldOverview : public IFileStructure
+{
+public:
+	SchemaFieldOverview(const CARField* fld) : obj(fld) {  }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#tab-2"; }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->GetSchema().FileID(); }
+	virtual unsigned int GetRootLevel() const { return 2; }
+private:
+	const CARField* obj;
+};
+
 class SchemaFieldDetail : public IFileStructure
 {
 public:
@@ -1308,6 +1320,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 						}
 					}
 					break;
+				case AR_STRUCT_ITEM_XML_FIELD: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_FIELD); return new SchemaFieldOverview(static_cast<const CARField*>(params.obj1));
 				case AR_STRUCT_ITEM_XML_VUI: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new SchemaVUIOverview(static_cast<const CARSchema*>(params.obj1));
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE: return new ImageOverview();
@@ -1526,6 +1539,18 @@ public:
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
 	const CARSchema* obj;
+};
+
+class ObjectNameSchemaFieldOverview : public IFileStructure
+{
+public:
+	ObjectNameSchemaFieldOverview(const CARField* fld) : obj(fld) {  }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#tab-2"; }
+	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetSchema().GetName(), IsObjectOverlaid(&obj->GetSchema())); }
+	virtual unsigned int GetRootLevel() const { return 2; }
+private:
+	const CARField* obj;
 };
 
 class ObjectNameSchemaFieldDetail : public IFileStructure
@@ -2412,6 +2437,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 						}
 					}
 					break;
+				case AR_STRUCT_ITEM_XML_FIELD: return new ObjectNameSchemaFieldOverview(static_cast<const CARField*>(params.obj1));
 				case AR_STRUCT_ITEM_XML_VUI: return new ObjectNameSchemaVUIOverview(static_cast<const CARSchema*>(params.obj1));
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 				case AR_STRUCT_ITEM_XML_IMAGE: return new ObjectNameImageOverview();
