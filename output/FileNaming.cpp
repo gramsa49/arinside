@@ -95,7 +95,7 @@ class SchemaPermissions : public IFileStructure
 {
 public:
 	SchemaPermissions(const CARObject* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_permission_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->FileID(); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -119,7 +119,7 @@ class SchemaIndexes : public IFileStructure
 {
 public:
 	SchemaIndexes(const CARObject* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_index_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->FileID(); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -131,7 +131,7 @@ class SchemaSortList : public IFileStructure
 {
 public:
 	SchemaSortList(const CARObject* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_sort_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->FileID(); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -143,7 +143,7 @@ class SchemaResultList : public IFileStructure
 {
 public:
 	SchemaResultList(const CARObject* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_result_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->FileID(); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -155,7 +155,7 @@ class SchemaSubadmins : public IFileStructure
 {
 public:
 	SchemaSubadmins(const CARObject* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_subadmin_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->FileID(); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -1641,7 +1641,7 @@ class ObjectNameSchemaIndexes : public IFileStructure
 {
 public:
 	ObjectNameSchemaIndexes(const CARSchema* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_index_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -1653,7 +1653,7 @@ class ObjectNameSchemaPermissions : public IFileStructure
 {
 public:
 	ObjectNameSchemaPermissions(const CARSchema* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_permission_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -1665,7 +1665,7 @@ class ObjectNameSchemaResultList : public IFileStructure
 {
 public:
 	ObjectNameSchemaResultList(const CARSchema* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_result_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -1677,7 +1677,7 @@ class ObjectNameSchemaSortList : public IFileStructure
 {
 public:
 	ObjectNameSchemaSortList(const CARSchema* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_sort_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
@@ -1689,7 +1689,7 @@ class ObjectNameSchemaSubadmins : public IFileStructure
 {
 public:
 	ObjectNameSchemaSubadmins(const CARSchema* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_subadmin_list"; }
+	virtual string GetFileName() const { return FILE_INDEX; }
 	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
