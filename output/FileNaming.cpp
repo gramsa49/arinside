@@ -279,8 +279,8 @@ class SchemaVUIOverview : public IFileStructure
 {
 public:
 	SchemaVUIOverview(const CARObject* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_vui_list"; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#tab-3"; }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + obj->FileID(); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
@@ -1569,8 +1569,8 @@ class ObjectNameSchemaVUIOverview : public IFileStructure
 {
 public:
 	ObjectNameSchemaVUIOverview(const CARSchema* schema) : obj(schema) { }
-	virtual string GetFileName() const { return "form_vui_list"; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return "index"; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#tab-3"; }
 	virtual string GetPath() const { return string(DIR_SCHEMA) + "/" + GetFileNameOfObjectName(obj->GetName(), IsObjectOverlaid(obj)); }
 	virtual unsigned int GetRootLevel() const { return 2; }
 private:
