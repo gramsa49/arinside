@@ -108,9 +108,6 @@ void CDocSchemaDetails::Documentation()
 			// Add list of all views to the page
 			tabControl.AddTab("Views", this->ShowVuiList());
 
-			// Add schemas properties (like Entrypoint-, Archiv- and Audit-settings) to the page
-			tabControl.AddTab("Properties", "");
-
 			// Add a section which lists workflow thats reading data from this form
 			tabControl.AddTab("Workflow", this->SetFieldReferences());
 
