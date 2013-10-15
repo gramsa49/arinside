@@ -1514,11 +1514,7 @@ bool IsObjectOverlaid(ARValueStruct* val)
 	return false;
 }
 
-// TODO: currently this template is needed, because it is used by multiple classes (CARSchema, CARFilter, etc).
-//       Later this should be replaced by a normal function with a CARServerObject parameter. If the GetPropList()
-//       method is part of abstract CARServerObject, some code duplication could be removed again.
-template<class T>
-bool IsObjectOverlaid(const T* obj)
+bool IsObjectOverlaid(const CARServerObject* obj)
 {
 	ARValueStruct* val = NULL;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
