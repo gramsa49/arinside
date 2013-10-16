@@ -162,7 +162,7 @@ public:
 
 	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CRefItem &refItem);
 
-	string ServerObjectHistory(CARServerObject *obj, int rootLevel);
+	string ServerObjectHistory(CARServerObject *obj, int rootLevel, bool noTableDescription = false);
 	string DataObjectHistory(CARDataObject *obj, int rootLevel);
 	bool ValidateGroup(const string& appRefName, int permissionId);
 	int CompareServerVersion(int major, int minor = -1, int revision = -1);

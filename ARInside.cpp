@@ -2032,7 +2032,7 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 	return inText;
 }
 
-string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
+string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel, bool noTableDescription)
 {		
 	stringstream strm;
 	strm.str("");
@@ -2065,7 +2065,8 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel)
 		tbl.AddColumn(20, "Description");
 		tbl.AddColumn(80, "Value");
 
-		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Change History";
+		if (!noTableDescription)
+			tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Change History";
 
 		//Owner
 		CTableRow tblRow("");

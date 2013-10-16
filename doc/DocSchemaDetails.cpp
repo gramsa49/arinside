@@ -1843,6 +1843,8 @@ string CDocSchemaDetails::ShowProperties()
 
 		propIdx.UnusedPropertiesToHTML(strm);
 
+		ShowChangeHistory(strm, &propIdx);
+
 		strm << "</div>";
 	}
 	catch(exception& e)
@@ -2136,7 +2138,7 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) + "Audit Settings:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Audit Settings:" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
@@ -2236,7 +2238,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) + "Archive Settings:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Archive Settings:" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
@@ -2469,8 +2471,6 @@ string CDocSchemaDetails::ShowGeneralInfo()
 
 	strm << "<hr/>" << endl;
 
-	strm << this->pInside->ServerObjectHistory(&this->schema, rootLevel);
-
 	return strm.str();
 }
 
@@ -2615,7 +2615,7 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 
 		///////////////////////////////////////////////////////////////////////////////////////
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) + "Full Text Search:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Full Text Search:" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (exception &e)
@@ -2623,4 +2623,10 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 		cerr << "EXCEPTION in ShowFTSMTSProperties: " << e.what() << endl;
 	}
 #endif
+}
+
+void CDocSchemaDetails::ShowChangeHistory(std::ostream &strm, CARProplistHelper *propIndex)
+{
+	strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Change History &amp; Helptext" << "</h2>"
+	     << "<div>" << this->pInside->ServerObjectHistory(&this->schema, rootLevel, true) << "</div>" << endl;
 }

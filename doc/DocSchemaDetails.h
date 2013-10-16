@@ -72,6 +72,7 @@ private:
 	void ShowAuditProperties(std::ostream& strm);
 	void ShowArchiveProperties(std::ostream& strm);
 	void ShowFTSMTSProperties(std::ostream& strm, CARProplistHelper *propIndex);
+	void ShowChangeHistory(std::ostream &strm, CARProplistHelper *propIndex);
 
 	bool InAlList(string objName);
 	bool InFilterList(string objName);
