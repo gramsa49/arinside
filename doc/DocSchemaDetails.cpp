@@ -2312,6 +2312,21 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 		row.AddCell((value == 1 ? "Yes" : "No"));
 		tbl.AddRow(row);
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
+		
+		char* strValue = "";
+		propVal = propIndex->GetAndUseValue(AR_OPROP_FORM_TAG_NAME);
+		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_CHAR)
+		{
+			strValue = propVal->u.charVal;
+		}
+
+		row.ClearCells();
+		row.AddCell(CAREnum::FieldPropertiesLabel(AR_OPROP_FORM_TAG_NAME));
+		row.AddCell(strValue);
+		tbl.AddRow(row);
+
+#endif //AR_CURRENT_API_VERSION >= AR_API_VERSION_800
 #endif //AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 #endif //AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 
@@ -2765,15 +2780,18 @@ string CDocSchemaDetails::ShowGeneralInfo()
 		tbl.AddRow(row);
 		row.ClearCells();
 
-		row.AddCell("DB Table View");
-		row.AddCell(schema.GetDbViewName());
-		tbl.AddRow(row);
-		row.ClearCells();
+		if (compSchema.schemaType != AR_SCHEMA_DIALOG && compSchema.schemaType != AR_SCHEMA_VENDOR)
+		{
+			row.AddCell("DB Table View");
+			row.AddCell(schema.GetDbViewName());
+			tbl.AddRow(row);
+			row.ClearCells();
 
-		row.AddCell("DB Table SH Views");
-		row.AddCell(schema.GetDbShViewName());
-		tbl.AddRow(row);
-		row.ClearCells();
+			row.AddCell("DB Table SH Views");
+			row.AddCell(schema.GetDbShViewName());
+			tbl.AddRow(row);
+			row.ClearCells();
+		}
 
 		strm << tbl.ToXHtml();
 	}
