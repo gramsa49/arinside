@@ -100,7 +100,7 @@ const char* CARContainer::GetHelpText() const
 	return CARInside::GetInstance()->containerList.ContainerGetHelptext(GetInsideId());
 }
 
-ARTimestamp CARContainer::GetTimestamp()
+ARTimestamp CARContainer::GetTimestamp() const
 {
 	return CARInside::GetInstance()->containerList.ContainerGetTimestamp(GetInsideId());
 }

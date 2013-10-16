@@ -203,7 +203,7 @@ const ARInternalId& CARActiveLink::GetFocusField() const
 	return CARInside::GetInstance()->alList.ActiveLinkGetFocusField(GetInsideId());
 }
 
-unsigned int CARActiveLink::GetEnabled()
+unsigned int CARActiveLink::GetEnabled() const
 { 
 	return CARInside::GetInstance()->alList.ActiveLinkGetEnabled(GetInsideId());
 }
@@ -243,7 +243,7 @@ const char* CARActiveLink::GetHelpText() const
 	return CARInside::GetInstance()->alList.ActiveLinkGetHelptext(GetInsideId());
 }
 
-ARTimestamp CARActiveLink::GetTimestamp()
+ARTimestamp CARActiveLink::GetTimestamp() const
 {
 	return CARInside::GetInstance()->alList.ActiveLinkGetTimestamp(GetInsideId());
 }

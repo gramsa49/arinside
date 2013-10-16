@@ -171,7 +171,7 @@ const char* CAREscalation::GetHelpText() const
 	return CARInside::GetInstance()->escalationList.EscalationGetHelptext(GetInsideId());
 }
 
-ARTimestamp CAREscalation::GetTimestamp()
+ARTimestamp CAREscalation::GetTimestamp() const
 {
 	return CARInside::GetInstance()->escalationList.EscalationGetTimestamp(GetInsideId());
 }

@@ -186,7 +186,7 @@ const char* CARFilter::GetHelpText() const
 	return CARInside::GetInstance()->filterList.FilterGetHelptext(GetInsideId());
 }
 
-ARTimestamp CARFilter::GetTimestamp()
+ARTimestamp CARFilter::GetTimestamp() const
 {
 	return CARInside::GetInstance()->filterList.FilterGetTimestamp(GetInsideId());
 }

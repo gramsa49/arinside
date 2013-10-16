@@ -184,7 +184,7 @@ const char* CARVui::GetHelpText() const
 	return vuiList->VUIGetHelptext(vuiIndex);
 }
 
-ARTimestamp CARVui::GetTimestamp()
+ARTimestamp CARVui::GetTimestamp() const
 {
 	return vuiList->VUIGetTimestamp(vuiIndex);
 }

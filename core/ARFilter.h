@@ -36,7 +36,7 @@ public:
 
 	// implement functions inherited from CARServerObject
 	const char* GetHelpText() const;
-	ARTimestamp GetTimestamp();
+	ARTimestamp GetTimestamp() const;
 	const ARAccessNameType& GetOwner() const;
 	const ARAccessNameType& GetLastChanged() const;
 	const char* GetChangeDiary() const;

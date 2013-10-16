@@ -172,7 +172,7 @@ const char* CARSchema::GetHelpText() const
 	return CARInside::GetInstance()->schemaList.SchemaGetHelptext(GetInsideId());
 }
 
-ARTimestamp CARSchema::GetTimestamp()
+ARTimestamp CARSchema::GetTimestamp() const
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetTimestamp(GetInsideId());
 }

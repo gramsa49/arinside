@@ -71,7 +71,7 @@ const char* CARImage::GetHelpText() const
 	return CARInside::GetInstance()->imageList.ImageGetHelptext(GetInsideId()); 
 }
 
-ARTimestamp CARImage::GetTimestamp()
+ARTimestamp CARImage::GetTimestamp() const
 {
 	return CARInside::GetInstance()->imageList.ImageGetTimestamp(GetInsideId()); 
 }

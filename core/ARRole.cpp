@@ -81,7 +81,7 @@ const char* CARRole::GetHelpText() const
 	return NULL; // no support for helptext
 }
 
-ARTimestamp CARRole::GetTimestamp()
+ARTimestamp CARRole::GetTimestamp() const
 {
 	return CARInside::GetInstance()->roleList.RoleGetModifiedDate(GetInsideId());
 }

@@ -84,7 +84,7 @@ const char* CARCharMenu::GetHelpText() const
 	return CARInside::GetInstance()->menuList.MenuGetHelptext(GetInsideId());
 }
 
-ARTimestamp CARCharMenu::GetTimestamp()
+ARTimestamp CARCharMenu::GetTimestamp() const
 {
 	return CARInside::GetInstance()->menuList.MenuGetTimestamp(GetInsideId());
 }

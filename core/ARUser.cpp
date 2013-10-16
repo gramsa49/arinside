@@ -79,7 +79,7 @@ const char* CARUser::GetHelpText() const
 	return NULL; // no support for helptext
 }
 
-ARTimestamp CARUser::GetTimestamp()
+ARTimestamp CARUser::GetTimestamp() const
 {
 	return CARInside::GetInstance()->userList.UserGetModifiedDate(GetInsideId());
 }

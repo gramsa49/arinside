@@ -129,7 +129,7 @@ const char* CARField::GetHelpText() const
 	return fieldList->FieldGetHelptext(fieldIndex);
 }
 
-ARTimestamp CARField::GetTimestamp()
+ARTimestamp CARField::GetTimestamp() const
 {
 	return fieldList->FieldGetTimestamp(fieldIndex);
 }

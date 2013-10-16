@@ -82,7 +82,7 @@ const char* CARGroup::GetHelpText() const
 	return NULL; // no support for helptext
 }
 
-ARTimestamp CARGroup::GetTimestamp()
+ARTimestamp CARGroup::GetTimestamp() const
 {
 	return CARInside::GetInstance()->groupList.GroupGetModifiedDate(GetInsideId());
 }
