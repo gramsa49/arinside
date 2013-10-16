@@ -44,7 +44,6 @@ public:
 	// other filter data access functions
 	const AREscalationTmStruct& GetTimeStruct() const;
 	const ARWorkflowConnectStruct& GetSchemaList() const;
-	unsigned int GetOperation();
 	unsigned int GetEnabled();
 	const ARQualifierStruct& GetRunIf() const;
 	const ARFilterActionList& GetIfActions() const;
