@@ -2247,15 +2247,27 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 	}
 }
 
-void CDocSchemaDetails::SetFieldReferences(std::ostream &strm)
+void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 {
 	try
 	{
-		CTable tab("setFieldReferences", "TblObjectList");
-		tab.AddColumn(50, "Object Name");
-		tab.AddColumn(10, "Enabled");
-		tab.AddColumn(20, "Execute On");
-		tab.AddColumn(20, "Description");
+		CTable tabSet("setFieldReferences", "TblObjectList");
+		tabSet.AddColumn(50, "Object Name");
+		tabSet.AddColumn(10, "Enabled");
+		tabSet.AddColumn(20, "Execute On");
+		tabSet.AddColumn(20, "Description");
+
+		CTable tabPush("pushReferences", "TblObjectList");
+		tabPush.AddColumn(50, "Object Name");
+		tabPush.AddColumn(10, "Enabled");
+		tabPush.AddColumn(20, "Execute On");
+		tabPush.AddColumn(20, "Description");
+
+		CTable tabService("serviceReferences", "TblObjectList");
+		tabService.AddColumn(50, "Object Name");
+		tabService.AddColumn(10, "Enabled");
+		tabService.AddColumn(20, "Execute On");
+		tabService.AddColumn(20, "Description");
 
 		const CARSchema::ReferenceList &refList = schema.GetReferences();
 		CARSchema::ReferenceList::const_iterator curIt = refList.begin();
@@ -2263,7 +2275,8 @@ void CDocSchemaDetails::SetFieldReferences(std::ostream &strm)
 
 		for (; curIt != endIt; ++curIt)
 		{
-			if (curIt->GetMessageId() == REFM_SETFIELDS_FORM)
+			int messageId = curIt->GetMessageId();
+			if (messageId == REFM_SETFIELDS_FORM)
 			{
 				bool hasEnabledFlag;
 				string tmpEnabled = "";
@@ -2282,12 +2295,60 @@ void CDocSchemaDetails::SetFieldReferences(std::ostream &strm)
 				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
 				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
 				row.AddCell(curIt->GetDescription(rootLevel));
-				tab.AddRow(row);
+				tabSet.AddRow(row);
+			}
+			if (messageId == REFM_SERVICE_CALL)
+			{
+				bool hasEnabledFlag;
+				string tmpEnabled = "";
+				string tmpCssEnabled = "";
+
+				unsigned int enabled = curIt->GetObjectEnabled(hasEnabledFlag);
+
+				if (hasEnabledFlag)
+				{
+					tmpEnabled = CAREnum::ObjectEnable(enabled);
+					if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
+				}
+
+				CTableRow row;
+				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
+				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
+				row.AddCell(curIt->GetDescription(rootLevel));
+				tabService.AddRow(row);
+			}
+			if (messageId == REFM_PUSHFIELD_TARGET)
+			{
+				bool hasEnabledFlag;
+				string tmpEnabled = "";
+				string tmpCssEnabled = "";
+
+				unsigned int enabled = curIt->GetObjectEnabled(hasEnabledFlag);
+
+				if (hasEnabledFlag)
+				{
+					tmpEnabled = CAREnum::ObjectEnable(enabled);
+					if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
+				}
+
+				CTableRow row;
+				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
+				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
+				row.AddCell(curIt->GetDescription(rootLevel));
+				tabPush.AddRow(row);
 			}
 		}
 
 		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
-		tab.ToXHtml(strm);
+		tabSet.ToXHtml(strm);
+
+		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow writing data to this form" << endl;
+		tabPush.ToXHtml(strm);
+
+		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow executing services on this form" << endl;
+		tabService.ToXHtml(strm);
 	}
 	catch(exception& e)
 	{
@@ -2298,7 +2359,7 @@ void CDocSchemaDetails::SetFieldReferences(std::ostream &strm)
 string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSchema)
 {
 	stringstream strmTmp;
-	this->SetFieldReferences(strmTmp);
+	WorkflowReferences(strmTmp);
 
 	//Schema Properties
 	CTable tblObjProp("objProperties", "TblObjectList");
@@ -2330,30 +2391,6 @@ string CDocSchemaDetails::GenerateReferencesTable(const ARCompoundSchema &compSc
 	row.ClearCells();
 	cellProp.content = "Active Link \"Open Window Action\"";
 	cellPropValue.content = this->AlWindowOpenReferences();
-	row.AddCell(cellProp);
-	row.AddCell(cellPropValue);
-	tblObjProp.AddRow(row);
-
-	//ActiveLink PushFields References
-	row.ClearCells();
-	cellProp.content = "Active Link \"Push Field Action\" to this form";
-	cellPropValue.content = this->AlPushFieldsReferences();
-	row.AddCell(cellProp);
-	row.AddCell(cellPropValue);
-	tblObjProp.AddRow(row);	
-
-	//Filter PushFields References
-	row.ClearCells();
-	cellProp.content = "Filter \"Push Field Action\" to this form";
-	cellPropValue.content = this->FilterPushFieldsReferences();
-	row.AddCell(cellProp);
-	row.AddCell(cellPropValue);
-	tblObjProp.AddRow(row);
-
-	//Escalation PushFIelds References
-	row.ClearCells();
-	cellProp.content = "Escalation \"Push Field Action\" to this form";
-	cellPropValue.content = this->EscalationPushFieldsReferences();
 	row.AddCell(cellProp);
 	row.AddCell(cellPropValue);
 	tblObjProp.AddRow(row);
@@ -2554,7 +2591,7 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 			wrfRow.AddCell((fieldId > 0 ? pInside->LinkToField(this->schema.GetInsideId(), fieldId, rootLevel) : ""));
 			weightedRelFields.AddRow(wrfRow);
 
-			if (fieldId > 0)
+			if (fieldId > 0 && (!pInside->appConfig.bOverlaySupport || IsVisibleObject(schema)))
 			{
 				CRefItem ref(schema, REFM_SCHEMA_FTS_WEIGHTED_RELEVANCY_FIELD);
 				pInside->AddFieldReference(schema.GetInsideId(), fieldId, ref);

@@ -641,6 +641,18 @@ void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFields
 		}
 		strm << "<br/>" << endl;
 
+		// create schema reference
+		if (!arIn->appConfig.bOverlaySupport || IsVisibleObject(*obj))
+		{
+			CARSchema targetSchema(pushSchema);
+			if (targetSchema.Exists())
+			{
+				CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_TARGET);
+				if (!targetSchema.ReferenceExists(refItem))
+					targetSchema.AddReference(refItem);
+			}
+		}
+
 		// push field if **************************************
 		strm << "<br/>Push Field If<br/>" << endl;
 		stringstream strmTmpQual;
@@ -1539,6 +1551,14 @@ void CDocAlActionStruct::ActionService(std::ostream& strm, const ARActiveLinkSvc
 			strm << "Service Form: " << arIn->LinkToSchema(action.serviceSchema, rootLevel) << "<br/>" << endl;
 		}
 
+		// create schema reference
+		CARSchema schemaToCall(serviceSchema);
+		if (schemaToCall.Exists() && (!arIn->appConfig.bOverlaySupport || IsVisibleObject(*obj)))
+		{
+			CRefItem refItem(*this->obj, ifElse, nAction, REFM_SERVICE_CALL);
+			schemaToCall.AddReference(refItem);
+		}
+
 		strm << "Request Id: ";
 		if (action.requestIdMap != 0)
 		{
@@ -1561,10 +1581,9 @@ void CDocAlActionStruct::ActionService(std::ostream& strm, const ARActiveLinkSvc
 		strm << "Output Mapping: "; if (action.outputFieldMapping.numItems == 0) strm << "None"; strm << "<br/>" << endl;
 		if (action.outputFieldMapping.numItems > 0)
 		{
-			CARSchema schema1(schemaName);
-			CARSchema schema2(serviceSchema);
+			CARSchema currentSchema(schemaName);
 
-			CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schema1, schema2);
+			CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, currentSchema, schemaToCall);
 			strm << assignHelper.ServiceAssignment(action.outputFieldMapping, nAction, ifElse, SMM_OUTPUT);
 		}
 	}

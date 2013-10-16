@@ -64,7 +64,7 @@ private:
 	string AlWindowOpenReferences();
 	string JoinFormReferences();
 	string SearchMenuReferences();
-	void SetFieldReferences(std::ostream &strm);
+	void WorkflowReferences(std::ostream &strm);
 	
 	string ShowProperties();
 	void ShowBasicProperties(std::ostream& strm, CARProplistHelper* propIndex);

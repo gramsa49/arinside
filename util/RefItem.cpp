@@ -512,6 +512,9 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 	case REFM_SERVICE_FORM:
 		strm << "Used as Service Form in " << IfElse() << "-Action " << ActionIndex();
 		break;
+	case REFM_SERVICE_CALL:
+		strm << "Start Service Call in " << IfElse() << "-Action " << ActionIndex();
+		break;
 	case REFM_SERVICE_REQUESTID:
 		strm << "Service Request-Id " << IfElse() << "-Action " << ActionIndex();
 		break;

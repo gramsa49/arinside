@@ -625,6 +625,16 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		}
 		strm << "<br/>" << endl;
 
+		if (!arIn->appConfig.bOverlaySupport || IsVisibleObject(*obj))
+		{
+			CARSchema targetSchema(pushSchema);
+			if (targetSchema.Exists())
+			{
+				CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_TARGET);
+				targetSchema.AddReference(refItem);
+			}
+		}
+
 		// push field if **************************************
 		strm << "<br/>Push Field If<br/>" << endl;
 		stringstream strmTmpQual;
@@ -900,6 +910,13 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		{
 			serviceSchema = action.serviceSchema;
 			strm << "Service Form: " << arIn->LinkToSchema(action.serviceSchema, rootLevel) << "<br/>" << endl;
+		}
+
+		CARSchema schemaToCall(serviceSchema);
+		if (schemaToCall.Exists() && (!arIn->appConfig.bOverlaySupport || IsVisibleObject(*obj)))
+		{
+			CRefItem refItem(*this->obj, ifElse, nAction, REFM_SERVICE_CALL);
+			schemaToCall.AddReference(refItem);
 		}
 
 		strm << "Request Id: ";
