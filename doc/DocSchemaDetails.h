@@ -47,7 +47,7 @@ private:
 	void SchemaEscalDoc();
 	void ShowPermissionProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void SchemaSubadminDoc();
-	void WorkflowDoc();
+	string WorkflowDoc();
 
 	std::string GenerateReferencesTable(const ARCompoundSchema &compSchema);
 

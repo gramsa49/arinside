@@ -88,7 +88,7 @@ void CDocSchemaDetails::Documentation()
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//Add schema navigation menu	
-			webPage.SetNavigation(this->SchemaNavigation());
+			//webPage.SetNavigation(this->SchemaNavigation());
 
 			// add the javascript we need for this page to display correctly
 			webPage.GetReferenceManager()
@@ -109,7 +109,7 @@ void CDocSchemaDetails::Documentation()
 			tabControl.AddTab("Views", this->ShowVuiList());
 
 			// Add a section which lists workflow thats reading data from this form
-			tabControl.AddTab("Workflow", "");
+			tabControl.AddTab("Workflow", WorkflowDoc());
 
 			// Add table with all references to the page
 			tabControl.AddTab("References", GenerateReferencesTable(compSchema));
@@ -151,20 +151,20 @@ void CDocSchemaDetails::Documentation()
 			//this->SchemaPermissionDoc();
 
 			//Workflow
-			this->WorkflowDoc();
+			//this->WorkflowDoc();
 
 			//subadmins
 			//this->SchemaSubadminDoc();
 
 			//active links
-			this->SchemaAlDoc();
+			//this->SchemaAlDoc();
 
 
 			//filter
-			this->SchemaFilterDoc();
+			//this->SchemaFilterDoc();
 
 			//escalation
-			this->SchemaEscalDoc();
+			//this->SchemaEscalDoc();
 
 
 			//webPage.AddContent(pgStrm.str());
@@ -805,12 +805,140 @@ void CDocSchemaDetails::AddTableRow(CTable& tbl, CARContainer& cont)
 	tbl.AddRow(row);
 }
 
-void CDocSchemaDetails::WorkflowDoc()
+void AddJsonRow(Document &doc, CARActiveLink &al, int rootLevel)
+{
+	CPageParams alDetailPage(PAGE_DETAILS, &al);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+	Value item;
+	item.SetArray();
+
+	string strModDate, strActlinkName, strLink;
+	strModDate = CUtil::DateTimeToString(al.GetTimestamp());
+	strActlinkName = al.GetName();
+	strLink = CWebUtil::GetRelativeURL(rootLevel, alDetailPage);
+
+	Value modDate, alName, alLink;
+	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
+	alName.SetString(strActlinkName.c_str(), strActlinkName.length(), alloc);
+	alLink.SetString(strLink.c_str(), strLink.length(), alloc);
+
+	item.PushBack((al.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
+	item.PushBack(alName, alloc);
+	item.PushBack((al.GetEnabled() ? true : false), alloc);
+	item.PushBack(al.GetOrder(), alloc);
+	item.PushBack(al.GetExecuteMask(), alloc);
+	item.PushBack(al.GetIfActions().numItems, alloc);
+	item.PushBack(al.GetElseActions().numItems, alloc);
+	item.PushBack(modDate, alloc);
+	item.PushBack(al.GetLastChanged(), alloc);
+	item.PushBack(alLink, alloc);
+	
+	doc.PushBack(item, alloc);
+}
+
+void AddJsonRow(Document &doc, CARFilter &flt, int rootLevel)
+{
+	CPageParams fltDetailPage(PAGE_DETAILS, &flt);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+	Value item;
+	item.SetArray();
+
+	string strModDate, strName, strLink;
+	strModDate = CUtil::DateTimeToString(flt.GetTimestamp());
+	strName = flt.GetName();
+	strLink = CWebUtil::GetRelativeURL(rootLevel, fltDetailPage);
+
+	Value modDate, objName, objLink;
+	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
+	objName.SetString(strName.c_str(), strName.length(), alloc);
+	objLink.SetString(strLink.c_str(), strLink.length(), alloc);
+
+	item.PushBack((flt.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
+	item.PushBack(objName, alloc);
+	item.PushBack((flt.GetEnabled() ? true : false), alloc);
+	item.PushBack(flt.GetOrder(), alloc);
+	item.PushBack(flt.GetOperation(), alloc);
+	item.PushBack(flt.GetIfActions().numItems, alloc);
+	item.PushBack(flt.GetElseActions().numItems, alloc);
+	item.PushBack(modDate, alloc);
+	item.PushBack(flt.GetLastChanged(), alloc);
+	item.PushBack(objLink, alloc);
+	
+	doc.PushBack(item, alloc);
+}
+
+void AddJsonRow(Document &doc, CAREscalation &esc, int rootLevel)
+{
+	CPageParams escDetailPage(PAGE_DETAILS, &esc);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+	Value item;
+	item.SetArray();
+
+	string strModDate, strName, strLink;
+	strModDate = CUtil::DateTimeToString(esc.GetTimestamp());
+	strName = esc.GetName();
+	strLink = CWebUtil::GetRelativeURL(rootLevel, escDetailPage);
+
+	Value modDate, objName, objLink;
+	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
+	objName.SetString(strName.c_str(), strName.length(), alloc);
+	objLink.SetString(strLink.c_str(), strLink.length(), alloc);
+
+	item.PushBack((esc.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
+	item.PushBack(objName, alloc);
+	item.PushBack((esc.GetEnabled() ? true : false), alloc);
+	item.PushBack("", alloc);
+	item.PushBack(esc.GetTimeStruct().escalationTmType, alloc);
+	item.PushBack(esc.GetIfActions().numItems, alloc);
+	item.PushBack(esc.GetElseActions().numItems, alloc);
+	item.PushBack(modDate, alloc);
+	item.PushBack(esc.GetLastChanged(), alloc);
+	item.PushBack(objLink, alloc);
+	
+	doc.PushBack(item, alloc);
+}
+
+void AddJsonRow(Document &doc, CARContainer &cnt, int rootLevel)
+{
+	CPageParams cntDetailPage(PAGE_DETAILS, &cnt);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+	Value item;
+	item.SetArray();
+
+	string strModDate, strName, strLink;
+	strModDate = CUtil::DateTimeToString(cnt.GetTimestamp());
+	strName = cnt.GetName();
+	strLink = CWebUtil::GetRelativeURL(rootLevel, cntDetailPage);
+
+	Value modDate, objName, objLink;
+	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
+	objName.SetString(strName.c_str(), strName.length(), alloc);
+	objLink.SetString(strLink.c_str(), strLink.length(), alloc);
+
+	item.PushBack((cnt.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
+	item.PushBack(objName, alloc);
+	item.PushBack(cnt.GetType(), alloc);
+	item.PushBack("", alloc);
+	item.PushBack("", alloc);
+	item.PushBack("", alloc);
+	item.PushBack("", alloc);
+	item.PushBack(modDate, alloc);
+	item.PushBack(cnt.GetLastChanged(), alloc);
+	item.PushBack(objLink, alloc);
+	
+	doc.PushBack(item, alloc);
+}
+
+string CDocSchemaDetails::WorkflowDoc()
 {
 	try
 	{
 		CPageParams file(PAGE_SCHEMA_WORKFLOW, &this->schema);
 		int rootLevel = file->GetRootLevel();
+
+		Document document;
+		Document::AllocatorType &alloc = document.GetAllocator();
+		document.SetArray();
 
 		string title = "Schema " + this->schema.GetName() + " (Workflow)";
 		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
@@ -848,6 +976,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		{
 			CARActiveLink al(*curIt);
 			AddTableRow(tblRef, al);
+			AddJsonRow(document, al, rootLevel);
 		}
 
 		// Add all filters
@@ -857,6 +986,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		{
 			CARFilter flt(*curIt);
 			AddTableRow(tblRef, flt);
+			AddJsonRow(document, flt, rootLevel);
 		}
 
 		// Add all escalations
@@ -866,6 +996,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		{
 			CAREscalation esc(*curIt);
 			AddTableRow(tblRef, esc);
+			AddJsonRow(document, esc, rootLevel);
 		}
 
 		// add all active link guides
@@ -875,6 +1006,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		{
 			CARContainer alg(*curIt);
 			AddTableRow(tblRef, alg);
+			AddJsonRow(document, alg, rootLevel);
 		}
 
 		// add all filter guides
@@ -884,6 +1016,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		{
 			CARContainer flg(*curIt);
 			AddTableRow(tblRef, flg);
+			AddJsonRow(document, flg, rootLevel);
 		}
 
 		// add all webservices
@@ -893,6 +1026,7 @@ void CDocSchemaDetails::WorkflowDoc()
 		{
 			CARContainer ws(*curIt);
 			AddTableRow(tblRef, ws);
+			AddJsonRow(document, ws, rootLevel);
 		}
 
 		stringstream tblDesc;
@@ -902,10 +1036,24 @@ void CDocSchemaDetails::WorkflowDoc()
 
 		webPage.AddContent(tblRef.ToXHtml());
 		webPage.SaveInFolder(file->GetPath());
+
+		tblRef.ClearRows();
+
+		// generate json output struct
+		stringstream strm;
+		GenericWriteStream genericStream(strm);
+		Writer<GenericWriteStream> genericWriter(genericStream);
+
+		strm << "<script type=\"text/javascript\">" << "var schemaWFLInit = false;" << endl;
+		strm << "var schemaWorkflowList = "; document.Accept(genericWriter); strm << ";" << endl
+		     << "</script>" << endl
+		     << tblRef;
+		return strm.str();
 	}
 	catch(exception& e)
 	{
 		cout << "EXCEPTION schema workflow doc of '" << this->schema.GetName() << "': " << e.what() << endl;
+		return "";
 	}
 }
 
@@ -1227,6 +1375,7 @@ string CDocSchemaDetails::ShowVuiList()
 	catch(exception& e)
 	{
 		cout << "EXCEPTION creating schema vuilist doc of '" << this->schema.GetName() << "': " << e.what() << endl;
+		return "";
 	}
 }
 

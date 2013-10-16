@@ -44,12 +44,85 @@ var schemaFieldManager = {
     }
 };
 
+function getIcon(row) {
+    var alt = "";
+    switch (row[0]) {
+        case 5: alt = "filter.gif"; break;
+        case 6: alt = "active_link.gif"; break;
+        case 9: alt = "escalation.gif"; break;
+        case 12: switch (row[2]) {
+                case 1: alt = "al_guide.gif"; break;
+                case 2: alt = "application.gif"; break;
+                case 3: alt = "packing_list.gif"; break;
+                case 4: alt = "filter_guide.gif"; break;
+                case 5: alt = "webservice.gif"; break;
+            }; break;
+        default: return "";
+    };
+    var src = "../../img/" + alt;
+    return $("<img>").attr("width", 16).attr("height", 16).attr("alt", alt).attr("src", src);
+}
+
+function getEnabled(row) {
+    if (row[0] == 12) return "";
+    return AREnabled(row[2]);
+}
+
+function getObjType(row) {
+    if (row[0] == 12) return ARContainerType(row[2]);
+    return ARObjectType(row[0]);
+}
+
+function initWorkflowList() {
+    var table_name = 'referenceList';
+    var table = $("#" + table_name);
+    $("#" + table_name + " tbody tr:gt(0)").remove();
+    $.each(schemaWorkflowList, function(i) {
+        var executeOn = function() { return ""; }
+        var objType = schemaWorkflowList[i][0];
+        if (objType == 6) {
+            executeOn = function(val) {
+                return ARActLinkExecuteOn(val);
+            };
+        }
+        else if (objType == 5) {
+            executeOn = function(val) {
+                return ARFilterOperation(val);
+            };
+        }
+        else if (objType == 9) {
+            executeOn = function(val) {
+                return AREscalationTMType(val);
+            };
+        }
+
+        var row = ($("<tr>")
+			.append($("<td>").text(getObjType(schemaWorkflowList[i])))
+			.append($("<td>")
+				.append(getIcon(schemaWorkflowList[i]))
+				.append($("<a>").attr("href", schemaWorkflowList[i][9]).text(schemaWorkflowList[i][1]))
+			)
+			.append($("<td>").text(getEnabled(schemaWorkflowList[i])))
+			.append($("<td>").text(schemaWorkflowList[i][3]))
+			.append($("<td>").text(executeOn(schemaWorkflowList[i][4])))
+			.append($("<td>").text(schemaWorkflowList[i][5]))
+			.append($("<td>").text(schemaWorkflowList[i][6]))
+			.append($("<td>").text(schemaWorkflowList[i][7]))
+			.append($("<td>").text(schemaWorkflowList[i][8]))
+		);
+        table.append(row);
+    });
+    schemaWFLInit = true;
+}
+
 $('document').ready(function() {
     $.address.change(function(event) {
         $("#MainObjectTabCtrl").tabs("select", window.location.hash);
+        if (window.location.hash === '#tab-4' && !schemaWFLInit) { initWorkflowList(); }
     });
     $("#MainObjectTabCtrl").bind("tabsselect", function(event, ui) {
         window.location.hash = ui.tab.hash;
+        if (ui.tab.hash === '#tab-4' && !schemaWFLInit) { initWorkflowList(); }
     });
     $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }

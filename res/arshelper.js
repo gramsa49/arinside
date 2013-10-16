@@ -30,3 +30,72 @@ function ARFieldDataTypeToString(dataType) {
         default: return "unknwon";
     };
 };
+
+function AREnabled(val) {
+    if (val) return "Enabled";
+    return "Disabled";
+}
+
+function ARObjectType(objType) {
+    switch (objType) {
+        case 5: return "Filter";
+        case 6: return "Active Link";
+        case 9: return "Escalation";
+    }
+}
+
+function ARContainerType(cntType) {
+    switch (cntType) {
+        case 1: return "Active Link Guide";
+        case 2: return "Application";
+        case 3: return "Packing List";
+        case 4: return "Filter Guide";
+        case 5: return "Webservice";
+    }
+}
+
+function StrAppend(str, val) {
+    if (str.length > 0)
+        return str + ", " + val;
+    return val;
+}
+
+function ARActLinkExecuteOn(val) {
+    var result = "";
+    if (val & 1) { result = StrAppend(result, "Button/MenuField") }
+    if (val & 2) { result = StrAppend(result, "Return"); }
+    if (val & 4) { result = StrAppend(result, "Submit"); }
+    if (val & 8) { result = StrAppend(result, "Modify"); }
+    if (val & 16) { result = StrAppend(result, "Display"); }
+    if (val & 128) { result = StrAppend(result, "Menu Choise"); }
+    if (val & 256) { result = StrAppend(result, "Loose Focus"); }
+    if (val & 512) { result = StrAppend(result, "Set Default"); }
+    if (val & 1024) { result = StrAppend(result, "Search"); }
+    if (val & 2048) { result = StrAppend(result, "After Modify"); }
+    if (val & 4096) { result = StrAppend(result, "After Submit"); }
+    if (val & 8192) { result = StrAppend(result, "Gain Focus"); }
+    if (val & 16384) { result = StrAppend(result, "Window Open"); }
+    if (val & 32768) { result = StrAppend(result, "Window Close"); }
+    if (val & 65536) { result = StrAppend(result, "Un-Display"); }
+    if (val & 131072) { result = StrAppend(result, "Copy To New"); }
+    if (val & 262144) { result = StrAppend(result, "Window Loaded"); }
+    if (result.length == 0) return "None";
+    return result;
+}
+
+function ARFilterOperation(val) {
+    var result = "";
+    if (val & 1) { result = StrAppend(result, "Get"); }
+    if (val & 2) { result = StrAppend(result, "Modify"); }
+    if (val & 4) { result = StrAppend(result, "Submit"); }
+    if (val & 8) { result = StrAppend(result, "Delete"); }
+    if (val & 16) { result = StrAppend(result, "Merge"); }
+    if (val & 64) { result = StrAppend(result, "Service"); }
+    if (result.length == 0) return "None";
+    return result;
+}
+
+function AREscalationTMType(val) {
+    if (val == 1) { return "Interval"; }
+    return "Time";
+}
