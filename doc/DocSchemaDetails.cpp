@@ -43,19 +43,6 @@ CDocSchemaDetails::~CDocSchemaDetails(void)
 {
 }
 
-string CDocSchemaDetails::FormPageHeader(string description)
-{
-	//ContentHead informations
-	stringstream contHeadStrm;
-	contHeadStrm.str("");
-	contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-	contHeadStrm << MenuSeparator <<this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
-	contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel);
-	contHeadStrm << CAREnum::GetOverlayTypeString(overlayType);
-	contHeadStrm << MenuSeparator << CWebUtil::ObjName(description) << endl;
-	return contHeadStrm.str();
-}
-
 void CDocSchemaDetails::Documentation()
 {
 	try
@@ -87,9 +74,6 @@ void CDocSchemaDetails::Documentation()
 			webPage.AddContentHead(contHeadStrm.str(), overlayHelper.PlaceOverlayLink());
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
-			//Add schema navigation menu	
-			//webPage.SetNavigation(this->SchemaNavigation());
-
 			// add the javascript we need for this page to display correctly
 			webPage.GetReferenceManager()
 				.AddScriptReference("img/schema_page.js")
@@ -115,69 +99,6 @@ void CDocSchemaDetails::Documentation()
 			tabControl.AddTab("References", GenerateReferencesTable(compSchema));
 
 			webPage.AddContent(tabControl.ToXHtml());
-
-			//pgStrm << GenerateReferencesTable(compSchema);
-
-			//// Add a section which lists workflow thats reading data from this form
-			//pgStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
-			//pgStrm << this->SetFieldReferences();
-
-			////Fields
-			//switch(compSchema.schemaType)
-			//{
-			//case AR_SCHEMA_JOIN:
-			//case AR_SCHEMA_VIEW:
-			//case AR_SCHEMA_VENDOR:
-			//	pgStrm << this->AllFieldsSpecial();
-			//	break;
-			//default:	
-			//	pgStrm << this->AllFields();
-			//	break;
-			//}
-
-			//indexes
-			//this->IndexDoc();
-
-			//sortlist
-			//this->SortListDoc();
-
-			//resultlist link
-			//this->ResultListDoc();
-
-			//views
-			//this->VuiListDoc();
-
-			//permissions
-			//this->SchemaPermissionDoc();
-
-			//Workflow
-			//this->WorkflowDoc();
-
-			//subadmins
-			//this->SchemaSubadminDoc();
-
-			//active links
-			//this->SchemaAlDoc();
-
-
-			//filter
-			//this->SchemaFilterDoc();
-
-			//escalation
-			//this->SchemaEscalDoc();
-
-
-			//webPage.AddContent(pgStrm.str());
-
-			//// Basics / Entry Points
-			//webPage.AddContent(ShowProperties());
-
-			//Properties
-			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pSchema->objPropList));
-
-			////History
-			//webPage.AddContent(this->pInside->ServerObjectHistory(&this->schema, rootLevel));
-
 			webPage.SaveInFolder(path);
 		}
 	}
@@ -186,33 +107,6 @@ void CDocSchemaDetails::Documentation()
 		cout << "EXCEPTION schema details documentation of '"<< this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
-
-string CDocSchemaDetails::SchemaNavigation()
-{	
-	CUList uList(this->rootLevel, "");
-
-	try
-	{
-		//Workflow		
-		uList.AddItem(CUListItem(CWebUtil::Link("Workflow", CPageParams(PAGE_SCHEMA_WORKFLOW, &this->schema), "", rootLevel)));
-
-		//Active Links
-		uList.AddItem(CUListItem(CWebUtil::Link("Active Link", CPageParams(PAGE_SCHEMA_ACTIVELINKS, &this->schema), "", rootLevel)));
-
-		//Filters
-		uList.AddItem(CUListItem(CWebUtil::Link("Filter", CPageParams(PAGE_SCHEMA_FILTERS, &this->schema), "", rootLevel)));
-
-		//Escalations
-		uList.AddItem(CUListItem(CWebUtil::Link("Escalation", CPageParams(PAGE_SCHEMA_ESCALATIONS, &this->schema), "", rootLevel)));
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION schema navigation of '" << this->schema.GetName() << "': " << e.what() << endl;
-	}	
-
-	return "<ul><span class=\"objName\">" + this->schema.GetURL(rootLevel, true) + "</span>"+ uList.ToXHtml("", true) + "</ul>";
-}
-
 
 //Create a page with all fields of this form
 string CDocSchemaDetails::AllFields()
@@ -342,9 +236,9 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 			string strDate = CUtil::DateTimeToString(field.GetTimestamp());
 			string strLink = CWebUtil::DocName(fieldLink->GetFileName());
 
-			Value name(strName.c_str(), strName.size(), alloc);
-			Value modified(strDate.c_str(), strDate.size(), alloc);
-			Value link(strLink.c_str(), strLink.size(), alloc);
+			Value name(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+			Value modified(strDate.c_str(), static_cast<SizeType>(strDate.size()), alloc);
+			Value link(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
 
 			item.PushBack(static_cast<int>(field.GetFieldId()), alloc);
 			item.PushBack(name, alloc);
@@ -385,15 +279,15 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 							string rightSchemaName = schemaRight.GetName();
 							string rightSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaRightLink);
 
-							Value leftNameVal(leftFieldName.c_str(), leftFieldName.size(), alloc);
-							Value leftLinkVal(leftFieldLink.c_str(), leftFieldLink.size(), alloc);
-							Value leftSchemaVal(leftSchemaName.c_str(), leftSchemaName.size(), alloc);
-							Value leftSchemaLinkVal(leftSchemaLink.c_str(), leftSchemaLink.size(), alloc);
+							Value leftNameVal(leftFieldName.c_str(), static_cast<SizeType>(leftFieldName.size()), alloc);
+							Value leftLinkVal(leftFieldLink.c_str(), static_cast<SizeType>(leftFieldLink.size()), alloc);
+							Value leftSchemaVal(leftSchemaName.c_str(), static_cast<SizeType>(leftSchemaName.size()), alloc);
+							Value leftSchemaLinkVal(leftSchemaLink.c_str(), static_cast<SizeType>(leftSchemaLink.size()), alloc);
 
-							Value rightNameVal(rightFieldName.c_str(), rightFieldName.size(), alloc);
-							Value rightLinkVal(rightFieldLink.c_str(), rightFieldLink.size(), alloc);
-							Value rightSchemaVal(rightSchemaName.c_str(), rightSchemaName.size(), alloc);
-							Value rightSchemaLinkVal(rightSchemaLink.c_str(), rightSchemaLink.size(), alloc);
+							Value rightNameVal(rightFieldName.c_str(), static_cast<SizeType>(rightFieldName.size()), alloc);
+							Value rightLinkVal(rightFieldLink.c_str(), static_cast<SizeType>(rightFieldLink.size()), alloc);
+							Value rightSchemaVal(rightSchemaName.c_str(), static_cast<SizeType>(rightSchemaName.size()), alloc);
+							Value rightSchemaLinkVal(rightSchemaLink.c_str(), static_cast<SizeType>(rightSchemaLink.size()), alloc);
 
 							item.PushBack(leftNameVal, alloc);
 							item.PushBack(leftLinkVal, alloc);
@@ -423,10 +317,10 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 								string baseFieldLink = CWebUtil::GetRelativeURL(rootLevel, baseFieldPage);
 								string baseSchemaLink = CWebUtil::GetRelativeURL(rootLevel, baseSchemaPage);
 								
-								Value baseFileNameVal(baseFieldName.c_str(), baseFieldName.size(), alloc);
-								Value baseFileLinkVal(baseFieldLink.c_str(), baseFieldLink.size(), alloc);
-								Value baseSchemaNameVal(baseSchemaName.c_str(), baseSchemaName.size(), alloc);
-								Value baseSchemaLinkVal(baseSchemaLink.c_str(), baseSchemaLink.size(), alloc);
+								Value baseFileNameVal(baseFieldName.c_str(), static_cast<SizeType>(baseFieldName.size()), alloc);
+								Value baseFileLinkVal(baseFieldLink.c_str(), static_cast<SizeType>(baseFieldLink.size()), alloc);
+								Value baseSchemaNameVal(baseSchemaName.c_str(), static_cast<SizeType>(baseSchemaName.size()), alloc);
+								Value baseSchemaLinkVal(baseSchemaLink.c_str(), static_cast<SizeType>(baseSchemaLink.size()), alloc);
 
 								item.PushBack(baseFileNameVal, alloc);
 								item.PushBack(baseFileLinkVal, alloc);
@@ -443,14 +337,14 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 				case AR_FIELD_VIEW:
 					{
 						string val = field.GetMapping().u.view.fieldName;
-						Value itemVal(val.c_str(), val.size(), alloc);
+						Value itemVal(val.c_str(), static_cast<SizeType>(val.size()), alloc);
 						item.PushBack(itemVal, alloc);
 					}
 					break;
 				case AR_FIELD_VENDOR:
 					{
 						string val = field.GetMapping().u.vendor.fieldName;
-						Value itemVal(val.c_str(), val.size(), alloc);
+						Value itemVal(val.c_str(), static_cast<SizeType>(val.size()), alloc);
 						item.PushBack(itemVal, alloc);
 					}
 					break;
@@ -738,73 +632,6 @@ bool CDocSchemaDetails::IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct&
 	return false;
 }
 
-void CDocSchemaDetails::AddTableRow(CTable& tbl, CARActiveLink& al)
-{
-	unsigned int enabled = al.GetEnabled();
-	CARProplistHelper alProps(&al.GetPropList());
-
-	CTableRow row("cssStdRow");
-	row.AddCell(CAREnum::XmlStructItem(al.GetServerObjectTypeXML()));
-	row.AddCell(al.GetURL(rootLevel));
-	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
-	row.AddCell(CTableCell(al.GetOrder()));
-	row.AddCell(al.GetExecuteOn(true, &alProps));
-	row.AddCell(CTableCell(al.GetIfActions().numItems));
-	row.AddCell(CTableCell(al.GetElseActions().numItems));
-	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(al.GetTimestamp())));
-	row.AddCell(CTableCell(this->pInside->LinkToUser(al.GetLastChanged(), rootLevel)));
-	tbl.AddRow(row);
-}
-
-void CDocSchemaDetails::AddTableRow(CTable& tbl, CARFilter& flt)
-{
-	unsigned int enabled = flt.GetEnabled();
-
-	CTableRow row("cssStdRow");
-	row.AddCell(CAREnum::XmlStructItem(flt.GetServerObjectTypeXML()));
-	row.AddCell(flt.GetURL(rootLevel));
-	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
-	row.AddCell(CTableCell(flt.GetOrder()));
-	row.AddCell(flt.GetExecuteOn(true));
-	row.AddCell(CTableCell(flt.GetIfActions().numItems));
-	row.AddCell(CTableCell(flt.GetElseActions().numItems));
-	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(flt.GetTimestamp())));
-	row.AddCell(CTableCell(this->pInside->LinkToUser(flt.GetLastChanged(), rootLevel)));
-	tbl.AddRow(row);
-}
-
-void CDocSchemaDetails::AddTableRow(CTable& tbl, CAREscalation& esc)
-{
-	unsigned int enabled = esc.GetEnabled();
-
-	CTableRow row("cssStdRow");
-	row.AddCell(CAREnum::XmlStructItem(esc.GetServerObjectTypeXML()));
-	row.AddCell(esc.GetURL(rootLevel));
-	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
-	row.AddCell(""); // order
-	row.AddCell(esc.GetExecuteOn());
-	row.AddCell(CTableCell(esc.GetIfActions().numItems));
-	row.AddCell(CTableCell(esc.GetElseActions().numItems));
-	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(esc.GetTimestamp())));
-	row.AddCell(CTableCell(this->pInside->LinkToUser(esc.GetLastChanged(), rootLevel)));
-	tbl.AddRow(row);
-}
-
-void CDocSchemaDetails::AddTableRow(CTable& tbl, CARContainer& cont)
-{
-	CTableRow row("cssStdRow");
-	row.AddCell(CAREnum::ContainerType(cont.GetType()));
-	row.AddCell(cont.GetURL(rootLevel));
-	row.AddCell(""); // enabled column
-	row.AddCell(""); // order column
-	row.AddCell(""); // execute on column
-	row.AddCell(""); // if actions column
-	row.AddCell(""); // else actions column
-	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
-	row.AddCell(CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
-	tbl.AddRow(row);
-}
-
 void AddJsonRow(Document &doc, CARActiveLink &al, int rootLevel)
 {
 	CPageParams alDetailPage(PAGE_DETAILS, &al);
@@ -818,9 +645,9 @@ void AddJsonRow(Document &doc, CARActiveLink &al, int rootLevel)
 	strLink = CWebUtil::GetRelativeURL(rootLevel, alDetailPage);
 
 	Value modDate, alName, alLink;
-	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
-	alName.SetString(strActlinkName.c_str(), strActlinkName.length(), alloc);
-	alLink.SetString(strLink.c_str(), strLink.length(), alloc);
+	modDate.SetString(strModDate.c_str(), static_cast<SizeType>(strModDate.length()), alloc);
+	alName.SetString(strActlinkName.c_str(), static_cast<SizeType>(strActlinkName.length()), alloc);
+	alLink.SetString(strLink.c_str(), static_cast<SizeType>(strLink.length()), alloc);
 
 	item.PushBack((al.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
 	item.PushBack(alName, alloc);
@@ -849,9 +676,9 @@ void AddJsonRow(Document &doc, CARFilter &flt, int rootLevel)
 	strLink = CWebUtil::GetRelativeURL(rootLevel, fltDetailPage);
 
 	Value modDate, objName, objLink;
-	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
-	objName.SetString(strName.c_str(), strName.length(), alloc);
-	objLink.SetString(strLink.c_str(), strLink.length(), alloc);
+	modDate.SetString(strModDate.c_str(), static_cast<SizeType>(strModDate.length()), alloc);
+	objName.SetString(strName.c_str(), static_cast<SizeType>(strName.length()), alloc);
+	objLink.SetString(strLink.c_str(), static_cast<SizeType>(strLink.length()), alloc);
 
 	item.PushBack((flt.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
 	item.PushBack(objName, alloc);
@@ -880,9 +707,9 @@ void AddJsonRow(Document &doc, CAREscalation &esc, int rootLevel)
 	strLink = CWebUtil::GetRelativeURL(rootLevel, escDetailPage);
 
 	Value modDate, objName, objLink;
-	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
-	objName.SetString(strName.c_str(), strName.length(), alloc);
-	objLink.SetString(strLink.c_str(), strLink.length(), alloc);
+	modDate.SetString(strModDate.c_str(), static_cast<SizeType>(strModDate.length()), alloc);
+	objName.SetString(strName.c_str(), static_cast<SizeType>(strName.length()), alloc);
+	objLink.SetString(strLink.c_str(), static_cast<SizeType>(strLink.length()), alloc);
 
 	item.PushBack((esc.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
 	item.PushBack(objName, alloc);
@@ -911,9 +738,9 @@ void AddJsonRow(Document &doc, CARContainer &cnt, int rootLevel)
 	strLink = CWebUtil::GetRelativeURL(rootLevel, cntDetailPage);
 
 	Value modDate, objName, objLink;
-	modDate.SetString(strModDate.c_str(), strModDate.length(), alloc);
-	objName.SetString(strName.c_str(), strName.length(), alloc);
-	objLink.SetString(strLink.c_str(), strLink.length(), alloc);
+	modDate.SetString(strModDate.c_str(), static_cast<SizeType>(strModDate.length()), alloc);
+	objName.SetString(strName.c_str(), static_cast<SizeType>(strName.length()), alloc);
+	objLink.SetString(strLink.c_str(), static_cast<SizeType>(strLink.length()), alloc);
 
 	item.PushBack((cnt.GetServerObjectTypeXML()-AR_STRUCT_XML_OFFSET), alloc);
 	item.PushBack(objName, alloc);
@@ -933,22 +760,11 @@ string CDocSchemaDetails::WorkflowDoc()
 {
 	try
 	{
-		CPageParams file(PAGE_SCHEMA_WORKFLOW, &this->schema);
-		int rootLevel = file->GetRootLevel();
+		//CPageParams file(PAGE_SCHEMA_WORKFLOW, &this->schema);
 
 		Document document;
 		Document::AllocatorType &alloc = document.GetAllocator();
 		document.SetArray();
-
-		string title = "Schema " + this->schema.GetName() + " (Workflow)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations		
-		webPage.AddContentHead(this->FormPageHeader("Workflow"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
 
 		//Field references
 		CTable tblRef("referenceList", "TblObjectList");
@@ -975,7 +791,6 @@ string CDocSchemaDetails::WorkflowDoc()
 		for (; curIt != endIt; ++curIt)
 		{
 			CARActiveLink al(*curIt);
-			AddTableRow(tblRef, al);
 			AddJsonRow(document, al, rootLevel);
 		}
 
@@ -985,7 +800,6 @@ string CDocSchemaDetails::WorkflowDoc()
 		for (; curIt != endIt; ++curIt)
 		{
 			CARFilter flt(*curIt);
-			AddTableRow(tblRef, flt);
 			AddJsonRow(document, flt, rootLevel);
 		}
 
@@ -995,7 +809,6 @@ string CDocSchemaDetails::WorkflowDoc()
 		for (; curIt != endIt; ++curIt)
 		{
 			CAREscalation esc(*curIt);
-			AddTableRow(tblRef, esc);
 			AddJsonRow(document, esc, rootLevel);
 		}
 
@@ -1005,7 +818,6 @@ string CDocSchemaDetails::WorkflowDoc()
 		for (; curIt != endIt; ++curIt)
 		{
 			CARContainer alg(*curIt);
-			AddTableRow(tblRef, alg);
 			AddJsonRow(document, alg, rootLevel);
 		}
 
@@ -1015,7 +827,6 @@ string CDocSchemaDetails::WorkflowDoc()
 		for (; curIt != endIt; ++curIt)
 		{
 			CARContainer flg(*curIt);
-			AddTableRow(tblRef, flg);
 			AddJsonRow(document, flg, rootLevel);
 		}
 
@@ -1025,19 +836,11 @@ string CDocSchemaDetails::WorkflowDoc()
 		for (; curIt != endIt; ++curIt)
 		{
 			CARContainer ws(*curIt);
-			AddTableRow(tblRef, ws);
 			AddJsonRow(document, ws, rootLevel);
 		}
 
 		stringstream tblDesc;
 		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
-
-		tblRef.description = tblDesc.str();
-
-		webPage.AddContent(tblRef.ToXHtml());
-		webPage.SaveInFolder(file->GetPath());
-
-		tblRef.ClearRows();
 
 		// generate json output struct
 		stringstream strm;
@@ -1376,142 +1179,6 @@ string CDocSchemaDetails::ShowVuiList()
 	{
 		cout << "EXCEPTION creating schema vuilist doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 		return "";
-	}
-}
-
-//Create a list with all filters related to thisform
-void CDocSchemaDetails::SchemaFilterDoc()
-{
-	try
-	{
-		CPageParams file(PAGE_SCHEMA_FILTERS, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Filter)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Filter"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
-		CFilterTable *tbl = new CFilterTable(*this->pInside);
-
-		const CARSchemaList::ObjectRefList& fltList = this->schema.GetFilters();
-		CARSchemaList::ObjectRefList::const_iterator curIt = fltList.begin();
-		CARSchemaList::ObjectRefList::const_iterator endIt = fltList.end();
-
-		for (; curIt != endIt; ++curIt)
-		{
-			CARFilter filter(*curIt);
-			tbl->AddRow(*curIt, rootLevel);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("filter.gif", rootLevel) << tbl->NumRows() << " ";
-		tblDesc << CWebUtil::Link("Filter", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", rootLevel);
-		tbl->SetDescription(tblDesc.str());
-
-		webPage.AddContent(tbl->Print());
-		delete tbl;
-
-		webPage.SaveInFolder(file->GetPath());
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION creating schema filter doc of '" << this->schema.GetName() << "': " << e.what() << endl;
-	}
-}
-
-//Create a list with all active links related to this form
-void CDocSchemaDetails::SchemaAlDoc()
-{
-	try
-	{
-		CPageParams file(PAGE_SCHEMA_ACTIVELINKS, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " + this->schema.GetName() +" (ActiveLinks)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Active Links"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
-		CAlTable *tbl = new CAlTable(*this->pInside);
-
-		const CARSchemaList::ObjectRefList& alList = this->schema.GetActiveLinks();
-		CARSchemaList::ObjectRefList::const_iterator curIt = alList.begin();
-		CARSchemaList::ObjectRefList::const_iterator endIt = alList.end();
-
-		for (; curIt != endIt; ++curIt)
-		{
-			CARActiveLink enumObj(*curIt);
-			tbl->AddRow(*curIt, rootLevel);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("active_link.gif", rootLevel) << tbl->NumRows() << " ";
-		// TODO: move to single CWebUtil call
-		tblDesc << CWebUtil::Link("ActiveLinks", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "", rootLevel);
-		tbl->SetDescription(tblDesc.str());
-
-		webPage.AddContent(tbl->Print());
-		delete tbl;
-
-		webPage.SaveInFolder(file->GetPath());
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION creating schema active link doc of '" << this->schema.GetName() << "': " << e.what() << endl;
-	}
-}
-
-//Create a list with all escalations related to this form
-void CDocSchemaDetails::SchemaEscalDoc()
-{
-	try
-	{
-		CPageParams file(PAGE_SCHEMA_ESCALATIONS, &this->schema);
-		int rootLevel = file->GetRootLevel();
-
-		string title = "Schema " +this->schema.GetName() +" (Escalations)";
-		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-		//ContentHead informations
-		webPage.AddContentHead(this->FormPageHeader("Escalations"));
-
-		//Add schema navigation menu	
-		webPage.SetNavigation(this->SchemaNavigation());
-
-		CEscalTable *tbl = new CEscalTable(*this->pInside);
-
-		const CARSchemaList::ObjectRefList& escList = this->schema.GetEscalations();
-		CARSchemaList::ObjectRefList::const_iterator curIt = escList.begin();
-		CARSchemaList::ObjectRefList::const_iterator endIt = escList.end();
-
-		for (; curIt != endIt; ++curIt)
-		{
-			CAREscalation escalation(*curIt);
-			tbl->AddRow(*curIt, rootLevel);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("escalation.gif", rootLevel) << tbl->NumRows() << " ";
-		tblDesc << CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", rootLevel);
-		tbl->SetDescription(tblDesc.str());
-
-		webPage.AddContent(tbl->Print());
-		delete tbl;
-
-		webPage.SaveInFolder(file->GetPath());
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION creating schema escalation doc of '" << this->schema.GetName() << "': " << e.what() << endl;
 	}
 }
 

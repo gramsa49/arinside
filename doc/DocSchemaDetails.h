@@ -42,11 +42,7 @@ private:
 	void ShowResultListProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	void ShowSortListProperties(std::ostream &strm, CARProplistHelper *propIndex);
 	string ShowVuiList();
-	void SchemaFilterDoc();
-	void SchemaAlDoc();
-	void SchemaEscalDoc();
 	void ShowPermissionProperties(std::ostream &strm, CARProplistHelper *propIndex);
-	void SchemaSubadminDoc();
 	string WorkflowDoc();
 
 	std::string GenerateReferencesTable(const ARCompoundSchema &compSchema);
@@ -77,9 +73,6 @@ private:
 	void ShowArchiveProperties(std::ostream& strm);
 	void ShowFTSMTSProperties(std::ostream& strm, CARProplistHelper *propIndex);
 
-	string SchemaNavigation();	
-	string FormPageHeader(string description);
-
 	bool InAlList(string objName);
 	bool InFilterList(string objName);
 	bool InEscalList(string objName);
@@ -88,9 +81,4 @@ private:
 	list<string> uniqueAlList;
 	list<string> uniqueFilterList;
 	list<string> uniqueEscalList;
-
-	void AddTableRow(CTable& tbl, CARActiveLink& al);
-	void AddTableRow(CTable& tbl, CARFilter& flt);
-	void AddTableRow(CTable& tbl, CAREscalation& esc);
-	void AddTableRow(CTable& tbl, CARContainer& cont);
 };
