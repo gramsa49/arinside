@@ -432,10 +432,6 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = schemaName2;
 
-		//strm << "Server Name: " << serverRaw.str << "<br/>" << endl;	
-
-
-
 		//check if it is a webservice set fields
 		if(strcmp(tmpDisplayName.c_str(), "ARSYS.ARF.WEBSERVICE")==0)
 		{
@@ -515,49 +511,23 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		}
 		else
 		{
-			strm << "From: ";
-			if (schemaName2.size()>0 && schemaName2[0] == '$' && action.sampleSchema[0] != 0)
-			{
-				int fieldId = atoi(&schemaName2[1]);
-				schemaName2 = action.sampleSchema;
-				tmpDisplayName = action.sampleSchema;
-				strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaInsideId, fieldId, rootLevel)) << "$ (Sample Form: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << ")";
-			}
-			else
-			{
-				strm << arIn->LinkToSchema(tmpDisplayName, rootLevel);
-			}
-			strm << "<br/>" << endl;
-
-
-			//All matching Ids?
-			string setFieldInfo = "Field Mapping";
-			for(unsigned int i= 0; i< action.fieldList.numItems; i++)
-			{
-				if(action.fieldList.fieldAssignList[i].fieldId == AR_LIKE_ID)
-				{
-					setFieldInfo = "Field Mapping: All Matching Ids";
-
-					strm << this->AllMatchingIds(schemaName, tmpDisplayName, AMM_SETFIELDS, nAction);
-				}
-			}
+			strm << "From: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
 			//Qualification
 			strm << qualification.str() << endl;
 
-			if(setFieldInfo.compare("Field Mapping") ==  0)
+			// set field mapping
+			strm << "Field Mapping:";
+			if (action.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 			{
-				strm << setFieldInfo << ":<br/>" << endl;			
-
-				CARSchema schema1(schemaName);
-				CARSchema schema2(schemaName2);
-
-				CARAssignHelper assignHelper(*arIn, rootLevel, *obj, schema1, schema2);
-				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
+				strm << " All Matching Ids<br/>";
+				strm << this->AllMatchingIds(schemaName, tmpDisplayName, AMM_SETFIELDS, nAction);
 			}
 			else
 			{
-				strm << setFieldInfo << endl;
+				strm << "<br/>" << endl;
+				CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, schemaName2);
+				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 			}
 		}
 	}

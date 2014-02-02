@@ -64,8 +64,9 @@ bool CARSetFieldHelper::CheckAssignment(const ARAssignStruct &assignment)
 					return false;
 				}
 
-				if (assignment.u.field->server[0] == '$' && assignment.u.field->server[1] != 0 &&
-					assignment.u.field->schema[0] == '$' && assignment.u.field->schema[1] != 0)
+				if ((assignment.u.field->server[0] == '$' && assignment.u.field->server[1] != 0 ||
+					   assignment.u.field->server[0] == '@' && assignment.u.field->server[1] == 0) &&
+					   assignment.u.field->schema[0] == '$' && assignment.u.field->schema[1] != 0)
 				{
 					type = SFT_SAMPLEDATA;
 					
