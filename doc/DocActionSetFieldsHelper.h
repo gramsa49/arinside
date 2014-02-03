@@ -45,6 +45,7 @@ private:
 	int nAction;
 	int rootLevel;
 	bool showServerNameInOutput;
+	bool showFormNameInOutput;
 
 	std::string schemaNameActionIsReadingFrom;
 

@@ -25,6 +25,7 @@ CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARSer
 	arStructItemType = structItemType;
 	nAction = numAction;
 	showServerNameInOutput = false;
+	showFormNameInOutput = false;
 }
 
 CDocActionSetFieldsHelper::~CDocActionSetFieldsHelper(void)
@@ -43,6 +44,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 	stringstream strmQual;
 
 	bool useDefaultFieldMappingTable = true;
+	showFormNameInOutput = true;
 
 	CARSchema wfSchema(attachedSchemaName);
 	if (wfSchema.Exists())
@@ -55,8 +57,8 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 		{
 		case SFT_CURRENT:
 			strmServer << arIn.LinkToServerInfo(arIn.appConfig.serverName, rootLevel);
-			strmSchemaDisplay << "CURRENT SCREEN";
 			schemaNameActionIsReadingFrom = sfh.GetSchemaName();
+			showFormNameInOutput = false;
 			break;
 		case SFT_SERVER:
 		case SFT_SAMPLEDATA:
@@ -122,10 +124,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 		case SFT_SQL:
 			{
 				strmServer << arIn.LinkToServerInfo(sfh.GetServerName(), rootLevel);
-				schemaNameActionIsReadingFrom = AR_ASSIGN_SQL_SCHEMA_NAME;
-				strmSchemaDisplay << "SQL";
-
-				strmQual << "<br/>SQL command<br/>" << endl;
+				strmQual << "<br/>Query:<br/>" << endl;
 
 				if(!sfh.GetSqlCommand().empty())
 				{
@@ -137,6 +136,8 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 				strmQual << "If No Requests Match: " << CAREnum::NoMatchRequest(sfh.GetNoMatchOption()) << "<br/>" << endl;
 				strmQual << "If Multiple Requests Match: " << CAREnum::MultiMatchRequest(sfh.GetMultiMatchOption()) << "<br/><br/>" << endl;	
+
+				showFormNameInOutput = false;
 			}
 			break;
 		case SFT_FILTERAPI:
@@ -151,16 +152,15 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 				}
 
 				// the html-documtation for this action is generated directly here
-				strmSchemaDisplay << "FILTER API<br/>";
-				strmSchemaDisplay << "Plugin-Name: " << schemaName << "<br/><br/>" << endl;
+				writer << "Plugin-Name: " << schemaName << "<br/><br/>" << endl;
 
-				strmSchemaDisplay << "Input-Mapping: " << "<br/>";
+				writer << "Input-Mapping: " << "<br/>";
 				CARAssignHelper docInput(arIn, rootLevel, obj, attachedSchemaName, attachedSchemaName);
-				strmSchemaDisplay << docInput.FilterApiInputAssignment(sfh.GetFilterAPIInputs(), sfh.GetFilterAPINumItems(), nAction, ifElse);
+				writer << docInput.FilterApiInputAssignment(sfh.GetFilterAPIInputs(), sfh.GetFilterAPINumItems(), nAction, ifElse);
 
-				strmSchemaDisplay << "Output-Mapping: " << "<br/>";
+				writer << "Output-Mapping: " << "<br/>";
 				CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, attachedSchemaName);
-				strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
+				writer << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
 			
 				// we've generated our own html-table with input/output mapping. So avoid default table.
 				useDefaultFieldMappingTable = false;
@@ -277,7 +277,8 @@ void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSc
 	if (this->showServerNameInOutput)
 		strmSchemaDisplay << "Server: " << strmServer.str() << "<br/>" << endl;
 
-	strmSchemaDisplay << "From: " << arIn.LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
+	if (this->showFormNameInOutput)
+		strmSchemaDisplay << "From: " << arIn.LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
 	//Qualification
 	strmSchemaDisplay << strmQual.str() << endl;
