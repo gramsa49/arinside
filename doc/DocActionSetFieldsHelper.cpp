@@ -209,7 +209,7 @@ void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(const string& fromSc
 	if (setFieldsStruct.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 	{
 		strmSchemaDisplay << " All Matching Ids<br/>";
-		this->AllMatchingIds(strmSchemaDisplay, fromSchema, readFromSchemaName, AMM_SETFIELDS, nAction);
+		this->AllMatchingIds(strmSchemaDisplay, fromSchema, readFromSchemaName, obj, AMM_SETFIELDS, nAction, ifElse, rootLevel);
 	}
 	else
 	{
@@ -219,10 +219,11 @@ void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(const string& fromSc
 	}
 }
 
-void CDocActionSetFieldsHelper::AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, AllMatchingMode mode, int nAction)
+void CDocActionSetFieldsHelper::AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, CARServerObject& obj, AllMatchingMode mode, int nAction, IfElseState ifElse, int rootLevel)
 {
 	try
-	{		
+	{
+		CARInside& arIn = *CARInside::GetInstance();
 		CARSchema schema1(table1);
 		CARSchema schema2(table2);
 
@@ -249,10 +250,10 @@ void CDocActionSetFieldsHelper::AllMatchingIds(std::ostream& strm, const string&
 			}
 
 			// Reference object for left field
-			CRefItem refItemField1(this->obj, ifElse, nAction, msgIdTarget);
+			CRefItem refItemField1(obj, ifElse, nAction, msgIdTarget);
 
 			// Reference object for right field
-			CRefItem refItemField2(this->obj, ifElse, nAction, msgIdValue);
+			CRefItem refItemField2(obj, ifElse, nAction, msgIdValue);
 
 			// scan the fields
 			unsigned int fieldCount1 = schema1.GetFields()->GetCount();
@@ -275,8 +276,8 @@ void CDocActionSetFieldsHelper::AllMatchingIds(std::ostream& strm, const string&
 						//Matching ID
 						CTableRow row("cssStdRow");		
 						row.AddCell(CTableCell(tmpField1.GetFieldId()));
-						row.AddCell(CTableCell(arIn.LinkToField(schema1.GetInsideId(), tmpField1.GetInsideId(), this->rootLevel)));
-						row.AddCell(CTableCell(arIn.LinkToField(schema2.GetInsideId(), tmpField2.GetInsideId(), this->rootLevel)));
+						row.AddCell(CTableCell(arIn.LinkToField(schema1.GetInsideId(), tmpField1.GetInsideId(), rootLevel)));
+						row.AddCell(CTableCell(arIn.LinkToField(schema2.GetInsideId(), tmpField2.GetInsideId(), rootLevel)));
 						tblListField.AddRow(row);
 					}
 				}
