@@ -24,17 +24,8 @@ public:
 	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElse, int numAction, int rootLevel);
 	~CDocActionSetFieldsHelper(void);
 
-	enum AllMatchingMode
-	{
-		AMM_PUSHFIELDS,
-		AMM_SETFIELDS
-	};
-
 	void SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
 	void ShowActionWithServerName(bool showIt);
-
-	//Get all matching IDs of two forms
-	static void AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, CARServerObject& obj, AllMatchingMode mode, int nAction, IfElseState ifElse, int rootLevel);
 
 private:
 	CARInside& arIn;

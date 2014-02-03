@@ -798,6 +798,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocAllMatchingIdsTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocAllMatchingIdsTable.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocAnalyzer.cpp"
 				>
 			</File>

@@ -40,20 +40,11 @@ private:
 	int structItemType;
 	IfElseState ifElse;
 
-	enum AllMatchingMode 
-	{
-		AMM_PUSHFIELDS,
-		AMM_SETFIELDS
-	};
-
 	enum WebserviceMappingMode 
 	{
 		WMM_INPUT,
 		WMM_OUTPUT
 	};
-
-	//Get all matching IDs of two forms
-	string AllMatchingIds(string table1, string table2, AllMatchingMode mode, int nAction);
 
 	//AR_FILTER_ACTION_NONE
 	string FilterActionNone(int nAction);

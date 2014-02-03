@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocAlActionStruct.h"
+#include "DocAllMatchingIdsTable.h"
 #include "DocActionOpenWindowHelper.h"
 
 CDocAlActionStruct::CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, int rootLevel)
@@ -183,79 +184,6 @@ string CDocAlActionStruct::Get(IfElseState ifElse, const ARActiveLinkActionList 
 	}
 
 	return strm.str();
-}
-
-//All matching Ids
-void CDocAlActionStruct::AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, AllMatchingMode mode, int nAction)
-{
-	try
-	{		
-		CARSchema schema1(table1);
-		CARSchema schema2(table2);
-
-		CTable tblListField("tblListMatchingIds", "TblObjectList");
-		tblListField.AddColumn(0, "Id");
-		tblListField.AddColumn(0, "Field Name");
-		tblListField.AddColumn(0, "Value");
-
-		if(schema1.Exists() && schema2.Exists())
-		{
-			int msgIdTarget = -1;
-			int msgIdValue = -1;
-
-			switch (mode)
-			{
-			case AMM_PUSHFIELDS:
-				msgIdTarget = REFM_PUSHFIELD_TARGET_MATCHING;
-				msgIdValue  = REFM_PUSHFIELD_VALUE_MATCHING;
-				break;
-			case AMM_SETFIELDS:
-				msgIdTarget = REFM_SETFIELDS_TARGET_MATCHING;
-				msgIdValue  = REFM_SETFIELDS_VALUE_MATCHING;
-				break;
-			}
-
-			// Reference object for left field
-			CRefItem refItemField1(*this->obj, ifElse, nAction, msgIdTarget);
-
-			// Reference object for right field
-			CRefItem refItemField2(*this->obj, ifElse, nAction, msgIdValue);
-
-			// scan the fields
-			unsigned int fieldCount1 = schema1.GetFields()->GetCount();
-			for(unsigned int fieldIndex1 = 0; fieldIndex1 < fieldCount1; ++fieldIndex1)
-			{
-				CARField tmpField1(schema1.GetInsideId(), 0, fieldIndex1);
-
-				if (tmpField1.GetDataType() <= AR_MAX_STD_DATA_TYPE)
-				{
-					CARField tmpField2(schema2.GetInsideId(), tmpField1.GetFieldId());
-
-					if(tmpField2.Exists() && tmpField2.GetDataType() <= AR_MAX_STD_DATA_TYPE)
-					{
-						// add reference for left field
-						arIn->AddFieldReference(schema1.GetInsideId(), tmpField1.GetInsideId(), refItemField1);
-						
-						// add reference for right field
-						arIn->AddFieldReference(schema2.GetInsideId(), tmpField2.GetInsideId(), refItemField2);
-
-						//Matching ID
-						CTableRow row("cssStdRow");		
-						row.AddCell(CTableCell(tmpField1.GetFieldId()));
-						row.AddCell(CTableCell(arIn->LinkToField(schema1.GetInsideId(), tmpField1.GetInsideId(), this->rootLevel)));
-						row.AddCell(CTableCell(arIn->LinkToField(schema2.GetInsideId(), tmpField2.GetInsideId(), this->rootLevel)));
-						tblListField.AddRow(row);
-					}
-				}
-			}
-		}
-
-		strm << tblListField;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in AlAllMatchingIds of " << table1 << ", " << table2 << ": " << e.what() << endl;
-	}
 }
 
 // AR_ACTIVE_LINK_ACTION_NONE
@@ -658,7 +586,8 @@ void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFields
 		if(action.pushFieldsList.pushFieldsList[0].field.u.fieldId == AR_LIKE_ID)
 		{
 			strm << " All Matching Ids<br/>";
-			this->AllMatchingIds(strm, schemaName, pushSchema, AMM_PUSHFIELDS, nAction);
+			CDocAllMatchingIdsTable allMatchingFieldsTbl(schemaName, pushSchema, *obj, CDocAllMatchingIdsTable::AMM_PUSHFIELDS, nAction, ifElse, rootLevel);
+			allMatchingFieldsTbl.ToStream(strm);
 		}
 		else
 		{

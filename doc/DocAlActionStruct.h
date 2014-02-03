@@ -40,15 +40,6 @@ private:
 	int structItemType;
 	IfElseState ifElse;
 
-	enum AllMatchingMode
-	{
-		AMM_PUSHFIELDS,
-		AMM_SETFIELDS
-	};
-
-	//Get all matching IDs of two forms
-	void AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, AllMatchingMode mode, int nAction);
-
 	// AR_ACTIVE_LINK_ACTION_NONE
 	string ActionNone(int nAction);
 

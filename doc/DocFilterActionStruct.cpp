@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocFilterActionStruct.h"
+#include "DocAllMatchingIdsTable.h"
 #include <tinyxml/tinyxml.h>
 
 CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType)
@@ -157,78 +158,6 @@ string CDocFilterActionStruct::Get(IfElseState ifElse, const ARFilterActionList 
 	catch(exception& e)
 	{
 		cout << "EXCEPTION enumerating filter action struct of '" << this->obj->GetName() << "': " << e.what() << endl;
-	}
-
-	return strm.str();
-}
-
-//All matching Ids
-string CDocFilterActionStruct::AllMatchingIds(string table1, string table2, AllMatchingMode mode, int nAction)
-{
-	stringstream strm;
-	strm.str("");
-
-	try
-	{		
-		CARSchema schema1(table1);
-		CARSchema schema2(table2);
-
-		CTable tblListField("tblListMatchingIds", "TblObjectList");
-		tblListField.AddColumn(0, "Id");
-		tblListField.AddColumn(0, "Field Name");
-		tblListField.AddColumn(0, "Value");
-
-		if(schema1.Exists() && schema2.Exists())
-		{
-			unsigned int fieldCount1 = schema1.GetFields()->GetCount();
-			for(unsigned int fieldIndex1 = 0; fieldIndex1 < fieldCount1; ++fieldIndex1)
-			{
-				CARField tmpField1(schema1.GetInsideId(), 0, fieldIndex1);
-
-				if (tmpField1.GetDataType() <= AR_MAX_STD_DATA_TYPE)
-				{
-					CARField tmpField2(schema2.GetInsideId(), tmpField1.GetFieldId());
-
-					if(tmpField2.Exists() && tmpField2.GetDataType() <= AR_MAX_STD_DATA_TYPE)
-					{
-						int msgIdTarget = 0;
-						int msgIdValue = 0;
-						switch (mode)
-						{
-						case AMM_SETFIELDS:
-							msgIdTarget = REFM_SETFIELDS_TARGET_MATCHING;
-							msgIdValue = REFM_SETFIELDS_VALUE_MATCHING;
-							break;
-						case AMM_PUSHFIELDS:
-							msgIdTarget = REFM_PUSHFIELD_TARGET_MATCHING;
-							msgIdValue = REFM_PUSHFIELD_TARGET_MATCHING;
-							break;
-						}
-
-						//Reference field1
-						CRefItem refItemField1(*this->obj, ifElse, nAction, msgIdTarget);
-						arIn->AddFieldReference(schema1.GetInsideId(), tmpField1.GetInsideId(), refItemField1);
-
-						//Reference field2
-						CRefItem refItemField2(*this->obj, ifElse, nAction, msgIdValue);
-						arIn->AddFieldReference(schema2.GetInsideId(), tmpField2.GetInsideId(), refItemField2);
-
-						//Matching ID
-						CTableRow row("cssStdRow");		
-						row.AddCell(CTableCell(tmpField1.GetFieldId()));
-						row.AddCell(CTableCell(arIn->LinkToField(schema1.GetName(), tmpField1.GetInsideId(), this->rootLevel)));
-						row.AddCell(CTableCell(arIn->LinkToField(schema2.GetName(), tmpField2.GetInsideId(), this->rootLevel)));
-						tblListField.AddRow(row);
-					}
-				}
-			}
-		}	
-
-		strm << tblListField;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in AlAllMatchingIds: " << table1 << ", " << table2 << "; error: " << e.what() << endl;
 	}
 
 	return strm.str();
@@ -618,7 +547,8 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		if(action.pushFieldsList.pushFieldsList[0].field.tag == AR_FIELD && action.pushFieldsList.pushFieldsList[0].field.u.fieldId == AR_LIKE_ID)
 		{
 			strm << " All Matching Ids<br/>" << endl;
-			strm << this->AllMatchingIds(schemaName, pushSchema, AMM_PUSHFIELDS, nAction);
+			CDocAllMatchingIdsTable allMatchingFieldsTbl(schemaName, pushSchema, *obj, CDocAllMatchingIdsTable::AMM_PUSHFIELDS, nAction, ifElse, rootLevel);
+			allMatchingFieldsTbl.ToStream(strm);
 		}
 		else
 		{
