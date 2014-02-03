@@ -260,41 +260,40 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 	if (useDefaultFieldMappingTable)
 	{
-		GenerateDefaultMappingTable(strmSchemaDisplay, strmServer, strmQual);
+		GenerateDefaultMappingTable(writer, strmSchemaDisplay, strmServer, strmQual);
 	}
 
-	writer << strmSchemaDisplay.str() << endl;
 	return writer;
 }
 
-void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(ostream &writer, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {
 	string tmpDisplayName = strmSchemaDisplay.str();
 	if(tmpDisplayName.size()==0)
 		tmpDisplayName = schemaNameActionIsReadingFrom;
 
 	if (this->showServerNameInOutput)
-		strmSchemaDisplay << "Server: " << strmServer.str() << "<br/>" << endl;
+		writer << "Server: " << strmServer.str() << "<br/>" << endl;
 
 	if (this->showFormNameInOutput)
-		strmSchemaDisplay << "From: " << arIn.LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
+		writer << "From: " << arIn.LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
 	//Qualification
-	strmSchemaDisplay << strmQual.str() << endl;
+	writer << strmQual.str() << endl;
 
 	// set field mapping
-	strmSchemaDisplay << "Field Mapping:";
+	writer << "Field Mapping:";
 	if (setFieldsStruct.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 	{
-		strmSchemaDisplay << " All Matching Ids<br/>";
+		writer << " All Matching Ids<br/>";
 		CDocAllMatchingIdsTable allMatchingFieldsTable(attachedSchemaName, schemaNameActionIsReadingFrom, obj, CDocAllMatchingIdsTable::AMM_SETFIELDS, nAction, ifElse, rootLevel);
-		allMatchingFieldsTable.ToStream(strmSchemaDisplay);
+		allMatchingFieldsTable.ToStream(writer);
 	}
 	else
 	{
-		strmSchemaDisplay << "<br/>" << endl;
+		writer << "<br/>" << endl;
 		CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, schemaNameActionIsReadingFrom);
-		strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
+		writer << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
 	}
 }
 

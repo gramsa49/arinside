@@ -50,7 +50,7 @@ private:
 	std::string schemaNameActionIsReadingFrom;
 
 private:
-	void GenerateDefaultMappingTable(std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
+	void GenerateDefaultMappingTable(std::ostream &writer, std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
 	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type);
 	const char* GetSetFieldsTypeName(SetFieldType type);
 };
