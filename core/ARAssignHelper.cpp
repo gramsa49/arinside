@@ -225,6 +225,43 @@ string CARAssignHelper::ServiceAssignment(const ARFieldAssignList &action, int n
 	return strm.str();
 }
 
+string CARAssignHelper::FilterApiInputAssignment(const ARAssignStruct* assignList, int numItems, int nAction, IfElseState ifElse)
+{
+	this->mode = AM_FILTERAPI_INPUT;
+
+	stringstream strm;
+	strm.str("");
+	try
+	{
+		CTable tblFieldList("setFieldsList", "TblObjectList");
+		tblFieldList.AddColumn(30, "Position");
+		tblFieldList.AddColumn(70, "Value");
+
+		for(int i=0; i< numItems; i++)
+		{
+			stringstream position;
+			position << (i+1);
+
+			CRefItem refItem(*this->object, ifElse, nAction, REFM_SETFIELDS_FILTERAPI_INPUT);
+			
+			stringstream assignText;
+			CheckAssignment(0, NULL, ifElse, nAction, const_cast<ARAssignStruct&>(assignList[i]), assignText, refItem);
+
+			CTableRow row("cssStdRow");
+			row.AddCell(position.str());
+			row.AddCell(assignText.str());
+			tblFieldList.AddRow(row);	
+		}
+		strm << tblFieldList;
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION in FilterAPIAssignment of '" << this->object->GetName() << "': " << e.what() << endl;
+	}
+
+	return strm.str();
+}
+
 unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, IfElseState ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const CRefItem& refItem)
 {
 	unsigned int assignType = assignment.assignType;

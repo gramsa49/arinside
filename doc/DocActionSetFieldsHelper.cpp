@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocActionSetFieldsHelper.h"
 #include "../core/ARSetFieldHelper.h"
+#include "../core/ARAssignHelper.h"
 
 CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction)
 : arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(ifElseMode)
@@ -125,6 +126,29 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 			}
 			break;
 		case SFT_FILTERAPI:
+			{
+				string schemaName = sfh.GetSchemaName();
+				strmSchema << sfh.GetSchemaName();
+
+				if (schemaName.substr(0, 1) == "$")
+				{
+					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_FILTERAPI_PLUGINNAME);
+					schemaName = arIn.TextFindFields(sfh.GetSchemaName(), "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, &refItem);
+				}
+
+				// the html-documtation for this action is generated directly here
+				strmSchemaDisplay << "FILTER API<br/>";
+				strmSchemaDisplay << "Plugin-Name: " << schemaName << "<br/><br/>" << endl;
+
+				strmSchemaDisplay << "Input-Mapping: " << "<br/>";
+				CARAssignHelper docInput(arIn, rootLevel, obj, fromSchema, fromSchema);
+				strmSchemaDisplay << docInput.FilterApiInputAssignment(sfh.GetFilterAPIInputs(), sfh.GetFilterAPINumItems(), nAction, ifElse);
+
+				strmSchemaDisplay << "Output-Mapping: " << "<br/>";
+				CARAssignHelper assignHelper(arIn, rootLevel, obj, fromSchema, fromSchema);
+				strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
+			}
+			break;
 		case SFT_WEBSERVICE:
 		case SFT_ATRIUM_ORCHESTRATOR:
 			{

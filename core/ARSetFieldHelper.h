@@ -49,6 +49,9 @@ public:
 	ARQualifierStruct* GetQualifier();      // qualifier struct
 	const string& GetSqlCommand() const;    // the sql command in case type = SFT_SQL
 
+	int GetFilterAPINumItems() const;       // in case of SFT_FILTERAPI, it returns the item count of the input mapping
+	const ARAssignStruct* GetFilterAPIInputs() const; // in case of SFT_FILTERAPI, it returns the input mapping
+
 private:
 	void Parse();
 	bool CheckAssignment(const ARAssignStruct &assignment);
@@ -74,4 +77,7 @@ private:
 
 	ARQualifierStruct* qualifier;
 	string sqlCommand;
+
+	ARAssignStruct* filterApiInputValues;
+	int filterApiInputNumItems;
 };

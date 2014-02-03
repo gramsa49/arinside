@@ -422,6 +422,12 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 	case REFM_SETFIELDS_HOVERFIELD:
 		strm << "Hover-Field in 'SetFields' " << IfElse() << "-Action " << ActionIndex();
 		break;
+	case REFM_SETFIELDS_FILTERAPI_INPUT:
+		strm << "Value in FilterAPI-Input-Mapping " << IfElse() << "-Action " << ActionIndex();
+		break;
+	case REFM_SETFIELDS_FILTERAPI_PLUGINNAME:
+		strm << "Plugin-Name in FilterAPI-Call " << IfElse() << "-Action " << ActionIndex();
+		break;
 	case REFM_PUSHFIELD_HOVERFIELD:
 		strm << "Hover-Field in 'PushFields' " << IfElse() << "-Action " << ActionIndex();
 		break;

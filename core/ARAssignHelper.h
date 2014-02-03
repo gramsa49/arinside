@@ -37,6 +37,7 @@ public:
 	string SetFieldsAssignment(const ARSetFieldsActionStruct &action, int nAction, IfElseState ifElse);
 	string OpenWindowAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, OpenWindowMode openCloseInfo);
 	string ServiceAssignment(const ARFieldAssignList &action, int nAction, IfElseState ifElse, ServiceMappingMode serviceInfo);
+	string FilterApiInputAssignment(const ARAssignStruct* assignList, int numItems, int nAction, IfElseState ifElse);
 
 private:
 	unsigned int CheckAssignment(int targetFieldId, ARAssignStruct* parentAssignment, IfElseState ifElse, int nAction, ARAssignStruct &assignment, stringstream &assignText, const CRefItem& refItem);
@@ -56,6 +57,7 @@ private:
 		AM_PUSHFIELD,
 		AM_OPENWINDOW,
 		AM_SERVICE,
+		AM_FILTERAPI_INPUT,
 	};
 
 	CARInside *arIn;

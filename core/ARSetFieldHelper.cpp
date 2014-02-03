@@ -28,6 +28,8 @@ CARSetFieldHelper::CARSetFieldHelper(CARInside &arInside, const CARSchema& wfCon
 	noMatchValue = 0;
 	multiMatchValue = 0;
 	type = SFT_CURRENT;
+	filterApiInputValues = NULL;
+	filterApiInputNumItems = 0;
 
 	Parse();
 }
@@ -143,6 +145,8 @@ bool CARSetFieldHelper::CheckAssignment(const ARAssignStruct &assignment)
 				{
 					type = SFT_FILTERAPI;
 				}
+				filterApiInputValues = assignment.u.filterApi->inputValues;
+				filterApiInputNumItems = assignment.u.filterApi->numItems;
 				this->schemaName = assignment.u.filterApi->serviceName;
 				return true;
 			}
@@ -198,4 +202,14 @@ ARQualifierStruct* CARSetFieldHelper::GetQualifier()
 const string& CARSetFieldHelper::GetSqlCommand() const
 {
 	return sqlCommand;
+}
+
+int CARSetFieldHelper::GetFilterAPINumItems() const
+{
+	return filterApiInputNumItems;
+}
+
+const ARAssignStruct* CARSetFieldHelper::GetFilterAPIInputs() const
+{
+	return filterApiInputValues;
 }
