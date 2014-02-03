@@ -20,8 +20,8 @@
 #include "../core/ARSetFieldHelper.h"
 #include "../core/ARAssignHelper.h"
 
-CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction, int rootLevel)
-: arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(ifElseMode), rootLevel(rootLevel)
+CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const string& objAttachedToSchemaName, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction, int rootLevel)
+: arIn(arInside), obj(arServerObject), attachedSchemaName(objAttachedToSchemaName), setFieldsStruct(sFieldStruct), ifElse(ifElseMode), rootLevel(rootLevel)
 {
 	arStructItemType = structItemType;
 	nAction = numAction;
@@ -37,11 +37,11 @@ void CDocActionSetFieldsHelper::ShowActionWithServerName(bool showIt)
 	showServerNameInOutput = showIt;
 }
 
-void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {
 	bool useDefaultFieldMappingTable = true;
 
-	CARSchema wfSchema(fromSchema);
+	CARSchema wfSchema(attachedSchemaName);
 	if (wfSchema.Exists())
 	{
 		CARSetFieldHelper sfh(*CARInside::GetInstance(), wfSchema, setFieldsStruct, ifElse, nAction);
@@ -56,26 +56,26 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 		case SFT_SERVER:
 		case SFT_SAMPLEDATA:
 			{
-				int pFormId = arIn.SchemaGetInsideId(fromSchema);
+				int pFormId = arIn.SchemaGetInsideId(attachedSchemaName);
 				int sFormId = -1;
 				string readServer = sfh.GetServerName();
 				string readSchema = sfh.GetSchemaName();
 
 				if (readSchema.compare("@") == 0)
 				{
-					readSchema = fromSchema;
+					readSchema = attachedSchemaName;
 				}
 
 				if (sfh.GetType() == SFT_SAMPLEDATA)
 				{
 					int fieldId = sfh.GetServerFieldId();
-					strmServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
+					strmServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(attachedSchemaName, fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
 
 					CRefItem refItemServer(obj, ifElse, nAction, REFM_SETFIELDS_SERVER);
 					arIn.AddFieldReference(pFormId, fieldId, refItemServer);
 
 					fieldId = sfh.GetSchemaFieldId();
-					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(fromSchema, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
+					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(attachedSchemaName, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
 					strmSchema << readSchema;
 
 					CRefItem refItemForm(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
@@ -125,7 +125,7 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 				if(!sfh.GetSqlCommand().empty())
 				{
 					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_SQL_QUALIFICATION);
-					strmQual << arIn.TextFindFields(sfh.GetSqlCommand(), "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, &refItem) << "<br/><br/>" << endl;
+					strmQual << arIn.TextFindFields(sfh.GetSqlCommand(), "$", arIn.SchemaGetInsideId(attachedSchemaName), rootLevel, true, &refItem) << "<br/><br/>" << endl;
 				}
 				else
 					strmQual << EmptyValue << "<br/><br/>" << endl;
@@ -142,7 +142,7 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 				if (schemaName.substr(0, 1) == "$")
 				{
 					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_FILTERAPI_PLUGINNAME);
-					schemaName = arIn.TextFindFields(sfh.GetSchemaName(), "$", arIn.SchemaGetInsideId(fromSchema), rootLevel, true, &refItem);
+					schemaName = arIn.TextFindFields(sfh.GetSchemaName(), "$", arIn.SchemaGetInsideId(attachedSchemaName), rootLevel, true, &refItem);
 				}
 
 				// the html-documtation for this action is generated directly here
@@ -150,11 +150,11 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 				strmSchemaDisplay << "Plugin-Name: " << schemaName << "<br/><br/>" << endl;
 
 				strmSchemaDisplay << "Input-Mapping: " << "<br/>";
-				CARAssignHelper docInput(arIn, rootLevel, obj, fromSchema, fromSchema);
+				CARAssignHelper docInput(arIn, rootLevel, obj, attachedSchemaName, attachedSchemaName);
 				strmSchemaDisplay << docInput.FilterApiInputAssignment(sfh.GetFilterAPIInputs(), sfh.GetFilterAPINumItems(), nAction, ifElse);
 
 				strmSchemaDisplay << "Output-Mapping: " << "<br/>";
-				CARAssignHelper assignHelper(arIn, rootLevel, obj, fromSchema, fromSchema);
+				CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, attachedSchemaName);
 				strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
 			
 				// we've generated our own html-table with input/output mapping. So avoid default table.
@@ -262,11 +262,11 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 
 	if (useDefaultFieldMappingTable)
 	{
-		GenerateDefaultMappingTable(fromSchema, strmSchema, strmSchemaDisplay, strmServer, strmQual);
+		GenerateDefaultMappingTable(strmSchema, strmSchemaDisplay, strmServer, strmQual);
 	}
 }
 
-void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {
 	//For the following internal calculations we need a secondary form
 	string readFromSchemaName = strmSchema.str();
@@ -289,13 +289,13 @@ void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(const string& fromSc
 	if (setFieldsStruct.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 	{
 		strmSchemaDisplay << " All Matching Ids<br/>";
-		CDocAllMatchingIdsTable allMatchingFieldsTable(fromSchema, readFromSchemaName, obj, CDocAllMatchingIdsTable::AMM_SETFIELDS, nAction, ifElse, rootLevel);
+		CDocAllMatchingIdsTable allMatchingFieldsTable(attachedSchemaName, readFromSchemaName, obj, CDocAllMatchingIdsTable::AMM_SETFIELDS, nAction, ifElse, rootLevel);
 		allMatchingFieldsTable.ToStream(strmSchemaDisplay);
 	}
 	else
 	{
 		strmSchemaDisplay << "<br/>" << endl;
-		CARAssignHelper assignHelper(arIn, rootLevel, obj, fromSchema, readFromSchemaName);
+		CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, readFromSchemaName);
 		strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
 	}
 }

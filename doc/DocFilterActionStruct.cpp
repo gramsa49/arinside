@@ -349,8 +349,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		//Possible values: "", "*", "schemaName" 
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
 
-		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction, rootLevel);
-		filterHelper->SetFieldsGetSecondaryForm(schemaName, secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
+		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
+		filterHelper->SetFieldsGetSecondaryForm(secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
 		delete filterHelper;
 
 		//For the following internal calculations we need a secondary form

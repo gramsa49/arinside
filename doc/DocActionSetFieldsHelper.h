@@ -22,10 +22,10 @@
 class CDocActionSetFieldsHelper
 {
 public:
-	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElse, int numAction, int rootLevel);
+	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const string& objAttachedToSchemaName, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElse, int numAction, int rootLevel);
 	~CDocActionSetFieldsHelper(void);
 
-	void SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
+	void SetFieldsGetSecondaryForm(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
 	void ShowActionWithServerName(bool showIt);
 
 	enum WebserviceMappingMode 
@@ -37,6 +37,7 @@ public:
 private:
 	CARInside& arIn;
 	CARServerObject& obj;
+	const std::string& attachedSchemaName;
 	const ARSetFieldsActionStruct& setFieldsStruct;
 	int arStructItemType;
 	IfElseState ifElse;
@@ -45,6 +46,6 @@ private:
 	bool showServerNameInOutput;
 
 private:
-	void GenerateDefaultMappingTable(const string& fromSchema, std::stringstream &strmSchema, std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
+	void GenerateDefaultMappingTable(std::stringstream &strmSchema, std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
 	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type);
 };
