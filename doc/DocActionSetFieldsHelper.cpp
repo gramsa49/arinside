@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "DocActionSetFieldsHelper.h"
 #include "DocAllMatchingIdsTable.h"
-#include "../core/ARSetFieldHelper.h"
 #include "../core/ARAssignHelper.h"
 
 CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const string& objAttachedToSchemaName, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction, int rootLevel)
@@ -49,6 +48,8 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 	if (wfSchema.Exists())
 	{
 		CARSetFieldHelper sfh(*CARInside::GetInstance(), wfSchema, setFieldsStruct, ifElse, nAction);
+
+		writer << "Data Source: " << this->GetSetFieldsTypeName(sfh.GetType()) << "<br/>";
 
 		switch (sfh.GetType())
 		{
@@ -345,4 +346,19 @@ string CDocActionSetFieldsHelper::processMappingXML( TiXmlNode* pParent, string 
 	}
 
 	return strm.str();
+}
+
+const char* CDocActionSetFieldsHelper::GetSetFieldsTypeName(SetFieldType type)
+{
+	switch (type)
+	{
+	case SFT_CURRENT: return "CURRENT SCREEN";
+	case SFT_SERVER: return "SERVER";
+	case SFT_SAMPLEDATA: return "SAMPLE DATA";
+	case SFT_SQL: return "SQL";
+	case SFT_FILTERAPI: return "FILTER API";
+	case SFT_WEBSERVICE: return "WEBSERVICE";
+	case SFT_ATRIUM_ORCHESTRATOR: return "BMC ATRIUM ORCHESTRATOR";
+	default: return EmptyValue;
+	}
 }

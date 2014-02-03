@@ -17,6 +17,7 @@
 #pragma once
 #include "../ARInside.h"
 #include "../core/ARQualification.h"
+#include "../core/ARSetFieldHelper.h"
 #include <tinyxml/tinyxml.h>
 
 class CDocActionSetFieldsHelper
@@ -50,4 +51,5 @@ private:
 private:
 	void GenerateDefaultMappingTable(std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
 	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type);
+	const char* GetSetFieldsTypeName(SetFieldType type);
 };
