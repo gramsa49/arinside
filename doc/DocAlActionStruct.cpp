@@ -251,18 +251,9 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 {
 	try
 	{
-		//Find the seconds form in the set fields assignemt
-		//Possible values: "", "*", "schemaName" 
-		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
-		secondaryFormRaw.str("");
-		secondaryFormDisplay.str("");
-		serverRaw.str("");
-		qualification.str("");
-
-		CDocActionSetFieldsHelper *alHelper = new CDocActionSetFieldsHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
-		alHelper->ShowActionWithServerName(true);
-		alHelper->SetFieldsGetSecondaryForm(strm);
-		delete alHelper;
+		CDocActionSetFieldsHelper setFieldHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
+		setFieldHelper.ShowActionWithServerName(true);
+		setFieldHelper.SetFieldsGetSecondaryForm(strm);
 	}
 	catch(exception& e)
 	{

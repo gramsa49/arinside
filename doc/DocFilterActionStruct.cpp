@@ -345,13 +345,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 
 	try
 	{
-		//Find the secondary form in the set fields assignemt
-		//Possible values: "", "*", "schemaName" 
-		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
-
-		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
-		filterHelper->SetFieldsGetSecondaryForm(strm);
-		delete filterHelper;
+		CDocActionSetFieldsHelper filterHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
+		filterHelper.SetFieldsGetSecondaryForm(strm);
 	}
 	catch(exception& e)
 	{
