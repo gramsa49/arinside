@@ -332,10 +332,10 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 		qualification.str("");
 
 		CDocActionSetFieldsHelper *alHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction, rootLevel);
+		alHelper->ShowActionWithServerName(true);
 		alHelper->SetFieldsGetSecondaryForm(schemaName, secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification);
 		delete alHelper;
 
-		strm << "Server: " << serverRaw.str() << "<br/>" << endl;
 		strm << secondaryFormDisplay.str();
 	}
 	catch(exception& e)

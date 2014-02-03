@@ -25,6 +25,7 @@ public:
 	~CDocActionSetFieldsHelper(void);
 
 	void SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
+	void ShowActionWithServerName(bool showIt);
 
 private:
 	CARInside& arIn;
@@ -34,6 +35,7 @@ private:
 	IfElseState ifElse;
 	int nAction;
 	int rootLevel;
+	bool showServerNameInOutput;
 
 	enum AllMatchingMode
 	{

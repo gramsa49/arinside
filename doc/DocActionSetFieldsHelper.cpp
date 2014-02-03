@@ -24,10 +24,16 @@ CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARSer
 {
 	arStructItemType = structItemType;
 	nAction = numAction;
+	showServerNameInOutput = false;
 }
 
 CDocActionSetFieldsHelper::~CDocActionSetFieldsHelper(void)
 {
+}
+
+void CDocActionSetFieldsHelper::ShowActionWithServerName(bool showIt)
+{
+	showServerNameInOutput = showIt;
 }
 
 void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
@@ -188,6 +194,10 @@ void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(const string& fromSc
 	string tmpDisplayName = strmSchemaDisplay.str();
 	if(tmpDisplayName.size()==0)
 		tmpDisplayName = readFromSchemaName;
+
+
+	if (this->showServerNameInOutput)
+		strmSchemaDisplay << "Server: " << strmServer.str() << "<br/>" << endl;
 
 	strmSchemaDisplay << "From: " << arIn.LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
 
