@@ -194,13 +194,12 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 				if (opElement)
 					operation = opElement->Attribute("name");
 
-				strmSchemaDisplay << "Read Value for Field from: WEB SERVICE<br/>";
-				strmSchemaDisplay << "WSDL Location: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 4 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) : "") << "<br/>"; 
-				strmSchemaDisplay << "Web Service: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 5 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value) : "") << "<br/>"; 
-				strmSchemaDisplay << "Port: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 11 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value) : "") << "<br/>"; 
-				strmSchemaDisplay << "Operation: " << operation << "<br/>";
-				strmSchemaDisplay << "URI: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 7 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value) : "") << "<br/>"; 
-				strmSchemaDisplay << "URN: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 8 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) : "") << "<br/>"; 
+				writer << "WSDL Location: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 4 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) : "") << "<br/>"; 
+				writer << "Web Service: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 5 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value) : "") << "<br/>"; 
+				writer << "Port: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 11 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value) : "") << "<br/>"; 
+				writer << "Operation: " << operation << "<br/>";
+				writer << "URI: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 7 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value) : "") << "<br/>"; 
+				writer << "URN: " << (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 8 ? CARValue::ValueToString(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) : "") << "<br/>"; 
 
 				//process input mapping
 				if (setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 9)
@@ -218,8 +217,8 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 					tblInputMappingList.AddColumn(70, "Field");
 					input << processMappingXML(element, "", tblInputMappingList, "", WMM_INPUT);
 					input << tblInputMappingList;
-					strmSchemaDisplay << "<BR/>";
-					strmSchemaDisplay << "Input Mapping: " << input.str() << "<BR/>";
+					writer << "<BR/>";
+					writer << "Input Mapping: " << input.str() << "<BR/>";
 				}
 
 				//process output mapping
@@ -239,7 +238,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 					output << processMappingXML(element, "", tblOutputMappingList, "", WMM_OUTPUT);
 					output << tblOutputMappingList;
-					strmSchemaDisplay << "Output Mapping: " << output.str();
+					writer << "Output Mapping: " << output.str();
 				}
 
 				// we've generated our own html-table with input/output mapping. So avoid default table.
