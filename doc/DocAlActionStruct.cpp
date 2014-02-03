@@ -253,7 +253,7 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 	{
 		CDocActionSetFieldsHelper setFieldHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
 		setFieldHelper.ShowActionWithServerName(true);
-		setFieldHelper.SetFieldsGetSecondaryForm(strm);
+		setFieldHelper.ToStream(strm);
 	}
 	catch(exception& e)
 	{

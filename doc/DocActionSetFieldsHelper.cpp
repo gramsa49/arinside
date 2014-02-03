@@ -37,7 +37,7 @@ void CDocActionSetFieldsHelper::ShowActionWithServerName(bool showIt)
 	showServerNameInOutput = showIt;
 }
 
-void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(std::ostream &writer)
+ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 {
 	stringstream strmSchema;
 	stringstream strmSchemaDisplay;
@@ -269,6 +269,8 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(std::ostream &writer)
 	{
 		GenerateDefaultMappingTable(strmSchema, strmSchemaDisplay, strmServer, strmQual);
 	}
+
+	return writer;
 }
 
 void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)

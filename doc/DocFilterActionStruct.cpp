@@ -345,8 +345,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 
 	try
 	{
-		CDocActionSetFieldsHelper filterHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
-		filterHelper.SetFieldsGetSecondaryForm(strm);
+		CDocActionSetFieldsHelper setFieldsHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
+		setFieldsHelper.ToStream(strm);
 	}
 	catch(exception& e)
 	{
