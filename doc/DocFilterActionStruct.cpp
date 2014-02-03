@@ -350,20 +350,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
 
 		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, schemaName, action, structItemType, ifElse, nAction, rootLevel);
-		filterHelper->SetFieldsGetSecondaryForm(secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
+		filterHelper->SetFieldsGetSecondaryForm(strm);
 		delete filterHelper;
-
-		//For the following internal calculations we need a secondary form
-		string readFromSchemaName = secondaryFormRaw.str();
-
-		string tmpDisplayName = secondaryFormDisplay.str();
-		if(tmpDisplayName.size()==0)
-			tmpDisplayName = readFromSchemaName;
-
-		else
-		{
-			strm << tmpDisplayName;
-		}
 	}
 	catch(exception& e)
 	{

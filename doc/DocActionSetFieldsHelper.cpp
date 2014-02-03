@@ -37,8 +37,13 @@ void CDocActionSetFieldsHelper::ShowActionWithServerName(bool showIt)
 	showServerNameInOutput = showIt;
 }
 
-void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(std::ostream &writer)
 {
+	stringstream strmSchema;
+	stringstream strmSchemaDisplay;
+	stringstream strmServer;
+	stringstream strmQual;
+
 	bool useDefaultFieldMappingTable = true;
 
 	CARSchema wfSchema(attachedSchemaName);

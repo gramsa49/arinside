@@ -25,7 +25,7 @@ public:
 	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const string& objAttachedToSchemaName, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElse, int numAction, int rootLevel);
 	~CDocActionSetFieldsHelper(void);
 
-	void SetFieldsGetSecondaryForm(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
+	void SetFieldsGetSecondaryForm(std::ostream &writer);
 	void ShowActionWithServerName(bool showIt);
 
 	enum WebserviceMappingMode 
