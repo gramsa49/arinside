@@ -17,7 +17,6 @@
 #include "stdafx.h"
 #include "DocFilterActionStruct.h"
 #include "DocAllMatchingIdsTable.h"
-#include <tinyxml/tinyxml.h>
 
 CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType)
 {
@@ -361,83 +360,6 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		if(tmpDisplayName.size()==0)
 			tmpDisplayName = readFromSchemaName;
 
-		//check if it is a webservice set fields
-		if(strcmp(tmpDisplayName.c_str(), "ARSYS.ARF.WEBSERVICE")==0)
-		{
-			//NumItems = action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems;
-			//action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[X].u.value
-			//0 = Unknown
-			//1 = Unknown
-			//2 = Unknown
-			//3 = Unknown
-			//4 = WSDL Location
-			//5 = Web Service
-			//6 = Operation
-			//7 = URI
-			//8 = URN
-			//9 = Input Mappings
-			//10 = Output Mappings
-			//11 = Port
-
-			//populate operation string from input #6
-			string operation = "";
-			string form = "";
-
-			TiXmlDocument operationXML;
-			operationXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
-			TiXmlHandle opHandle(&operationXML);
-			TiXmlElement *opElement = opHandle.FirstChild("operation").FirstChild("inputMapping").ToElement();
-			if (opElement)
-				operation = opElement->Attribute("name");
-
-			strm << "Read Value for Field from: WEB SERVICE<br/>";
-			strm << "WSDL Location: " << (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 4 ? CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[4].u.value) : "") << "<br/>"; 
-			strm << "Web Service: " << (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 5 ? CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[5].u.value) : "") << "<br/>"; 
-			strm << "Port: " << (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 11 ? CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[11].u.value) : "") << "<br/>"; 
-			strm << "Operation: " << operation << "<br/>";
-			strm << "URI: " << (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 7 ? CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[7].u.value) : "") << "<br/>"; 
-			strm << "URN: " << (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 8 ? CARValue::ValueToString(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[8].u.value) : "") << "<br/>"; 
-
-			//process input mapping
-			if (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 9)
-			{
-				stringstream input;
-				input.str("");
-
-				TiXmlDocument inputXML;
-				inputXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
-				TiXmlHandle inputHandle(&inputXML);
-				TiXmlNode *element = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").ToNode();
-
-				CTable tblInputMappingList("pushFieldsList", "TblObjectList");
-				tblInputMappingList.AddColumn(30, "Element");
-				tblInputMappingList.AddColumn(70, "Field");
-				input << processMappingXML(element, "", tblInputMappingList, "", WMM_INPUT);
-				input << tblInputMappingList;
-				strm << "<BR/>";
-				strm << "Input Mapping: " << input.str() << "<BR/>";
-			}
-
-			//process output mapping
-			if (action.fieldList.fieldAssignList[0].assignment.u.filterApi->numItems > 10)
-			{
-				stringstream output;
-				output.str("");
-
-				TiXmlDocument outputXML;
-				outputXML.Parse(action.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
-				TiXmlHandle outputHandle(&outputXML);
-				TiXmlNode *element = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").ToNode();
-
-				CTable tblOutputMappingList("pushFieldsList", "TblObjectList");
-				tblOutputMappingList.AddColumn(30, "Element");
-				tblOutputMappingList.AddColumn(70, "Field");
-
-				output << processMappingXML(element, "", tblOutputMappingList, "", WMM_OUTPUT);
-				output << tblOutputMappingList;
-				strm << "Output Mapping: " << output.str();
-			}
-		}
 		else
 		{
 			strm << tmpDisplayName;
@@ -713,56 +635,6 @@ string CDocFilterActionStruct::FilterActionGotoGuideLabel(ARGotoGuideLabelStruct
 	catch(exception& e)
 	{
 		cout << "EXCEPTION in FilterActionGotoGuideLabel of '" << this->obj->GetName() << "': " << e.what() << endl;
-	}
-
-	return strm.str();
-}
-
-string CDocFilterActionStruct::processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type)
-{
-	if ( !pParent )
-		return "";
-
-	stringstream strm;
-
-	TiXmlNode* pChild;
-	int t = pParent->Type();
-
-	switch ( t )
-	{
-	case TiXmlNode::ELEMENT:
-		if (strcmp("element",pParent->Value()) == 0)
-		{
-			sParent = pParent->ToElement()->Attribute("name");
-		}
-		else if (strcmp("formMapping",pParent->Value()) == 0)
-		{
-			form = pParent->FirstChild("form")->ToElement()->Attribute("formName");
-		}
-		else if (strcmp("fieldMapping",pParent->Value()) == 0)
-		{
-			int fieldID = atoi(pParent->ToElement()->Attribute("arFieldId"));
-
-			CTableRow row("cssStdRow");
-			row.AddCell(CTableCell(sParent));
-			row.AddCell(CTableCell(arIn->LinkToField(form, fieldID, rootLevel)));
-			//row.AddCell(CTableCell(form + " - "+arIn->LinkToField(form, fieldID, rootLevel)));
-			tblFieldList.AddRow(row);	
-
-			int msgId = 0;
-			switch (type)
-			{
-			case WMM_INPUT: msgId = REFM_SETFIELDS_WS_INPUT; break;
-			case WMM_OUTPUT: msgId = REFM_SETFIELDS_WS_OUTPUT; break;
-			}
-			CRefItem refItem(*this->obj, ifElse, 0, msgId);
-			arIn->AddFieldReference(arIn->SchemaGetInsideId(form), fieldID, refItem);
-		}
-		break;
-	}
-	for ( pChild = pParent->FirstChild(); pChild != 0; pChild = pChild->NextSibling()) 
-	{
-		strm << processMappingXML( pChild, sParent, tblFieldList, form, type);
 	}
 
 	return strm.str();

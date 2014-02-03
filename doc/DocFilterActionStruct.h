@@ -18,7 +18,6 @@
 #include "DocActionSetFieldsHelper.h"
 #include "../core/ARAssignHelper.h"
 #include "../core/ARQualification.h"
-#include <tinyxml/tinyxml.h>
 
 using namespace OUTPUT;
 
@@ -39,12 +38,6 @@ private:
 	int rootLevel;
 	int structItemType;
 	IfElseState ifElse;
-
-	enum WebserviceMappingMode 
-	{
-		WMM_INPUT,
-		WMM_OUTPUT
-	};
 
 	//AR_FILTER_ACTION_NONE
 	string FilterActionNone(int nAction);
@@ -81,8 +74,6 @@ private:
 
 	// AR_FILTER_ACTION_GOTOGUIDELABEL
 	string FilterActionGotoGuideLabel(ARGotoGuideLabelStruct &action, int nAction);
-
-	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	// AR_FILTER_ACTION_SERVICE

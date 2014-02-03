@@ -17,6 +17,7 @@
 #pragma once
 #include "../ARInside.h"
 #include "../core/ARQualification.h"
+#include <tinyxml/tinyxml.h>
 
 class CDocActionSetFieldsHelper
 {
@@ -26,6 +27,12 @@ public:
 
 	void SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
 	void ShowActionWithServerName(bool showIt);
+
+	enum WebserviceMappingMode 
+	{
+		WMM_INPUT,
+		WMM_OUTPUT
+	};
 
 private:
 	CARInside& arIn;
@@ -39,4 +46,5 @@ private:
 
 private:
 	void GenerateDefaultMappingTable(const string& fromSchema, std::stringstream &strmSchema, std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
+	string processMappingXML( TiXmlNode* pParent, string sParent, CTable &tblFieldList, string form, WebserviceMappingMode type);
 };
