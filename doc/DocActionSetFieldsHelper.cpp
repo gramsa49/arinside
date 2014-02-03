@@ -248,13 +248,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 			break;
 		case SFT_ATRIUM_ORCHESTRATOR:
 			{
-				// TODO: implement documenting of filter-api actions correctly
-				// normally we should set assignSchemaDisplay to "FILTER API" but CDocFilterActionStruct checks 
-				// for "ARSYS.ARF.WEBSERVICE". To avoid breaking this implementation we leave it as it is until
-				// there is enough time to re-work both (filter api & webservices) at the same time.
-				//
-				// Note: serviceName can hold a fieldId which is used to read the plugin-name from. add a 
-				// reference tho this field later.
+				// TODO: implement Atrium Orchestrator actions correctly
 				strmServer << arIn.LinkToServerInfo(AR_CURRENT_SERVER_TAG, rootLevel);
 				strmSchema << sfh.GetSchemaName();
 				strmSchemaDisplay << sfh.GetSchemaName();
