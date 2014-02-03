@@ -426,11 +426,11 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		delete filterHelper;
 
 		//For the following internal calculations we need a secondary form
-		string schemaName2 = secondaryFormRaw.str();
+		string readFromSchemaName = secondaryFormRaw.str();
 
 		string tmpDisplayName = secondaryFormDisplay.str();
 		if(tmpDisplayName.size()==0)
-			tmpDisplayName = schemaName2;
+			tmpDisplayName = readFromSchemaName;
 
 		//check if it is a webservice set fields
 		if(strcmp(tmpDisplayName.c_str(), "ARSYS.ARF.WEBSERVICE")==0)
@@ -521,12 +521,12 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 			if (action.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 			{
 				strm << " All Matching Ids<br/>";
-				strm << this->AllMatchingIds(schemaName, tmpDisplayName, AMM_SETFIELDS, nAction);
+				strm << this->AllMatchingIds(schemaName, readFromSchemaName, AMM_SETFIELDS, nAction);
 			}
 			else
 			{
 				strm << "<br/>" << endl;
-				CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, schemaName2);
+				CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, readFromSchemaName);
 				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 			}
 		}

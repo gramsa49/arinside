@@ -336,11 +336,11 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 		delete alHelper;
 
 		//For the following internal calculations we need a secondary form
-		string schemaName2 = secondaryFormRaw.str();
+		string readFromSchemaName = secondaryFormRaw.str();
 
 		string tmpDisplayName = secondaryFormDisplay.str();
 		if(tmpDisplayName.size()==0)
-			tmpDisplayName = schemaName2;
+			tmpDisplayName = readFromSchemaName;
 
 		strm << "Server: " << serverRaw.str() << "<br/>" << endl;
 		strm << "From: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
@@ -353,12 +353,12 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 		if (action.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 		{
 			strm << " All Matching Ids<br/>";
-			this->AllMatchingIds(strm, schemaName, tmpDisplayName, AMM_SETFIELDS, nAction);
+			this->AllMatchingIds(strm, schemaName, readFromSchemaName, AMM_SETFIELDS, nAction);
 		}
 		else
 		{
 			strm << "<br/>" << endl;
-			CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, schemaName2);
+			CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, readFromSchemaName);
 			strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
 		}
 	}
