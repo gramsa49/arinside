@@ -21,10 +21,10 @@
 class CDocActionSetFieldsHelper
 {
 public:
-	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElse, int numAction);
+	CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElse, int numAction, int rootLevel);
 	~CDocActionSetFieldsHelper(void);
 
-	void SetFieldsGetSecondaryForm(const string& fromSchema, int rootLevel, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
+	void SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual);
 
 private:
 	CARInside& arIn;
@@ -33,4 +33,18 @@ private:
 	int arStructItemType;
 	IfElseState ifElse;
 	int nAction;
+	int rootLevel;
+
+	enum AllMatchingMode
+	{
+		AMM_PUSHFIELDS,
+		AMM_SETFIELDS
+	};
+
+private:
+	void GenerateDefaultMappingTable(const string& fromSchema, std::stringstream &strmSchema, std::stringstream &strmSchemaDisplay, std::stringstream &strmServer, std::stringstream &strmQual);
+
+	//Get all matching IDs of two forms
+	void AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, AllMatchingMode mode, int nAction);
+
 };

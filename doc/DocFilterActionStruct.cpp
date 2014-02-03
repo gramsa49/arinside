@@ -421,8 +421,8 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		//Possible values: "", "*", "schemaName" 
 		stringstream secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification;
 
-		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction);
-		filterHelper->SetFieldsGetSecondaryForm(schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
+		CDocActionSetFieldsHelper* filterHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction, rootLevel);
+		filterHelper->SetFieldsGetSecondaryForm(schemaName, secondaryFormRaw, secondaryFormDisplay,  serverRaw, qualification);
 		delete filterHelper;
 
 		//For the following internal calculations we need a secondary form
@@ -511,24 +511,7 @@ string CDocFilterActionStruct::FilterActionSetFields(ARSetFieldsActionStruct &ac
 		}
 		else
 		{
-			strm << "From: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
-
-			//Qualification
-			strm << qualification.str() << endl;
-
-			// set field mapping
-			strm << "Field Mapping:";
-			if (action.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
-			{
-				strm << " All Matching Ids<br/>";
-				strm << this->AllMatchingIds(schemaName, readFromSchemaName, AMM_SETFIELDS, nAction);
-			}
-			else
-			{
-				strm << "<br/>" << endl;
-				CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, readFromSchemaName);
-				strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
-			}
+			strm << tmpDisplayName;
 		}
 	}
 	catch(exception& e)

@@ -331,36 +331,12 @@ void CDocAlActionStruct::ActionSetFields(std::ostream& strm, const ARSetFieldsAc
 		serverRaw.str("");
 		qualification.str("");
 
-		CDocActionSetFieldsHelper *alHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction);
-		alHelper->SetFieldsGetSecondaryForm(schemaName, rootLevel, secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification);
+		CDocActionSetFieldsHelper *alHelper = new CDocActionSetFieldsHelper(*arIn, *obj, action, structItemType, ifElse, nAction, rootLevel);
+		alHelper->SetFieldsGetSecondaryForm(schemaName, secondaryFormRaw, secondaryFormDisplay, serverRaw, qualification);
 		delete alHelper;
 
-		//For the following internal calculations we need a secondary form
-		string readFromSchemaName = secondaryFormRaw.str();
-
-		string tmpDisplayName = secondaryFormDisplay.str();
-		if(tmpDisplayName.size()==0)
-			tmpDisplayName = readFromSchemaName;
-
 		strm << "Server: " << serverRaw.str() << "<br/>" << endl;
-		strm << "From: " << arIn->LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
-
-		//Qualification
-		strm << qualification.str() << endl;		
-
-		// set field mapping
-		strm << "Field Mapping:";
-		if (action.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
-		{
-			strm << " All Matching Ids<br/>";
-			this->AllMatchingIds(strm, schemaName, readFromSchemaName, AMM_SETFIELDS, nAction);
-		}
-		else
-		{
-			strm << "<br/>" << endl;
-			CARAssignHelper assignHelper(*arIn, rootLevel, *this->obj, schemaName, readFromSchemaName);
-			strm << assignHelper.SetFieldsAssignment(action, nAction, ifElse);
-		}
+		strm << secondaryFormDisplay.str();
 	}
 	catch(exception& e)
 	{

@@ -19,8 +19,8 @@
 #include "../core/ARSetFieldHelper.h"
 #include "../core/ARAssignHelper.h"
 
-CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction)
-: arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(ifElseMode)
+CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction, int rootLevel)
+: arIn(arInside), obj(arServerObject), setFieldsStruct(sFieldStruct), ifElse(ifElseMode), rootLevel(rootLevel)
 {
 	arStructItemType = structItemType;
 	nAction = numAction;
@@ -30,8 +30,10 @@ CDocActionSetFieldsHelper::~CDocActionSetFieldsHelper(void)
 {
 }
 
-void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSchema, int rootLevel, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {
+	bool useDefaultFieldMappingTable = true;
+
 	CARSchema wfSchema(fromSchema);
 	if (wfSchema.Exists())
 	{
@@ -147,6 +149,9 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 				strmSchemaDisplay << "Output-Mapping: " << "<br/>";
 				CARAssignHelper assignHelper(arIn, rootLevel, obj, fromSchema, fromSchema);
 				strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
+			
+				// we've generated our own html-table with input/output mapping. So avoid default table.
+				useDefaultFieldMappingTable = false;
 			}
 			break;
 		case SFT_WEBSERVICE:
@@ -162,8 +167,116 @@ void CDocActionSetFieldsHelper::SetFieldsGetSecondaryForm(const string& fromSche
 				strmServer << arIn.LinkToServerInfo(AR_CURRENT_SERVER_TAG, rootLevel);
 				strmSchema << sfh.GetSchemaName();
 				strmSchemaDisplay << sfh.GetSchemaName();
+
+				useDefaultFieldMappingTable = false;
 			}
 			break;
 		}
+	}
+
+	if (useDefaultFieldMappingTable)
+	{
+		GenerateDefaultMappingTable(fromSchema, strmSchema, strmSchemaDisplay, strmServer, strmQual);
+	}
+}
+
+void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(const string& fromSchema, stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+{
+	//For the following internal calculations we need a secondary form
+	string readFromSchemaName = strmSchema.str();
+
+	string tmpDisplayName = strmSchemaDisplay.str();
+	if(tmpDisplayName.size()==0)
+		tmpDisplayName = readFromSchemaName;
+
+	strmSchemaDisplay << "From: " << arIn.LinkToSchema(tmpDisplayName, rootLevel) << "<br/>" << endl;
+
+	//Qualification
+	strmSchemaDisplay << strmQual.str() << endl;
+
+	// set field mapping
+	strmSchemaDisplay << "Field Mapping:";
+	if (setFieldsStruct.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
+	{
+		strmSchemaDisplay << " All Matching Ids<br/>";
+		this->AllMatchingIds(strmSchemaDisplay, fromSchema, readFromSchemaName, AMM_SETFIELDS, nAction);
+	}
+	else
+	{
+		strmSchemaDisplay << "<br/>" << endl;
+		CARAssignHelper assignHelper(arIn, rootLevel, obj, fromSchema, readFromSchemaName);
+		strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
+	}
+}
+
+void CDocActionSetFieldsHelper::AllMatchingIds(std::ostream& strm, const string& table1, const string& table2, AllMatchingMode mode, int nAction)
+{
+	try
+	{		
+		CARSchema schema1(table1);
+		CARSchema schema2(table2);
+
+		CTable tblListField("tblListMatchingIds", "TblObjectList");
+		tblListField.AddColumn(0, "Id");
+		tblListField.AddColumn(0, "Field Name");
+		tblListField.AddColumn(0, "Value");
+
+		if(schema1.Exists() && schema2.Exists())
+		{
+			int msgIdTarget = -1;
+			int msgIdValue = -1;
+
+			switch (mode)
+			{
+			case AMM_PUSHFIELDS:
+				msgIdTarget = REFM_PUSHFIELD_TARGET_MATCHING;
+				msgIdValue  = REFM_PUSHFIELD_VALUE_MATCHING;
+				break;
+			case AMM_SETFIELDS:
+				msgIdTarget = REFM_SETFIELDS_TARGET_MATCHING;
+				msgIdValue  = REFM_SETFIELDS_VALUE_MATCHING;
+				break;
+			}
+
+			// Reference object for left field
+			CRefItem refItemField1(this->obj, ifElse, nAction, msgIdTarget);
+
+			// Reference object for right field
+			CRefItem refItemField2(this->obj, ifElse, nAction, msgIdValue);
+
+			// scan the fields
+			unsigned int fieldCount1 = schema1.GetFields()->GetCount();
+			for(unsigned int fieldIndex1 = 0; fieldIndex1 < fieldCount1; ++fieldIndex1)
+			{
+				CARField tmpField1(schema1.GetInsideId(), 0, fieldIndex1);
+
+				if (tmpField1.GetDataType() <= AR_MAX_STD_DATA_TYPE)
+				{
+					CARField tmpField2(schema2.GetInsideId(), tmpField1.GetFieldId());
+
+					if(tmpField2.Exists() && tmpField2.GetDataType() <= AR_MAX_STD_DATA_TYPE)
+					{
+						// add reference for left field
+						arIn.AddFieldReference(schema1.GetInsideId(), tmpField1.GetInsideId(), refItemField1);
+						
+						// add reference for right field
+						arIn.AddFieldReference(schema2.GetInsideId(), tmpField2.GetInsideId(), refItemField2);
+
+						//Matching ID
+						CTableRow row("cssStdRow");		
+						row.AddCell(CTableCell(tmpField1.GetFieldId()));
+						row.AddCell(CTableCell(arIn.LinkToField(schema1.GetInsideId(), tmpField1.GetInsideId(), this->rootLevel)));
+						row.AddCell(CTableCell(arIn.LinkToField(schema2.GetInsideId(), tmpField2.GetInsideId(), this->rootLevel)));
+						tblListField.AddRow(row);
+					}
+				}
+			}
+		}
+
+		strm << tblListField;
+	}
+	catch(exception& e)
+	{
+		cout << "EXCEPTION in AlAllMatchingIds of " << table1 << ", " << table2 << ": " << e.what() << endl;
 	}
 }
