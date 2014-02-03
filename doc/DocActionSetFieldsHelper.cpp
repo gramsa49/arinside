@@ -39,7 +39,6 @@ void CDocActionSetFieldsHelper::ShowActionWithServerName(bool showIt)
 
 ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 {
-	stringstream strmSchema;
 	stringstream strmSchemaDisplay;
 	stringstream strmServer;
 	stringstream strmQual;
@@ -56,7 +55,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 		case SFT_CURRENT:
 			strmServer << arIn.LinkToServerInfo(arIn.appConfig.serverName, rootLevel);
 			strmSchemaDisplay << "CURRENT SCREEN";
-			strmSchema << sfh.GetSchemaName();
+			schemaNameActionIsReadingFrom = sfh.GetSchemaName();
 			break;
 		case SFT_SERVER:
 		case SFT_SAMPLEDATA:
@@ -81,7 +80,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 					fieldId = sfh.GetSchemaFieldId();
 					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(attachedSchemaName, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
-					strmSchema << readSchema;
+					schemaNameActionIsReadingFrom = readSchema;
 
 					CRefItem refItemForm(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
 					arIn.AddFieldReference(pFormId, fieldId, refItemForm);
@@ -91,7 +90,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 					strmServer << arIn.LinkToServerInfo(readServer, rootLevel);
 
 					strmSchemaDisplay << readSchema;
-					strmSchema << readSchema;
+					schemaNameActionIsReadingFrom = readSchema;
 				}
 
 				// *************************************************************************
@@ -122,7 +121,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 		case SFT_SQL:
 			{
 				strmServer << arIn.LinkToServerInfo(sfh.GetServerName(), rootLevel);
-				strmSchema << AR_ASSIGN_SQL_SCHEMA_NAME;
+				schemaNameActionIsReadingFrom = AR_ASSIGN_SQL_SCHEMA_NAME;
 				strmSchemaDisplay << "SQL";
 
 				strmQual << "<br/>SQL command<br/>" << endl;
@@ -142,7 +141,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 		case SFT_FILTERAPI:
 			{
 				string schemaName = sfh.GetSchemaName();
-				strmSchema << sfh.GetSchemaName();
+				schemaNameActionIsReadingFrom = sfh.GetSchemaName();
 
 				if (schemaName.substr(0, 1) == "$")
 				{
@@ -250,7 +249,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 			{
 				// TODO: implement Atrium Orchestrator actions correctly
 				strmServer << arIn.LinkToServerInfo(AR_CURRENT_SERVER_TAG, rootLevel);
-				strmSchema << sfh.GetSchemaName();
+				schemaNameActionIsReadingFrom = sfh.GetSchemaName();
 				strmSchemaDisplay << sfh.GetSchemaName();
 
 				useDefaultFieldMappingTable = false;
@@ -261,21 +260,18 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 	if (useDefaultFieldMappingTable)
 	{
-		GenerateDefaultMappingTable(strmSchema, strmSchemaDisplay, strmServer, strmQual);
+		GenerateDefaultMappingTable(strmSchemaDisplay, strmServer, strmQual);
 	}
 
+	writer << strmSchemaDisplay.str() << endl;
 	return writer;
 }
 
-void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSchema, stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
+void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSchemaDisplay, stringstream &strmServer, stringstream &strmQual)
 {
-	//For the following internal calculations we need a secondary form
-	string readFromSchemaName = strmSchema.str();
-
 	string tmpDisplayName = strmSchemaDisplay.str();
 	if(tmpDisplayName.size()==0)
-		tmpDisplayName = readFromSchemaName;
-
+		tmpDisplayName = schemaNameActionIsReadingFrom;
 
 	if (this->showServerNameInOutput)
 		strmSchemaDisplay << "Server: " << strmServer.str() << "<br/>" << endl;
@@ -290,13 +286,13 @@ void CDocActionSetFieldsHelper::GenerateDefaultMappingTable(stringstream &strmSc
 	if (setFieldsStruct.fieldList.fieldAssignList[0].fieldId == AR_LIKE_ID)
 	{
 		strmSchemaDisplay << " All Matching Ids<br/>";
-		CDocAllMatchingIdsTable allMatchingFieldsTable(attachedSchemaName, readFromSchemaName, obj, CDocAllMatchingIdsTable::AMM_SETFIELDS, nAction, ifElse, rootLevel);
+		CDocAllMatchingIdsTable allMatchingFieldsTable(attachedSchemaName, schemaNameActionIsReadingFrom, obj, CDocAllMatchingIdsTable::AMM_SETFIELDS, nAction, ifElse, rootLevel);
 		allMatchingFieldsTable.ToStream(strmSchemaDisplay);
 	}
 	else
 	{
 		strmSchemaDisplay << "<br/>" << endl;
-		CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, readFromSchemaName);
+		CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, schemaNameActionIsReadingFrom);
 		strmSchemaDisplay << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
 	}
 }
