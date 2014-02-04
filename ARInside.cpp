@@ -1966,32 +1966,6 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 	return inText;
 }
 
-// TODO: remove unused function
-string CARInside::TextFindKeywords(string inText, string fieldSeparator)
-{	
-
-	try
-	{
-		for(unsigned int nKeyword=0; nKeyword< AR_KEYWORD_NO; nKeyword++)
-		{
-			stringstream strmKeyword;
-			strmKeyword << fieldSeparator << "-" << nKeyword << fieldSeparator;
-
-			stringstream strmTxtKeyword;
-			strmTxtKeyword << fieldSeparator << CAREnum::Keyword(nKeyword) << fieldSeparator;		
-
-			inText = CUtil::StrReplace(strmKeyword.str(), strmTxtKeyword.str(), inText);	
-		}
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION in TextFindKeywords:" << e.what() << endl;
-	}
-
-	return inText;
-}
-
-
 string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {	
 	try
