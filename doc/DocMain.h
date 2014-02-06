@@ -71,4 +71,6 @@ private:
 	void AddGlobalFieldRow(OUTPUT::CTable& tbl, int fieldId, OUTPUT::CTable& fields);
 
 	static string ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter);
+	static string CreateSchemaFilterControl();
+	void SchemaListJson(std::ostream &strm);
 };

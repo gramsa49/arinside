@@ -849,6 +849,7 @@ string CDocSchemaDetails::WorkflowDoc()
 
 		strm << "<script type=\"text/javascript\">" << "var schemaWFLInit = false;" << endl;
 		strm << "var schemaWorkflowList = "; document.Accept(genericWriter); strm << ";" << endl
+		     << "var rootLevel = " << rootLevel << endl
 		     << "</script>" << endl
 		     << tblRef;
 		return strm.str();

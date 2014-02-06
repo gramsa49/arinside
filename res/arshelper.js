@@ -99,3 +99,36 @@ function AREscalationTMType(val) {
     if (val == 1) { return "Interval"; }
     return "Time";
 }
+
+function ARSchemaType(schemaType) {
+    switch (schemaType) {
+        case 1: return "Regular";
+        case 2: return "Join";
+        case 3: return "View";
+        case 4: return "Dialog";
+        case 5: return "Vendor";
+        default: return "unknown";
+    }
+}
+
+function getIcon(rootLevel, type, subtype) {
+    var alt = "";
+    switch (type) {
+        case 1: alt = "schema.gif"; break;
+        case 5: alt = "filter.gif"; break;
+        case 6: alt = "active_link.gif"; break;
+        case 9: alt = "escalation.gif"; break;
+        case 12: switch (subtype) {
+                case 1: alt = "al_guide.gif"; break;
+                case 2: alt = "application.gif"; break;
+                case 3: alt = "packing_list.gif"; break;
+                case 4: alt = "filter_guide.gif"; break;
+                case 5: alt = "webservice.gif"; break;
+            }; break;
+        default: return "";
+    };
+    var src = "";
+    for (i = 0; i < rootLevel; i++) { src += "../"; }
+    src += "img/" + alt;
+    return $("<img>").attr("width", 16).attr("height", 16).attr("alt", alt).attr("src", src);
+}

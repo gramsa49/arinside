@@ -1635,6 +1635,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\object_list.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\packing_list.gif"
 				>
 				<FileConfiguration

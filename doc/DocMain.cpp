@@ -19,6 +19,12 @@
 #include "../output/IFileStructure.h"
 #include "../core/ARServerInfo.h"
 
+#include "rapidjson/document.h"
+#include "rapidjson/genericwritestream.h"
+#include "rapidjson/writer.h"
+
+using namespace rapidjson;
+
 CDocMain::CDocMain()
 {
 }
@@ -127,7 +133,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 
 	try
 	{
-		int rootLevel = file->GetRootLevel();
+		/*int*/ rootLevel = file->GetRootLevel();
 		CSchemaTable tbl(*this->pInside);
 
 		unsigned int schemaCount = this->pInside->schemaList.GetCount();
@@ -186,13 +192,24 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToSchemaIndex(tbl.NumRows(), rootLevel);
+			strmTmp << "<span id='schemaListFilterResultCount'></span>" << CWebUtil::LinkToSchemaIndex(tbl.NumRows(), rootLevel);
 
 			if(nType != AR_SCHEMA_NONE)
 				strmTmp << MenuSeparator << CAREnum::SchemaType(nType);
 
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 
+			if (nType == AR_SCHEMA_NONE && searchChar == "*")
+			{
+				webPage.GetReferenceManager()
+					.AddScriptReference("img/object_list.js")
+					.AddScriptReference("img/jquery.timers.js")
+					.AddScriptReference("img/jquery.address.min.js");
+
+				SchemaListJson(strmTmp);
+				strmTmp << CreateSchemaFilterControl() << endl;
+			}
+
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -1608,4 +1625,85 @@ void CDocMain::Sort(list<CMessageItem> &listResult)
 bool CDocMain::SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 )
 {	
 	return ( t1.msgNumber < t2.msgNumber);
+}
+
+string CDocMain::CreateSchemaFilterControl()
+{
+	stringstream content;	
+	content << "<div>" 
+		<< "<span class='clearable'><input id='formNameFilter' class='data_field' type='text' /></span><button id='execFormFilter' class>Filter</button> &nbsp;&nbsp;&nbsp; "
+		<< "<span class='multiFilter' id='multiFilter' style='border: 1px solid silver; padding: 5px;'>"
+		<< "<input id='typeFilterRegular' type='checkbox' value='1'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
+		<< "<input id='typeFilterJoin' type='checkbox' value='2'/><label for='typeFilterJoin'>&nbsp;Join</label>"
+		<< "<input id='typeFilterView' type='checkbox' value='3'/><label for='typeFilterView'>&nbsp;View</label>"
+		<< "<input id='typeFilterDialog' type='checkbox' value='4'/><label for='typeFilterDialog'>&nbsp;Dialog</label>"
+		<< "<input id='typeFilterVendor' type='checkbox' value='5'/><label for='typeFilterVendor'>&nbsp;Vendor</label>"
+		<< "<button id='typeFilterAll'>V</button>"
+		<< "<button id='typeFilterNone'>&nbsp;</button>"
+		<< "<button id='typeFilterInvert'>~</button>"
+		<< "<span>"
+	<< "</div>";
+
+	return content.str();
+}
+
+void CDocMain::SchemaListJson(std::ostream &strm)
+{
+	Document document;
+	Document::AllocatorType &alloc = document.GetAllocator();
+	document.SetArray();
+
+	unsigned int schemaCount = this->pInside->schemaList.GetCount();
+	for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
+	{	
+		CARSchema schema(schemaIndex);
+		CPageParams schemaDetailPage(PAGE_DETAILS, &schema);
+		
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
+				continue;
+#endif
+
+			// create a new json row and make it an array
+			Value schemaRow;
+			schemaRow.SetArray();
+
+			// now build the needed temporary variables
+			string strName = schema.GetName();
+			string strWebAlias = schema.WebAlias();			
+			string strModifiedDate = CUtil::DateTimeToString(schema.GetTimestamp());
+			string strLink = CWebUtil::GetRelativeURL(rootLevel, schemaDetailPage);
+
+			//// try to reduce data size
+			//if (strLink.compare(strName) == 0)
+			//	strLink == "";
+
+			Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+			Value valWebAlias(strWebAlias.c_str(), static_cast<SizeType>(strWebAlias.size()), alloc);
+			Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+			Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+			// add everything to the row
+			schemaRow.PushBack(schema.GetDbTableId(), alloc);
+			schemaRow.PushBack(valName, alloc);
+			schemaRow.PushBack(valWebAlias, alloc);
+			schemaRow.PushBack(static_cast<int>(schema.GetFields()->GetCount()), alloc);
+			schemaRow.PushBack(static_cast<int>(schema.GetVUIs()->GetCount()), alloc);
+			schemaRow.PushBack(static_cast<int>(schema.GetCompound().schemaType), alloc);
+			schemaRow.PushBack(valModifiedDate, alloc);
+			schemaRow.PushBack(schema.GetLastChanged(), alloc);
+			schemaRow.PushBack(valLink, alloc);
+
+			// add the row to the document
+			document.PushBack(schemaRow, alloc);
+	}
+
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+
+	strm << endl << "<script type=\"text/javascript\">" << endl;
+	strm << "var schemaList = "; document.Accept(writer); strm << ";";
+	strm << "var rootLevel = " << rootLevel << ";";
+	strm << endl;
+	strm << "</script>" << endl;	
 }

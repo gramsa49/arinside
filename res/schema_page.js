@@ -44,25 +44,6 @@ var schemaFieldManager = {
     }
 };
 
-function getIcon(row) {
-    var alt = "";
-    switch (row[0]) {
-        case 5: alt = "filter.gif"; break;
-        case 6: alt = "active_link.gif"; break;
-        case 9: alt = "escalation.gif"; break;
-        case 12: switch (row[2]) {
-                case 1: alt = "al_guide.gif"; break;
-                case 2: alt = "application.gif"; break;
-                case 3: alt = "packing_list.gif"; break;
-                case 4: alt = "filter_guide.gif"; break;
-                case 5: alt = "webservice.gif"; break;
-            }; break;
-        default: return "";
-    };
-    var src = "../../img/" + alt;
-    return $("<img>").attr("width", 16).attr("height", 16).attr("alt", alt).attr("src", src);
-}
-
 function getEnabled(row) {
     if (row[0] == 12) return "";
     return AREnabled(row[2]);
@@ -99,7 +80,7 @@ function initWorkflowList() {
         var row = ($("<tr>")
 			.append($("<td>").text(getObjType(schemaWorkflowList[i])))
 			.append($("<td>")
-				.append(getIcon(schemaWorkflowList[i]))
+				.append(getIcon(rootLevel, schemaWorkflowList[i][0], schemaWorkflowList[i][2]))
 				.append($("<a>").attr("href", schemaWorkflowList[i][9]).text(schemaWorkflowList[i][1]))
 			)
 			.append($("<td>").text(getEnabled(schemaWorkflowList[i])))
