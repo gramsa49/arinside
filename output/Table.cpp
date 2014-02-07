@@ -21,6 +21,7 @@ using namespace OUTPUT;
 
 CTable::CTable()
 {
+	Init();
 }
 
 CTable::CTable(const string& htmId, const string& cssClass)
@@ -28,10 +29,16 @@ CTable::CTable(const string& htmId, const string& cssClass)
 	this->htmId = htmId;
 	this->cssClass = cssClass;
 	this->hideHeader = false;
+	Init();
 }
 
 CTable::~CTable(void)
 {
+}
+
+void CTable::Init()
+{
+	emptyMessage = "Table contains no data";
 }
 
 int CTable::NumRows()
@@ -181,10 +188,7 @@ void CTable::ToXHtml(std::ostream &strm)
 	}
 	else
 	{
-		size_t nColspan = listColumns.size();
-		strm << "<tr>" << endl << "<td colspan=\"" << (unsigned int)nColspan << "\">";
-		strm << "Table contains no data";
-		strm << "</td>" << endl << "</tr>" << endl;
+		this->GetEmptyMessageRow(strm);
 	}
 
 	strm << "</table>" << endl;
@@ -203,6 +207,17 @@ string CTable::ToCsv()
 	}
 
 	return strm.str();	
+}
+
+void CTable::GetEmptyMessageRow(std::ostream& strm)
+{
+	if (emptyMessage.size() > 0)
+	{
+		size_t nColspan = listColumns.size();
+		strm << "<tr>" << endl << "<td colspan=\"" << (unsigned int)nColspan << "\">";
+		strm << emptyMessage;
+		strm << "</td>" << endl << "</tr>" << endl;
+	}
 }
 
 ostream& operator<<(ostream& strm, OUTPUT::CTable& tbl)

@@ -52,12 +52,15 @@ namespace OUTPUT
 		list<CTableRow> listRows;
 		list<CTableColumn> listColumns;
 		string htmId;
+		string emptyMessage;
 		bool hideHeader;
+		void Init();
 		void GetHtmlRows(std::ostream& strm);
 		void GetCsvRows(std::ostream& strm);
 		void GetColumnDefinition(std::ostream& strm);
 		void GetHeaderDefinition(std::ostream& strm);
 		void GetCsvHeaderDefinition(std::ostream& strm);
+		void GetEmptyMessageRow(std::ostream& strm);
 	};
 }
 
