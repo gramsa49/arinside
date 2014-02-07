@@ -73,6 +73,11 @@ void CTable::SetCssClass(const string& cssClass)
 	this->cssClass = cssClass;
 }
 
+void CTable::SetEmptyMessage(const string& msg)
+{
+	this->emptyMessage = msg;
+}
+
 void CTable::Clear()
 {
 	this->ClearColumns();

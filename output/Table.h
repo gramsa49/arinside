@@ -40,6 +40,7 @@ namespace OUTPUT
 		void ClearColumns();
 		void SetHtmId(const string& cssClass);
 		void SetCssClass(const string& htmId);
+		void SetEmptyMessage(const string& msg);
 		int NumRows();
 		void AddColumn(int width, const string& text);
 		void AddColumn(int width, const string& text, const string& cssClass);	
