@@ -1,3 +1,18 @@
+var FILTER_MAX_RESULT = 100;
+var lastMatchIndex = 0;
+var schemaType = new Array();
+
+function bHasTypeFilter() {
+    var allTypeOn = true;
+    var allTypeOff = true;
+    for (i = 1; i < 6; i++) {
+        schemaType[i] = $('#multiFilter input[value="' + i + '"]').attr('checked');
+        if (schemaType[i]) { allTypeOff = false; }
+        if (!schemaType[i]) { allTypeOn = false; }
+    }
+    return !(allTypeOff || allTypeOn)
+}
+
 $('document').ready(function() {
     var checkBoxes = $('#multiFilter input[type="checkbox"]');
 
@@ -14,15 +29,7 @@ $('document').ready(function() {
             var search = $("#formNameFilter").val().replace(" +", " ").replace(" ", ".*");
             var numSearch = search.search("^\\d+$");
             var matches = 0;
-            var allTypeOn = true;
-            var allTypeOff = true;
-            var schemaType = new Array();
-            for (i = 1; i < 6; i++) {
-                schemaType[i] = $('#multiFilter input[value="' + i + '"]').attr('checked');
-                if (schemaType[i]) { allTypeOff = false; }
-                if (!schemaType[i]) { allTypeOn = false; }
-            }
-            var hasTypeFilter = !(allTypeOff || allTypeOn);
+            var hasTypeFilter = bHasTypeFilter();
             var hasFilter = (search != null && search.length > 0) || hasTypeFilter;
 
             $('#' + table_name + ' tbody tr:gt(0)').remove();
@@ -46,6 +53,18 @@ $('document').ready(function() {
 						);
 
                         table.append(row);
+                    }
+                    if (matches >= FILTER_MAX_RESULT) {
+                        var row = $("<tr>")
+							.append($("<td class='warn' colspan=7>").text("Result limit reached! ")
+								.append($("<a id=showNext href='javascript:void(0)'>Show Next " + FILTER_MAX_RESULT + "</a>").click(function() {
+								}))
+								.append(" &nbsp; ")
+								.append($("<a id=showAll href='javascript:void(0)'>Show All</a>").click(function() {
+								}))
+							);
+                        table.append(row);
+                        return false;
                     }
                 });
             }
@@ -74,7 +93,7 @@ $('document').ready(function() {
         $("#execFormFilter").click();
     });
 
-    if ($("#formNameFilter").val() != "") {
+    if ($("#formNameFilter").val() != "" || bHasTypeFilter()) {
         $("#execFormFilter").click();
     };
 });
