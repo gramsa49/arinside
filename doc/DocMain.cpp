@@ -133,7 +133,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 
 	try
 	{
-		/*int*/ rootLevel = file->GetRootLevel();
+		rootLevel = file->GetRootLevel();
 		CSchemaTable tbl(*this->pInside);
 
 		unsigned int schemaCount = this->pInside->schemaList.GetCount();
@@ -145,8 +145,6 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(schema))
 				continue;
 #endif
-
-			objCount++;
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
@@ -183,7 +181,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 
 			if(bInsert)
 			{
-				tbl.AddRow(schema, rootLevel);
+				objCount++;
 			}
 		}
 
@@ -192,12 +190,12 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 			stringstream strmTmp;
-			strmTmp << "<span id='schemaListFilterResultCount'></span>" << CWebUtil::LinkToSchemaIndex(tbl.NumRows(), rootLevel);
+			strmTmp << "<span id='schemaListFilterResultCount'></span>" << CWebUtil::LinkToSchemaIndex(objCount, rootLevel);
 
 			if(nType != AR_SCHEMA_NONE)
 				strmTmp << MenuSeparator << CAREnum::SchemaType(nType);
 
-
+			// add scripts and json data only on the "ALL"-schemas page
 			if (nType == AR_SCHEMA_NONE && searchChar == "*")
 			{
 				webPage.GetReferenceManager()
@@ -1632,7 +1630,7 @@ string CDocMain::CreateSchemaFilterControl()
 	stringstream content;	
 	content << "<div>" 
 		<< "<span class='clearable'><input id='formNameFilter' class='data_field' type='text' /></span><button id='execFormFilter' class>Filter</button> &nbsp;&nbsp;&nbsp; "
-		<< "<span class='multiFilter' id='multiFilter' style='border: 1px solid silver; padding: 5px;'>"
+		<< "<span class='multiFilter' id='multiFilter'>"
 		<< "<input id='typeFilterRegular' type='checkbox' value='1'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
 		<< "<input id='typeFilterJoin' type='checkbox' value='2'/><label for='typeFilterJoin'>&nbsp;Join</label>"
 		<< "<input id='typeFilterView' type='checkbox' value='3'/><label for='typeFilterView'>&nbsp;View</label>"
