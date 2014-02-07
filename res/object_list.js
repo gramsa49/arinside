@@ -27,6 +27,7 @@ function filterTable(tableId, appendNextChunk) {
     var hasFilter = (search != null && search.length > 0) || hasTypeFilter;
     var start = 0;
     var end = schemaList.length;
+    var showAllMatches = appendNextChunk == 'all';
 
     if (appendNextChunk) {
         start = table.data('lastindex');
@@ -37,8 +38,7 @@ function filterTable(tableId, appendNextChunk) {
     }
 
     if (hasFilter) {
-        for (var i = start; i < end; i++)
-        /*$.each(schemaList, function(i) */{
+        for (var i = start; i < end; i++) {
             var r = new RegExp(search, "i");
             if ((!hasTypeFilter || hasTypeFilter && schemaType[schemaList[i][5]]) && (schemaList[i][1].match(r) || (numSearch == 0 && ("" + schemaList[i][0]) == search))) {
                 matches++;
@@ -57,7 +57,7 @@ function filterTable(tableId, appendNextChunk) {
 
                 table.append(row);
             }
-            if (matches >= maxMatch) {
+            if (!showAllMatches && matches >= maxMatch) {
                 var row = $("<tr>")
 					.append($("<td class='warn' colspan=7>").text("Result limit reached! ")
 						.append($("<a id=showNext href='javascript:void(0)'>Show Next " + maxMatch + "</a>").click(function() {
@@ -66,6 +66,8 @@ function filterTable(tableId, appendNextChunk) {
 						}))
 						.append(" &nbsp; ")
 						.append($("<a id=showAll href='javascript:void(0)'>Show All</a>").click(function() {
+						    $(this).parents('tr:first').remove();
+						    filterTable(tableId, 'all');
 						}))
 					);
                 table.append(row);
@@ -73,7 +75,7 @@ function filterTable(tableId, appendNextChunk) {
                 table.data('lastmatches', lastMatches + matches);
                 break;
             }
-        } /*)*/;
+        };
     }
     $('#' + table.data('resultid')).text((hasFilter ? "showing " + (lastMatches + matches) + " out of " : ""));
 }
@@ -83,7 +85,7 @@ function initSchemaTable() {
 }
 
 function updateSchemaTable() {
-    if (schemaList != null) { filterTable('schemaList'/*, 'formNameFilter', 'schemaListFilterResultCount'*/); }
+    if (schemaList != null) { filterTable('schemaList'); }
 }
 
 $('document').ready(function() {
