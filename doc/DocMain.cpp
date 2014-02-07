@@ -1639,7 +1639,7 @@ string CDocMain::CreateSchemaFilterControl()
 		<< "<button id='typeFilterAll'>V</button>"
 		<< "<button id='typeFilterNone'>&nbsp;</button>"
 		<< "<button id='typeFilterInvert'>~</button>"
-		<< "<span>"
+		<< "</span>"
 	<< "</div>";
 
 	return content.str();
