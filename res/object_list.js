@@ -18,7 +18,7 @@ function initTable(tableId, filterId, resultCountId) {
 
 function filterTable(tableId, appendNextChunk) {
     var table = $('#' + tableId);
-    var search = $('#' + table.data('filterid')).val().replace(" +", " ").replace(" ", ".*");
+    var search = $('#' + table.data('filterid')).val().replace(/ +/g, " ").replace(/ /g, ".*");
     var numSearch = search.search("^\\d+$");
     var maxMatch = 0 + (table.data('maxresult'));
     var lastMatches = 0;
@@ -126,4 +126,10 @@ $('document').ready(function() {
     if ($("#formNameFilter").val() != "" || bHasTypeFilter()) {
         $("#execFormFilter").click();
     };
+
+    $("#formLetterFilter a").click(function() {
+        $("#formNameFilter").val("^" + this.innerText);
+        $("#execFormFilter").click();
+        return false;
+    });
 });

@@ -91,7 +91,7 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std:
 	stringstream strm;
 	try
 	{
-		strm << "<table><tr>" << endl;
+		strm << "<table id='formLetterFilter'><tr>" << endl;
 
 		string strValue = objectNameFirstCharLetters; // "abcdefghijklmnopqrstuvwxyz0123456789#"
 		for (unsigned int i = 0; i < strValue.size(); ++i) 
