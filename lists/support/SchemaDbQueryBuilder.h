@@ -22,6 +22,7 @@ public:
 	SchemaDbQueryBuilder(unsigned int maxRetrieve);
 	~SchemaDbQueryBuilder(void);
 
+	static unsigned int ExpectedColumnCount();
 	const char* GetNextQuery();
 	void SetLastReceivedSchemaId(int schemaId);
 

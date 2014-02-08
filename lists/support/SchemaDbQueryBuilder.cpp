@@ -43,6 +43,11 @@ const char* SchemaDbQueryBuilder::GetNextQuery()
 	return query.c_str();
 }
 
+unsigned int SchemaDbQueryBuilder::ExpectedColumnCount()
+{
+	return 4;
+}
+
 void SchemaDbQueryBuilder::AppendStatement(std::ostream &strm)
 {
 	strm << "select schemaId, name, viewName, shViewName from arschema";

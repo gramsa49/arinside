@@ -454,7 +454,7 @@ void CARSchemaList::StoreDatabaseDetails(ARValueListList &valueList)
 	{
 		ARValueList& row = valueList.valueListList[valPos];
 		
-		if (row.numItems < 4 || row.valueList[1].dataType != AR_DATA_TYPE_CHAR)
+		if (row.numItems < SchemaDbQueryBuilder::ExpectedColumnCount() || row.valueList[1].dataType != AR_DATA_TYPE_CHAR)
 			continue;
 		
 		int idx = TryFindSchemaInNameList(row.valueList[1].u.charVal);

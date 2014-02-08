@@ -19,6 +19,11 @@ TEST(SchemaDbQueryBuilder, DefaultQueryIfNoMaxRetrieve)
 	ASSERT_STREQ(DEFAULT_SQL_STATEMENT_WITHOUT_QUERY, sql);
 }
 
+TEST(SchemaDbQueryBuilder, ValidateQueryColumCount)
+{
+	ASSERT_EQ(4, SchemaDbQueryBuilder::ExpectedColumnCount());
+}
+
 class SchemaDbQueryWithMax100Results : public Test
 {
 public:
@@ -37,7 +42,7 @@ TEST_F(SchemaDbQueryWithMax100Results, FirstQueryShouldStartAtZero)
 	ASSERT_STREQ(DEFAULT_SQL_STATEMENT_WITH_QUERY, sql);
 }
 
-#define SECOND100_SQL_STATEMENT_WITH_QUERY BASE_STATEMENT BASE_QUERY(112) BASE_ORDER
+#define SECOND100_SQL_STATEMENT_WITH_QUERY (BASE_STATEMENT BASE_QUERY(112) BASE_ORDER)
 TEST_F(SchemaDbQueryWithMax100Results, SecondQueryShouldStartAtLastSchemaId)
 {
 	const char* sql;
