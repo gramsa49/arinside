@@ -19,6 +19,7 @@
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
+#include "support/SchemaDbQueryBuilder.h"
 
 CARSchemaList::CARSchemaList(void)
 {
@@ -429,8 +430,11 @@ void CARSchemaList::LoadDatabaseDetails()
 		return;
 
 	ARZeroMemory(&valueList);
+	
+	const int NO_MAX_RESULT_LIMIT = 0;
+	SchemaDbQueryBuilder queryBuilder(NO_MAX_RESULT_LIMIT);
 
-	if (ARGetListSQL(&arIn->arControl, (char*)"select schemaId, name, viewName, shViewName from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
+	if (ARGetListSQL(&arIn->arControl, const_cast<char*>(queryBuilder.GetNextQuery()), 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
 	{
 		StoreDatabaseDetails(valueList);
 		FreeARValueListList(&valueList, false);
