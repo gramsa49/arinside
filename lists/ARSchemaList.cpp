@@ -428,51 +428,70 @@ void CARSchemaList::LoadDatabaseDetails()
 	if (arIn->CompareServerVersion(7,1) < 0)
 		return;
 
-	ARZeroMemory(&valueList);	
+	ARZeroMemory(&valueList);
 
 	if (ARGetListSQL(&arIn->arControl, (char*)"select schemaId, name, viewName, shViewName from arschema", 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
 	{
-		if (numMatches > 0)
-		{
-			for (unsigned int idx = 0; idx < names.numItems; ++idx)
-			{
-				for (unsigned int valPos = 0; valPos < valueList.numItems; ++valPos)
-				{
-					ARValueList& row = valueList.valueListList[valPos];
-					bool foundRow = false;
-					
-					if (row.numItems < 2 || row.valueList[1].dataType != AR_DATA_TYPE_CHAR)
-						continue;
-
-					if (strncmp(names.nameList[idx], row.valueList[1].u.charVal, AR_MAX_NAME_SIZE) == 0)
-					{
-						ARSchemaDbValues &dbValues = schemaDbValues[idx];
-
-						if (row.valueList[0].dataType == AR_DATA_TYPE_INTEGER)
-							dbValues.schemaId = row.valueList[0].u.ulongVal;
-
-						if (row.valueList[2].dataType == AR_DATA_TYPE_CHAR)
-						{
-							strncpy(dbValues.viewName, row.valueList[2].u.charVal, AR_MAX_NAME_SIZE);
-							dbValues.viewName[AR_MAX_NAME_SIZE] = 0;
-						}
-
-						if (row.valueList[3].dataType == AR_DATA_TYPE_CHAR)
-						{
-							strncpy(dbValues.shViewName, row.valueList[3].u.charVal, AR_MAX_NAME_SIZE);
-							dbValues.shViewName[AR_MAX_NAME_SIZE] = 0;
-						}
-						break;
-					}
-				}
-			}
-		}
+		StoreDatabaseDetails(valueList);
 		FreeARValueListList(&valueList, false);
 		FreeARStatusList(&status, false);
 	}
 	else
 	{
 		cout << arIn->GetARStatusError(&status);
+	}
+}
+
+void CARSchemaList::StoreDatabaseDetails(ARValueListList &valueList)
+{
+	if (valueList.numItems == 0) return;
+
+	for (unsigned int valPos = 0; valPos < valueList.numItems; ++valPos)
+	{
+		ARValueList& row = valueList.valueListList[valPos];
+		
+		if (row.numItems < 4 || row.valueList[1].dataType != AR_DATA_TYPE_CHAR)
+			continue;
+		
+		int idx = TryFindSchemaInNameList(row.valueList[1].u.charVal);
+		if (idx < 0) // not found
+		{
+			continue;
+		}
+		StoreSingleDatabaseRow(row, idx);
+	}
+}
+
+int CARSchemaList::TryFindSchemaInNameList(const char* schemaName)
+{
+	int idx = 0;
+	for (; idx < static_cast<int>(names.numItems); ++idx)
+	{
+		if (strncmp(names.nameList[idx], schemaName, AR_MAX_NAME_SIZE) == 0)
+			return idx;
+	}
+	return -1;
+}
+
+void CARSchemaList::StoreSingleDatabaseRow(ARValueList &row, int storeToSchemaIndex)
+{
+	if (storeToSchemaIndex < 0 || storeToSchemaIndex >= static_cast<int>(schemaDbValues.size())) return;
+
+	ARSchemaDbValues &dbValues = schemaDbValues[storeToSchemaIndex];
+
+	if (row.valueList[0].dataType == AR_DATA_TYPE_INTEGER)
+		dbValues.schemaId = row.valueList[0].u.ulongVal;
+
+	if (row.valueList[2].dataType == AR_DATA_TYPE_CHAR)
+	{
+		strncpy(dbValues.viewName, row.valueList[2].u.charVal, AR_MAX_NAME_SIZE);
+		dbValues.viewName[AR_MAX_NAME_SIZE] = 0;
+	}
+
+	if (row.valueList[3].dataType == AR_DATA_TYPE_CHAR)
+	{
+		strncpy(dbValues.shViewName, row.valueList[3].u.charVal, AR_MAX_NAME_SIZE);
+		dbValues.shViewName[AR_MAX_NAME_SIZE] = 0;
 	}
 }
 

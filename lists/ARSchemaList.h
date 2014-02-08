@@ -116,6 +116,11 @@ private:
 	void InitDatabaseDetails();
 	void LoadDatabaseDetails();
 
+	int TryFindSchemaInNameList(const char* schemaName);
+	void StoreDatabaseDetails(ARValueListList &valList);
+	void StoreSingleDatabaseRow(ARValueList &row, int storeToSchemaIndex);
+
+
 private:
 	// allocation state of internal structures
 	enum SchemaListState { EMPTY, ARAPI_ALLOC, INTERNAL_ALLOC };
