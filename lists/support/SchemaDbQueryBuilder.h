@@ -26,6 +26,10 @@ public:
 	const char* GetNextQuery();
 	void SetLastReceivedSchemaId(int schemaId);
 
+	static bool TryReadSchemaId(ARValueList &row, unsigned int &schemaId);
+	static bool TryReadSchemaView(ARValueList &row, ARNameType &schemaView);
+	static bool TryReadSchemaShView(ARValueList &row, ARNameType &shSchemaView);
+
 private:
 	void AppendStatement(std::ostream &strm);
 	void AppendWhereCondition(std::ostream &strm);

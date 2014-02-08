@@ -3,6 +3,8 @@
 
 using namespace testing;
 
+const int NO_MAX_RESULT_LIMIT = 0;
+
 #define BASE_STATEMENT "select schemaId, name, viewName, shViewName from arschema"
 #define BASE_QUERY(N) " where schemaId > " #N
 #define BASE_ORDER " order by schemaId asc"
@@ -12,7 +14,7 @@ using namespace testing;
 
 TEST(SchemaDbQueryBuilder, DefaultQueryIfNoMaxRetrieve)
 {
-	SchemaDbQueryBuilder queryBuilder(0);
+	SchemaDbQueryBuilder queryBuilder(NO_MAX_RESULT_LIMIT);
 
 	const char* sql = queryBuilder.GetNextQuery();
 
@@ -32,7 +34,10 @@ public:
 	const static unsigned int MAX_RESULT = 100;
 
 	void SetUp() override {
-			queryBuilder = new SchemaDbQueryBuilder(MAX_RESULT);
+		queryBuilder = new SchemaDbQueryBuilder(MAX_RESULT);
+	}
+	void TearDown() override {
+		delete queryBuilder;
 	}
 };
 
@@ -51,4 +56,65 @@ TEST_F(SchemaDbQueryWithMax100Results, SecondQueryShouldStartAtLastSchemaId)
 	
 	sql = queryBuilder->GetNextQuery(); // generate second query
 	ASSERT_STREQ(SECOND100_SQL_STATEMENT_WITH_QUERY, sql);
+}
+
+class SchemaDbQueryResultValidator : public Test
+{
+#define STRUCT_ITEM_COUNT 4
+#define ROW_VALUE_SCHEMAID 123
+#define ROW_VALUE_SCHEMANAME "TestSchema"
+#define ROW_VALUE_SCHEMAVIEW ROW_VALUE_SCHEMANAME
+#define ROW_VALUE_SCHEMASHVIEW ("SH_" ROW_VALUE_SCHEMANAME)
+public:
+	SchemaDbQueryBuilder *queryBuilder;
+
+	ARValueList validRow;
+	ARValueStruct values[STRUCT_ITEM_COUNT];
+
+	void SetUp() override {
+		queryBuilder = new SchemaDbQueryBuilder(NO_MAX_RESULT_LIMIT);
+
+		values[0].dataType = AR_DATA_TYPE_INTEGER;
+		values[0].u.intVal = ROW_VALUE_SCHEMAID;
+
+		values[1].dataType = AR_DATA_TYPE_CHAR;
+		values[1].u.charVal = ROW_VALUE_SCHEMANAME;
+
+		values[2].dataType = AR_DATA_TYPE_CHAR;
+		values[2].u.charVal = ROW_VALUE_SCHEMAVIEW;
+
+		values[3].dataType = AR_DATA_TYPE_CHAR;
+		values[3].u.charVal = ROW_VALUE_SCHEMASHVIEW;
+
+		validRow.numItems = STRUCT_ITEM_COUNT;
+		validRow.valueList = values;
+	}
+};
+
+TEST_F(SchemaDbQueryResultValidator, TryReadingAValidSchemaId)
+{
+	unsigned int schemaId = 0;  // just init it to a value, different to the expected result
+	
+	bool isValidRead = queryBuilder->TryReadSchemaId(validRow, schemaId);
+	
+	ASSERT_EQ(ROW_VALUE_SCHEMAID, schemaId);
+	ASSERT_TRUE(isValidRead);
+}
+
+TEST_F(SchemaDbQueryResultValidator, TryReadingAValidSchemaView)
+{
+	ARNameType schemaView;
+	bool isValidRead = queryBuilder->TryReadSchemaView(validRow, schemaView);
+
+	ASSERT_STREQ(ROW_VALUE_SCHEMAVIEW, schemaView);
+	ASSERT_TRUE(isValidRead);
+}
+
+TEST_F(SchemaDbQueryResultValidator, TryReadingAValidSchemaShView)
+{
+	ARNameType shViewName;
+	bool isValidRead = queryBuilder->TryReadSchemaShView(validRow, shViewName);
+	
+	ASSERT_STREQ(ROW_VALUE_SCHEMASHVIEW, shViewName);
+	ASSERT_TRUE(isValidRead);
 }

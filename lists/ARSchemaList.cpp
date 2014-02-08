@@ -483,20 +483,9 @@ void CARSchemaList::StoreSingleDatabaseRow(ARValueList &row, int storeToSchemaIn
 
 	ARSchemaDbValues &dbValues = schemaDbValues[storeToSchemaIndex];
 
-	if (row.valueList[0].dataType == AR_DATA_TYPE_INTEGER)
-		dbValues.schemaId = row.valueList[0].u.ulongVal;
-
-	if (row.valueList[2].dataType == AR_DATA_TYPE_CHAR)
-	{
-		strncpy(dbValues.viewName, row.valueList[2].u.charVal, AR_MAX_NAME_SIZE);
-		dbValues.viewName[AR_MAX_NAME_SIZE] = 0;
-	}
-
-	if (row.valueList[3].dataType == AR_DATA_TYPE_CHAR)
-	{
-		strncpy(dbValues.shViewName, row.valueList[3].u.charVal, AR_MAX_NAME_SIZE);
-		dbValues.shViewName[AR_MAX_NAME_SIZE] = 0;
-	}
+	SchemaDbQueryBuilder::TryReadSchemaId(row, dbValues.schemaId);
+	SchemaDbQueryBuilder::TryReadSchemaView(row, dbValues.viewName);
+	SchemaDbQueryBuilder::TryReadSchemaShView(row, dbValues.shViewName);
 }
 
 void CARSchemaList::Reserve(unsigned int size)

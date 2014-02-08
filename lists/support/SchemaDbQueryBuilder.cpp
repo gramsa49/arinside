@@ -70,3 +70,35 @@ void SchemaDbQueryBuilder::BuildWhereCondition(std::ostream &strm)
 {
 	strm << " where schemaId > " << lastReceivedSchemaId;
 }
+
+bool SchemaDbQueryBuilder::TryReadSchemaId(ARValueList &row, unsigned int &schemaId)
+{
+	if (row.valueList[0].dataType == AR_DATA_TYPE_INTEGER)
+	{
+		schemaId = row.valueList[0].u.ulongVal;
+		return true;
+	}
+	return false;
+}
+
+bool SchemaDbQueryBuilder::TryReadSchemaView(ARValueList &row, ARNameType &schemaView)
+{
+	if (row.valueList[2].dataType == AR_DATA_TYPE_CHAR)
+	{
+		strncpy(schemaView, row.valueList[2].u.charVal, AR_MAX_NAME_SIZE);
+		schemaView[AR_MAX_NAME_SIZE] = 0;
+		return true;
+	}
+	return false;
+}
+
+bool SchemaDbQueryBuilder::TryReadSchemaShView(ARValueList &row, ARNameType &shSchemaView)
+{
+	if (row.valueList[3].dataType == AR_DATA_TYPE_CHAR)
+	{
+		strncpy(shSchemaView, row.valueList[3].u.charVal, AR_MAX_NAME_SIZE);
+		shSchemaView[AR_MAX_NAME_SIZE] = 0;
+		return true;
+	}
+	return false;
+}
