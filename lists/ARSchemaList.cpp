@@ -431,18 +431,33 @@ void CARSchemaList::LoadDatabaseDetails()
 
 	ARZeroMemory(&valueList);
 	
-	const int NO_MAX_RESULT_LIMIT = 0;
-	SchemaDbQueryBuilder queryBuilder(NO_MAX_RESULT_LIMIT);
+	SchemaDbQueryBuilder queryBuilder;
+	bool keepGettingNextChunk = true;
 
-	if (ARGetListSQL(&arIn->arControl, const_cast<char*>(queryBuilder.GetNextQuery()), 0, &valueList, &numMatches, &status) == AR_RETURN_OK)
+	while (keepGettingNextChunk)
 	{
-		StoreDatabaseDetails(valueList);
-		FreeARValueListList(&valueList, false);
-		FreeARStatusList(&status, false);
-	}
-	else
-	{
-		cout << arIn->GetARStatusError(&status);
+		keepGettingNextChunk = false;
+		int result = ARGetListSQL(&arIn->arControl, const_cast<char*>(queryBuilder.GetNextQuery()), 0, &valueList, &numMatches, &status);
+
+		if (result == AR_RETURN_OK || result == AR_RETURN_WARNING)
+		{
+			StoreDatabaseDetails(valueList);
+
+			if (valueList.numItems > 0 && status.numItems > 0 && status.statusList[0].messageNum == 66)
+			{
+				unsigned int lastReceiveSchemaId = 0;
+				SchemaDbQueryBuilder::TryReadSchemaId(valueList.valueListList[valueList.numItems-1], lastReceiveSchemaId);
+				queryBuilder.SetLastReceivedSchemaId(lastReceiveSchemaId);
+				queryBuilder.SetMaxRetrieve(valueList.numItems);
+				keepGettingNextChunk = true;
+			}
+			FreeARValueListList(&valueList, false);
+			FreeARStatusList(&status, false);
+		}
+		else
+		{
+			cout << arIn->GetARStatusError(&status);
+		}
 	}
 }
 

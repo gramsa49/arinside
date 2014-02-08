@@ -19,12 +19,13 @@
 class SchemaDbQueryBuilder
 {
 public:
-	SchemaDbQueryBuilder(unsigned int maxRetrieve);
+	SchemaDbQueryBuilder();
 	~SchemaDbQueryBuilder(void);
 
 	static unsigned int ExpectedColumnCount();
 	const char* GetNextQuery();
 	void SetLastReceivedSchemaId(int schemaId);
+	void SetMaxRetrieve(unsigned int maxRetrieve);
 
 	static bool TryReadSchemaId(ARValueList &row, unsigned int &schemaId);
 	static bool TryReadSchemaView(ARValueList &row, ARNameType &schemaView);

@@ -17,8 +17,8 @@
 #include "stdafx.h"
 #include "SchemaDbQueryBuilder.h"
 
-SchemaDbQueryBuilder::SchemaDbQueryBuilder(unsigned int maxRetrieve)
-: maxRetrieve(maxRetrieve), lastReceivedSchemaId(0)
+SchemaDbQueryBuilder::SchemaDbQueryBuilder()
+: maxRetrieve(0), lastReceivedSchemaId(0)
 {
 }
 
@@ -29,6 +29,11 @@ SchemaDbQueryBuilder::~SchemaDbQueryBuilder(void)
 void SchemaDbQueryBuilder::SetLastReceivedSchemaId(int schemaId)
 {
 	this->lastReceivedSchemaId = schemaId;
+}
+
+void SchemaDbQueryBuilder::SetMaxRetrieve(unsigned int maxRetrieve)
+{
+	this->maxRetrieve = maxRetrieve;
 }
 
 const char* SchemaDbQueryBuilder::GetNextQuery()

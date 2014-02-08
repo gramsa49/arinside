@@ -14,11 +14,25 @@ const int NO_MAX_RESULT_LIMIT = 0;
 
 TEST(SchemaDbQueryBuilder, DefaultQueryIfNoMaxRetrieve)
 {
-	SchemaDbQueryBuilder queryBuilder(NO_MAX_RESULT_LIMIT);
+	SchemaDbQueryBuilder queryBuilder;
 
 	const char* sql = queryBuilder.GetNextQuery();
 
 	ASSERT_STREQ(DEFAULT_SQL_STATEMENT_WITHOUT_QUERY, sql);
+}
+
+#define SECOND1000_SQL_STATEMENT_WITH_QUERY (BASE_STATEMENT BASE_QUERY(1122) BASE_ORDER)
+TEST(SchemaDbQueryBuilder, QueryAfterSetMaxRetrieve)
+{
+	SchemaDbQueryBuilder queryBuilder;
+	queryBuilder.GetNextQuery();
+	// .. execute query and work on results, then start next chunk iteration
+	queryBuilder.SetMaxRetrieve(1000);           // take the size of the first result (for the test we assume 1000 entries)
+	queryBuilder.SetLastReceivedSchemaId(1122);
+
+	const char* sql = queryBuilder.GetNextQuery();
+
+	ASSERT_STREQ(SECOND1000_SQL_STATEMENT_WITH_QUERY, sql);
 }
 
 TEST(SchemaDbQueryBuilder, ValidateQueryColumCount)
@@ -34,7 +48,8 @@ public:
 	const static unsigned int MAX_RESULT = 100;
 
 	void SetUp() override {
-		queryBuilder = new SchemaDbQueryBuilder(MAX_RESULT);
+		queryBuilder = new SchemaDbQueryBuilder();
+		queryBuilder->SetMaxRetrieve(MAX_RESULT);
 	}
 	void TearDown() override {
 		delete queryBuilder;
@@ -72,7 +87,7 @@ public:
 	ARValueStruct values[STRUCT_ITEM_COUNT];
 
 	void SetUp() override {
-		queryBuilder = new SchemaDbQueryBuilder(NO_MAX_RESULT_LIMIT);
+		queryBuilder = new SchemaDbQueryBuilder();
 
 		values[0].dataType = AR_DATA_TYPE_INTEGER;
 		values[0].u.intVal = ROW_VALUE_SCHEMAID;
