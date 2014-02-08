@@ -549,6 +549,14 @@
 				RelativePath=".\lists\ARListHelpersTest.cpp"
 				>
 			</File>
+			<Filter
+				Name="support"
+				>
+				<File
+					RelativePath=".\lists\support\SchemaDbQueryBuilderTest.cpp"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<File
 			RelativePath=".\AppConfigReaderTest.cpp"

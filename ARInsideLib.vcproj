@@ -2130,6 +2130,18 @@
 				RelativePath=".\lists\BlackList.h"
 				>
 			</File>
+			<Filter
+				Name="support"
+				>
+				<File
+					RelativePath=".\lists\support\SchemaDbQueryBuilder.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\SchemaDbQueryBuilder.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="scan"

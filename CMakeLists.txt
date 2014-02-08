@@ -111,6 +111,7 @@ SET (ARINSIDE_SRCS
  lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
  lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp lists/ARListHelpers.cpp
  lists/ARServerInfoList.cpp
+ lists/support/SchemaDbQueryBuilder.cpp
  output/Table.cpp output/TableCell.cpp output/WebControl.cpp output/AlTable.cpp output/EscalTable.cpp
  output/UList.cpp output/FilterTable.cpp output/IFileStructure.cpp output/CsvPage.cpp output/ObjectTable.cpp
  output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp
@@ -130,6 +131,7 @@ SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
 SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
  AppConfigReaderTest.cpp FileSystemUtilTest.cpp RapidJSONTests.cpp
  lists/ARListHelpersTest.cpp 
+ lists/support/SchemaDbQueryBuilderTest.cpp
  output/webpage/HtmlReferenceListImplTest.cpp
  util/CommandLineValidatorTest.cpp util/UntarStreamTest.cpp util/UntarStreamTest.h
 )
