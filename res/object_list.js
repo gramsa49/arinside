@@ -17,18 +17,18 @@ function initTable(tableId, filterId, resultCountId) {
 }
 
 function createMoreResultsRow(tableId, maxMatch) {
-    return $("<tr>")
+    return $("<tfoot>").append($("<tr>")
     .append($("<td class='warn' colspan=7>").text("Result limit reached! ")
 	    .append($("<a id=showNext href='javascript:void(0)'>Show Next " + maxMatch + "</a>").click(function() {
-	        $(this).parents('tr:first').remove();
+	        $(this).parents('tfoot:first').remove();
 	        filterTable(tableId, 'next');
 	    }))
 	    .append(" &nbsp; ")
 	    .append($("<a id=showAll href='javascript:void(0)'>Show All</a>").click(function() {
-	        $(this).parents('tr:first').remove();
+	        $(this).parents('tfoot:first').remove();
 	        filterTable(tableId, 'all');
 	    }))
-	);
+	));
 }
 
 function filterTable(tableId, appendNextChunk) {
@@ -49,7 +49,7 @@ function filterTable(tableId, appendNextChunk) {
         lastMatches += table.data('lastmatches');
     }
     else {
-        $('#' + tableId + ' tbody tr:gt(0)').remove();
+        $('#' + tableId + ' tbody,tfoot').remove();
     }
 
     if (hasFilter) {

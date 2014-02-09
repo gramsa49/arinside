@@ -185,8 +185,13 @@ void CTable::ToXHtml(std::ostream &strm)
 
 	this->GetColumnDefinition(strm);
 	if (!hideHeader)
+	{
+		strm << "<thead>";
 		this->GetHeaderDefinition(strm);
+		strm << "</thead>";
+	}
 
+	strm << "<tbody>";
 	if(listRows.size() > 0)
 	{
 		this->GetHtmlRows(strm);
@@ -195,6 +200,7 @@ void CTable::ToXHtml(std::ostream &strm)
 	{
 		this->GetEmptyMessageRow(strm);
 	}
+	strm << "</tbody>";
 
 	strm << "</table>" << endl;
 }
