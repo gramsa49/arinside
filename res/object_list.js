@@ -16,6 +16,21 @@ function initTable(tableId, filterId, resultCountId) {
     table.data('filterid', filterId).data('resultid', resultCountId).data('maxresult', 100).data('lastmatches', 0);
 }
 
+function createMoreResultsRow(tableId, maxMatch) {
+    return $("<tr>")
+    .append($("<td class='warn' colspan=7>").text("Result limit reached! ")
+	    .append($("<a id=showNext href='javascript:void(0)'>Show Next " + maxMatch + "</a>").click(function() {
+	        $(this).parents('tr:first').remove();
+	        filterTable(tableId, 'next');
+	    }))
+	    .append(" &nbsp; ")
+	    .append($("<a id=showAll href='javascript:void(0)'>Show All</a>").click(function() {
+	        $(this).parents('tr:first').remove();
+	        filterTable(tableId, 'all');
+	    }))
+	);
+}
+
 function filterTable(tableId, appendNextChunk) {
     var table = $('#' + tableId);
     var search = $('#' + table.data('filterid')).val().replace(/ +/g, " ").replace(/ /g, ".*");
@@ -42,35 +57,10 @@ function filterTable(tableId, appendNextChunk) {
             var r = new RegExp(search, "i");
             if ((!hasTypeFilter || hasTypeFilter && schemaType[schemaList[i][5]]) && (schemaList[i][1].match(r) || (numSearch == 0 && ("" + schemaList[i][0]) == search))) {
                 matches++;
-                var row = ($("<tr>")
-					.append($("<td>")
-						.append(getIcon(rootLevel, 1, 0))
-						.append($("<a>").attr("href", schemaList[i][8]).text(schemaList[i][1]))
-					)
-					.append($("<td>").text(schemaList[i][2]))
-					.append($("<td>").text(schemaList[i][3]))
-					.append($("<td>").text(schemaList[i][4]))
-					.append($("<td>").text(ARSchemaType(schemaList[i][5])))
-					.append($("<td>").text(schemaList[i][6]))
-					.append($("<td>").text(schemaList[i][7]))
-				);
-
-                table.append(row);
+                table.append(createSchemaRowHtml(schemaList[i]));
             }
             if (!showAllMatches && matches >= maxMatch) {
-                var row = $("<tr>")
-					.append($("<td class='warn' colspan=7>").text("Result limit reached! ")
-						.append($("<a id=showNext href='javascript:void(0)'>Show Next " + maxMatch + "</a>").click(function() {
-						    $(this).parents('tr:first').remove();
-						    filterTable(tableId, 'next');
-						}))
-						.append(" &nbsp; ")
-						.append($("<a id=showAll href='javascript:void(0)'>Show All</a>").click(function() {
-						    $(this).parents('tr:first').remove();
-						    filterTable(tableId, 'all');
-						}))
-					);
-                table.append(row);
+                table.append(createMoreResultsRow(tableId, maxMatch));
                 table.data('lastindex', i + 1);
                 table.data('lastmatches', lastMatches + matches);
                 break;
@@ -86,6 +76,21 @@ function initSchemaTable() {
 
 function updateSchemaTable() {
     if (schemaList != null) { filterTable('schemaList'); }
+}
+
+function createSchemaRowHtml(data) {
+    return ($("<tr>")
+        .append($("<td>")
+            .append(getIcon(rootLevel, 1, 0))
+            .append($("<a>").attr("href", data[8]).text(data[1]))
+        )
+        .append($("<td>").text(data[2]))
+        .append($("<td>").text(data[3]))
+		.append($("<td>").text(data[4]))
+		.append($("<td>").text(ARSchemaType(data[5])))
+		.append($("<td>").text(data[6]))
+		.append($("<td>").text(data[7]))
+    );
 }
 
 $('document').ready(function() {
@@ -123,12 +128,12 @@ $('document').ready(function() {
     });
 
     initSchemaTable();
-    if ($("#formNameFilter").val() != "" || bHasTypeFilter()) {
+    if ($("#formNameFilter").focus().val() != "" || bHasTypeFilter()) {
         $("#execFormFilter").click();
     };
 
     $("#formLetterFilter a").click(function() {
-        $("#formNameFilter").val("^" + this.innerText);
+        $("#formNameFilter").val("^" + this.text);
         $("#execFormFilter").click();
         return false;
     });
