@@ -105,21 +105,9 @@ $('document').ready(function() {
     $("#execFormFilter").click(function() {
         updateSchemaTable();
     });
-    $("#typeFilterAll").click(function() {
-        $('#multiFilter input[type="checkbox"]').each(function() {
-            this.checked = true;
-        });
-        $("#execFormFilter").click();
-    });
     $("#typeFilterNone").click(function() {
         checkBoxes.each(function() {
             this.checked = false;
-        });
-        $("#execFormFilter").click();
-    });
-    $("#typeFilterInvert").click(function() {
-        checkBoxes.each(function() {
-            this.checked = !this.checked;
         });
         $("#execFormFilter").click();
     });

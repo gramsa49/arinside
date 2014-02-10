@@ -1630,15 +1630,13 @@ string CDocMain::CreateSchemaFilterControl()
 	stringstream content;	
 	content << "<div>" 
 		<< "<span class='clearable'><input id='formNameFilter' class='data_field' type='text' /></span><button id='execFormFilter' class>Filter</button> &nbsp;&nbsp;&nbsp; "
-		<< "<span class='multiFilter' id='multiFilter'>"
+		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
 		<< "<input id='typeFilterRegular' type='checkbox' value='1'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
 		<< "<input id='typeFilterJoin' type='checkbox' value='2'/><label for='typeFilterJoin'>&nbsp;Join</label>"
 		<< "<input id='typeFilterView' type='checkbox' value='3'/><label for='typeFilterView'>&nbsp;View</label>"
 		<< "<input id='typeFilterDialog' type='checkbox' value='4'/><label for='typeFilterDialog'>&nbsp;Dialog</label>"
 		<< "<input id='typeFilterVendor' type='checkbox' value='5'/><label for='typeFilterVendor'>&nbsp;Vendor</label>"
-		<< "<button id='typeFilterAll'>V</button>"
-		<< "<button id='typeFilterNone'>&nbsp;</button>"
-		<< "<button id='typeFilterInvert'>~</button>"
+		<< " <button id='typeFilterNone'>Clear All</button>"
 		<< "</span>"
 	<< "</div>";
 
