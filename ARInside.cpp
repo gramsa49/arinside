@@ -113,8 +113,10 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 {
 	cout << endl << "Connecting to server " << server << "..." << endl;
 
-	memset(&arControl, '\0', sizeof(arControl));
-	memset(&arStatus, '\0', sizeof(arStatus));
+	ARStatusList status;
+
+	ARZeroMemory(&arControl);
+	ARZeroMemory(&status);
 
 	if(this->appConfig.bUseUtf8)
 		strcpy(arControl.localeInfo.charSet, "UTF-8");
@@ -126,11 +128,11 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	strncpy(arControl.server, server.c_str(), AR_MAX_SERVER_SIZE);
 	arControl.server[AR_MAX_SERVER_SIZE]='\0';
 
-	int nResult = ARInitialization(&this->arControl,&this->arStatus);
+	int nResult = ARInitialization(&this->arControl,&status);
 	if (nResult != AR_RETURN_OK)
 	{
 		cout << "Initilization of ARAPI returned: " << nResult << " (" << CAREnum::ActiveLinkMessageType(nResult) << ")" << endl;
-		cout << BuildMessageAndFreeStatus(arStatus);
+		cout << BuildMessageAndFreeStatus(status);
 		return nResult;
 	}
 
@@ -143,10 +145,10 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	{
 		if(port>0)
 		{
-			nResult = ARSetServerPort(&this->arControl, this->arControl.server, port, rpc, &this->arStatus);
+			nResult = ARSetServerPort(&this->arControl, this->arControl.server, port, rpc, &status);
 			if (nResult != AR_RETURN_OK)
 			{
-				throw(AppException(BuildMessageAndFreeStatus(arStatus), "undefined", "ARSystem"));
+				throw(AppException(BuildMessageAndFreeStatus(status), "undefined", "ARSystem"));
 			}
 		}
 
@@ -156,7 +158,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			for (unsigned int valId = AR_SESS_TIMEOUT_NORMAL; valId <= AR_SESS_TIMEOUT_XLONG; ++valId)
 			{
 				ARZeroMemory(&val);
-				nResult = ARGetSessionConfiguration(&this->arControl, valId, &val, &this->arStatus);
+				nResult = ARGetSessionConfiguration(&this->arControl, valId, &val, &status);
 
 				// validate result
 				if (nResult != AR_RETURN_OK) continue;	// ok, if this fails, dont bother .. next one
@@ -168,10 +170,10 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 				val.u.intVal = this->appConfig.apiTimeout;
 
 				// now configure session
-				nResult = ARSetSessionConfiguration(&this->arControl, valId, &val, &this->arStatus);
+				nResult = ARSetSessionConfiguration(&this->arControl, valId, &val, &status);
 				if (nResult != AR_RETURN_OK)
 				{
-					cout << "Setting session timeout failed: " << BuildMessageAndFreeStatus(arStatus);
+					cout << "Setting session timeout failed: " << BuildMessageAndFreeStatus(status);
 				}
 			}
 		}
@@ -179,13 +181,13 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 		if(nResult == AR_RETURN_OK)
 		{
 			ARBoolean isAdmin, isSubadmin, hasCustomize;
-			nResult = ARVerifyUser(&this->arControl, &isAdmin, &isSubadmin, &hasCustomize, &this->arStatus);
+			nResult = ARVerifyUser(&this->arControl, &isAdmin, &isSubadmin, &hasCustomize, &status);
 			
 			if (nResult != AR_RETURN_OK)
 			{
-				throw(AppException(BuildMessageAndFreeStatus(arStatus), "undefined", "ARSystem"));
+				throw(AppException(BuildMessageAndFreeStatus(status), "undefined", "ARSystem"));
 			}
-			FreeARStatusList(&this->arStatus, false);
+			FreeARStatusList(&status, false);
 
 			serverInfoList.LoadAndGetValue(AR_SERVER_INFO_HOSTNAME, StoreTo(this->srvHostName));
 			serverInfoList.LoadAndGetValue(AR_SERVER_INFO_FULL_HOSTNAME, StoreTo(this->srvFullHostName));
@@ -203,14 +205,18 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 		}
 	}
 
-	FreeARStatusList(&this->arStatus, false);
+	FreeARStatusList(&status, false);
 	return nResult;
 }
 
 int CARInside::Terminate(void)
 {
-	ARTermination(&this->arControl, &this->arStatus);
-	FreeARStatusList(&this->arStatus, false);
+	ARStatusList status;
+	ARZeroMemory(&status);
+
+	ARTermination(&this->arControl, &status);
+	
+	FreeARStatusList(&status, false);
 	return 0;
 }
 
@@ -268,6 +274,9 @@ void CARInside::LoadFromFile(void)
 	{
 		cout << endl << "Loading objects from file '" << appConfig.objListXML << "'" << endl;
 
+		ARStatusList status;
+		ARZeroMemory(&status);
+
 		ARXMLInputDoc xmlInputDoc;
 		xmlInputDoc.docType = AR_XML_DOC_FILE_NAME;
 		xmlInputDoc.u.fileName = (char*)appConfig.objListXML.c_str();
@@ -282,7 +291,7 @@ void CARInside::LoadFromFile(void)
 			&parsedStream,
 			&parsedObjects,
 			NULL,
-			&this->arStatus) == AR_RETURN_OK)
+			&status) == AR_RETURN_OK)
 		{			
 			cout << parsedObjects.numItems << " items loaded." << endl;
 
@@ -457,13 +466,13 @@ void CARInside::LoadFromFile(void)
 		else
 		{
 			cout << "An error occured parsing the xml document '" << appConfig.objListXML << "'" << endl;
-			cout << BuildMessageAndFreeStatus(this->arStatus);
+			cout << BuildMessageAndFreeStatus(status);
 		}
 		if (!arServerVersion.empty())
 			cout << "server version: " << arServerVersion << endl;
 
 		FreeARXMLParsedStream(&parsedStream, false);
-		FreeARStatusList(&this->arStatus, false);
+		FreeARStatusList(&status, false);
 	} 
 	catch (...)
 	{ 
@@ -1987,7 +1996,8 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel, bool 
 		if(obj->GetChangeDiary() != NULL)
 		{				
 			ARDiaryList diaryList; ARZeroMemory(&diaryList);
-			if(ARDecodeDiary(&this->arControl, const_cast<char*>(obj->GetChangeDiary()), &diaryList, &this->arStatus)==AR_RETURN_OK)
+			ARStatusList status; ARZeroMemory(&status);
+			if(ARDecodeDiary(&this->arControl, const_cast<char*>(obj->GetChangeDiary()), &diaryList, &status)==AR_RETURN_OK)
 			{
 				if(diaryList.numItems > 0)
 				{
@@ -2002,7 +2012,8 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel, bool 
 					historyLog << EmptyValue << endl;
 				}
 			}
-			FreeARDiaryList(&diaryList, false);				
+			FreeARDiaryList(&diaryList, false);
+			FreeARStatusList(&status, false);
 		}
 
 		CTable tbl("history", "TblObjectHistory");
@@ -2433,11 +2444,12 @@ void CARInside::SetupOverlaySupport()
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 	if (CompareServerVersion(7,6,4) >= 0 && appConfig.bOverlaySupport)
 	{
+		ARStatusList status; ARZeroMemory(&status);
 		ARValueStruct value;
 		value.dataType = AR_DATA_TYPE_CHAR;
 		value.u.charVal = (char*)AR_OVERLAY_CLIENT_MODE_FULL;
-		if (ARSetSessionConfiguration(&arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &arStatus) != AR_RETURN_OK)
-			cerr << "SetSessionConfiguration failed: " << BuildMessageAndFreeStatus(arStatus);
+		if (ARSetSessionConfiguration(&arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &status) != AR_RETURN_OK)
+			cerr << "SetSessionConfiguration failed: " << BuildMessageAndFreeStatus(status);
 	}
 #endif
 }

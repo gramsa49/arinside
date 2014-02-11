@@ -65,7 +65,6 @@ public:
 	~CARInside(void);
 
 	ARControlStruct		arControl;
-	ARStatusList		arStatus;
 	AppConfig			appConfig;
 
 	int					arXmlVersion;
