@@ -722,6 +722,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARStatusList.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARStatusList.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\ARUser.cpp"
 				>
 			</File>

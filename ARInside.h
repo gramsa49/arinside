@@ -79,7 +79,6 @@ public:
 	int Init(string user, string pw, string server, int port, int rpc);
 	void DoWork(int nMode);
 	int Terminate(void);
-	string GetARStatusError(ARStatusList* status);	
 
 	bool FileExists(string fName);
 	void LoadServerObjects(int nMode);
@@ -171,8 +170,6 @@ public:
 private:
 	static CARInside*	pInsideInstance;
 private:	
-	string GetARStatusError();	
-
 	int LoadActiveLinks(void);
 	int LoadFilters(void);
 	int LoadEscalations(void);

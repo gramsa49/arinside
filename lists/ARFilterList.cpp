@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARFilterList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
 
@@ -124,7 +125,7 @@ bool CARFilterList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	// ok, now retrieve all informations of the filters we need
@@ -158,7 +159,7 @@ bool CARFilterList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt object that keeps us from getting all at once
@@ -177,7 +178,7 @@ bool CARFilterList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -223,7 +224,7 @@ bool CARFilterList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}	
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 			}
 
 			// now update list counts
@@ -397,7 +398,7 @@ int CARFilterList::AddFilterFromXML(ARXMLParsedStream &stream, const char* filte
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

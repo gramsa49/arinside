@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARVUIList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CARVUIListXML - implementation
@@ -140,7 +141,7 @@ bool CARVUIListServer::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return false;
 	}
 }

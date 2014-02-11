@@ -19,6 +19,7 @@
 
 #include "core/ChangeHistoryEntry.h"
 #include "core/ARHandle.h"
+#include "core/ARStatusList.h"
 
 #include "doc/DocMain.h"
 #include "doc/DocUserDetails.h"
@@ -129,7 +130,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 	if (nResult != AR_RETURN_OK)
 	{
 		cout << "Initilization of ARAPI returned: " << nResult << " (" << CAREnum::ActiveLinkMessageType(nResult) << ")" << endl;
-		cout << GetARStatusError();
+		cout << BuildMessageAndFreeStatus(arStatus);
 		return nResult;
 	}
 
@@ -145,7 +146,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			nResult = ARSetServerPort(&this->arControl, this->arControl.server, port, rpc, &this->arStatus);
 			if (nResult != AR_RETURN_OK)
 			{
-				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
+				throw(AppException(BuildMessageAndFreeStatus(arStatus), "undefined", "ARSystem"));
 			}
 		}
 
@@ -170,7 +171,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 				nResult = ARSetSessionConfiguration(&this->arControl, valId, &val, &this->arStatus);
 				if (nResult != AR_RETURN_OK)
 				{
-					cout << "Setting session timeout failed: " << GetARStatusError();
+					cout << "Setting session timeout failed: " << BuildMessageAndFreeStatus(arStatus);
 				}
 			}
 		}
@@ -182,7 +183,7 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 			
 			if (nResult != AR_RETURN_OK)
 			{
-				throw(AppException(GetARStatusError(), "undefined", "ARSystem"));
+				throw(AppException(BuildMessageAndFreeStatus(arStatus), "undefined", "ARSystem"));
 			}
 			FreeARStatusList(&this->arStatus, false);
 
@@ -211,37 +212,6 @@ int CARInside::Terminate(void)
 	ARTermination(&this->arControl, &this->arStatus);
 	FreeARStatusList(&this->arStatus, false);
 	return 0;
-}
-
-string CARInside::GetARStatusError(ARStatusList* status)
-{
-	const unsigned int maxTypes = 3;		// max index of the following array
-	const char* returnTypes[] = { "ARROK", "ARWARN", "ARERR", "" };
-	stringstream strm;
-	strm.str("");
-
-	if (status == NULL || status->numItems == 0) return strm.str();
-
-	if(status->statusList != NULL)
-	{
-		for (unsigned int i = 0; i < status->numItems; i++)
-		{
-			const char* typeStr = returnTypes[min(status->statusList[i].messageType,maxTypes)];
-			strm << "[" << typeStr << " " << status->statusList[i].messageNum << "] ";
-			strm << status->statusList[i].messageText << endl;
-			if (status->statusList[i].appendedText != NULL) 
-				strm << "  " << status->statusList[i].appendedText << endl;
-		}
-	}
-
-	FreeARStatusList(status, false);
-	return strm.str();
-}
-
-string CARInside::GetARStatusError()
-{
-	string errorText = GetARStatusError(&this->arStatus);
-	return errorText;
 }
 
 bool CARInside::FileExists(string fName)
@@ -487,7 +457,7 @@ void CARInside::LoadFromFile(void)
 		else
 		{
 			cout << "An error occured parsing the xml document '" << appConfig.objListXML << "'" << endl;
-			cout << GetARStatusError();
+			cout << BuildMessageAndFreeStatus(this->arStatus);
 		}
 		if (!arServerVersion.empty())
 			cout << "server version: " << arServerVersion << endl;
@@ -2467,7 +2437,7 @@ void CARInside::SetupOverlaySupport()
 		value.dataType = AR_DATA_TYPE_CHAR;
 		value.u.charVal = (char*)AR_OVERLAY_CLIENT_MODE_FULL;
 		if (ARSetSessionConfiguration(&arControl, AR_SESS_CONTROL_PROP_API_OVERLAYGROUP, &value, &arStatus) != AR_RETURN_OK)
-			cerr << "SetSessionConfiguration failed: " << GetARStatusError(&arStatus);
+			cerr << "SetSessionConfiguration failed: " << BuildMessageAndFreeStatus(arStatus);
 	}
 #endif
 }

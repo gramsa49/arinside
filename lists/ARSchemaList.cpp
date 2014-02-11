@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARSchemaList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
 #include "support/SchemaDbQueryBuilder.h"
@@ -132,7 +133,7 @@ bool CARSchemaList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	// ok, now retrieve all informations of the schemas we need
@@ -232,7 +233,7 @@ bool CARSchemaList::LoadFromServer()
 			}
 			else
 			{
-				cout << arIn->GetARStatusError(&status);
+				cout << BuildMessageAndFreeStatus(status);
 			}
 			// </APIBUG-WORKAROUND>
 
@@ -250,7 +251,7 @@ bool CARSchemaList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt schema that keeps us from getting all schemas at once
@@ -269,7 +270,7 @@ bool CARSchemaList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -317,7 +318,7 @@ bool CARSchemaList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 			}
 
 			// now update list counts
@@ -456,7 +457,7 @@ void CARSchemaList::LoadDatabaseDetails()
 		}
 		else
 		{
-			cout << arIn->GetARStatusError(&status);
+			cout << BuildMessageAndFreeStatus(status);
 		}
 	}
 }
@@ -657,7 +658,7 @@ int CARSchemaList::AddSchemaFromXML(ARXMLParsedStream &stream, const char* schem
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

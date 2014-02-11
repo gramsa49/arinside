@@ -18,6 +18,7 @@
 #include "ARRoleList.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
+#include "../core/ARStatusList.h"
 
 void GetGroupStringAsVector(const char* groupStr, vector<int>& addToGroupList)
 {
@@ -195,12 +196,12 @@ bool CARRoleList::LoadFromServer()
 			}
 			else // ARGetListEntryWithFields failed
 			{
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 			}
 		}
 		else // ARLoadARQualifierStruct failed
 		{
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		delete[] fields.fieldsList;

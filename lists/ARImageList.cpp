@@ -20,6 +20,7 @@
 #include "../output/WebUtil.h"
 #include "../core/ARImage.h"
 #include "../core/ARHandle.h"
+#include "../core/ARStatusList.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 
@@ -105,7 +106,7 @@ bool CARImageList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleImages(&arIn->arControl,
@@ -131,7 +132,7 @@ bool CARImageList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt object that keeps us from getting all at once
@@ -154,7 +155,7 @@ bool CARImageList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -193,7 +194,7 @@ bool CARImageList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}	
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 
 				// now update list counts
 				names.numItems = curListPos;
@@ -323,7 +324,7 @@ int CARImageList::AddImageFromXML(ARXMLParsedStream &stream, const char* imageNa
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

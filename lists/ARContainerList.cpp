@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARContainerList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "BlackList.h"
 
 CARContainerList::CARContainerList(void)
@@ -130,7 +131,7 @@ bool CARContainerList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	// ok, now retrieve all informations of the containers we need
@@ -167,7 +168,7 @@ bool CARContainerList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		if (!arIn->appConfig.slowObjectLoading)
@@ -198,7 +199,7 @@ bool CARContainerList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -244,7 +245,7 @@ bool CARContainerList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 
 				// now update list counts
 				names.numItems = curListPos;
@@ -400,7 +401,7 @@ int CARContainerList::AddContainerFromXML(ARXMLParsedStream &stream, const char*
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

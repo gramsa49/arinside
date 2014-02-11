@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "BlackList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 
 // with this its easier to change container type later, if needed
 typedef vector<string> BlacklistContainer;
@@ -152,7 +153,7 @@ bool CBlackList::LoadFromServer(const string &packingListName)
 		return true;
 	}
 	else
-		cerr << "Failed loading the blacklist: " << CARInside::GetInstance()->GetARStatusError(&status);
+		cerr << "Failed loading the blacklist: " << BuildMessageAndFreeStatus(status);
 
 	return false;
 }

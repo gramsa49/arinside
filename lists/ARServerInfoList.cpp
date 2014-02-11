@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARServerInfoList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../core/ARValue.h"
 
 CARServerInfoList::CARServerInfoList()
@@ -120,7 +121,7 @@ bool CARServerInfoList::Load()
 		}
 		else
 		{
-			cerr << "Error Loading System Information properties:" << pInside->GetARStatusError(&arStatus);
+			cerr << "Error Loading System Information properties:" << BuildMessageAndFreeStatus(arStatus);
 		}
 		delete[] requestList.requestList;
 		ARZeroMemory(&requestList);
@@ -156,7 +157,7 @@ bool CARServerInfoList::LoadAndGetValue(unsigned int serverInfoVal, const CStore
 	}
 	else
 	{
-		cerr << "Failed to load server info " << serverInfoVal << ": " << pInside->GetARStatusError(&status);
+		cerr << "Failed to load server info " << serverInfoVal << ": " << BuildMessageAndFreeStatus(status);
 	}
 
 	FreeARServerInfoList(&serverInfo, false);

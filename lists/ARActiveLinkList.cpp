@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARActiveLinkList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
 #include "../output/IFileStructure.h"
 #include "BlackList.h"
@@ -112,7 +113,7 @@ bool CARActiveLinkList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	// ok, now retrieve all informations of the active links we need
@@ -151,7 +152,7 @@ bool CARActiveLinkList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt actlink that keeps us from getting all activelinks at once
@@ -170,7 +171,7 @@ bool CARActiveLinkList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -221,7 +222,7 @@ bool CARActiveLinkList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}		
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 			}
 
 			// now update list counts
@@ -400,7 +401,7 @@ int CARActiveLinkList::AddActiveLinkFromXML(ARXMLParsedStream &stream, const cha
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

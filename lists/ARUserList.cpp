@@ -18,6 +18,7 @@
 #include "ARUserList.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
+#include "../core/ARStatusList.h"
 
 CARUserList::CARUserList(void)
 {
@@ -206,13 +207,13 @@ bool CARUserList::LoadFromServer()
 			}
 			else // ARGetListEntryWithFields failed
 			{
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 			}
 			FreeARQualifierStruct(&qualifier, false);
 		}
 		else // ARLoadARQualifierStruct failed
 		{
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		delete[] fields.fieldsList;

@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARFieldList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../util/RefItem.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -215,7 +216,7 @@ bool CARFieldListServer::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return false;
 	}
 }

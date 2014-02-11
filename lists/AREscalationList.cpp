@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "AREscalationList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
 
@@ -115,7 +116,7 @@ bool CAREscalationList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	// ok, now retrieve all informations of the escalations we need
@@ -144,7 +145,7 @@ bool CAREscalationList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		if (!arIn->appConfig.slowObjectLoading)
@@ -165,7 +166,7 @@ bool CAREscalationList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -206,7 +207,7 @@ bool CAREscalationList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 
 				// now update list counts
 				names.numItems = curListPos;
@@ -356,7 +357,7 @@ int CAREscalationList::AddEscalationFromXML(ARXMLParsedStream &stream, const cha
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

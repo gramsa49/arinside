@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARMenuList.h"
 #include "../ARInside.h"
+#include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
 
@@ -95,7 +96,7 @@ bool CARMenuList::LoadFromServer()
 			objectsToLoad = &objectNames;
 		}
 		else
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 	}
 
 	// ok, now retrieve all informations of the menus we need
@@ -120,7 +121,7 @@ bool CARMenuList::LoadFromServer()
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 
 		// ok, fallback to slow data retrieval
 		// this could be necessaray if there is a corrupt object that keeps us from getting all at once
@@ -139,7 +140,7 @@ bool CARMenuList::LoadFromServer()
 				objectsToLoad = &objectNames;
 			}
 			else
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		if (objectsToLoad != NULL && objectsToLoad->numItems > 0)
@@ -176,7 +177,7 @@ bool CARMenuList::LoadFromServer()
 					FreeARStatusList(&status, false);
 				}	
 				else
-					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << arIn->GetARStatusError(&status);
+					cerr << "Failed to load '" << names.nameList[curListPos] << "' : " << BuildMessageAndFreeStatus(status);
 
 				// now update list counts
 				names.numItems = curListPos;
@@ -304,7 +305,7 @@ int CARMenuList::AddMenuFromXML(ARXMLParsedStream &stream, const char* menuName,
 	}
 	else
 	{
-		cerr << arIn->GetARStatusError(&status);
+		cerr << BuildMessageAndFreeStatus(status);
 		return -1;
 	}
 }

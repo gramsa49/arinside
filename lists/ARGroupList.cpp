@@ -18,6 +18,7 @@
 #include "ARGroupList.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
+#include "../core/ARStatusList.h"
 
 CARGroupList::CARGroupList(void)
 {
@@ -178,12 +179,12 @@ bool CARGroupList::LoadFromServer()
 			}
 			else // ARGetListEntryWithFields failed
 			{
-				cerr << arIn->GetARStatusError(&status);
+				cerr << BuildMessageAndFreeStatus(status);
 			}
 		}
 		else // ARLoadARQualifierStruct failed
 		{
-			cerr << arIn->GetARStatusError(&status);
+			cerr << BuildMessageAndFreeStatus(status);
 		}
 
 		delete[] fields.fieldsList;
