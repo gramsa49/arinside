@@ -143,6 +143,7 @@ public:
 	string LinkToMenu(const CRefItem& refItem, int rootLevel);
 	string LinkToSchema(const string& schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
+	string LinkToSchema(int schemaInsideId, const string &nameToUseIfSchemaNotExists, int rootLevel);
 	string LinkToSchemaIndex(string indexName, int schemaInsideId, int fromRootLevel);	
 	string LinkToEscalation(const string& escalationName, int fromRootLevel);
 	string LinkToEscalation(const CRefItem& refItem, int fromRootLevel);

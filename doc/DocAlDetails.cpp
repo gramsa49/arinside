@@ -237,7 +237,8 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 {
 	stringstream pgStrm;
 	pgStrm.str("");
-	int schemaInsideId = -2;
+	CARSchema schema(schemaName);
+	int schemaInsideId = schema.GetInsideId();
 
 	try
 	{	
@@ -247,9 +248,6 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 
 		if(this->al.GetControlField() > 0)
 		{
-			if (schemaInsideId == -2)
-				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
-
 			pgStrm << "Control Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetControlField(), rootLevel) << "<br/><br/>" << endl;
 			CRefItem refItem(this->al, REFM_CONTROLFIELD);
 			pInside->AddFieldReference(schemaInsideId, this->al.GetControlField(), refItem);
@@ -258,9 +256,6 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 
 		if(this->al.GetFocusField() > 0)
 		{
-			if (schemaInsideId == -2)
-				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
-
 			pgStrm << "Focus Field: " << this->pInside->LinkToField(schemaInsideId, this->al.GetFocusField(), rootLevel) << "<br/><br/>" << endl;
 			CRefItem refItem(this->al, REFM_FOCUSFIELD);
 			pInside->AddFieldReference(schemaInsideId, al.GetFocusField(), refItem);
@@ -270,15 +265,10 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 		strmTmp.str("");
 		if(this->al.GetRunIf().operation != AR_COND_OP_NONE)
 		{		
-			if (schemaInsideId == -2)
-				schemaInsideId = this->pInside->SchemaGetInsideId(schemaName);
-
 			CRefItem refItem(this->al, REFM_RUNIF);
 
 			CARQualification arQual(*this->pInside);
-			int pFormId = schemaInsideId;
-			int sFormId = schemaInsideId;
-			arQual.CheckQuery(&this->al.GetRunIf(), refItem, 0, pFormId, sFormId, strmTmp, rootLevel);
+			arQual.CheckQuery(&this->al.GetRunIf(), refItem, 0, schemaInsideId, schemaInsideId, strmTmp, rootLevel);
 		}
 		else
 		{

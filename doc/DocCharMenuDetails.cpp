@@ -361,7 +361,7 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 			CARSchema querySchema(menu.schema);
 
 			strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-			strm << "Schema: " << this->pInside->LinkToSchema(querySchema.GetInsideId(), rootLevel) << "<br/>" << endl;	
+			strm << "Schema: " << this->pInside->LinkToSchema(querySchema.GetInsideId(), menu.schema, rootLevel) << "<br/>" << endl;	
 
 			//Label Fields
 			for(int i=0; i< 5; i++)

@@ -1180,12 +1180,7 @@ string CARInside::LinkToSchemaIndex(string indexName, int schemaInsideId, int fr
 
 string CARInside::LinkToSchema(int insideId, int fromRootLevel)
 {
-	CARSchema schema(insideId);
-	if(schema.Exists())
-	{
-		return schema.GetURL(fromRootLevel);
-	}
-	return EmptyValue;
+	return LinkToSchema(insideId, EmptyValue, fromRootLevel);
 }
 
 string CARInside::LinkToSchema(const string& schemaName, int fromRootLevel)
@@ -1196,6 +1191,16 @@ string CARInside::LinkToSchema(const string& schemaName, int fromRootLevel)
 		return schema.GetURL(fromRootLevel);
 	}
 	return schemaName;
+}
+
+string CARInside::LinkToSchema(int schemaInsideId, const string &nameToUseIfSchemaNotExists, int fromRootLevel)
+{
+	CARSchema schema(schemaInsideId);
+	if (schema.Exists())
+	{
+		return schema.GetURL(fromRootLevel);
+	}
+	return nameToUseIfSchemaNotExists;
 }
 
 int CARInside::SchemaGetInsideId(string searchObjName)
