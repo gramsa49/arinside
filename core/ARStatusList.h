@@ -33,7 +33,4 @@ private:
 	bool freeStatusList;
 };
 
-//typedef CARStatusList BuildMessageAndFreeStatus;
-//
-//std::ostream& operator<<(std::ostream &output, CARStatusList &statusList);
 std::string BuildMessageAndFreeStatus(ARStatusList &statusList);

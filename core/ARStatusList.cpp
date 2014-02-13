@@ -65,12 +65,6 @@ string CARStatusList::ToString()
 	return strm.str();
 }
 
-//std::ostream& operator<<(std::ostream &output, CARStatusList &statusList)
-//{
-//	statusList.ToStream(output);
-//	return output;
-//}
-
 string BuildMessageAndFreeStatus(ARStatusList &statusList)
 {
 	CARStatusList status(statusList);
