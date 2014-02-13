@@ -57,6 +57,7 @@ public:
 	static string Keyword(int nType);
 	static int OpenWindowModeMapped(int nType);
 	static string OpenWindowMode(int nType);
+	static string OpenWindowDisplayType(int nType);
 	static string FilterAction(int nType);
 	static string MessageType(int nType);
 	static string NotifyMechanism(int nType);

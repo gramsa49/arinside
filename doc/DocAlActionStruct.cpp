@@ -812,42 +812,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 		// display type
 		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_MODIFY || windowMode == AR_ACTIVE_LINK_ACTION_OPEN_DSPLY)
 		{
-			strm << "<br/>Display Type: ";
-			switch (action.windowMode)
-			{
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_LST:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_LST:
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_LST:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_LST:
-#endif
-				strm << "List Only";
-				break;
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DETAIL:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_DETAIL:
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_DETAIL:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_DETAIL:
-#endif
-				strm << "Details Only";
-				break;
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_SPLIT:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY_SPLIT:
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT_SPLIT:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT_SPLIT:
-#endif
-				strm << "Split Window";
-				break;
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
-			case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
-#endif
-				strm << "&lt;Clear&gt;";
-			}
-			strm << endl;
+			strm << "<br/>Display Type: " << CAREnum::OpenWindowDisplayType(action.windowMode) << endl;
 		}
 
 		// target location
