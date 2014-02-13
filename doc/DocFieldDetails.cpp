@@ -499,7 +499,7 @@ string CDocFieldDetails::FieldLimits()
 			{
 				const ARTableLimitsStruct& fLimit = this->field.GetLimits().u.tableLimits;
 				string tableServer;
-				string tableSchema;
+				string tableSchemaName;
 
 				strm << "<p>Server: ";
 				if (fLimit.server[0] == '$' && fLimit.sampleServer[0] != 0)
@@ -525,12 +525,12 @@ string CDocFieldDetails::FieldLimits()
 				if (fLimit.schema[0] == '$' && fLimit.sampleSchema[0] != 0)
 				{
 					int fieldId = atoi(&fLimit.schema[1]);
-					tableSchema = fLimit.sampleSchema;
+					tableSchemaName = fLimit.sampleSchema;
 
-					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						tableSchema = schema.GetARName();
+					if (tableSchemaName.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						tableSchemaName = schema.GetARName();
 
-					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(schema.GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchema, rootLevel) << ")";
+					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : pInside->LinkToField(schema.GetInsideId(), fieldId, rootLevel) ) << "$ (Sample Form: " << pInside->LinkToSchema(tableSchemaName, rootLevel) << ")";
 
 					if (fieldId > 0)
 					{
@@ -540,12 +540,12 @@ string CDocFieldDetails::FieldLimits()
 				}
 				else
 				{
-					tableSchema = fLimit.schema;
+					tableSchemaName = fLimit.schema;
 
-					if (tableSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0)
-						tableSchema = schema.GetARName();
+					if (tableSchemaName.compare(AR_CURRENT_SCHEMA_TAG) == 0)
+						tableSchemaName = schema.GetARName();
 
-					strm << this->pInside->LinkToSchema(tableSchema, rootLevel);
+					strm << this->pInside->LinkToSchema(tableSchemaName, rootLevel);
 				}
 				strm << "<p/>" << endl;
 
@@ -554,10 +554,9 @@ string CDocFieldDetails::FieldLimits()
 				{		
 					CRefItem refItem; // Dont change; reference to nothing, because table field references are already created
 					CARQualification arQual(*this->pInside);
+					CARSchema tableSchema(tableSchemaName);
 
-					int pFormId = schema.GetInsideId();
-					int sFormId = this->pInside->SchemaGetInsideId(tableSchema);
-					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
+					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, schema.GetInsideId(), tableSchema.GetInsideId(), strmQuery, rootLevel);
 				}
 				else
 				{

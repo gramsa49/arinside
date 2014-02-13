@@ -63,7 +63,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 		case SFT_SERVER:
 		case SFT_SAMPLEDATA:
 			{
-				int pFormId = arIn.SchemaGetInsideId(attachedSchemaName);
+				int pFormId = wfSchema.GetInsideId();
 				int sFormId = -1;
 				string readServer = sfh.GetServerName();
 				string readSchema = sfh.GetSchemaName();
@@ -76,13 +76,13 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 				if (sfh.GetType() == SFT_SAMPLEDATA)
 				{
 					int fieldId = sfh.GetServerFieldId();
-					strmServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(attachedSchemaName, fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
+					strmServer << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(wfSchema.GetInsideId(), fieldId, rootLevel)) << "$ (Sample Server: " << arIn.LinkToServerInfo(readServer, rootLevel) << ")";
 
 					CRefItem refItemServer(obj, ifElse, nAction, REFM_SETFIELDS_SERVER);
 					arIn.AddFieldReference(pFormId, fieldId, refItemServer);
 
 					fieldId = sfh.GetSchemaFieldId();
-					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(attachedSchemaName, fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
+					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(wfSchema.GetInsideId(), fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
 					schemaNameActionIsReadingFrom = readSchema;
 
 					CRefItem refItemForm(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
@@ -98,7 +98,8 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 				// *************************************************************************
 
-				sFormId = arIn.SchemaGetInsideId(readSchema);
+				CARSchema readFromSchemaObj(readSchema);
+				sFormId = readFromSchemaObj.GetInsideId();
 
 				strmQual << "<br/>Set Field If<br/>" << endl;
 				stringstream strmTmpQual;
@@ -129,7 +130,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 				if(!sfh.GetSqlCommand().empty())
 				{
 					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_SQL_QUALIFICATION);
-					strmQual << arIn.TextFindFields(sfh.GetSqlCommand(), "$", arIn.SchemaGetInsideId(attachedSchemaName), rootLevel, true, &refItem) << "<br/><br/>" << endl;
+					strmQual << arIn.TextFindFields(sfh.GetSqlCommand(), "$", wfSchema.GetInsideId(), rootLevel, true, &refItem) << "<br/><br/>" << endl;
 				}
 				else
 					strmQual << EmptyValue << "<br/><br/>" << endl;
@@ -148,18 +149,18 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 				if (schemaName.substr(0, 1) == "$")
 				{
 					CRefItem refItem(obj, ifElse, nAction, REFM_SETFIELDS_FILTERAPI_PLUGINNAME);
-					schemaName = arIn.TextFindFields(sfh.GetSchemaName(), "$", arIn.SchemaGetInsideId(attachedSchemaName), rootLevel, true, &refItem);
+					schemaName = arIn.TextFindFields(sfh.GetSchemaName(), "$", wfSchema.GetInsideId(), rootLevel, true, &refItem);
 				}
 
 				// the html-documtation for this action is generated directly here
 				writer << "Plugin-Name: " << schemaName << "<br/><br/>" << endl;
 
 				writer << "Input-Mapping: " << "<br/>";
-				CARAssignHelper docInput(arIn, rootLevel, obj, attachedSchemaName, attachedSchemaName);
+				CARAssignHelper docInput(arIn, rootLevel, obj, wfSchema, wfSchema);
 				writer << docInput.FilterApiInputAssignment(sfh.GetFilterAPIInputs(), sfh.GetFilterAPINumItems(), nAction, ifElse);
 
 				writer << "Output-Mapping: " << "<br/>";
-				CARAssignHelper assignHelper(arIn, rootLevel, obj, attachedSchemaName, attachedSchemaName);
+				CARAssignHelper assignHelper(arIn, rootLevel, obj, wfSchema, wfSchema);
 				writer << assignHelper.SetFieldsAssignment(setFieldsStruct, nAction, ifElse);
 			
 				// we've generated our own html-table with input/output mapping. So avoid default table.

@@ -1100,7 +1100,8 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 
 string CARInside::LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel)
 {
-	return LinkToVui(SchemaGetInsideId(schemaName), vuiInsideId, fromRootLevel);
+	CARSchema schema(schemaName);
+	return LinkToVui(schema.GetInsideId(), vuiInsideId, fromRootLevel);
 }
 
 string CARInside::LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLevel)
@@ -1115,7 +1116,8 @@ string CARInside::LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLev
 
 string CARInside::LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel)
 {	
-	return LinkToField(SchemaGetInsideId(schemaName), fieldInsideId, fromRootLevel);
+	CARSchema schema(schemaName);
+	return LinkToField(schema.GetInsideId(), fieldInsideId, fromRootLevel);
 }
 
 string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel)

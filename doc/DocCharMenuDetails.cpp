@@ -358,8 +358,10 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 			CARSchema schema(*curIt);
 
 			const ARCharMenuQueryStruct& menu = this->menu.GetDefinition().u.menuQuery;
+			CARSchema querySchema(menu.schema);
+
 			strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-			strm << "Schema: " << this->pInside->LinkToSchema(menu.schema, rootLevel) << "<br/>" << endl;	
+			strm << "Schema: " << this->pInside->LinkToSchema(querySchema.GetInsideId(), rootLevel) << "<br/>" << endl;	
 
 			//Label Fields
 			for(int i=0; i< 5; i++)
@@ -370,7 +372,7 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 					strm << " (FieldId: " << menu.labelField[i] << ")<br/>" << endl;
 
 					CRefItem refItem(this->menu, REFM_CHARMENU_LABELFIELD);
-					pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.labelField[i], refItem);
+					pInside->AddFieldReference(querySchema.GetInsideId(), menu.labelField[i], refItem);
 				}
 			}
 
@@ -382,9 +384,9 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 
 
 			//Value Field
-			strm << "Value Field: " << this->pInside->LinkToField(menu.schema, menu.valueField, rootLevel) << "<br/>";
+			strm << "Value Field: " << this->pInside->LinkToField(querySchema.GetInsideId(), menu.valueField, rootLevel) << "<br/>";
 			CRefItem refItemValue(this->menu, REFM_CHARMENU_VALUE);
-			pInside->AddFieldReference(pInside->SchemaGetInsideId(menu.schema), menu.valueField, refItemValue);
+			pInside->AddFieldReference(querySchema.GetInsideId(), menu.valueField, refItemValue);
 
 			//Query
 			stringstream strmQuery;
@@ -393,11 +395,8 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 			CRefItem refItemQuery(this->menu, REFM_CHARMENU_QUALIFICATION);
 
 			CARQualification arQual(*this->pInside);
-			int pFormId = this->pInside->SchemaGetInsideId(menu.schema);
-			int sFormId = this->pInside->SchemaGetInsideId(menu.schema);
 			arQual.arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
-
-			arQual.CheckQuery(&menu.qualifier, refItemQuery, 0, schema.GetInsideId(), sFormId, strmQuery, rootLevel);
+			arQual.CheckQuery(&menu.qualifier, refItemQuery, 0, schema.GetInsideId(), querySchema.GetInsideId(), strmQuery, rootLevel);
 
 			if(strmQuery.str().length() > 0)
 			{

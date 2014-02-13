@@ -1203,10 +1203,10 @@ string CDocSchemaDetails::TypeDetails()
 					CRefItem refItem(this->schema, REFM_SCHEMA_JOIN_QUALIFICATION);
 					CARQualification arQual(*this->pInside);
 
-					int pFormId = this->pInside->SchemaGetInsideId(compSchema.u.join.memberA);
-					int sFormId = this->pInside->SchemaGetInsideId(compSchema.u.join.memberB);
+					CARSchema memberA(compSchema.u.join.memberA);
+					CARSchema memberB(compSchema.u.join.memberB);
 
-					arQual.CheckQuery(&compSchema.u.join.joinQual, refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
+					arQual.CheckQuery(&compSchema.u.join.joinQual, refItem, 0, memberA.GetInsideId(), memberB.GetInsideId(), strmQuery, rootLevel);
 
 					strm << "Qualification: " << strmQuery.str();
 				}
@@ -2098,7 +2098,7 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 					if (audit.formName[0] != 0)
 					{
 						row.AddCell("Audited From Form");
-						row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
+						row.AddCell(this->pInside->LinkToSchema(audit.formName,rootLevel));
 						tbl.AddRow(row);
 					}
 				}
@@ -2106,14 +2106,14 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 			case AR_AUDIT_COPY:
 				{
 					row.AddCell("Audit Form");
-					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
+					row.AddCell(this->pInside->LinkToSchema(audit.formName,rootLevel));
 					tbl.AddRow(row);
 				}
 				break;
 			case AR_AUDIT_LOG:
 				{
 					row.AddCell("Audit Log Form");
-					row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(audit.formName),rootLevel));
+					row.AddCell(this->pInside->LinkToSchema(audit.formName,rootLevel));
 					tbl.AddRow(row);
 				}
 				break;
@@ -2198,7 +2198,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		else if (archiveToForm)
 		{
 			stringstream tmpStrm; tmpStrm.str("");
-			tmpStrm << this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(archive.u.formName),rootLevel) << "<br/>" << endl;
+			tmpStrm << this->pInside->LinkToSchema(archive.u.formName,rootLevel) << "<br/>" << endl;
 			tmpStrm << CWebUtil::ChkBoxInput("noAttachments",noAttachments) << "No Attachments&nbsp;&nbsp;";
 			tmpStrm << CWebUtil::ChkBoxInput("noDiary",noDiary) << "No Diary" << endl;
 
@@ -2211,7 +2211,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		{
 			row.ClearCells();
 			row.AddCell("Archive From Form");
-			row.AddCell(this->pInside->LinkToSchema(this->pInside->SchemaGetInsideId(archive.archiveFrom), rootLevel));
+			row.AddCell(this->pInside->LinkToSchema(archive.archiveFrom, rootLevel));
 			tbl.AddRow(row);
 		}
 

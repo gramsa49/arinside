@@ -121,6 +121,7 @@ string CDocWebserviceDetails::WSInformation()
 	try
 	{
 		const ARReferenceList& refs = this->ws.GetReferences();
+		CARSchema wsOwnerSchema(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
 		for(unsigned int i=0; i< refs.numItems; i++)
 		{
@@ -141,11 +142,9 @@ string CDocWebserviceDetails::WSInformation()
 
 							try
 							{
-								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
-
 								CRefItem refItem(this->ws, REFM_WEBSERVICE_PROPERTY);
 								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
-								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, &refItem) << "</pre>";
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, wsOwnerSchema.GetInsideId(), rootLevel, &refItem) << "</pre>";
 							}
 							catch(...)
 							{
@@ -165,11 +164,9 @@ string CDocWebserviceDetails::WSInformation()
 						{
 							try
 							{
-								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
-
 								CRefItem refItem(this->ws, REFM_WEBSERVICE_OPERATION);
 								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
-								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, &refItem) << "</pre>";								
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, wsOwnerSchema.GetInsideId(), rootLevel, &refItem) << "</pre>";								
 							}
 							catch(...)
 							{
@@ -188,11 +185,9 @@ string CDocWebserviceDetails::WSInformation()
 						{
 							try
 							{
-								int schemaId = pInside->SchemaGetInsideId(ws.GetOwnerObjects().ownerObjList[0].ownerName);
-
 								CRefItem refItem(this->ws, REFM_WEBSERVICE_FIELDMAP);
 								string tmpValue = CWebUtil::Validate(ref.reference.u.extRef.value.u.charVal);
-								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, schemaId, rootLevel, &refItem) << "</pre>";
+								strmWsValue << "<pre class=\"preWsInfo\">" << pInside->XMLFindFields(tmpValue, wsOwnerSchema.GetInsideId(), rootLevel, &refItem) << "</pre>";
 							}
 							catch(...)
 							{

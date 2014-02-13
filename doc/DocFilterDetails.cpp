@@ -196,11 +196,9 @@ string CDocFilterDetails::CreateSpecific(string schemaName)
 		{		
 			CRefItem refItem(this->filter, REFM_RUNIF);
 			CARQualification arQual(*this->pInside);
+			CARSchema wfSchema(schemaName);
 
-			int pFormId = this->pInside->SchemaGetInsideId(schemaName.c_str());
-			int sFormId = pFormId;
-
-			arQual.CheckQuery(&this->filter.GetRunIf(), refItem, 0, pFormId, sFormId, strmQuery, rootLevel);
+			arQual.CheckQuery(&this->filter.GetRunIf(), refItem, 0, wfSchema.GetInsideId(), wfSchema.GetInsideId(), strmQuery, rootLevel);
 		}
 		else
 		{
