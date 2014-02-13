@@ -243,18 +243,16 @@ string CDocFilterDetails::WorkflowReferences()
 		for ( ; curIt != endIt; ++curIt)
 		{
 			CARFilter flt(*curIt);
+			unsigned int isEnabled = flt.GetEnabled();
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FILTER));
 			row.AddCell(pInside->LinkToFilterRef(&flt, rootLevel));
 
-			string tmpEnabled = this->pInside->XmlObjEnabled(&flt);
-			string tmpCssEnabled = "";
+			string tmpCssClass;
+			if(!isEnabled) { tmpCssClass = "objStatusDisabled"; }
 
-			if(strcmp(tmpEnabled.c_str(), "Disabled")==0)
-				tmpCssEnabled = "objStatusDisabled";
-
-			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
+			row.AddCell(CTableCell(CAREnum::ObjectEnable(isEnabled), tmpCssClass));
 			row.AddCell("Selected as Error Handler");				
 			tblRef.AddRow(row);
 			refCount++;

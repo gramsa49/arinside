@@ -1493,57 +1493,6 @@ string CARInside::LinkToObjByRefItem(const CRefItem& refItem, int rootLevel)
 	return result;
 }
 
-string CARInside::XmlObjEnabled(CARServerObject *obj)
-{
-	switch(obj->GetServerObjectTypeXML())
-	{
-	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
-		return CAREnum::ObjectEnable(static_cast<CARActiveLink*>(obj)->GetEnabled());
-	case AR_STRUCT_ITEM_XML_FILTER:
-		return CAREnum::ObjectEnable(static_cast<CARFilter*>(obj)->GetEnabled());
-	case AR_STRUCT_ITEM_XML_ESCALATION:
-		return CAREnum::ObjectEnable(static_cast<CAREscalation*>(obj)->GetEnabled());
-	default:
-		return "";
-	}
-}
-
-string CARInside::XmlObjEnabled(int arsStructItemType, string objName)
-{
-	switch(arsStructItemType)
-	{
-	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
-		{
-			CARActiveLink al(objName);
-			if (al.Exists())
-			{
-				return CAREnum::ObjectEnable(al.GetEnabled());
-			}
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_FILTER:
-		{
-			int fltInsideId = filterList.Find(objName.c_str());
-			if (fltInsideId > -1)
-			{
-				return CAREnum::ObjectEnable(filterList.FilterGetEnabled(fltInsideId));
-			}
-		}
-		break;		
-	case AR_STRUCT_ITEM_XML_ESCALATION:
-		{
-			int escInsideId = escalationList.Find(objName.c_str());
-			if (escInsideId > -1)
-			{
-				return CAREnum::ObjectEnable(escalationList.EscalationGetEnabled(escInsideId));
-			}
-		}
-		break;	
-	}
-
-	return "";
-}
-
 void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref)
 {
 	if (ref.GetMessageId() == -1) return; // if no message id is specified, dont create a reference

@@ -114,8 +114,6 @@ public:
 
 	string LinkToServerInfo(string srvName, int rootLevel);
 	string LinkToObjByRefItem(const CRefItem& refItem, int rootLevel);
-	string XmlObjEnabled(int arsStructItemType, string objName);
-	string XmlObjEnabled(CARServerObject *obj);
 
 	int SchemaGetInsideId(string searchObjName);
 
