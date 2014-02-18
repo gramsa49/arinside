@@ -230,7 +230,7 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 
 	try
 	{
-		int rootLevel = file->GetRootLevel();
+		rootLevel = file->GetRootLevel();
 
 		CAlTable tbl(*this->pInside);
 
@@ -245,8 +245,6 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(actLink))
 				continue;
 #endif
-
-			objCount++;
 
 			if(searchChar == "*")  //All objecte
 			{
@@ -271,17 +269,29 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 
 			if(bInsert)
 			{
-				tbl.AddRow(alIdx, rootLevel);
+				objCount++;
 			}
 		}
 
-		if (tbl.NumRows() > 0 || searchChar == "*") 
+		if (tbl.NumRows() > 0 || searchChar == "*")
 		{
 			CWebPage webPage(file->GetFileName(), "Active Link List", rootLevel, this->pInside->appConfig);
-
 			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToActiveLinkIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
+			strmTmp << "<span id='actlinkListFilterResultCount'></span>" << CWebUtil::LinkToActiveLinkIndex(objCount, rootLevel);
+			
+			if (searchChar == "*")
+			{
+				webPage.GetReferenceManager()
+					.AddScriptReference("img/actlinkList.js")
+					.AddScriptReference("img/jquery.timers.js")
+					.AddScriptReference("img/jquery.address.min.js");
+
+				ActiveLinkListJson(strmTmp);
+				strmTmp << CreateActlinkFilterControl() << endl;
+			}
+
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -293,6 +303,67 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 		cout << "EXCEPTION ActiveLinkList: " << e.what() << endl;
 	}
 	return objCount;
+}
+
+void CDocMain::ActiveLinkListJson(ostream &strm)
+{
+	Document document;
+	Document::AllocatorType &alloc = document.GetAllocator();
+	document.SetArray();
+
+	unsigned int actlinkCount = this->pInside->alList.GetCount();
+	for (unsigned int actlinkIndex = 0; actlinkIndex < actlinkCount; ++actlinkIndex)
+	{	
+		CARActiveLink actlink(actlinkIndex);
+		
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(actlink))
+				continue;
+#endif
+
+			CARProplistHelper props(&actlink.GetPropList());
+			CPageParams actlinkDetailPage(PAGE_DETAILS, &actlink);
+
+			// create a new json row and make it an array
+			Value actlinkRow;
+			actlinkRow.SetArray();
+
+			// now build the needed temporary variables
+			string strName = actlink.GetName();
+			string strModifiedDate = CUtil::DateTimeToString(actlink.GetTimestamp());
+			string strLink = CWebUtil::GetRelativeURL(rootLevel, actlinkDetailPage);
+			string strExecuteOn = actlink.GetExecuteOn(true, &props);
+
+			// build the values
+			Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+			Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+			Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+			Value valExecuteOn(strExecuteOn.c_str(), static_cast<SizeType>(strExecuteOn.size()), alloc);
+
+			// add everything to the row
+			actlinkRow.PushBack(valName, alloc);
+			actlinkRow.PushBack(actlink.GetEnabled(), alloc);
+			actlinkRow.PushBack(actlink.GetGroupList().numItems, alloc);
+			actlinkRow.PushBack(actlink.GetOrder(), alloc);
+			actlinkRow.PushBack(valExecuteOn, alloc);
+			actlinkRow.PushBack(actlink.GetIfActions().numItems, alloc);
+			actlinkRow.PushBack(actlink.GetElseActions().numItems, alloc);
+			actlinkRow.PushBack(valModifiedDate, alloc);
+			actlinkRow.PushBack(actlink.GetLastChanged(), alloc);
+			actlinkRow.PushBack(valLink, alloc);
+
+			// add the row to the document
+			document.PushBack(actlinkRow, alloc);
+	}
+
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+
+	strm << endl << "<script type=\"text/javascript\">" << endl;
+	strm << "var alList = "; document.Accept(writer); strm << ";";
+	strm << "var rootLevel = " << rootLevel << ";";
+	strm << endl;
+	strm << "</script>" << endl;
 }
 
 void CDocMain::ActiveLinkActionList()
@@ -1625,11 +1696,18 @@ bool CDocMain::SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 )
 	return ( t1.msgNumber < t2.msgNumber);
 }
 
+string CDocMain::CreateStandardFilterControl(const string &inputControlId)
+{
+	stringstream content;
+	content << "<span class='clearable'><label for='" << inputControlId << "'>Filter: </label><input id='" << inputControlId << "' class='data_field' type='text' /></span><button style='visibility:hidden' id='exec" << inputControlId << "' class></button>";
+	return content.str();
+}
+
 string CDocMain::CreateSchemaFilterControl()
 {
 	stringstream content;	
 	content << "<div>" 
-		<< "<span class='clearable'><input id='formNameFilter' class='data_field' type='text' /></span><button id='execFormFilter' class>Filter</button> &nbsp;&nbsp;&nbsp; "
+		<< CreateStandardFilterControl("formFilter") << " &nbsp;&nbsp;&nbsp; "
 		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
 		<< "<input id='typeFilterRegular' type='checkbox' value='1'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
 		<< "<input id='typeFilterJoin' type='checkbox' value='2'/><label for='typeFilterJoin'>&nbsp;Join</label>"
@@ -1640,6 +1718,15 @@ string CDocMain::CreateSchemaFilterControl()
 		<< "</span>"
 	<< "</div>";
 
+	return content.str();
+}
+
+string CDocMain::CreateActlinkFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("actlinkFilter")
+	<< "</div>";
 	return content.str();
 }
 
