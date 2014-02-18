@@ -91,13 +91,9 @@ $('document').ready(function() {
 
     $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
-        $(this).stopTime().oneTime(300, function() {
-            updateActlinkTable();
-        });
+        $(this).stopTime().oneTime(300, updateActlinkTable);
     });
-    $("#execactlinkFilter").click(function() {
-        updateActlinkTable();
-    });
+    $("#execactlinkFilter").click(updateActlinkTable);
 	/*
     $("#typeFilterAll").click(function() {
         $('#multiFilter input[type="checkbox"]').each(function() {

@@ -98,22 +98,16 @@ $('document').ready(function() {
 
     $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
-        $(this).stopTime().oneTime(300, function() {
-            updateSchemaTable();
-        });
+        $(this).stopTime().oneTime(300, updateSchemaTable);
     });
-    $("#formFilter").click(function() {
-        updateSchemaTable();
-    });
+    $("#formFilter").click(updateSchemaTable);
     $("#typeFilterNone").click(function() {
         checkBoxes.each(function() {
             this.checked = false;
         });
         updateSchemaTable();
     });
-    checkBoxes.change(function() {
-        updateSchemaTable();
-    });
+    checkBoxes.change(updateSchemaTable);
 
     initSchemaTable();
     if ($("#formFilter").focus().val() != "" || bHasTypeFilter()) {
