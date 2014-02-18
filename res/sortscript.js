@@ -72,11 +72,14 @@ function ts_resortTable(lnk) {
     // Work out a type for the column
     if (table.rows.length <= 1) return;
     var itm = ts_getInnerText(table.rows[1].cells[column]);
-    sortfn = ts_selectSortFunc(itm);
+    var sortfn = ts_selectSortFunc(itm);
 
     SORT_COLUMN_INDEX = column;
     var newRows = new Array();
-    for (j=1;j<table.rows.length;j++) { newRows[j-1] = table.rows[j]; }
+	var tRows;
+	var skipFirst = 0;
+	if (table.tBodies.length>0) { tRows = table.tBodies[0].rows; } else { tRows = table.rows; skipFirst = 1; }
+    for (j=skipFirst;j<tRows.length;j++) { newRows[j-skipFirst] = tRows[j]; }
 
     newRows.sort(sortfn);
 
@@ -90,10 +93,7 @@ function ts_resortTable(lnk) {
     }
     
     // We appendChild rows that already exist to the tbody, so it moves them rather than creating new ones
-    // don't do sortbottom rows
-    for (i=0;i<newRows.length;i++) { if (!newRows[i].className || (newRows[i].className && (newRows[i].className.indexOf('sortbottom') == -1))) table.tBodies[0].appendChild(newRows[i]);}
-    // do sortbottom rows only
-    for (i=0;i<newRows.length;i++) { if (newRows[i].className && (newRows[i].className.indexOf('sortbottom') != -1)) table.tBodies[0].appendChild(newRows[i]);}
+    for (i=0;i<newRows.length;i++) { table.tBodies[0].appendChild(newRows[i]); }
     
     // Delete any other arrows there may be showing
     var allspans = document.getElementsByTagName("span");
