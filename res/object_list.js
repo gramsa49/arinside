@@ -71,7 +71,7 @@ function filterTable(tableId, appendNextChunk) {
 }
 
 function initSchemaTable() {
-    if (schemaList != null) { initTable('schemaList', 'formNameFilter', 'schemaListFilterResultCount'); }
+    if (schemaList != null) { initTable('schemaList', 'formFilter', 'schemaListFilterResultCount'); }
 }
 
 function updateSchemaTable() {
@@ -99,30 +99,30 @@ $('document').ready(function() {
     $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
         $(this).stopTime().oneTime(300, function() {
-            $("#execFormFilter").click();
+            updateSchemaTable();
         });
     });
-    $("#execFormFilter").click(function() {
+    $("#formFilter").click(function() {
         updateSchemaTable();
     });
     $("#typeFilterNone").click(function() {
         checkBoxes.each(function() {
             this.checked = false;
         });
-        $("#execFormFilter").click();
+        updateSchemaTable();
     });
     checkBoxes.change(function() {
-        $("#execFormFilter").click();
+        updateSchemaTable();
     });
 
     initSchemaTable();
-    if ($("#formNameFilter").focus().val() != "" || bHasTypeFilter()) {
-        $("#execFormFilter").click();
+    if ($("#formFilter").focus().val() != "" || bHasTypeFilter()) {
+        updateSchemaTable();
     };
 
     $("#formLetterFilter a").click(function() {
-        $("#formNameFilter").val("^" + this.text);
-        $("#execFormFilter").click();
+        $("#formFilter").val("^" + this.text);
+        updateSchemaTable();
         return false;
     });
 });
