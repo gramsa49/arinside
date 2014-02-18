@@ -50,6 +50,14 @@ function ts_getInnerText(el) {
 	return str;
 }
 
+function ts_selectSortFunc(cellContent) {    
+    if (cellContent.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) return ts_sort_date;
+    if (cellContent.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) return ts_sort_date;
+    if (cellContent.match(/^[£$]/)) return ts_sort_currency;
+    if (cellContent.match(/^[\d\.]+$/)) return ts_sort_numeric;
+	return ts_sort_caseinsensitive;
+}
+
 function ts_resortTable(lnk) {
     // get the span
     var span;
@@ -64,15 +72,10 @@ function ts_resortTable(lnk) {
     // Work out a type for the column
     if (table.rows.length <= 1) return;
     var itm = ts_getInnerText(table.rows[1].cells[column]);
-    sortfn = ts_sort_caseinsensitive;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^\d\d[\/-]\d\d[\/-]\d\d$/)) sortfn = ts_sort_date;
-    if (itm.match(/^[£$]/)) sortfn = ts_sort_currency;
-    if (itm.match(/^[\d\.]+$/)) sortfn = ts_sort_numeric;
+    sortfn = ts_selectSortFunc(itm);
+
     SORT_COLUMN_INDEX = column;
-    var firstRow = new Array();
     var newRows = new Array();
-    for (i=0;i<table.rows[0].length;i++) { firstRow[i] = table.rows[0][i]; }
     for (j=1;j<table.rows.length;j++) { newRows[j-1] = table.rows[j]; }
 
     newRows.sort(sortfn);
