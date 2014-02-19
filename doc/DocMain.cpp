@@ -200,6 +200,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 			{
 				webPage.GetReferenceManager()
 					.AddScriptReference("img/object_list.js")
+					.AddScriptReference("img/schemaList.js")
 					.AddScriptReference("img/jquery.timers.js")
 					.AddScriptReference("img/jquery.address.min.js");
 
@@ -283,6 +284,7 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 			if (searchChar == "*")
 			{
 				webPage.GetReferenceManager()
+					.AddScriptReference("img/object_list.js")
 					.AddScriptReference("img/actlinkList.js")
 					.AddScriptReference("img/jquery.timers.js")
 					.AddScriptReference("img/jquery.address.min.js");

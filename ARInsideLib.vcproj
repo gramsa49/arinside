@@ -1711,6 +1711,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\schemaList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\script.js"
 				>
 				<FileConfiguration
