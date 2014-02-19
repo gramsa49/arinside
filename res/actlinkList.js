@@ -1,72 +1,90 @@
-function bHasTypeFilter() {
-	return false;
+function FilterableTable(objTableId, objFilterId, objResultCountId) {
+	this.tableId = objTableId;
+	this.filterId = objFilterId;
+	this.resultCountId = objResultCountId;
+	this.maxMatches = 100;
+	this.lastMatches = 0;
+	this.lastIndex = 0;
+	this.nameIndex = 0;
+    this.table = $('#' + objTableId);
 }
 
-function initTable(tableId, filterId, resultCountId) {
-    var table = $('#' + tableId);
-    table.data('filterid', filterId).data('resultid', resultCountId).data('maxresult', 100).data('lastmatches', 0);
-}
+FilterableTable.prototype.hasTypeFilter = function() { return false; }
+FilterableTable.prototype.checkTypeFilterForRow = function(row) { return false; }
+FilterableTable.prototype.createHtmlRow = function(row) { return ""; }
 
-function createMoreResultsRow(tableId, maxMatch) {
+FilterableTable.prototype.onHasTypeFilter = function(cb) { this.hasTypeFilter = cb; return this; }
+FilterableTable.prototype.onCheckTypeFilterForRow = function(cb) { this.checkTypeFilterForRow = cb; return this; }
+FilterableTable.prototype.onCreateHtmlRow = function(cb) { this.createHtmlRow = cb; return this; }
+
+FilterableTable.prototype.setNameIndex = function(idx) { this.nameIndex = idx; return this; }
+
+FilterableTable.prototype.createMoreResultsRow = function() {
+	var ft = this;
     return $("<tfoot>").append($("<tr>")
-    .append($("<td class='warn' colspan=9>").text("Result limit reached! ")
-	    .append($("<a id=showNext href='javascript:void(0)'>Show Next " + maxMatch + "</a>").click(function() {
+    .append($("<td class='warn' colspan=99>").text("Result limit reached! ")
+	    .append($("<a id=showNext href='javascript:void(0)'>Show Next " + ft.maxMatches + "</a>").click(function() {
 	        $(this).parents('tfoot:first').remove();
-	        filterTable(tableId, 'next');
+	        ft.filterTable('next');
 	    }))
 	    .append(" &nbsp; ")
 	    .append($("<a id=showAll href='javascript:void(0)'>Show All</a>").click(function() {
 	        $(this).parents('tfoot:first').remove();
-	        filterTable(tableId, 'all');
+	        ft.filterTable('all');
 	    }))
 	));
 }
 
-function filterTable(tableId, appendNextChunk) {
-    var table = $('#' + tableId);
-    var search = $('#' + table.data('filterid')).val().replace(/ +/g, " ").replace(/ /g, ".*");
+FilterableTable.prototype.filterTable = function(appendNextChunk) {
+    var table = this.table; //$('#' + tableId);
+	var list = window[this.tableId];
+    var search = $('#' + this.filterId).val().replace(/ +/g, " ").replace(/ /g, ".*");
     var numSearch = search.search("^\\d+$");
-    var maxMatch = 0 + (table.data('maxresult'));
+    var maxMatch = this.maxMatches;
     var lastMatches = 0;
     var matches = 0;
-    var hasTypeFilter = bHasTypeFilter();
+    var hasTypeFilter = this.hasTypeFilter();
     var hasFilter = (search != null && search.length > 0) || hasTypeFilter;
     var start = 0;
-    var end = alList.length;
+    var end = list.length;
     var showAllMatches = appendNextChunk == 'all';
 
     if (appendNextChunk) {
-        start = table.data('lastindex');
-        lastMatches += table.data('lastmatches');
+        start = this.lastIndex;
+        lastMatches += this.lastMatches;
     }
     else {
-        $('#' + tableId + ' tbody,tfoot').remove();
+        $('#' + this.tableId + ' tbody,tfoot').remove();
     }
 
     if (hasFilter) {
         for (var i = start; i < end; i++) {
             var r = new RegExp(search, "i");
-            if ((!hasTypeFilter || hasTypeFilter && schemaType[alList[i][5]]) && (alList[i][0].match(r) || (numSearch == 0 && ("" + alList[i][0]) == search))) {
+			var row = list[i];
+            if ((!hasTypeFilter || hasTypeFilter && this.checkTypeFilterForRow(row)) && (row[this.nameIndex].match(r) || (numSearch == 0 && ("" + row[0]) == search))) {
                 matches++;
-                table.append(createActlinkRowHtml(alList[i]));
+                table.append(this.createHtmlRow(row));
             }
             if (!showAllMatches && matches >= maxMatch) {
-                table.append(createMoreResultsRow(tableId, maxMatch));
-                table.data('lastindex', i + 1);
-                table.data('lastmatches', lastMatches + matches);
+                table.append(this.createMoreResultsRow());
+                this.lastIndex = i + 1;
+                this.lastMatches = lastMatches + matches;
                 break;
             }
         };
     }
-    $('#' + table.data('resultid')).text((hasFilter ? "showing " + (lastMatches + matches) + " out of " : ""));
+    $('#' + this.resultCountId).text((hasFilter ? "showing " + (lastMatches + matches) + " out of " : ""));
 }
 
 function initActlinkTable() {
-    if (alList != null) { initTable('alList', 'actlinkFilter', 'actlinkListFilterResultCount'); }
+    if (alList != null) { 
+		alListObj = new FilterableTable('alList', 'actlinkFilter', 'actlinkListFilterResultCount'); 
+		alListObj.onCreateHtmlRow(createActlinkRowHtml);
+	}
 }
 
 function updateActlinkTable() {
-    if (alList != null) { filterTable('alList'); }
+    if (alListObj != null) { alListObj.filterTable(); }
 }
 
 function createActlinkRowHtml(data) {
@@ -119,7 +137,7 @@ $('document').ready(function() {
 	*/
 
     initActlinkTable();
-    if ($("#actlinkFilter").focus().val() != "" || bHasTypeFilter()) {
+    if ($("#actlinkFilter").focus().val() != "" || alListObj.hasTypeFilter()) {
         updateActlinkTable();
     };
 
