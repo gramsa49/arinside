@@ -203,8 +203,8 @@ class SchemaRegular : public IFileStructure
 {
 public:
 	SchemaRegular() { }
-	virtual string GetFileName() const { return FILE_INDEX_REGULAR; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#regular"; }
 	virtual string GetPath() const { return DIR_SCHEMA; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
@@ -213,8 +213,8 @@ class SchemaJoin : public IFileStructure
 {
 public:
 	SchemaJoin() { }
-	virtual string GetFileName() const { return FILE_INDEX_JOIN; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#join"; }
 	virtual string GetPath() const { return DIR_SCHEMA; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
@@ -223,8 +223,8 @@ class SchemaView : public IFileStructure
 {
 public:
 	SchemaView() { }
-	virtual string GetFileName() const { return FILE_INDEX_VIEW; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#view"; }
 	virtual string GetPath() const { return DIR_SCHEMA; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
@@ -233,8 +233,8 @@ class SchemaDialog : public IFileStructure
 {
 public:
 	SchemaDialog() { }
-	virtual string GetFileName() const { return FILE_INDEX_DIALOG; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#dialog"; }
 	virtual string GetPath() const { return DIR_SCHEMA; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
@@ -243,8 +243,8 @@ class SchemaVendor : public IFileStructure
 {
 public:
 	SchemaVendor() { }
-	virtual string GetFileName() const { return FILE_INDEX_VENDOR; }
-	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()); }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#vendor"; }
 	virtual string GetPath() const { return DIR_SCHEMA; }
 	virtual unsigned int GetRootLevel() const { return 1; }
 };

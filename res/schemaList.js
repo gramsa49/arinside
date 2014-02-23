@@ -42,6 +42,19 @@ function createSchemaRowHtml(data) {
 $('document').ready(function() {
     var checkBoxes = $('#multiFilter input[type="checkbox"]');
 
+    $.address.change(function(event) {
+		var hash = window.location.hash;
+		var value = 0;
+		if (hash === "#regular") { value = 1; }
+		if (hash === "#join") { value = 2; }
+		if (hash === "#view") { value = 3; }
+		if (hash === "#dialog") { value = 4; }
+		if (hash === "#vendor") { value = 5; }
+		if (value>0) {			
+			$('#multiFilter input[type="checkbox"][value="'+value+'"]').attr("checked","checked");
+			updateSchemaTable();
+		}
+    });
     $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
         $(this).stopTime().oneTime(300, updateSchemaTable);
@@ -51,9 +64,13 @@ $('document').ready(function() {
         checkBoxes.each(function() {
             this.checked = false;
         });
+		window.location.hash="";
         updateSchemaTable();
     });
-    checkBoxes.change(updateSchemaTable);
+    checkBoxes.change(function() {
+		if (this.checked) {	window.location.hash="#" + ARSchemaType(Number(this.value)).toLowerCase(); }
+		updateSchemaTable();
+	});
 
     initSchemaTable();
     if ($("#formFilter").focus().val() != "" || schemaListObj.hasTypeFilter()) {
