@@ -36,6 +36,8 @@ CEscalTable::CEscalTable(CARInside &arIn)
 	tbl.AddColumn(5, "Else");
 	tbl.AddColumn(20, "Changed");
 	tbl.AddColumn(20, "By");
+
+	tbl.SetEmptyMessage("");
 }
 
 CEscalTable::~CEscalTable(void)

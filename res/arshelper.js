@@ -132,3 +132,8 @@ function getIcon(rootLevel, type, subtype) {
     src += "img/" + alt;
     return $("<img>").attr("width", 16).attr("height", 16).attr("alt", alt).attr("src", src);
 }
+
+function ARPool(poolNum) {
+	var n = Number(poolNum);	
+	if (n !== "NaN" && poolNum > 0) { return n; }	
+}

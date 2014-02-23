@@ -796,22 +796,20 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 
 	try
 	{
-		int rootLevel = file->GetRootLevel();
+		rootLevel = file->GetRootLevel();
 		CEscalTable tbl(*this->pInside);
 
 		unsigned int escalCount = pInside->escalationList.GetCount();
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{
 			CAREscalation escalation(escalIndex);
+			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escalation))
 				continue;
 #endif
 
-			objCount++;
-
-			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
@@ -835,17 +833,30 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 
 			if(bInsert)
 			{
-				tbl.AddRow(escalIndex, rootLevel);
+				objCount++;
 			}
 		}
 
 		if (tbl.NumRows() > 0 || searchChar == "*")
 		{
 			CWebPage webPage(file->GetFileName(), "Escalation List", rootLevel, this->pInside->appConfig);
-
 			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToEscalationIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
 
+			strmTmp << "<span id='esclationListFilterResultCount'></span>" << CWebUtil::LinkToEscalationIndex(objCount, rootLevel);
+
+			if (searchChar == "*")
+			{
+				webPage.GetReferenceManager()
+					.AddScriptReference("img/object_list.js")
+					.AddScriptReference("img/escalationList.js")
+					.AddScriptReference("img/jquery.timers.js")
+					.AddScriptReference("img/jquery.address.min.js");
+
+				EscalationListJson(strmTmp);
+				strmTmp << CreateEscalationFilterControl() << endl;
+			}
+
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -857,6 +868,69 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 		cout << "EXCEPTION EscalationList: " << e.what() << endl;
 	}
 	return objCount;
+}
+
+void CDocMain::EscalationListJson(std::ostream &strm)
+{
+	Document document;
+	Document::AllocatorType &alloc = document.GetAllocator();
+	document.SetArray();
+
+	unsigned int escalCount = this->pInside->escalationList.GetCount();
+	for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
+	{	
+		CAREscalation escalation(escalIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escalation))
+			continue;
+#endif
+
+		CARProplistHelper props(&escalation.GetPropList());
+		CPageParams escalDetailPage(PAGE_DETAILS, &escalation);
+
+		// create a new json row and make it an array
+		Value escalRow;
+		escalRow.SetArray();
+
+		// now build the needed temporary variables
+		string strName = escalation.GetName();			
+		string strExecuteOn = escalation.GetExecuteOn();
+		string strModifiedDate = CUtil::DateTimeToString(escalation.GetTimestamp());
+		string strLink = CWebUtil::GetRelativeURL(rootLevel, escalDetailPage);
+		
+		// build the values
+		Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+		Value valExecuteOn(strExecuteOn.c_str(), static_cast<SizeType>(strExecuteOn.size()), alloc);
+		Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+		Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+		// add everything to the row
+		escalRow.PushBack(valName, alloc);
+		escalRow.PushBack(escalation.GetEnabled(), alloc);
+		escalRow.PushBack(valExecuteOn, alloc);
+		escalRow.PushBack(escalation.GetIfActions().numItems, alloc);
+		escalRow.PushBack(escalation.GetElseActions().numItems, alloc);
+		escalRow.PushBack(valModifiedDate, alloc);
+		escalRow.PushBack(escalation.GetLastChanged(), alloc);
+		escalRow.PushBack(valLink, alloc);
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
+		if (pInside->CompareServerVersion(7, 1) >= 0)
+			escalRow.PushBack(escalation.GetPool(), alloc);			
+#endif
+
+		// add the row to the document
+		document.PushBack(escalRow, alloc);
+	}
+
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+
+	strm << endl << "<script type=\"text/javascript\">" << endl;
+	strm << "var escalationList = "; document.Accept(writer); strm << ";";
+	strm << "var rootLevel = " << rootLevel << ";";
+	strm << endl;
+	strm << "</script>" << endl;
 }
 
 void CDocMain::EscalationActionList()
@@ -1807,7 +1881,17 @@ string CDocMain::CreateFilterFilterControl()
 	content << "<div>"
 		<< CreateStandardFilterControl("filterFilter")
 	<< "</div>";
-	return content.str();}
+	return content.str();
+}
+
+string CDocMain::CreateEscalationFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("escalationFilter")
+	<< "</div>";
+	return content.str();
+}
 
 void CDocMain::SchemaListJson(std::ostream &strm)
 {

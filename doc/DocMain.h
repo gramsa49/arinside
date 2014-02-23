@@ -76,8 +76,10 @@ private:
 	static string CreateSchemaFilterControl();
 	static string CreateActlinkFilterControl();
 	static string CreateFilterFilterControl();
+	static string CreateEscalationFilterControl();
 
 	void SchemaListJson(std::ostream &strm);
 	void ActiveLinkListJson(std::ostream &strm);
 	void FilterListJson(std::ostream &strm);
+	void EscalationListJson(std::ostream &stream);
 };

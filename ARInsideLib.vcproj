@@ -1458,6 +1458,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\escalationList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\filter.gif"
 				>
 				<FileConfiguration
