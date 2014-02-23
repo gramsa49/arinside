@@ -51,7 +51,7 @@ $('document').ready(function() {
 		if (hash === "#dialog") { value = 4; }
 		if (hash === "#vendor") { value = 5; }
 		if (value>0) {			
-			$('#multiFilter input[type="checkbox"][value="'+value+'"]').attr("checked","checked");
+			checkBoxes.filter('[value="'+value+'"]').attr("checked","checked");
 			updateSchemaTable();
 		}
     });
