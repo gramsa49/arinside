@@ -2643,9 +2643,11 @@ const char* CAREnum::WeightedRelevancyFieldType(int nType)
 {
 	switch (nType)
 	{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 	case AR_MFS_WEIGHTED_RELEVANCY_TITLE_FIELD_TAG: return "Title";
 	case AR_MFS_WEIGHTED_RELEVANCY_ENVIRONMENT_FIELD_TAG: return "Environment";
 	case AR_MFS_WEIGHTED_RELEVANCY_KEYWORDS_FIELD_TAG: return "Keywords";
+#endif
 	default: return EnumDefault;
 	}
 }

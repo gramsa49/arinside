@@ -194,6 +194,7 @@ const char* CAREscalation::GetChangeDiary() const
 unsigned int CAREscalation::GetPool(CARProplistHelper* propList) const
 {
 	unsigned int escalPool = 0;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 	if (CARInside::GetInstance()->CompareServerVersion(7, 1) >= 0)
 	{
 		bool freePropList = false;
@@ -207,6 +208,7 @@ unsigned int CAREscalation::GetPool(CARProplistHelper* propList) const
 		if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
 			escalPool = val->u.intVal;
 	}
+#endif
 	return escalPool;
 }
 
