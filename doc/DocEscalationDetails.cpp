@@ -74,11 +74,7 @@ void CDocEscalationDetails::Documentation()
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 			if (this->pInside->CompareServerVersion(7,1) >= 0)
 			{				
-				ARValueStruct* val = props.GetAndUseValue(AR_OPROP_POOL_NUMBER);
-				if (val != NULL)
-					cellPropValue.content = CARValue::ValueToString(*val);
-				else
-					cellPropValue.content = "";
+				cellPropValue.content = escalation.GetPoolStr(&props);
 
 				row.ClearCells();
 				cellProp.content = "Pool Number";

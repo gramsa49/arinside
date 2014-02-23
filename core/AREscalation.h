@@ -57,6 +57,8 @@ public:
 	string GetTimeCriteria();
 	string GetExecuteOn();
 	string GetURL(int rootLevel, bool showImage = true) const;
+	unsigned int GetPool(CARProplistHelper* propList = NULL) const;
+	string GetPoolStr(CARProplistHelper* propList = NULL) const;
 
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_ESCALATION; }

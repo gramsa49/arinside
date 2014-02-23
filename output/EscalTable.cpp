@@ -48,16 +48,7 @@ void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 	tblRow.AddCell( CTableCell(escal.GetURL(rootLevel)));
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
-	string escalPool;
-	if (pInside->CompareServerVersion(7, 1) >= 0)
-	{
-		CARProplistHelper props(&escal.GetPropList());
-		ARValueStruct* val = props.GetValue(AR_OPROP_POOL_NUMBER);
-		if (val != NULL)
-			escalPool = CARValue::ValueToString(*val);
-		else
-			escalPool = "";
-	}
+	string escalPool = escal.GetPoolStr();
 #endif
 
 	string tmpCssEnabled = "";

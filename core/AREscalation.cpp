@@ -190,3 +190,34 @@ const char* CAREscalation::GetChangeDiary() const
 {
 	return CARInside::GetInstance()->escalationList.EscalationGetChangeDiary(GetInsideId());
 }
+
+unsigned int CAREscalation::GetPool(CARProplistHelper* propList) const
+{
+	unsigned int escalPool = 0;
+	if (CARInside::GetInstance()->CompareServerVersion(7, 1) >= 0)
+	{
+		bool freePropList = false;
+		if (propList == NULL)
+		{
+			propList = new CARProplistHelper(&this->GetPropList());
+			freePropList = true;
+		}
+		
+		ARValueStruct* val = propList->GetValue(AR_OPROP_POOL_NUMBER);
+		if (val != NULL && val->dataType == AR_DATA_TYPE_INTEGER)
+			escalPool = val->u.intVal;
+	}
+	return escalPool;
+}
+
+string CAREscalation::GetPoolStr(CARProplistHelper* propList) const
+{
+	unsigned int escalPool = this->GetPool(propList);
+	if (escalPool > 0) 
+	{
+		stringstream tmpStrm;
+		tmpStrm << escalPool;
+		return tmpStrm.str();
+	}
+	return "";
+}
