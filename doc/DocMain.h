@@ -75,7 +75,9 @@ private:
 	static string CreateStandardFilterControl(const string &inputControlId);
 	static string CreateSchemaFilterControl();
 	static string CreateActlinkFilterControl();
+	static string CreateFilterFilterControl();
 
 	void SchemaListJson(std::ostream &strm);
 	void ActiveLinkListJson(std::ostream &strm);
+	void FilterListJson(std::ostream &strm);
 };

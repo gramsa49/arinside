@@ -32,6 +32,8 @@ CFilterTable::CFilterTable(CARInside &arIn)
 	tbl.AddColumn(0, "Else");
 	tbl.AddColumn(0, "Changed");
 	tbl.AddColumn(0, "By");
+	
+	tbl.SetEmptyMessage("");
 }
 
 CFilterTable::~CFilterTable(void)

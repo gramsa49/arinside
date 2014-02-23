@@ -494,7 +494,7 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 
 	try
 	{
-		int rootLevel = file->GetRootLevel();
+		rootLevel = file->GetRootLevel();
 		CFilterTable tbl(*this->pInside);
 
 		unsigned int filterCount = this->pInside->filterList.GetCount();
@@ -502,15 +502,13 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
 			CARFilter filter(filterIndex);
+			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
 				continue;
 #endif
 
-			objCount++;
-
-			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
 				// the first call to this function holds always "*" as search char. That's the
@@ -534,7 +532,7 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 
 			if(bInsert)
 			{
-				tbl.AddRow(filterIndex, rootLevel);
+				objCount++;
 			}
 		}
 
@@ -543,8 +541,21 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 			CWebPage webPage(file->GetFileName(), "Filter List", file->GetRootLevel(), this->pInside->appConfig);
 
 			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToFilterIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << "<span id='filterListFilterResultCount'></span>" << CWebUtil::LinkToFilterIndex(objCount, rootLevel);
 
+			if (searchChar == "*")
+			{
+				webPage.GetReferenceManager()
+					.AddScriptReference("img/object_list.js")
+					.AddScriptReference("img/filterList.js")
+					.AddScriptReference("img/jquery.timers.js")
+					.AddScriptReference("img/jquery.address.min.js");
+
+				FilterListJson(strmTmp);
+				strmTmp << CreateFilterFilterControl() << endl;
+			}
+
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -556,6 +567,64 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 		cout << "EXCEPTION FilterList: " << e.what() << endl;
 	}
 	return objCount;
+}
+
+void CDocMain::FilterListJson(std::ostream &strm)
+{
+	Document document;
+	Document::AllocatorType &alloc = document.GetAllocator();
+	document.SetArray();
+
+	unsigned int filterCount = this->pInside->filterList.GetCount();
+	for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex)
+	{	
+		CARFilter filter(filterIndex);
+		
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
+			continue;
+#endif
+
+		CPageParams filterDetailPage(PAGE_DETAILS, &filter);
+
+		// create a new json row and make it an array
+		Value filterRow;
+		filterRow.SetArray();
+
+		// now build the needed temporary variables
+		string strName = filter.GetName();
+		string strExecuteOn = filter.GetExecuteOn(true);
+		string strModifiedDate = CUtil::DateTimeToString(filter.GetTimestamp());
+		string strLink = CWebUtil::GetRelativeURL(rootLevel, filterDetailPage);
+
+		// build the values
+		Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+		Value valExecOn(strExecuteOn.c_str(), static_cast<SizeType>(strExecuteOn.size()), alloc);		
+		Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+		Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+		// add everything to the row
+		filterRow.PushBack(valName,alloc);
+		filterRow.PushBack(filter.GetEnabled(), alloc);
+		filterRow.PushBack(filter.GetOrder(), alloc);
+		filterRow.PushBack(valExecOn, alloc);
+		filterRow.PushBack(filter.GetIfActions().numItems, alloc);
+		filterRow.PushBack(filter.GetElseActions().numItems, alloc);
+		filterRow.PushBack(valModifiedDate, alloc);
+		filterRow.PushBack(filter.GetLastChanged(), alloc);
+		filterRow.PushBack(valLink, alloc);
+
+		document.PushBack(filterRow, alloc);
+	}
+
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+
+	strm << endl << "<script type=\"text/javascript\">" << endl;
+	strm << "var filterList = "; document.Accept(writer); strm << ";";
+	strm << "var rootLevel = " << rootLevel << ";";
+	strm << endl;
+	strm << "</script>" << endl;
 }
 
 void CDocMain::FilterActionList()
@@ -1731,6 +1800,14 @@ string CDocMain::CreateActlinkFilterControl()
 	<< "</div>";
 	return content.str();
 }
+
+string CDocMain::CreateFilterFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("filterFilter")
+	<< "</div>";
+	return content.str();}
 
 void CDocMain::SchemaListJson(std::ostream &strm)
 {

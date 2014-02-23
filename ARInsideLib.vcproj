@@ -1498,6 +1498,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\filterList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\folder.gif"
 				>
 				<FileConfiguration
