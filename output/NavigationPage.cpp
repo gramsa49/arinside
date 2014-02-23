@@ -51,14 +51,6 @@ void CNavigationPage::Write()
 		// content
 		fout << "<li>";
 			fout << CWebUtil::Link("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "schema.gif", rootLevel, TARGET_MODE_PARENT);			
-
-			fout << "<ul>"; 
-				fout << "<li>" << CWebUtil::Link("Regular", CPageParams(PAGE_SCHEMA_REGULAR), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("Join"   , CPageParams(PAGE_SCHEMA_JOIN)   , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("View"   , CPageParams(PAGE_SCHEMA_VIEW)   , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("Dialog" , CPageParams(PAGE_SCHEMA_DIALOG) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("Vendor" , CPageParams(PAGE_SCHEMA_VENDOR) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-			fout << "</ul>";
 		fout << "</li>";
 
 		fout << "<li>";

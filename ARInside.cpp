@@ -890,15 +890,6 @@ void CARInside::Documentation(void)
 
 	//Schema List
 	indexSummary.schemaCount = docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*", allObjCount);
-	docMain->SchemaList(AR_SCHEMA_REGULAR, CPageParams(PAGE_SCHEMA_REGULAR, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (Regular)", "*", allObjCount);
-	docMain->SchemaList(AR_SCHEMA_JOIN,    CPageParams(PAGE_SCHEMA_JOIN, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (Join)"   , "*", allObjCount);
-	docMain->SchemaList(AR_SCHEMA_VIEW,    CPageParams(PAGE_SCHEMA_VIEW, AR_STRUCT_ITEM_XML_SCHEMA)   , "Formlist (View)"   , "*", allObjCount);
-	docMain->SchemaList(AR_SCHEMA_DIALOG,  CPageParams(PAGE_SCHEMA_DIALOG, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Dialog)" , "*", allObjCount);
-	docMain->SchemaList(AR_SCHEMA_VENDOR,  CPageParams(PAGE_SCHEMA_VENDOR, AR_STRUCT_ITEM_XML_SCHEMA) , "Formlist (Vendor)" , "*", allObjCount);	
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->SchemaList(AR_SCHEMA_NONE, CPageParams(strValue.at(i), AR_STRUCT_ITEM_XML_SCHEMA), "Formlist", std::string(1, strValue.at(i)), allObjCount);
-	}
 
 	//Schema and field Details
 	nTmpCnt=1;
