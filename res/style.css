@@ -401,6 +401,7 @@ td.disabledLetter
 .clearable{
     position:relative;
 	padding: 3px;
+	line-height: 24px;
 }
 .data_field{
     padding-right:17px; /* add space for the 'x' icon*/
