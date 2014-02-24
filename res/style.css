@@ -434,6 +434,7 @@ td.disabledLetter
 
 #multiFilter {
     border: 1px solid silver; padding: 5px;
+	margin-left: 24px;
 }
 
 td.warn {

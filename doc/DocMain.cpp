@@ -613,6 +613,7 @@ void CDocMain::FilterListJson(std::ostream &strm)
 		filterRow.PushBack(valModifiedDate, alloc);
 		filterRow.PushBack(filter.GetLastChanged(), alloc);
 		filterRow.PushBack(valLink, alloc);
+		filterRow.PushBack(filter.GetOperation(), alloc);
 
 		document.PushBack(filterRow, alloc);
 	}
@@ -1844,7 +1845,7 @@ bool CDocMain::SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 )
 string CDocMain::CreateStandardFilterControl(const string &inputControlId)
 {
 	stringstream content;
-	content << "<span class='clearable'><label for='" << inputControlId << "'>Filter: </label><input id='" << inputControlId << "' class='data_field' type='text' /></span><button style='visibility:hidden' id='exec" << inputControlId << "' class></button>";
+	content << "<span class='clearable'><label for='" << inputControlId << "'>Filter: </label><input id='" << inputControlId << "' class='data_field' type='text' /></span>";
 	return content.str();
 }
 
@@ -1880,6 +1881,16 @@ string CDocMain::CreateFilterFilterControl()
 	stringstream content;
 	content << "<div>"
 		<< CreateStandardFilterControl("filterFilter")
+		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
+		<< "<input id='typeFilterOnlyNone' type='checkbox' value='N'/><label for='typeFilterOnlyNone'>&nbsp;None</label>"
+		<< "<input id='typeFilterModify' type='checkbox' value='2'/><label for='typeFilterModify'>&nbsp;Modify</label>"
+		<< "<input id='typeFilterSubmit' type='checkbox' value='4'/><label for='typeFilterSubmit'>&nbsp;Submit</label>"
+		<< "<input id='typeFilterDelete' type='checkbox' value='8'/><label for='typeFilterDelete'>&nbsp;Delete</label>"
+		<< "<input id='typeFilterGetEntry' type='checkbox' value='1'/><label for='typeFilterGetEntry'>&nbsp;Get&nbsp;Entry</label>"
+		<< "<input id='typeFilterMerge' type='checkbox' value='16'/><label for='typeFilterMerge'>&nbsp;Merge</label>"
+		<< "<input id='typeFilterService' type='checkbox' value='64'/><label for='typeFilterService'>&nbsp;Service</label>"
+		<< " <button id='typeFilterNone'>Clear All</button>"
+		<< "</span>"
 	<< "</div>";
 	return content.str();
 }

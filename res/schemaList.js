@@ -59,7 +59,6 @@ $('document').ready(function() {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
         $(this).stopTime().oneTime(300, updateSchemaTable);
     });
-    $("#formFilter").click(updateSchemaTable);
     $("#typeFilterNone").click(function() {
         checkBoxes.each(function() {
             this.checked = false;

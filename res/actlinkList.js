@@ -33,7 +33,6 @@ $('document').ready(function() {
         if (e.keyCode == 27 /*Escape-Key*/) { $(this).val(''); }
         $(this).stopTime().oneTime(300, updateActlinkTable);
     });
-    $("#execactlinkFilter").click(updateActlinkTable);
 	/*
     $("#typeFilterAll").click(function() {
         $('#multiFilter input[type="checkbox"]').each(function() {
