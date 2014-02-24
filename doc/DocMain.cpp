@@ -1072,7 +1072,7 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 
 	try
 	{
-		int rootLevel = file->GetRootLevel();
+		rootLevel = file->GetRootLevel();
 		CMenuTable tbl(*this->pInside);
 
 		unsigned int menuCount = this->pInside->menuList.GetCount();
@@ -1084,8 +1084,6 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
 				continue;
 #endif
-
-			objCount++;
 
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
@@ -1115,17 +1113,30 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 
 			if(bInsert)
 			{
-				tbl.AddRow(menu, rootLevel);
+				objCount++;
 			}
 		}
 
 		if (tbl.NumRows() > 0 || searchChar == "*")
 		{
-			CWebPage webPage(file->GetFileName(), "CharMenu List", 1, this->pInside->appConfig);
+			CWebPage webPage(file->GetFileName(), "Menu List", 1, this->pInside->appConfig);
 
 			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToMenuIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << "<span id='menuListFilterResultCount'></span>" << CWebUtil::LinkToMenuIndex(objCount, rootLevel);
+
+			if (searchChar == "*")
+			{
+				webPage.GetReferenceManager()
+					.AddScriptReference("img/object_list.js")
+					.AddScriptReference("img/menuList.js")
+					.AddScriptReference("img/jquery.timers.js")
+					.AddScriptReference("img/jquery.address.min.js");
+				
+				MenuListJson(strmTmp);
+				strmTmp << CreateMenuFilterControl() << endl;
+			}
 			
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 			webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
@@ -1138,6 +1149,60 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 		cout << "EXCEPTION CharMenuList: " << e.what() << endl;
 	}
 	return objCount;
+}
+
+void CDocMain::MenuListJson(std::ostream &strm)
+{
+	Document document;
+	Document::AllocatorType &alloc = document.GetAllocator();
+	document.SetArray();
+
+	unsigned int menuCount = this->pInside->menuList.GetCount();
+	for (unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex)
+	{
+		CARCharMenu menu(menuIndex);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(menu))
+			continue;
+#endif
+
+		CPageParams menuDetailPage(PAGE_DETAILS, &menu);
+
+		// create a new json row and make it an array
+		Value menuRow;
+		menuRow.SetArray();
+
+		// now build the needed temporary variables
+		string strName = menu.GetName();
+		string strModifiedDate = CUtil::DateTimeToString(menu.GetTimestamp());
+		string strLink = CWebUtil::GetRelativeURL(rootLevel, menuDetailPage);
+
+		// build the values
+		Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+		Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+		Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+		// add everything to the row
+		menuRow.PushBack(valName, alloc);
+		menuRow.PushBack(menu.GetDefinition().menuType, alloc);
+		menuRow.PushBack(menu.GetRefreshCode(), alloc);
+		menuRow.PushBack(valModifiedDate, alloc);
+		menuRow.PushBack(menu.GetLastChanged(), alloc);
+		menuRow.PushBack(valLink, alloc);
+
+		// add the row to the document
+		document.PushBack(menuRow, alloc);
+	}
+
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+
+	strm << endl << "<script type=\"text/javascript\">" << endl;
+	strm << "var menuList = "; document.Accept(writer); strm << ";";
+	strm << "var rootLevel = " << rootLevel << ";";
+	strm << endl;
+	strm << "</script>" << endl;
 }
 
 unsigned int CDocMain::ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter)
@@ -1900,6 +1965,23 @@ string CDocMain::CreateEscalationFilterControl()
 	stringstream content;
 	content << "<div>"
 		<< CreateStandardFilterControl("escalationFilter")
+	<< "</div>";
+	return content.str();
+}
+
+string CDocMain::CreateMenuFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("menuFilter")
+		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
+		<< "<input id='typeFilterCharacter' type='checkbox' value='1'/><label for='typeFilterCharacter'>&nbsp;Character</label>"
+		<< "<input id='typeFilterSearch' type='checkbox' value='2'/><label for='typeFilterSearch'>&nbsp;Search</label>"
+		<< "<input id='typeFilterFile' type='checkbox' value='3'/><label for='typeFilterFile'>&nbsp;File</label>"
+		<< "<input id='typeFilterSQL' type='checkbox' value='4'/><label for='typeFilterSQL'>&nbsp;SQL</label>"
+		<< "<input id='typeFilterDD' type='checkbox' value='6'/><label for='typeFilterDD'>&nbsp;Data&nbsp;Dictionary</label>"
+		<< " <button id='typeFilterNone'>Clear All</button>"
+		<< "</span>"
 	<< "</div>";
 	return content.str();
 }

@@ -20,7 +20,7 @@
 using namespace OUTPUT;
 
 CMenuTable::CMenuTable(CARInside &arIn)
-: CObjectTable("charmenuList", "TblObjectList")
+: CObjectTable("menuList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
@@ -29,6 +29,8 @@ CMenuTable::CMenuTable(CARInside &arIn)
 	tbl.AddColumn(10, "Refresh On");
 	tbl.AddColumn(20, "Changed");
 	tbl.AddColumn(20, "By");
+
+	tbl.SetEmptyMessage("");
 }
 
 CMenuTable::~CMenuTable(void)
