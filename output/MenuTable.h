@@ -28,10 +28,5 @@ namespace OUTPUT
 		~CMenuTable(void);
 
 		void AddRow(CARCharMenu &menu, int rootLevel);
-
-	private:
-		int NumRelatedActiveLinks(CARCharMenu &obj);
-		int NumRelatedFields(CARCharMenu &obj);
-
 	};
 }

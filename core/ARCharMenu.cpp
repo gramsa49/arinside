@@ -148,3 +148,19 @@ const CARCharMenu::ReferenceList& CARCharMenu::GetReferences() const
 {
 	return CARInside::GetInstance()->menuList.GetReferences(GetInsideId());
 }
+
+bool CARCharMenu::IsUsedInWorkflow() const
+{
+	const ReferenceList& refs = GetReferences();
+	ReferenceList::const_iterator curIt = refs.begin();
+	ReferenceList::const_iterator endIt = refs.end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_FIELD && curIt->GetMessageId() == REFM_FIELD_CHARMENU)
+			return true;
+		if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
+			return true;
+	}
+	return false;
+}

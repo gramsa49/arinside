@@ -42,7 +42,7 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 	CTableRow tblRow("");
 
 	string cellNameValue = menu.GetURL(rootLevel);
-	if(NumRelatedFields(menu) + NumRelatedActiveLinks(menu) ==0)
+	if(!menu.IsUsedInWorkflow())
 	{
 		cellNameValue += " (<b>!</b>)";
 	}
@@ -54,38 +54,4 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(menu.GetLastChanged(), rootLevel)));
 
 	this->tbl.AddRow(tblRow);
-}
-
-int CMenuTable::NumRelatedFields(CARCharMenu &obj)
-{	
-	int count = 0;
-
-	const CARCharMenu::ReferenceList& refs = obj.GetReferences();
-	CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
-	CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
-
-	for (; curIt != endIt; ++curIt)
-	{
-		if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_FIELD && curIt->GetMessageId() == REFM_FIELD_CHARMENU)
-			count++;
-	}
-
-	return count;
-}
-
-int CMenuTable::NumRelatedActiveLinks(CARCharMenu &obj)
-{
-	int count = 0;
-
-	const CARCharMenu::ReferenceList& refs = obj.GetReferences();
-	CARCharMenu::ReferenceList::const_iterator curIt = refs.begin();
-	CARCharMenu::ReferenceList::const_iterator endIt = refs.end();
-
-	for (; curIt != endIt; ++curIt)
-	{
-		if (curIt->GetObjectType() == AR_STRUCT_ITEM_XML_ACTIVE_LINK)
-			count++;
-	}
-
-	return count;
 }

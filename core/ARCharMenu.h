@@ -53,6 +53,7 @@ public:
 
 	// helpers
 	string GetURL(int rootLevel, bool showImage = true) const;
+	bool IsUsedInWorkflow() const;
 
 	// class type support
 	static const unsigned int XmlTypeDef = AR_STRUCT_ITEM_XML_CHAR_MENU ;
