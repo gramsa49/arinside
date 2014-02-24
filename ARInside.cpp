@@ -802,11 +802,6 @@ void CARInside::Documentation(void)
 
 	//ActiveLink List
 	indexSummary.activelinkCount = docMain->ActiveLinkList("*", alObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->ActiveLinkList(std::string(1, strValue.at(i)), alObjCount);
-	}	
-
 	docMain->ActiveLinkActionList();
 
 	//ActiveLink Details
@@ -825,10 +820,6 @@ void CARInside::Documentation(void)
 
 	//Filter List
 	indexSummary.filterCount = docMain->FilterList("*", fltObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->FilterList(std::string(1, strValue.at(i)), fltObjCount);
-	}	
 	docMain->FilterActionList();
 	docMain->FilterErrorHandlers();
 
@@ -848,10 +839,6 @@ void CARInside::Documentation(void)
 
 	//Escalation List
 	indexSummary.escalationCount = docMain->EscalationList("*", escObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->EscalationList(std::string(1, strValue.at(i)), escObjCount);
-	}
 	docMain->EscalationActionList();
 
 	//Escalation Details
@@ -870,10 +857,6 @@ void CARInside::Documentation(void)
 
 	//CharMenus
 	indexSummary.menuCount = docMain->CharMenuList("*", mnuObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->CharMenuList(std::string(1, strValue.at(i)), mnuObjCount);
-	}	
 
 	// Char Menu Details
 	tmpCount = menuList.GetCount();
