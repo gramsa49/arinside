@@ -1190,6 +1190,7 @@ void CDocMain::MenuListJson(std::ostream &strm)
 		menuRow.PushBack(valModifiedDate, alloc);
 		menuRow.PushBack(menu.GetLastChanged(), alloc);
 		menuRow.PushBack(valLink, alloc);
+		menuRow.PushBack((menu.IsUsedInWorkflow() ? 1 : 0), alloc);
 
 		// add the row to the document
 		document.PushBack(menuRow, alloc);

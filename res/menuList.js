@@ -37,6 +37,7 @@ function createMenuRowHtml(data) {
         .append($("<td>")
             .append(getIcon(rootLevel, 8))
             .append($("<a>").attr("href", data[5]).text(data[0]))
+			.append((data[6]==0?" (<b>!</b>)":""))
         )
         .append($("<td>").text(ARMenuType(data[1])))
         .append($("<td>").text(ARMenuConnect(data[2])))
