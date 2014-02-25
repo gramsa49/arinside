@@ -500,8 +500,6 @@ void CARInside::LoadFromServer(void)
 	else
 		cout << endl << "Loading Server Informations [SKIPPED]" << endl;
 
-	SetupOverlaySupport();
-
 	//LoadUserList
 	if(appConfig.bLoadUserList)
 	{
@@ -532,6 +530,8 @@ void CARInside::LoadFromServer(void)
 	}
 	else
 		cout << endl << "Loading Roles [SKIPPED]" << endl;
+
+	SetupOverlaySupport();
 
 	//ActiveLinks		
 	cout << endl << "Start loading Active Links:" << endl;
