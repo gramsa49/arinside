@@ -72,7 +72,7 @@ private:
 
 	static string ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter);
 	
-	static string CreateStandardFilterControl(const string &inputControlId);
+	static string CreateStandardFilterControl(const string &inputControlId, const string &htmlPlaceHolder = "search by name");
 	static string CreateSchemaFilterControl();
 	static string CreateActlinkFilterControl();
 	static string CreateFilterFilterControl();

@@ -1908,10 +1908,12 @@ bool CDocMain::SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 )
 	return ( t1.msgNumber < t2.msgNumber);
 }
 
-string CDocMain::CreateStandardFilterControl(const string &inputControlId)
+string CDocMain::CreateStandardFilterControl(const string &inputControlId, const string &htmlPlaceHolder)
 {
 	stringstream content;
-	content << "<span class='clearable'><label for='" << inputControlId << "'>Filter: </label><input id='" << inputControlId << "' class='data_field' type='text' /></span>";
+	content << "<span class='clearable'><label for='" << inputControlId << "'>Filter: </label><input id='" << inputControlId << "' class='data_field' type='text' ";
+	if (!htmlPlaceHolder.empty()) { content << "placeholder='" << htmlPlaceHolder << "'"; }
+	content << "/></span>";
 	return content.str();
 }
 
@@ -1919,7 +1921,7 @@ string CDocMain::CreateSchemaFilterControl()
 {
 	stringstream content;	
 	content << "<div>" 
-		<< CreateStandardFilterControl("formFilter") << " &nbsp;&nbsp;&nbsp; "
+		<< CreateStandardFilterControl("formFilter", "search by name or id") << " &nbsp;&nbsp;&nbsp; "
 		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
 		<< "<input id='typeFilterRegular' type='checkbox' value='1'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
 		<< "<input id='typeFilterJoin' type='checkbox' value='2'/><label for='typeFilterJoin'>&nbsp;Join</label>"
