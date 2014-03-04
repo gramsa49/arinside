@@ -57,7 +57,7 @@ function getObjType(row) {
 function initWorkflowList() {
     var table_name = 'referenceList';
     var table = $("#" + table_name);
-    $("#" + table_name + " tbody tr:gt(0)").remove();
+    if (schemaWorkflowList.length > 0) { $("#" + table_name + " tbody").remove(); }
     $.each(schemaWorkflowList, function(i) {
         var executeOn = function() { return ""; }
         var objType = schemaWorkflowList[i][0];
