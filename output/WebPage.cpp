@@ -226,6 +226,5 @@ void CWebPage::SetupDefaultReferences(WebPage::HtmlReferenceList &inst)
 	inst.AddScriptReference("img/tabscript.js");
 	inst.AddScriptReference("img/jquery.js");
 	inst.AddScriptReference("img/jquery-ui.js");
-	inst.AddScriptReference("img/jquery.address.js");
 	inst.AddScriptReference("img/arshelper.js");
 }
