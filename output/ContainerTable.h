@@ -24,7 +24,7 @@ namespace OUTPUT
 		public CObjectTable
 	{
 	public:
-		CContainerTable(CARInside &arIn);
+		CContainerTable(CARInside &arIn, bool includeObjTypeColumn = true);
 		~CContainerTable(void);
 
 		void AddRow(CARContainer &cont, int rootLevel);
@@ -32,5 +32,7 @@ namespace OUTPUT
 	private:
 		int NumRelatedActiveLinks(CARContainer &obj);
 		int NumRelatedFilters(CARContainer &obj);
+
+		bool hasObjTypeColumn;
 	};
 }

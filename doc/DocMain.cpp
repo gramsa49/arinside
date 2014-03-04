@@ -1213,13 +1213,14 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 	CPageParams file(page, AR_STRUCT_ITEM_XML_CONTAINER, nType);
 	try
 	{
-		int rootLevel = file->GetRootLevel();
-		CContainerTable tbl(*this->pInside);
+		rootLevel = file->GetRootLevel();
+		CContainerTable tbl(*this->pInside, false);
 
 		unsigned int cntCount = this->pInside->containerList.GetCount();
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
 			CARContainer cont(cntIndex);
+			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
@@ -1228,8 +1229,6 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 
 			if (cont.GetType() == nType)	// the type must match
 			{
-				objCount++;
-				bool bInsert = false;
 				if(searchChar == "*")  //All objecte
 				{
 					// the first call to this function holds alwasy "*" as search char. That's the
@@ -1257,7 +1256,7 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 
 				if(bInsert)
 				{
-					tbl.AddRow(cont, rootLevel);
+					objCount++;
 				}
 			}
 		}
@@ -1267,13 +1266,28 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
 
 			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToContainer(tbl.NumRows(), rootLevel, nType);
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << "<span id='containerListResultCount'></span>" << CWebUtil::LinkToContainer(objCount, rootLevel, nType);
 			
+			if (searchChar == "*")
+			{
+				webPage.GetReferenceManager()
+					.AddScriptReference("img/object_list.js")
+					.AddScriptReference("img/containerList.js")
+					.AddScriptReference("img/jquery.timers.js")
+					.AddScriptReference("img/jquery.address.min.js");
+
+				ContainerListJson(strmTmp, nType);
+				strmTmp << CreateContainerFilterControl() << endl;
+			}
+
+			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
-			webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
+			if (nType == ARCON_GUIDE || nType == ARCON_FILTER_GUIDE)
+			{
+				webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
+			}
 
 			webPage.SaveInFolder(file->GetPath());
 		}
@@ -1283,6 +1297,61 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 		cout << "EXCEPTION ContainerList: " << e.what() << endl;
 	}
 	return objCount;
+}
+
+void CDocMain::ContainerListJson(std::ostream &strm, int nType)
+{
+	Document document;
+	Document::AllocatorType &alloc = document.GetAllocator();
+	document.SetArray();
+
+	unsigned int containerCount = this->pInside->containerList.GetCount();
+	for (unsigned int containerIndex = 0; containerIndex < containerCount; ++containerIndex)
+	{	
+		CARContainer container(containerIndex);
+
+		if (container.GetType() != nType)
+			continue;
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
+		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(container))
+			continue;
+#endif
+
+		CPageParams containerDetailPage(PAGE_DETAILS, &container);
+
+		// create a new json row and make it an array
+		Value containerRow;
+		containerRow.SetArray();
+
+		// now build the needed temporary variables
+		string strName = container.GetName();
+		string strModifiedDate = CUtil::DateTimeToString(container.GetTimestamp());
+		string strLink = CWebUtil::GetRelativeURL(rootLevel, containerDetailPage);
+
+		// build the values
+		Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+		Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+		Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+		// add everything to the row
+		containerRow.PushBack(valName, alloc);
+		containerRow.PushBack(valModifiedDate, alloc);
+		containerRow.PushBack(container.GetLastChanged(), alloc);
+		containerRow.PushBack(valLink, alloc);
+
+		document.PushBack(containerRow, alloc);
+	}
+
+	GenericWriteStream output(strm);
+	Writer<GenericWriteStream> writer(output);
+
+	strm << endl << "<script type=\"text/javascript\">" << endl;
+	strm << "var containerList = "; document.Accept(writer); strm << ";";
+	strm << "var rootLevel = " << rootLevel << ";";
+	strm << "var containerType = " << nType << ";";
+	strm << endl;
+	strm << "</script>" << endl;
 }
 
 void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
@@ -1985,6 +2054,15 @@ string CDocMain::CreateMenuFilterControl()
 		<< "<input id='typeFilterDD' type='checkbox' value='6'/><label for='typeFilterDD'>&nbsp;Data&nbsp;Dictionary</label>"
 		<< " <button id='typeFilterNone'>Clear All</button>"
 		<< "</span>"
+	<< "</div>";
+	return content.str();
+}
+
+string CDocMain::CreateContainerFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("containerFilter")
 	<< "</div>";
 	return content.str();
 }

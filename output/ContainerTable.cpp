@@ -19,15 +19,20 @@
 
 using namespace OUTPUT;
 
-CContainerTable::CContainerTable(CARInside &arIn)
-: CObjectTable("containerLIst", "TblObjectList")
+CContainerTable::CContainerTable(CARInside &arIn, bool includeObjTypeColumn)
+: CObjectTable("containerList", "TblObjectList")
 {
 	this->pInside = &arIn;
 
-	tbl.AddColumn(40, "Container Name");
-	tbl.AddColumn(20, "Type");
+	tbl.AddColumn((includeObjTypeColumn?40:60), "Container Name");
+	if (includeObjTypeColumn)
+	{
+		tbl.AddColumn(20, "Type");
+	}
 	tbl.AddColumn(20, "Modified");
 	tbl.AddColumn(20, "By");
+
+	hasObjTypeColumn = includeObjTypeColumn;
 }
 
 CContainerTable::~CContainerTable(void)
@@ -60,7 +65,7 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	}
 
 	tblRow.AddCell( CTableCell(cellNameValue));
-	tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.GetType())));
+	if (this->hasObjTypeColumn) { tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.GetType()))); }
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);

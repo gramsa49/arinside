@@ -713,14 +713,6 @@ void CARInside::Documentation(void)
 	indexSummary.packlistCount = docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*", pklObjCount);
 	indexSummary.fltguideCount = docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*", ftgObjCount);
 	indexSummary.webserviceCount = docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*", wbsObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->ContainerList(ARCON_GUIDE, "GuideList", std::string(1, strValue.at(i)), algObjCount);
-		docMain->ContainerList(ARCON_APP, "ApplicationList", std::string(1, strValue.at(i)), appObjCount);
-		docMain->ContainerList(ARCON_PACK, "PackinglistList", std::string(1, strValue.at(i)), pklObjCount);
-		docMain->ContainerList(ARCON_FILTER_GUIDE, "FilterGuideList", std::string(1, strValue.at(i)), ftgObjCount);
-		docMain->ContainerList(ARCON_WEBSERVICE, "WebserviceList", std::string(1, strValue.at(i)), wbsObjCount);
-	}
 
 	//Application Details
 	int nTmpCnt = 1;
