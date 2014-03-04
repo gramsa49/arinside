@@ -63,7 +63,7 @@ $('document').ready(function() {
     };
 
     $("#formLetterFilter a").click(function() {
-        $("#actlinkFilter").val("^" + this.text);
+        $("#actlinkFilter").val("^" + $(this).text());
         updateActlinkTable();
         return false;
     });

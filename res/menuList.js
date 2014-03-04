@@ -58,7 +58,7 @@ $('document').ready(function() {
     };
 
     $("#formLetterFilter a").click(function() {
-        $("#menuFilter").val("^" + this.text);
+        $("#menuFilter").val("^" + $(this).text());
         updateMenuTable();
         return false;
     });

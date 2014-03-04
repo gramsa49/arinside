@@ -61,7 +61,7 @@ $('document').ready(function() {
     };
 
     $("#formLetterFilter a").click(function() {
-        $("#filterFilter").val("^" + this.text);
+        $("#filterFilter").val("^" + $(this).text());
         updateFilterTable();
         return false;
     });

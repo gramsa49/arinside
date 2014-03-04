@@ -77,7 +77,7 @@ $('document').ready(function() {
     };
 
     $("#formLetterFilter a").click(function() {
-        $("#formFilter").val("^" + this.text);
+        $("#formFilter").val("^" + $(this).text());
         updateSchemaTable();
         return false;
     });
