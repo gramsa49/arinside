@@ -30,6 +30,7 @@ namespace OUTPUT
 		void AddRow(CARContainer &cont, int rootLevel);
 
 	private:
+		bool IsUnusedContainer(CARContainer &obj);
 		int NumRelatedActiveLinks(CARContainer &obj);
 		int NumRelatedFilters(CARContainer &obj);
 

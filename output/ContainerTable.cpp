@@ -24,7 +24,7 @@ CContainerTable::CContainerTable(CARInside &arIn, bool includeObjTypeColumn)
 {
 	this->pInside = &arIn;
 
-	tbl.AddColumn((includeObjTypeColumn?40:60), "Container Name");
+	tbl.AddColumn((includeObjTypeColumn?40:60), "Name");
 	if (includeObjTypeColumn)
 	{
 		tbl.AddColumn(20, "Type");
@@ -41,34 +41,42 @@ CContainerTable::~CContainerTable(void)
 
 void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 {
-	CTableRow tblRow("");
 	string cellNameValue = cont.GetURL(rootLevel);
-
-	switch(cont.GetType())
-	{
-	case ARCON_FILTER_GUIDE:
-		{
-			if(NumRelatedFilters(cont)==0)
-			{
-				cellNameValue += " (<b>!</b>)";
-			}
-		}
-		break;
-	case ARCON_GUIDE:
-		{
-			if(NumRelatedActiveLinks(cont)==0)
-			{
-				cellNameValue += " (<b>!</b>)";
-			}
-		}
-		break;
+	if (IsUnusedContainer(cont))
+	{ 
+		cellNameValue += " (<b>!</b>)"; 
 	}
 
+	CTableRow tblRow("");
 	tblRow.AddCell( CTableCell(cellNameValue));
 	if (this->hasObjTypeColumn) { tblRow.AddCell( CTableCell(CAREnum::ContainerType(cont.GetType()))); }
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
+}
+
+bool CContainerTable::IsUnusedContainer(CARContainer &obj)
+{
+	switch(obj.GetType())
+	{
+	case ARCON_FILTER_GUIDE:
+		{
+			if(NumRelatedFilters(obj)==0)
+			{
+				return true;
+			}
+		}
+		break;
+	case ARCON_GUIDE:
+		{
+			if(NumRelatedActiveLinks(obj)==0)
+			{
+				return true;
+			}
+		}
+		break;
+	}
+	return false;
 }
 
 // TODO: optimize related workflow scanning
