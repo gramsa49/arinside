@@ -1338,6 +1338,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\containerList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\disabled.gif"
 				>
 				<FileConfiguration
