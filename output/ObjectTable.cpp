@@ -48,6 +48,11 @@ void CObjectTable::Print(std::ostream& strm)
 	strm << tbl;
 }
 
+void CObjectTable::RemoveEmptyMessageRow()
+{
+	tbl.SetEmptyMessage("");
+}
+
 std::ostream& operator<<(std::ostream& strm, OUTPUT::CObjectTable& oTbl)
 {
 	oTbl.Print(strm);

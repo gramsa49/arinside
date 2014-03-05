@@ -207,6 +207,10 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 				SchemaListJson(strmTmp);
 				strmTmp << CreateSchemaFilterControl() << endl;
 			}
+			if (objCount > 0)
+			{
+				tbl.RemoveEmptyMessageRow();
+			}
 
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
@@ -291,6 +295,10 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 
 				ActiveLinkListJson(strmTmp);
 				strmTmp << CreateActlinkFilterControl() << endl;
+			}
+			if (objCount > 0)
+			{
+				tbl.RemoveEmptyMessageRow();
 			}
 
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
@@ -553,6 +561,10 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 
 				FilterListJson(strmTmp);
 				strmTmp << CreateFilterFilterControl() << endl;
+			}
+			if (objCount > 0)
+			{
+				tbl.RemoveEmptyMessageRow();
 			}
 
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
@@ -856,6 +868,10 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 				EscalationListJson(strmTmp);
 				strmTmp << CreateEscalationFilterControl() << endl;
 			}
+			if (objCount > 0)
+			{
+				tbl.RemoveEmptyMessageRow();
+			}
 
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
@@ -1135,6 +1151,10 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 				MenuListJson(strmTmp);
 				strmTmp << CreateMenuFilterControl() << endl;
 			}
+			if (objCount > 0)
+			{
+				tbl.RemoveEmptyMessageRow();
+			}
 			
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
 			tbl.SetDescription(strmTmp.str());
@@ -1278,6 +1298,10 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 
 				ContainerListJson(strmTmp, nType);
 				strmTmp << CreateContainerFilterControl() << endl;
+			}
+			if (objCount > 0)
+			{
+				tbl.RemoveEmptyMessageRow();
 			}
 
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);

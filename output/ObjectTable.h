@@ -31,6 +31,7 @@ namespace OUTPUT
 		void Print(std::ostream& strm);
 		int NumRows();
 		void SetDescription(const string& desc);
+		void RemoveEmptyMessageRow();
 
 	protected:
 		CARInside *pInside;

@@ -31,8 +31,6 @@ CSchemaTable::CSchemaTable(CARInside &arIn)
 	tbl.AddColumn(10, "Type");
 	tbl.AddColumn(15, "Modified");
 	tbl.AddColumn(15, "By");
-
-	tbl.SetEmptyMessage("");
 }
 
 CSchemaTable::~CSchemaTable(void)

@@ -54,7 +54,7 @@ FilterableTable.prototype.filterTable = function(appendNextChunk) {
         lastMatches += this.lastMatches;
     }
     else {
-        $('#' + this.tableId + ' tbody,tfoot').remove();
+        if (end > 0) table.find("tbody,tfoot").remove();
     }
 
     if (hasFilter) {

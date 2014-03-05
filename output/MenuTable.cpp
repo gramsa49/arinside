@@ -29,8 +29,6 @@ CMenuTable::CMenuTable(CARInside &arIn)
 	tbl.AddColumn(10, "Refresh On");
 	tbl.AddColumn(20, "Changed");
 	tbl.AddColumn(20, "By");
-
-	tbl.SetEmptyMessage("");
 }
 
 CMenuTable::~CMenuTable(void)
