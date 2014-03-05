@@ -1254,6 +1254,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\actlinkList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\al_guide.gif"
 				>
 				<FileConfiguration
@@ -1612,6 +1616,10 @@
 						Name="VCCustomBuildTool"
 					/>
 				</FileConfiguration>
+			</File>
+			<File
+				RelativePath=".\res\menuList.js"
+				>
 			</File>
 			<File
 				RelativePath=".\Res\navigation.htm"
