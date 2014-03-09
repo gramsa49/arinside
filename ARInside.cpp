@@ -913,7 +913,7 @@ void CARInside::Documentation(void)
 
 	// Image
 	{
-		CDocImageOverview imageOverview("*");
+		CDocImageOverview imageOverview;
 		indexSummary.imageCount = imageOverview.Build();
 	}
 

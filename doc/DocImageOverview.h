@@ -19,12 +19,11 @@
 class CDocImageOverview
 {
 public:
-	CDocImageOverview(const std::string &startChar);
+	CDocImageOverview(void);
 	~CDocImageOverview(void);
 
 	unsigned int Build();
 
 private:
 	int rootLevel;
-	std::string searchChar;
 };

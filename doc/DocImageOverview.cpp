@@ -21,8 +21,7 @@
 #include "../output/ImageTable.h"
 #include "../output/LetterFilterControl.h"
 
-CDocImageOverview::CDocImageOverview(const std::string &startChar)
-: searchChar(startChar)
+CDocImageOverview::CDocImageOverview(void)
 {
 }
 
@@ -38,10 +37,8 @@ unsigned int CDocImageOverview::Build()
 
 	// server version older than 7.5 ?? then there are no files to generate
 	if (pInside->CompareServerVersion(7,5) < 0) return 0;
-	if (searchChar.size() != 1) return 0;
 
-	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page, AR_STRUCT_ITEM_XML_IMAGE);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE);
 	LetterFilterControl letterFilter;
 
 	try
@@ -60,57 +57,32 @@ unsigned int CDocImageOverview::Build()
 				continue;
 #endif
 
-			if (searchChar == "*") // All objects
-			{
-				letterFilter.IncStartLetterOf(img);
-				bInsert = true;
-			}
-			else if (searchChar == "#")
-			{
-				if (!img.NameStandardFirstChar())
-					bInsert = true;
-			}
-			else 
-			{
-				if (img.GetNameFirstChar() == searchChar)
-					bInsert = true;
-			}
-
-			if (bInsert)
-			{
-				imgTable.AddRowJson(idx, rootLevel);
-				objCount++;
-			}
+			letterFilter.IncStartLetterOf(img);
+			imgTable.AddRowJson(idx, rootLevel);
+			objCount++;
 		}
 
-		if (imgTable.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Image List", rootLevel, pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << "<span id='imageListFilterResultCount'></span>" << CWebUtil::LinkToImageIndex(objCount, rootLevel);
-
-			if (searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/imageList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-
-				strmTmp << CDocMain::CreateImageFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				imgTable.RemoveEmptyMessageRow();
-			}
-
-			strmTmp << letterFilter;
-			strmTmp << imgTable;
-			
-			webPage.AddContent(strmTmp.str());
-			webPage.SaveInFolder(file->GetPath());
+			imgTable.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Image List", rootLevel, pInside->appConfig);
+
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/imageList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='imageListFilterResultCount'></span>" << CWebUtil::LinkToImageIndex(objCount, rootLevel);
+		strmTmp << CDocMain::CreateImageFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << imgTable;
+		
+		webPage.AddContent(strmTmp.str());
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
