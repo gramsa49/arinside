@@ -117,7 +117,7 @@ function getIcon(rootLevel, type, subtype) {
         case 1: alt = "schema.gif"; break;
         case 5: alt = "filter.gif"; break;
         case 6: alt = "active_link.gif"; break;
-		case 8: alt = "menu.gif"; break;
+        case 8: alt = "menu.gif"; break;
         case 9: alt = "escalation.gif"; break;
         case 12: switch (subtype) {
                 case 1: alt = "al_guide.gif"; break;
@@ -126,6 +126,7 @@ function getIcon(rootLevel, type, subtype) {
                 case 4: alt = "filter_guide.gif"; break;
                 case 5: alt = "webservice.gif"; break;
             }; break;
+        case 17: alt = "image.gif"; break;
         default: return "";
     };
     var src = "";

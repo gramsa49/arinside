@@ -914,10 +914,6 @@ void CARInside::Documentation(void)
 
 	// Image
 	indexSummary.imageCount = docMain->ImageList("*", imgObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->ImageList(std::string(1, strValue.at(i)), imgObjCount);
-	}	
 
 	// Image Details
 	tmpCount = imageList.GetCount();

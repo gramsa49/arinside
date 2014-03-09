@@ -79,6 +79,7 @@ private:
 	static string CreateEscalationFilterControl();
 	static string CreateMenuFilterControl();
 	static string CreateContainerFilterControl();
+	static string CreateImageFilterControl();
 
 	void SchemaListJson(std::ostream &strm);
 	void ActiveLinkListJson(std::ostream &strm);
@@ -86,4 +87,5 @@ private:
 	void EscalationListJson(std::ostream &strm);
 	void MenuListJson(std::ostream &strm);
 	void ContainerListJson(std::ostream &strm, int nType);
+	void ImageListJson(std::ostream &strm);
 };
