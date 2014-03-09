@@ -21,8 +21,8 @@
 #include "../output/ImageTable.h"
 #include "../output/LetterFilterControl.h"
 
-CDocImageOverview::CDocImageOverview(const std::string &startChar, std::vector<int> &countPerLetter)
-: searchChar(startChar), objCountPerLetter(countPerLetter)
+CDocImageOverview::CDocImageOverview(const std::string &startChar)
+: searchChar(startChar)
 {
 }
 
@@ -63,12 +63,6 @@ unsigned int CDocImageOverview::Build()
 			if (searchChar == "*") // All objects
 			{
 				letterFilter.IncStartLetterOf(img);
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = img.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
 				bInsert = true;
 			}
 			else if (searchChar == "#")

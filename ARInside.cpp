@@ -913,10 +913,7 @@ void CARInside::Documentation(void)
 
 	// Image
 	{
-		// image object count per first char
-		vector<int> imgObjCount; imgObjCount.resize(38);
-
-		CDocImageOverview imageOverview("*", imgObjCount);
+		CDocImageOverview imageOverview("*");
 		indexSummary.imageCount = imageOverview.Build();
 	}
 
