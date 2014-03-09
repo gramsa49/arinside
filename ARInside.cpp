@@ -42,6 +42,7 @@
 #include "doc/DocRoleDetails.h"
 #include "doc/DocSummaryInfo.h"
 #include "doc/DocImageDetails.h"
+#include "doc/DocImageOverview.h"
 #include "doc/DocCustomWorkflow.h"
 
 #include "output/Table.h"
@@ -909,11 +910,15 @@ void CARInside::Documentation(void)
 	}
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-	// image object count per first char
-	vector<int> imgObjCount; imgObjCount.resize(38);
 
 	// Image
-	indexSummary.imageCount = docMain->ImageList("*", imgObjCount);
+	{
+		// image object count per first char
+		vector<int> imgObjCount; imgObjCount.resize(38);
+
+		CDocImageOverview imageOverview("*", imgObjCount);
+		indexSummary.imageCount = imageOverview.Build();
+	}
 
 	// Image Details
 	tmpCount = imageList.GetCount();

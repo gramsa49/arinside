@@ -918,6 +918,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocImageOverview.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocImageOverview.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocMain.cpp"
 				>
 			</File>
