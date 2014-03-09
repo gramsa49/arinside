@@ -23,6 +23,8 @@
 
 CDocImageOverview::CDocImageOverview(void)
 {
+	pInside = CARInside::GetInstance();
+	objCount = 0;
 }
 
 CDocImageOverview::~CDocImageOverview(void)
@@ -31,10 +33,7 @@ CDocImageOverview::~CDocImageOverview(void)
 
 unsigned int CDocImageOverview::Build()
 {
-	unsigned int objCount = 0;
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-	CARInside *pInside = CARInside::GetInstance();
-
 	// server version older than 7.5 ?? then there are no files to generate
 	if (pInside->CompareServerVersion(7,5) < 0) return 0;
 
@@ -50,7 +49,6 @@ unsigned int CDocImageOverview::Build()
 		for (unsigned int idx = 0; idx < len; ++idx)
 		{
 			CARImage img(idx);
-			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(img))
@@ -68,15 +66,10 @@ unsigned int CDocImageOverview::Build()
 		}
 
 		CWebPage webPage(file->GetFileName(), "Image List", rootLevel, pInside->appConfig);
-
-		webPage.GetReferenceManager()
-			.AddScriptReference("img/object_list.js")
-			.AddScriptReference("img/imageList.js")
-			.AddScriptReference("img/jquery.timers.js")
-			.AddScriptReference("img/jquery.address.min.js");
+		SetupAdditionalPageResources(webPage);
 
 		stringstream strmTmp;
-		strmTmp << "<span id='imageListFilterResultCount'></span>" << CWebUtil::LinkToImageIndex(objCount, rootLevel);
+		strmTmp << Header();
 		strmTmp << CDocMain::CreateImageFilterControl() << endl;
 		strmTmp << letterFilter;
 		strmTmp << imgTable;
@@ -90,4 +83,18 @@ unsigned int CDocImageOverview::Build()
 	}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	return objCount;
+}
+
+void CDocImageOverview::SetupAdditionalPageResources(CWebPage &webPage)
+{
+	webPage.GetReferenceManager()
+		.AddScriptReference("img/object_list.js")
+		.AddScriptReference("img/imageList.js")
+		.AddScriptReference("img/jquery.timers.js")
+		.AddScriptReference("img/jquery.address.min.js");
+}
+
+std::string CDocImageOverview::Header()
+{
+	return "<span id='imageListFilterResultCount'></span>" + CWebUtil::LinkToImageIndex(objCount, rootLevel);
 }

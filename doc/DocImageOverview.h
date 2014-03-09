@@ -16,6 +16,9 @@
 
 #pragma once
 
+class CARInside;
+namespace OUTPUT { class CWebPage; }
+
 class CDocImageOverview
 {
 public:
@@ -25,5 +28,10 @@ public:
 	unsigned int Build();
 
 private:
+	CARInside *pInside;
 	int rootLevel;
+	unsigned int objCount;
+
+	void SetupAdditionalPageResources(OUTPUT::CWebPage &webPage);
+	std::string Header();
 };

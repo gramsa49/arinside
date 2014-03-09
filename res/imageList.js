@@ -15,7 +15,7 @@ function createImageRowHtml(data) {
             .append(getIcon(rootLevel, 17))
             .append($("<a>").attr("href", data[4]).text(data[0]))
         )
-        .append($("<td>").text(AREnabled(data[1])))
+        .append($("<td>").text(data[1]))
         .append($("<td>").text(data[2]))
 				.append($("<td>").text(data[3]))
     );
