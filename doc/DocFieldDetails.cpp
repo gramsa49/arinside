@@ -20,6 +20,7 @@
 #include "../util/RefItem.h"
 #include "../core/ARImage.h"
 #include "../core/ARGlobalField.h"
+#include "../core/ARQualification.h"
 
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)

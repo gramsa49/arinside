@@ -20,7 +20,6 @@
 #include "../output/TableRow.h"
 #include "../output/UList.h"
 #include "../output/UListItem.h"
-#include "../core/ARQualification.h"
 
 using namespace OUTPUT;
 

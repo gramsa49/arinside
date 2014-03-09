@@ -18,6 +18,7 @@
 #include "DocCharMenuDetails.h"
 #include "../output/ContainerTable.h"
 #include "DocOverlayHelper.h"
+#include "../core/ARQualification.h"
 
 const char* MenuDefinitionText = "Menu Definition";
 

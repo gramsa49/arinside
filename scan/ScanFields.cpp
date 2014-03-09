@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ScanFields.h"
 #include "../ARInside.h"
+#include "../core/ARQualification.h"
 #include "../doc/DocFieldDetails.h"
 
 CScanFields::CScanFields()
