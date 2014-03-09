@@ -1090,6 +1090,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\LetterFilterControl.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\LetterFilterControl.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Output\MenuTable.cpp"
 				>
 			</File>

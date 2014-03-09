@@ -19,8 +19,9 @@
 #include "DocMain.h"
 #include "../ARInside.h"
 #include "../output/ImageTable.h"
+#include "../output/LetterFilterControl.h"
 
-CDocImageOverview::CDocImageOverview(const std::string &startChar, std::vector<int> countPerLetter)
+CDocImageOverview::CDocImageOverview(const std::string &startChar, std::vector<int> &countPerLetter)
 : searchChar(startChar), objCountPerLetter(countPerLetter)
 {
 }
@@ -41,6 +42,7 @@ unsigned int CDocImageOverview::Build()
 
 	unsigned int page = (unsigned int)searchChar[0];
 	CPageParams file(page, AR_STRUCT_ITEM_XML_IMAGE);
+	LetterFilterControl letterFilter;
 
 	try
 	{
@@ -60,6 +62,7 @@ unsigned int CDocImageOverview::Build()
 
 			if (searchChar == "*") // All objects
 			{
+				letterFilter.IncStartLetterOf(img);
 				// the first call to this function holds always "*" as search char. That's the
 				// best time to sum up the object count per letter.
 				string firstChar = img.GetNameFirstChar();
@@ -108,7 +111,7 @@ unsigned int CDocImageOverview::Build()
 				imgTable.RemoveEmptyMessageRow();
 			}
 
-			strmTmp << CDocMain::ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << letterFilter;
 			strmTmp << imgTable;
 			
 			webPage.AddContent(strmTmp.str());

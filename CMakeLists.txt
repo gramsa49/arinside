@@ -107,6 +107,7 @@ SET (ARINSIDE_SRCS
  doc/DocActionOpenWindowHelper.cpp doc/DocPacklistDetails.cpp doc/DocApplicationDetails.cpp
  doc/DocGroupDetails.cpp doc/MessageItem.cpp doc/DocEscalationDetails.cpp doc/DocSummaryInfo.cpp
  doc/DocAlGuideDetails.cpp doc/DocCustomWorkflow.cpp doc/DocOverlayHelper.cpp doc/DocAllMatchingIdsTable.cpp
+ doc/DocImageOverview.cpp
  lists/ARActiveLinkList.cpp lists/ARContainerList.cpp lists/AREscalationList.cpp lists/ARFieldList.cpp
  lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
  lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp lists/ARListHelpers.cpp
@@ -117,7 +118,7 @@ SET (ARINSIDE_SRCS
  output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp
  output/WebPage.cpp output/TableColumn.cpp output/NavigationPage.cpp output/GroupTable.cpp output/ImageTable.cpp
  output/UListItem.cpp output/MenuTable.cpp output/UserTable.cpp output/WebUtil.cpp output/TabControl.cpp
- output/webpage/HtmlReferenceList.cpp output/webpage/HtmlReferenceListImpl.cpp
+ output/webpage/HtmlReferenceList.cpp output/webpage/HtmlReferenceListImpl.cpp output/LetterFilterControl.cpp
  scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
  scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
  thirdparty/tinyxml/tinyxml.cpp thirdparty/tinyxml/tinystr.cpp thirdparty/tinyxml/tinyxmlerror.cpp 
@@ -309,7 +310,7 @@ ADD_CUSTOM_TARGET(arinsideres ALL
 ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS)
 
 # generate svnrev.h file
-FIND_PACKAGE(Subversion)
+#FIND_PACKAGE(Subversion)
 IF(Subversion_FOUND)
 	Subversion_WC_INFO(${PROJECT_SOURCE_DIR} ARINSIDE)
 ELSE(Subversion_FOUND)

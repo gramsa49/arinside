@@ -16,16 +16,23 @@
 
 #pragma once
 
-class CDocImageOverview
+// forward declarations
+class CARServerObject;
+
+namespace OUTPUT 
 {
-public:
-	CDocImageOverview(const std::string &startChar, std::vector<int> &objCountPerLetter);
-	~CDocImageOverview(void);
+	class LetterFilterControl
+	{
+	public:
+		LetterFilterControl();
+		~LetterFilterControl();
 
-	unsigned int Build();
+		void IncStartLetterOf(CARServerObject &obj);
+		void Render(std::ostream &strm);
 
-private:
-	int rootLevel;
-	std::vector<int> &objCountPerLetter;
-	std::string searchChar;
+	private:
+		std::vector<int> objCountPerLetter;
+	};
 };
+
+ostream& operator<<(ostream& strm, OUTPUT::LetterFilterControl& inst);
