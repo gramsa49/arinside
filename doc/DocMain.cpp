@@ -1494,6 +1494,7 @@ unsigned int CDocMain::ImageList(string searchChar, std::vector<int> &objCountPe
 
 			if (bInsert)
 			{
+				imgTable.AddRowJson(idx, rootLevel);
 				objCount++;
 			}
 		}
@@ -1513,7 +1514,6 @@ unsigned int CDocMain::ImageList(string searchChar, std::vector<int> &objCountPe
 					.AddScriptReference("img/jquery.timers.js")
 					.AddScriptReference("img/jquery.address.min.js");
 
-				ImageListJson(strmTmp);
 				strmTmp << CreateImageFilterControl() << endl;
 			}
 			if (objCount > 0)
@@ -1522,10 +1522,9 @@ unsigned int CDocMain::ImageList(string searchChar, std::vector<int> &objCountPe
 			}
 
 			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << imgTable;
 			
-			imgTable.SetDescription(strmTmp.str());
-			
-			webPage.AddContent(imgTable.Print());
+			webPage.AddContent(strmTmp.str());
 			webPage.SaveInFolder(file->GetPath());
 		}
 	}
@@ -1535,57 +1534,6 @@ unsigned int CDocMain::ImageList(string searchChar, std::vector<int> &objCountPe
 	}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	return objCount;
-}
-
-void CDocMain::ImageListJson(std::ostream &strm)
-{
-	Document document;
-	Document::AllocatorType &alloc = document.GetAllocator();
-	document.SetArray();
-
-	unsigned int imageCount = this->pInside->imageList.GetCount();
-	for (unsigned int imageIndex = 0; imageIndex < imageCount; ++imageIndex)
-	{
-		CARImage image(imageIndex);
-		CPageParams imageDetailPage(PAGE_DETAILS, &image);
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(image))
-			continue;
-#endif
-
-		// create a new json row and make it an array
-		Value imageRow;
-		imageRow.SetArray();
-
-		// now build the needed temporary variables
-		string strName = image.GetName();
-		string strModifiedDate = CUtil::DateTimeToString(image.GetTimestamp());
-		string strLink = CWebUtil::GetRelativeURL(rootLevel, imageDetailPage);
-
-		Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
-		Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
-		Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
-
-		// add everything to the row
-		imageRow.PushBack(valName, alloc);
-		imageRow.PushBack(image.GetType(), alloc);
-		imageRow.PushBack(valModifiedDate, alloc);
-		imageRow.PushBack(image.GetLastChanged(), alloc);
-		imageRow.PushBack(valLink, alloc);
-
-		// add the row to the document
-		document.PushBack(imageRow, alloc);
-	}
-
-	GenericWriteStream output(strm);
-	Writer<GenericWriteStream> writer(output);
-
-	strm << endl << "<script type=\"text/javascript\">" << endl;
-	strm << "var imageList = "; document.Accept(writer); strm << ";";
-	strm << "var rootLevel = " << rootLevel << ";";
-	strm << endl;
-	strm << "</script>" << endl;	
 }
 
 void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)

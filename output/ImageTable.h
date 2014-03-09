@@ -28,5 +28,6 @@ namespace OUTPUT
 		~CImageTable(void);
 
 		void AddRow(int imageIndex, int rootLevel);
+		void AddRowJson(int imageIndex, int rootLevel);
 	};
 }

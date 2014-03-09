@@ -63,9 +63,9 @@ void CTable::AddRow(const CTableRow& tableRow)
 	this->listRows.push_back(tableRow);
 }
 
-void CTable::SetHtmId(const string& htmId)
+string CTable::GetHtmId()
 {
-	this->htmId = htmId;
+	return htmId;
 }
 
 void CTable::SetCssClass(const string& cssClass)

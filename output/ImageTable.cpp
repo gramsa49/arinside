@@ -18,6 +18,7 @@
 #include "ImageTable.h"
 
 using namespace OUTPUT;
+using namespace rapidjson;
 
 CImageTable::CImageTable(CARInside &arIn)
 : CObjectTable("imageList", "TblObjectList")
@@ -52,4 +53,37 @@ void CImageTable::AddRow(int imageIndex, int rootLevel)
 		cout << "EXCEPTION adding image: " << e.what()<< endl;
 	}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+}
+
+void CImageTable::AddRowJson(int imageIndex, int rootLevel)
+{
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+	CARImage image(imageIndex);
+	if (!image.Exists()) return;
+
+	CPageParams imageDetailPage(PAGE_DETAILS, &image);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+
+	Value imageRow;
+	imageRow.SetArray();
+
+	// now build the needed temporary variables
+	string strName = image.GetName();
+	string strModifiedDate = CUtil::DateTimeToString(image.GetTimestamp());
+	string strLink = CWebUtil::GetRelativeURL(rootLevel, imageDetailPage);
+
+	Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+	Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+	Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+	// add everything to the row
+	imageRow.PushBack(valName, alloc);
+	imageRow.PushBack(image.GetType(), alloc);
+	imageRow.PushBack(valModifiedDate, alloc);
+	imageRow.PushBack(image.GetLastChanged(), alloc);
+	imageRow.PushBack(valLink, alloc);
+
+	// add the row to the document
+	doc.PushBack(imageRow, alloc);	
+#endif
 }

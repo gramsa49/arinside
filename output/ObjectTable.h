@@ -18,6 +18,7 @@
 #include "../output/Table.h"
 #include "../output/TableRow.h"
 #include "../ARInside.h"
+#include "rapidjson/document.h"
 
 namespace OUTPUT
 {
@@ -36,7 +37,7 @@ namespace OUTPUT
 	protected:
 		CARInside *pInside;
 		CTable tbl;
-
+		rapidjson::Document doc;
 	};
 }
 

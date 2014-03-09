@@ -38,7 +38,7 @@ namespace OUTPUT
 		void Clear();
 		void ClearRows();
 		void ClearColumns();
-		void SetHtmId(const string& cssClass);
+		std::string GetHtmId();
 		void SetCssClass(const string& htmId);
 		void SetEmptyMessage(const string& msg);
 		int NumRows();

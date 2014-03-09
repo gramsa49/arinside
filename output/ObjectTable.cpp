@@ -12,16 +12,20 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 #include "ObjectTable.h"
+#include "rapidjson/genericwritestream.h"
+#include "rapidjson/writer.h"
 
 using namespace OUTPUT;
+using namespace rapidjson;
 
 CObjectTable::CObjectTable(const string &htmlId, const string &cssClass)
 : tbl(htmlId, cssClass)
 {
+	doc.SetArray();
 }
 
 CObjectTable::~CObjectTable(void)
@@ -45,6 +49,15 @@ string CObjectTable::Print()
 
 void CObjectTable::Print(std::ostream& strm)
 {
+	if (!doc.Empty())
+	{
+		GenericWriteStream output(strm);
+		Writer<GenericWriteStream> writer(output);
+
+		strm << "<script type=\"text/javascript\">" << endl;
+		strm << "var " << this->tbl.GetHtmId() << " = "; doc.Accept(writer); strm << ";" << endl;
+		strm << "</script>" << endl;
+	}
 	strm << tbl;
 }
 

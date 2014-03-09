@@ -73,6 +73,7 @@ void CWebPage::PageHeader(ostream &strm)
 	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" << endl;
 	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << endl;
 	strm << "<meta name=\"author\" content=\"ARInside\" />" << endl;
+	strm << "<script type='text/javascript'>var rootLevel=" << rootLevel << ";</script>" << endl;
 	strm << GetReferenceManager() << endl;
 	strm << "</head>" << endl;
 }
