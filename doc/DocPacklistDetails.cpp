@@ -136,7 +136,7 @@ string CDocPacklistDetails::PackListInformation()
 			case ARREF_CHAR_MENU:
 				{
 					srvType << CAREnum::ContainerRefType(refs.referenceList[i].type);
-					srvObj << this->pInside->LinkToMenu(refs.referenceList[i].reference.u.name, rootLevel);
+					srvObj << CWebUtil::LinkToMenu(refs.referenceList[i].reference.u.name, rootLevel);
 
 					CRefItem refItem(this->pPackList, REFM_PACKINGLIST);
 					pInside->AddMenuReference(refs.referenceList[i].reference.u.name, refItem);

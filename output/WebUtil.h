@@ -18,6 +18,8 @@
 
 #include "IFileStructure.h"
 
+class CRefItem;
+
 namespace OUTPUT
 {
 	enum LinkTargetMode {
@@ -72,6 +74,8 @@ namespace OUTPUT
 		static string LinkToImageIndex(int rootLevel);
 		static string LinkToImageIndex(int objectCount, int rootLevel);
 #endif
+		static string LinkToMenu(string menuName, int rootLevel);
+		static string LinkToMenu(const CRefItem& refItem, int rootLevel);
 		static string LinkToMenuIndex(int rootLevel);
 		static string LinkToMenuIndex(int objectCount, int rootLevel);
 		static string LinkToPackingListIndex(int rootLevel);

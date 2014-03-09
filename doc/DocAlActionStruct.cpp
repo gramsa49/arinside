@@ -366,7 +366,7 @@ void CDocAlActionStruct::ActionSetChar(std::ostream& strm, const ARFieldCharacte
 		{
 			if(strcmp(action.charMenu, "") != 0)
 			{
-				strm << "Menu: " << arIn->LinkToMenu(action.charMenu, rootLevel) << "<br/>" << endl;
+				strm << "Menu: " << CWebUtil::LinkToMenu(action.charMenu, rootLevel) << "<br/>" << endl;
 			}
 		}
 

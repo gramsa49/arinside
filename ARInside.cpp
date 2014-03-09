@@ -1308,36 +1308,6 @@ string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 	return filterName;
 }
 
-string CARInside::LinkToMenu(string menuName, int fromRootLevel)
-{
-	if (menuName.compare("$NULL$")==0)
-	{
-		return menuName;
-	}
-
-	CARCharMenu menu(menuName);
-	if (menu.Exists())
-	{
-		return menu.GetURL(fromRootLevel);
-	}
-
-	//Menu has not been found
-	//If the menu is missing, we just return the name of it. maybe link to the
-	//"missing menus" page (must be implemented first) of CDocValidator later.
-	return "<span class=\"fieldNotFound\">" + menuName + "</span>";
-}
-
-string CARInside::LinkToMenu(const CRefItem& refItem, int rootLevel)
-{
-	CARCharMenu menu(refItem.GetObjectId());
-	if (menu.Exists())
-	{
-		return menu.GetURL(rootLevel);
-	}
-
-	return EmptyValue;
-}
-
 string CARInside::LinkToEscalation(const string& escalationName, int fromRootLevel)
 {
 	CAREscalation escal(escalationName);
@@ -1437,7 +1407,7 @@ string CARInside::LinkToObjByRefItem(const CRefItem& refItem, int rootLevel)
 		break;
 	case AR_STRUCT_ITEM_XML_CHAR_MENU:
 		{
-			result = this->LinkToMenu(refItem, rootLevel);
+			result = CWebUtil::LinkToMenu(refItem, rootLevel);
 		}
 		break;		
 	case AR_STRUCT_ITEM_XML_CONTAINER:

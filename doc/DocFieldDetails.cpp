@@ -307,7 +307,7 @@ string CDocFieldDetails::FieldLimits()
 
 				if(fLimit.charMenu[0] != 0)
 				{
-					strm << "Menu: " << this->pInside->LinkToMenu(fLimit.charMenu, rootLevel) << "<br/>" << endl;
+					strm << "Menu: " << CWebUtil::LinkToMenu(fLimit.charMenu, rootLevel) << "<br/>" << endl;
 				}
 
 				strm << "Fulltext Option: " << CAREnum::FieldFTOption(fLimit.fullTextOptions) << "<br/>" << endl;

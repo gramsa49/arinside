@@ -137,8 +137,6 @@ public:
 	string LinkToImage(unsigned int imageIndex, int rootLevel);
 	string LinkToImage(const string &imageName, int rootLevel);
 #endif
-	string LinkToMenu(string menuName, int rootLevel);
-	string LinkToMenu(const CRefItem& refItem, int rootLevel);
 	string LinkToSchema(const string& schemaName, int fromRootLevel);
 	string LinkToSchema(int insideId, int fromRootLevel);
 	string LinkToSchema(int schemaInsideId, const string &nameToUseIfSchemaNotExists, int rootLevel);

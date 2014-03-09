@@ -262,6 +262,36 @@ string CWebUtil::LinkToMenuIndex(int objectCount, int rootLevel)
 	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), "menu.gif", rootLevel);
 }
 
+string CWebUtil::LinkToMenu(string menuName, int rootLevel)
+{
+	if (menuName.compare("$NULL$")==0)
+	{
+		return menuName;
+	}
+
+	CARCharMenu menu(menuName);
+	if (menu.Exists())
+	{
+		return menu.GetURL(rootLevel);
+	}
+
+	//Menu has not been found
+	//If the menu is missing, we just return the name of it. maybe link to the
+	//"missing menus" page (must be implemented first) of CDocValidator later.
+	return "<span class=\"fieldNotFound\">" + menuName + "</span>";
+}
+
+string CWebUtil::LinkToMenu(const CRefItem& refItem, int rootLevel)
+{
+	CARCharMenu menu(refItem.GetObjectId());
+	if (menu.Exists())
+	{
+		return menu.GetURL(rootLevel);
+	}
+
+	return EmptyValue;
+}
+
 string CWebUtil::LinkToPackingListIndex(int rootLevel)
 {
 	return LinkToPackingListIndex(-1, rootLevel);
