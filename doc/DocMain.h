@@ -62,7 +62,6 @@ public:
 	void GroupList(string searchChar, std::vector<int>& objCountPerLetter);
 	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
 	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
-	unsigned int ImageList(string searchChar, std::vector<int> &objCountPerLetter);
 
 private:
 	static void Sort(list<CMessageItem> &listResult);
