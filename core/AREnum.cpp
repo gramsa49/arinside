@@ -2629,8 +2629,8 @@ const char* CAREnum::CallGuideMode(int mode)
 {
 	switch (mode)
 	{
-	case 0: return "None";
-	case AR_CALL_GUIDE_FORM_HIDDEN: return "All Rows";
+	case /*AR_CALL_GUIDE_LOOP_ALL_ROWS*/ 0: return "All Rows";
+	case AR_CALL_GUIDE_FORM_HIDDEN: return "Form Hidden";
 	case AR_CALL_GUIDE_LOOP_SELECTED_ONLY: return "Selected Rows";
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
 	case AR_CALL_GUIDE_LOOP_ALL_ROWS_VISIBLE: return "All Visible Rows";
