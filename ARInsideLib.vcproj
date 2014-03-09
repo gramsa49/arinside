@@ -1594,6 +1594,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\res\imageList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\info.gif"
 				>
 				<FileConfiguration
