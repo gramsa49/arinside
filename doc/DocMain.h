@@ -41,33 +41,38 @@ public:
 
 	int Index();
 	void ServerInfoList();
+
 	unsigned int SchemaList();	
+	unsigned int ActiveLinkList();	
+	unsigned int FilterList();	
+	unsigned int EscalationList();
 	unsigned int CharMenuList();
 	unsigned int ContainerList(int nType, string title);
+
+	void GroupList(string searchChar, std::vector<int>& objCountPerLetter);
+	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
+	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
+
 	void GlobalFieldList();
 	void MessageList();
 	void NotificationList();
 
-	unsigned int ActiveLinkList();	
 	void ActiveLinkActionList();
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
-	unsigned int FilterList();	
+
 	void FilterActionList();
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void FilterErrorHandlers();
-	unsigned int EscalationList();
+
 	void EscalationActionList();
 	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 
-	void GroupList(string searchChar, std::vector<int>& objCountPerLetter);
-	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
-	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
 
 private:
 	static void Sort(list<CMessageItem> &listResult);
 	static bool SortByMsgNum(const CMessageItem& t1, const CMessageItem& t2 );
 
-	void AddGlobalFieldRow(OUTPUT::CTable& tbl, int fieldId, OUTPUT::CTable& fields);
+	static void AddGlobalFieldRow(OUTPUT::CTable& tbl, int fieldId, OUTPUT::CTable& fields);
 
 public:
 	static string ShortMenu(string curCharacter, const CPageParams &curPage, std::vector<int>& objCountPerLetter);
