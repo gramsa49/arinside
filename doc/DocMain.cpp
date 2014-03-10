@@ -128,7 +128,7 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std:
 	return strm.str();
 }
 
-unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar, std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar)
 {
 	unsigned int objCount = 0;
 
@@ -223,7 +223,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 	return objCount;
 }
 
-unsigned int CDocMain::ActiveLinkList(std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::ActiveLinkList()
 {
 	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK);
 	unsigned int objCount = 0;
@@ -240,7 +240,6 @@ unsigned int CDocMain::ActiveLinkList(std::vector<int>& objCountPerLetter)
 		for (unsigned int alIdx = 0; alIdx < alCount; ++alIdx)
 		{
 			CARActiveLink actLink(alIdx);
-			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(actLink))
@@ -461,7 +460,7 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::FilterList(string searchChar)
 {
 	CPageParams file((unsigned int)searchChar.at(0), AR_STRUCT_ITEM_XML_FILTER);
 	unsigned int objCount = 0;
@@ -764,7 +763,7 @@ void CDocMain::FilterErrorHandlers()
 	}
 }
 
-unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::EscalationList(string searchChar)
 {
 	CPageParams file(searchChar.at(0), AR_STRUCT_ITEM_XML_ESCALATION);
 	unsigned int objCount = 0;
@@ -1039,7 +1038,7 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCountPerLetter)
+unsigned int CDocMain::CharMenuList(string searchChar)
 {
 	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_CHAR_MENU);
 	unsigned int objCount = 0;
@@ -1180,7 +1179,7 @@ void CDocMain::MenuListJson(std::ostream &strm)
 	strm << "</script>" << endl;
 }
 
-unsigned int CDocMain::ContainerList(int nType, string title, string searchChar, std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::ContainerList(int nType, string title, string searchChar)
 {
 	unsigned int page = (unsigned int)searchChar[0];
 	unsigned int objCount = 0;

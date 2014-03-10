@@ -699,21 +699,14 @@ void CARInside::Documentation(void)
 	//Server information
 	docMain->ServerInfoList();
 
-	// container object count per first char
-	vector<int> algObjCount; algObjCount.resize(38);
-	vector<int> appObjCount; appObjCount.resize(38);
-	vector<int> pklObjCount; pklObjCount.resize(38);
-	vector<int> ftgObjCount; ftgObjCount.resize(38);
-	vector<int> wbsObjCount; wbsObjCount.resize(38);
-
 	CDocSummaryInfo indexSummary(*this, "");	// this is the object for the summary start page (it's written at the end of this function)
 
 	//ContainerList
-	indexSummary.alguideCount = docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*", algObjCount);
-	indexSummary.applicationCount = docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*", appObjCount);
-	indexSummary.packlistCount = docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*", pklObjCount);
-	indexSummary.fltguideCount = docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*", ftgObjCount);
-	indexSummary.webserviceCount = docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*", wbsObjCount);
+	indexSummary.alguideCount = docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*");
+	indexSummary.applicationCount = docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*");
+	indexSummary.packlistCount = docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*");
+	indexSummary.fltguideCount = docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*");
+	indexSummary.webserviceCount = docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*");
 
 	//Application Details
 	int nTmpCnt = 1;
@@ -790,11 +783,9 @@ void CARInside::Documentation(void)
 		nTmpCnt++;
 	}
 
-	// active link object count per first char
-	vector<int> alObjCount; alObjCount.resize(38);
 
 	//ActiveLink List
-	indexSummary.activelinkCount = docMain->ActiveLinkList(alObjCount);
+	indexSummary.activelinkCount = docMain->ActiveLinkList();
 	docMain->ActiveLinkActionList();
 
 	//ActiveLink Details
@@ -808,11 +799,8 @@ void CARInside::Documentation(void)
 	}
 
 
-	// filter object count per first char
-	vector<int> fltObjCount; fltObjCount.resize(38);
-
 	//Filter List
-	indexSummary.filterCount = docMain->FilterList("*", fltObjCount);
+	indexSummary.filterCount = docMain->FilterList("*");
 	docMain->FilterActionList();
 	docMain->FilterErrorHandlers();
 
@@ -827,11 +815,8 @@ void CARInside::Documentation(void)
 	}
 
 
-	// escalation object count per first char
-	vector<int> escObjCount; escObjCount.resize(38);
-
 	//Escalation List
-	indexSummary.escalationCount = docMain->EscalationList("*", escObjCount);
+	indexSummary.escalationCount = docMain->EscalationList("*");
 	docMain->EscalationActionList();
 
 	//Escalation Details
@@ -845,11 +830,8 @@ void CARInside::Documentation(void)
 	}
 
 
-	// char menu object count per first char
-	vector<int> mnuObjCount; mnuObjCount.resize(38);
-
 	//CharMenus
-	indexSummary.menuCount = docMain->CharMenuList("*", mnuObjCount);
+	indexSummary.menuCount = docMain->CharMenuList("*");
 
 	// Char Menu Details
 	tmpCount = menuList.GetCount();
@@ -861,11 +843,9 @@ void CARInside::Documentation(void)
 		menuDetails.Documentation();
 	}
 
-	// schema types object first char count
-	vector<int> allObjCount; allObjCount.resize(38);
 
 	//Schema List
-	indexSummary.schemaCount = docMain->SchemaList(AR_SCHEMA_NONE,    CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA)      , "Formlist (All)"    , "*", allObjCount);
+	indexSummary.schemaCount = docMain->SchemaList(AR_SCHEMA_NONE, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (All)", "*");
 
 	//Schema and field Details
 	nTmpCnt=1;
