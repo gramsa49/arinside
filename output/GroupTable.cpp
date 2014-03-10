@@ -20,6 +20,7 @@
 #include "../core/ARRole.h"
 
 using namespace OUTPUT;
+using namespace rapidjson;
 
 CGroupTable::CGroupTable(CARInside &arIn)
 : CObjectTable("groupList", "TblObjectList")
@@ -110,4 +111,36 @@ void CGroupTable::AddGroupRow(string appRefName, int groupId, int rootLevel)
 		tblRow.AddCell( CTableCell(EmptyValue));    // LastChangedBy
 		this->tbl.AddRow(tblRow);
 	}	
+}
+
+void CGroupTable::AddRowJson(CARGroup &group, int rootLevel)
+{
+	if (!group.Exists()) return;
+
+	CPageParams groupDetailPage(PAGE_DETAILS, &group);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+
+	Value groupRow;
+	groupRow.SetArray();
+
+	// now build the needed temporary variables
+	string strName = group.GetName();
+	string strModifiedDate = CUtil::DateTimeToString(group.GetTimestamp());
+	string strLink = CWebUtil::GetRelativeURL(rootLevel, groupDetailPage);
+
+	Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+	Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+	Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+	// add everything to the row
+	groupRow.PushBack((unsigned int)group.GetGroupId(), alloc);
+	groupRow.PushBack(valName, alloc);
+	groupRow.PushBack(group.GetType(), alloc);
+	groupRow.PushBack(group.GetCategory(), alloc);
+	groupRow.PushBack(valModifiedDate, alloc);
+	groupRow.PushBack(group.GetLastChanged(), alloc);
+	groupRow.PushBack(valLink, alloc);
+
+	// add the row to the document
+	doc.PushBack(groupRow, alloc);	
 }

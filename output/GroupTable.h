@@ -28,6 +28,7 @@ namespace OUTPUT
 		~CGroupTable(void);
 
 		void AddRow(string appRefName, int id, int rootLevel);
+		void AddRowJson(CARGroup &group, int rootLevel);
 	private:
 		void AddGroupRow(string appRefName, int groupId, int rootLevel);
 		void AddRoleRow(string appRefName, int roleId, int rootLevel);

@@ -933,16 +933,9 @@ void CARInside::Documentation(void)
 		customWF.Documentation();
 	}
 
-	// group count per first char
-	vector<int> grpObjCount; grpObjCount.resize(38);
 
 	//Group List
-	docMain->GroupList("*", grpObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->GroupList(std::string(1, strValue.at(i)), grpObjCount);
-	}	
-
+	docMain->GroupList();
 
 	//Group Details
 	cout << "Starting Group Documentation" << endl;

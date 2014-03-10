@@ -49,7 +49,7 @@ public:
 	unsigned int CharMenuList();
 	unsigned int ContainerList(int nType, string title);
 
-	void GroupList(string searchChar, std::vector<int>& objCountPerLetter);
+	void GroupList();
 	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
 	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
 
@@ -85,6 +85,7 @@ public:
 	static string CreateMenuFilterControl();
 	static string CreateContainerFilterControl();
 	static string CreateImageFilterControl();
+	static string CreateGroupFilterControl();
 
 private:
 	void SchemaListJson(std::ostream &strm);

@@ -1236,65 +1236,44 @@ void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
 	}
 }
 
-void CDocMain::GroupList(string searchChar, std::vector<int>& objCountPerLetter)
+void CDocMain::GroupList()
 {
-	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page, AR_STRUCT_ITEM_XML_GROUP);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP);
 
 	try
 	{
 		int rootLevel = file->GetRootLevel();
 		CGroupTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int groupCount = pInside->groupList.GetCount();
 		for (unsigned int groupIndex = 0; groupIndex < groupCount; ++groupIndex)
 		{	
 			CARGroup grp(groupIndex);
-
-			bool bInsert = false;
-			if(searchChar == "*")  //All objects
-			{
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = grp.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
-				bInsert = true;
-			}
-			else if(searchChar == "#")
-			{
-				if(!grp.NameStandardFirstChar())
-				{
-					bInsert = true;
-				}
-			}
-			else
-			{
-				if(grp.GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
-
-			if(bInsert)
-			{	
-				tbl.AddRow("", grp.GetGroupId(), rootLevel);
-			}
+			letterFilter.IncStartLetterOf(grp);
+			tbl.AddRowJson(grp, rootLevel);
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (groupCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Group List", rootLevel, this->pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToGroupIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
-
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Group List", rootLevel, this->pInside->appConfig);
+
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/groupList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='groupListFilterResultCount'></span>" << CWebUtil::LinkToGroupIndex(groupCount, rootLevel);
+		strmTmp << CreateGroupFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1811,6 +1790,21 @@ string CDocMain::CreateImageFilterControl()
 	stringstream content;
 	content << "<div>"
 		<< CreateStandardFilterControl("imageFilter")
+	<< "</div>";
+	return content.str();
+}
+
+string CDocMain::CreateGroupFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("groupFilter", "seach by name or id") << " &nbsp;&nbsp;&nbsp; "
+		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
+		<< "<input id='typeFilterRegular' type='checkbox' value='0'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
+		<< "<input id='typeFilterDynamic' type='checkbox' value='1'/><label for='typeFilterDynamic'>&nbsp;Dynamic</label>"
+		<< "<input id='typeFilterComputed' type='checkbox' value='2'/><label for='typeFilterComputed'>&nbsp;Computed</label>"
+		<< " <button id='typeFilterNone'>Clear All</button>"
+		<< "</span>"
 	<< "</div>";
 	return content.str();
 }
