@@ -128,8 +128,9 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std:
 	return strm.str();
 }
 
-unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string title, string searchChar)
+unsigned int CDocMain::SchemaList()
 {
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA);
 	unsigned int objCount = 0;
 
 	try
@@ -148,73 +149,31 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 				continue;
 #endif
 
-			bool bInsert = false;
-			if(searchChar == "*")  //All objecte
-			{
-				if (nType == AR_SCHEMA_NONE)
-				{
-					letterFilter.IncStartLetterOf(schema);
-				}
-
-				if(nType == AR_SCHEMA_NONE || nType == schema.GetCompound().schemaType)  //Only check type
-				{
-					bInsert = true;
-				}
-			}		
-			else if(searchChar == "#")
-			{
-				if(!schema.NameStandardFirstChar())
-				{
-					bInsert = true;		
-				}
-			}
-			else
-			{
-				if(schema.GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
-
-			if(bInsert)
-			{
-				objCount++;
-			}
+			letterFilter.IncStartLetterOf(schema);
+			objCount++;
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << "<span id='schemaListFilterResultCount'></span>" << CWebUtil::LinkToSchemaIndex(objCount, rootLevel);
-
-			if(nType != AR_SCHEMA_NONE)
-				strmTmp << MenuSeparator << CAREnum::SchemaType(nType);
-
-			// add scripts and json data only on the "ALL"-schemas page
-			if (nType == AR_SCHEMA_NONE && searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/schemaList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-
-				SchemaListJson(strmTmp);
-				strmTmp << CreateSchemaFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				tbl.RemoveEmptyMessageRow();
-			}
-
-			strmTmp << letterFilter;
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Forms", rootLevel, this->pInside->appConfig);
+
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/schemaList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='schemaListFilterResultCount'></span>" << CWebUtil::LinkToSchemaIndex(objCount, rootLevel);
+		SchemaListJson(strmTmp);
+		strmTmp << CreateSchemaFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -460,9 +419,9 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-unsigned int CDocMain::FilterList(string searchChar)
+unsigned int CDocMain::FilterList()
 {
-	CPageParams file((unsigned int)searchChar.at(0), AR_STRUCT_ITEM_XML_FILTER);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER);
 	unsigned int objCount = 0;
 
 	try
@@ -476,64 +435,37 @@ unsigned int CDocMain::FilterList(string searchChar)
 		for (unsigned int filterIndex = 0; filterIndex < filterCount; ++filterIndex )
 		{
 			CARFilter filter(filterIndex);
-			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(filter))
 				continue;
 #endif
 
-			if(searchChar == "*")  //All objecte
-			{
-				letterFilter.IncStartLetterOf(filter);
-				bInsert = true;
-			}
-			else if(searchChar == "#")
-			{
-				if(filter.NameStandardFirstChar())
-					bInsert = true;		
-			}
-			else
-			{
-				if(filter.GetNameFirstChar() == searchChar)
-					bInsert = true;
-			}
-
-			if(bInsert)
-			{
-				objCount++;
-			}
+			letterFilter.IncStartLetterOf(filter);
+			objCount++;
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Filter List", file->GetRootLevel(), this->pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << "<span id='filterListFilterResultCount'></span>" << CWebUtil::LinkToFilterIndex(objCount, rootLevel);
-
-			if (searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/filterList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-
-				FilterListJson(strmTmp);
-				strmTmp << CreateFilterFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				tbl.RemoveEmptyMessageRow();
-			}
-
-			strmTmp << letterFilter;
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Filter List", file->GetRootLevel(), this->pInside->appConfig);
+
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/filterList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='filterListFilterResultCount'></span>" << CWebUtil::LinkToFilterIndex(objCount, rootLevel);
+		FilterListJson(strmTmp);
+		strmTmp << CreateFilterFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -763,9 +695,9 @@ void CDocMain::FilterErrorHandlers()
 	}
 }
 
-unsigned int CDocMain::EscalationList(string searchChar)
+unsigned int CDocMain::EscalationList()
 {
-	CPageParams file(searchChar.at(0), AR_STRUCT_ITEM_XML_ESCALATION);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION);
 	unsigned int objCount = 0;
 
 	try
@@ -778,64 +710,36 @@ unsigned int CDocMain::EscalationList(string searchChar)
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
 		{
 			CAREscalation escalation(escalIndex);
-			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escalation))
 				continue;
 #endif
 
-			if(searchChar == "*")  //All objecte
-			{
-				letterFilter.IncStartLetterOf(escalation);
-				bInsert = true;
-			}
-			else if(searchChar == "#")
-			{
-				if(!escalation.NameStandardFirstChar())
-					bInsert = true;		
-			}
-			else
-			{
-				if(escalation.GetNameFirstChar() == searchChar)
-					bInsert = true;
-			}
-
-			if(bInsert)
-			{
-				objCount++;
-			}
+			letterFilter.IncStartLetterOf(escalation);
+			objCount++;
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Escalation List", rootLevel, this->pInside->appConfig);
-			stringstream strmTmp;
-
-			strmTmp << "<span id='esclationListFilterResultCount'></span>" << CWebUtil::LinkToEscalationIndex(objCount, rootLevel);
-
-			if (searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/escalationList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-
-				EscalationListJson(strmTmp);
-				strmTmp << CreateEscalationFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				tbl.RemoveEmptyMessageRow();
-			}
-
-			strmTmp << letterFilter;
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Escalation List", rootLevel, this->pInside->appConfig);
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/escalationList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='esclationListFilterResultCount'></span>" << CWebUtil::LinkToEscalationIndex(objCount, rootLevel);
+		EscalationListJson(strmTmp);
+		strmTmp << CreateEscalationFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1038,9 +942,9 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 }
 
 
-unsigned int CDocMain::CharMenuList(string searchChar)
+unsigned int CDocMain::CharMenuList()
 {
-	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_CHAR_MENU);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU);
 	unsigned int objCount = 0;
 
 	try
@@ -1059,63 +963,33 @@ unsigned int CDocMain::CharMenuList(string searchChar)
 				continue;
 #endif
 
-			bool bInsert = false;
-			if(searchChar == "*")  //All objecte
-			{
-				letterFilter.IncStartLetterOf(menu);
-				bInsert = true;
-			}
-			else if(searchChar == "#")
-			{
-				if(!menu.NameStandardFirstChar())
-				{
-					bInsert = true;
-				}
-			}
-			else
-			{
-				if(menu.GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
-
-			if(bInsert)
-			{
-				objCount++;
-			}
+			letterFilter.IncStartLetterOf(menu);
+			objCount++;
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Menu List", 1, this->pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << "<span id='menuListFilterResultCount'></span>" << CWebUtil::LinkToMenuIndex(objCount, rootLevel);
-
-			if (searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/menuList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-				
-				MenuListJson(strmTmp);
-				strmTmp << CreateMenuFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				tbl.RemoveEmptyMessageRow();
-			}
-			
-			strmTmp << letterFilter;
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-			webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Menu List", 1, this->pInside->appConfig);
+
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/menuList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='menuListFilterResultCount'></span>" << CWebUtil::LinkToMenuIndex(objCount, rootLevel);
+		MenuListJson(strmTmp);
+		strmTmp << CreateMenuFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+
+		webPage.AddContent(strmTmp.str());
+		webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
@@ -1179,11 +1053,11 @@ void CDocMain::MenuListJson(std::ostream &strm)
 	strm << "</script>" << endl;
 }
 
-unsigned int CDocMain::ContainerList(int nType, string title, string searchChar)
+unsigned int CDocMain::ContainerList(int nType, string title)
 {
-	unsigned int page = (unsigned int)searchChar[0];
 	unsigned int objCount = 0;
-	CPageParams file(page, AR_STRUCT_ITEM_XML_CONTAINER, nType);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, nType);
+
 	try
 	{
 		rootLevel = file->GetRootLevel();
@@ -1194,7 +1068,6 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar)
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
 		{	
 			CARContainer cont(cntIndex);
-			bool bInsert = false;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(cont))
@@ -1203,67 +1076,37 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar)
 
 			if (cont.GetType() == nType)	// the type must match
 			{
-				if(searchChar == "*")  //All objecte
-				{
-					letterFilter.IncStartLetterOf(cont);
-					bInsert = true;
-				}
-				else if(searchChar == "#")
-				{
-					if(!cont.NameStandardFirstChar())
-					{
-						bInsert = true;
-					}
-				}
-				else
-				{
-					if(cont.GetNameFirstChar() == searchChar)
-					{
-						bInsert = true;
-					}
-				}
-
-				if(bInsert)
-				{
-					objCount++;
-				}
+				letterFilter.IncStartLetterOf(cont);
+				objCount++;
 			}
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << "<span id='containerListResultCount'></span>" << CWebUtil::LinkToContainer(objCount, rootLevel, nType);
-			
-			if (searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/containerList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-
-				ContainerListJson(strmTmp, nType);
-				strmTmp << CreateContainerFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				tbl.RemoveEmptyMessageRow();
-			}
-
-			strmTmp << letterFilter;
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			if (nType == ARCON_GUIDE || nType == ARCON_FILTER_GUIDE)
-			{
-				webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
-			}
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), title, rootLevel, this->pInside->appConfig);
+		
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/containerList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='containerListResultCount'></span>" << CWebUtil::LinkToContainer(objCount, rootLevel, nType);
+		ContainerListJson(strmTmp, nType);
+		strmTmp << CreateContainerFilterControl() << endl;
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		if (nType == ARCON_GUIDE || nType == ARCON_FILTER_GUIDE)
+		{
+			webPage.AddContent("(!) No Active Link / Filter \"CallGuide\" Action uses this Guide.");
+		}
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{

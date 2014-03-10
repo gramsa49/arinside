@@ -41,9 +41,9 @@ public:
 
 	int Index();
 	void ServerInfoList();
-	unsigned int SchemaList(int nType, const CPageParams &file, string title, string searchChar);	
-	unsigned int CharMenuList(string searchChar);
-	unsigned int ContainerList(int nType, string title, string searchChar);
+	unsigned int SchemaList();	
+	unsigned int CharMenuList();
+	unsigned int ContainerList(int nType, string title);
 	void GlobalFieldList();
 	void MessageList();
 	void NotificationList();
@@ -51,11 +51,11 @@ public:
 	unsigned int ActiveLinkList();	
 	void ActiveLinkActionList();
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
-	unsigned int FilterList(string searchChar);	
+	unsigned int FilterList();	
 	void FilterActionList();
 	void FilterActionDetails(int nActionType, int &ifCount, int &elseCount);
 	void FilterErrorHandlers();
-	unsigned int EscalationList(string searchChar);
+	unsigned int EscalationList();
 	void EscalationActionList();
 	void EscalationActionDetails(int nActionType, int &ifCount, int &elseCount);
 

@@ -702,11 +702,11 @@ void CARInside::Documentation(void)
 	CDocSummaryInfo indexSummary(*this, "");	// this is the object for the summary start page (it's written at the end of this function)
 
 	//ContainerList
-	indexSummary.alguideCount = docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)", "*");
-	indexSummary.applicationCount = docMain->ContainerList(ARCON_APP, "ContainerList (Application)", "*");
-	indexSummary.packlistCount = docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)", "*");
-	indexSummary.fltguideCount = docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)", "*");
-	indexSummary.webserviceCount = docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)", "*");
+	indexSummary.alguideCount = docMain->ContainerList(ARCON_GUIDE, "ContainerList (ActiveLinkGuide)");
+	indexSummary.applicationCount = docMain->ContainerList(ARCON_APP, "ContainerList (Application)");
+	indexSummary.packlistCount = docMain->ContainerList(ARCON_PACK, "ContainerList (PackingList)");
+	indexSummary.fltguideCount = docMain->ContainerList(ARCON_FILTER_GUIDE, "ContainerList (FilterGuide)");
+	indexSummary.webserviceCount = docMain->ContainerList(ARCON_WEBSERVICE, "ContainerList (Webservice)");
 
 	//Application Details
 	int nTmpCnt = 1;
@@ -800,7 +800,7 @@ void CARInside::Documentation(void)
 
 
 	//Filter List
-	indexSummary.filterCount = docMain->FilterList("*");
+	indexSummary.filterCount = docMain->FilterList();
 	docMain->FilterActionList();
 	docMain->FilterErrorHandlers();
 
@@ -816,7 +816,7 @@ void CARInside::Documentation(void)
 
 
 	//Escalation List
-	indexSummary.escalationCount = docMain->EscalationList("*");
+	indexSummary.escalationCount = docMain->EscalationList();
 	docMain->EscalationActionList();
 
 	//Escalation Details
@@ -831,7 +831,7 @@ void CARInside::Documentation(void)
 
 
 	//CharMenus
-	indexSummary.menuCount = docMain->CharMenuList("*");
+	indexSummary.menuCount = docMain->CharMenuList();
 
 	// Char Menu Details
 	tmpCount = menuList.GetCount();
@@ -845,7 +845,7 @@ void CARInside::Documentation(void)
 
 
 	//Schema List
-	indexSummary.schemaCount = docMain->SchemaList(AR_SCHEMA_NONE, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "Formlist (All)", "*");
+	indexSummary.schemaCount = docMain->SchemaList();
 
 	//Schema and field Details
 	nTmpCnt=1;
