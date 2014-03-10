@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocMain.h"
 #include "../output/IFileStructure.h"
+#include "../output/LetterFilterControl.h"
 #include "../core/ARServerInfo.h"
 
 #include "rapidjson/document.h"
@@ -135,6 +136,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 	{
 		rootLevel = file->GetRootLevel();
 		CSchemaTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int schemaCount = this->pInside->schemaList.GetCount();
 		for (unsigned int schemaIndex = 0; schemaIndex < schemaCount; ++schemaIndex)
@@ -151,12 +153,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 			{
 				if (nType == AR_SCHEMA_NONE)
 				{
-					// the first call to this function holds always "*" as search char. That's the
-					// best time to sum up the object count per letter.
-					string firstChar = schema.GetNameFirstChar();
-					if (firstChar.empty()) firstChar = "*";
-					int index = CARObject::GetFirstCharIndex(firstChar[0]);
-					++(objCountPerLetter[index]);
+					letterFilter.IncStartLetterOf(schema);
 				}
 
 				if(nType == AR_SCHEMA_NONE || nType == schema.GetCompound().schemaType)  //Only check type
@@ -212,7 +209,7 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 				tbl.RemoveEmptyMessageRow();
 			}
 
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << letterFilter;
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -236,6 +233,7 @@ unsigned int CDocMain::ActiveLinkList(std::vector<int>& objCountPerLetter)
 		rootLevel = file->GetRootLevel();
 
 		CAlTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int alCount = this->pInside->alList.GetCount();
 		
@@ -249,12 +247,7 @@ unsigned int CDocMain::ActiveLinkList(std::vector<int>& objCountPerLetter)
 				continue;
 #endif
 
-			// the first call to this function holds always "*" as search char. That's the
-			// best time to sum up the object count per letter.
-			string firstChar = actLink.GetNameFirstChar();
-			if (firstChar.empty()) firstChar = "*";
-			int index = CARObject::GetFirstCharIndex(firstChar[0]);
-			++(objCountPerLetter[index]);
+			letterFilter.IncStartLetterOf(actLink);
 
 			objCount++;
 		}
@@ -275,7 +268,7 @@ unsigned int CDocMain::ActiveLinkList(std::vector<int>& objCountPerLetter)
 		strmTmp << "<span id='actlinkListFilterResultCount'></span>" << CWebUtil::LinkToActiveLinkIndex(objCount, rootLevel);
 		ActiveLinkListJson(strmTmp);
 		strmTmp << CreateActlinkFilterControl() << endl;
-		strmTmp << ShortMenu("*", file, objCountPerLetter);
+		strmTmp << letterFilter;
 		strmTmp << tbl;
 		webPage.AddContent(strmTmp.str());
 
@@ -477,6 +470,7 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 	{
 		rootLevel = file->GetRootLevel();
 		CFilterTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int filterCount = this->pInside->filterList.GetCount();
 
@@ -492,12 +486,7 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 
 			if(searchChar == "*")  //All objecte
 			{
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = filter.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
+				letterFilter.IncStartLetterOf(filter);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -540,7 +529,7 @@ unsigned int CDocMain::FilterList(string searchChar, std::vector<int> &objCountP
 				tbl.RemoveEmptyMessageRow();
 			}
 
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << letterFilter;
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -784,6 +773,7 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 	{
 		rootLevel = file->GetRootLevel();
 		CEscalTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int escalCount = pInside->escalationList.GetCount();
 		for (unsigned int escalIndex = 0; escalIndex < escalCount; ++escalIndex)
@@ -798,12 +788,7 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 
 			if(searchChar == "*")  //All objecte
 			{
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = escalation.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
+				letterFilter.IncStartLetterOf(escalation);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -846,7 +831,7 @@ unsigned int CDocMain::EscalationList(string searchChar, std::vector<int> &objCo
 				tbl.RemoveEmptyMessageRow();
 			}
 
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << letterFilter;
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
@@ -1063,6 +1048,7 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 	{
 		rootLevel = file->GetRootLevel();
 		CMenuTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int menuCount = this->pInside->menuList.GetCount();
 		for ( unsigned int menuIndex = 0; menuIndex < menuCount; ++menuIndex )
@@ -1077,12 +1063,7 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 			bool bInsert = false;
 			if(searchChar == "*")  //All objecte
 			{
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = menu.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
+				letterFilter.IncStartLetterOf(menu);
 				bInsert = true;
 			}
 			else if(searchChar == "#")
@@ -1129,7 +1110,7 @@ unsigned int CDocMain::CharMenuList(string searchChar, std::vector<int> &objCoun
 				tbl.RemoveEmptyMessageRow();
 			}
 			
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << letterFilter;
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 			webPage.AddContent("(!) Menu is not attached to a character field and no Active Link \"Change Field\" Action sets the menu to a field.");
@@ -1208,6 +1189,7 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 	{
 		rootLevel = file->GetRootLevel();
 		CContainerTable tbl(*this->pInside, false);
+		LetterFilterControl letterFilter;
 
 		unsigned int cntCount = this->pInside->containerList.GetCount();
 		for ( unsigned int cntIndex = 0; cntIndex < cntCount; ++cntIndex )
@@ -1224,12 +1206,7 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 			{
 				if(searchChar == "*")  //All objecte
 				{
-					// the first call to this function holds alwasy "*" as search char. That's the
-					// best time to sum up the object count per letter.
-					string firstChar = cont.GetNameFirstChar();
-					if (firstChar.empty()) firstChar = "*";
-					int index = CARObject::GetFirstCharIndex(firstChar[0]);
-					++(objCountPerLetter[index]);
+					letterFilter.IncStartLetterOf(cont);
 					bInsert = true;
 				}
 				else if(searchChar == "#")
@@ -1277,7 +1254,7 @@ unsigned int CDocMain::ContainerList(int nType, string title, string searchChar,
 				tbl.RemoveEmptyMessageRow();
 			}
 
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
+			strmTmp << letterFilter;
 			tbl.SetDescription(strmTmp.str());
 			webPage.AddContent(tbl.Print());
 
