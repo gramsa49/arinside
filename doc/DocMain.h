@@ -48,7 +48,7 @@ public:
 	void MessageList();
 	void NotificationList();
 
-	unsigned int ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter);	
+	unsigned int ActiveLinkList(std::vector<int>& objCountPerLetter);	
 	void ActiveLinkActionList();
 	void ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseCount);
 	unsigned int FilterList(string searchChar, std::vector<int> &objCountPerLetter);	

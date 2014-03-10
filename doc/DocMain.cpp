@@ -226,11 +226,9 @@ unsigned int CDocMain::SchemaList(int nType, const CPageParams &file, string tit
 	return objCount;
 }
 
-unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCountPerLetter)
+unsigned int CDocMain::ActiveLinkList(std::vector<int>& objCountPerLetter)
 {
-	if (searchChar.size() != 1) return 0;
-
-	CPageParams file(searchChar[0], AR_STRUCT_ITEM_XML_ACTIVE_LINK);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK);
 	unsigned int objCount = 0;
 
 	try
@@ -251,62 +249,37 @@ unsigned int CDocMain::ActiveLinkList(string searchChar, std::vector<int>& objCo
 				continue;
 #endif
 
-			if(searchChar == "*")  //All objecte
-			{
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = actLink.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
-				bInsert = true;
-			}
-			else if(searchChar == "#")
-			{
-				if (!actLink.NameStandardFirstChar())
-					bInsert = true;
-			}
-			else
-			{
-				if (actLink.GetNameFirstChar() == searchChar)
-					bInsert = true;
-			}
+			// the first call to this function holds always "*" as search char. That's the
+			// best time to sum up the object count per letter.
+			string firstChar = actLink.GetNameFirstChar();
+			if (firstChar.empty()) firstChar = "*";
+			int index = CARObject::GetFirstCharIndex(firstChar[0]);
+			++(objCountPerLetter[index]);
 
-			if(bInsert)
-			{
-				objCount++;
-			}
+			objCount++;
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (objCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Active Link List", rootLevel, this->pInside->appConfig);
-			stringstream strmTmp;
-
-			strmTmp << "<span id='actlinkListFilterResultCount'></span>" << CWebUtil::LinkToActiveLinkIndex(objCount, rootLevel);
-			
-			if (searchChar == "*")
-			{
-				webPage.GetReferenceManager()
-					.AddScriptReference("img/object_list.js")
-					.AddScriptReference("img/actlinkList.js")
-					.AddScriptReference("img/jquery.timers.js")
-					.AddScriptReference("img/jquery.address.min.js");
-
-				ActiveLinkListJson(strmTmp);
-				strmTmp << CreateActlinkFilterControl() << endl;
-			}
-			if (objCount > 0)
-			{
-				tbl.RemoveEmptyMessageRow();
-			}
-
-			strmTmp << ShortMenu(searchChar, file, objCountPerLetter);
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Active Link List", rootLevel, this->pInside->appConfig);
+		
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/actlinkList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='actlinkListFilterResultCount'></span>" << CWebUtil::LinkToActiveLinkIndex(objCount, rootLevel);
+		ActiveLinkListJson(strmTmp);
+		strmTmp << CreateActlinkFilterControl() << endl;
+		strmTmp << ShortMenu("*", file, objCountPerLetter);
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{

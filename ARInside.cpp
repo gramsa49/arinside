@@ -794,7 +794,7 @@ void CARInside::Documentation(void)
 	vector<int> alObjCount; alObjCount.resize(38);
 
 	//ActiveLink List
-	indexSummary.activelinkCount = docMain->ActiveLinkList("*", alObjCount);
+	indexSummary.activelinkCount = docMain->ActiveLinkList(alObjCount);
 	docMain->ActiveLinkActionList();
 
 	//ActiveLink Details
