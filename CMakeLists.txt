@@ -93,7 +93,7 @@ IF(UNIX AND CMAKE_COMPILER_IS_GNUCXX AND ARINSIDE_TARGET_ARCHITECTURE EQUAL 4 AN
 ENDIF(UNIX AND CMAKE_COMPILER_IS_GNUCXX AND ARINSIDE_TARGET_ARCHITECTURE EQUAL 4 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
 
 SET (ARINSIDE_SRCS
- core/ARContainer.cpp core/ARGlobalField.cpp core/ARServerObject.cpp core/ARMessageObject.cpp
+ core/ARContainer.cpp core/ARGlobalField.cpp core/ARServerObject.cpp
  core/ARObject.cpp core/ARProplistHelper.cpp core/ARGroup.cpp core/ARAssignHelper.cpp
  core/ARDayStructHelper.cpp core/ARFilter.cpp core/ARVui.cpp core/AREscalation.cpp core/ARQualification.cpp
  core/ARServerInfo.cpp core/ARSchema.cpp core/ChangeHistoryEntry.cpp core/ARField.cpp core/ARUser.cpp
