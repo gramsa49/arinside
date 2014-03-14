@@ -163,6 +163,7 @@ bool CARRoleList::LoadFromServer()
 						case AR_CORE_CREATE_DATE:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
 								createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+							break;
 						case AR_CORE_LAST_MODIFIED_BY:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
 							{
@@ -173,7 +174,7 @@ bool CARRoleList::LoadFromServer()
 							break;
 						case AR_CORE_MODIFIED_DATE:
 							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
-								createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+								modifiedDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
 							break;
 						}
 					}
