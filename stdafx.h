@@ -29,6 +29,7 @@
 #include <memory>
 #include <iterator>
 #include <algorithm>
+#include <functional>
 #include <assert.h>
 
 #ifdef WIN32 // JLS17 LINUX

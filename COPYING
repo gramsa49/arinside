@@ -48,6 +48,20 @@ functionality of the zlib C-library in a C++ iostream.
 
 == rapidjson ==
 Homepage: http://code.google.com/p/rapidjson/
-License:  MIT (see thirdparty/rapidjson/license.txt
+License:  MIT (see thirdparty/rapidjson/license.txt)
 
 rapidjson is a fast JSON parser/generator for C++ with both SAX/DOM style API
+
+== googletest ==
+Homepage: https://code.google.com/p/googletest/
+License:  New BSD License (http://opensource.org/licenses/BSD-3-Clause)
+
+googletest is framework for writing C++ tests on a variety of platforms.
+
+== JQuery & JQueryUI ==
+Homepage: https://jquery.org/  ||  http://jqueryui.com/
+License:  MIT (https://jquery.org/license/)
+
+jQuery is a fast, small, and feature-rich JavaScript library. jQuery UI is a 
+curated set of user interface interactions, effects, widgets, and themes built
+on top of the jQuery JavaScript Library.

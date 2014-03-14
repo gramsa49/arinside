@@ -308,6 +308,10 @@ ADD_CUSTOM_TARGET(arinsideres ALL
 	COMMAND ${CMAKE_COMMAND} -E tar "czf" "${arinside_BINARY_DIR}/arires.tgz" img WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" DEPENDS arinsideresdir
 )
 
+ADD_CUSTOM_TARGET(gtestzippedsource ALL
+	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest-1.6.0.zip ${CMAKE_BINARY_DIR}/thirdparty/src/
+)
+
 ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS)
 
 # generate svnrev.h file
@@ -327,7 +331,8 @@ INCLUDE(ExternalProject)
 SET_DIRECTORY_PROPERTIES(PROPERTIES EP_PREFIX ${CMAKE_BINARY_DIR}/thirdparty)
 ExternalProject_Add(
 	googletest
-	URL http://googletest.googlecode.com/files/gtest-1.6.0.zip
+	DEPENDS gtestzippedsource
+	URL gtest-1.6.0.zip
 	TIMEOUT 10
 	# Force separate output paths for debug and release builds to allow easy
 	# identification of correct lib in subsequent TARGET_LINK_LIBRARIES commands
@@ -348,6 +353,11 @@ INCLUDE_DIRECTORIES(${source_dir}/include)
 ExternalProject_Get_Property(googletest binary_dir)
 SET(GTEST_BINARY_DIR ${binary_dir})
 ENABLE_TESTING()
+
+# Add compiler flag for MSVC 2012
+if(MSVC_VERSION EQUAL 1700)
+  add_definitions(-D_VARIADIC_MAX=10)
+endif()
 
 LINK_DIRECTORIES(${GTEST_BINARY_DIR})
 
