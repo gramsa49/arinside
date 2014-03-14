@@ -951,15 +951,8 @@ void CARInside::Documentation(void)
 	}
 
 
-	// role count per first char
-	vector<int> roleObjCount; roleObjCount.resize(38);
-
 	//Role List
-	docMain->RoleList("*", roleObjCount);
-	for (unsigned int i = 0; i < strValue.size(); ++i)
-	{		
-		docMain->RoleList(std::string(1, strValue.at(i)), roleObjCount);
-	}	
+	docMain->RoleList();
 
 	//Role Details
 	cout << "Starting Role Documentation" << endl;

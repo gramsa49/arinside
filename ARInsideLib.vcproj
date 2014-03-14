@@ -1723,6 +1723,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\res\roleList.js"
+				>
+			</File>
+			<File
 				RelativePath=".\Res\schema.gif"
 				>
 				<FileConfiguration

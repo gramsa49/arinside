@@ -31,6 +31,6 @@ namespace OUTPUT
 		~CRoleTable(void);
 
 		void AddRow(CARRole &role, int rootLevel);
-		void AddRow(int roleId, int rootLevel);
+		void AddRowJson(CARRole &role, int rootLevel);
 	};
 }

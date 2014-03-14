@@ -18,6 +18,7 @@
 #include "RoleTable.h"
 
 using namespace OUTPUT;
+using namespace rapidjson;
 
 CRoleTable::CRoleTable(CARInside &arIn)
 : CObjectTable("roleList", "TblObjectList")
@@ -44,4 +45,44 @@ void CRoleTable::AddRow(CARRole &role, int rootLevel)
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(role.GetTimestamp())));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(role.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
+}
+
+void CRoleTable::AddRowJson(CARRole &role, int rootLevel)
+{
+	if (!role.Exists()) return;
+
+	CARContainer app(role.GetApplicationName());
+
+	CPageParams roleDetailPage(PAGE_DETAILS, &role);
+	CPageParams appDetailPage(PAGE_DETAILS, &app);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+
+	Value roleRow;
+	roleRow.SetArray();
+
+	// now build the needed temporary variables
+	string strName = role.GetName();
+	string strAppName = role.GetApplicationName();
+	string strModifiedDate = CUtil::DateTimeToString(role.GetTimestamp());
+	string strLink = CWebUtil::GetRelativeURL(rootLevel, roleDetailPage);
+	string strAppLink = (app.Exists() ? CWebUtil::GetRelativeURL(rootLevel, appDetailPage) : "");
+
+	Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+	Value valAppName(strAppName.c_str(), static_cast<SizeType>(strAppName.size()), alloc);
+	Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+	Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+	Value valAppLink(strAppLink.c_str(), static_cast<SizeType>(strAppLink.size()), alloc);
+
+	// add everything to the row
+	roleRow.PushBack(role.GetRoleId(), alloc);
+	roleRow.PushBack(valName, alloc);
+	roleRow.PushBack(valAppName, alloc);
+	roleRow.PushBack(valModifiedDate, alloc);
+	roleRow.PushBack(role.GetLastChanged(), alloc);
+	roleRow.PushBack(valLink, alloc);
+	roleRow.PushBack(valAppLink, alloc);
+
+	// add the row to the document
+	doc.PushBack(roleRow, alloc);	
+
 }

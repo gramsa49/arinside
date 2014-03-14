@@ -112,7 +112,7 @@ function ARSchemaType(schemaType) {
 }
 
 function getIcon(rootLevel, type, subtype) {
-    var alt = "";
+    var alt = ""; var width=16; var height=16;
     switch (type) {
         case 1: alt = "schema.gif"; break;
         case 5: alt = "filter.gif"; break;
@@ -127,12 +127,15 @@ function getIcon(rootLevel, type, subtype) {
                 case 5: alt = "webservice.gif"; break;
             }; break;
         case 17: alt = "image.gif"; break;
+		case 500: alt = "user.gif"; break;
+		case 501: alt = "group.gif"; break;
+		case 502: alt = "doc.gif"; width=15; height=10; break;
         default: return "";
     };
     var src = "";
     for (i = 0; i < rootLevel; i++) { src += "../"; }
     src += "img/" + alt;
-    return $("<img>").attr("width", 16).attr("height", 16).attr("alt", alt).attr("src", src);
+    return $("<img>").attr("width", width).attr("height", height).attr("alt", alt).attr("src", src);
 }
 
 function ARPool(poolNum) {
@@ -157,5 +160,22 @@ function ARMenuConnect(type) {
 		case 2: return "On Open";
 		case 3: return "On 15-minute Interval";
 		default: return "";
+	}
+}
+
+function ARGroupType(type) {
+	switch(type) {
+		case 1: return "View";
+		case 2: return "Change";
+		default: return "None";
+	}
+}
+
+function ARGroupCategory(cat) {
+	switch(cat) {
+		case 0: return "Regular";
+		case 1: return "Dynamic";
+		case 2: return "Computed";
+		default: return "None";
 	}
 }

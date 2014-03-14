@@ -50,7 +50,7 @@ public:
 	unsigned int ContainerList(int nType, string title);
 
 	void GroupList();
-	void RoleList(string searchChar, std::vector<int>& objCountPerLetter);
+	void RoleList();
 	void UserList(string searchChar, std::vector<int>& objCountPerLetter);
 
 	void GlobalFieldList();
@@ -86,6 +86,7 @@ public:
 	static string CreateContainerFilterControl();
 	static string CreateImageFilterControl();
 	static string CreateGroupFilterControl();
+	static string CreateRoleFilterControl();
 
 private:
 	void SchemaListJson(std::ostream &strm);

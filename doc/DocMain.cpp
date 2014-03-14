@@ -1170,69 +1170,49 @@ void CDocMain::ContainerListJson(std::ostream &strm, int nType)
 	strm << "</script>" << endl;
 }
 
-void CDocMain::RoleList(string searchChar, std::vector<int>& objCountPerLetter)
+void CDocMain::RoleList()
 {
-	unsigned int page = (unsigned int)searchChar[0];
-	CPageParams file(page, AR_STRUCT_ITEM_XML_ROLE);
+	CPageParams file(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE);
 
 	try
 	{
 		int rootLevel = file->GetRootLevel();
 		CRoleTable tbl(*this->pInside);
+		LetterFilterControl letterFilter;
 
 		unsigned int roleCount = this->pInside->roleList.GetCount();
 		for (unsigned int roleIndex = 0; roleIndex < roleCount; ++roleIndex)
 		{	
 			CARRole role(roleIndex);
 
-			bool bInsert = false;
-			if(searchChar == "*")  //All objecte
-			{
-				// the first call to this function holds always "*" as search char. That's the
-				// best time to sum up the object count per letter.
-				string firstChar = role.GetNameFirstChar();
-				if (firstChar.empty()) firstChar = "*";
-				int index = CARObject::GetFirstCharIndex(firstChar[0]);
-				++(objCountPerLetter[index]);
-				bInsert = true;
-			}
-			else if(searchChar == "#")
-			{
-				if(!role.NameStandardFirstChar())
-				{
-					bInsert = true;
-				}
-			}
-			else
-			{
-				if(role.GetNameFirstChar() == searchChar)
-				{
-					bInsert = true;
-				}
-			}
-
-			if(bInsert)
-			{	
-				tbl.AddRow(role, rootLevel);
-			}
+			letterFilter.IncStartLetterOf(role);
+			tbl.AddRowJson(role, rootLevel);
 		}
-
-		if (tbl.NumRows() > 0 || searchChar == "*")
+		if (roleCount > 0)
 		{
-			CWebPage webPage(file->GetFileName(), "Role List", rootLevel, this->pInside->appConfig);
-
-			stringstream strmTmp;
-			strmTmp << CWebUtil::LinkToRoleIndex(tbl.NumRows(), rootLevel) << ShortMenu(searchChar, file, objCountPerLetter);
-
-			tbl.SetDescription(strmTmp.str());
-			webPage.AddContent(tbl.Print());
-
-			webPage.SaveInFolder(file->GetPath());
+			tbl.RemoveEmptyMessageRow();
 		}
+
+		CWebPage webPage(file->GetFileName(), "Role List", rootLevel, this->pInside->appConfig);
+
+		webPage.GetReferenceManager()
+			.AddScriptReference("img/object_list.js")
+			.AddScriptReference("img/roleList.js")
+			.AddScriptReference("img/jquery.timers.js")
+			.AddScriptReference("img/jquery.address.min.js");
+
+		stringstream strmTmp;
+		strmTmp << "<span id='roleListFilterResultCount'></span>" << CWebUtil::LinkToRoleIndex(roleCount, rootLevel);
+		strmTmp << CreateRoleFilterControl();
+		strmTmp << letterFilter;
+		strmTmp << tbl;
+		webPage.AddContent(strmTmp.str());
+
+		webPage.SaveInFolder(file->GetPath());
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION GroupList: " << e.what() << endl;
+		cout << "EXCEPTION RoleList: " << e.what() << endl;
 	}
 }
 
@@ -1805,6 +1785,15 @@ string CDocMain::CreateGroupFilterControl()
 		<< "<input id='typeFilterComputed' type='checkbox' value='2'/><label for='typeFilterComputed'>&nbsp;Computed</label>"
 		<< " <button id='typeFilterNone'>Clear All</button>"
 		<< "</span>"
+	<< "</div>";
+	return content.str();
+}
+
+string CDocMain::CreateRoleFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("roleFilter", "seach by name or id")
 	<< "</div>";
 	return content.str();
 }
