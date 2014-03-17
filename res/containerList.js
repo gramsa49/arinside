@@ -27,9 +27,7 @@ $('document').ready(function() {
     });
 
     initFilterTable();
-    if ($("#containerFilter").focus().val() != "" || cntListObj.hasTypeFilter()) {
-        updateFilterTable();
-    };
+	updateFilterTable();
 
     $("#formLetterFilter a").click(function() {
         $("#containerFilter").val("^" + $(this).text());

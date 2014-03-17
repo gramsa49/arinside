@@ -58,9 +58,7 @@ $('document').ready(function() {
 	*/
 
     initActlinkTable();
-    if ($("#actlinkFilter").focus().val() != "" || alListObj.hasTypeFilter()) {
-        updateActlinkTable();
-    };
+	updateActlinkTable();
 
     $("#formLetterFilter a").click(function() {
         $("#actlinkFilter").val("^" + $(this).text());

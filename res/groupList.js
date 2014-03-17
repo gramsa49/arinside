@@ -55,9 +55,7 @@ $('document').ready(function() {
     });
 
     initFilterTable();
-    if ($("#groupFilter").focus().val() != "" || grpListObj.hasTypeFilter()) {
-        updateFilterTable();
-    };
+	updateFilterTable();
 
     $("#formLetterFilter a").click(function() {
         $("#groupFilter").val("^" + $(this).text());

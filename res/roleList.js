@@ -57,9 +57,7 @@ $('document').ready(function() {
     });
 
     initFilterTable();
-    if ($("#roleFilter").focus().val() != "" || roleListObj.hasTypeFilter()) {
-        updateRoleTable();
-    };
+	updateRoleTable();
 
     $("#formLetterFilter a").click(function() {
         $("#roleFilter").val("^" + $(this).text());

@@ -28,9 +28,7 @@ $('document').ready(function() {
     });
 
     initImageTable();
-    if ($("#imageFilter").focus().val() != "" || imgListObj.hasTypeFilter()) {
-        updateImageTable();
-    };
+	updateImageTable();
 
     $("#formLetterFilter a").click(function() {
         $("#imageFilter").val("^" + $(this).text());

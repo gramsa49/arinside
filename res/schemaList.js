@@ -72,9 +72,7 @@ $('document').ready(function() {
 	});
 
     initSchemaTable();
-    if ($("#formFilter").focus().val() != "" || schemaListObj.hasTypeFilter()) {
-        updateSchemaTable();
-    };
+	updateSchemaTable();
 
     $("#formLetterFilter a").click(function() {
         $("#formFilter").val("^" + $(this).text());

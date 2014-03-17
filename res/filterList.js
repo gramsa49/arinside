@@ -56,9 +56,7 @@ $('document').ready(function() {
     });
 
     initFilterTable();
-    if ($("#filterFilter").focus().val() != "" || fltListObj.hasTypeFilter()) {
-        updateFilterTable();
-    };
+	updateFilterTable();
 
     $("#formLetterFilter a").click(function() {
         $("#filterFilter").val("^" + $(this).text());

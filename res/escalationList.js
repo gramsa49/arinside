@@ -62,9 +62,7 @@ $('document').ready(function() {
 	*/
 
     initEscalationTable();
-    if ($("#escalationFilter").focus().val() != "" || escalListObj.hasTypeFilter()) {
-        updateEscalationTable();
-    };
+	updateEscalationTable();
 
     $("#formLetterFilter a").click(function() {
         $("#escalationFilter").val("^" + this.text);

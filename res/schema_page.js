@@ -97,12 +97,16 @@ function initWorkflowList() {
 }
 
 $('document').ready(function() {
+	var internal = false;
     $.address.change(function(event) {
+		if (internal) return;
         $("#MainObjectTabCtrl").tabs("select", window.location.hash);
         if (window.location.hash === '#tab-4' && !schemaWFLInit) { initWorkflowList(); }
     });
     $("#MainObjectTabCtrl").bind("tabsselect", function(event, ui) {
+		internal = true;
         window.location.hash = ui.tab.hash;
+		internal = false;
         if (ui.tab.hash === '#tab-4' && !schemaWFLInit) { initWorkflowList(); }
     });
     $(".clearable").on('propertychange keyup input paste', 'input.data_field', function(e) {

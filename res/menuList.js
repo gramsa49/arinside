@@ -53,9 +53,7 @@ $('document').ready(function() {
     });
 
     initMenuTable();
-    if ($("#menuFilter").focus().val() != "" || menuListObj.hasTypeFilter()) {
-        updateMenuTable();
-    };
+	updateMenuTable();
 
     $("#formLetterFilter a").click(function() {
         $("#menuFilter").val("^" + $(this).text());

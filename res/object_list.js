@@ -57,7 +57,6 @@ FilterableTable.prototype.filterTable = function(appendNextChunk) {
         if (end > 0) table.find("tbody,tfoot").remove();
     }
 
-    if (hasFilter) {
         for (var i = start; i < end; i++) {
             var r = new RegExp(search, "i");
 			var row = list[i];
@@ -72,6 +71,6 @@ FilterableTable.prototype.filterTable = function(appendNextChunk) {
                 break;
             }
         };
-    }
+
     $('#' + this.resultCountId).text((hasFilter ? "showing " + (lastMatches + matches) + " out of " : ""));
 }
