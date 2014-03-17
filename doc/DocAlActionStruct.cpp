@@ -1415,7 +1415,8 @@ void CDocAlActionStruct::ActionService(std::ostream& strm, const ARActiveLinkSvc
 		if (schemaToCall.Exists() && (!arIn->appConfig.bOverlaySupport || IsVisibleObject(*obj)))
 		{
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_SERVICE_CALL);
-			schemaToCall.AddReference(refItem);
+			if (!schemaToCall.ReferenceExists(refItem))
+				schemaToCall.AddReference(refItem);
 		}
 
 		strm << "Request Id: ";
