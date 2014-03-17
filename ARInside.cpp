@@ -2178,7 +2178,8 @@ string CARInside::processForm(const string& command, const string& inText, int s
 		strmTmp << schema.GetURL(rootLevel, false);
 		if (refItem != NULL) 
 		{
-			schema.AddReference(*refItem);
+			if (!schema.ReferenceExists(*refItem))
+				schema.AddReference(*refItem);
 		}
 	}
 	else
@@ -2187,7 +2188,7 @@ string CARInside::processForm(const string& command, const string& inText, int s
 		if (refItem != NULL && form.compare("$-5$") == 0)
 		{
 			CARSchema currentSchema(schemaInsideId);
-			if (currentSchema.Exists())
+			if (currentSchema.Exists() && !currentSchema.ReferenceExists(*refItem))
 			{
 				currentSchema.AddReference(*refItem);
 			}

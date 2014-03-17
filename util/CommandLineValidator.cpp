@@ -22,7 +22,7 @@ CommandLineValidator::CommandLineValidator(int argc, char* argv[])
 	slowArg      ("", "slow", "Uses slow object loading", false),
 	verboseArg   ("v","verbose","Verbose Output",false)
 #if ARINSIDE_TEST_SUPPORT
-	testModeArg ,("","test", "", false)
+	,testModeArg ("","test", "", false)
 #endif
 {
 	argumentCount = argc;
