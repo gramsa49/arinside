@@ -137,6 +137,7 @@ enum ReferenceMessages
 	REFM_SERVICE_VALUE,
 	REFM_SERVICE_HOVERFIELD,
 	REFM_RUN_PROCESS,
+	REFM_DELETE_ENTRY_ACTION,
 	REFM_MESSAGE,
 	REFM_CHANGEFIELD,
 	REFM_CHANGEFIELD_OF_FIELDS_VALUE,
@@ -219,6 +220,7 @@ public:
 	CRefItem();	// constructor for reference to nothing
 	CRefItem(const CARServerObject& obj, int dMessage);
 	CRefItem(const CARServerObject& obj, int IfOrElse, int nAction, int dMessage);
+	CRefItem(const CRefItem& copyFrom, int dMessage); // to copy the referenced object, but change the message at the same time
 	// the following constructor is for openwindow-action references
 	CRefItem(const CARServerObject& obj, int IfOrElse, int nAction, int OpenOrClose, int dMessage);
 	~CRefItem(void) { }

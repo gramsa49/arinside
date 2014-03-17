@@ -2264,11 +2264,18 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 		tabPush.AddColumn(20, "Execute On");
 		tabPush.AddColumn(20, "Description");
 
+		CTable delAction("deleteReferences", "TblObjectList");
+		delAction.AddColumn(50, "Object Name");
+		delAction.AddColumn(10, "Enabled");
+		delAction.AddColumn(20, "Execute On");
+		delAction.AddColumn(20, "Description");
+
 		CTable tabService("serviceReferences", "TblObjectList");
 		tabService.AddColumn(50, "Object Name");
 		tabService.AddColumn(10, "Enabled");
 		tabService.AddColumn(20, "Execute On");
 		tabService.AddColumn(20, "Description");
+
 
 		const CARSchema::ReferenceList &refList = schema.GetReferences();
 		CARSchema::ReferenceList::const_iterator curIt = refList.begin();
@@ -2340,6 +2347,27 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 				row.AddCell(curIt->GetDescription(rootLevel));
 				tabPush.AddRow(row);
 			}
+			if (messageId == REFM_DELETE_ENTRY_ACTION)
+			{
+				bool hasEnabledFlag;
+				string tmpEnabled = "";
+				string tmpCssEnabled = "";
+
+				unsigned int enabled = curIt->GetObjectEnabled(hasEnabledFlag);
+
+				if (hasEnabledFlag)
+				{
+					tmpEnabled = CAREnum::ObjectEnable(enabled);
+					if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
+				}
+
+				CTableRow row;
+				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
+				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
+				row.AddCell(curIt->GetDescription(rootLevel));
+				delAction.AddRow(row);
+			}
 		}
 
 		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
@@ -2347,6 +2375,9 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 
 		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow writing data to this form" << endl;
 		tabPush.ToXHtml(strm);
+
+		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow deleting data on this form" << endl;
+		delAction.ToXHtml(strm);
 
 		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow executing services on this form" << endl;
 		tabService.ToXHtml(strm);

@@ -73,6 +73,26 @@ CRefItem::CRefItem(const CARServerObject &obj, int IfOrElse, int nAction, int Op
 		this->actionIndex |= ACTIONMASK_OPENCLOSE;	// set open/close bit
 }
 
+CRefItem::CRefItem(const CRefItem& copyFrom, int dMessage)
+{
+	if (&copyFrom != NULL)
+	{
+		arsStructItemType = copyFrom.arsStructItemType;
+		objectId = copyFrom.objectId;
+		subObjectId = copyFrom.subObjectId;
+		actionIndex = copyFrom.actionIndex;
+		messageId = dMessage;
+	}
+	else 
+	{
+		arsStructItemType = AR_STRUCT_ITEM_XML_NONE;
+		objectId = -1;
+		subObjectId = -1;
+		actionIndex = -1;
+		messageId = -1;
+	}
+}
+
 void CRefItem::Init(const CARServerObject &obj, int IfOrElse, int nAction, int dMessage)
 {
 	this->arsStructItemType = obj.GetServerObjectTypeXML();
@@ -439,6 +459,9 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 		break;
 	case REFM_RUN_PROCESS:
 		strm << "Field in Run Process " << IfElse() << "-Action " << ActionIndex();
+		break;
+	case REFM_DELETE_ENTRY_ACTION:
+		strm << "Application-Delete Command in " << IfElse() << "-Action " << ActionIndex();
 		break;
 	case REFM_MESSAGE:
 		strm << "Message " << IfElse() << "-Action " << ActionIndex();
