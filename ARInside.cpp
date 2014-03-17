@@ -1809,6 +1809,8 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 			return "";
 
 		CARSchema schema(schemaInsideId);
+		if (!schema.Exists())
+			return inText;
 
 		unsigned int fieldCount = schema.GetFields()->GetCount();
 		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
