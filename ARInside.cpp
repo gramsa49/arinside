@@ -1735,7 +1735,11 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 						CARField field(schemaInsideId, iFieldId);
 
 						if (!field.Exists())
+						{
+							strmTmp << fieldId << "$";
+							++curPos; // skip the $ so it isnt found again
 							break;
+						}
 
 						// now link to the field
 						strmTmp << field.GetURL(rootLevel);
