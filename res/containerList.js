@@ -1,7 +1,9 @@
 function initFilterTable() {
     if (containerList != null) { 
-		cntListObj = new FilterableTable('containerList', 'containerFilter', 'containerListResultCount'); 
+		var inputControl = 'containerFilter';
+		cntListObj = new FilterableTable('containerList', inputControl, 'containerListResultCount'); 
 		cntListObj.onCreateHtmlRow(createContainerRowHtml);		
+		$('#'+inputControl).focus();
 	}
 }
 

@@ -1,7 +1,9 @@
 function initActlinkTable() {
     if (alList != null) { 
-		alListObj = new FilterableTable('alList', 'actlinkFilter', 'actlinkListFilterResultCount'); 
+		var inputControl = 'actlinkFilter';
+		alListObj = new FilterableTable('alList', inputControl, 'actlinkListFilterResultCount'); 
 		alListObj.onCreateHtmlRow(createActlinkRowHtml);
+		$('#'+inputControl).focus();
 	}
 }
 

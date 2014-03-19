@@ -1,6 +1,7 @@
 function initFilterTable() {
     if (filterList != null) { 
-		fltListObj = new FilterableTable('filterList', 'filterFilter', 'filterListFilterResultCount'); 
+		var inputControl = 'filterFilter';
+		fltListObj = new FilterableTable('filterList', inputControl, 'filterListFilterResultCount'); 
 		fltListObj.onCreateHtmlRow(createFilterRowHtml);
 		
 		var checkboxes = $('#multiFilter input[type="checkbox"]');
@@ -26,6 +27,7 @@ function initFilterTable() {
 			});
 			updateFilterTable();
 		});
+		$('#'+inputControl).focus();
 	}
 }
 

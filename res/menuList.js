@@ -1,6 +1,7 @@
 function initMenuTable() {
     if (menuList != null) { 
-		menuListObj = new FilterableTable('menuList', 'menuFilter', 'menuListFilterResultCount'); 
+		var inputControl = 'menuFilter';
+		menuListObj = new FilterableTable('menuList', inputControl, 'menuListFilterResultCount'); 
 		menuListObj.onCreateHtmlRow(createMenuRowHtml);
 		
 		var checkboxes = $('#multiFilter input[type="checkbox"]');
@@ -25,6 +26,7 @@ function initMenuTable() {
 			});
 			updateMenuTable();
 		});
+		$('#'+inputControl).focus();
 	}
 }
 

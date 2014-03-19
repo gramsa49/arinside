@@ -1,7 +1,9 @@
 function initImageTable() {
     if (imageList != null) { 
-		imgListObj = new FilterableTable('imageList', 'imageFilter', 'imageListFilterResultCount'); 
+		var inputControl = 'imageFilter';
+		imgListObj = new FilterableTable('imageList', inputControl, 'imageListFilterResultCount'); 
 		imgListObj.onCreateHtmlRow(createImageRowHtml);
+		$('#'+inputControl).focus();
 	}
 }
 
@@ -17,7 +19,7 @@ function createImageRowHtml(data) {
         )
         .append($("<td>").text(data[1]))
         .append($("<td>").text(data[2]))
-				.append($("<td>").text(data[3]))
+		.append($("<td>").text(data[3]))
     );
 }
 

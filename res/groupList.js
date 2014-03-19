@@ -1,6 +1,7 @@
 function initFilterTable() {
     if (groupList != null) { 
-		grpListObj = new FilterableTable('groupList', 'groupFilter', 'groupListFilterResultCount'); 
+		var inputControl = 'groupFilter';
+		grpListObj = new FilterableTable('groupList', inputControl, 'groupListFilterResultCount'); 
 		grpListObj.onCreateHtmlRow(createGroupRowHtml);
 		
 		var checkboxes = $('#multiFilter input[type="checkbox"]');
@@ -27,6 +28,7 @@ function initFilterTable() {
 			});
 			updateFilterTable();
 		});
+		$('#'+inputControl).focus();
 	}
 }
 

@@ -1,9 +1,10 @@
-
 function initEscalationTable() {
     if (escalationList != null) { 
-		escalListObj = new FilterableTable('escalationList', 'escalationFilter', 'escalationListFilterResultCount'); 
+		var inputControl = 'escalationFilter';
+		escalListObj = new FilterableTable('escalationList', inputControl, 'escalationListFilterResultCount'); 
 		escalListObj.onCreateHtmlRow(createEscalationRowHtml);
 		escalListObj.hasPoolColumn = (escalListObj.table[0].rows[0].cells[2].textContent == "Pool");
+		$('#'+inputControl).focus();
 	}
 }
 

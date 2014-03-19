@@ -1,6 +1,7 @@
 function initFilterTable() {
-    if (roleList != null) { 
-		roleListObj = new FilterableTable('roleList', 'roleFilter', 'roleListFilterResultCount'); 
+    if (roleList != null) {
+		var inputControl = 'roleFilter';
+		roleListObj = new FilterableTable('roleList', inputControl, 'roleListFilterResultCount'); 
 		roleListObj.onCreateHtmlRow(createRoleRowHtml);
 		
 		var checkboxes = $('#multiFilter input[type="checkbox"]');
@@ -27,6 +28,7 @@ function initFilterTable() {
 			});
 			updateRoleTable();
 		});
+		$('#'+inputControl).focus();
 	}
 }
 

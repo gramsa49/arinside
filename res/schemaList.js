@@ -1,6 +1,7 @@
 function initSchemaTable() {
-    if (schemaList != null) { 
-		schemaListObj = new FilterableTable('schemaList', 'formFilter', 'schemaListFilterResultCount');
+    if (schemaList != null) {
+		var inputControl = 'formFilter';
+		schemaListObj = new FilterableTable('schemaList', inputControl, 'schemaListFilterResultCount');
 		schemaListObj.typeFilter = new Array();
 		schemaListObj.onHasTypeFilter(function() {
 			var allTypeOn = true;
@@ -17,6 +18,7 @@ function initSchemaTable() {
 		})
 		.setNameIndex(1)
 		.onCreateHtmlRow(createSchemaRowHtml);
+		$('#'+inputControl).focus();
 	}
 }
 
