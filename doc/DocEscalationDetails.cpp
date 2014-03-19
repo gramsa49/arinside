@@ -139,7 +139,7 @@ void CDocEscalationDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(props.UnusedPropertiesToHTML());
+			webPage.AddContent(props.UnusedPropertiesToHTML(rootLevel));
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(&this->escalation, this->rootLevel));

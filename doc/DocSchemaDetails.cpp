@@ -1842,7 +1842,7 @@ string CDocSchemaDetails::ShowProperties()
 
 		ShowPermissionProperties(strm, &propIdx);
 
-		propIdx.UnusedPropertiesToHTML(strm);
+		propIdx.UnusedPropertiesToHTML(strm, rootLevel);
 
 		ShowChangeHistory(strm, &propIdx);
 
@@ -2139,7 +2139,7 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Audit Settings:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Audit Settings" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
@@ -2239,7 +2239,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Archive Settings:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Archive Settings" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
@@ -2684,7 +2684,7 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 
 		///////////////////////////////////////////////////////////////////////////////////////
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Full Text Search:" << "</h2>";
+		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Full Text Search" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (exception &e)

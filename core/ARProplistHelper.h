@@ -55,8 +55,8 @@ public:
 
 	ARValueStruct* GetAndUseValue(ARULong32 nProp);
 	ARValueStruct* GetValue(ARULong32 nProp);
-	string UnusedPropertiesToHTML();
-	void UnusedPropertiesToHTML(std::ostream& strm);
+	string UnusedPropertiesToHTML(int rootLevel);
+	void UnusedPropertiesToHTML(std::ostream& strm, int rootLevel);
 
 private:
 	class PropHelpData

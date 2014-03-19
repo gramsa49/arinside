@@ -148,7 +148,7 @@ void CDocAlDetails::Documentation()
 			tblObjProp.Clear();
 
 			//Properties
-			webPage.AddContent(props->UnusedPropertiesToHTML());
+			webPage.AddContent(props->UnusedPropertiesToHTML(rootLevel));
 			//webPage.AddContent(CARProplistHelper::GetList(*this->pInside, this->pAl->objPropList));
 
 			//History		

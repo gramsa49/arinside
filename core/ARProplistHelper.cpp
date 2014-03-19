@@ -277,14 +277,14 @@ ARValueStruct* CARProplistHelper::GetValue(ARULong32 nProp)
 	}
 }
 
-string CARProplistHelper::UnusedPropertiesToHTML()
+string CARProplistHelper::UnusedPropertiesToHTML(int rootLevel)
 {
 	stringstream strm;
-	UnusedPropertiesToHTML(strm);
+	UnusedPropertiesToHTML(strm, rootLevel);
 	return strm.str();
 }
 
-void CARProplistHelper::UnusedPropertiesToHTML(std::ostream& strm)
+void CARProplistHelper::UnusedPropertiesToHTML(std::ostream& strm, int rootLevel)
 {
 	try
 	{
@@ -307,7 +307,7 @@ void CARProplistHelper::UnusedPropertiesToHTML(std::ostream& strm)
 			}
 		}
 
-		tbl.description = "Object Properties:";
+		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Object Properties";
 		strm << tbl;
 
 	}
