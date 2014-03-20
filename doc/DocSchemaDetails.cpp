@@ -839,9 +839,6 @@ string CDocSchemaDetails::WorkflowDoc()
 			AddJsonRow(document, ws, rootLevel);
 		}
 
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
-
 		// generate json output struct
 		stringstream strm;
 		GenericWriteStream genericStream(strm);
