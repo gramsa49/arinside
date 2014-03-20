@@ -32,7 +32,7 @@ CARContainerList::CARContainerList(void)
 	ARZeroMemory(&labels);
 	ARZeroMemory(&descriptions);
 	ARZeroMemory(&types);
-	ARZeroMemory(&references);
+	ARZeroMemory(&content);
 	ARZeroMemory(&helpTexts);
 	ARZeroMemory(&changedTimes);
 	ARZeroMemory(&owners);
@@ -54,7 +54,7 @@ CARContainerList::~CARContainerList(void)
 			delete[] labels.stringList;
 			delete[] descriptions.stringList;
 			delete[] types.intList;
-			delete[] references.referenceListList;
+			delete[] content.referenceListList;
 			delete[] changedTimes.timestampList;
 			delete[] helpTexts.stringList;
 			delete[] owners.nameList;
@@ -77,7 +77,7 @@ CARContainerList::~CARContainerList(void)
 			FreeARTextStringList(&labels,false);
 			FreeARTextStringList(&descriptions,false);
 			FreeARUnsignedIntList(&types,false);
-			FreeARReferenceListList(&references,false);
+			FreeARReferenceListList(&content,false);
 			FreeARTextStringList(&helpTexts,false);
 			FreeARTimestampList(&changedTimes,false);
 			FreeARAccessNameList(&owners,false);
@@ -153,7 +153,7 @@ bool CARContainerList::LoadFromServer()
 		&labels,
 		&descriptions,
 		&types,
-		&references,
+		&content,
 		&helpTexts,
 		&owners,
 		&changedTimes,
@@ -230,7 +230,7 @@ bool CARContainerList::LoadFromServer()
 					&labels.stringList[curListPos],
 					&descriptions.stringList[curListPos],
 					&types.intList[curListPos],
-					&references.referenceListList[curListPos],
+					&content.referenceListList[curListPos],
 					&helpTexts.stringList[curListPos],
 					owners.nameList[curListPos],
 					&changedTimes.timestampList[curListPos],
@@ -255,7 +255,7 @@ bool CARContainerList::LoadFromServer()
 				labels.numItems = curListPos;
 				descriptions.numItems = curListPos;
 				types.numItems = curListPos;
-				references.numItems = curListPos;
+				content.numItems = curListPos;
 				helpTexts.numItems = curListPos;
 				changedTimes.numItems = curListPos;
 				owners.numItems = curListPos;
@@ -317,8 +317,8 @@ void CARContainerList::Reserve(unsigned int size)
 	types.numItems = 0;
 	types.intList = new unsigned int[size];
 
-	references.numItems = 0;
-	references.referenceListList = new ARReferenceList[size];
+	content.numItems = 0;
+	content.referenceListList = new ARReferenceList[size];
 
 	helpTexts.numItems = 0;
 	helpTexts.stringList = new char*[size];
@@ -367,7 +367,7 @@ int CARContainerList::AddContainerFromXML(ARXMLParsedStream &stream, const char*
 		&labels.stringList[index],
 		&descriptions.stringList[index],
 		&types.intList[index],
-		&references.referenceListList[index],
+		&content.referenceListList[index],
 		owners.nameList[index],
 		changedUsers.nameList[index],
 		&changedTimes.timestampList[index],
@@ -384,7 +384,7 @@ int CARContainerList::AddContainerFromXML(ARXMLParsedStream &stream, const char*
 		++labels.numItems;
 		++descriptions.numItems;
 		++types.numItems;
-		++references.numItems;
+		++content.numItems;
 		++helpTexts.numItems;
 		++changedTimes.numItems;
 		++owners.numItems;
