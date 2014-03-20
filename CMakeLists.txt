@@ -23,28 +23,19 @@ PROJECT(arinside)
 #SET(ARINSIDE_TARGET_ARCHITECTURE 4) # OR USE AT CMD-LINE: -DARINSIDE_TARGET_ARCHITECTURE=4 ## for 32bit build on 64bit platform
 
 MESSAGE(STATUS "System Name: ${CMAKE_SYSTEM_NAME}")
+INCLUDE(project.cmake/msvc_pch_support.cmake)
 
-## *** taken from http://stackoverflow.com/questions/148570/using-pre-compiled-headers-with-cmake ***
-## To use it, the PrecompiledSource file shouldn't be specified in SourceVar array. Otherwise the
-## file specific precompiled properties will get overwritten.
-MACRO(ADD_MSVC_PRECOMPILED_HEADER PrecompiledHeader PrecompiledSource SourcesVar)
-  IF(MSVC)
-	MESSAGE(STATUS "Setting up precompiler header support")
-    GET_FILENAME_COMPONENT(PrecompiledBasename ${PrecompiledHeader} NAME_WE)
-    SET(PrecompiledBinary "${CMAKE_CURRENT_BINARY_DIR}/${PrecompiledBasename}.pch")
-    SET(Sources ${${SourcesVar}})
-
-    SET_SOURCE_FILES_PROPERTIES(${PrecompiledSource}
-                                PROPERTIES COMPILE_FLAGS "/Yc\"${PrecompiledHeader}\" /Fp\"${PrecompiledBinary}\""
-                                           OBJECT_OUTPUTS "${PrecompiledBinary}")
-										   
-    SET_SOURCE_FILES_PROPERTIES(${Sources}
-                                PROPERTIES COMPILE_FLAGS "/Yu\"${PrecompiledBinary}\" /FI\"${PrecompiledBinary}\" /Fp\"${PrecompiledBinary}\""
-                                           OBJECT_DEPENDS "${PrecompiledBinary}")  
-    # Add precompiled header to SourcesVar
-    LIST(APPEND ${SourcesVar} ${PrecompiledSource})
-  ENDIF(MSVC)
-ENDMACRO(ADD_MSVC_PRECOMPILED_HEADER)
+#define project names
+SET(MAIN_PROJECT_NAME "ARInside")
+SET(LIB_PROJECT_NAME "ARInsideLib")
+SET(TEST_PROJECT_NAME "ARInsideTest")
+SET(RES_PROJECT_NAME "ARInsideRes")
+IF(UNIX)
+  STRING(TOLOWER ${MAIN_PROJECT_NAME} MAIN_PROJECT_NAME)
+  STRING(TOLOWER ${LIB_PROJECT_NAME} LIB_PROJECT_NAME)
+  STRING(TOLOWER ${TEST_PROJECT_NAME} TEST_PROJECT_NAME)
+  STRING(TOLOWER ${RES_PROJECT_NAME} RES_PROJECT_NAME)
+ENDIF(UNIX)
 
 # configurable variables for cmakegui
 IF(NOT DEFINED ARINSIDE_BETA)
@@ -92,54 +83,7 @@ IF(UNIX AND CMAKE_COMPILER_IS_GNUCXX AND ARINSIDE_TARGET_ARCHITECTURE EQUAL 4 AN
 	SET(CMAKE_EXE_LINKER_FLAGS -m32)
 ENDIF(UNIX AND CMAKE_COMPILER_IS_GNUCXX AND ARINSIDE_TARGET_ARCHITECTURE EQUAL 4 AND CMAKE_SIZEOF_VOID_P EQUAL 8)
 
-SET (ARINSIDE_SRCS
- core/ARContainer.cpp core/ARGlobalField.cpp core/ARServerObject.cpp
- core/ARObject.cpp core/ARProplistHelper.cpp core/ARGroup.cpp core/ARAssignHelper.cpp
- core/ARDayStructHelper.cpp core/ARFilter.cpp core/ARVui.cpp core/AREscalation.cpp core/ARQualification.cpp
- core/ARServerInfo.cpp core/ARSchema.cpp core/ChangeHistoryEntry.cpp core/ARField.cpp core/ARUser.cpp
- core/ARImage.cpp core/ARCharMenu.cpp core/ARRole.cpp core/ARActiveLink.cpp core/ARValue.cpp
- core/ARSetFieldHelper.cpp core/ARHandle.cpp core/AREnum.cpp core/ARStatusList.cpp
- doc/DocFieldDetails.cpp doc/DocFilterActionStruct.cpp doc/DocAlActionStruct.cpp doc/DocBase.cpp 
- doc/DocUserDetails.cpp doc/DocVuiDetails.cpp doc/DocWebserviceDetails.cpp doc/DocMain.cpp
- doc/DocActionSetFieldsHelper.cpp doc/DocFilterGuideDetails.cpp doc/DocAlDetails.cpp
- doc/DocCharMenuDetails.cpp doc/DocContainerHelper.cpp doc/DocRoleDetails.cpp doc/DocAnalyzer.cpp
- doc/DocSchemaDetails.cpp doc/DocValidator.cpp doc/DocFilterDetails.cpp doc/DocImageDetails.cpp
- doc/DocActionOpenWindowHelper.cpp doc/DocPacklistDetails.cpp doc/DocApplicationDetails.cpp
- doc/DocGroupDetails.cpp doc/MessageItem.cpp doc/DocEscalationDetails.cpp doc/DocSummaryInfo.cpp
- doc/DocAlGuideDetails.cpp doc/DocCustomWorkflow.cpp doc/DocOverlayHelper.cpp doc/DocAllMatchingIdsTable.cpp
- doc/DocImageOverview.cpp
- lists/ARActiveLinkList.cpp lists/ARContainerList.cpp lists/AREscalationList.cpp lists/ARFieldList.cpp
- lists/ARFilterList.cpp lists/ARGroupList.cpp lists/ARImageList.cpp lists/ARMenuList.cpp lists/ARRoleList.cpp
- lists/ARSchemaList.cpp lists/ARUserList.cpp lists/ARVUIList.cpp lists/BlackList.cpp lists/ARListHelpers.cpp
- lists/ARServerInfoList.cpp
- lists/support/SchemaDbQueryBuilder.cpp
- output/Table.cpp output/TableCell.cpp output/WebControl.cpp output/AlTable.cpp output/EscalTable.cpp
- output/UList.cpp output/FilterTable.cpp output/IFileStructure.cpp output/CsvPage.cpp output/ObjectTable.cpp
- output/FileNaming.cpp output/TableRow.cpp output/SchemaTable.cpp output/RoleTable.cpp output/ContainerTable.cpp
- output/WebPage.cpp output/TableColumn.cpp output/NavigationPage.cpp output/GroupTable.cpp output/ImageTable.cpp
- output/UListItem.cpp output/MenuTable.cpp output/UserTable.cpp output/WebUtil.cpp output/TabControl.cpp
- output/webpage/HtmlReferenceList.cpp output/webpage/HtmlReferenceListImpl.cpp output/LetterFilterControl.cpp
- scan/ScanActiveLinks.cpp scan/ScanContainers.cpp scan/ScanEscalations.cpp scan/ScanFields.cpp scan/ScanFilters.cpp
- scan/ScanImages.cpp scan/ScanMain.cpp scan/ScanMenus.cpp scan/ScanSchema.cpp
- thirdparty/tinyxml/tinyxml.cpp thirdparty/tinyxml/tinystr.cpp thirdparty/tinyxml/tinyxmlerror.cpp 
- thirdparty/tinyxml/tinyxmlparser.cpp
- util/AppTimer.cpp util/BlackListItem.cpp util/CommandLineValidator.cpp util/RefItem.cpp 
- util/ResourceFileLocatorAndExtractor.cpp util/UntarStream.cpp util/Util.cpp 
- AppConfig.cpp AppConfigReader.cpp ARInside.cpp ConfigFile.cpp FileSystemUtil.cpp gzstream.cpp Main.cpp
-)
-
-SET(ARINSIDE_MAIN_SRCS ARInsideMain.cpp ARInsideMain.h)
-SET(ARINSIDE_TEST_SRCS ARInsideTest.cpp ARInsideTest.h
- AppConfigReaderTest.cpp FileSystemUtilTest.cpp RapidJSONTests.cpp
- lists/ARListHelpersTest.cpp 
- lists/support/SchemaDbQueryBuilderTest.cpp
- output/webpage/HtmlReferenceListImplTest.cpp
- util/CommandLineValidatorTest.cpp util/UntarStreamTest.cpp util/UntarStreamTest.h
-)
-
-IF(NOT MSVC)
-	SET (ARINSIDE_SRCS ${ARINSIDE_SRCS} stdafx.cpp)
-ENDIF(NOT MSVC)
+INCLUDE(project.cmake/files.cmake)
 
 # set link libraries for project
 IF(UNIX)
@@ -246,7 +190,7 @@ IF(ARS_API_ICUUCBMC_LIB)
 ENDIF(ARS_API_ICUUCBMC_LIB)
 
 # now generate and import resources
-ADD_CUSTOM_TARGET(arinsideresdir ALL
+ADD_CUSTOM_TARGET(resource_directory ALL
 	COMMAND ${CMAKE_COMMAND} -E make_directory ${CMAKE_BINARY_DIR}/img
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/active_link.gif ${CMAKE_BINARY_DIR}/img
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/res/al_guide.gif ${CMAKE_BINARY_DIR}/img
@@ -305,15 +249,13 @@ ADD_CUSTOM_TARGET(arinsideresdir ALL
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/jquery/images/ui-bg_glass_65_ffffff_1x400.png ${CMAKE_BINARY_DIR}/img/images
 )
 
-ADD_CUSTOM_TARGET(arinsideres ALL 
-	COMMAND ${CMAKE_COMMAND} -E tar "czf" "${arinside_BINARY_DIR}/arires.tgz" img WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" DEPENDS arinsideresdir
+ADD_CUSTOM_TARGET(${RES_PROJECT_NAME} ALL 
+	COMMAND ${CMAKE_COMMAND} -E tar "czf" "${arinside_BINARY_DIR}/arires.tgz" img WORKING_DIRECTORY "${CMAKE_BINARY_DIR}" DEPENDS resource_directory
 )
 
 ADD_CUSTOM_TARGET(gtestzippedsource ALL
 	COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_CURRENT_SOURCE_DIR}/thirdparty/gtest-1.6.0.zip ${CMAKE_BINARY_DIR}/thirdparty/src/
 )
-
-ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS)
 
 # generate svnrev.h file
 #FIND_PACKAGE(Subversion)
@@ -363,25 +305,25 @@ endif()
 LINK_DIRECTORIES(${GTEST_BINARY_DIR})
 
 # setup output target
-ADD_LIBRARY(arinsidelib ${ARINSIDE_SRCS} ${ARINSIDE_RESOURCE_OBJECTS})
-ADD_EXECUTABLE(arinside ${ARINSIDE_MAIN_SRCS})
-ADD_EXECUTABLE(arinsidetest ${ARINSIDE_TEST_SRCS})
+ADD_LIBRARY(${LIB_PROJECT_NAME} ${ARINSIDE_SRCS} ${ARINSIDE_RESOURCE_OBJECTS})
+ADD_EXECUTABLE(${MAIN_PROJECT_NAME} ${ARINSIDE_MAIN_SRCS})
+ADD_EXECUTABLE(${TEST_PROJECT_NAME} ${ARINSIDE_TEST_SRCS})
 
 # dependencies
-ADD_DEPENDENCIES(arinsidetest arinsidelib googletest)
-ADD_DEPENDENCIES(arinside arinsidelib arinsideres)
+ADD_DEPENDENCIES(${TEST_PROJECT_NAME} ${LIB_PROJECT_NAME} googletest)
+ADD_DEPENDENCIES(${MAIN_PROJECT_NAME} ${LIB_PROJECT_NAME} ${RES_PROJECT_NAME})
 
 # reference the needed libraries
-TARGET_LINK_LIBRARIES(arinside ${ARS_API_LIB} ${ZLIB_LIB} ${ARINSIDE_ADDITIONAL_LIBS} arinsidelib)
-TARGET_LINK_LIBRARIES(arinsidetest ${ARS_API_LIB} ${ZLIB_LIB} ${ARINSIDE_ADDITIONAL_LIBS} arinsidelib)
+TARGET_LINK_LIBRARIES(${MAIN_PROJECT_NAME} ${ARS_API_LIB} ${ZLIB_LIB} ${ARINSIDE_ADDITIONAL_LIBS} ${LIB_PROJECT_NAME})
+TARGET_LINK_LIBRARIES(${TEST_PROJECT_NAME} ${ARS_API_LIB} ${ZLIB_LIB} ${ARINSIDE_ADDITIONAL_LIBS} ${LIB_PROJECT_NAME})
 IF(MSVC)
-	TARGET_LINK_LIBRARIES(arinsidetest
+	TARGET_LINK_LIBRARIES(${TEST_PROJECT_NAME}
 		debug ${GTEST_BINARY_DIR}/DebugLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
 		optimized ${GTEST_BINARY_DIR}/ReleaseLibs/${CMAKE_FIND_LIBRARY_PREFIXES}gtest${CMAKE_FIND_LIBRARY_SUFFIXES}
 	)
 ELSE(MSVC)
-	TARGET_LINK_LIBRARIES(arinsidetest gtest)
+	TARGET_LINK_LIBRARIES(${TEST_PROJECT_NAME} gtest)
 ENDIF(MSVC)
 
-ADD_TEST(NAME test COMMAND arinsidetest)
+ADD_TEST(NAME test COMMAND ${TEST_PROJECT_NAME})
 #INSTALL(TARGETS arinside DESTINATION bin)
