@@ -27,15 +27,17 @@ using namespace OUTPUT;
 WorkflowReferenceTable::WorkflowReferenceTable(const CARImage &image)
 : obj(image)
 {
-	const CRefItemList &refs = image.GetReferences();
-	curIt = refs.begin();
-	endIt = refs.end();
+	InitIterators(image.GetReferences());
 }
 
 WorkflowReferenceTable::WorkflowReferenceTable(const CARContainer& container)
 :obj(container)
 {
-	const CRefItemList &refs = container.GetReferences();
+	InitIterators(container.GetReferences());
+}
+
+void WorkflowReferenceTable::InitIterators(const CRefItemList &refs)
+{
 	curIt = refs.begin();
 	endIt = refs.end();
 }

@@ -36,5 +36,7 @@ namespace OUTPUT
 		CRefItemList::const_iterator curIt;
 		CRefItemList::const_iterator endIt;
 		const CARServerObject &obj;
+
+		void InitIterators(const CRefItemList &refItemList);
 	};
 };
