@@ -57,6 +57,12 @@ public:
 	const string& ContainerGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void ContainerSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }
 
+	// referencing
+	typedef vector<CRefItem> ReferenceList;
+	void AddReference(unsigned int index, const CRefItem& refItem);
+	bool ReferenceExists(unsigned int index, const CRefItem& refItem);
+	const ReferenceList& GetReferences(unsigned int index);
+
 	void AddOverlayOrCustom(unsigned int index);
 	const ObjectRefList& GetOverlayAndCustomWorkflow();
 private:
@@ -86,4 +92,5 @@ private:
 	typedef map<string,int> CMapType;
 	CMapType searchList;
 	vector<int> overlayAndCustomList;
+	vector<ReferenceList> references;
 };

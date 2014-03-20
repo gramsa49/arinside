@@ -60,5 +60,9 @@ public:
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_CONTAINER; }
 	bool IsClonable() const;
 	CARServerObject* Clone() const;
+
+	typedef vector<CRefItem> ReferenceList;
+	void AddReference(const CRefItem& refItem);
+	const ReferenceList& GetReferences() const;
 private:
 };

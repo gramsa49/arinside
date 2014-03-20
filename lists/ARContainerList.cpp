@@ -284,6 +284,7 @@ bool CARContainerList::LoadFromServer()
 			appRefNames.push_back("");
 			sortedList.push_back(i);
 		}
+		references.resize(names.numItems);
 	}
 
 	return funcResult;
@@ -337,6 +338,8 @@ void CARContainerList::Reserve(unsigned int size)
 
 	objProps.numItems = 0;
 	objProps.propsList = new ARPropList[size];
+
+	references.resize(size);
 
 	reservedSize = size;
 	internalListState = INTERNAL_ALLOC;
@@ -445,4 +448,28 @@ void CARContainerList::AddOverlayOrCustom(unsigned int index)
 const CARContainerList::ObjectRefList& CARContainerList::GetOverlayAndCustomWorkflow()
 {
 	return overlayAndCustomList;
+}
+
+void CARContainerList::AddReference(unsigned int index, const CRefItem &refItem)
+{
+	if (!ReferenceExists(index, refItem))
+		references[sortedList[index]].push_back(refItem);
+}
+
+bool CARContainerList::ReferenceExists(unsigned int index, const CRefItem &refItem)
+{
+	ReferenceList::iterator curIt = references[sortedList[index]].begin();
+	ReferenceList::iterator endIt = references[sortedList[index]].end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (*curIt == refItem)
+			return true;
+	}
+	return false;
+}
+
+const CARContainerList::ReferenceList& CARContainerList::GetReferences(unsigned int index)
+{
+	return references[sortedList[index]];
 }

@@ -164,3 +164,13 @@ const ARReferenceList& CARContainer::GetContent() const
 {
 	return CARInside::GetInstance()->containerList.ContainerGetContent(GetInsideId());
 }
+
+void CARContainer::AddReference(const CRefItem &refItem)
+{
+	return CARInside::GetInstance()->containerList.AddReference(GetInsideId(), refItem);
+}
+
+const CARContainer::ReferenceList& CARContainer::GetReferences() const
+{
+	return CARInside::GetInstance()->containerList.GetReferences(GetInsideId());
+}
