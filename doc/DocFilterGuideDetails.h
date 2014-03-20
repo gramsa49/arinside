@@ -31,4 +31,5 @@ private:
 	CARContainer& filterGuide;
 
 	string FilterActions();
+	string WorkflowReferences();
 };

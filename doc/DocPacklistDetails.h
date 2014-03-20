@@ -30,4 +30,5 @@ public:
 private:
 	CARContainer& pPackList;
 	string PackListInformation();
+	string WorkflowReferences();
 };

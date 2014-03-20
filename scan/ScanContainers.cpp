@@ -96,6 +96,16 @@ void CScanContainers::Scan()
 						schema.AddPackingList(cont);
 					}
 				}
+
+				if (refs.referenceList[refIndex].type == ARREF_CONTAINER)
+				{
+					CARContainer container(refs.referenceList[refIndex].reference.u.name);
+					if (container.Exists())
+					{
+						CRefItem refItem(cont, REFM_PACKINGLIST);
+						container.AddReference(refItem);
+					}
+				}
 			}
 		}
 		break;

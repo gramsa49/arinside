@@ -30,4 +30,5 @@ public:
 private:
 	CARContainer& alGuide;
 	string ActiveLinkActions();
+	string WorkflowReferences();
 };
