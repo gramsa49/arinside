@@ -20,6 +20,7 @@
 
 class CARImage;
 class CARServerObject;
+class CARContainer;
 
 namespace OUTPUT
 {
@@ -27,6 +28,7 @@ namespace OUTPUT
 	{
 	public:
 		WorkflowReferenceTable(const CARImage& image);
+		WorkflowReferenceTable(const CARContainer& container);
 	
 		std::string ToString(int rootLevel);
 

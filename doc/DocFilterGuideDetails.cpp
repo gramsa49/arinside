@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocFilterGuideDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/WorkflowReferenceTable.h"
 
 CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &fltGuide)
 : filterGuide(fltGuide)
@@ -64,7 +65,10 @@ void CDocFilterGuideDetails::Documentation()
 			webPage.AddContent(FilterActions());
 
 			//Workflow References
-			webPage.AddContent(WorkflowReferences());
+			{
+				WorkflowReferenceTable wfRefTable(filterGuide);
+				webPage.AddContent(wfRefTable.ToString(rootLevel));
+			}
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(&this->filterGuide, this->rootLevel));
@@ -150,58 +154,4 @@ string CDocFilterGuideDetails::FilterActions()
 
 	tblPropEx.description = "Filters calling this guide";
 	return tblPropEx.ToXHtml();
-}
-
-string CDocFilterGuideDetails::WorkflowReferences()
-{
-	stringstream strm;
-	strm.str("");
-
-	try
-	{
-		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(10, "Type");
-		tblRef.AddColumn(45, "Server object");
-		tblRef.AddColumn(5, "Enabled");
-		tblRef.AddColumn(40, "Description");
-
-		const CARContainer::ReferenceList& refs = filterGuide.GetReferences();
-		CARContainer::ReferenceList::const_iterator curIt = refs.begin();
-		CARContainer::ReferenceList::const_iterator endIt = refs.end();
-		for ( ; curIt != endIt; ++curIt)
-		{			
-			CTableRow row("cssStdRow");		
-			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
-			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
-
-			string tmpEnabled = "";
-			string tmpCssEnabled = "";
-
-			bool enabledSupported = false;
-			int enabled = curIt->GetObjectEnabled(enabledSupported);
-
-			if (enabledSupported)
-			{
-				tmpEnabled = CAREnum::ObjectEnable(enabled);
-				if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
-			}
-
-			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-			row.AddCell(curIt->GetDescription(rootLevel));
-			tblRef.AddRow(row);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference";
-
-		tblRef.description = tblDesc.str();
-
-		strm << tblRef;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION enumerating workflow references for filterguide: " << filterGuide.GetName() << " -- " << e.what() << endl;
-	}	
-
-	return strm.str();
 }

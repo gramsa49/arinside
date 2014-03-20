@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocAlGuideDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/WorkflowReferenceTable.h"
 
 CDocAlGuideDetails::CDocAlGuideDetails(CARContainer &container)
 : alGuide(container)
@@ -64,7 +65,10 @@ void CDocAlGuideDetails::Documentation()
 			webPage.AddContent(ActiveLinkActions());
 
 			//Workflow References
-			webPage.AddContent(WorkflowReferences());
+			{
+				WorkflowReferenceTable wfRefTable(alGuide);
+				webPage.AddContent(wfRefTable.ToString(rootLevel));
+			}
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(&this->alGuide, this->rootLevel));
@@ -146,58 +150,4 @@ string CDocAlGuideDetails::ActiveLinkActions()
 
 	tblPropEx.description = "Active Links calling this guide";
 	return tblPropEx.ToXHtml();
-}
-
-string CDocAlGuideDetails::WorkflowReferences()
-{
-	stringstream strm;
-	strm.str("");
-
-	try
-	{
-		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(10, "Type");
-		tblRef.AddColumn(45, "Server object");
-		tblRef.AddColumn(5, "Enabled");
-		tblRef.AddColumn(40, "Description");
-
-		const CARContainer::ReferenceList& refs = alGuide.GetReferences();
-		CARContainer::ReferenceList::const_iterator curIt = refs.begin();
-		CARContainer::ReferenceList::const_iterator endIt = refs.end();
-		for ( ; curIt != endIt; ++curIt)
-		{			
-			CTableRow row("cssStdRow");		
-			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
-			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
-
-			string tmpEnabled = "";
-			string tmpCssEnabled = "";
-
-			bool enabledSupported = false;
-			int enabled = curIt->GetObjectEnabled(enabledSupported);
-
-			if (enabledSupported)
-			{
-				tmpEnabled = CAREnum::ObjectEnable(enabled);
-				if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
-			}
-
-			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-			row.AddCell(curIt->GetDescription(rootLevel));
-			tblRef.AddRow(row);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference";
-
-		tblRef.description = tblDesc.str();
-
-		strm << tblRef;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION enumerating workflow references for alguide: " << alGuide.GetName() << " -- " << e.what() << endl;
-	}	
-
-	return strm.str();
 }

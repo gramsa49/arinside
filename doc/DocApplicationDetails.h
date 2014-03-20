@@ -40,6 +40,4 @@ private:
 	string SearchContainer(int &nResult, int nType);
 	string SearchMenus(int &nResult);
 	bool InList(string searchName, int objType);
-
-	string WorkflowReferences();
 };

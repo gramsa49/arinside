@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocApplicationDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/WorkflowReferenceTable.h"
 
 CDocApplicationDetails::CDocApplicationDetails(CARContainer &application)
 : pApp(application)
@@ -58,7 +59,10 @@ void CDocApplicationDetails::Documentation()
 			webPage.AddContent(ApplicationInformation());
 
 			//Workflow Referenes
-			webPage.AddContent(WorkflowReferences());
+			{
+				WorkflowReferenceTable wfRefTable(pApp);
+				webPage.AddContent(wfRefTable.ToString(rootLevel));
+			}
 
 			//History
 			webPage.AddContent(this->pInside->ServerObjectHistory(&this->pApp, this->rootLevel));
@@ -593,58 +597,4 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 	}
 
 	return strmResult.str();
-}
-
-string CDocApplicationDetails::WorkflowReferences()
-{
-	stringstream strm;
-	strm.str("");
-
-	try
-	{
-		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(10, "Type");
-		tblRef.AddColumn(45, "Server object");
-		tblRef.AddColumn(5, "Enabled");
-		tblRef.AddColumn(40, "Description");
-
-		const CARContainer::ReferenceList& refs = pApp.GetReferences();
-		CARContainer::ReferenceList::const_iterator curIt = refs.begin();
-		CARContainer::ReferenceList::const_iterator endIt = refs.end();
-		for ( ; curIt != endIt; ++curIt)
-		{			
-			CTableRow row("cssStdRow");		
-			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
-			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
-
-			string tmpEnabled = "";
-			string tmpCssEnabled = "";
-
-			bool enabledSupported = false;
-			int enabled = curIt->GetObjectEnabled(enabledSupported);
-
-			if (enabledSupported)
-			{
-				tmpEnabled = CAREnum::ObjectEnable(enabled);
-				if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
-			}
-
-			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-			row.AddCell(curIt->GetDescription(rootLevel));
-			tblRef.AddRow(row);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference";
-
-		tblRef.description = tblDesc.str();
-
-		strm << tblRef;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION enumerating workflow references for application: " << pApp.GetName() << " -- " << e.what() << endl;
-	}	
-
-	return strm.str();
 }

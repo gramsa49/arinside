@@ -16,8 +16,9 @@
 
 #include "stdafx.h"
 #include "WorkflowReferenceTable.h"
-#include "../core/ARImage.h"
+#include "../core/ARContainer.h"
 #include "../core/AREnum.h"
+#include "../core/ARImage.h"
 #include "../ARInside.h"
 
 
@@ -27,6 +28,14 @@ WorkflowReferenceTable::WorkflowReferenceTable(const CARImage &image)
 : obj(image)
 {
 	const CRefItemList &refs = image.GetReferences();
+	curIt = refs.begin();
+	endIt = refs.end();
+}
+
+WorkflowReferenceTable::WorkflowReferenceTable(const CARContainer& container)
+:obj(container)
+{
+	const CRefItemList &refs = container.GetReferences();
 	curIt = refs.begin();
 	endIt = refs.end();
 }
