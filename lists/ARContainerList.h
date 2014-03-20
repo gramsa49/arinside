@@ -46,7 +46,7 @@ public:
 	char* ContainerGetLabel(unsigned int index) const { assert(index < labels.numItems); return labels.stringList[sortedList[index]]; }
 	char* ContainerGetDescription(unsigned int index) const { assert(index < descriptions.numItems); return descriptions.stringList[sortedList[index]]; }
 	unsigned int ContainerGetType(unsigned int index) const { assert(index < types.numItems); return types.intList[sortedList[index]]; }
-	const ARReferenceList& ContainerGetReferences(unsigned int index) const { assert(index < references.numItems); return references.referenceListList[sortedList[index]]; }
+	const ARReferenceList& ContainerGetContent(unsigned int index) const { assert(index < references.numItems); return references.referenceListList[sortedList[index]]; }
 	char* ContainerGetHelptext(unsigned int index) const { assert(index < helpTexts.numItems); return helpTexts.stringList[sortedList[index]]; }
 	const ARTimestamp& ContainerGetTimestamp(unsigned int index) const { return changedTimes.timestampList[sortedList[index]]; }
 	const ARAccessNameType& ContainerGetOwner(unsigned int index) const { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }

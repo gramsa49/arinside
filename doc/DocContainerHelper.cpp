@@ -190,7 +190,7 @@ string CDocContainerHelper::GuideContent()
 
 	try
 	{
-		const ARReferenceList& refs = this->container.GetReferences();
+		const ARReferenceList& refs = this->container.GetContent();
 		for(unsigned int i=0; i< refs.numItems; i++)
 		{
 			stringstream label, object;

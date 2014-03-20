@@ -120,7 +120,7 @@ string CDocWebserviceDetails::WSInformation()
 	//Properties
 	try
 	{
-		const ARReferenceList& refs = this->ws.GetReferences();
+		const ARReferenceList& refs = this->ws.GetContent();
 		CARSchema wsOwnerSchema(ws.GetOwnerObjects().ownerObjList[0].ownerName);
 
 		for(unsigned int i=0; i< refs.numItems; i++)

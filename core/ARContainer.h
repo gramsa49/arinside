@@ -49,7 +49,7 @@ public:
 	char* GetLabel() const;
 	char* GetDescription() const;
 	unsigned int GetType() const;
-	const ARReferenceList& GetReferences() const;
+	const ARReferenceList& GetContent() const;
 	const ARPropList& GetPropList() const;
 
 	const string& GetAppRefName() const;

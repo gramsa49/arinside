@@ -76,7 +76,7 @@ string CDocApplicationDetails::GetPrimaryForm()
 {
 	try
 	{
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; i++)
 		{
 			switch(refs.referenceList[i].type)
@@ -99,7 +99,7 @@ bool CDocApplicationDetails::InList(string searchName, int nType)
 {
 	try
 	{
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; i++)
 		{
 			if(refs.referenceList[i].type == nType)
@@ -247,7 +247,7 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 	{
 		list<int> schemaList;
 		//Update the schema informations
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for ( unsigned int refIndex = 0; refIndex < refs.numItems; ++refIndex )
 		{
 			if (refs.referenceList[refIndex].type == ARREF_SCHEMA && refs.referenceList[refIndex].reference.dataType == ARREF_DATA_ARSREF)
@@ -289,7 +289,7 @@ string CDocApplicationDetails::SearchActiveLinks(int &nResult)
 	try
 	{
 		list<int> appALList;
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; ++i)
 		{
 			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
@@ -340,7 +340,7 @@ string CDocApplicationDetails::SearchFilters(int &nResult)
 	try
 	{
 		list<int> appFltList;
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; ++i)
 		{
 			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
@@ -393,7 +393,7 @@ string CDocApplicationDetails::SearchEscalations(int &nResult)
 	try
 	{
 		list<int> appEscList;
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; ++i)
 		{
 			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)
@@ -447,7 +447,7 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 	try
 	{
 		list<int> appCntList;
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; ++i)
 		{
 			switch (nType)
@@ -541,7 +541,7 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 	try
 	{
 		list<int> appMnuList;
-		const ARReferenceList& refs = this->pApp.GetReferences();
+		const ARReferenceList& refs = this->pApp.GetContent();
 		for(unsigned int i=0; i< refs.numItems; ++i)
 		{
 			if (refs.referenceList[i].type == ARREF_SCHEMA && refs.referenceList[i].reference.dataType == ARREF_DATA_ARSREF)

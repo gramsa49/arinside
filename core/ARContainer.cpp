@@ -160,7 +160,7 @@ unsigned int CARContainer::GetType() const
 	return CARInside::GetInstance()->containerList.ContainerGetType(GetInsideId());
 }
 
-const ARReferenceList& CARContainer::GetReferences() const
+const ARReferenceList& CARContainer::GetContent() const
 {
-	return CARInside::GetInstance()->containerList.ContainerGetReferences(GetInsideId());
+	return CARInside::GetInstance()->containerList.ContainerGetContent(GetInsideId());
 }

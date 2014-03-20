@@ -85,7 +85,7 @@ void CScanContainers::Scan()
 		break;
 	case ARCON_PACK:
 		{
-			const ARReferenceList& refs = cont.GetReferences();
+			const ARReferenceList& refs = cont.GetContent();
 			for (unsigned int refIndex = 0; refIndex < refs.numItems; ++refIndex)
 			{
 				if (refs.referenceList[refIndex].type == ARREF_SCHEMA && refs.referenceList[refIndex].reference.dataType == ARREF_DATA_ARSREF)

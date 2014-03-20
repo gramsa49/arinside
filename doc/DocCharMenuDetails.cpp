@@ -509,7 +509,7 @@ string CDocCharMenuDetails::ContainerReferences()
 
 			if(cont.GetType() != ARCON_APP)
 			{
-				const ARReferenceList& refs = cont.GetReferences();
+				const ARReferenceList& refs = cont.GetContent();
 				for(unsigned int nCnt = 0; nCnt < refs.numItems; nCnt++)
 				{
 					if(refs.referenceList[nCnt].type == ARREF_CHAR_MENU)

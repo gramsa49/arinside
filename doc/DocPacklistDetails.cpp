@@ -86,7 +86,7 @@ string CDocPacklistDetails::PackListInformation()
 
 	try
 	{
-		const ARReferenceList& refs = this->pPackList.GetReferences();
+		const ARReferenceList& refs = this->pPackList.GetContent();
 		for(unsigned int i=0; i< refs.numItems; i++)
 		{			
 			stringstream srvType, srvObj;
