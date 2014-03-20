@@ -1217,6 +1217,14 @@
 				RelativePath=".\Output\WebUtil.h"
 				>
 			</File>
+			<File
+				RelativePath=".\output\WorkflowReferenceTable.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\WorkflowReferenceTable.h"
+				>
+			</File>
 			<Filter
 				Name="webpage"
 				>

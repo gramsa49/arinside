@@ -1,4 +1,4 @@
-//Copyright (C) 2009 John Luthgers | jls17
+//Copyright (C) 2014 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -12,24 +12,27 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
-#include "DocBase.h"
-#include "../output/ImageTable.h"
 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-class CDocImageDetails :
-	public CDocBase
+#include "../util/RefItem.h"
+
+class CARImage;
+class CARServerObject;
+
+namespace OUTPUT
 {
-public:
-	CDocImageDetails(int imageIndex);
-	~CDocImageDetails(void);
+	class WorkflowReferenceTable
+	{
+	public:
+		WorkflowReferenceTable(const CARImage& image);
+	
+		std::string ToString(int rootLevel);
 
-	void Documentation();
-private:
-	unsigned int imageIndex;
-
-	void SaveImage();
+	private:
+		CRefItemList::const_iterator curIt;
+		CRefItemList::const_iterator endIt;
+		const CARServerObject &obj;
+	};
 };
-#endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

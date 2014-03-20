@@ -128,7 +128,7 @@ bool CARImage::ReferenceExists(const CRefItem &refItem) const
 	//return CARInside::GetInstance()->imageList.R
 }
 
-const CARImage::ReferenceList& CARImage::GetReferences() const
+const CRefItemList& CARImage::GetReferences() const
 {
 	return CARInside::GetInstance()->imageList.GetReferences(GetInsideId());
 }

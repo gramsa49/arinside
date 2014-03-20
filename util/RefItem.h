@@ -277,3 +277,5 @@ protected:
 	int actionIndex;
 	int messageId;
 };
+
+typedef vector<CRefItem> CRefItemList;

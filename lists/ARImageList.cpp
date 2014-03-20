@@ -369,7 +369,7 @@ void CARImageList::AddReference(unsigned int index, const CRefItem &referenceIte
 	referenceList[sortedList[index]].push_back(referenceItem);
 }
 
-const CARImageList::ReferenceItem& CARImageList::GetReferences(unsigned int index)
+const CRefItemList& CARImageList::GetReferences(unsigned int index)
 {
 	return referenceList[sortedList[index]];
 }

@@ -33,9 +33,8 @@ public:
 	int AddImageFromXML(ARXMLParsedStream& stream, const char* imageName);
 
 	// referencing...
-	typedef vector<CRefItem> ReferenceItem;
 	void AddReference(unsigned int index, const CRefItem &referenceItem);
-	const ReferenceItem& GetReferences(unsigned int index);
+	const CRefItemList& GetReferences(unsigned int index);
 
 	// list functions
 	inline unsigned int GetCount() { return names.numItems; }
@@ -79,7 +78,7 @@ private:
 	ARImageDataList data;
 	ImageListState internalListState;
 	vector<int> sortedList;
-	vector<ReferenceItem> referenceList;
+	vector<CRefItemList> referenceList;
 	typedef map<string,int> CMapType;
 	CMapType searchList;
 	vector<int> overlayAndCustomList;

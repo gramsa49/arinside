@@ -61,10 +61,9 @@ public:
 	CARServerObject* Clone() const;
 
 	// referencing functions
-	typedef CARImageList::ReferenceItem ReferenceList;	
 	void AddReference(const CRefItem &refItem);
 	bool ReferenceExists(const CRefItem &refItem) const;
-	const ReferenceList& GetReferences() const;
+	const CRefItemList& GetReferences() const;
 
 };
 

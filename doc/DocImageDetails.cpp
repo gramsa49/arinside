@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocImageDetails.h"
 #include "../core/ARImage.h"
+#include "../output/WorkflowReferenceTable.h"
 #include "DocOverlayHelper.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -80,7 +81,10 @@ void CDocImageDetails::Documentation()
 		webPage.AddContent(imgTag.str());
 
 		// add workflow references
-		webPage.AddContent(WorkflowReferences());
+		{
+			WorkflowReferenceTable wfRefTable(image);
+			webPage.AddContent(wfRefTable.ToString(rootLevel));
+		}
 		
 		// Histoy
 		webPage.AddContent(pInside->ServerObjectHistory(&image, rootLevel));
@@ -126,59 +130,4 @@ void CDocImageDetails::SaveImage()
 	}
 }
 
-string CDocImageDetails::WorkflowReferences()
-{
-	stringstream strm;
-	strm.str("");
-
-	try
-	{
-		//Field references
-		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(10, "Type");
-		tblRef.AddColumn(45, "Server object");
-		tblRef.AddColumn(5, "Enabled");
-		tblRef.AddColumn(40, "Description");
-
-		CARImage image(this->imageIndex);
-		const CARImage::ReferenceList& refs = image.GetReferences();
-		CARImage::ReferenceList::const_iterator curIt = refs.begin();
-		CARImage::ReferenceList::const_iterator endIt = refs.end();
-		for ( ; curIt != endIt; ++curIt)
-		{			
-			CTableRow row("cssStdRow");		
-			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
-			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
-
-			string tmpEnabled = "";
-			string tmpCssEnabled = "";
-
-			bool enabledSupported = false;
-			int enabled = curIt->GetObjectEnabled(enabledSupported);
-
-			if (enabledSupported)
-			{
-				tmpEnabled = CAREnum::ObjectEnable(enabled);
-				if (!enabled) { tmpCssEnabled = "objStatusDisabled"; }
-			}
-
-			row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled));
-			row.AddCell(curIt->GetDescription(rootLevel));
-			tblRef.AddRow(row);
-		}
-
-		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
-
-		tblRef.description = tblDesc.str();
-
-		strm << tblRef;
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION enumerating workflow references for image: " << pInside->imageList.ImageGetName(imageIndex) << " -- " << e.what() << endl;
-	}	
-
-	return strm.str();
-}
 #endif // AR_CURRENT_API_VERSION >= AR_API_VERSION_750

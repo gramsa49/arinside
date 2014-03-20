@@ -197,6 +197,7 @@ SET(ARINSIDE_SRCS_OUTPUT_CPP
  output/WebControl.cpp
  output/WebPage.cpp
  output/WebUtil.cpp
+ output/WorkflowReferenceTable.cpp
 )
 SET(ARINSIDE_SRCS_OUTPUT_H
  output/AlTable.h
@@ -225,6 +226,7 @@ SET(ARINSIDE_SRCS_OUTPUT_H
  output/WebControl.h
  output/WebPage.h
  output/WebUtil.h
+ output/WorkflowReferenceTable.h
 )
 SOURCE_GROUP(output FILES ${ARINSIDE_SRCS_OUTPUT_CPP} ${ARINSIDE_SRCS_OUTPUT_H})
 
