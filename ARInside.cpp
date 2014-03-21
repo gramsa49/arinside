@@ -63,7 +63,7 @@
 
 /////////
 // version information block
-#define VERSION "3.0.4"
+#define VERSION "3.1.0"
 #if defined(_DEBUG)
 #define VERSION_STR VERSION "." SVN_REV_STR " Debug"
 #elif defined(_ARINSIDE_BETA)
