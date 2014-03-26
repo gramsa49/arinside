@@ -141,7 +141,7 @@ void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps)
 					if (CARInside::GetInstance()->overlayMode == 1)
 					{
 						// strip the AR_RESERVED_OVERLAY_STRING from end of the name, so it gets the real object name
-						size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
+						size_t nameLen = strlen(names.nameList[idx]);
 						if (nameLen > 3)
 						{
 							nameLen -= 3;
@@ -153,7 +153,7 @@ void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps)
 			case AR_CUSTOM_OBJECT:
 				{
 					// strip the AR_RESERV_OVERLAY_CUSTOM_STRING from end of the name, so it gets the real object name
-					size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
+					size_t nameLen = strlen(names.nameList[idx]);
 					if (nameLen > 3)
 					{
 						nameLen -= 3;
@@ -183,7 +183,7 @@ void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps)
 			case AR_OVERLAY_OBJECT:   // this occurs if overlayMode = 0
 				{
 					// strip the AR_RESERVED_OVERLAY_STRING again, so it gets the real object name
-					size_t nameLen = strnlen(names.nameList[idx], AR_MAX_NAME_SIZE);
+					size_t nameLen = strlen(names.nameList[idx]);
 					if (nameLen > 3)
 					{
 						nameLen -= 3;

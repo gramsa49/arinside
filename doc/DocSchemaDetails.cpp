@@ -1954,7 +1954,7 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 		else
 			value = AR_LOCALIZE_FORM_VIEWS_ALL;	// default, if property isn't present
 
-		char* strState = "Disabled";
+		const char* strState = "Disabled";
 		if (value == AR_LOCALIZE_FORM_VIEWS_ALL) strState = "All";
 		if (value == AR_LOCALIZE_FORM_VIEWS_ALIASES) strState = "Only for selection field aliases";
 
@@ -1981,7 +1981,7 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_800
 		
-		char* strValue = "";
+		const char* strValue = "";
 		propVal = propIndex->GetAndUseValue(AR_OPROP_FORM_TAG_NAME);
 		if (propVal != NULL && propVal->dataType == AR_DATA_TYPE_CHAR)
 		{
