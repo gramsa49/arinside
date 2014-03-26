@@ -47,11 +47,11 @@ public:
 
 	const static unsigned int MAX_RESULT = 100;
 
-	void SetUp() override {
+	void SetUp() {
 		queryBuilder = new SchemaDbQueryBuilder();
 		queryBuilder->SetMaxRetrieve(MAX_RESULT);
 	}
-	void TearDown() override {
+	void TearDown() {
 		delete queryBuilder;
 	}
 };
@@ -86,7 +86,7 @@ public:
 	ARValueList validRow;
 	ARValueStruct values[STRUCT_ITEM_COUNT];
 
-	void SetUp() override {
+	void SetUp() {
 		queryBuilder = new SchemaDbQueryBuilder();
 
 		values[0].dataType = AR_DATA_TYPE_INTEGER;
