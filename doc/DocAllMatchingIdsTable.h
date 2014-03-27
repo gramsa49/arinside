@@ -32,12 +32,12 @@ public:
 	};
 
 public:
-	CDocAllMatchingIdsTable(const string& table1, const string& table2, CARServerObject& obj, AllMatchingMode mode, int nAction, IfElseState ifElse, int rootLevel);
+	CDocAllMatchingIdsTable(const string& targetForm, const string& sourceForm, CARServerObject& obj, AllMatchingMode mode, int nAction, IfElseState ifElse, int rootLevel);
 	std::ostream& ToStream(std::ostream& strm);
 
 private:
-	std::string tableLeft;
-	std::string tableRight;
+	std::string tableLeftTarget;
+	std::string tableRightSource;
 	CARServerObject &obj;
 	AllMatchingMode matchMode;
 	int nAction;

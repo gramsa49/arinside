@@ -452,7 +452,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		if(action.pushFieldsList.pushFieldsList[0].field.tag == AR_FIELD && action.pushFieldsList.pushFieldsList[0].field.u.fieldId == AR_LIKE_ID)
 		{
 			strm << " All Matching Ids<br/>" << endl;
-			CDocAllMatchingIdsTable allMatchingFieldsTbl(schemaName, pushSchema, *obj, CDocAllMatchingIdsTable::AMM_PUSHFIELDS, nAction, ifElse, rootLevel);
+			CDocAllMatchingIdsTable allMatchingFieldsTbl(pushSchema, schemaName, *obj, CDocAllMatchingIdsTable::AMM_PUSHFIELDS, nAction, ifElse, rootLevel);
 			allMatchingFieldsTbl.ToStream(strm);
 		}
 		else

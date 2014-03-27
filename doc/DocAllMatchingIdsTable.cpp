@@ -18,8 +18,8 @@
 #include "DocAllMatchingIdsTable.h"
 #include "../ARInside.h"
 
-CDocAllMatchingIdsTable::CDocAllMatchingIdsTable(const string& table1, const string& table2, CARServerObject& obj, AllMatchingMode mode, int nAction, IfElseState ifElse, int rootLevel)
-: tableLeft(table1), tableRight(table2), obj(obj), matchMode(mode), nAction(nAction), ifElse(ifElse), rootLevel(rootLevel)
+CDocAllMatchingIdsTable::CDocAllMatchingIdsTable(const string& targetForm, const string& sourceForm, CARServerObject& obj, AllMatchingMode mode, int nAction, IfElseState ifElse, int rootLevel)
+: tableLeftTarget(targetForm), tableRightSource(sourceForm), obj(obj), matchMode(mode), nAction(nAction), ifElse(ifElse), rootLevel(rootLevel)
 {
 }
 
@@ -28,8 +28,8 @@ std::ostream& CDocAllMatchingIdsTable::ToStream(std::ostream &strm)
 	try
 	{
 		CARInside& arIn = *CARInside::GetInstance();
-		CARSchema schema1(tableLeft);
-		CARSchema schema2(tableRight);
+		CARSchema schema1(tableLeftTarget);
+		CARSchema schema2(tableRightSource);
 
 		CTable tblListField("tblListMatchingIds", "TblObjectList");
 		tblListField.AddColumn(0, "Id");
@@ -92,7 +92,7 @@ std::ostream& CDocAllMatchingIdsTable::ToStream(std::ostream &strm)
 	}
 	catch(exception& e)
 	{
-		cout << "EXCEPTION in AllMatchingIds of " << tableLeft << ", " << tableRight << ": " << e.what() << endl;
+		cout << "EXCEPTION in AllMatchingIds of " << tableLeftTarget << ", " << tableRightSource << ": " << e.what() << endl;
 	}
 
 	return strm;
