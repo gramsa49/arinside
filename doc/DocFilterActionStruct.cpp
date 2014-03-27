@@ -418,7 +418,8 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 			if (targetSchema.Exists())
 			{
 				CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_TARGET);
-				targetSchema.AddReference(refItem);
+				if (!targetSchema.ReferenceExists(refItem))
+					targetSchema.AddReference(refItem);
 			}
 		}
 
