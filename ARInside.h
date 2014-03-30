@@ -110,11 +110,9 @@ public:
 #endif
 
 	string LinkToServerInfo(string srvName, int rootLevel);
-	string LinkToObjByRefItem(const CRefItem& refItem, int rootLevel);
 
 	int SchemaGetInsideId(string searchObjName);
 
-	string LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel);
 	string LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLevel);
 	string LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel);	
 	string LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel);
@@ -125,11 +123,7 @@ public:
 	string LinkToContainer(const CRefItem& refItem, int rootLevel);
 	string LinkToAl(const string& alName, int rootLevel);
 	string LinkToAl(int alInsideId, int rootLevel);
-	string LinkToAlRef(const CRefItem& refItem, int rootLevel);
 	string LinkToFilter(string filterName, int rootLevel);	
-	string LinkToFilterRef(int filterInsideId, int rootLevel);	
-	string LinkToFilterRef(const CRefItem& refItem, int rootLevel);
-	string LinkToFilterRef(CARFilter* filter, int rootLevel);
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	string LinkToImage(unsigned int imageIndex, int rootLevel);
 	string LinkToImage(const string &imageName, int rootLevel);

@@ -17,10 +17,11 @@
 #include "stdafx.h"
 #include "DocFieldDetails.h"
 #include "DocOverlayHelper.h"
-#include "../util/RefItem.h"
 #include "../core/ARImage.h"
 #include "../core/ARGlobalField.h"
 #include "../core/ARQualification.h"
+#include "../output/WorkflowReferenceTable.h"
+#include "../util/RefItem.h"
 
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)
@@ -186,7 +187,7 @@ string CDocFieldDetails::WorkflowReferences()
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(iter->GetObjectType()));				
-			row.AddCell(this->pInside->LinkToObjByRefItem(*iter, rootLevel));
+			row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*iter, rootLevel));
 
 			bool hasEnabledFlag;
 			unsigned int enabled = iter->GetObjectEnabled(hasEnabledFlag);
@@ -1129,7 +1130,7 @@ string CDocFieldDetails::WorkflowAttached()
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(order));
-			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+			row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*curIt, rootLevel));
 			row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), cssEnabled));
 			row.AddCell(execution);
 			tblRef.AddRow(row);

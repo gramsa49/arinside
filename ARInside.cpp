@@ -1028,12 +1028,6 @@ string CARInside::GetFieldEnumValue(int schemaInsideId, int fieldInsideId, int e
 	return "";
 }
 
-string CARInside::LinkToVui(const string& schemaName, int vuiInsideId, int fromRootLevel)
-{
-	CARSchema schema(schemaName);
-	return LinkToVui(schema.GetInsideId(), vuiInsideId, fromRootLevel);
-}
-
 string CARInside::LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLevel)
 {
 	CARVui vui(schemaInsideId, vuiInsideId);
@@ -1200,17 +1194,6 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 	return strmTmp.str();
 }
 
-string CARInside::LinkToAlRef(const CRefItem& refItem, int rootLevel)
-{
-	CARActiveLink al(refItem.GetObjectId());
-	if (!al.Exists())
-		return EmptyValue;
-
-	stringstream strmTmp;
-	strmTmp << al.GetURL(rootLevel) << " (" << al.GetOrder() << ")";
-	return strmTmp.str();
-}
-
 string CARInside::LinkToAl(const string& alName, int fromRootLevel)
 {
 	CARActiveLink al(alName);
@@ -1228,37 +1211,6 @@ string CARInside::LinkToAl(int alInsideId, int rootLevel)
 		return al.GetURL(rootLevel);
 
 	return EmptyValue;
-}
-
-string CARInside::LinkToFilterRef(int filterInsideId, int rootLevel)
-{	
-	CARFilter flt(filterInsideId);
-	if (flt.Exists())
-	{
-		return LinkToFilterRef(&flt, rootLevel);
-	}
-	return EmptyValue;
-}
-
-string CARInside::LinkToFilterRef(const CRefItem& refItem, int rootLevel)
-{
-	CARFilter flt(refItem.GetObjectId());
-	if (flt.Exists())
-	{
-		return LinkToFilterRef(&flt, rootLevel);
-	}
-	return EmptyValue;
-}
-
-string CARInside::LinkToFilterRef(CARFilter* filter, int rootLevel)
-{
-	stringstream strmTmp;
-	strmTmp.str("");
-
-	if (filter != NULL)
-		strmTmp << filter->GetURL(rootLevel) << " (" << filter->GetOrder() << ")";
-
-	return strmTmp.str();
 }
 
 string CARInside::LinkToFilter(string filterName, int fromRootLevel)
@@ -1331,64 +1283,6 @@ string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 		return CWebUtil::Link(srvName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
 	}
 
-
-	return result;
-}
-
-string CARInside::LinkToObjByRefItem(const CRefItem& refItem, int rootLevel)
-{
-	string result = EmptyValue;
-
-	switch(refItem.GetObjectType())
-	{
-	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
-		{
-			result = this->LinkToAlRef(refItem, rootLevel);
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_FILTER:
-		{
-			result = this->LinkToFilterRef(refItem, rootLevel);
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_SCHEMA:
-		{
-			result = this->LinkToSchema(refItem.GetObjectName(), rootLevel);
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_FIELD:
-		{
-			result = this->LinkToField(refItem.GetObjectId(), refItem.GetSubObjectId(), rootLevel);
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_VUI:
-		{
-			result = this->LinkToVui(refItem.GetObjectId(), refItem.GetSubObjectId(), rootLevel);
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_ESCALATION:
-		{
-			result = this->LinkToEscalation(refItem, rootLevel);
-		}
-		break;
-	case AR_STRUCT_ITEM_XML_CHAR_MENU:
-		{
-			result = CWebUtil::LinkToMenu(refItem, rootLevel);
-		}
-		break;		
-	case AR_STRUCT_ITEM_XML_CONTAINER:
-		{
-			result = this->LinkToContainer(refItem, rootLevel);
-		}
-		break;
-//#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
-//	case AR_STRUCT_ITEM_XML_IMAGE:
-//		{
-//			result = this->LinkToImage(objName, rootLevel);
-//		}
-//		break;
-//#endif
-	}
 
 	return result;
 }

@@ -19,6 +19,7 @@
 #include "DocFieldDetails.h"
 #include "../output/CsvPage.h"
 #include "../output/TabControl.h"
+#include "../output/WOrkflowReferenceTable.h"
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
 #include "../core/ARHandle.h"
@@ -2296,7 +2297,7 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 				}
 
 				CTableRow row;
-				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*curIt, rootLevel));
 				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
 				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
 				row.AddCell(curIt->GetDescription(rootLevel));
@@ -2317,7 +2318,7 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 				}
 
 				CTableRow row;
-				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*curIt, rootLevel));
 				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
 				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
 				row.AddCell(curIt->GetDescription(rootLevel));
@@ -2338,7 +2339,7 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 				}
 
 				CTableRow row;
-				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*curIt, rootLevel));
 				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
 				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
 				row.AddCell(curIt->GetDescription(rootLevel));
@@ -2359,7 +2360,7 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 				}
 
 				CTableRow row;
-				row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+				row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*curIt, rootLevel));
 				row.AddCell(CTableCell(tmpEnabled, tmpCssEnabled)); // Enabled?
 				row.AddCell(curIt->GetObjectExecuteOn()); // Exceute On
 				row.AddCell(curIt->GetDescription(rootLevel));

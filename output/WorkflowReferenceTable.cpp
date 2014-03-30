@@ -18,6 +18,7 @@
 #include "WorkflowReferenceTable.h"
 #include "../core/ARContainer.h"
 #include "../core/AREnum.h"
+#include "../core/ARFilter.h"
 #include "../core/ARImage.h"
 #include "../ARInside.h"
 
@@ -60,7 +61,7 @@ string WorkflowReferenceTable::ToString(int rootLevel)
 		{			
 			CTableRow row("cssStdRow");		
 			row.AddCell(CAREnum::XmlStructItem(curIt->GetObjectType()));				
-			row.AddCell(pInside->LinkToObjByRefItem(*curIt, rootLevel));
+			row.AddCell(this->LinkToObjByRefItem(*curIt, rootLevel));
 
 			string tmpEnabled = "";
 			string tmpCssEnabled = "";
@@ -93,3 +94,94 @@ string WorkflowReferenceTable::ToString(int rootLevel)
 
 	return strm.str();
 }
+
+string WorkflowReferenceTable::LinkToObjByRefItem(const CRefItem& refItem, int rootLevel)
+{
+	string result = EmptyValue;
+
+	switch(refItem.GetObjectType())
+	{
+	case AR_STRUCT_ITEM_XML_ACTIVE_LINK: 
+		{
+			result = LinkToAlRef(refItem, rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_FILTER:
+		{
+			result = LinkToFilterRef(refItem, rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_SCHEMA:
+		{
+			result = CARInside::GetInstance()->LinkToSchema(refItem.GetObjectName(), rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_FIELD:
+		{
+			result = CARInside::GetInstance()->LinkToField(refItem.GetObjectId(), refItem.GetSubObjectId(), rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_VUI:
+		{
+			result = CARInside::GetInstance()->LinkToVui(refItem.GetObjectId(), refItem.GetSubObjectId(), rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_ESCALATION:
+		{
+			result = CARInside::GetInstance()->LinkToEscalation(refItem, rootLevel);
+		}
+		break;
+	case AR_STRUCT_ITEM_XML_CHAR_MENU:
+		{
+			result = CWebUtil::LinkToMenu(refItem, rootLevel);
+		}
+		break;		
+	case AR_STRUCT_ITEM_XML_CONTAINER:
+		{
+			result = CARInside::GetInstance()->LinkToContainer(refItem, rootLevel);
+		}
+		break;
+//#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
+//	case AR_STRUCT_ITEM_XML_IMAGE:
+//		{
+//			result = this->LinkToImage(objName, rootLevel);
+//		}
+//		break;
+//#endif
+	}
+
+	return result;
+}
+
+string WorkflowReferenceTable::LinkToAlRef(const CRefItem& refItem, int rootLevel)
+{
+	CARActiveLink al(refItem.GetObjectId());
+	if (!al.Exists())
+		return EmptyValue;
+
+	stringstream strmTmp;
+	strmTmp << al.GetURL(rootLevel) << " (" << al.GetOrder() << ")";
+	return strmTmp.str();
+}
+
+string WorkflowReferenceTable::LinkToFilterRef(const CRefItem& refItem, int rootLevel)
+{
+	CARFilter flt(refItem.GetObjectId());
+	if (flt.Exists())
+	{
+		return LinkToFilterRef(&flt, rootLevel);
+	}
+	return EmptyValue;
+}
+
+string WorkflowReferenceTable::LinkToFilterRef(CARFilter* filter, int rootLevel)
+{
+	stringstream strmTmp;
+	strmTmp.str("");
+
+	if (filter != NULL)
+		strmTmp << filter->GetURL(rootLevel) << " (" << filter->GetOrder() << ")";
+
+	return strmTmp.str();
+}
+

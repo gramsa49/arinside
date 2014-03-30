@@ -18,6 +18,7 @@
 
 #include "../util/RefItem.h"
 
+class CARFilter;
 class CARImage;
 class CARServerObject;
 class CARContainer;
@@ -38,5 +39,13 @@ namespace OUTPUT
 		const CARServerObject &obj;
 
 		void InitIterators(const CRefItemList &refItemList);
+
+	public:
+		static string LinkToObjByRefItem(const CRefItem& refItem, int rootLevel);
+		static string LinkToFilterRef(CARFilter* filter, int rootLevel);
+	private:
+		static string LinkToAlRef(const CRefItem& refItem, int rootLevel);
+		static string LinkToFilterRef(int filterInsideId, int rootLevel);	
+		static string LinkToFilterRef(const CRefItem& refItem, int rootLevel);
 	};
 };

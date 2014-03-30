@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocValidator.h"
+#include "../output/WorkflowReferenceTable.h"
 
 // helper functions ///////////////////////////////////////////////////////////
 bool InList(vector<int>& list, int fieldId)
@@ -494,7 +495,7 @@ void CDocValidator::FieldReferenceValidator()
 						{
 							CTableRow row("cssStdRow");		
 							row.AddCell(CTableCell(CAREnum::XmlStructItem(curIt->second.GetObjectType())));
-							row.AddCell(CTableCell(this->pInside->LinkToObjByRefItem(curIt->second, rootLevel)));
+							row.AddCell(CTableCell(WorkflowReferenceTable::LinkToObjByRefItem(curIt->second, rootLevel)));
 
 							bool supportsEnabled;
 							unsigned int enabled = curIt->second.GetObjectEnabled(supportsEnabled);
@@ -585,7 +586,7 @@ void CDocValidator::MenuReferenceValidator()
 
 						row.AddCell(curIt->first);
 						row.AddCell(CAREnum::XmlStructItem(arsObjectType));
-						row.AddCell(pInside->LinkToObjByRefItem(*curRefIt, rootLevel));
+						row.AddCell(WorkflowReferenceTable::LinkToObjByRefItem(*curRefIt, rootLevel));
 
 						stringstream strm;
 						strm << curRefIt->GetDescription(rootLevel);

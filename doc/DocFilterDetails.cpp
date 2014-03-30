@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocFilterDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/WorkflowReferenceTable.h"
 
 CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId)
 : filter(filterInsideId)
@@ -247,7 +248,7 @@ string CDocFilterDetails::WorkflowReferences()
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FILTER));
-			row.AddCell(pInside->LinkToFilterRef(&flt, rootLevel));
+			row.AddCell(WorkflowReferenceTable::LinkToFilterRef(&flt, rootLevel));
 
 			string tmpCssClass;
 			if(!isEnabled) { tmpCssClass = "objStatusDisabled"; }
