@@ -4,6 +4,34 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
+2014-03-30
+[3.1.0]
+E - Redesign of the whole schema-page (added tab-control to organize the different informations)
+E - added database view-names and schemaid to the schema-page (#58, #59)
+E - added support for 8.0 and 8.1 keywords and functions
+E - added a new filter-control to the field list on the schema-page 
+E - moved information which were stored in different pages directly into the schema-page 
+    (removed the additional navigation items on schema-pages)
+E - added accordion control to the general-tab of the schema-page holding all the different details
+E - added default vui information to the schema page
+E - added form tag support (8.0 feature)
+E - schema references are now distinguished between data read, data writen
+E - added service-calls references to the schema page (#97)
+E - added full support for filterApi calls (input-mapping, output-mapping and references are created)
+E - set-field actions show "Data Source" like in devstudio
+E - added filtering support to all the overview/list-pages (actlinks, filters, escalations, menus,
+    alguides, fltguides, applications, packing-lists, groups, roles, users, images); filtering is
+    limited to 100 results and next chunk of results could be fetched by user
+E - added tar/gzip support and moved the static-resources out of the executable
+E - delete-workflow is listed on the schema page (see references tab)
+E - references between containers are now shown, so you could see if a actlink-guide, filter-guide
+    application or packing list is part of another packing list (#16 & #98)
+
+D - fixed an error with setfields-all-matching-ids in case it is used in combination with sample-data
+D - fixed an error in sample data resolving, if the sample data is read from current server (uses @)
+D - fixed a crash if webservice was attached to a missing form (or form is blacklisted)
+D - push-field actions with all-matching-id mapping, the source and target forms were switched
+
 2012-06-06
 [3.0.3]
 E - Support for overlay feature (#102)
