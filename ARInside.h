@@ -16,9 +16,6 @@
 
 #pragma once
 
-class IFileNamingFactory;
-class IFileStructure;
-
 #include "ARApi.h"
 #include "core/ARActiveLink.h"
 #include "core/ARFilter.h"
