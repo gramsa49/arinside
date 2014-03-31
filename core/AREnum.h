@@ -30,6 +30,7 @@ public:
 	static string FieldPropertiesValue(int nProp, int nVal);
 	static string ContainerRefType(int nType);
 	static string SchemaType(int nType);
+	static const char* SchemaTypeImage(int nType);
 	static const char* JoinType(int nType);
 	static string ContainerType(int nType);
 	static string ContainerImage(int nType);

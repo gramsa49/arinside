@@ -55,7 +55,6 @@ namespace OUTPUT
 		static string CsvDocName(const string& fName);
 		static string ObjName(const string& objName);
 		static string ChkBoxInput(string nameAndValue, bool checked);
-		static string SchemaImageTag(int schemyType, int rootLevel);
 
 		static string LinkToActiveLinkIndex(int rootLevel);
 		static string LinkToActiveLinkIndex(int objectCount, int rootLevel);

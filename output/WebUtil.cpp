@@ -140,21 +140,6 @@ string CWebUtil::ImageTag(const string& imgName, int rootLevel)
 	return strm.str();
 }
 
-string CWebUtil::SchemaImageTag(int schemaType, int rootLevel)
-{
-	const char* image = "schema.gif";
-	
-	switch (schemaType)
-	{
-	case AR_SCHEMA_JOIN: image = "schema_join.gif"; break;
-	case AR_SCHEMA_VIEW: image = "schema_join.gif"; break;
-	case AR_SCHEMA_DIALOG: image = "schema_display.gif"; break;
-	case AR_SCHEMA_VENDOR: image = "schema_vendor.gif"; break;
-	}
-
-	return ImageTag(image, rootLevel);
-}
-
 string CWebUtil::ObjName(const string& objName)
 {
 	stringstream strm;

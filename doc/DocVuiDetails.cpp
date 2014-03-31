@@ -39,11 +39,13 @@ void CDocVuiDetails::Documentation()
 		CWebPage webPage(file->GetFileName(), this->vui.GetName(), this->rootLevel, this->pInside->appConfig);
 		CDocOverlayHelper overlayHelper(vui, rootLevel);
 
+		int schemaType = this->schema.GetCompound().schemaType;
+
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), "", rootLevel);
+		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel, false) << endl;
+		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schemaType, this->rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), CAREnum::SchemaTypeImage(schemaType), rootLevel);
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schema.GetOverlayType());
 		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel) << endl;

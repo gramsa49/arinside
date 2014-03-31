@@ -44,12 +44,13 @@ void CDocFieldDetails::Documentation()
 
 		int overlayType = field.GetOverlayType();
 		int schemaOverlayType = this->schema.GetOverlayType();
+		int schemaType = schema.GetCompound().schemaType;
 
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(this->schema.GetCompound().schemaType, rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << endl;
+		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel, false) << endl;
+		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schemaType, rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), CAREnum::SchemaTypeImage(schemaType), rootLevel) << endl;
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schemaOverlayType);
 		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field",  CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FIELD, &field), "", rootLevel) << endl;

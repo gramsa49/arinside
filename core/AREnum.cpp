@@ -1394,6 +1394,18 @@ string CAREnum::SchemaType(int nType)
 	}
 }
 
+const char* CAREnum::SchemaTypeImage(int nType)
+{	
+	switch (nType)
+	{
+	case AR_SCHEMA_JOIN: return "schema_join.gif";
+	case AR_SCHEMA_VIEW: return "schema_view.gif";
+	case AR_SCHEMA_DIALOG: return "schema_display.gif";
+	case AR_SCHEMA_VENDOR: return "schema_vendor.gif";
+	default: 	return "schema.gif";
+	}
+}
+
 const char* CAREnum::JoinType(int nType)
 {
 	switch (nType)
