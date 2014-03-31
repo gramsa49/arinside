@@ -114,7 +114,13 @@ function ARSchemaType(schemaType) {
 function getIcon(rootLevel, type, subtype) {
     var alt = ""; var width=16; var height=16;
     switch (type) {
-        case 1: alt = "schema.gif"; break;
+        case 1: switch (subtype) {
+				case 2: alt="schema_join.gif"; break;
+				case 3: alt="schema_view.gif"; break;
+				case 4: alt="schema_display.gif"; break;
+				case 5: alt="schema_vendor.gif"; break;
+				default: alt = "schema.gif"; break;
+			}; break;
         case 5: alt = "filter.gif"; break;
         case 6: alt = "active_link.gif"; break;
         case 8: alt = "menu.gif"; break;

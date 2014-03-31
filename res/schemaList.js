@@ -29,7 +29,7 @@ function updateSchemaTable() {
 function createSchemaRowHtml(data) {
     return ($("<tr>")
         .append($("<td>")
-            .append(getIcon(rootLevel, 1, 0))
+            .append(getIcon(rootLevel, 1, data[5]))
             .append($("<a>").attr("href", data[8]).text(data[1]))
         )
         .append($("<td>").text(data[2]))
