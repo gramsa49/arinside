@@ -59,7 +59,7 @@ CARServerObject* CARSchema::Clone() const
 string CARSchema::GetURL(int rootLevel, bool useImage) const
 {
 	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(this->GetName(), file, (useImage ? "schema.gif" : ""), rootLevel);
+	return CWebUtil::Link(this->GetName(), file, (useImage ? CAREnum::SchemaTypeImage(GetCompound().schemaType) : ""), rootLevel);
 }
 
 string CARSchema::WebAlias()
