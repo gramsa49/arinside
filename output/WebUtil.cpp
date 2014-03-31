@@ -140,6 +140,21 @@ string CWebUtil::ImageTag(const string& imgName, int rootLevel)
 	return strm.str();
 }
 
+string CWebUtil::SchemaImageTag(int schemaType, int rootLevel)
+{
+	const char* image = "schema.gif";
+	
+	switch (schemaType)
+	{
+	case AR_SCHEMA_JOIN: image = "schema_join.gif"; break;
+	case AR_SCHEMA_VIEW: image = "schema_join.gif"; break;
+	case AR_SCHEMA_DIALOG: image = "schema_display.gif"; break;
+	case AR_SCHEMA_VENDOR: image = "schema_vendor.gif"; break;
+	}
+
+	return ImageTag(image, rootLevel);
+}
+
 string CWebUtil::ObjName(const string& objName)
 {
 	stringstream strm;
@@ -314,15 +329,15 @@ string CWebUtil::LinkToRoleIndex(int objectCount, int rootLevel)
 	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), "doc.gif", rootLevel);
 }
 
-string CWebUtil::LinkToSchemaIndex(int rootLevel)
+string CWebUtil::LinkToSchemaIndex(int rootLevel, bool showImage)
 {
-	return LinkToSchemaIndex(-1, rootLevel);
+	return LinkToSchemaIndex(-1, rootLevel, showImage);
 }
 
-string CWebUtil::LinkToSchemaIndex(int objectCount, int rootLevel)
+string CWebUtil::LinkToSchemaIndex(int objectCount, int rootLevel, bool showImage)
 {
 	string name = (objectCount > 1?"Forms":"Form");
-	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "schema.gif", rootLevel);
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), (showImage ? "schema.gif" : ""), rootLevel);
 }
 
 string CWebUtil::LinkToUserIndex(int rootLevel)
@@ -360,7 +375,7 @@ string CWebUtil::LinkToContainer(int objectCount, int rootLevel, int containerTy
 	}
 }
 
-string CWebUtil::LinkToHelper(string name, int objectCount, const CPageParams& page, string image, int rootLevel)
+string CWebUtil::LinkToHelper(string name, int objectCount, const CPageParams& page, const string& image, int rootLevel)
 {
 	stringstream strmTmp;
 	strmTmp.str("");

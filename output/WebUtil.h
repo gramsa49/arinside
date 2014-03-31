@@ -55,6 +55,7 @@ namespace OUTPUT
 		static string CsvDocName(const string& fName);
 		static string ObjName(const string& objName);
 		static string ChkBoxInput(string nameAndValue, bool checked);
+		static string SchemaImageTag(int schemyType, int rootLevel);
 
 		static string LinkToActiveLinkIndex(int rootLevel);
 		static string LinkToActiveLinkIndex(int objectCount, int rootLevel);
@@ -82,15 +83,15 @@ namespace OUTPUT
 		static string LinkToPackingListIndex(int objectCount, int rootLevel);
 		static string LinkToRoleIndex(int rootLevel);
 		static string LinkToRoleIndex(int objectCount, int rootLevel);
-		static string LinkToSchemaIndex(int rootLevel);
-		static string LinkToSchemaIndex(int objectCount, int rootLevel);
+		static string LinkToSchemaIndex(int rootLevel, bool showImage = true);
+		static string LinkToSchemaIndex(int objectCount, int rootLevel, bool showImage = true);
 		static string LinkToUserIndex(int rootLevel);
 		static string LinkToUserIndex(int objectCount, int rootLevel);
 		static string LinkToWebServiceIndex(int rootLevel);
 		static string LinkToWebServiceIndex(int objectCount, int rootLevel);	
 		static string LinkToContainer(int objectCount, int rootLevel, int containerType);
 
-		static string LinkToHelper(string name, int objectCount, const CPageParams& page, string image, int rootLevel);
+		static string LinkToHelper(string name, int objectCount, const CPageParams& page, const string &image, int rootLevel);
 		static string GetRelativeURL(int rootLevel, const CPageParams& page);
 
 		static string webpageFileExtension;
