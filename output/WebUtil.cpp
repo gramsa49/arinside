@@ -119,6 +119,11 @@ string CWebUtil::CsvDocName(const string& fName)
 
 string CWebUtil::ImageTag(const string& imgName, int rootLevel)
 {
+	return ImageTag(imgName, 0, rootLevel);
+}
+
+string CWebUtil::ImageTag(const string& imgName, int overlayType, int rootLevel)
+{
 	stringstream strm;
 
 	int width  = 16;
@@ -135,7 +140,24 @@ string CWebUtil::ImageTag(const string& imgName, int rootLevel)
 	if(imgName == "edit.gif")       { width =18 ; height =18 ; }	
 	if(imgName == "hidden.gif")     { width =18 ; height =18 ; }
 
-	strm << "<img src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\" />";
+	string imgOverlay;
+	switch(overlayType)
+	{
+	case AR_OVERLAY_OBJECT: imgOverlay = "overlay.gif";
+	case AR_CUSTOM_OBJECT: imgOverlay = "custom.gif";
+	}
+
+	strm << "<img ";
+	if (!imgOverlay.empty())
+	{
+		strm << "style=\"background:url(" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << ")\" "
+		     << "src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgOverlay << "\" ";
+	}
+	else
+	{
+		strm << "src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" ";
+	}
+	strm << "width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\" />";
 
 	return strm.str();
 }

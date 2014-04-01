@@ -1844,6 +1844,7 @@ void CDocMain::SchemaListJson(std::ostream &strm)
 			schemaRow.PushBack(valModifiedDate, alloc);
 			schemaRow.PushBack(schema.GetLastChanged(), alloc);
 			schemaRow.PushBack(valLink, alloc);
+			schemaRow.PushBack(schema.GetOverlayType(), alloc);
 
 			// add the row to the document
 			document.PushBack(schemaRow, alloc);

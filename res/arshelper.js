@@ -60,6 +60,12 @@ function StrAppend(str, val) {
     return val;
 }
 
+function RootPath(rootLevel) {
+	var path = '';
+    for (i = 0; i < rootLevel; i++) { path += "../"; }
+	return path;
+}
+
 function ARActLinkExecuteOn(val) {
     var result = "";
     if (val & 1) { result = StrAppend(result, "Button/MenuField") }
@@ -111,7 +117,7 @@ function ARSchemaType(schemaType) {
     }
 }
 
-function getIcon(rootLevel, type, subtype) {
+function getIcon(rootLevel, type, subtype, overlay) {
     var alt = ""; var width=16; var height=16;
     switch (type) {
         case 1: switch (subtype) {
@@ -139,9 +145,24 @@ function getIcon(rootLevel, type, subtype) {
         default: return "";
     };
     var src = "";
-    for (i = 0; i < rootLevel; i++) { src += "../"; }
-    src += "img/" + alt;
-    return $("<img>").attr("width", width).attr("height", height).attr("alt", alt).attr("src", src);
+    src += RootPath(rootLevel) + "img/" + alt;
+
+	var ovlIcon = '';
+	var style;
+	switch (overlay)
+	{
+		case 2: ovlIcon = 'overlay.gif'; break;
+		case 4: ovlIcon = 'custom.gif'; break;
+	}
+	if (ovlIcon) {
+		style = 'background:url('+src+')';
+		src = RootPath(rootLevel) + "img/" + ovlIcon;
+	}
+	
+	var image = $("<img>").attr("width", width).attr("height", height)/*.attr("alt", alt)*/.attr("src", src);
+	if (style)
+		image.attr('style',style);
+    return image;
 }
 
 function ARPool(poolNum) {

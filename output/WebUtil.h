@@ -50,6 +50,7 @@ namespace OUTPUT
 		static string HtmlGZPageSuffix();
 		static string WebPageSuffix();
 		static string CsvPageSuffix();
+		static string ImageTag(const string& imgName, int overlayType, int rootLevel);
 		static string ImageTag(const string& imgName, int rootLevel);
 		static string DocName(const string& fName);
 		static string CsvDocName(const string& fName);

@@ -29,7 +29,7 @@ function updateSchemaTable() {
 function createSchemaRowHtml(data) {
     return ($("<tr>")
         .append($("<td>")
-            .append(getIcon(rootLevel, 1, data[5]))
+            .append(getIcon(rootLevel, 1, data[5], data[9]))
             .append($("<a>").attr("href", data[8]).text(data[1]))
         )
         .append($("<td>").text(data[2]))
@@ -52,7 +52,7 @@ $('document').ready(function() {
 		if (hash === "#view") { value = 3; }
 		if (hash === "#dialog") { value = 4; }
 		if (hash === "#vendor") { value = 5; }
-		if (value>0) {			
+		if (value>0) {
 			checkBoxes.filter('[value="'+value+'"]').attr("checked","checked");
 			updateSchemaTable();
 		}
