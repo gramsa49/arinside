@@ -1082,6 +1082,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\ImageTag.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\ImageTag.h"
+				>
+			</File>
+			<File
 				RelativePath=".\output\LetterFilterControl.cpp"
 				>
 			</File>

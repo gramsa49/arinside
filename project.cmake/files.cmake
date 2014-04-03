@@ -180,6 +180,7 @@ SET(ARINSIDE_SRCS_OUTPUT_CPP
  output/GroupTable.cpp
  output/IFileStructure.cpp
  output/ImageTable.cpp
+ output/ImageTag.cpp
  output/LetterFilterControl.cpp
  output/MenuTable.cpp
  output/NavigationPage.cpp
@@ -209,6 +210,7 @@ SET(ARINSIDE_SRCS_OUTPUT_H
  output/GroupTable.h
  output/IFileStructure.h
  output/ImageTable.h
+ output/ImageTag.h
  output/LetterFilterControl.h
  output/MenuTable.h
  output/NavigationPage.h
@@ -366,6 +368,7 @@ SET(ARINSIDE_TEST_SRCS
  lists/ARListHelpersTest.cpp
  lists/support/SchemaDbQueryBuilderTest.cpp
  output/webpage/HtmlReferenceListImplTest.cpp
+ output/ImageTagTest.cpp
  util/CommandLineValidatorTest.cpp
  util/UntarStreamTest.cpp
  util/UntarStreamTest.h
