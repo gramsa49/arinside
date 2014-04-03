@@ -15,7 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "ImageTag.h"
 #include "NavigationPage.h"
+#include "URLLink.h"
 #include "WebUtil.h"
 #include "../AppException.h"
 #include "../ARInside.h"
@@ -30,6 +32,7 @@ void CNavigationPage::Write()
 	stringstream strmName;
 	strmName << this->conf.targetFolder << "/" << CWebUtil::DocName(this->fileName);
 	CARInside *pInside = CARInside::GetInstance();
+	ImageTag docImage(ImageTag::Document, rootLevel);
 
 	try
 	{
@@ -50,61 +53,61 @@ void CNavigationPage::Write()
 
 		// content
 		fout << "<li>";
-			fout << CWebUtil::Link("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "schema.gif", rootLevel, TARGET_MODE_PARENT);			
+			fout << URLLink("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), ImageTag(ImageTag::Schema, rootLevel), rootLevel, URLLink::TARGET_MODE_PARENT);
 		fout << "</li>";
 
 		fout << "<li>";
-			fout << CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "active_link.gif", rootLevel, TARGET_MODE_PARENT);			
-			fout << "<ul><li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li></ul>";
+			fout << URLLink("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), ImageTag(ImageTag::ActiveLink, rootLevel), rootLevel, URLLink::TARGET_MODE_PARENT);			
+			fout << "<ul><li>" << URLLink("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li></ul>";
 		fout << "</li>";
 
 		fout << "<li>";
-			fout << CWebUtil::Link("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel, TARGET_MODE_PARENT);
+			fout << URLLink("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), ImageTag(ImageTag::Filter, rootLevel), rootLevel, URLLink::TARGET_MODE_PARENT);
 			fout << "<ul>";
-				fout << "<li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << URLLink("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 				if (pInside->CompareServerVersion(7,1) >= 0)
 				{
-					fout << "<li>" << CWebUtil::Link("Error Handler", CPageParams(PAGE_FILTER_ERRORHANDLERS), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+					fout << "<li>" << URLLink("Error Handler", CPageParams(PAGE_FILTER_ERRORHANDLERS), docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 				}
 #endif
 			fout << "</ul>";
 		fout << "</li>";
 
 		fout << "<li>";
-			fout << CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "escalation.gif", rootLevel, TARGET_MODE_PARENT);
-			fout << "<ul><li>" << CWebUtil::Link("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li></ul>";
+			fout << URLLink("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), ImageTag(ImageTag::Escalation, rootLevel), rootLevel, URLLink::TARGET_MODE_PARENT);
+			fout << "<ul><li>" << URLLink("By Action", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li></ul>";
 		fout << "</li>";
 
-		fout << "<li>" << CWebUtil::Link("Menus"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU)                    , "menu.gif"        , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE)       , "al_guide.gif"    , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Filter Guides"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), "filter_guide.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Applications"      , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP)         , "application.gif" , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Packing Lists"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK)        , "packing_list.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Webservices"       , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE)  , "webservice.gif"  , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Groups"            , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP)                        , "group.gif"       , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Roles"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE)                         , "doc.gif"         , rootLevel, TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << CWebUtil::Link("Users"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER)                         , "user.gif"        , rootLevel, TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Menus"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU)                    , ImageTag(ImageTag::Menu, rootLevel)           , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE)       , ImageTag(ImageTag::ActiveLinkGuide, rootLevel), rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Filter Guides"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), ImageTag(ImageTag::FilterGuide, rootLevel)    , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Applications"      , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP)         , ImageTag(ImageTag::Application, rootLevel)    , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Packing Lists"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK)        , ImageTag(ImageTag::PackingList, rootLevel)    , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Webservices"       , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE)  , ImageTag(ImageTag::Webservice, rootLevel)     , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Groups"            , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP)                        , ImageTag(ImageTag::Group, rootLevel)          , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Roles"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE)                         , docImage          , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Users"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER)                         , ImageTag(ImageTag::User, rootLevel)           , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		if (pInside->CompareServerVersion(7,5) >= 0)
 		{
-			fout << "<li>" << CWebUtil::Link("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "image.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+			fout << "<li>" << URLLink("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), ImageTag(ImageTag::Image, rootLevel), rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 		}
 #endif
 
 		fout << "<li>"; 
-			Image(fout, "../img/", "folder.gif", 16, 13); fout << "Information:";
+		  fout << ImageTag(ImageTag::Folder, rootLevel) << "Information:";
 			fout << "<ul>";
-				fout << "<li>" << CWebUtil::Link("Messages"          , CPageParams(PAGE_MESSAGES)      , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("Notifications"     , CPageParams(PAGE_NOTIFICATIONS) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("Global&nbsp;Fields", CPageParams(PAGE_GLOBALFIELS)   , "doc.gif", rootLevel, false, TARGET_MODE_PARENT) << "</li>";
+			  fout << "<li>" << URLLink("Messages"          , CPageParams(PAGE_MESSAGES)      , docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << URLLink("Notifications"     , CPageParams(PAGE_NOTIFICATIONS) , docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << URLLink("Global&nbsp;Fields", CPageParams(PAGE_GLOBALFIELS)   , docImage, rootLevel, false, URLLink::TARGET_MODE_PARENT) << "</li>";
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 				if (pInside->CompareServerVersion(7,6,4) >= 0 || (pInside->appConfig.fileMode == true && pInside->CompareServerVersion(7,5) >= 0))
-					fout << "<li>" << CWebUtil::Link("Customizations"    , CPageParams(PAGE_CUSTOMWORKFLOW), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+					fout << "<li>" << URLLink("Customizations"    , CPageParams(PAGE_CUSTOMWORKFLOW), docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 #endif
-				fout << "<li>" << CWebUtil::Link("Validator"         , CPageParams(PAGE_VALIDATOR_MAIN), "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
-				fout << "<li>" << CWebUtil::Link("Analyzer"          , CPageParams(PAGE_ANALYZER_MAIN) , "doc.gif", rootLevel, TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << URLLink("Validator"         , CPageParams(PAGE_VALIDATOR_MAIN), docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+				fout << "<li>" << URLLink("Analyzer"          , CPageParams(PAGE_ANALYZER_MAIN) , docImage, rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 			fout << "</ul>";
 		fout << "</li>";
 
@@ -150,9 +153,4 @@ void CNavigationPage::Header(ostream &strm)
 void CNavigationPage::Footer(ostream &strm)
 {
 	strm << "</ul></body></html>";
-}
-
-void CNavigationPage::Image(ostream &strm, const char *path, const char *file, int width, int height)
-{
-	strm << "<img src=\"" << path << file << "\" width=\"" << width << "\" height=\"" << height << "\" alt=\"" << file << "\" />";
 }

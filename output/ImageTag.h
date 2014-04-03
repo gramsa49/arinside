@@ -33,6 +33,21 @@ namespace OUTPUT
 			SchemaDialog,
 			SchemaVendor,
 			Server,
+			Document,
+			Folder,
+			ActiveLink,
+			Filter,
+			Escalation,
+			Menu,
+			ActiveLinkGuide,
+			FilterGuide,
+			Application,
+			PackingList,
+			Webservice,
+			Image,
+			User,
+			Group,
+			
 		};
 
 		// constructors

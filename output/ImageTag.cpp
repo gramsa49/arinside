@@ -36,13 +36,29 @@ namespace OUTPUT
 		case ImageTag::NoImage: return "";
 		case ImageTag::Schema: return "schema.gif";
 		case ImageTag::Server: return "server.gif";
+		case ImageTag::Document: return "doc.gif";
+		case ImageTag::Folder: return "folder.gif";
+		case ImageTag::ActiveLink: return "active_link.gif";
+		case ImageTag::Filter: return "filter.gif";
+		case ImageTag::Escalation: return "escalation.gif";
+		case ImageTag::Menu: return "menu.gif";
+		case ImageTag::ActiveLinkGuide: return "al_guide.gif";
+		case ImageTag::FilterGuide: return "filter_guide.gif";
+		case ImageTag::Application: return "application.gif";
+		case ImageTag::PackingList: return "packing_list.gif";
+		case ImageTag::Webservice: return "webservice.gif";
+		case ImageTag::Image: return "image.gif";
+		case ImageTag::User: return "user.gif";
+		case ImageTag::Group: return "group.gif";
 		}
 		// always throw an assert here, in case a undefined image is used!
 		assert(false);
 		return "";
 	}
 
-	ImageDimensions DefaultImageDimmensions = { 16, 16 };
+	ImageDimensions DefaultImageDimensions = { 16, 16 };
+	ImageDimensions DocumentImageDimensions = { 15, 10 };
+	ImageDimensions FolderImageDimensions = { 16, 13 };
 
 	// the following provides the image dimensions (width and height)
 	// for a particular imageId. If new images don't use the default
@@ -52,8 +68,10 @@ namespace OUTPUT
 	{
 		switch (image)
 		{
+		case ImageTag::Document: return DocumentImageDimensions;
+		case ImageTag::Folder: return FolderImageDimensions;
 		}
-		return DefaultImageDimmensions;
+		return DefaultImageDimensions;
 	}
 
 	// ################################################################

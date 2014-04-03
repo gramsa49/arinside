@@ -25,6 +25,16 @@ namespace OUTPUT
 
 	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target)
 	{
+		Init(caption, linkToPage, image, rootLevel, validate, target);
+	}
+
+	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, OUTPUT::URLLink::LinkTargetMode target)
+	{
+		Init(caption, linkToPage, image, rootLevel, true, target);
+	}
+
+	void URLLink::Init(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target)
+	{
 		stringstream strmTmp;
 
 		strmTmp << image;
