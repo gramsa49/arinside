@@ -1130,6 +1130,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\RootLevel.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\RootLevel.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Output\SchemaTable.cpp"
 				>
 			</File>

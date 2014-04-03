@@ -17,26 +17,36 @@
 #include "stdafx.h"
 #include "ImageTag.h"
 #include "../core/ARServerObject.h"
+#include "../util/RootLevel.h"
 
 namespace OUTPUT
 {
-	const char* GetImageName(int imageId)
-	{
-		switch (imageId)
-		{
-		case ImageTag::Schema: return "schema.gif";
-		}
-		return "";
-	}
-
 	struct ImageDimensions
 	{
 		unsigned short x;
 		unsigned short y;
 	};
 
+	// the following function maps the imageId to a file name
+	// make sure new images are added here
+	const char* GetImageName(int imageId)
+	{
+		switch (imageId)
+		{
+		case ImageTag::NoImage: return "";
+		case ImageTag::Schema: return "schema.gif";
+		}
+		// always throw an assert here, in case a undefined image is used!
+		assert(false);
+		return "";
+	}
+
 	ImageDimensions DefaultImageDimmensions = { 16, 16 };
 
+	// the following provides the image dimensions (width and height)
+	// for a particular imageId. If new images don't use the default
+	// width and height of 16x16, make sure the correct dimension is
+	// returned here.
 	ImageDimensions GetImageDimensions(ImageTag::ImageEnum image)
 	{
 		switch (image)
@@ -45,8 +55,11 @@ namespace OUTPUT
 		return DefaultImageDimmensions;
 	}
 
-	ImageTag::ImageTag(OUTPUT::ImageTag::ImageEnum image)
+	// ################################################################
+	// ## ImageTag class definition
+	ImageTag::ImageTag(OUTPUT::ImageTag::ImageEnum image, int currentRootLevel)
 	{
+		rootLevel = currentRootLevel;
 		imageId = image;
 	}
 
@@ -58,7 +71,7 @@ namespace OUTPUT
 			ImageDimensions &imageDim = GetImageDimensions(imageId);
 
 			strm << "<img ";
-			strm << "src=\"" << "img/" << imageName << "\" ";
+			strm << "src=\"" << RootLevel(rootLevel) << "img/" << imageName << "\" ";
 			strm << "width=\"" << imageDim.x << "\" height=\"" << imageDim.y << "\" alt=\"" << imageName << "\" />";
 		}
 		return strm;
@@ -67,6 +80,11 @@ namespace OUTPUT
 
 ostream& operator <<(ostream &strm, OUTPUT::ImageTag::ImageEnum image)
 {
-	ImageTag img(image);
+	ImageTag img(image, 0);
 	return img.ToStream(strm);
+}
+
+ostream& operator <<(ostream &strm, OUTPUT::ImageTag &image)
+{
+	return image.ToStream(strm);
 }

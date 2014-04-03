@@ -16,35 +16,18 @@
 
 #pragma once
 
-class CARServerObject;
+namespace OUTPUT {
 
-namespace OUTPUT
-{
-	class ImageTag 
+	class RootLevel
 	{
 	public:
-		enum ImageEnum
-		{
-			NoImage = 0,
-			Schema = 1,
-			SchemaRegular = 1,
-			SchemaJoin,
-			SchemaView,
-			SchemaDialog,
-			SchemaVendor,
-		};
+		RootLevel(int rootLevel);
+		const char * GetRootPath() const;
 
-		// constructors
-		ImageTag(const CARServerObject &obj, int rootLevel);
-		ImageTag(ImageEnum image, int rootLevel);
-
-		std::ostream& ToStream(std::ostream &strm);
 	private:
 		int rootLevel;
-		ImageEnum imageId;
-		ImageEnum imageOverlayId;
 	};
-};
 
-std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);
-std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag &image);
+}; // end namespace OUTPUT
+
+std::ostream& operator <<(std::ostream &stream, OUTPUT::RootLevel &rootLevelObj);

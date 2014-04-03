@@ -14,37 +14,32 @@
 //    You should have received a copy of the GNU General Public License
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
-#pragma once
+#include "stdafx.h"
+#include "RootLevel.h"
 
-class CARServerObject;
-
-namespace OUTPUT
+namespace OUTPUT 
 {
-	class ImageTag 
+
+	RootLevel::RootLevel(int currentRootLevel)
 	{
-	public:
-		enum ImageEnum
+		rootLevel = currentRootLevel;
+	}
+
+	const char* RootLevel::GetRootPath() const
+	{
+		switch(rootLevel)
 		{
-			NoImage = 0,
-			Schema = 1,
-			SchemaRegular = 1,
-			SchemaJoin,
-			SchemaView,
-			SchemaDialog,
-			SchemaVendor,
-		};
+		case 1: return "../";
+		case 2: return "../../";
+		case 3: return "../../../";
+		default: return "";
+		}	
+	}
 
-		// constructors
-		ImageTag(const CARServerObject &obj, int rootLevel);
-		ImageTag(ImageEnum image, int rootLevel);
+}; // end namespace OUTPUT;
 
-		std::ostream& ToStream(std::ostream &strm);
-	private:
-		int rootLevel;
-		ImageEnum imageId;
-		ImageEnum imageOverlayId;
-	};
-};
-
-std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);
-std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag &image);
+ostream& operator <<(ostream &stream, OUTPUT::RootLevel &rootLevelObj)
+{
+	stream << rootLevelObj.GetRootPath();
+	return stream;
+}

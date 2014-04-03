@@ -186,6 +186,7 @@ SET(ARINSIDE_SRCS_OUTPUT_CPP
  output/NavigationPage.cpp
  output/ObjectTable.cpp
  output/RoleTable.cpp
+ output/RootLevel.cpp
  output/SchemaTable.cpp
  output/TabControl.cpp
  output/Table.cpp
@@ -216,6 +217,7 @@ SET(ARINSIDE_SRCS_OUTPUT_H
  output/NavigationPage.h
  output/ObjectTable.h
  output/RoleTable.h
+ output/RootLevel.h
  output/SchemaTable.h
  output/TabControl.h
  output/Table.h
