@@ -38,7 +38,7 @@ namespace OUTPUT
 		ImageTag(const CARServerObject &obj, int rootLevel);
 		ImageTag(ImageEnum image, int rootLevel);
 
-		std::ostream& ToStream(std::ostream &strm);
+		std::ostream& ToStream(std::ostream &strm) const;
 	private:
 		int rootLevel;
 		ImageEnum imageId;
@@ -47,4 +47,4 @@ namespace OUTPUT
 };
 
 std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);
-std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag &image);
+std::ostream& operator<<(std::ostream& strm, const OUTPUT::ImageTag &image);

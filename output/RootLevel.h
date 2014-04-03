@@ -30,4 +30,4 @@ namespace OUTPUT {
 
 }; // end namespace OUTPUT
 
-std::ostream& operator <<(std::ostream &stream, OUTPUT::RootLevel &rootLevelObj);
+std::ostream& operator <<(std::ostream &stream, const OUTPUT::RootLevel &rootLevelObj);

@@ -19,7 +19,7 @@
 #include "DocFieldDetails.h"
 #include "../output/CsvPage.h"
 #include "../output/TabControl.h"
-#include "../output/WOrkflowReferenceTable.h"
+#include "../output/WorkflowReferenceTable.h"
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
 #include "../core/ARHandle.h"

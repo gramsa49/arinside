@@ -38,7 +38,7 @@ namespace OUTPUT
 
 }; // end namespace OUTPUT;
 
-ostream& operator <<(ostream &stream, OUTPUT::RootLevel &rootLevelObj)
+ostream& operator <<(ostream &stream, const OUTPUT::RootLevel &rootLevelObj)
 {
 	stream << rootLevelObj.GetRootPath();
 	return stream;

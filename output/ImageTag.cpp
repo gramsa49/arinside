@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "ImageTag.h"
 #include "../core/ARServerObject.h"
-#include "../util/RootLevel.h"
+#include "../output/RootLevel.h"
 
 namespace OUTPUT
 {
@@ -63,12 +63,12 @@ namespace OUTPUT
 		imageId = image;
 	}
 
-	ostream& ImageTag::ToStream(std::ostream &strm)
+	ostream& ImageTag::ToStream(std::ostream &strm) const
 	{
 		if (imageId != NoImage)
 		{
 			const char* imageName = GetImageName(imageId);
-			ImageDimensions &imageDim = GetImageDimensions(imageId);
+			ImageDimensions imageDim = GetImageDimensions(imageId);
 
 			strm << "<img ";
 			strm << "src=\"" << RootLevel(rootLevel) << "img/" << imageName << "\" ";
@@ -84,7 +84,7 @@ ostream& operator <<(ostream &strm, OUTPUT::ImageTag::ImageEnum image)
 	return img.ToStream(strm);
 }
 
-ostream& operator <<(ostream &strm, OUTPUT::ImageTag &image)
+ostream& operator <<(ostream &strm, const OUTPUT::ImageTag &image)
 {
 	return image.ToStream(strm);
 }
