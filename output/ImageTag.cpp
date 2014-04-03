@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "ImageTag.h"
 #include "../core/ARServerObject.h"
-#include "../output/RootLevel.h"
+#include "../output/RootPath.h"
 
 namespace OUTPUT
 {
@@ -71,7 +71,7 @@ namespace OUTPUT
 			ImageDimensions imageDim = GetImageDimensions(imageId);
 
 			strm << "<img ";
-			strm << "src=\"" << RootLevel(rootLevel) << "img/" << imageName << "\" ";
+			strm << "src=\"" << RootPath(rootLevel) << "img/" << imageName << "\" ";
 			strm << "width=\"" << imageDim.x << "\" height=\"" << imageDim.y << "\" alt=\"" << imageName << "\" />";
 		}
 		return strm;

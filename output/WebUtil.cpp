@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "RootLevel.h"
+#include "RootPath.h"
 #include "WebUtil.h"
 #include "../ARInside.h"
 
@@ -139,12 +139,12 @@ string CWebUtil::ImageTag(const string& imgName, int overlayType, int rootLevel)
 	strm << "<img ";
 	if (!imgOverlay.empty())
 	{
-		strm << "style=\"background:url(" << RootLevel(rootLevel) << "img/" << imgName << ")\" "
-		     << "src=\"" << RootLevel(rootLevel) << "img/" << imgOverlay << "\" ";
+		strm << "style=\"background:url(" << RootPath(rootLevel) << "img/" << imgName << ")\" "
+		     << "src=\"" << RootPath(rootLevel) << "img/" << imgOverlay << "\" ";
 	}
 	else
 	{
-		strm << "src=\"" << RootLevel(rootLevel) << "img/" << imgName << "\" ";
+		strm << "src=\"" << RootPath(rootLevel) << "img/" << imgName << "\" ";
 	}
 	strm << "width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\" />";
 
@@ -373,7 +373,7 @@ string CWebUtil::LinkToContainer(int objectCount, int rootLevel, int containerTy
 
 string CWebUtil::LinkToHelper(string name, int objectCount, const CPageParams& page, const string& image, int rootLevel)
 {
-	RootLevel rootPath(rootLevel);
+	RootPath rootPath(rootLevel);
 	stringstream strmTmp;
 	strmTmp.str("");
 
@@ -434,7 +434,7 @@ string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, cons
 		strmTmp << xhtmlCaption;
 	else
 	{
-		strmTmp << "<a href=\"" << RootLevel(rootLevel) << linkToPage->GetFullFileName() << "\"";
+		strmTmp << "<a href=\"" << RootPath(rootLevel) << linkToPage->GetFullFileName() << "\"";
 		if (target > TARGET_MODE_SELF)
 		{
 			strmTmp << " target=\"";
@@ -454,6 +454,6 @@ string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, cons
 
 string CWebUtil::GetRelativeURL(int rootLevel, const CPageParams& page)
 {
-	RootLevel rootPath(rootLevel);
+	RootPath rootPath(rootLevel);
 	return rootPath.GetRootPath() + page->GetFullFileName();
 }

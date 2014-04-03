@@ -18,15 +18,15 @@
 
 namespace OUTPUT {
 
-	class RootLevel
+	class RootPath
 	{
 	public:
-		RootLevel(int rootLevel);
+		RootPath(int rootLevel);
 		const char * GetRootPath() const;
 
 	private:
 		int rootLevel;
 	};
 
-	std::ostream& operator <<(std::ostream &stream, const OUTPUT::RootLevel &rootLevelObj);
+	std::ostream& operator <<(std::ostream &stream, const OUTPUT::RootPath &rootLevelObj);
 }; // end namespace OUTPUT

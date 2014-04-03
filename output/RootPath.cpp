@@ -15,17 +15,17 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "RootLevel.h"
+#include "RootPath.h"
 
 namespace OUTPUT 
 {
 
-	RootLevel::RootLevel(int currentRootLevel)
+	RootPath::RootPath(int currentRootLevel)
 	{
 		rootLevel = currentRootLevel;
 	}
 
-	const char* RootLevel::GetRootPath() const
+	const char* RootPath::GetRootPath() const
 	{
 		switch(rootLevel)
 		{
@@ -36,7 +36,7 @@ namespace OUTPUT
 		}	
 	}
 
-	ostream& operator <<(ostream &stream, const OUTPUT::RootLevel &rootLevelObj)
+	ostream& operator <<(ostream &stream, const OUTPUT::RootPath &rootLevelObj)
 	{
 		stream << rootLevelObj.GetRootPath();
 		return stream;

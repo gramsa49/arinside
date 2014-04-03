@@ -18,7 +18,7 @@
 #include "DocImageDetails.h"
 #include "../core/ARImage.h"
 #include "../output/WorkflowReferenceTable.h"
-#include "../output/RootLevel.h"
+#include "../output/RootPath.h"
 #include "DocOverlayHelper.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -78,7 +78,7 @@ void CDocImageDetails::Documentation()
 		CPageParams imageLink(PAGE_IMAGE_DATA, &image);
 
 		stringstream imgTag;
-		imgTag << "<p class=\"ars_image\"><img src=\"" << RootLevel(rootLevel) << imageLink->GetFullFileName() <<  "\" alt=\"" << image.GetType() << "\" /></p>";
+		imgTag << "<p class=\"ars_image\"><img src=\"" << RootPath(rootLevel) << imageLink->GetFullFileName() <<  "\" alt=\"" << image.GetType() << "\" /></p>";
 		webPage.AddContent(imgTag.str());
 
 		// add workflow references
