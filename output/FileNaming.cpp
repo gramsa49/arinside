@@ -67,6 +67,16 @@ const char* FILE_INDEX_ACTION_PREFIX = "index_action_";
 
 const char* FILE_SERVER = "server";
 
+class MainHomePage : public IFileStructure
+{
+public:
+	MainHomePage() { }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return CWebUtil::DocName(GetFileName()); }
+	virtual string GetPath() const { return ""; }
+	virtual unsigned int GetRootLevel() const { return 0; }
+};
+
 ////////////////////////////////////////////////////////////////////
 // for Schemas                                                    //
 class SchemaOverview : public IFileStructure
@@ -1258,6 +1268,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 {
 	switch (params.page)
 	{
+		case PAGE_MAINHOME: return new MainHomePage();
 		case PAGE_DETAILS:
 		{
 			assert(params.obj1 != NULL);
@@ -2371,6 +2382,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 {
 	switch (params.page)
 	{
+		case PAGE_MAINHOME: return new MainHomePage();
 		case PAGE_DETAILS:
 		{
 			assert(params.obj1 != NULL);

@@ -36,10 +36,10 @@ namespace OUTPUT
 		}	
 	}
 
+	ostream& operator <<(ostream &stream, const OUTPUT::RootLevel &rootLevelObj)
+	{
+		stream << rootLevelObj.GetRootPath();
+		return stream;
+	}
 }; // end namespace OUTPUT;
 
-ostream& operator <<(ostream &stream, const OUTPUT::RootLevel &rootLevelObj)
-{
-	stream << rootLevelObj.GetRootPath();
-	return stream;
-}

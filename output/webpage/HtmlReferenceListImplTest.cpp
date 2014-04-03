@@ -23,7 +23,7 @@ TEST(HtmlReferenceListImplTest, ValidateScriptOutput)
 	refList.AddScriptReference("jquery.js");
 
 	output << refList;
-	ASSERT_EQ("<script src=\"./jquery.js\" type=\"text/javascript\"></script>\n", output.str());
+	ASSERT_EQ("<script src=\"jquery.js\" type=\"text/javascript\"></script>\n", output.str());
 }
 
 TEST(HtmlReferenceListImplTest, ValidateStylesheetOutput)
@@ -34,5 +34,5 @@ TEST(HtmlReferenceListImplTest, ValidateStylesheetOutput)
 	refList.AddStyleSheetReference("page.css");
 
 	output << refList;
-	ASSERT_EQ("<link rel=\"stylesheet\" type=\"text/css\" href=\"./page.css\" />\n", output.str());
+	ASSERT_EQ("<link rel=\"stylesheet\" type=\"text/css\" href=\"page.css\" />\n", output.str());
 }

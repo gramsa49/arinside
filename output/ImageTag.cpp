@@ -76,15 +76,15 @@ namespace OUTPUT
 		}
 		return strm;
 	}
+
+	ostream& operator <<(ostream &strm, OUTPUT::ImageTag::ImageEnum image)
+	{
+		ImageTag img(image, 0);
+		return img.ToStream(strm);
+	}
+
+	ostream& operator <<(ostream &strm, const OUTPUT::ImageTag &image)
+	{
+		return image.ToStream(strm);
+	}
 }; // end namespace OUTPUT
-
-ostream& operator <<(ostream &strm, OUTPUT::ImageTag::ImageEnum image)
-{
-	ImageTag img(image, 0);
-	return img.ToStream(strm);
-}
-
-ostream& operator <<(ostream &strm, const OUTPUT::ImageTag &image)
-{
-	return image.ToStream(strm);
-}

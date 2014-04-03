@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "RootLevel.h"
 #include "WebPage.h"
 #include "WebUtil.h"
 #include "../ARInside.h"
@@ -82,7 +83,7 @@ void CWebPage::DynamicHeaderText(ostream &strm)
 {
 	strm << "<table>" << endl;
 	strm << "<tr>" << endl;
-	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel)+ CWebUtil::DocName("index"), "server.gif", rootLevel) << "</td>" << endl;
+	strm << "<td>" << CWebUtil::Link("Main", CPageParams(PAGE_MAINHOME), "server.gif", rootLevel) << "</td>" << endl;
 	strm << "<td>" << " (Server: " << CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel) << "</td>" << endl;
 	strm << "<td>" << "@" << "</td>" << endl;
 	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
@@ -98,7 +99,7 @@ string CWebPage::CurrentDateTime()
 void CWebPage::DynamicFooterText(ostream &strm)
 {
 	strm << "<table><tr>" << endl;
-	strm << "<td>" << CWebUtil::Link("Main", CWebUtil::RootPath(rootLevel) + CWebUtil::DocName("index"), "next.gif", rootLevel)<< "</td>" << endl;
+	strm << "<td>" << CWebUtil::Link("Main", CPageParams(PAGE_MAINHOME), "next.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
 	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
@@ -125,7 +126,7 @@ void CWebPage::ContentOpen(ostream &strm)
 		strm << navContent << endl;
 		strm << "</div>" << endl;
 	}
-	strm << "<iframe id=\"IFrameMenu\" src=\"" << CWebUtil::RootPath(rootLevel) << "template/navigation." << CWebUtil::WebPageSuffix() << "\" name=\"Navigation\" frameborder=\"0\">" << endl;
+	strm << "<iframe id=\"IFrameMenu\" src=\"" << RootLevel(rootLevel) << "template/navigation." << CWebUtil::WebPageSuffix() << "\" name=\"Navigation\" frameborder=\"0\">" << endl;
 	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << endl;
 }
 
@@ -201,12 +202,12 @@ int CWebPage::SaveInFolder(const string &path)
 
 void CWebPage::AddScriptReference(std::ostream &strm, const std::string &scriptPath)
 {
-	strm << "<script src=\"" << CWebUtil::RootPath(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
+	strm << "<script src=\"" << RootLevel(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
 }
 
 void CWebPage::AddStyleSheetReference(std::ostream &strm, const std::string &cssPath)
 {
-	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << CWebUtil::RootPath(rootLevel) << cssPath << "\" />" << endl;
+	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << RootLevel(rootLevel) << cssPath << "\" />" << endl;
 }
 
 HtmlReferenceList& CWebPage::GetReferenceManager()

@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "RootLevel.h"
 #include "WebUtil.h"
 #include "../ARInside.h"
 
@@ -28,18 +29,6 @@ CWebUtil::CWebUtil(void)
 
 CWebUtil::~CWebUtil(void)
 {
-}
-
-string CWebUtil::RootPath(int level)
-{
-	switch(level)
-	{
-	case 0:
-	default: return "./";
-	case 1: return "../";
-	case 2: return "../../";
-	case 3: return "../../../";
-	}
 }
 
 string CWebUtil::Validate(const string& text)
@@ -150,12 +139,12 @@ string CWebUtil::ImageTag(const string& imgName, int overlayType, int rootLevel)
 	strm << "<img ";
 	if (!imgOverlay.empty())
 	{
-		strm << "style=\"background:url(" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << ")\" "
-		     << "src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgOverlay << "\" ";
+		strm << "style=\"background:url(" << RootLevel(rootLevel) << "img/" << imgName << ")\" "
+		     << "src=\"" << RootLevel(rootLevel) << "img/" << imgOverlay << "\" ";
 	}
 	else
 	{
-		strm << "src=\"" << CWebUtil::RootPath(rootLevel) << "img/" << imgName << "\" ";
+		strm << "src=\"" << RootLevel(rootLevel) << "img/" << imgName << "\" ";
 	}
 	strm << "width=\"" << width << "\" height=\"" << height << "\" alt=\"" << imgName << "\" />";
 
@@ -384,12 +373,13 @@ string CWebUtil::LinkToContainer(int objectCount, int rootLevel, int containerTy
 
 string CWebUtil::LinkToHelper(string name, int objectCount, const CPageParams& page, const string& image, int rootLevel)
 {
+	RootLevel rootPath(rootLevel);
 	stringstream strmTmp;
 	strmTmp.str("");
 
 	if(objectCount > -1) strmTmp << objectCount << " ";
 
-	strmTmp << CWebUtil::Link(name, RootPath(rootLevel) + page->GetFullFileName(), image, rootLevel);
+	strmTmp << CWebUtil::Link(name, rootPath.GetRootPath() + page->GetFullFileName(), image, rootLevel);
 	return strmTmp.str();
 }
 
@@ -444,7 +434,7 @@ string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, cons
 		strmTmp << xhtmlCaption;
 	else
 	{
-		strmTmp << "<a href=\"" << RootPath(rootLevel) + linkToPage->GetFullFileName() << "\"";
+		strmTmp << "<a href=\"" << RootLevel(rootLevel) << linkToPage->GetFullFileName() << "\"";
 		if (target > TARGET_MODE_SELF)
 		{
 			strmTmp << " target=\"";
@@ -464,5 +454,6 @@ string CWebUtil::Link(const string& caption, const CPageParams &linkToPage, cons
 
 string CWebUtil::GetRelativeURL(int rootLevel, const CPageParams& page)
 {
-	return RootPath(rootLevel) + page->GetFullFileName();
+	RootLevel rootPath(rootLevel);
+	return rootPath.GetRootPath() + page->GetFullFileName();
 }

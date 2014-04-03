@@ -16,8 +16,10 @@
 
 #include "stdafx.h"
 #include "HtmlReferenceListImpl.h"
+#include "../RootLevel.h"
 #include "../WebUtil.h"
 
+using namespace OUTPUT;
 using namespace OUTPUT::WebPage;
 
 HtmlReferenceListImpl::HtmlReferenceListImpl(int rootLevel)
@@ -60,10 +62,10 @@ void HtmlReferenceListImpl::ToStream(std::ostream &output) const
 
 void HtmlReferenceListImpl::WriteCSSReference(std::ostream &output, const std::string &cssPath) const
 {
-	output << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << CWebUtil::RootPath(rootLevel) << cssPath << "\" />" << endl;
+	output << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << RootLevel(rootLevel) << cssPath << "\" />" << endl;
 }
 
 void HtmlReferenceListImpl::WriteJSReference(std::ostream &output, const std::string &scriptPath) const
 {
-	output << "<script src=\"" << CWebUtil::RootPath(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
+	output << "<script src=\"" << RootLevel(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
 }

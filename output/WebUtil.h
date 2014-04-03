@@ -35,7 +35,6 @@ namespace OUTPUT
 		CWebUtil(void);
 		~CWebUtil(void);
 
-		static string RootPath(int level);	
 		static string Validate(const string& text);
 		//static string Replace(string text);
 

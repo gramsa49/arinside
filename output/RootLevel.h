@@ -28,6 +28,5 @@ namespace OUTPUT {
 		int rootLevel;
 	};
 
+	std::ostream& operator <<(std::ostream &stream, const OUTPUT::RootLevel &rootLevelObj);
 }; // end namespace OUTPUT
-
-std::ostream& operator <<(std::ostream &stream, const OUTPUT::RootLevel &rootLevelObj);

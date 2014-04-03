@@ -96,6 +96,8 @@ const unsigned int PAGE_OVERVIEW_LETTER_0 = '0';
 const unsigned int PAGE_OVERVIEW_LETTER_9 = '9';
 const unsigned int PAGE_OVERVIEW_OTHER = '#';
 
+const unsigned int PAGE_MAINHOME = 0;
+
 // === PAGE_DETAILS ===
 // CPageParams: obj1 = arServerObject -- detail page for object --- objType = AR_STRUCT_ITEM_XML_*
 // CPageParams: data1 = dataObj --- dataObj (Group/User/Role)

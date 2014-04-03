@@ -44,7 +44,7 @@ namespace OUTPUT
 		ImageEnum imageId;
 		ImageEnum imageOverlayId;
 	};
-};
 
-std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);
-std::ostream& operator<<(std::ostream& strm, const OUTPUT::ImageTag &image);
+	std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);
+	std::ostream& operator<<(std::ostream& strm, const OUTPUT::ImageTag &image);
+};
