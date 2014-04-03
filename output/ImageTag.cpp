@@ -35,6 +35,7 @@ namespace OUTPUT
 		{
 		case ImageTag::NoImage: return "";
 		case ImageTag::Schema: return "schema.gif";
+		case ImageTag::Server: return "server.gif";
 		}
 		// always throw an assert here, in case a undefined image is used!
 		assert(false);

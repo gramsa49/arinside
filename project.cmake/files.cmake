@@ -195,6 +195,7 @@ SET(ARINSIDE_SRCS_OUTPUT_CPP
  output/TableRow.cpp
  output/UList.cpp
  output/UListItem.cpp
+ output/URLLink.cpp
  output/UserTable.cpp
  output/WebControl.cpp
  output/WebPage.cpp
@@ -226,6 +227,7 @@ SET(ARINSIDE_SRCS_OUTPUT_H
  output/TableRow.h
  output/UList.h
  output/UListItem.h
+ output/URLLink.h
  output/UserTable.h
  output/WebControl.h
  output/WebPage.h
@@ -367,10 +369,12 @@ SET(ARINSIDE_TEST_SRCS
  FileSystemUtilTest.cpp
  FileSystemUtilTest.h
  RapidJSONTests.cpp
+ core/ARDayStructHelperTest.cpp
  lists/ARListHelpersTest.cpp
  lists/support/SchemaDbQueryBuilderTest.cpp
  output/webpage/HtmlReferenceListImplTest.cpp
  output/ImageTagTest.cpp
+ output/URLLinkTest.cpp
  util/CommandLineValidatorTest.cpp
  util/UntarStreamTest.cpp
  util/UntarStreamTest.h

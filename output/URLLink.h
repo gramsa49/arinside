@@ -16,36 +16,31 @@
 
 #pragma once
 
-class CARServerObject;
+class CPageParams;
 
 namespace OUTPUT
 {
-	class ImageTag 
+	class ImageTag;
+
+	class URLLink
 	{
 	public:
-		enum ImageEnum
-		{
-			NoImage = 0,
-			Schema = 1,
-			SchemaRegular = 1,
-			SchemaJoin,
-			SchemaView,
-			SchemaDialog,
-			SchemaVendor,
-			Server,
+		enum LinkTargetMode {
+			TARGET_MODE_SELF = 0,
+			TARGET_MODE_PARENT = 1,
+			TARGET_MODE_TOP = 2,
+			TARGET_MODE_BLANK = 3,
 		};
 
-		// constructors
-		ImageTag(const CARServerObject &obj, int rootLevel);
-		ImageTag(ImageEnum image, int rootLevel);
+		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target);
 
 		std::ostream& ToStream(std::ostream &strm) const;
 	private:
-		int rootLevel;
-		ImageEnum imageId;
-		ImageEnum imageOverlayId;
+		std::string link;
+
+	private:
+		static void AddCaption(std::ostream &strm, const std::string &caption, bool validate);
 	};
 
-	std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);
-	std::ostream& operator<<(std::ostream& strm, const OUTPUT::ImageTag &image);
+	std::ostream& operator<<(std::ostream &stream, const OUTPUT::URLLink &link);
 };

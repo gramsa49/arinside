@@ -529,6 +529,10 @@
 				RelativePath=".\output\ImageTagTest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\output\URLLinkTest.cpp"
+				>
+			</File>
 			<Filter
 				Name="webpage"
 				>
