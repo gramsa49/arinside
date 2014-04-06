@@ -136,7 +136,7 @@ string CDocSchemaDetails::AllFields()
 
 			stringstream strmTmp;
 			if(field.GetDisplayInstances().numItems == 0 && field.GetFieldId() != 15)				
-				strmTmp << "<span class=\"fieldInNoView\">" << field.GetDisplayInstances().numItems << "</span" << endl;
+				strmTmp << "<span class=\"fieldInNoView\">" << field.GetDisplayInstances().numItems << "</span>" << endl;
 			else
 				strmTmp << field.GetDisplayInstances().numItems;			
 			CTableCell cellNumViews(strmTmp.str(), "");			
