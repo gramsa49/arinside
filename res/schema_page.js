@@ -146,7 +146,7 @@ $('document').ready(function() {
 			var search = $("#fieldNameFilter").val().replace(" +", " ").replace(" ", ".*");
 			var numSearch = search.search("^\\d+$");
 			var matches = 0;
-			var hasRealFieldColumn = ($('#' + table_name + ' tbody tr:eq(0) th:eq(3)').text().lastIndexOf("Real Field", 0) === 0);
+			var hasRealFieldColumn = ($('#' + table_name + ' thead tr:eq(0) th:eq(3)').text().lastIndexOf("Real Field", 0) === 0);
 
 			$('#' + table_name + ' tbody').remove();
 
