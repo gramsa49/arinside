@@ -87,6 +87,7 @@ public:
 	static string CreateImageFilterControl();
 	static string CreateGroupFilterControl();
 	static string CreateRoleFilterControl();
+	static string CreateSchemaReferenceFilterControl();
 
 private:
 	void SchemaListJson(std::ostream &strm);

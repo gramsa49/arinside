@@ -433,9 +433,9 @@ td.disabledLetter
     color:gray;
 }
 
-#multiFilter {
-    border: 1px solid silver; padding: 5px;
-	margin-left: 24px;
+.multiFilter {
+	border: 1px solid silver; padding: 5px;
+	margin-left: 10px;
 }
 
 td.warn {

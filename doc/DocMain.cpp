@@ -1778,7 +1778,7 @@ string CDocMain::CreateGroupFilterControl()
 {
 	stringstream content;
 	content << "<div>"
-		<< CreateStandardFilterControl("groupFilter", "seach by name or id") << " &nbsp;&nbsp;&nbsp; "
+		<< CreateStandardFilterControl("groupFilter", "search by name or id") << " &nbsp;&nbsp;&nbsp; "
 		<< "<span class='multiFilter' id='multiFilter'>Restrict results to: "
 		<< "<input id='typeFilterRegular' type='checkbox' value='0'/><label for='typeFilterRegular'>&nbsp;Regular</label>"
 		<< "<input id='typeFilterDynamic' type='checkbox' value='1'/><label for='typeFilterDynamic'>&nbsp;Dynamic</label>"
@@ -1793,7 +1793,27 @@ string CDocMain::CreateRoleFilterControl()
 {
 	stringstream content;
 	content << "<div>"
-		<< CreateStandardFilterControl("roleFilter", "seach by name or id")
+		<< CreateStandardFilterControl("roleFilter", "search by name or id")
+	<< "</div>";
+	return content.str();
+}
+
+string CDocMain::CreateSchemaReferenceFilterControl()
+{
+	stringstream content;
+	content << "<div>"
+		<< CreateStandardFilterControl("workflowFilter")
+		<< "<span class='multiFilter' id='referenceMultiFilter'>Restrict results to: "
+		<< "<input id='typeFilterActiveLink' type='checkbox' value='1'/><label for='typeFilterActiveLink'>&nbsp;ActiveLink</label>"
+		<< "<input id='typeFilterFilter' type='checkbox' value='2'/><label for='typeFilterFilter'>&nbsp;Filter</label>"
+		<< "<input id='typeFilterEscalation' type='checkbox' value='3'/><label for='typeFilterEscalation'>&nbsp;Escalation</label>"
+		<< "<input id='typeFilterALGuide' type='checkbox' value='4'/><label for='typeFilterALGuide'>&nbsp;ActiveLinkGuide</label>"
+		<< "<input id='typeFilterFilterGuide' type='checkbox' value='5'/><label for='typeFilterFilterGuide'>&nbsp;FilterGuide</label>"
+		<< "<input id='typeFilterApplication' type='checkbox' value='6'/><label for='typeFilterApplication'>&nbsp;Application</label>"
+		<< "<input id='typeFilterPackList' type='checkbox' value='7'/><label for='typeFilterPackList'>&nbsp;PackingList</label>"
+		<< "<input id='typeFilterWebservice' type='checkbox' value='8'/><label for='typeFilterWebservice'>&nbsp;Webservice</label>"
+		<< " <button id='typeFilterNone'>Clear All</button>"
+		<< "</span>"
 	<< "</div>";
 	return content.str();
 }

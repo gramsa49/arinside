@@ -24,6 +24,7 @@
 #include "DocActionOpenWindowHelper.h"
 #include "../core/ARHandle.h"
 #include "DocOverlayHelper.h"
+#include "DocMain.h"
 
 #include "rapidjson/document.h"
 #include "rapidjson/genericwritestream.h"
@@ -77,6 +78,7 @@ void CDocSchemaDetails::Documentation()
 
 			// add the javascript we need for this page to display correctly
 			webPage.GetReferenceManager()
+				.AddScriptReference("img/object_list.js")
 				.AddScriptReference("img/schema_page.js")
 				.AddScriptReference("img/jquery.timers.js")
 				.AddScriptReference("img/jquery.address.min.js");
@@ -846,9 +848,10 @@ string CDocSchemaDetails::WorkflowDoc()
 		Writer<GenericWriteStream> genericWriter(genericStream);
 
 		strm << "<script type=\"text/javascript\">" << "var schemaWFLInit = false;" << endl;
-		strm << "var schemaWorkflowList = "; document.Accept(genericWriter); strm << ";" << endl
+		strm << "var referenceList = "; document.Accept(genericWriter); strm << ";" << endl
 		     << "var rootLevel = " << rootLevel << endl
 		     << "</script>" << endl
+				 << CDocMain::CreateSchemaReferenceFilterControl() << endl
 		     << tblRef;
 		return strm.str();
 	}
