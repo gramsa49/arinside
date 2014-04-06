@@ -16,6 +16,7 @@
 
 #pragma once
 
+class CARServerObject;
 class CPageParams;
 
 namespace OUTPUT
@@ -33,7 +34,8 @@ namespace OUTPUT
 		};
 
 		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target);
-		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, OUTPUT::URLLink::LinkTargetMode target);	
+		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, OUTPUT::URLLink::LinkTargetMode target);
+		URLLink(const CARServerObject &workflowObject, int rootLevel, bool showImage = true);
 
 		std::ostream& ToStream(std::ostream &strm) const;
 	private:
