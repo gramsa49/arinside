@@ -55,6 +55,8 @@ namespace OUTPUT
 		ImageTag(ImageEnum image, int rootLevel);
 
 		std::ostream& ToStream(std::ostream &strm) const;
+
+		operator string() const;
 	private:
 		int rootLevel;
 		ImageEnum imageId;

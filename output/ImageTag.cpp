@@ -146,4 +146,11 @@ namespace OUTPUT
 	{
 		return image.ToStream(strm);
 	}
+
+	ImageTag::operator std::string() const
+	{
+		stringstream strm;
+		ToStream(strm);
+		return strm.str();
+	}
 }; // end namespace OUTPUT
