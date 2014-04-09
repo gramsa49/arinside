@@ -771,15 +771,14 @@ string CDocSchemaDetails::WorkflowDoc()
 
 		//Field references
 		CTable tblRef("referenceList", "TblObjectList");
-		tblRef.AddColumn(05, "Type");
-		tblRef.AddColumn(20, "Server object");
+		tblRef.AddColumn(35, "Server object");
 		tblRef.AddColumn(05, "Enabled");
 		tblRef.AddColumn(05, "Order");
-		tblRef.AddColumn(10, "Execute On");
+		tblRef.AddColumn(15, "Execute On");
 		tblRef.AddColumn(05, "If");
 		tblRef.AddColumn(05, "Else");
-		tblRef.AddColumn(10, "Changed");
-		tblRef.AddColumn(10, "By");
+		tblRef.AddColumn(15, "Changed");
+		tblRef.AddColumn(15, "By");
 
 		const CARSchemaList::ObjectRefList& alList = this->schema.GetActiveLinks();
 		const CARSchemaList::ObjectRefList& fltList = this->schema.GetFilters();

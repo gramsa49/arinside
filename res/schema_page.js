@@ -66,7 +66,6 @@ function createReferenceRow(row) {
 	else if (objType == 9) { executeOn = function(val) { return AREscalationTMType(val);};}
 
 	return ($("<tr>")
-		.append($("<td>").text(getObjType(row)))
 		.append($("<td>")
 			.append(getIcon(rootLevel, row[0], row[2]))
 			.append($("<a>").attr("href", row[9]).text(row[1]))
