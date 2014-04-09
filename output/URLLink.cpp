@@ -16,7 +16,6 @@
 
 #include "stdafx.h"
 #include "../core/ARServerObject.h"
-#include "../core/ARContainer.h"
 #include "ImageTag.h"
 #include "RootPath.h"
 #include "URLLink.h"
@@ -24,38 +23,6 @@
 
 namespace OUTPUT
 {
-	ImageTag::ImageEnum GetContainerImage(unsigned int containerType)
-	{
-		switch (containerType)
-		{
-		case ARCON_GUIDE: return ImageTag::ActiveLinkGuide;
-		case ARCON_APP: return ImageTag::Application;
-		case ARCON_PACK: return ImageTag::PackingList;
-		case ARCON_FILTER_GUIDE: return ImageTag::FilterGuide;
-		case ARCON_WEBSERVICE: return ImageTag::Webservice;
-		default: return ImageTag::Document;
-		}
-	}
-
-	ImageTag::ImageEnum MapXmlStructItemToImage(const CARServerObject &serverObj)
-	{
-		switch (serverObj.GetServerObjectTypeXML())
-		{
-		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return ImageTag::ActiveLink;
-		case AR_STRUCT_ITEM_XML_FILTER: return ImageTag::Filter;
-		case AR_STRUCT_ITEM_XML_ESCALATION: return ImageTag::Escalation;
-		case AR_STRUCT_ITEM_XML_CHAR_MENU: return ImageTag::Menu;
-		case AR_STRUCT_ITEM_XML_CONTAINER:
-			{
-				const CARContainer &cnt = dynamic_cast<const CARContainer&>(serverObj);
-				return GetContainerImage(cnt.GetType());
-			}
-			break;
-		case AR_STRUCT_ITEM_XML_IMAGE: return ImageTag::Image;
-		default: return ImageTag::NoImage;
-		}
-	}
-
 	// constructors
 	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target)
 	{
@@ -69,8 +36,7 @@ namespace OUTPUT
 	URLLink::URLLink(const CARServerObject &workflowObject, int rootLevel, bool showImage)
 	{
 		CPageParams linkToPage(PAGE_DETAILS, &workflowObject);
-		ImageTag image(showImage ? MapXmlStructItemToImage(workflowObject) : ImageTag::NoImage, rootLevel);
-		Init(workflowObject.GetName(), linkToPage, image, rootLevel, true, URLLink::TARGET_MODE_SELF);
+		Init(workflowObject.GetName(), linkToPage, (showImage ? ImageTag(workflowObject, rootLevel) : ImageTag(ImageTag::NoImage, 0)), rootLevel, true, URLLink::TARGET_MODE_SELF);
 	}
 
 	// Central class initialization

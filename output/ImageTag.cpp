@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ImageTag.h"
 #include "../core/ARServerObject.h"
+#include "../core/ARContainer.h"
 #include "../output/RootPath.h"
 
 namespace OUTPUT
@@ -74,8 +75,47 @@ namespace OUTPUT
 		return DefaultImageDimensions;
 	}
 
+	// #### some helpers for construction
+	ImageTag::ImageEnum GetContainerImage(unsigned int containerType)
+	{
+		switch (containerType)
+		{
+		case ARCON_GUIDE: return ImageTag::ActiveLinkGuide;
+		case ARCON_APP: return ImageTag::Application;
+		case ARCON_PACK: return ImageTag::PackingList;
+		case ARCON_FILTER_GUIDE: return ImageTag::FilterGuide;
+		case ARCON_WEBSERVICE: return ImageTag::Webservice;
+		default: return ImageTag::Document;
+		}
+	}
+
+	ImageTag::ImageEnum MapXmlStructItemToImage(const CARServerObject &serverObj)
+	{
+		switch (serverObj.GetServerObjectTypeXML())
+		{
+		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return ImageTag::ActiveLink;
+		case AR_STRUCT_ITEM_XML_FILTER: return ImageTag::Filter;
+		case AR_STRUCT_ITEM_XML_ESCALATION: return ImageTag::Escalation;
+		case AR_STRUCT_ITEM_XML_CHAR_MENU: return ImageTag::Menu;
+		case AR_STRUCT_ITEM_XML_CONTAINER:
+			{
+				const CARContainer &cnt = dynamic_cast<const CARContainer&>(serverObj);
+				return GetContainerImage(cnt.GetType());
+			}
+			break;
+		case AR_STRUCT_ITEM_XML_IMAGE: return ImageTag::Image;
+		default: return ImageTag::NoImage;
+		}
+	}
+
 	// ################################################################
 	// ## ImageTag class definition
+	ImageTag::ImageTag(const CARServerObject &obj, int currentRootLevel)
+	{
+		rootLevel = currentRootLevel;
+		imageId = MapXmlStructItemToImage(obj);
+	}
+
 	ImageTag::ImageTag(OUTPUT::ImageTag::ImageEnum image, int currentRootLevel)
 	{
 		rootLevel = currentRootLevel;
