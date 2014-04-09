@@ -45,6 +45,7 @@
 #include "doc/DocImageOverview.h"
 #include "doc/DocCustomWorkflow.h"
 
+#include "output/ImageTag.h"
 #include "output/Table.h"
 #include "output/WebUtil.h"
 #include "output/NavigationPage.h"
@@ -1782,7 +1783,10 @@ string CARInside::ServerObjectHistory(CARServerObject *obj, int rootLevel, bool 
 		tbl.AddColumn(80, "Value");
 
 		if (!noTableDescription)
-			tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Change History";
+		{
+			tbl.description = ImageTag(ImageTag::Document, rootLevel);
+			tbl.description+= "Change History";
+		}
 
 		//Owner
 		CTableRow tblRow("");

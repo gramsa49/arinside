@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocEscalationDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/ImageTag.h"
 
 CDocEscalationDetails::CDocEscalationDetails(unsigned int escalInsideId)
 : escalation(escalInsideId)
@@ -123,7 +124,7 @@ void CDocEscalationDetails::Documentation()
 
 			//Table description
 			stringstream tblDesc;
-			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Escalation Properties";
+			tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Escalation Properties";
 			tblObjProp.description = tblDesc.str();
 
 			//Escalation used in container?

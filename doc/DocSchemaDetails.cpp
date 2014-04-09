@@ -18,6 +18,7 @@
 #include "DocSchemaDetails.h"
 #include "DocFieldDetails.h"
 #include "../output/CsvPage.h"
+#include "../output/ImageTag.h"
 #include "../output/TabControl.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "../core/ARDayStructHelper.h"
@@ -969,7 +970,7 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 			tblFieldPerm.AddRow(row);
 		}
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Permissions" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Permissions" << "</h2>";
 		strm << "<div id='schemaPermissions'>" 
 		         << "<h2>" << "Group Permissions" << "</h2>" << "<div>" << tbl << "</div>"
              << "<h2>" << "Subadministrator Permissions" << "</h2>" << "<div>" << tblSubAdm << "</div>"
@@ -989,7 +990,7 @@ void CDocSchemaDetails::ShowIndexProperties(std::ostream &strm, CARProplistHelpe
 	{
 		//CPageParams file(PAGE_SCHEMA_INDEXES, &this->schema);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Indexes" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Indexes" << "</h2>";
 		strm << "<div>";
 
 		const ARIndexList& indexList = this->schema.GetIndexList();
@@ -1078,7 +1079,7 @@ void CDocSchemaDetails::ShowResultListProperties(std::ostream &strm, CARProplist
 			}
 		}
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Result List Fields" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Result List Fields" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
@@ -1133,7 +1134,7 @@ void CDocSchemaDetails::ShowSortListProperties(std::ostream &strm, CARProplistHe
 			}
 		}
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Sort" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Sort" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
@@ -2001,7 +2002,7 @@ void CDocSchemaDetails::ShowBasicProperties(std::ostream& strm, CARProplistHelpe
 #endif //AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 
 		// now write the table
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Basic" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Basic" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
@@ -2055,7 +2056,7 @@ void CDocSchemaDetails::ShowEntryPointProperties(std::ostream &strm, CARProplist
 		tbl.AddRow(row);
 		
 		// now write the table
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "EntryPoints" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "EntryPoints" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch(exception& e)
@@ -2139,7 +2140,7 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Audit Settings" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Audit Settings" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
@@ -2239,7 +2240,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		row.AddCell(qualStrm.str());
 		tbl.AddRow(row);
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Archive Settings" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Archive Settings" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (...)
@@ -2370,16 +2371,16 @@ void CDocSchemaDetails::WorkflowReferences(std::ostream &strm)
 			}
 		}
 
-		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow reading data from this form" << endl;
+		strm << ImageTag(ImageTag::Document, rootLevel) << "Workflow reading data from this form" << endl;
 		tabSet.ToXHtml(strm);
 
-		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow writing data to this form" << endl;
+		strm << ImageTag(ImageTag::Document, rootLevel) << "Workflow writing data to this form" << endl;
 		tabPush.ToXHtml(strm);
 
-		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow deleting data on this form" << endl;
+		strm << ImageTag(ImageTag::Document, rootLevel) << "Workflow deleting data on this form" << endl;
 		delAction.ToXHtml(strm);
 
-		strm << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow executing services on this form" << endl;
+		strm << ImageTag(ImageTag::Document, rootLevel) << "Workflow executing services on this form" << endl;
 		tabService.ToXHtml(strm);
 	}
 	catch(exception& e)
@@ -2684,7 +2685,7 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 
 		///////////////////////////////////////////////////////////////////////////////////////
 
-		strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Full Text Search" << "</h2>";
+		strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Full Text Search" << "</h2>";
 		strm << "<div>" << tbl << "</div>";
 	}
 	catch (exception &e)
@@ -2696,6 +2697,6 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 
 void CDocSchemaDetails::ShowChangeHistory(std::ostream &strm, CARProplistHelper *propIndex)
 {
-	strm << "<h2>" << CWebUtil::ImageTag("doc.gif", rootLevel) << "Change History &amp; Helptext" << "</h2>"
+	strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Change History &amp; Helptext" << "</h2>"
 	     << "<div>" << this->pInside->ServerObjectHistory(&this->schema, rootLevel, true) << "</div>" << endl;
 }

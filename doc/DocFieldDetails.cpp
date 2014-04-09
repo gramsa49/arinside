@@ -20,8 +20,11 @@
 #include "../core/ARImage.h"
 #include "../core/ARGlobalField.h"
 #include "../core/ARQualification.h"
+#include "../output/ImageTag.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "../util/RefItem.h"
+
+using namespace OUTPUT;
 
 CDocFieldDetails::CDocFieldDetails(unsigned int SchemaInsideId, const CARField& fieldObj, int rootLevel)
 : schema(SchemaInsideId), field(fieldObj)
@@ -231,7 +234,7 @@ string CDocFieldDetails::WorkflowReferences()
 		}
 
 		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
+		tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Workflow Reference:";
 
 		tblRef.description = tblDesc.str();
 

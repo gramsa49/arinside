@@ -231,7 +231,7 @@ void CTable::GetEmptyMessageRow(std::ostream& strm)
 	}
 }
 
-ostream& operator<<(ostream& strm, OUTPUT::CTable& tbl)
+ostream& OUTPUT::operator<<(ostream& strm, OUTPUT::CTable& tbl)
 { 
 	tbl.ToXHtml(strm);
 	return strm;

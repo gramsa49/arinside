@@ -20,8 +20,8 @@
 #include "../core/AREnum.h"
 #include "../core/ARFilter.h"
 #include "../core/ARImage.h"
+#include "../output/ImageTag.h"
 #include "../ARInside.h"
-
 
 using namespace OUTPUT;
 
@@ -81,7 +81,7 @@ string WorkflowReferenceTable::ToString(int rootLevel)
 		}
 
 		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference";
+		tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Workflow Reference";
 
 		tblRef.description = tblDesc.str();
 

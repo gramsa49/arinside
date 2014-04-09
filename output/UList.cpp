@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "UList.h"
+#include "ImageTag.h"
 
 using namespace OUTPUT;
 
@@ -54,7 +55,7 @@ string CUList::ToXHtml(string title, bool bItemImage)
 		string liImage = "";
 
 		if(bItemImage)
-			liImage = CWebUtil::ImageTag("doc.gif", rootLevel);
+			liImage = ImageTag(ImageTag::Document, rootLevel);
 
 		strm << "<li>" << liImage << listItem->itemText << "</li>" << endl;
 	}

@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "../ARInside.h"
 #include "ARProplistHelper.h"
+#include "../output/ImageTag.h"
 
 CARProplistHelper::CARProplistHelper(const ARPropList* propList)
 {
@@ -307,7 +308,8 @@ void CARProplistHelper::UnusedPropertiesToHTML(std::ostream& strm, int rootLevel
 			}
 		}
 
-		tbl.description = CWebUtil::ImageTag("doc.gif", rootLevel) + "Object Properties";
+		tbl.description = ImageTag(ImageTag::Document, rootLevel);
+		tbl.description+= "Object Properties";
 		strm << tbl;
 
 	}

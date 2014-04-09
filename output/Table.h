@@ -63,6 +63,7 @@ namespace OUTPUT
 		void GetCsvHeaderDefinition(std::ostream& strm);
 		void GetEmptyMessageRow(std::ostream& strm);
 	};
+
+	ostream& operator<<(ostream& strm, OUTPUT::CTable& tbl);
 }
 
-ostream& operator<<(ostream& strm, OUTPUT::CTable& tbl);

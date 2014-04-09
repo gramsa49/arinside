@@ -18,6 +18,7 @@
 #include "DocAlActionStruct.h"
 #include "DocAllMatchingIdsTable.h"
 #include "DocActionOpenWindowHelper.h"
+#include "../output/ImageTag.h"
 
 CDocAlActionStruct::CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, int rootLevel)
 {
@@ -173,7 +174,7 @@ string CDocAlActionStruct::Get(IfElseState ifElse, const ARActiveLinkActionList 
 
 		stringstream tblDesc;
 		tblDesc.str("");
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << IfElse(ifElse) << "-Actions";
+		tblDesc << ImageTag(ImageTag::Document, rootLevel) << IfElse(ifElse) << "-Actions";
 		tblListAction.description = tblDesc.str();
 
 		strm << tblListAction;

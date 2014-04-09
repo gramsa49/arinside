@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocFilterDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/ImageTag.h"
 #include "../output/WorkflowReferenceTable.h"
 
 CDocFilterDetails::CDocFilterDetails(unsigned int filterInsideId)
@@ -117,7 +118,7 @@ void CDocFilterDetails::Documentation()
 
 			//Table description
 			stringstream tblDesc;
-			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Filter Properties";
+			tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Filter Properties";
 			tblObjProp.description = tblDesc.str();
 
 			//Add table to page
@@ -263,7 +264,7 @@ string CDocFilterDetails::WorkflowReferences()
 		if (refCount > 0)
 		{
 			stringstream tblDesc;
-			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Workflow Reference:";
+			tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Workflow Reference:";
 
 			tblRef.description = tblDesc.str();
 

@@ -18,6 +18,7 @@
 #include "DocAlDetails.h"
 #include "DocOverlayHelper.h"
 #include "../output/IFileStructure.h"
+#include "../output/ImageTag.h"
 
 CDocAlDetails::CDocAlDetails(int alInsideId)
 : al(alInsideId)
@@ -140,7 +141,7 @@ void CDocAlDetails::Documentation()
 
 			//Table description
 			stringstream tblDesc;
-			tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Active Link Properties";
+			tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Active Link Properties";
 			tblObjProp.description = tblDesc.str();
 
 			//Add table to page

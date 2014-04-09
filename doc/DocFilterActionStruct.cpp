@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocFilterActionStruct.h"
 #include "DocAllMatchingIdsTable.h"
+#include "../output/ImageTag.h"
 
 CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType)
 {
@@ -149,7 +150,7 @@ string CDocFilterActionStruct::Get(IfElseState ifElse, const ARFilterActionList 
 
 		stringstream tblDesc;
 		tblDesc.str("");
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << IfElse(ifElse) << "-Actions";
+		tblDesc << ImageTag(ImageTag::Document, rootLevel) << IfElse(ifElse) << "-Actions";
 		tblListAction.description = tblDesc.str();
 
 		strm << tblListAction;

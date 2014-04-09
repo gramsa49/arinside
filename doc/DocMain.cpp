@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocMain.h"
 #include "../output/IFileStructure.h"
+#include "../output/ImageTag.h"
 #include "../output/LetterFilterControl.h"
 #include "../core/ARServerInfo.h"
 
@@ -74,7 +75,7 @@ void CDocMain::ServerInfoList()
 		}
 
 		stringstream tblDesc;
-		tblDesc << CWebUtil::ImageTag("doc.gif", rootLevel) << "Server informations";
+		tblDesc << ImageTag(ImageTag::Document, rootLevel) << "Server informations";
 		tbl.description = tblDesc.str();
 
 		webPage.AddContent(tbl.ToXHtml());
@@ -1378,7 +1379,7 @@ void CDocMain::GlobalFieldList()
 			AddGlobalFieldRow(tbl, currentGlobalFieldId, innerTbl);
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::ImageTag("doc.gif", rootLevel) << tbl.NumRows() << " Global Fields" << endl;
+		strmTmp << ImageTag(ImageTag::Document, rootLevel) << tbl.NumRows() << " Global Fields" << endl;
 		tbl.description = strmTmp.str();
 
 		webPage.AddContent(tbl.ToXHtml());
