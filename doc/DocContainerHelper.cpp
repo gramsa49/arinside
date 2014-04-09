@@ -16,6 +16,9 @@
 
 #include "stdafx.h"
 #include "DocContainerHelper.h"
+#include "../output/ImageTag.h"
+
+using namespace OUTPUT;
 
 CDocContainerHelper::CDocContainerHelper(CARContainer &contObj, int rootLevel)
 : container(contObj)
@@ -133,7 +136,7 @@ string CDocContainerHelper::PermissionList()
 			const ARPermissionStruct& perm = groupList.permissionList[i];
 
 			CTableRow row("");			
-			string img = CWebUtil::ImageTag((perm.permissions == AR_PERMISSIONS_HIDDEN ? "hidden.gif" : "visible.gif"), rootLevel);
+			string img = ImageTag((perm.permissions == AR_PERMISSIONS_HIDDEN ? ImageTag::Hidden : ImageTag::Visible), rootLevel);
 
 			string appRefName;
 			if(this->container.GetAppRefName().empty())

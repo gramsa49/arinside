@@ -574,7 +574,7 @@ string CDocSchemaDetails::GenerateFieldTableDescription(CTable &tbl)
 	stringstream outputStrm;
 	AllFieldsJson(outputStrm);
 	outputStrm << "<div><span class='clearable'><input type=\"text\" class='data_field' id=\"fieldNameFilter\" placeholder=\"search by name or id\"/></span><button id=\"execFieldFilter\">Filter</button></div>" << endl;
-	outputStrm << CWebUtil::ImageTag("doc.gif", rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
+	outputStrm << ImageTag(ImageTag::Document, rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
 	outputStrm << "<div id=\"result\"></div>";
 	return outputStrm.str();
 }
@@ -883,9 +883,9 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 				stringstream perm;
 
 				if(perms.permissionList[i].permissions == AR_PERMISSIONS_HIDDEN)
-					perm << CWebUtil::ImageTag("hidden.gif", rootLevel);
+					perm << ImageTag(ImageTag::Hidden, rootLevel);
 				else
-					perm << CWebUtil::ImageTag("visible.gif", rootLevel);
+					perm << ImageTag(ImageTag::Visible, rootLevel);
 
 				perm << CAREnum::ObjectPermission(perms.permissionList[i].permissions);
 
@@ -942,9 +942,9 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 					stringstream perm;
 					
 					if(fldPerms.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
-						perm << CWebUtil::ImageTag("edit.gif", rootLevel);
+						perm << ImageTag(ImageTag::Edit, rootLevel);
 					else
-						perm << CWebUtil::ImageTag("visible.gif", rootLevel);
+						perm << ImageTag(ImageTag::Visible, rootLevel);
 
 					perm << CAREnum::FieldPermission(fldPerms.permissionList[i].permissions);
 

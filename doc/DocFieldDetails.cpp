@@ -759,14 +759,10 @@ string CDocFieldDetails::Permisssions()
 		const ARPermissionList& perms = field.GetPermissions();
 		for(unsigned int i=0; i < perms.numItems; i++)
 		{
-			string img;
-			if(perms.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
-				img = CWebUtil::ImageTag("edit.gif", rootLevel);
-			else
-				img = CWebUtil::ImageTag("visible.gif", rootLevel);
+			ImageTag image((perms.permissionList[i].permissions == AR_PERMISSIONS_CHANGE ? ImageTag::Edit : ImageTag::Visible), rootLevel);
 
 			CTableRow row("");
-			row.AddCell( CTableCell(img));
+			row.AddCell( CTableCell(image));
 			row.AddCell( CTableCell(CAREnum::FieldPermission(perms.permissionList[i].permissions)));
 			row.AddCell( CTableCell(this->pInside->LinkToGroup(this->schema.GetAppRefName(), perms.permissionList[i].groupId, rootLevel)));
 			row.AddCell( CTableCell(perms.permissionList[i].groupId));

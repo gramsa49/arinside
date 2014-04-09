@@ -51,6 +51,9 @@ namespace OUTPUT
 		case ImageTag::Image: return "image.gif";
 		case ImageTag::User: return "user.gif";
 		case ImageTag::Group: return "group.gif";
+		case ImageTag::Hidden: return "hidden.gif";
+		case ImageTag::Visible: return "visible.gif";
+		case ImageTag::Edit: return "edit.gif";
 		}
 		// always throw an assert here, in case a undefined image is used!
 		assert(false);
@@ -60,6 +63,7 @@ namespace OUTPUT
 	ImageDimensions DefaultImageDimensions = { 16, 16 };
 	ImageDimensions DocumentImageDimensions = { 15, 10 };
 	ImageDimensions FolderImageDimensions = { 16, 13 };
+	ImageDimensions PermissionDimensions =  { 18, 18 };
 
 	// the following provides the image dimensions (width and height)
 	// for a particular imageId. If new images don't use the default
@@ -71,6 +75,9 @@ namespace OUTPUT
 		{
 		case ImageTag::Document: return DocumentImageDimensions;
 		case ImageTag::Folder: return FolderImageDimensions;
+		case ImageTag::Hidden:
+		case ImageTag::Visible:
+		case ImageTag::Edit: return PermissionDimensions;
 		}
 		return DefaultImageDimensions;
 	}

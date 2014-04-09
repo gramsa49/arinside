@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocGroupDetails.h"
+#include "../output/ImageTag.h"
 
 CDocGroupDetails::CDocGroupDetails(CARGroup &arGroup)
 : group(arGroup)
@@ -338,14 +339,10 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 			{
 				if (this->group.GetGroupId() == groupList.permissionList[nGrp].groupId)
 				{
-					string visibleInfo;
-					if (groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE)
-						visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
-					else
-						visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
+					ImageTag visibility((groupList.permissionList[nGrp].permissions == AR_PERMISSIONS_VISIBLE ? ImageTag::Visible : ImageTag::Hidden), rootLevel);
 
 					CTableRow row("");
-					row.AddCell(CTableCell(visibleInfo));
+					row.AddCell(CTableCell(visibility));
 					row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
 					row.AddCell(CTableCell(schema.GetFields()->GetCount()));
 					row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
@@ -603,13 +600,8 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 				strmFormDesc.str("");
 				if(bInsert)
 				{
-					string visibleInfo;
-					if(bVisiblePermission)
-						visibleInfo = CWebUtil::ImageTag("visible.gif", rootLevel);
-					else
-						visibleInfo = CWebUtil::ImageTag("hidden.gif", rootLevel);
-
-					strmFormDesc << visibleInfo << schema.GetURL(rootLevel) << endl;
+					ImageTag image((bVisiblePermission ? ImageTag::Visible : ImageTag::Hidden), rootLevel);
+					strmFormDesc << image << schema.GetURL(rootLevel) << endl;
 				}
 				else
 				{
@@ -633,16 +625,11 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 						if(permissions.permissionList[i].groupId == this->group.GetGroupId())
 						{
 							//We found a field that this group is allowed to access
-
-							string img;
-							if(permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE)
-								img = CWebUtil::ImageTag("edit.gif", rootLevel);
-							else
-								img = CWebUtil::ImageTag("visible.gif", rootLevel);
+							ImageTag image((permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE ? ImageTag::Edit : ImageTag::Visible), rootLevel);
 
 							CTableRow row("");			
 							row.AddCell(CTableCell(field.GetURL(rootLevel)));
-							row.AddCell(CTableCell(img));
+							row.AddCell(CTableCell(image));
 							row.AddCell(CTableCell(CAREnum::FieldPermission(permissions.permissionList[i].permissions)));
 							schemaTbl.AddRow(row);
 
