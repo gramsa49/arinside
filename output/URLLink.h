@@ -19,10 +19,10 @@
 class CARServerObject;
 class CPageParams;
 
+#include "ImageTag.h"
+
 namespace OUTPUT
 {
-	class ImageTag;
-
 	class URLLink
 	{
 	public:
@@ -33,11 +33,16 @@ namespace OUTPUT
 			TARGET_MODE_BLANK = 3,
 		};
 
-		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target);
-		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, OUTPUT::URLLink::LinkTargetMode target);
+		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate = true, LinkTargetMode target = TARGET_MODE_SELF);
+		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, LinkTargetMode target);
+		URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag::ImageEnum imageId, int rootLevel);
+		URLLink(const std::string &caption, const CPageParams &linkToPage, int rootLevel);
+		URLLink(const std::string &caption, unsigned int page, OUTPUT::ImageTag::ImageEnum imageId, int rootLevel);
+		URLLink(const std::string &caption, unsigned int page, int rootLevel);
 		URLLink(const CARServerObject &workflowObject, int rootLevel, bool showImage = true);
 
 		std::ostream& ToStream(std::ostream &strm) const;
+		operator std::string () const;
 	private:
 		std::string link;
 

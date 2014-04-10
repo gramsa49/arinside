@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocRoleDetails.h"
 #include "../output/ImageTag.h"
+#include "../output/URLLink.h"
 
 CDocRoleDetails::CDocRoleDetails(CARRole &arRole)
 {
@@ -97,7 +98,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Form Access");
 	else
-		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_ROLE_SCHEMA_LIST, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Form Access", CPageParams(PAGE_ROLE_SCHEMA_LIST, pRole), rootLevel) << " (" << nResult << ")<br/>";
 
 	CTableRow row("");		
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -111,7 +112,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Field Permission");
 	else
-		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_ROLE_FIELD_LIST, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Field Permission", CPageParams(PAGE_ROLE_FIELD_LIST, pRole), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -125,7 +126,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_ROLE_ACTIVELINK_LIST, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Active Link Permission", CPageParams(PAGE_ROLE_ACTIVELINK_LIST, pRole), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -139,7 +140,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Packing List Permission");
 	else
-		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_PACK, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Packing List Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_PACK, pRole), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -153,7 +154,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Guide Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_GUIDE, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Active Link Guide Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_GUIDE, pRole), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -167,7 +168,7 @@ string CDocRoleDetails::RolePermissions()
 	if(nResult == 0)
 		strmTmp.str("No Webservice Permission");
 	else
-		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_WEBSERVICE, pRole), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Webservice Permission", CPageParams(PAGE_ROLE_CONTAINER_LIST, ARCON_WEBSERVICE, pRole), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -191,7 +192,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -292,7 +293,7 @@ void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -348,7 +349,7 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -470,7 +471,7 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");

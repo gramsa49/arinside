@@ -18,6 +18,7 @@
 #include "DocFilterActionStruct.h"
 #include "DocAllMatchingIdsTable.h"
 #include "../output/ImageTag.h"
+#include "../output/URLLink.h"
 
 CDocFilterActionStruct::CDocFilterActionStruct(CARInside &arIn, CARServerObject &obj, string schemaName, int rootLevel, int structItemType)
 {
@@ -58,7 +59,7 @@ string CDocFilterActionStruct::Get(IfElseState ifElse, const ARFilterActionList 
 			if(this->structItemType == AR_STRUCT_ITEM_XML_FILTER)
 			{
 				CPageParams file(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_FILTER, action.action);
-				tmpActionType = CWebUtil::Link(CAREnum::FilterAction(action.action), file, "", rootLevel);
+				tmpActionType = URLLink(CAREnum::FilterAction(action.action), file, rootLevel);
 			}
 			CTableCell cellActionType(tmpActionType.c_str(), "");			
 

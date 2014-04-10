@@ -24,14 +24,35 @@
 namespace OUTPUT
 {
 	// constructors
-	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target)
+	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, LinkTargetMode target)
 	{
 		Init(caption, linkToPage, image, rootLevel, validate, target);
 	}
-
-	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, OUTPUT::URLLink::LinkTargetMode target)
+	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, LinkTargetMode target)
 	{
 		Init(caption, linkToPage, image, rootLevel, true, target);
+	}
+	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag::ImageEnum imageId, int rootLevel)
+	{
+		ImageTag image(imageId, rootLevel);
+		Init(caption, linkToPage, image, rootLevel, true, TARGET_MODE_SELF);
+	}
+	URLLink::URLLink(const std::string &caption, const CPageParams &linkToPage, int rootLevel)
+	{
+		ImageTag image(ImageTag::NoImage, 0);
+		Init(caption, linkToPage, image, rootLevel, true, TARGET_MODE_SELF);
+	}
+	URLLink::URLLink(const std::string &caption, unsigned int page, OUTPUT::ImageTag::ImageEnum imageId, int rootLevel)
+	{
+		CPageParams linkToPage(page);
+		ImageTag image(imageId, rootLevel);
+		Init(caption, linkToPage, image, rootLevel, true, TARGET_MODE_SELF);
+	}
+	URLLink::URLLink(const std::string &caption, unsigned int page, int rootLevel)
+	{
+		CPageParams linkToPage(page);
+		ImageTag image(ImageTag::NoImage, 0);
+		Init(caption, linkToPage, image, rootLevel, true, TARGET_MODE_SELF);
 	}
 	URLLink::URLLink(const CARServerObject &workflowObject, int rootLevel, bool showImage)
 	{
@@ -85,4 +106,12 @@ namespace OUTPUT
 	{
 		return link.ToStream(strm);
 	}
+
+	URLLink::operator std::string() const
+	{
+		stringstream strm;
+		ToStream(strm);
+		return strm.str();
+	}
+
 }; // end namespace OUTPUT

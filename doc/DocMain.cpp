@@ -19,6 +19,7 @@
 #include "../output/IFileStructure.h"
 #include "../output/ImageTag.h"
 #include "../output/LetterFilterControl.h"
+#include "../output/URLLink.h"
 #include "../core/ARServerInfo.h"
 
 #include "rapidjson/document.h"
@@ -105,7 +106,7 @@ string CDocMain::ShortMenu(string curCharacter, const CPageParams &curPage, std:
 				if (objCountPerLetter[i] > 0)
 				{
 					strm << "<td>";
-					strm << CWebUtil::Link( std::string(1, strValue.at(i)), linkTo , "", curPage->GetRootLevel());
+					strm << URLLink( std::string(1, strValue.at(i)), linkTo , curPage->GetRootLevel());
 				}
 				else
 				{
@@ -313,7 +314,7 @@ void CDocMain::ActiveLinkActionList()
 		CTable tbl("alList", "TblObjectList");
 
 		stringstream strmTmp;
-		strmTmp << ImageTag(ImageTag::ActiveLink, rootLevel) << CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "", rootLevel) << " with a specified action in If/Else list:";
+		strmTmp << URLLink("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), ImageTag::ActiveLink, rootLevel) << " with a specified action in If/Else list:";
 
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Active Link Action (Items count if/else)");
@@ -546,7 +547,7 @@ void CDocMain::FilterActionList()
 		CTable tbl("filterList", "TblObjectList");
 
 		stringstream strmTmp;
-		strmTmp << ImageTag(ImageTag::Filter, rootLevel) << CWebUtil::Link("Filter", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", rootLevel) << " with a specified action in If/Else list:";
+		strmTmp << URLLink("Filter", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), ImageTag::Filter, rootLevel) << " with a specified action in If/Else list:";
 
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Filter Action (Items count if/else)");
@@ -824,7 +825,7 @@ void CDocMain::EscalationActionList()
 		CTable tbl("escalList", "TblObjectList");
 
 		stringstream strmTmp;
-		strmTmp << ImageTag(ImageTag::Escalation, rootLevel) << CWebUtil::Link("Escalation", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", rootLevel) << " with a specified action in If/Else list:";
+		strmTmp << URLLink("Escalation", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), ImageTag::Escalation, rootLevel) << " with a specified action in If/Else list:";
 
 		tbl.description = strmTmp.str();
 		tbl.AddColumn(100, "Escalation Action (Items count if/else)");

@@ -19,6 +19,7 @@
 #include "../output/CsvPage.h"
 #include "../core/ARImage.h"
 #include "DocOverlayHelper.h"
+#include "../output/URLLink.h"
 
 CDocVuiDetails::CDocVuiDetails(unsigned int SchemaInsideId, const CARVui& vuiObj, int rootLevel)
 : schema(SchemaInsideId), vui(vuiObj)
@@ -48,7 +49,7 @@ void CDocVuiDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), CAREnum::SchemaTypeImage(schemaType), rootLevel);
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schema.GetOverlayType());
-		contHeadStrm << MenuSeparator << CWebUtil::Link("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << URLLink("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->vui.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->vui.GetInsideId() << ")" << CAREnum::GetOverlayTypeString(vui.GetOverlayType()) << endl;
 		
@@ -128,7 +129,7 @@ CTable CDocVuiDetails::FieldProperties()
 		}
 
 		stringstream tblDesc;
-		tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_VUIFIELDS_CSV, &this->vui), "", rootLevel) << ")" <<  endl;
+		tblDesc << tbl.NumRows() << " fields in view (" << URLLink("data", CPageParams(PAGE_SCHEMA_VUIFIELDS_CSV, &this->vui), rootLevel) << ")" <<  endl;
 		tbl.description = tblDesc.str();
 	}
 	catch(exception& e)
@@ -200,10 +201,6 @@ void CDocVuiDetails::FieldPropertiesCsv()
 		}
 
 		csvPage.SaveInFolder(csvFile->GetPath(), tbl.ToCsv());
-
-		//stringstream tblDesc;
-		//tblDesc << tbl.NumRows() << " fields in view (" << CWebUtil::Link("csv", CWebUtil::CsvDocName(fName), "", 0) << ")" <<  endl;
-		//tbl.description = tblDesc.str();
 	}
 	catch(exception& e)
 	{

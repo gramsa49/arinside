@@ -19,6 +19,7 @@
 #include "DocAllMatchingIdsTable.h"
 #include "DocActionOpenWindowHelper.h"
 #include "../output/ImageTag.h"
+#include "../output/URLLink.h"
 
 CDocAlActionStruct::CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, int rootLevel)
 {
@@ -57,7 +58,7 @@ string CDocAlActionStruct::Get(IfElseState ifElse, const ARActiveLinkActionList 
 			row.AddCell(CTableCell(nAction));				
 
 			CPageParams file(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ACTIVE_LINK, action.action);
-			row.AddCell(CTableCell(CWebUtil::Link(CAREnum::ActiveLinkAction(action.action), file, "", rootLevel)));			
+			row.AddCell(CTableCell(URLLink(CAREnum::ActiveLinkAction(action.action), file, rootLevel)));			
 
 			stringstream actionDesc;
 			actionDesc.str("");

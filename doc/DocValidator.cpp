@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocValidator.h"
+#include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 
 // helper functions ///////////////////////////////////////////////////////////
@@ -100,35 +101,35 @@ void CDocValidator::Main()
 			//Field reference check
 			webPage.AddContent("Missing Objects referenced by Workflow:<br/>");
 			cout << "Field reference validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Fields", CPageParams(PAGE_VALIDATOR_MISSING_FIELDS), "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Fields", PAGE_VALIDATOR_MISSING_FIELDS, ImageTag::Document, rootLevel));
 			this->FieldReferenceValidator();
 			webPage.AddContent("<br/>");
 
 			//Menu reference check
 			cout << "Menu reference validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Menus", CPageParams(PAGE_VALIDATOR_MISSING_MENUS), "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Menus", PAGE_VALIDATOR_MISSING_MENUS, ImageTag::Document, rootLevel));
 			this->MenuReferenceValidator();
 
 			//Group permission check
 			webPage.AddContent("<br/><br/>List of server objects with no specified access groups:<br/>");
 
 			cout << "Form access group validation" << endl;
-			webPage.AddContent(CWebUtil::Link("Forms", CPageParams(PAGE_VALIDATOR_FORM_GROUPS), "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Forms", PAGE_VALIDATOR_FORM_GROUPS, ImageTag::Document, rootLevel));
 			this->FormGroupValidator();
 
 			cout << "Field access group validation" << endl;
 			webPage.AddContent("<br/>");
-			webPage.AddContent(CWebUtil::Link("Fields", CPageParams(PAGE_VALIDATOR_FIELD_GROUPS), "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Fields", PAGE_VALIDATOR_FIELD_GROUPS, ImageTag::Document, rootLevel));
 			this->FieldGroupValidator();
 
 			cout << "Active Link access group validation" << endl;
 			webPage.AddContent("<br/>");
-			webPage.AddContent(CWebUtil::Link("Active Links", CPageParams(PAGE_VALIDATOR_ACTIVELINKS_GROUPS), "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Active Links", PAGE_VALIDATOR_ACTIVELINKS_GROUPS, ImageTag::Document, rootLevel));
 			this->AlGroupValidator();
 
 			cout << "Container access group validation" << endl;
 			webPage.AddContent("<br/>");
-			webPage.AddContent(CWebUtil::Link("Container", CPageParams(PAGE_VALIDATOR_CONTAINER_GROUPS), "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Container", PAGE_VALIDATOR_CONTAINER_GROUPS, ImageTag::Document, rootLevel));
 			this->ContainerGroupValidator();
 
 			webPage.SaveInFolder(path);
@@ -157,7 +158,7 @@ void CDocValidator::ContainerGroupValidator()
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "Container with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -217,7 +218,7 @@ void CDocValidator::AlGroupValidator()
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "Active Links with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -271,7 +272,7 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema)
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "Fields with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -321,7 +322,7 @@ void CDocValidator::FieldGroupValidator()
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "Fields with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -356,7 +357,7 @@ void CDocValidator::FieldGroupValidator()
 				{
 					CTableRow row("");		
 					row.AddCell(nEmptyFields);
-					row.AddCell(CWebUtil::Link(schema.GetName(), CPageParams(PAGE_VALIDATOR_FIELD_GROUP_DETAILS, &schema), "", rootLevel));
+					row.AddCell(URLLink(schema.GetName(), CPageParams(PAGE_VALIDATOR_FIELD_GROUP_DETAILS, &schema), rootLevel));
 					tblObj.AddRow(row);			
 
 					FieldGroupValidatorDetails(schema/*, fName*/);
@@ -390,7 +391,7 @@ void CDocValidator::FormGroupValidator()
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "Forms with no or unknown group permission:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -444,7 +445,7 @@ void CDocValidator::FieldReferenceValidator()
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "List of missing fields that are referenced in ARSystem workflow:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
@@ -557,7 +558,7 @@ void CDocValidator::MenuReferenceValidator()
 
 			//ContentHead informations
 			stringstream contHeadStrm;
-			contHeadStrm << CWebUtil::Link("Validation", CPageParams(PAGE_VALIDATOR_MAIN), "", rootLevel) << MenuSeparator;
+			contHeadStrm << URLLink("Validation", PAGE_VALIDATOR_MAIN, rootLevel) << MenuSeparator;
 			contHeadStrm << "List of missing menus that are referenced in ARSystem workflow:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 

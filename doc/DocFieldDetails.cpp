@@ -21,6 +21,7 @@
 #include "../core/ARGlobalField.h"
 #include "../core/ARQualification.h"
 #include "../output/ImageTag.h"
+#include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "../util/RefItem.h"
 
@@ -56,7 +57,7 @@ void CDocFieldDetails::Documentation()
 		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &schema), CAREnum::SchemaTypeImage(schemaType), rootLevel) << endl;
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schemaOverlayType);
-		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << CWebUtil::Link("Field",  CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FIELD, &field), "", rootLevel) << endl;
+		contHeadStrm << MenuSeparator << CAREnum::DataType(this->field.GetDataType()) << " " << URLLink("Field",  CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FIELD, &field), rootLevel) << endl;
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(this->field.GetName()) << endl;
 		contHeadStrm << " (Id: " << this->field.GetFieldId() << ")" << CAREnum::GetOverlayTypeString(overlayType) << endl;
 		
@@ -843,7 +844,7 @@ string CDocFieldDetails::DisplayProperties()
 
 			stringstream viewTmpDesc;
 			viewTmpDesc.str("");
-			viewTmpDesc << "Display Properties in " << CWebUtil::Link("Schema",CPageParams(PAGE_DETAILS, &schema), "", rootLevel) << ", View: " << endl;
+			viewTmpDesc << "Display Properties in " << URLLink("Schema", CPageParams(PAGE_DETAILS, &schema), rootLevel) << ", View: " << endl;
 			viewTmpDesc << this->schema.LinkToVui(dispList.dInstanceList[i].vui, rootLevel);
 			viewTmpDesc << " (Id: " << dispList.dInstanceList[i].vui << ", Label: " << this->schema.VuiGetLabel(dispList.dInstanceList[i].vui) << ")" << endl;
 

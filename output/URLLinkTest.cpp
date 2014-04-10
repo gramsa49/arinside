@@ -55,6 +55,15 @@ TEST_F(URLLinkTests, MainLinkWithImageAndTarget)
 	ASSERT_STREQ("<img src=\"../img/server.gif\" width=\"16\" height=\"16\" alt=\"server.gif\" /><a href=\"../index.htm\" target=\"_parent\">&lt;Main Page&gt;</a>", result.c_str());
 }
 
+TEST_F(URLLinkTests, MainLinkWithImageShort)
+{
+	stringstream strm;
+	strm << URLLink("<Main Page>", PAGE_MAINHOME, ImageTag::Server, rootLevel);
+	string result = strm.str();
+
+	ASSERT_STREQ("<img src=\"../img/server.gif\" width=\"16\" height=\"16\" alt=\"server.gif\" /><a href=\"../index.htm\">&lt;Main Page&gt;</a>", result.c_str());
+}
+
 TEST_F(URLLinkTests, ObjectLinkWithImage)
 {
 	CFakeServerObject fakeWorkflow;

@@ -52,6 +52,7 @@
 
 #include "output/IFileStructure.h"
 #include "output/FileNaming.h"
+#include "output/URLLink.h"
 
 #include "scan/ScanMain.h"
 
@@ -1092,7 +1093,7 @@ string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
 		case AR_SCHEMA_VENDOR: page = PAGE_SCHEMA_VENDOR; break;
 	}
 
-	return CWebUtil::Link(CAREnum::SchemaType(schemaType), CPageParams(page), "", rootLevel);
+	return URLLink(CAREnum::SchemaType(schemaType), page, rootLevel);
 }
 
 // TODO: add a function with parameter CARSchema instead of schemaInsideId to pass in the object directly
@@ -1100,7 +1101,7 @@ string CARInside::LinkToSchemaIndex(string indexName, int schemaInsideId, int fr
 {
 	CARSchema schema(schemaInsideId);
 	CPageParams file(PAGE_SCHEMA_INDEXES, &schema);
-	return CWebUtil::Link(indexName, file, "", fromRootLevel);
+	return URLLink(indexName, file, fromRootLevel);
 }
 
 string CARInside::LinkToSchema(int insideId, int fromRootLevel)
@@ -1143,7 +1144,7 @@ string CARInside::LinkToUser(string loginName, int rootLevel)
 	CARUser user(loginName);
 
 	if (user.Exists())
-		return CWebUtil::Link(loginName, CPageParams(PAGE_DETAILS, &user), "", rootLevel);
+		return URLLink(loginName, CPageParams(PAGE_DETAILS, &user), rootLevel);
 
 	return loginName;
 }
@@ -1273,15 +1274,15 @@ string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 
 	if(strcmp(srvName.c_str(), "")==0)
 	{
-		return CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
+		return URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel);
 	}
 	else if(strcmp(srvName.c_str(), AR_CURRENT_SERVER_TAG)==0 || strcmp(srvName.c_str(), AR_CURRENT_SCREEN_TAG)==0)
 	{
-		return CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
+		return URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel);
 	}
 	else
 	{
-		return CWebUtil::Link(srvName, CPageParams(PAGE_SERVER_INFO), "", rootLevel);
+		return URLLink(srvName, PAGE_SERVER_INFO, rootLevel);
 	}
 
 

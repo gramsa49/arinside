@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocSummaryInfo.h"
+#include "../output/URLLink.h"
 
 extern int nFilesCreated;
 
@@ -48,68 +49,68 @@ void CDocSummaryInfo::Documentation()
 
 		CTableRow row("cssStdRow");
 		row.AddCell(CTableCell((int)this->activelinkCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK) , "", 0)));
+		row.AddCell(CTableCell(URLLink("Active Links", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), 0)));
 		tblListObjectInfo.AddRow(row);
 
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->webserviceCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Web Services", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE), "", 0)));
+		row.AddCell(CTableCell(URLLink("Web Services", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->alguideCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE), "", 0)));
+		row.AddCell(CTableCell(URLLink("Active Link Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->fltguideCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Filter Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), "", 0)));
+		row.AddCell(CTableCell(URLLink("Filter Guides", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->packlistCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Packing Lists", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK), "", 0)));
+		row.AddCell(CTableCell(URLLink("Packing Lists", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->applicationCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Applications", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP), "", 0)));
+		row.AddCell(CTableCell(URLLink("Applications", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->escalationCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "", 0)));
+		row.AddCell(CTableCell(URLLink("Escalations", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->filterCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "", 0)));
+		row.AddCell(CTableCell(URLLink("Filters", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->groupList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Groups", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP), "", 0)));
+		row.AddCell(CTableCell(URLLink("Groups", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->menuCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Menus", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), "", 0)));
+		row.AddCell(CTableCell(URLLink("Menus", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->roleList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Roles", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), "", 0)));
+		row.AddCell(CTableCell(URLLink("Roles", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->schemaCount));
-		row.AddCell(CTableCell(CWebUtil::Link("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), "", 0)));
+		row.AddCell(CTableCell(URLLink("Forms", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_SCHEMA), 0)));
 		tblListObjectInfo.AddRow(row);
 
 		row.ClearCells();
 		row.AddCell(CTableCell((int)this->pInside->userList.GetCount()));
-		row.AddCell(CTableCell(CWebUtil::Link("Users", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER), "", 0)));
+		row.AddCell(CTableCell(URLLink("Users", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER), 0)));
 		tblListObjectInfo.AddRow(row);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -117,7 +118,7 @@ void CDocSummaryInfo::Documentation()
 		{
 			row.ClearCells();
 			row.AddCell(CTableCell(this->imageCount));
-			row.AddCell(CTableCell(CWebUtil::Link("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), "", 0)));
+			row.AddCell(CTableCell(URLLink("Images", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), 0)));
 			tblListObjectInfo.AddRow(row);
 		}
 #endif

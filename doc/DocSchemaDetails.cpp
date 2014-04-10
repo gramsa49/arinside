@@ -20,6 +20,7 @@
 #include "../output/CsvPage.h"
 #include "../output/ImageTag.h"
 #include "../output/TabControl.h"
+#include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "../core/ARDayStructHelper.h"
 #include "DocActionOpenWindowHelper.h"
@@ -574,7 +575,7 @@ string CDocSchemaDetails::GenerateFieldTableDescription(CTable &tbl)
 	stringstream outputStrm;
 	AllFieldsJson(outputStrm);
 	outputStrm << "<div><span class='clearable'><input type=\"text\" class='data_field' id=\"fieldNameFilter\" placeholder=\"search by name or id\"/></span><button id=\"execFieldFilter\">Filter</button></div>" << endl;
-	outputStrm << ImageTag(ImageTag::Document, rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << CWebUtil::Link("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), "", rootLevel) << ")" << endl;
+	outputStrm << ImageTag(ImageTag::Document, rootLevel) << "<span id='fieldListFilterResultCount'></span>" << tbl.NumRows() << " fields (" << URLLink("data", CPageParams(PAGE_SCHEMA_FIELDS_CSV, &this->schema), rootLevel) << ")" << endl;
 	outputStrm << "<div id=\"result\"></div>";
 	return outputStrm.str();
 }

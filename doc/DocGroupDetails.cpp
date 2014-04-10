@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocGroupDetails.h"
 #include "../output/ImageTag.h"
+#include "../output/URLLink.h"
 
 CDocGroupDetails::CDocGroupDetails(CARGroup &arGroup)
 : group(arGroup)
@@ -142,7 +143,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Form Access");
 	else
-		strmTmp << CWebUtil::Link("Form Access", CPageParams(PAGE_GROUP_SCHEMA_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Form Access", CPageParams(PAGE_GROUP_SCHEMA_LIST, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	CTableRow row("");		
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -155,7 +156,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Field Permission");
 	else
-		strmTmp << CWebUtil::Link("Field Permission", CPageParams(PAGE_GROUP_FIELD_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Field Permission", CPageParams(PAGE_GROUP_FIELD_LIST, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -168,7 +169,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Permission", CPageParams(PAGE_GROUP_ACTIVELINK_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Active Link Permission", CPageParams(PAGE_GROUP_ACTIVELINK_LIST, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -181,7 +182,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Group Members");
 	else
-		strmTmp << CWebUtil::Link("Group Members", CPageParams(PAGE_GROUP_USER_LIST, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Group Members", CPageParams(PAGE_GROUP_USER_LIST, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -194,7 +195,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Packing List Permission");
 	else
-		strmTmp << CWebUtil::Link("Packing List Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_PACK, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Packing List Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_PACK, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -207,7 +208,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Active Link Guide Permission");
 	else
-		strmTmp << CWebUtil::Link("Active Link Guide Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_GUIDE, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Active Link Guide Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_GUIDE, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -220,7 +221,7 @@ string CDocGroupDetails::GroupPermissions()
 	if(nResult == 0)
 		strmTmp.str("No Webservice Permission");
 	else
-		strmTmp << CWebUtil::Link("Webservice Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_WEBSERVICE, &group), "", rootLevel) << " (" << nResult << ")<br/>";
+		strmTmp << URLLink("Webservice Permission", CPageParams(PAGE_GROUP_CONTAINER_LIST, ARCON_WEBSERVICE, &group), rootLevel) << " (" << nResult << ")<br/>";
 
 	row.ClearCells();
 	row.AddCell(CTableCell(strmTmp.str()));
@@ -243,7 +244,7 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToUserIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &this->group), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &this->group), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -265,7 +266,7 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 			if (findIt != grpList.end())
 			{
 				CTableRow row("");
-				row.AddCell(CTableCell(CWebUtil::Link(user.GetName(), CPageParams(PAGE_DETAILS, &user),"", rootLevel)));
+				row.AddCell(CTableCell(URLLink(user.GetName(), CPageParams(PAGE_DETAILS, &user), rootLevel)));
 				row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(user.GetTimestamp())));
 				row.AddCell(CTableCell(this->pInside->LinkToUser(user.GetLastChanged(), rootLevel)));
 				tbl.AddRow(row);
@@ -298,7 +299,7 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -400,7 +401,7 @@ void CDocGroupDetails::AlPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -453,7 +454,7 @@ void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int co
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -561,7 +562,7 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "", rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");

@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "RootPath.h"
+#include "URLLink.h"
 #include "WebPage.h"
 #include "WebUtil.h"
 #include "../ARInside.h"
@@ -84,7 +85,7 @@ void CWebPage::DynamicHeaderText(ostream &strm)
 	strm << "<table>" << endl;
 	strm << "<tr>" << endl;
 	strm << "<td>" << CWebUtil::Link("Main", CPageParams(PAGE_MAINHOME), "server.gif", rootLevel) << "</td>" << endl;
-	strm << "<td>" << " (Server: " << CWebUtil::Link(appConfig.serverName, CPageParams(PAGE_SERVER_INFO), "", rootLevel) << "</td>" << endl;
+	strm << "<td>" << " (Server: " << URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel) << "</td>" << endl;
 	strm << "<td>" << "@" << "</td>" << endl;
 	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
 	strm << "</tr>" << endl;

@@ -28,6 +28,7 @@
 #include "../core/ARContainer.h"
 #include "../core/ARCharMenu.h"
 #include "../core/ARImage.h"
+#include "../output/URLLink.h"
 
 const char* IfElse(IfElseState state)
 {
@@ -159,7 +160,7 @@ string CRefItem::LinkToSchemaIndex(int rootLevel) const
 	if (schema.Exists())
 	{
 		const ARIndexList& indexList = schema.GetIndexList();
-		return CWebUtil::Link(indexList.indexList[actionIndex].indexName, CPageParams(PAGE_SCHEMA_INDEXES, &schema), "", rootLevel);
+		return URLLink(indexList.indexList[actionIndex].indexName, CPageParams(PAGE_SCHEMA_INDEXES, &schema), rootLevel);
 	}
 	return "Index";
 }
@@ -170,7 +171,7 @@ string CRefItem::LinkToSchemaResultList(int rootLevel) const
 	CARSchema schema(objectId);
 	if (schema.Exists())
 	{
-		return CWebUtil::Link(cResultList, CPageParams(PAGE_SCHEMA_RESULTLIST, &schema), "", rootLevel);
+		return URLLink(cResultList, CPageParams(PAGE_SCHEMA_RESULTLIST, &schema), rootLevel);
 	}
 	return cResultList;
 }
@@ -181,7 +182,7 @@ string CRefItem::LinkToSchemaSortList(int rootLevel) const
 	CARSchema schema(objectId);
 	if (schema.Exists())
 	{
-		return CWebUtil::Link(cSortList, CPageParams(PAGE_SCHEMA_SORTLIST, &schema), "", rootLevel);
+		return URLLink(cSortList, CPageParams(PAGE_SCHEMA_SORTLIST, &schema), rootLevel);
 	}
 	return cSortList;
 }
