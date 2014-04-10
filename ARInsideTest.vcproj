@@ -566,6 +566,18 @@
 				</File>
 			</Filter>
 		</Filter>
+		<Filter
+			Name="fakes"
+			>
+			<File
+				RelativePath=".\test\fakes\FakeARServerObject.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\test\fakes\FakeARServerObject.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\AppConfigReaderTest.cpp"
 			>

@@ -375,6 +375,8 @@ SET(ARINSIDE_TEST_SRCS
  output/webpage/HtmlReferenceListImplTest.cpp
  output/ImageTagTest.cpp
  output/URLLinkTest.cpp
+ test/fakes/FakeARServerObject.cpp
+ test/fakes/FakeARServerObject.h
  util/CommandLineValidatorTest.cpp
  util/UntarStreamTest.cpp
  util/UntarStreamTest.h
