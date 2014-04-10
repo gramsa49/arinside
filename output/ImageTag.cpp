@@ -16,8 +16,9 @@
 
 #include "stdafx.h"
 #include "ImageTag.h"
-#include "../core/ARServerObject.h"
 #include "../core/ARContainer.h"
+#include "../core/ARSchema.h"
+#include "../core/ARServerObject.h"
 #include "../output/RootPath.h"
 
 namespace OUTPUT
@@ -96,13 +97,27 @@ namespace OUTPUT
 		}
 	}
 
+	ImageTag::ImageEnum GetSchemaImage(unsigned int schemaType)
+	{
+		switch (schemaType)
+		{
+		case AR_SCHEMA_REGULAR: return ImageTag::SchemaRegular;
+		case AR_SCHEMA_JOIN: return ImageTag::SchemaJoin;
+		case AR_SCHEMA_VIEW: return ImageTag::SchemaView;
+		case AR_SCHEMA_DIALOG: return ImageTag::SchemaDialog;
+		case AR_SCHEMA_VENDOR: return ImageTag::SchemaVendor;
+		default: return ImageTag::Schema;
+		}
+	}
+
 	ImageTag::ImageEnum MapXmlStructItemToImage(const CARServerObject &serverObj)
 	{
 		switch (serverObj.GetServerObjectTypeXML())
 		{
 		case AR_STRUCT_ITEM_XML_SCHEMA:
 			{
-				assert(false);
+				const CARSchema &schema = dynamic_cast<const CARSchema&>(serverObj);
+				return GetSchemaImage(schema.GetCompound().schemaType);
 			}
 			break;
 		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return ImageTag::ActiveLink;
