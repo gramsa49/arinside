@@ -84,7 +84,7 @@ void CWebPage::DynamicHeaderText(ostream &strm)
 {
 	strm << "<table>" << endl;
 	strm << "<tr>" << endl;
-	strm << "<td>" << CWebUtil::Link("Main", CPageParams(PAGE_MAINHOME), "server.gif", rootLevel) << "</td>" << endl;
+	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Server, rootLevel) << "</td>" << endl;
 	strm << "<td>" << " (Server: " << URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel) << "</td>" << endl;
 	strm << "<td>" << "@" << "</td>" << endl;
 	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
@@ -100,7 +100,7 @@ string CWebPage::CurrentDateTime()
 void CWebPage::DynamicFooterText(ostream &strm)
 {
 	strm << "<table><tr>" << endl;
-	strm << "<td>" << CWebUtil::Link("Main", CPageParams(PAGE_MAINHOME), "next.gif", rootLevel)<< "</td>" << endl;
+	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Next, rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
 	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;

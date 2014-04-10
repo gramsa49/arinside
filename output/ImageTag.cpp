@@ -37,6 +37,10 @@ namespace OUTPUT
 		{
 		case ImageTag::NoImage: return "";
 		case ImageTag::Schema: return "schema.gif";
+		case ImageTag::SchemaJoin: return "schema_join.gif";
+		case ImageTag::SchemaView: return "schema_view.gif";
+		case ImageTag::SchemaDialog: return "schema_dialog.gif";
+		case ImageTag::SchemaVendor: return "schema_vendor.gif";
 		case ImageTag::Server: return "server.gif";
 		case ImageTag::Document: return "doc.gif";
 		case ImageTag::Folder: return "folder.gif";
@@ -55,6 +59,7 @@ namespace OUTPUT
 		case ImageTag::Hidden: return "hidden.gif";
 		case ImageTag::Visible: return "visible.gif";
 		case ImageTag::Edit: return "edit.gif";
+		case ImageTag::Next: return "next.gif";
 		}
 		// always throw an assert here, in case a undefined image is used!
 		assert(false);
@@ -65,6 +70,7 @@ namespace OUTPUT
 	ImageDimensions DocumentImageDimensions = { 15, 10 };
 	ImageDimensions FolderImageDimensions = { 16, 13 };
 	ImageDimensions PermissionDimensions =  { 18, 18 };
+	ImageDimensions NextImageDimensions = { 10, 10 };
 
 	// the following provides the image dimensions (width and height)
 	// for a particular imageId. If new images don't use the default
@@ -79,6 +85,7 @@ namespace OUTPUT
 		case ImageTag::Hidden:
 		case ImageTag::Visible:
 		case ImageTag::Edit: return PermissionDimensions;
+		case ImageTag::Next: return NextImageDimensions;
 		}
 		return DefaultImageDimensions;
 	}
@@ -131,6 +138,9 @@ namespace OUTPUT
 			}
 			break;
 		case AR_STRUCT_ITEM_XML_IMAGE: return ImageTag::Image;
+		case AR_STRUCT_ITEM_XML_USER: return ImageTag::User;
+		case AR_STRUCT_ITEM_XML_GROUP: return ImageTag::Group;
+		case AR_STRUCT_ITEM_XML_ROLE: return ImageTag::Document;
 		default: return ImageTag::NoImage;
 		}
 	}

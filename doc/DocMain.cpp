@@ -334,7 +334,7 @@ void CDocMain::ActiveLinkActionList()
 			ActiveLinkActionDetails(nActionType, nCountIf, nCountElse);
 
 			strmTmp.str("");
-			strmTmp << CWebUtil::Link(CAREnum::ActiveLinkAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ACTIVE_LINK, nActionType), "doc.gif", rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
+			strmTmp << URLLink(CAREnum::ActiveLinkAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ACTIVE_LINK, nActionType), ImageTag::Document, rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
 
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
@@ -406,7 +406,7 @@ void CDocMain::ActiveLinkActionDetails(int nActionType, int &ifCount, int &elseC
 		}
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::Link("Active Links", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), "active_link.gif", rootLevel) << " with " << CAREnum::ActiveLinkAction(nActionType) << " action";
+		strmTmp << URLLink("Active Links", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), ImageTag::ActiveLink, rootLevel) << " with " << CAREnum::ActiveLinkAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
@@ -568,7 +568,7 @@ void CDocMain::FilterActionList()
 			FilterActionDetails(nActionType, nCountIf, nCountElse);
 
 			strmTmp.str("");
-			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_FILTER, nActionType), "doc.gif", rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
+			strmTmp << URLLink(CAREnum::FilterAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_FILTER, nActionType), ImageTag::Document, rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
 
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));		
@@ -641,7 +641,7 @@ void CDocMain::FilterActionDetails(int nActionType, int &ifCount, int &elseCount
 		}
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::Link("Filter", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
+		strmTmp << URLLink("Filter", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), ImageTag::Filter, rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());
@@ -819,7 +819,7 @@ void CDocMain::EscalationActionList()
 
 	try
 	{
-		int rootLevel = 1;
+		int rootLevel = file->GetRootLevel();
 		CWebPage webPage(file->GetFileName(), "Escalation Actions", rootLevel, this->pInside->appConfig);
 
 		CTable tbl("escalList", "TblObjectList");
@@ -855,7 +855,7 @@ void CDocMain::EscalationActionList()
 			EscalationActionDetails(nActionType, nCountIf, nCountElse);
 
 			strmTmp.str("");
-			strmTmp << CWebUtil::Link(CAREnum::FilterAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ESCALATION, nActionType), "doc.gif", 1) << " (" << nCountIf << "/" << nCountElse << ")";
+			strmTmp << URLLink(CAREnum::FilterAction(nActionType), CPageParams(PAGE_ACTION_OBJLIST, AR_STRUCT_ITEM_XML_ESCALATION, nActionType), ImageTag::Document, rootLevel) << " (" << nCountIf << "/" << nCountElse << ")";
 
 			CTableRow row("");
 			row.AddCell(CTableCell(strmTmp.str()));
@@ -929,7 +929,7 @@ void CDocMain::EscalationActionDetails(int nActionType, int &ifCount, int &elseC
 		}
 
 		stringstream strmTmp;
-		strmTmp << CWebUtil::Link("Escalation", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), "escalation.gif", rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
+		strmTmp << URLLink("Escalation", CPageParams(PAGE_ACTION_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), ImageTag::Escalation, rootLevel) << " with " << CAREnum::FilterAction(nActionType) << " action";
 		tbl->SetDescription(strmTmp.str());
 
 		webPage.AddContent(tbl->Print());

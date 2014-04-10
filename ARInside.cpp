@@ -1175,7 +1175,7 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 		CARGroup group(-1, permissionId);
 		if (group.Exists())
 		{
-			return CWebUtil::Link(group.GetName(), CPageParams(PAGE_DETAILS, &group), "group.gif", rootLevel);
+			return URLLink(group, rootLevel);
 		}		
 	}
 	else
@@ -1186,7 +1186,7 @@ string CARInside::LinkToGroup(const string& appRefName, int permissionId, int ro
 
 			if(role.Exists())
 			{
-				return CWebUtil::Link(role.GetName(), CPageParams(PAGE_DETAILS, &role), "doc.gif", rootLevel);
+				return URLLink(role, rootLevel);
 			}
 		}
 	}

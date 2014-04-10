@@ -94,10 +94,6 @@ void CDocValidator::Main()
 			contHeadStrm << "Server object validation:" << endl;
 			webPage.AddContentHead(contHeadStrm.str());
 
-			//cout << "Field reference validation" << endl;
-			//webPage.AddContent(CWebUtil::Link("List of missing fields that are referenced in ARSystem workflow", CWebUtil::DocName("validation_field"), "doc.gif", rootLevel, true));
-			//this->FieldReferenceValidator();
-
 			//Field reference check
 			webPage.AddContent("Missing Objects referenced by Workflow:<br/>");
 			cout << "Field reference validation" << endl;

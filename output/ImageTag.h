@@ -50,6 +50,7 @@ namespace OUTPUT
 			Hidden,
 			Visible,
 			Edit,
+			Next,
 			
 		};
 

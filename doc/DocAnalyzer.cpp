@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocAnalyzer.h"
+#include "../output/URLLink.h"
 
 CDocAnalyzer::CDocAnalyzer()
 {
@@ -47,7 +48,7 @@ void CDocAnalyzer::Documentation()
 			webPage.AddContentHead(contHeadStrm.str());
 
 			CPageParams file(PAGE_ANALYZER_QBE_CHECK);
-			webPage.AddContent(CWebUtil::Link("Form Index Analyzer", file, "doc.gif", rootLevel));
+			webPage.AddContent(URLLink("Form Index Analyzer", file, ImageTag::Document, rootLevel));
 			IndexAnalyzer();		
 
 			webPage.SaveInFolder(path);

@@ -46,7 +46,7 @@ void CDocVuiDetails::Documentation()
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel, false) << endl;
 		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schemaType, this->rootLevel) << endl;
-		contHeadStrm << MenuSeparator << CWebUtil::Link(this->schema.GetName(), CPageParams(PAGE_DETAILS, &this->schema), CAREnum::SchemaTypeImage(schemaType), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(this->schema, rootLevel);
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schema.GetOverlayType());
 		contHeadStrm << MenuSeparator << URLLink("View", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_VUI, &this->schema), rootLevel) << endl;
