@@ -238,7 +238,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 
 						CTableRow row("");
 						row.AddCell(CTableCell(visibility));
-						row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+						row.AddCell(CTableCell(URLLink(schema, rootLevel)));						
 						row.AddCell(CTableCell(schema.GetFields()->GetCount()));
 						row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
 						row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
@@ -255,7 +255,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 					if(this->pRole->GetRoleId() == admingrpList.internalIdList[nGrp])
 					{
 						CTableRow row("");
-						row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+						row.AddCell(CTableCell(URLLink(schema, rootLevel)));						
 						row.AddCell(CTableCell(schema.GetFields()->GetCount()));
 						row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
 						row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
@@ -510,11 +510,11 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 				if(bInsert)
 				{
 					ImageTag visibility((bVisiblePermission ? ImageTag::Visible : ImageTag::Hidden), rootLevel);
-					strmFormDesc << visibility << schema.GetURL(rootLevel) << endl;
+					strmFormDesc << visibility << URLLink(schema, rootLevel) << endl;
 				}
 				else
 				{
-					strmFormDesc << schema.GetURL(rootLevel) << endl;
+					strmFormDesc << URLLink(schema, rootLevel) << endl;
 				}
 
 				//Create a table for every form
@@ -537,7 +537,7 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 							ImageTag image((permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE ? ImageTag::Edit : ImageTag::Visible), rootLevel);
 
 							CTableRow row("");			
-							row.AddCell(CTableCell(field.GetURL(rootLevel)));
+							row.AddCell(CTableCell(URLLink(field, rootLevel)));
 							row.AddCell(CTableCell(image));
 							row.AddCell(CTableCell(CAREnum::FieldPermission(permissions.permissionList[i].permissions)));
 							schemaTbl.AddRow(row);

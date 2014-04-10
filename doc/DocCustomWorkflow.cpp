@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocCustomWorkflow.h"
+#include "../output/URLLink.h"
 
 CDocCustomWorkflow::CDocCustomWorkflow(void)
 {
@@ -157,7 +158,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARSchema& schema)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(schema.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(schema.GetServerObjectTypeXML()));
-	row.AddCell(schema.GetURL(rootLevel));
+	row.AddCell(URLLink(schema, rootLevel));
 	row.AddCell(""); // Enabled
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(schema.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(schema.GetLastChanged(), rootLevel)));
@@ -167,7 +168,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARSchema& schema)
 void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARField& field)
 {
 	stringstream tmpStrm;
-	tmpStrm << field.GetSchema().GetURL(rootLevel) << MenuSeparator << field.GetURL(rootLevel);
+	tmpStrm << URLLink(field.GetSchema(), rootLevel) << MenuSeparator << URLLink(field, rootLevel);
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(field.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(field.GetServerObjectTypeXML()));
@@ -181,7 +182,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARField& field)
 void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARVui& vui)
 {
 	stringstream tmpStrm;
-	tmpStrm << vui.GetSchema().GetURL(rootLevel) << MenuSeparator << vui.GetURL(rootLevel);
+	tmpStrm << URLLink(vui.GetSchema(), rootLevel) << MenuSeparator << URLLink(vui, rootLevel);
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(vui.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(vui.GetServerObjectTypeXML()));
@@ -200,7 +201,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARActiveLink& al)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(al.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(al.GetServerObjectTypeXML()));
-	row.AddCell(al.GetURL(rootLevel));
+	row.AddCell(URLLink(al, rootLevel));
 	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(al.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(al.GetLastChanged(), rootLevel)));
@@ -214,7 +215,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARFilter& flt)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(flt.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(flt.GetServerObjectTypeXML()));
-	row.AddCell(flt.GetURL(rootLevel));
+	row.AddCell(URLLink(flt, rootLevel));
 	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(flt.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(flt.GetLastChanged(), rootLevel)));
@@ -228,7 +229,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CAREscalation& escal)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(escal.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(escal.GetServerObjectTypeXML()));
-	row.AddCell(escal.GetURL(rootLevel));
+	row.AddCell(URLLink(escal, rootLevel));
 	row.AddCell(CTableCell(CAREnum::ObjectEnable(enabled), (enabled == 0 ? "objStatusDisabled" : "")));
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(escal.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(escal.GetLastChanged(), rootLevel)));
@@ -240,7 +241,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARCharMenu& menu)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(menu.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(menu.GetServerObjectTypeXML()));
-	row.AddCell(menu.GetURL(rootLevel));
+	row.AddCell(URLLink(menu, rootLevel));
 	row.AddCell(""); // Enabled
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(menu.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(menu.GetLastChanged(), rootLevel)));
@@ -252,7 +253,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARContainer& container)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(container.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(container.GetServerObjectTypeXML())); //TODO: maybe distinguish between each container type here
-	row.AddCell(container.GetURL(rootLevel));
+	row.AddCell(URLLink(container, rootLevel));
 	row.AddCell(""); // Enabled
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(container.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(container.GetLastChanged(), rootLevel)));
@@ -265,7 +266,7 @@ void CDocCustomWorkflow::AddTableRow(CTable& tbl, CARImage& image)
 	CTableRow row("cssStdRow");
 	row.AddCell(CAREnum::GetOverlayType(image.GetOverlayType()));
 	row.AddCell(CAREnum::XmlStructItem(image.GetServerObjectTypeXML()));
-	row.AddCell(image.GetURL(rootLevel));
+	row.AddCell(URLLink(image, rootLevel));
 	row.AddCell(""); // Enabled
 	row.AddCell(CTableCell(CUtil::DateTimeToHTMLString(image.GetTimestamp())));
 	row.AddCell(CTableCell(this->pInside->LinkToUser(image.GetLastChanged(), rootLevel)));

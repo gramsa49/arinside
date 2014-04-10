@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocApplicationDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 
 CDocApplicationDetails::CDocApplicationDetails(CARContainer &application)
@@ -277,7 +278,7 @@ string CDocApplicationDetails::SearchForms(int &nResult)
 		for (; curIt != endIt; ++curIt)
 		{
 			CARSchema schema(*curIt);
-			strmResult << schema.GetURL(this->rootLevel) << "<br/>" << endl;
+			strmResult << URLLink(schema, this->rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -328,7 +329,7 @@ string CDocApplicationDetails::SearchActiveLinks(int &nResult)
 		for (; curIt != endIt; ++curIt)
 		{
 			CARActiveLink al(*curIt);
-			strmResult << al.GetURL(rootLevel) << "<br/>" << endl;
+			strmResult << URLLink(al, rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -379,7 +380,7 @@ string CDocApplicationDetails::SearchFilters(int &nResult)
 		for (; curIt != endIt; ++curIt)
 		{
 			CARFilter flt(*curIt);
-			strmResult << flt.GetURL(rootLevel) << "<br/>" << endl;
+			strmResult << URLLink(flt, rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -432,7 +433,7 @@ string CDocApplicationDetails::SearchEscalations(int &nResult)
 		for (; curIt != endIt; ++curIt)
 		{
 			CAREscalation esc(*curIt);
-			strmResult << esc.GetURL(rootLevel) << "<br/>" << endl;
+			strmResult << URLLink(esc, rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -527,7 +528,7 @@ string CDocApplicationDetails::SearchContainer(int &nResult, int nType)
 		for (; curIt != endIt; ++curIt)
 		{
 			CARContainer cnt(*curIt);
-			strmResult << cnt.GetURL(rootLevel) << "<br/>" << endl;
+			strmResult << URLLink(cnt, rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)
@@ -588,7 +589,7 @@ string CDocApplicationDetails::SearchMenus(int &nResult)
 		for (; curIt != endIt; ++curIt)
 		{
 			CARCharMenu mnu(*curIt);
-			strmResult << mnu.GetURL(rootLevel) << "<br/>" << endl;
+			strmResult << URLLink(mnu, rootLevel) << "<br/>" << endl;
 		}
 	}
 	catch(exception& e)

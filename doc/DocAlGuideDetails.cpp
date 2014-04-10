@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocAlGuideDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 
 CDocAlGuideDetails::CDocAlGuideDetails(CARContainer &container)
@@ -111,7 +112,7 @@ string CDocAlGuideDetails::ActiveLinkActions()
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellActiveLink(al.GetURL(rootLevel), "");
+						CTableCell cellActiveLink(URLLink(al, rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);
@@ -132,7 +133,7 @@ string CDocAlGuideDetails::ActiveLinkActions()
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellActiveLink(al.GetURL(rootLevel), "");
+						CTableCell cellActiveLink(URLLink(al, rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);

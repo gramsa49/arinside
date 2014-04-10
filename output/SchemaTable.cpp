@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "SchemaTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 
@@ -41,7 +42,7 @@ void CSchemaTable::AddRow(CARSchema &schema, int rootLevel)
 {
 	CTableRow tblRow("");
 
-	tblRow.AddCell( CTableCell(schema.GetURL(rootLevel)));
+	tblRow.AddCell( CTableCell(URLLink(schema, rootLevel)));
 	tblRow.AddCell( CTableCell(schema.WebAlias()));
 	tblRow.AddCell( CTableCell(schema.GetFields()->GetCount()));
 	tblRow.AddCell( CTableCell(schema.GetVUIs()->GetCount()));

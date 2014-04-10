@@ -134,7 +134,7 @@ string CDocSchemaDetails::AllFields()
 
 			CTableRow row("");
 
-			CTableCell cellName(field.GetURL(rootLevel), "");
+			CTableCell cellName(URLLink(field, rootLevel), "");
 			CTableCell cellFieldId(field.GetFieldId(), "");
 			CTableCell cellDataType(CAREnum::DataType(field.GetDataType()), "");
 
@@ -415,7 +415,7 @@ string CDocSchemaDetails::AllFieldsSpecial()
 			CARField field(schema.GetInsideId(), 0, fieldIndex);
 
 			CTableRow row("");
-			CTableCell cellName(field.GetURL(rootLevel), "");
+			CTableCell cellName(URLLink(field, rootLevel), "");
 			CTableCell cellFieldId(field.GetFieldId(), "");
 
 			stringstream strmTmp;
@@ -964,7 +964,7 @@ void CDocSchemaDetails::ShowPermissionProperties(std::ostream &strm, CARProplist
 
 
 			CTableRow row("");			
-			row.AddCell(CTableCell(field.GetURL(rootLevel)));
+			row.AddCell(CTableCell(URLLink(field, rootLevel)));
 			row.AddCell(CTableCell(field.GetFieldId()));
 			row.AddCell(CTableCell(CAREnum::DataType(field.GetDataType())));
 			row.AddCell(CTableCell(strmFieldPermissions.str()));
@@ -1019,7 +1019,7 @@ void CDocSchemaDetails::ShowIndexProperties(std::ostream &strm, CARProplistHelpe
 				if (field.Exists())
 				{
 					CTableRow row("");
-					row.AddCell( CTableCell(field.GetURL(rootLevel)));
+					row.AddCell( CTableCell(URLLink(field, rootLevel)));
 					row.AddCell( CTableCell(field.GetFieldId()));
 					row.AddCell( CTableCell(CAREnum::DataType(field.GetDataType())));
 					row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field.GetDataType())));
@@ -1065,7 +1065,7 @@ void CDocSchemaDetails::ShowResultListProperties(std::ostream &strm, CARProplist
 			if (field.Exists())
 			{
 				CTableRow row("");
-				row.AddCell( CTableCell(field.GetURL(rootLevel)));
+				row.AddCell( CTableCell(URLLink(field, rootLevel)));
 				row.AddCell( CTableCell(field.GetFieldId()));
 				row.AddCell( CTableCell(CAREnum::DataType(field.GetDataType())));
 				row.AddCell( CTableCell(resultFields.fieldsList[i].columnWidth));
@@ -1121,7 +1121,7 @@ void CDocSchemaDetails::ShowSortListProperties(std::ostream &strm, CARProplistHe
 					sortImage = CWebUtil::ImageTag("sort_asc.gif", rootLevel);
 
 				row.AddCell( CTableCell(sortImage));
-				row.AddCell( CTableCell(field.GetURL(rootLevel)));
+				row.AddCell( CTableCell(URLLink(field, rootLevel)));
 				row.AddCell( CTableCell(field.GetFieldId()));
 				row.AddCell( CTableCell(CAREnum::DataType(field.GetDataType())));				
 				row.AddCell( CTableCell(CUtil::DateTimeToHTMLString(field.GetTimestamp())));
@@ -1165,7 +1165,7 @@ string CDocSchemaDetails::ShowVuiList()
 			CARVui vui(schema.GetInsideId(), 0, vuiIndex);
 
 			CTableRow row("");			
-			row.AddCell( CTableCell(vui.GetURL(rootLevel)));
+			row.AddCell( CTableCell(URLLink(vui, rootLevel)));
 			row.AddCell( CTableCell(vui.Label()));
 			row.AddCell( CTableCell(vui.webAlias()));
 			row.AddCell( CTableCell(CAREnum::VuiType(vui.GetType())));
@@ -1328,12 +1328,12 @@ string CDocSchemaDetails::JoinFormReferences()
 			{
 				if(strcmp(schemaName, compSchema.u.join.memberA) == 0)
 				{
-					strm << "Primary Form in: " << schema.GetURL(rootLevel) << "<br/>" << endl;
+					strm << "Primary Form in: " << URLLink(schema, rootLevel) << "<br/>" << endl;
 				}
 
 				if(strcmp(schemaName, compSchema.u.join.memberB)==0)					
 				{
-					strm << "Secondary Form in: " << schema.GetURL(rootLevel) << "<br/>" << endl;
+					strm << "Secondary Form in: " << URLLink(schema, rootLevel) << "<br/>" << endl;
 				}
 			}
 		}
@@ -1385,8 +1385,8 @@ string CDocSchemaDetails::TableFieldReferences()
 
 					if(schema.GetName().compare(tableSchema) == 0)
 					{
-						strm << "Table: " << field.GetURL(rootLevel);
-						strm << " in form: " << searchSchema.GetURL(rootLevel) << "<br/>" << endl;
+						strm << "Table: " << URLLink(field, rootLevel);
+						strm << " in form: " << URLLink(searchSchema, rootLevel) << "<br/>" << endl;
 
 						bFound = true;
 					}

@@ -1443,7 +1443,7 @@ void CDocMain::MessageList()
 						msgItem.msgNumber = msg.messageNum;
 						msgItem.msgText = (schema.Exists() ? pInside->TextFindFields(msg.messageText, "$", schema.GetInsideId(), rootLevel, true, NULL) : msg.messageText);
 						msgItem.msgType = msg.messageType;
-						msgItem.objectLink = al.GetURL(rootLevel);
+						msgItem.objectLink = URLLink(al, rootLevel);
 						listMsgItem.push_back(msgItem);
 					}
 				}
@@ -1484,7 +1484,7 @@ void CDocMain::MessageList()
 						msgItem.msgNumber = msg.messageNum;
 						msgItem.msgText = (schema.Exists() ? pInside->TextFindFields(msg.messageText, "$", schema.GetInsideId(), rootLevel, true, NULL) : msg.messageText);
 						msgItem.msgType = msg.messageType;
-						msgItem.objectLink = flt.GetURL(rootLevel);
+						msgItem.objectLink = URLLink(flt, rootLevel);
 						listMsgItem.push_back(msgItem);
 					}
 				}
@@ -1589,7 +1589,7 @@ void CDocMain::NotificationList()
 							text << pInside->TextFindFields(notifyAction.notifyText, "$", schema.GetInsideId(), rootLevel, true, NULL);
 
 						CTableRow row("");
-						row.AddCell(flt.GetURL(rootLevel));
+						row.AddCell(URLLink(flt, rootLevel));
 						row.AddCell(strm.str());
 						row.AddCell(CAREnum::NotifyMechanism(notifyAction.notifyMechanism)); // Type of Notifcation
 						row.AddCell(text.str());
@@ -1638,7 +1638,7 @@ void CDocMain::NotificationList()
 							text << pInside->TextFindFields(notifyAction.notifyText, "$", schema.GetInsideId(), rootLevel, true, NULL);
 
 						CTableRow row("");
-						row.AddCell(esc.GetURL(rootLevel));
+						row.AddCell(URLLink(esc, rootLevel));
 						row.AddCell(strm.str());
 						row.AddCell(CAREnum::NotifyMechanism(notifyAction.notifyMechanism)); // Type of Notifcation
 						row.AddCell(text.str());

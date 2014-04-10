@@ -116,7 +116,7 @@ CTable CDocVuiDetails::FieldProperties()
 					}	
 
 					CTableRow row("");
-					row.AddCell(CTableCell(field.GetURL(rootLevel)));
+					row.AddCell(CTableCell(URLLink(field, rootLevel)));
 					row.AddCell(CTableCell(field.GetFieldId()));
 					row.AddCell(CTableCell(tmpLabel.str()));				
 					row.AddCell(CTableCell(CAREnum::DataType(field.GetDataType())));				
@@ -220,7 +220,7 @@ bool CDocVuiDetails::SpecialPropertyCallback(ARULong32 propId, const ARValueStru
 			CARImage img(value.u.charVal);
 			if (img.Exists())
 			{
-				displayValue = img.GetURL(rootLevel);
+				displayValue = URLLink(img, rootLevel);
 
 				int msgId = -1;
 				switch (propId)

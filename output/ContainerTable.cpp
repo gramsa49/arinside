@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ContainerTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 
@@ -41,7 +42,7 @@ CContainerTable::~CContainerTable(void)
 
 void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 {
-	string cellNameValue = cont.GetURL(rootLevel);
+	string cellNameValue = URLLink(cont, rootLevel);
 	if (IsUnusedContainer(cont))
 	{ 
 		cellNameValue += " (<b>!</b>)"; 

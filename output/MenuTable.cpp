@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "MenuTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 
@@ -39,7 +40,7 @@ void CMenuTable::AddRow(CARCharMenu &menu, int rootLevel)
 {
 	CTableRow tblRow("");
 
-	string cellNameValue = menu.GetURL(rootLevel);
+	string cellNameValue = URLLink(menu, rootLevel);
 	if(!menu.IsUsedInWorkflow())
 	{
 		cellNameValue += " (<b>!</b>)";

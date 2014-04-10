@@ -196,7 +196,7 @@ string CRefItem::LinkToSchema(int rootLevel) const
 	case AR_STRUCT_ITEM_XML_VUI:
 		{
 			CARSchema schema(objectId);
-			return schema.GetURL(rootLevel);
+			return URLLink(schema, rootLevel);
 		}
 		break;
 	default: return "";

@@ -1035,7 +1035,7 @@ string CARInside::LinkToVui(int schemaInsideId, int vuiInsideId, int fromRootLev
 	CARVui vui(schemaInsideId, vuiInsideId);
 	if (vui.Exists())
 	{
-		return vui.GetURL(fromRootLevel);
+		return URLLink(vui, fromRootLevel);
 	}
 	return "";
 }
@@ -1114,7 +1114,7 @@ string CARInside::LinkToSchema(const string& schemaName, int fromRootLevel)
 	CARSchema schema(schemaName);
 	if(schema.Exists())
 	{
-		return schema.GetURL(fromRootLevel);
+		return URLLink(schema, fromRootLevel);
 	}
 	return schemaName;
 }
@@ -1124,7 +1124,7 @@ string CARInside::LinkToSchema(int schemaInsideId, const string &nameToUseIfSche
 	CARSchema schema(schemaInsideId);
 	if (schema.Exists())
 	{
-		return schema.GetURL(fromRootLevel);
+		return URLLink(schema, fromRootLevel);
 	}
 	return nameToUseIfSchemaNotExists;
 }
@@ -1202,7 +1202,7 @@ string CARInside::LinkToAl(const string& alName, int fromRootLevel)
 	if (!al.Exists())
 		return alName;
 
-	return al.GetURL(fromRootLevel);
+	return URLLink(al, fromRootLevel);
 }
 
 string CARInside::LinkToAl(int alInsideId, int rootLevel)
@@ -1210,7 +1210,7 @@ string CARInside::LinkToAl(int alInsideId, int rootLevel)
 	CARActiveLink al(alInsideId);
 
 	if (al.Exists())
-		return al.GetURL(rootLevel);
+		return URLLink(al, rootLevel);
 
 	return EmptyValue;
 }
@@ -1223,7 +1223,7 @@ string CARInside::LinkToFilter(string filterName, int fromRootLevel)
 	if (fltInsideId > -1)
 	{
 		CARFilter flt(fltInsideId);
-		return flt.GetURL(fromRootLevel);
+		return URLLink(flt, fromRootLevel);
 	}
 	return filterName;
 }
@@ -1233,7 +1233,7 @@ string CARInside::LinkToEscalation(const string& escalationName, int fromRootLev
 	CAREscalation escal(escalationName);
 	if (escal.Exists())
 	{
-		return escal.GetURL(fromRootLevel);
+		return URLLink(escal, fromRootLevel);
 	}
 	return escalationName;
 }
@@ -1243,7 +1243,7 @@ string CARInside::LinkToEscalation(const CRefItem& refItem, int fromRootLevel)
 	CAREscalation escal(refItem.GetObjectId());
 	if (escal.Exists())
 	{
-		return escal.GetURL(fromRootLevel);
+		return URLLink(escal, fromRootLevel);
 	}
 	return EmptyValue;
 }
@@ -1253,7 +1253,7 @@ string CARInside::LinkToContainer(string containerName, int fromRootLevel)
 	CARContainer cnt(containerName);
 	if (cnt.Exists())
 	{
-		return cnt.GetURL(fromRootLevel);
+		return URLLink(cnt, fromRootLevel);
 	}
 	return containerName;
 }
@@ -1263,7 +1263,7 @@ string CARInside::LinkToContainer(const CRefItem& refItem, int rootLevel)
 	CARContainer cnt(refItem.GetObjectId());
 	if (cnt.Exists())
 	{
-		return cnt.GetURL(rootLevel);
+		return URLLink(cnt, rootLevel);
 	}
 	return EmptyValue;
 }
@@ -1638,7 +1638,7 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 						}
 
 						// now link to the field
-						strmTmp << field.GetURL(rootLevel);
+						strmTmp << URLLink(field, rootLevel);
 						if (refItem != NULL)
 							AddFieldReference(schemaInsideId, iFieldId, *refItem);
 
@@ -1726,7 +1726,7 @@ string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel
 			strmTmp << "arFieldId=&quot;" << field.GetFieldId() << "&quot;";			
 
 			stringstream fieldLink;
-			fieldLink << "arFieldId=&quot;" << field.GetURL(rootLevel) << "&quot;";					
+			fieldLink << "arFieldId=&quot;" << URLLink(field, rootLevel) << "&quot;";					
 
 			unsigned int nLengthOrg = (unsigned int)inText.length();
 
@@ -2078,7 +2078,7 @@ string CARInside::processForm(const string& command, const string& inText, int s
 	CARSchema schema(form);
 	if (schema.Exists())
 	{
-		strmTmp << schema.GetURL(rootLevel, false);
+		strmTmp << URLLink(schema, rootLevel, false);
 		if (refItem != NULL) 
 		{
 			if (!schema.ReferenceExists(*refItem))
@@ -2149,7 +2149,7 @@ string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, co
 		CARField field(schemaInsideId, iFieldId);
 		if (field.Exists())
 		{
-			strmTmp << field.GetURL(rootLevel);
+			strmTmp << URLLink(field, rootLevel);
 		}
 		else
 			strmTmp << iFieldId;
@@ -2177,7 +2177,7 @@ string CARInside::LinkToImage(unsigned int imageIndex, int rootLevel)
 	CARImage image(imageIndex);
 	if (image.Exists())
 	{
-		return image.GetURL(rootLevel);
+		return URLLink(image, rootLevel);
 	}
 	return EmptyValue;
 }

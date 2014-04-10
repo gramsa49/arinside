@@ -21,6 +21,7 @@
 #include "../core/ARFilter.h"
 #include "../core/ARImage.h"
 #include "../output/ImageTag.h"
+#include "../output/URLLink.h"
 #include "../ARInside.h"
 
 using namespace OUTPUT;
@@ -160,7 +161,7 @@ string WorkflowReferenceTable::LinkToAlRef(const CRefItem& refItem, int rootLeve
 		return EmptyValue;
 
 	stringstream strmTmp;
-	strmTmp << al.GetURL(rootLevel) << " (" << al.GetOrder() << ")";
+	strmTmp << URLLink(al, rootLevel) << " (" << al.GetOrder() << ")";
 	return strmTmp.str();
 }
 
@@ -180,7 +181,7 @@ string WorkflowReferenceTable::LinkToFilterRef(CARFilter* filter, int rootLevel)
 	strmTmp.str("");
 
 	if (filter != NULL)
-		strmTmp << filter->GetURL(rootLevel) << " (" << filter->GetOrder() << ")";
+		strmTmp << URLLink(*filter, rootLevel) << " (" << filter->GetOrder() << ")";
 
 	return strmTmp.str();
 }

@@ -109,8 +109,8 @@ void CDocAnalyzer::IndexAnalyzer()
 							if(fLimit.qbeMatchOperation == AR_QBE_MATCH_ANYWHERE)
 							{
 								CTableRow row("");
-								row.AddCell(CTableCell(field.GetURL(rootLevel)));
-								row.AddCell(CTableCell(schema.GetURL(rootLevel)));
+								row.AddCell(CTableCell(URLLink(field, rootLevel)));
+								row.AddCell(CTableCell(URLLink(schema, rootLevel)));
 
 								stringstream strmTmp;
 								strmTmp.str("");
@@ -124,8 +124,8 @@ void CDocAnalyzer::IndexAnalyzer()
 							if(fLimit.maxLength > 255)
 							{
 								CTableRow row("");
-								row.AddCell(CTableCell(field.GetURL(rootLevel)));
-								row.AddCell(CTableCell(schema.GetURL(rootLevel)));
+								row.AddCell(CTableCell(URLLink(field, rootLevel)));
+								row.AddCell(CTableCell(URLLink(schema, rootLevel)));
 
 								stringstream strmTmp;
 								strmTmp.str("");

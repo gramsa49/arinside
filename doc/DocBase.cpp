@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocBase.h"
+#include "../output/URLLink.h"
 
 CDocBase::CDocBase(void)
 {
@@ -38,7 +39,7 @@ string CDocBase::PlaceOverlayLink(int currentType, CARServerObject& target)
 			stringstream tmpStrm;
 			tmpStrm << "Overlay: ";
 			if (target.Exists())
-				tmpStrm << target.GetURL(rootLevel, false);
+				tmpStrm << URLLink(target, rootLevel, false);
 			else
 				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;
 			return tmpStrm.str();
@@ -49,7 +50,7 @@ string CDocBase::PlaceOverlayLink(int currentType, CARServerObject& target)
 			stringstream tmpStrm;
 			tmpStrm << "Based on: ";
 			if (target.Exists())
-				tmpStrm << target.GetURL(rootLevel, false);
+				tmpStrm << URLLink(target, rootLevel, false);
 			else
 				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;				
 			return tmpStrm.str();

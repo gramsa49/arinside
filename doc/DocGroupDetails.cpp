@@ -106,7 +106,7 @@ string CDocGroupDetails::RoleReferences()
 			if(*curIt == this->group.GetGroupId())
 			{
 				CTableRow row("");
-				row.AddCellList(CTableCell("Production"), CTableCell( role.GetURL(this->rootLevel)));
+				row.AddCellList(CTableCell("Production"), CTableCell( URLLink(role, this->rootLevel)));
 				tbl.AddRow(row);
 			}
 		}
@@ -120,7 +120,7 @@ string CDocGroupDetails::RoleReferences()
 			if(*curIt == this->group.GetGroupId())
 			{
 				CTableRow row("");
-				row.AddCellList(CTableCell("Test"), CTableCell( role.GetURL(this->rootLevel)));
+				row.AddCellList(CTableCell("Test"), CTableCell( URLLink(role, this->rootLevel)));
 				tbl.AddRow(row);
 			}
 		}
@@ -344,7 +344,7 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 
 					CTableRow row("");
 					row.AddCell(CTableCell(visibility));
-					row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+					row.AddCell(CTableCell(URLLink(schema, rootLevel)));						
 					row.AddCell(CTableCell(schema.GetFields()->GetCount()));
 					row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
 					row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
@@ -362,7 +362,7 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 				if(this->group.GetGroupId() == admingrpList.internalIdList[nGrp])
 				{
 					CTableRow row("");
-					row.AddCell(CTableCell(schema.GetURL(rootLevel)));						
+					row.AddCell(CTableCell(URLLink(schema, rootLevel)));						
 					row.AddCell(CTableCell(schema.GetFields()->GetCount()));
 					row.AddCell(CTableCell(schema.GetVUIs()->GetCount()));
 					row.AddCell(CTableCell(CAREnum::SchemaType(schema.GetCompound().schemaType)));
@@ -602,11 +602,11 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 				if(bInsert)
 				{
 					ImageTag image((bVisiblePermission ? ImageTag::Visible : ImageTag::Hidden), rootLevel);
-					strmFormDesc << image << schema.GetURL(rootLevel) << endl;
+					strmFormDesc << image << URLLink(schema, rootLevel) << endl;
 				}
 				else
 				{
-					strmFormDesc << schema.GetURL(rootLevel) << endl;
+					strmFormDesc << URLLink(schema, rootLevel) << endl;
 				}
 
 				//Create a table for every form
@@ -629,7 +629,7 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 							ImageTag image((permissions.permissionList[i].permissions == AR_PERMISSIONS_CHANGE ? ImageTag::Edit : ImageTag::Visible), rootLevel);
 
 							CTableRow row("");			
-							row.AddCell(CTableCell(field.GetURL(rootLevel)));
+							row.AddCell(CTableCell(URLLink(field, rootLevel)));
 							row.AddCell(CTableCell(image));
 							row.AddCell(CTableCell(CAREnum::FieldPermission(permissions.permissionList[i].permissions)));
 							schemaTbl.AddRow(row);

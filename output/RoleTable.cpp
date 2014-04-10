@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "RoleTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 using namespace rapidjson;
@@ -39,7 +40,7 @@ CRoleTable::~CRoleTable(void)
 void CRoleTable::AddRow(CARRole &role, int rootLevel)
 {
 	CTableRow tblRow("");
-	tblRow.AddCell( CTableCell(role.GetURL(rootLevel)));
+	tblRow.AddCell( CTableCell(URLLink(role, rootLevel)));
 	tblRow.AddCell( CTableCell(role.GetRoleId()));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToContainer(role.GetApplicationName(), rootLevel)));
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(role.GetTimestamp())));

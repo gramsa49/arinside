@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "FilterTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 
@@ -43,7 +44,7 @@ void CFilterTable::AddRow(unsigned int filterIndex, int rootLevel)
 	CARFilter filter(filterIndex);
 
 	CTableRow tblRow("");
-	tblRow.AddCell(CTableCell(filter.GetURL(rootLevel)));
+	tblRow.AddCell(CTableCell(URLLink(filter, rootLevel)));
 
 	string tmpCssEnabled = "";
 	if(filter.GetEnabled()==0)

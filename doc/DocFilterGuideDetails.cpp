@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocFilterGuideDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 
 CDocFilterGuideDetails::CDocFilterGuideDetails(CARContainer &fltGuide)
@@ -114,7 +115,7 @@ string CDocFilterGuideDetails::FilterActions()
 						stringstream tmp;
 						tmp << "If-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellFilter(filter.GetURL(this->rootLevel), "");
+						CTableCell cellFilter(URLLink(filter, this->rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);
@@ -136,7 +137,7 @@ string CDocFilterGuideDetails::FilterActions()
 						stringstream tmp;
 						tmp << "Else-Action " << nAction;
 						CTableCell cellActionInfo(tmp.str(), "");
-						CTableCell cellFilter(filter.GetURL(this->rootLevel), "");
+						CTableCell cellFilter(URLLink(filter, this->rootLevel), "");
 
 						CTableRow row("");
 						row.AddCell(cellActionInfo);

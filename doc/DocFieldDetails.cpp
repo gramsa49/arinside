@@ -222,11 +222,11 @@ string CDocFieldDetails::WorkflowReferences()
 					CARField fld(curIt->schemaInsideId, curIt->fieldId);
 
 					stringstream strm;
-					strm << "Field with same global field id in " << fld.GetSchema().GetURL(rootLevel);
+					strm << "Field with same global field id in " << URLLink(fld.GetSchema(), rootLevel);
 
 					CTableRow row("cssStdRow");
 					row.AddCell(CAREnum::XmlStructItem(AR_STRUCT_ITEM_XML_FIELD));				
-					row.AddCell(fld.GetURL(rootLevel));
+					row.AddCell(URLLink(fld, rootLevel));
 					row.AddCell(CTableCell(""));
 					row.AddCell(strm.str());
 					tblRef.AddRow(row);		
@@ -358,7 +358,7 @@ string CDocFieldDetails::FieldLimits()
 					{
 						if (AttachmentFieldGetPool(attachField) == field.GetInsideId())
 						{
-							strm << "Attachment Field: " << attachField.GetURL(rootLevel) << "<br/>" << endl;
+							strm << "Attachment Field: " << URLLink(attachField, rootLevel) << "<br/>" << endl;
 						}
 					}
 				}
@@ -653,7 +653,7 @@ string CDocFieldDetails::FieldLimits()
 					// now create the row
 					CTableRow tblRow;
 					tblRow.AddCell(label);
-					tblRow.AddCell(columnField.GetURL(rootLevel));
+					tblRow.AddCell(URLLink(columnField, rootLevel));
 					tblRow.AddCell((colSourceField.Exists() ? CAREnum::DataType(colSourceField.GetDataType()) : EnumDefault));
 					tblRow.AddCell(CAREnum::ColumnDataSourceType(colLimits.dataSource));
 					colTab.AddRow(tblRow);
@@ -821,7 +821,7 @@ string CDocFieldDetails::DisplayProperties()
 							}
 						}
 
-						value = img.GetURL(rootLevel);
+						value = URLLink(img, rootLevel);
 					}
 				}
 #endif
@@ -893,8 +893,8 @@ string CDocFieldDetails::JoinFormReferences()
 						CARField tmpField(schemaIndex, 0, fieldIndex);
 						if(tmpField.GetMapping().u.join.realId == this->field.GetFieldId() && tmpField.GetMapping().u.join.schemaIndex == 0)
 						{
-							strm << tmpField.GetURL(rootLevel) << " in Join-Form: ";
-							strm << tmpSchema.GetURL(rootLevel) << "<br/>" << endl;
+							strm << URLLink(tmpField, rootLevel) << " in Join-Form: ";
+							strm << URLLink(tmpSchema, rootLevel) << "<br/>" << endl;
 						}
 					}
 				}
@@ -908,8 +908,8 @@ string CDocFieldDetails::JoinFormReferences()
 						CARField tmpField(schemaIndex, 0, fieldIndex);
 						if(tmpField.GetMapping().u.join.realId == this->field.GetFieldId() && tmpField.GetMapping().u.join.schemaIndex == 1)
 						{
-							strm << tmpField.GetURL(rootLevel) << " in Join-Form: ";
-							strm << tmpSchema.GetURL(rootLevel) << "<br/>" << endl;
+							strm << URLLink(tmpField, rootLevel) << " in Join-Form: ";
+							strm << URLLink(tmpSchema, rootLevel) << "<br/>" << endl;
 						}
 					}
 				}
@@ -957,7 +957,7 @@ string CDocFieldDetails::FieldMapping()
 
 				CARSchema schema(schemaName);
 				if (schema.Exists())
-					strm << schema.GetURL(this->rootLevel);
+					strm << URLLink(schema, this->rootLevel);
 				else
 					strm << "<span class=\"fieldNotFound\">" << (schemaName.empty() ? EnumDefault : schemaName) << "</span>";
 				strm << "<br/>";
@@ -966,7 +966,7 @@ string CDocFieldDetails::FieldMapping()
 				
 				CARField field(schema.GetInsideId(), map.u.join.realId);
 				if (field.Exists())
-					strm << field.GetURL(this->rootLevel);
+					strm << URLLink(field, this->rootLevel);
 				else
 					strm << "<span class=\"fieldNotFound\">" << map.u.join.realId << "</span>";
 			}

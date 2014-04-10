@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocOverlayHelper.h"
 #include "../core/ARServerObject.h"
+#include "../output/URLLink.h"
 #include "../ARInside.h"
 
 CDocOverlayHelper::CDocOverlayHelper(const CARServerObject &srvObj, int rootLevel)
@@ -70,7 +71,7 @@ string CDocOverlayHelper::PlaceOverlayLink()
 			stringstream tmpStrm;
 			tmpStrm << "Overlay: ";
 			if (target->Exists())
-				tmpStrm << target->GetURL(rootLevel, false);
+				tmpStrm << URLLink(*target, rootLevel, false);
 			else
 				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;
 			return tmpStrm.str();
@@ -81,7 +82,7 @@ string CDocOverlayHelper::PlaceOverlayLink()
 			stringstream tmpStrm;
 			tmpStrm << "Based on: ";
 			if (target->Exists())
-				tmpStrm << target->GetURL(rootLevel, false);
+				tmpStrm << URLLink(*target, rootLevel, false);
 			else
 				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;				
 			return tmpStrm.str();
@@ -105,7 +106,7 @@ string CDocOverlayHelper::PlaceOverlaidNotice()
 	tmp << "<div id=\"ovlNote\">" << endl;
 	tmp << "This object is currently not executed/used because it is overlaid by ";
 	if (target.get() != NULL && target->Exists())
-		tmp << target->GetURL(rootLevel, false);
+		tmp << URLLink(*target, rootLevel, false);
 	else
 		tmp << "<span class=\"fieldNotFound\">" << "object missing" << "</span>";
 	

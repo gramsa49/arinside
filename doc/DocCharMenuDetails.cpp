@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocCharMenuDetails.h"
 #include "../output/ContainerTable.h"
+#include "../output/URLLink.h"
 #include "DocOverlayHelper.h"
 #include "../core/ARQualification.h"
 
@@ -441,9 +442,9 @@ string CDocCharMenuDetails::RelatedFields()
 				CARField field(curIt->GetObjectId(), curIt->GetSubObjectId());
 				
 				CTableRow row("cssStdRow");		
-				row.AddCell(field.GetURL(rootLevel));
+				row.AddCell(URLLink(field, rootLevel));
 				row.AddCell(CTableCell(field.GetInsideId()));
-				row.AddCell(field.GetSchema().GetURL(rootLevel));
+				row.AddCell(URLLink(field.GetSchema(), rootLevel));
 				tbl.AddRow(row);		
 			}
 		}
@@ -476,7 +477,7 @@ string CDocCharMenuDetails::RelatedActiveLinks()
 				CTableRow row("cssStdRow");
 
 				stringstream tmp;
-				tmp << curIt->IfElse() << "-Action " << curIt->ActionIndex() << " " << al.GetURL(rootLevel);
+				tmp << curIt->IfElse() << "-Action " << curIt->ActionIndex() << " " << URLLink(al, rootLevel);
 
 				CTableCell cellActiveLink(tmp.str(), "");						
 				row.AddCell(cellActiveLink);

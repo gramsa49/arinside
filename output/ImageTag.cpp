@@ -39,7 +39,7 @@ namespace OUTPUT
 		case ImageTag::Schema: return "schema.gif";
 		case ImageTag::SchemaJoin: return "schema_join.gif";
 		case ImageTag::SchemaView: return "schema_view.gif";
-		case ImageTag::SchemaDialog: return "schema_dialog.gif";
+		case ImageTag::SchemaDialog: return "schema_display.gif";
 		case ImageTag::SchemaVendor: return "schema_vendor.gif";
 		case ImageTag::Server: return "server.gif";
 		case ImageTag::Document: return "doc.gif";

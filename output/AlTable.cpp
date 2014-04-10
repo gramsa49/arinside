@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "AlTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 
@@ -45,7 +46,7 @@ void CAlTable::AddRow(int alInsideId, int rootLevel)
 
 	CARProplistHelper props(&al.GetPropList());
 	CTableRow tblRow("");
-	tblRow.AddCell( CTableCell(al.GetURL(rootLevel)));
+	tblRow.AddCell( CTableCell(URLLink(al, rootLevel)));
 
 	string tmpCssEnabled = "";
 	if(al.GetEnabled()==0)

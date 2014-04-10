@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "RootPath.h"
+#include "URLLink.h"
 #include "WebUtil.h"
 #include "../ARInside.h"
 
@@ -283,7 +284,7 @@ string CWebUtil::LinkToMenu(string menuName, int rootLevel)
 	CARCharMenu menu(menuName);
 	if (menu.Exists())
 	{
-		return menu.GetURL(rootLevel);
+		return URLLink(menu, rootLevel);
 	}
 
 	//Menu has not been found
@@ -297,7 +298,7 @@ string CWebUtil::LinkToMenu(const CRefItem& refItem, int rootLevel)
 	CARCharMenu menu(refItem.GetObjectId());
 	if (menu.Exists())
 	{
-		return menu.GetURL(rootLevel);
+		return URLLink(menu, rootLevel);
 	}
 
 	return EmptyValue;

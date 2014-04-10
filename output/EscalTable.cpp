@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "../core/ARValue.h"
 #include "EscalTable.h"
+#include "URLLink.h"
 
 using namespace OUTPUT;
 
@@ -45,7 +46,7 @@ CEscalTable::~CEscalTable(void)
 void CEscalTable::AddRow(CAREscalation &escal, int rootLevel)
 {
 	CTableRow tblRow("");
-	tblRow.AddCell( CTableCell(escal.GetURL(rootLevel)));
+	tblRow.AddCell( CTableCell(URLLink(escal, rootLevel)));
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
 	string escalPool = escal.GetPoolStr();

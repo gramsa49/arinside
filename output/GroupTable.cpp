@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "GroupTable.h"
+#include "URLLink.h"
 #include "../core/ARGroup.h"
 #include "../core/ARRole.h"
 
@@ -55,7 +56,7 @@ void CGroupTable::AddRoleRow(string appRefName, int roleId, int rootLevel)
 	{
 		CTableRow tblRow("");
 		tblRow.AddCell( CTableCell("Role"));
-		tblRow.AddCell( CTableCell(role.GetURL(rootLevel)));	
+		tblRow.AddCell( CTableCell(URLLink(role, rootLevel)));	
 		tblRow.AddCell( CTableCell(role.GetRoleId()));
 		tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(role.GetTimestamp())));
 		tblRow.AddCell( CTableCell(this->pInside->LinkToUser(role.GetLastChanged(), rootLevel)));
