@@ -68,7 +68,7 @@ TEST_F(URLLinkTests, ObjectLinkWithImage)
 
 TEST_F(URLLinkTests, ObjectFilterLinkWithImage)
 {
-	CFakeServerObject fakeWorkflow(AR_STRUCT_ITEM_XML_FILTER);
+	CFakeServerObject fakeWorkflow("TheTestObj", AR_STRUCT_ITEM_XML_FILTER);
 
 	stringstream strm;
 	strm << URLLink(fakeWorkflow, rootLevel);
@@ -79,11 +79,22 @@ TEST_F(URLLinkTests, ObjectFilterLinkWithImage)
 
 TEST_F(URLLinkTests, ObjectEscalationLinkWithoutImage)
 {
-	CFakeServerObject fakeWorkflow(AR_STRUCT_ITEM_XML_ESCALATION);
+	CFakeServerObject fakeWorkflow("TheTestObj", AR_STRUCT_ITEM_XML_ESCALATION);
 
 	stringstream strm;
 	strm << URLLink(fakeWorkflow, rootLevel, false);
 	string result = strm.str();
 
 	ASSERT_STREQ("<a href=\"../escalation/TheTestObj.htm\">TheTestObj</a>", result.c_str());
+}
+
+TEST_F(URLLinkTests, ObjectOverlayLink)
+{
+	CFakeServerObject fakeWorkflow("SampleMenu", AR_STRUCT_ITEM_XML_CHAR_MENU, AR_OVERLAY_OBJECT);
+	
+	stringstream strm;
+	strm << URLLink(fakeWorkflow, rootLevel);
+	string result = strm.str();
+
+	ASSERT_STREQ("<img src=\"../img/overlay.gif\" style=\"background:url(../img/menu.gif)\" width=\"16\" height=\"16\" alt=\"menu.gif\" /><a href=\"../menu/SampleMenu.htm\">SampleMenu</a>", result.c_str());
 }

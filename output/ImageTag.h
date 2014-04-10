@@ -63,7 +63,7 @@ namespace OUTPUT
 	private:
 		int rootLevel;
 		ImageEnum imageId;
-		ImageEnum imageOverlayId;
+		unsigned int imageOverlayType;
 	};
 
 	std::ostream& operator<<(std::ostream& strm, OUTPUT::ImageTag::ImageEnum image);

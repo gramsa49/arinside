@@ -100,6 +100,11 @@ namespace OUTPUT
 	{
 		switch (serverObj.GetServerObjectTypeXML())
 		{
+		case AR_STRUCT_ITEM_XML_SCHEMA:
+			{
+				assert(false);
+			}
+			break;
 		case AR_STRUCT_ITEM_XML_ACTIVE_LINK: return ImageTag::ActiveLink;
 		case AR_STRUCT_ITEM_XML_FILTER: return ImageTag::Filter;
 		case AR_STRUCT_ITEM_XML_ESCALATION: return ImageTag::Escalation;
@@ -115,30 +120,65 @@ namespace OUTPUT
 		}
 	}
 
+	unsigned int MapOverlayTypeToInternal(unsigned int overlayType)
+	{
+		switch (overlayType)
+		{
+		case AR_OVERLAY_OBJECT: return AR_OVERLAY_OBJECT;
+		case AR_CUSTOM_OBJECT: return AR_CUSTOM_OBJECT;
+		}
+		return AR_ORIGINAL_OBJECT;
+	}
+
+	const char* MapOverlayTypeToImageName(unsigned int overlayType)
+	{
+		switch (overlayType)
+		{
+		case AR_OVERLAY_OBJECT: return "overlay.gif";
+		case AR_CUSTOM_OBJECT: return "custom.gif";
+		}
+		return "";
+	}
+
 	// ################################################################
 	// ## ImageTag class definition
 	ImageTag::ImageTag(const CARServerObject &obj, int currentRootLevel)
 	{
 		rootLevel = currentRootLevel;
 		imageId = MapXmlStructItemToImage(obj);
+		imageOverlayType = MapOverlayTypeToInternal(obj.GetOverlayType());
 	}
 
 	ImageTag::ImageTag(OUTPUT::ImageTag::ImageEnum image, int currentRootLevel)
 	{
 		rootLevel = currentRootLevel;
 		imageId = image;
+		imageOverlayType = AR_ORIGINAL_OBJECT;
 	}
 
 	ostream& ImageTag::ToStream(std::ostream &strm) const
 	{
 		if (imageId != NoImage)
 		{
-			const char* imageName = GetImageName(imageId);
+			const char* imageSrc = GetImageName(imageId);
+			const char* imageAlt = imageSrc;
+			const char* imageBg  = NULL;
+
 			ImageDimensions imageDim = GetImageDimensions(imageId);
 
+			if (imageOverlayType > AR_ORIGINAL_OBJECT)
+			{
+				imageBg = imageSrc;
+				imageSrc = MapOverlayTypeToImageName(imageOverlayType);
+			}
+
 			strm << "<img ";
-			strm << "src=\"" << RootPath(rootLevel) << "img/" << imageName << "\" ";
-			strm << "width=\"" << imageDim.x << "\" height=\"" << imageDim.y << "\" alt=\"" << imageName << "\" />";
+			strm << "src=\"" << RootPath(rootLevel) << "img/" << imageSrc << "\" ";
+			if (imageBg != NULL)
+			{
+				strm << "style=\"background:url(" << RootPath(rootLevel) << "img/" << imageBg << ")\" ";
+			}
+			strm << "width=\"" << imageDim.x << "\" height=\"" << imageDim.y << "\" alt=\"" << imageAlt << "\" />";
 		}
 		return strm;
 	}
