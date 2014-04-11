@@ -1126,6 +1126,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\ObjNotFound.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\ObjNotFound.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Output\RoleTable.cpp"
 				>
 			</File>

@@ -530,6 +530,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\output\ObjNotFoundTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\output\URLLinkTest.cpp"
 				>
 			</File>

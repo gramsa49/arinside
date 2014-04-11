@@ -185,6 +185,7 @@ SET(ARINSIDE_SRCS_OUTPUT_CPP
  output/MenuTable.cpp
  output/NavigationPage.cpp
  output/ObjectTable.cpp
+ output/ObjNotFound.cpp
  output/RoleTable.cpp
  output/RootPath.cpp
  output/SchemaTable.cpp
@@ -215,8 +216,9 @@ SET(ARINSIDE_SRCS_OUTPUT_H
  output/ImageTag.h
  output/LetterFilterControl.h
  output/MenuTable.h
- output/NavigationPage.h
+ output/NavigationPage.h 
  output/ObjectTable.h
+ output/ObjNotFound.h
  output/RoleTable.h
  output/RootPath.h
  output/SchemaTable.h
@@ -374,6 +376,7 @@ SET(ARINSIDE_TEST_SRCS
  lists/support/SchemaDbQueryBuilderTest.cpp
  output/webpage/HtmlReferenceListImplTest.cpp
  output/ImageTagTest.cpp
+ output/ObjNotFoundTest.cpp
  output/URLLinkTest.cpp
  test/fakes/FakeARServerObject.cpp
  test/fakes/FakeARServerObject.h
