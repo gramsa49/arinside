@@ -19,6 +19,7 @@
 #include "DocAllMatchingIdsTable.h"
 #include "DocActionOpenWindowHelper.h"
 #include "../output/ImageTag.h"
+#include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
 
 CDocAlActionStruct::CDocAlActionStruct(CARInside &arIn, CARActiveLink &obj, string schemaName, int rootLevel)
@@ -905,7 +906,9 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 				CARSchema rSchema(openWindowSchema);
 				if (!rSchema.Exists())
 				{
-					strm << "<span class=\"fieldNotFound\">" << action.vuiLabel << "</span>";
+					ObjNotFound notFound(strm);
+					notFound << action.vuiLabel;
+					notFound.End();
 				}
 				else
 				{
@@ -913,7 +916,11 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 					if (vui.Exists())
 						strm << URLLink(vui, rootLevel);
 					else
-						strm << "<span class=\"fieldNotFound\">" << action.vuiLabel << "</span>";
+					{
+						ObjNotFound notFound(strm);
+						notFound << action.vuiLabel;
+						notFound.End();
+					}
 				}
 			}
 		}
@@ -937,7 +944,11 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 
 			if (!CDocActionOpenWindowHelper::GetReportData(action.reportString, reportType, reportLocation, reportName, reportDestination, *entryIDs, *queryOverride, *reportOperation, *charEncoding))
 			{
-				strm << "<p><span class=\"fieldNotFound\">Could not load report informations!</span></p>";
+				strm << "<p>";
+				ObjNotFound notFound(strm);
+				notFound << "Could not load report informations!";
+				notFound.End();
+				strm << "</p>";
 			}
 			else
 			{

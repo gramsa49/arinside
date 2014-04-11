@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocValidator.h"
+#include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 
@@ -593,7 +594,12 @@ void CDocValidator::MenuReferenceValidator()
 							unsigned int enabled = curRefIt->GetObjectEnabled();
 							if (!enabled)
 							{
-								strm << " (<span class=\"fieldNotFound\">" << CAREnum::ObjectEnable(enabled) << "</span>)";
+								// use the same formatting like used for missing objects
+								strm << " (";
+								ObjNotFound notFound(strm);
+								notFound << CAREnum::ObjectEnable(enabled);
+								notFound.End();
+								strm << ")";
 							}
 						}
 

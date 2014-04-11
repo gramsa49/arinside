@@ -45,6 +45,7 @@
 #include "doc/DocImageOverview.h"
 #include "doc/DocCustomWorkflow.h"
 
+#include "output/ObjNotFound.h"
 #include "output/ImageTag.h"
 #include "output/Table.h"
 #include "output/WebUtil.h"
@@ -1059,7 +1060,9 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, const strin
 
 	if(fieldInsideId > 0 && schemaInsideId > -1) //OpenWindow uses 0 what is no valid field
 	{
-		tmp << "<span class=\"fieldNotFound\">" << fieldInsideId << "</span>";
+		ObjNotFound notFound(tmp);
+		notFound << fieldInsideId;
+		notFound.End();
 	}
 	else
 	{
@@ -2187,7 +2190,11 @@ string CARInside::LinkToImage(const string &imageName, int rootLevel)
 	int imageIndex = imageList.FindImage(imageName.c_str());
 	if (imageIndex < 0)
 	{
-		return "<span class=\"fieldNotFound\">" + imageName + "</span>";
+		stringstream strm;
+		ObjNotFound notFound(strm);
+		notFound << imageName;
+		notFound.End();
+		return strm.str();
 	}
 	else
 	{

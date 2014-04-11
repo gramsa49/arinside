@@ -21,6 +21,7 @@
 #include "../core/ARGlobalField.h"
 #include "../core/ARQualification.h"
 #include "../output/ImageTag.h"
+#include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "../util/RefItem.h"
@@ -971,7 +972,11 @@ string CDocFieldDetails::FieldMapping()
 				if (schema.Exists())
 					strm << URLLink(schema, this->rootLevel);
 				else
-					strm << "<span class=\"fieldNotFound\">" << (schemaName.empty() ? EnumDefault : schemaName) << "</span>";
+				{
+					ObjNotFound notFound(strm);
+					notFound << (schemaName.empty() ? EnumDefault : schemaName);
+					notFound.End();
+				}
 				strm << "<br/>";
 
 				strm << "Field Name: ";
@@ -980,7 +985,11 @@ string CDocFieldDetails::FieldMapping()
 				if (field.Exists())
 					strm << URLLink(field, this->rootLevel);
 				else
-					strm << "<span class=\"fieldNotFound\">" << map.u.join.realId << "</span>";
+				{
+					ObjNotFound notFound(strm);
+					notFound << map.u.join.realId;
+					notFound.End();
+				}
 			}
 		}
 		break;
@@ -993,7 +1002,11 @@ string CDocFieldDetails::FieldMapping()
 			if (compSchema.schemaType == AR_SCHEMA_VIEW) 
 				strm << compSchema.u.view.tableName;
 			else
-				strm << "<span class=\"fieldNotFound\">" << EnumDefault << "</span>";
+			{
+				ObjNotFound notFound(strm);
+				notFound << EnumDefault;
+				notFound.End();
+			}
 		}
 		break;
 
@@ -1005,14 +1018,22 @@ string CDocFieldDetails::FieldMapping()
 			if (compSchema.schemaType == AR_SCHEMA_VENDOR)
 				strm << compSchema.u.vendor.vendorName;
 			else
-				strm << "<span class=\"fieldNotFound\">" << EnumDefault << "</span>";
+			{
+				ObjNotFound notFound(strm);
+				notFound << EnumDefault;
+				notFound.End();
+			}
 			strm << "<br/>";
 
 			strm << "Table: ";
 			if (compSchema.schemaType == AR_SCHEMA_VENDOR)
 				strm << compSchema.u.vendor.tableName;
 			else
-				strm << "<span class=\"fieldNotFound\">" << EnumDefault << "</span>";
+			{
+				ObjNotFound notFound(strm);
+				notFound << EnumDefault;
+				notFound.End();
+			}
 		}
 		break;
 	}

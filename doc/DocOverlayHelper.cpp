@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocOverlayHelper.h"
 #include "../core/ARServerObject.h"
+#include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
 #include "../ARInside.h"
 
@@ -73,7 +74,11 @@ string CDocOverlayHelper::PlaceOverlayLink()
 			if (target->Exists())
 				tmpStrm << URLLink(*target, rootLevel, false);
 			else
-				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;
+			{
+				ObjNotFound notFound(tmpStrm);
+				notFound << missing_note;
+				notFound.End();
+			}
 			return tmpStrm.str();
 		}
 		break;
@@ -84,7 +89,11 @@ string CDocOverlayHelper::PlaceOverlayLink()
 			if (target->Exists())
 				tmpStrm << URLLink(*target, rootLevel, false);
 			else
-				tmpStrm << "<span class=\"fieldNotFound\">" << missing_note << "</span>" << endl;				
+			{
+				ObjNotFound notFound(tmpStrm);
+				notFound << missing_note;
+				notFound.End();
+			}
 			return tmpStrm.str();
 		}
 		break;
@@ -108,7 +117,11 @@ string CDocOverlayHelper::PlaceOverlaidNotice()
 	if (target.get() != NULL && target->Exists())
 		tmp << URLLink(*target, rootLevel, false);
 	else
-		tmp << "<span class=\"fieldNotFound\">" << "object missing" << "</span>";
+	{
+		ObjNotFound notFound(tmp);
+		notFound << "object missing";
+		notFound.End();
+	}
 	
 	tmp << "</div>";
 

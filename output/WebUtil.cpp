@@ -15,6 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "ObjNotFound.h"
 #include "RootPath.h"
 #include "URLLink.h"
 #include "WebUtil.h"
@@ -290,7 +291,11 @@ string CWebUtil::LinkToMenu(string menuName, int rootLevel)
 	//Menu has not been found
 	//If the menu is missing, we just return the name of it. maybe link to the
 	//"missing menus" page (must be implemented first) of CDocValidator later.
-	return "<span class=\"fieldNotFound\">" + menuName + "</span>";
+	stringstream strm;
+	ObjNotFound notFound(strm);
+	notFound << menuName;
+	notFound.End();
+	return strm.str();
 }
 
 string CWebUtil::LinkToMenu(const CRefItem& refItem, int rootLevel)
