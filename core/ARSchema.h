@@ -76,7 +76,6 @@ public:
 	string GetURL(int rootLevel, bool useImage = true) const;
 
 	string LinkToVui(int vuiId, int fromRootLevel);
-	string LinkToVui(string vuiName, int fromRootLevel);
 	string VuiGetLabel(int vuiId);
 
 	// class type support

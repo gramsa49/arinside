@@ -842,11 +842,23 @@ string CDocFieldDetails::DisplayProperties()
 				tbl.AddRow(row);				
 			}	
 
+			int vuiId = dispList.dInstanceList[i].vui;
+			CARVui vui(schema.GetInsideId(), vuiId);
+
 			stringstream viewTmpDesc;
 			viewTmpDesc.str("");
 			viewTmpDesc << "Display Properties in " << URLLink("Schema", CPageParams(PAGE_DETAILS, &schema), rootLevel) << ", View: " << endl;
-			viewTmpDesc << this->schema.LinkToVui(dispList.dInstanceList[i].vui, rootLevel);
-			viewTmpDesc << " (Id: " << dispList.dInstanceList[i].vui << ", Label: " << this->schema.VuiGetLabel(dispList.dInstanceList[i].vui) << ")" << endl;
+			viewTmpDesc << this->schema.LinkToVui(vuiId, rootLevel);
+			viewTmpDesc << " (Id: " << vuiId << ", Label: "; 
+			if (vui.Exists()) 
+			{ 
+				viewTmpDesc << vui.Label();
+			}
+			else 
+			{
+				viewTmpDesc << vuiId;
+			}
+			viewTmpDesc << ")" << endl;
 
 
 			tbl.description = viewTmpDesc.str();

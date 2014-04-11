@@ -909,7 +909,11 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 				}
 				else
 				{
-					strm << rSchema.LinkToVui(action.vuiLabel, rootLevel);	
+					CARVui vui(rSchema.GetInsideId(), action.vuiLabel);
+					if (vui.Exists())
+						strm << URLLink(vui, rootLevel);
+					else
+						strm << "<span class=\"fieldNotFound\">" << action.vuiLabel << "</span>";
 				}
 			}
 		}

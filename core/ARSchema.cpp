@@ -104,49 +104,6 @@ string CARSchema::LinkToVui(int vuiId, int fromRootLevel)
 	return EmptyValue;
 }
 
-
-string CARSchema::LinkToVui(string vuiLabel, int fromRootLevel)
-{	
-	CARVUIList* vuiList = this->GetVUIs();
-	unsigned int vuiCount = vuiList->GetCount();
-	for (unsigned int vuiIndex = 0; vuiIndex < vuiCount; ++vuiIndex)
-	{
-		CARVui vui(GetInsideId(), 0, vuiIndex);
-		const ARPropList& propList = vui.GetDisplayProps();
-
-		for(unsigned int i=0; i < propList.numItems; ++i)
-		{
-			if (propList.props[i].prop == AR_DPROP_LABEL && propList.props[i].value.dataType == AR_DATA_TYPE_CHAR)
-			{
-				if(vuiLabel.compare(propList.props[i].value.u.charVal) == 0)
-				{
-					return CWebUtil::Link(propList.props[i].value.u.charVal, CPageParams(PAGE_DETAILS, &vui), "", fromRootLevel);
-				}
-				break;
-			}
-		}
-	}
-
-	return "<span class=\"fieldNotFound\">" + vuiLabel + "</span>";
-}
-
-string CARSchema::VuiGetLabel(int vuiId)
-{
-	unsigned int vuiCount = this->GetVUIs()->GetCount();
-	for(unsigned int vuiIndex = 0; vuiIndex < vuiCount; ++vuiIndex)
-	{
-		CARVui vui(GetInsideId(), 0, vuiIndex);
-		if(vui.GetId() == vuiId)
-		{
-			return vui.Label();
-		}
-	}
-
-	stringstream strmTmp;
-	strmTmp << vuiId;    
-	return strmTmp.str();
-}
-
 string CARSchema::GetName()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId());

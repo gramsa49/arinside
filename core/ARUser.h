@@ -55,9 +55,6 @@ public:
 	int GetFTLicenseType() const;
 	ARTimestamp GetCreateDate() const;
 
-	// some helpers
-	string GetURL(int rootLevel, bool useImage = true) const;
-
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_USER; }
 	bool IsClonable() const;
