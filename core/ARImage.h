@@ -53,8 +53,6 @@ public:
 	const ARImageDataStruct& GetData() const;
 	const ARPropList& GetPropList() const;
 
-	string GetURL(int rootLevel, bool showImage = true) const;
-	
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_IMAGE; }
 	bool IsClonable() const;

@@ -438,13 +438,6 @@ void CARActiveLinkList::Sort()
 #endif
 }
 
-string CARActiveLinkList::ActiveLinkGetURL(unsigned int index, int rootLevel)
-{
-	CARActiveLink al(index);
-	CPageParams file(PAGE_DETAILS,&al);
-	return CWebUtil::Link(ActiveLinkGetName(index), file, "active_link.gif", rootLevel); 
-}
-
 void CARActiveLinkList::AddOverlayOrCustom(unsigned int index)
 {
 	overlayAndCustomList.push_back(index);

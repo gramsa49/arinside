@@ -45,7 +45,6 @@ public:
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const = 0;
 	virtual const char* VUIGetChangeDiary(unsigned int index) const = 0;
 	virtual const ARPropList& VUIGetPropList(unsigned int index) const = 0;
-	//virtual string VUIGetURL(unsigned int index, int rootLevel);
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -76,7 +75,6 @@ public:
 	virtual const ARAccessNameType& VUIGetModifiedBy(unsigned int index) const { return vuiList.vuiList[sortedList[index]].lastChanged; }
 	virtual const char* VUIGetChangeDiary(unsigned int index) const { return vuiList.vuiList[sortedList[index]].changeDiary; }
 	virtual const ARPropList& VUIGetPropList(unsigned int index) const;
-	//virtual string VUIGetURL(unsigned int index, int rootLevel);
 
 	friend class CARSchemaList;
 private:

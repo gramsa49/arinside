@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARAssignHelper.h"
+#include "../output/URLLink.h"
 
 CARAssignHelper::CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject &obj, const CARSchema& schema1, const CARSchema& schema2)
 {
@@ -289,7 +290,7 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 						CARField statHistField(schemaInsideId2, iFieldId);
 						if (statHistField.Exists())
 						{
-							assignText << statHistField.GetURL(rootLevel);
+							assignText << URLLink(statHistField, rootLevel);
 							arIn->AddFieldReference(schemaInsideId2, iFieldId, refItem);
 						}
 						else

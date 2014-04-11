@@ -33,7 +33,6 @@ public:
 	virtual const ARAccessNameType& GetLastChanged() const = 0;
 	virtual const char* GetChangeDiary() const = 0;
 	virtual const ARPropList& GetPropList() const = 0;
-	virtual string GetURL(int rootLevel, bool showImage = true) const = 0;
 	virtual int GetServerObjectTypeXML() const = 0;
 
 	virtual CARServerObject* Clone() const = 0;

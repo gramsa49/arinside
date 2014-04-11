@@ -60,8 +60,7 @@ public:
 
 	// some helpers
 	string GetExecuteOn(bool singleLine=false);
-	string GetURL(int rootLevel, bool showImage = true) const;
-
+	
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_FILTER; }
 	bool IsClonable() const;

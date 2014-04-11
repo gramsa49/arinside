@@ -51,12 +51,6 @@ CARServerObject* CARGroup::Clone() const
 	return new CARGroup(*this);
 }
 
-string CARGroup::GetURL(int rootLevel, bool useImage) const
-{
-	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(this->GetName(), file, (useImage ? "group.gif" : ""), rootLevel);
-}
-
 string CARGroup::GetName()
 {
 	return CARInside::GetInstance()->groupList.GroupGetName(GetInsideId());

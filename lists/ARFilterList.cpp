@@ -434,13 +434,6 @@ void CARFilterList::Sort()
 #endif
 }
 
-string CARFilterList::FilterGetURL(unsigned int index, int rootLevel)
-{
-	CARFilter flt(index);
-	CPageParams file(PAGE_DETAILS, &flt);
-	return CWebUtil::Link(FilterGetName(index), file, "filter.gif", rootLevel); 
-}
-
 void CARFilterList::AddOverlayOrCustom(unsigned int index)
 {
 	overlayAndCustomList.push_back(index);

@@ -48,9 +48,6 @@ public:
 	int GetCategory() const;
 	const string& GetComputedQualification() const;
 
-	// some helpers
-	string GetURL(int rootLevel, bool useImage = true) const;
-
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_GROUP; }
 	bool IsClonable() const;

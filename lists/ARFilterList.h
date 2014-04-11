@@ -53,7 +53,6 @@ public:
 	const ARAccessNameType& FilterGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
 	const char* FilterGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
 	const ARPropList& FilterGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
-	string FilterGetURL(unsigned int index, int rootLevel);
 
 	// Notice about the function below (FilterGetErrorOption)
 	// The errorOptions list might contain zero items if we connect to a 7.0/6.3

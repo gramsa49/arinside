@@ -53,9 +53,6 @@ public:
 	const GroupList& GetGroupsProd() const;
 	ARTimestamp GetCreateDate() const;
 
-	// some helpers
-	string GetURL(int rootLevel, bool useImage = true) const;
-
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_ROLE; }
 	bool IsClonable() const;

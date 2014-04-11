@@ -52,7 +52,6 @@ public:
 	void SetAppRefName(const string& appName);
 
 	// helpers
-	string GetURL(int rootLevel, bool showImage = true) const;
 	bool IsUsedInWorkflow() const;
 
 	// class type support

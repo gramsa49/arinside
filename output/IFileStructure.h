@@ -21,9 +21,6 @@ class CARDataObject;
 
 class IFileStructure
 {
-	/// IMPORTANT NOTE: avoid calling the GetURL methods of any object. 
-	/// For example in: virtual string GetPath(const CARActiveLink &obj) 
-	/// dont call obj.GetURL(...). This will lead to an infinite loop!
 public:
 
 	/// returns the root level of the directory returned by GetPath

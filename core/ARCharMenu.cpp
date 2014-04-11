@@ -53,12 +53,6 @@ CARServerObject* CARCharMenu::Clone() const
 	return new CARCharMenu(*this);
 }
 
-string CARCharMenu::GetURL(int rootLevel, bool showImage) const
-{
-	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(GetARName(), file, (showImage ? "menu.gif" : ""), rootLevel);
-}
-
 string CARCharMenu::GetName()
 {
 	return CARInside::GetInstance()->menuList.MenuGetName(GetInsideId());

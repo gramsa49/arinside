@@ -56,7 +56,6 @@ public:
 	// some helpers
 	string GetTimeCriteria();
 	string GetExecuteOn();
-	string GetURL(int rootLevel, bool showImage = true) const;
 	unsigned int GetPool(CARProplistHelper* propList = NULL) const;
 	string GetPoolStr(CARProplistHelper* propList = NULL) const;
 

@@ -57,7 +57,6 @@ public:
 	const ARAccessNameType& ActiveLinkGetModifiedBy(unsigned int index) const { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
 	const char* ActiveLinkGetChangeDiary(unsigned int index) const { assert(index < changeDiary.numItems); return changeDiary.stringList[sortedList[index]]; }
 	const ARPropList& ActiveLinkGetPropList(unsigned int index) const { assert(index < objProps.numItems); return objProps.propsList[sortedList[index]]; }
-	string ActiveLinkGetURL(unsigned int index, int rootLevel);
 
 	const string& ActiveLinkGetAppRefName(unsigned int index) const { assert(index < appRefNames.size()); return appRefNames[sortedList[index]]; }
 	void ActiveLinkSetAppRefName(unsigned int index, const string& appName) { assert(index < appRefNames.size()); appRefNames[sortedList[index]] = appName; }

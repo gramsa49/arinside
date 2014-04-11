@@ -57,7 +57,6 @@ public:
 	virtual const ARAccessNameType& FieldGetModifiedBy(unsigned int index) const = 0;
 	virtual const char* FieldGetChangeDiary(unsigned int index) const = 0;
 	virtual const ARPropList& FieldGetPropList(unsigned int index) const = 0;
-	//virtual string FieldGetURL(unsigned int index, int rootLevel) = 0;
 
 	// types used for workflow references
 	typedef list<CRefItem> ReferenceList;

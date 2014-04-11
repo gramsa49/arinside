@@ -62,7 +62,6 @@ public:
 	void SetAppRefName(const string& appName);
 
 	string GetExecuteOn(bool singleLine=false, CARProplistHelper* props=NULL);
-	string GetURL(int rootLevel, bool showImage = true) const;
 
 	static const unsigned int XmlTypeDef = AR_STRUCT_ITEM_XML_ACTIVE_LINK ;
 	int GetServerObjectTypeXML() const { return XmlTypeDef; }

@@ -48,12 +48,6 @@ CARServerObject* CARFilter::Clone() const
 	return new CARFilter(*this);
 }
 
-string CARFilter::GetURL(int rootLevel, bool showImage) const
-{
-	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(this->GetName(), file, (showImage ? "filter.gif" : ""), rootLevel);
-}
-
 bool CARFilter::Exists() const
 {
 	return (insideId >= 0 && (unsigned int)insideId < CARInside::GetInstance()->filterList.GetCount());

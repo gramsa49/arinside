@@ -50,12 +50,6 @@ CARServerObject* CARRole::Clone() const
 	return new CARRole(*this);
 }
 
-string CARRole::GetURL(int rootLevel, bool useImage) const
-{
-	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(this->GetName(), file, (useImage ? "doc.gif" : ""), rootLevel);
-}
-
 string CARRole::GetName()
 {
 	return CARInside::GetInstance()->roleList.RoleGetName(GetInsideId());

@@ -111,12 +111,6 @@ const ARPropList& CARImage::GetPropList() const
 	return CARInside::GetInstance()->imageList.ImageGetPropList(GetInsideId());
 }
 
-string CARImage::GetURL(int rootLevel, bool showImage) const
-{
-	CPageParams file(PAGE_DETAILS, this);
-	return CWebUtil::Link(this->GetName(), file, (showImage ? "image.gif" : ""), rootLevel); 
-}
-
 void CARImage::AddReference(const CRefItem &refItem)
 {
 	CARInside::GetInstance()->imageList.AddReference(GetInsideId(), refItem);
