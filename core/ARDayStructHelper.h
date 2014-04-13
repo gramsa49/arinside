@@ -12,7 +12,7 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #pragma once
 
@@ -20,6 +20,6 @@
 class CARDayStructHelper
 {
 public:
-	static string DayStructToHTMLString(const ARDayStruct* dayStruct);
+	static string DayStructToHTMLString(const ARDayStruct &dayStruct);
 	static void SplitInterval(unsigned int interval, unsigned int &days, unsigned int &hours, unsigned int &minutes, unsigned int &seconds);
 };

@@ -2233,7 +2233,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 
 		row.ClearCells();
 		row.AddCell("Times");
-		row.AddCell(CARDayStructHelper::DayStructToHTMLString(&archive.archiveTime));
+		row.AddCell(CARDayStructHelper::DayStructToHTMLString(archive.archiveTime));
 		tbl.AddRow(row);
 
 		row.ClearCells();
@@ -2667,7 +2667,7 @@ void CDocSchemaDetails::ShowFTSMTSProperties(std::ostream& strm, CARProplistHelp
 		row.AddCell("FT-indexed field updates");
 		if (timeValue.monthday != 0 || timeValue.weekday != 0 || timeValue.hourmask != 0 || timeValue.minute != 0)
 		{
-			row.AddCell(CARDayStructHelper::DayStructToHTMLString(&timeValue));
+			row.AddCell(CARDayStructHelper::DayStructToHTMLString(timeValue));
 		}
 		else if (intervalValue != 0)
 		{

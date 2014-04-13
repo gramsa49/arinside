@@ -12,64 +12,75 @@
 //    GNU General Public License for more details.
 //
 //    You should have received a copy of the GNU General Public License
-//    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
 #include "ARDayStructHelper.h"
+#include "AREnum.h"
 
-string CARDayStructHelper::DayStructToHTMLString(const ARDayStruct* dayStruct)
+string CARDayStructHelper::DayStructToHTMLString(const ARDayStruct &dayStruct)
 {
 	stringstream strm; strm.str("");
 	try
 	{
-		char weekdays[][15] = { "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+		bool first = true;
 
 		strm << "Weekday(s):<br/> ";
 		bool bWeekDay=false;
 		for (unsigned int i = 0; i < 7; i++)
 		{
-			if (AR_DAY(dayStruct->weekday, i))
+			if (AR_DAY(dayStruct.weekday, i))
 			{
-				strm << weekdays[i] << ", ";
+				if (first)
+					first = false;
+				else
+					strm << ", ";
+
+				strm << CAREnum::WeekDayName(i);
 				bWeekDay=true;
 			}				
 		}
 		if(!bWeekDay)
 			strm << "None ";
-		else
-			CUtil::CleanUpStream(strm, 2);
 
 		strm << "\n<br/><br/>Day of Month:<br/>\n";
 		bool bDayOfMonth=false;
+		first = true;
 		for (unsigned int i = 0; i < 31; i++)
 		{
-			if (AR_DAY(dayStruct->monthday, i))
+			if (AR_DAY(dayStruct.monthday, i))
 			{
-				strm << i+1 << ", ";
+				if (first)
+					first = false;
+				else
+					strm << ", ";
+				strm << i+1;
 				bDayOfMonth=true;
 			}
 		}
 		if(!bDayOfMonth)
 			strm << "None ";
-		else
-			CUtil::CleanUpStream(strm, 2);
 
 		strm << "<br/><br/>Time:<br/>";
 		bool bTime=false;
+		first=true;
 		for (unsigned int i = 0; i < 24; i++)
 		{
-			if (AR_HOUR(dayStruct->hourmask, i))
+			if (AR_HOUR(dayStruct.hourmask, i))
 			{
+				if (first)
+					first = false;
+				else
+					strm << ", ";
+
 				char tmp[10];
-				sprintf(tmp, "%.02d:%.02d", i, dayStruct->minute);
-				strm << tmp << ", ";
+				sprintf(tmp, "%.02d:%.02d", i, dayStruct.minute);
+				strm << tmp;
 				bTime=true;
 			}
 		}
 		if(!bTime)
 			strm << "None";
-		else
-			CUtil::CleanUpStream(strm, 2);
 	}
 	catch (...)
 	{

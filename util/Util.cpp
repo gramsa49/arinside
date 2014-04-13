@@ -109,19 +109,6 @@ int CUtil::SplitString(const std::string& input_record, std::vector<std::string>
 	return static_cast<int>(colv.size());
 }
 
-//Remove last n chars from string
-void CUtil::CleanUpStream(stringstream &strm, unsigned int nLength)
-{
-	if(strm != NULL
-		&& strm.str().size() > nLength)
-	{
-		string tmp = strm.str();
-		tmp.erase(tmp.size()-nLength, nLength);		
-		strm.str("");
-		strm << tmp;
-	}
-}
-
 string CUtil::DateToString(int dateInt)
 {
 	//formula found from http://en.wikipedia.org/wiki/Julian_day#Gregorian_calendar_from_Julian_day_number

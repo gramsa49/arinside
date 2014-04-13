@@ -76,7 +76,7 @@ string CAREscalation::GetTimeCriteria()
 		}
 		else
 		{
-			return CARDayStructHelper::DayStructToHTMLString(&escalationTm.u.date);
+			return CARDayStructHelper::DayStructToHTMLString(escalationTm.u.date);
 		}
 	}
 	catch(exception& e)
