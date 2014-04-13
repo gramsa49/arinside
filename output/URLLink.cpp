@@ -124,16 +124,53 @@ namespace OUTPUT
 		return strm.str();
 	}
 
+	CheckedURLLink::CheckedURLLink(const CARServerObject &workflowObject, const std::string &alternateHTML, int rootLevel, bool showImage)
+	{
+		if (workflowObject.Exists())
+		{
+			InitObj(workflowObject, rootLevel, showImage);
+		}
+		else
+		{
+			InitDirect(alternateHTML);
+		}
+	}
+
+	DirectURLLink::DirectURLLink(OUTPUT::DirectURLLink::DirectLinkEnum directLinkType, int rootLevel)
+	{
+		switch (directLinkType)
+		{
+		case CreateTop: InitDirect("<a id=\"top\"></a>"); break;
+		case LinkToTop: InitLinkEnum("Top", ImageTag::Up, "#top", rootLevel); break;
+		default: InitDirect("");
+		}
+	}
+
+	void DirectURLLink::InitLinkEnum(const std::string &caption, const OUTPUT::ImageTag::ImageEnum imageId, const std::string &href, int rootLevel)
+	{
+		stringstream strm;
+		if (imageId != ImageTag::NoImage)
+		{
+			ImageTag image(imageId, rootLevel);
+			strm << image;
+		}
+		strm << "<a href=\"" << href << "\">";
+		AddCaption(strm, caption, true);
+		strm << "</a>";
+
+		InitDirect(strm.str());
+	}
+
+	ostream& operator <<(ostream &strm, const OUTPUT::DirectURLLink::DirectLinkEnum link)
+	{
+		DirectURLLink linkInst(link, 0);
+		return linkInst.ToStream(strm);
+	}
+
+	ostream& operator <<(ostream &strm, const OUTPUT::DirectURLLink &link)
+	{
+		return link.ToStream(strm);
+	}
+
 }; // end namespace OUTPUT
 
-CheckedURLLink::CheckedURLLink(const CARServerObject &workflowObject, const std::string &alternateHTML, int rootLevel, bool showImage)
-{
-	if (workflowObject.Exists())
-	{
-		InitObj(workflowObject, rootLevel, showImage);
-	}
-	else
-	{
-		InitDirect(alternateHTML);
-	}
-}

@@ -69,7 +69,7 @@ void CDocSchemaDetails::Documentation()
 			stringstream contHeadStrm;
 			contHeadStrm << CWebUtil::LinkToSchemaIndex(rootLevel, false) << endl;
 			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
-			contHeadStrm << MenuSeparator << CWebUtil::ImageTag(CAREnum::SchemaTypeImage(compSchema.schemaType), rootLevel) << CWebUtil::ObjName(this->schema.GetName());
+			contHeadStrm << MenuSeparator << ImageTag(schema, rootLevel) << CWebUtil::ObjName(this->schema.GetName());
 			contHeadStrm << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!this->schema.GetAppRefName().empty())
@@ -1116,9 +1116,9 @@ void CDocSchemaDetails::ShowSortListProperties(std::ostream &strm, CARProplistHe
 
 				string sortImage;
 				if(sorting.sortList[i].sortOrder == AR_SORT_DESCENDING)
-					sortImage = CWebUtil::ImageTag("sort_desc.gif", rootLevel);
+					sortImage = ImageTag(ImageTag::SortDesc, rootLevel);
 				else
-					sortImage = CWebUtil::ImageTag("sort_asc.gif", rootLevel);
+					sortImage = ImageTag(ImageTag::SortAsc, rootLevel);
 
 				row.AddCell( CTableCell(sortImage));
 				row.AddCell( CTableCell(URLLink(field, rootLevel)));

@@ -60,6 +60,10 @@ namespace OUTPUT
 		case ImageTag::Visible: return "visible.gif";
 		case ImageTag::Edit: return "edit.gif";
 		case ImageTag::Next: return "next.gif";
+		case ImageTag::SortAsc: return "sort_asc.gif";
+		case ImageTag::SortDesc: return "sort_desc.gif";
+		case ImageTag::Up: return "up.gif";
+		case ImageTag::Down: return "down.gif";
 		}
 		// always throw an assert here, in case a undefined image is used!
 		assert(false);
@@ -71,6 +75,7 @@ namespace OUTPUT
 	ImageDimensions FolderImageDimensions = { 16, 13 };
 	ImageDimensions PermissionDimensions =  { 18, 18 };
 	ImageDimensions NextImageDimensions = { 10, 10 };
+	ImageDimensions UpDownDimensions = { 14, 10 };
 
 	// the following provides the image dimensions (width and height)
 	// for a particular imageId. If new images don't use the default
@@ -86,6 +91,8 @@ namespace OUTPUT
 		case ImageTag::Visible:
 		case ImageTag::Edit: return PermissionDimensions;
 		case ImageTag::Next: return NextImageDimensions;
+		case ImageTag::Up: 
+		case ImageTag::Down: return UpDownDimensions;
 		}
 		return DefaultImageDimensions;
 	}

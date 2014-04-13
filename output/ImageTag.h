@@ -51,7 +51,10 @@ namespace OUTPUT
 			Visible,
 			Edit,
 			Next,
-			
+			SortAsc,
+			SortDesc,
+			Up,
+			Down,
 		};
 
 		// constructors

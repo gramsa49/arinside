@@ -102,7 +102,7 @@ void CWebPage::DynamicFooterText(ostream &strm)
 	strm << "<table><tr>" << endl;
 	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Next, rootLevel)<< "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
-	strm << "<td>" << CWebUtil::Link("Top", "#top", "up.gif", rootLevel)<< "</td>" << endl;
+	strm << "<td>" << DirectURLLink(DirectURLLink::LinkToTop, rootLevel) << "</td>" << endl;
 	strm << "<td>&nbsp;</td>" << endl;
 #if ARINSIDE_TEST_SUPPORT
 	if (appConfig.testMode)
@@ -116,7 +116,7 @@ void CWebPage::DynamicFooterText(ostream &strm)
 void CWebPage::ContentOpen(ostream &strm)
 {
 	strm << "<body>" << endl;
-	strm << "<a name=\"top\"></a>" << endl;
+	strm << DirectURLLink::CreateTop << endl;
 	strm << "<table class=\"TblMain\">" << endl;
 	strm << "<tr><td class=\"TdMainHeader\" colspan=\"3\">" << endl;
 	DynamicHeaderText(strm);

@@ -130,3 +130,21 @@ TEST_F(URLLinkTests, CheckedObjectMissing)
 
 	ASSERT_STREQ(AlternateHTMLIfObjectDoesNotExist, result.c_str());
 }
+
+TEST_F(URLLinkTests, TopLinkCreation)
+{
+	stringstream strm;
+	strm << DirectURLLink::CreateTop;
+	string result = strm.str();
+
+	ASSERT_STREQ("<a id=\"top\"></a>", result.c_str());
+}
+
+TEST_F(URLLinkTests, LinkToTop)
+{
+	stringstream strm;
+	strm << DirectURLLink(DirectURLLink::LinkToTop, rootLevel);
+	string result = strm.str();
+
+	ASSERT_STREQ("<img src=\"../img/up.gif\" width=\"14\" height=\"10\" alt=\"up.gif\" /><a href=\"#top\">Top</a>", result.c_str());
+}

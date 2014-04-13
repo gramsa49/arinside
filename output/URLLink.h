@@ -61,5 +61,21 @@ namespace OUTPUT
 		CheckedURLLink(const CARServerObject &workflowObject, const std::string &alternateHTML, int rootLevel, bool showImage = true);
 	};
 
+	class DirectURLLink : public URLLink
+	{
+	public:
+		enum DirectLinkEnum
+		{
+			CreateTop,
+			LinkToTop
+		};
+		DirectURLLink(DirectLinkEnum directLinkType, int rootLevel);
+
+	private:
+		void InitLinkEnum(const std::string &caption, const OUTPUT::ImageTag::ImageEnum imageId, const std::string &href, int rootLevel);
+	};
+
 	std::ostream& operator<<(std::ostream &stream, const OUTPUT::URLLink &link);
+	std::ostream& operator<<(std::ostream &stream, const OUTPUT::DirectURLLink::DirectLinkEnum link);
+	std::ostream& operator<<(std::ostream &stream, const OUTPUT::DirectURLLink &link);
 };
