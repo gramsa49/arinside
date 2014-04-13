@@ -849,7 +849,7 @@ string CDocFieldDetails::DisplayProperties()
 			stringstream viewTmpDesc;
 			viewTmpDesc.str("");
 			viewTmpDesc << "Display Properties in " << URLLink("Schema", CPageParams(PAGE_DETAILS, &schema), rootLevel) << ", View: " << endl;
-			viewTmpDesc << this->schema.LinkToVui(vuiId, rootLevel);
+			viewTmpDesc << CheckedURLLink(vui, EmptyValue, rootLevel);
 			viewTmpDesc << " (Id: " << vuiId << ", Label: "; 
 			if (vui.Exists()) 
 			{ 

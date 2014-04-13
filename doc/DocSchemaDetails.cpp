@@ -2502,7 +2502,7 @@ string CDocSchemaDetails::ShowGeneralInfo()
 	CARVui defaultVUI(this->schema.GetInsideId(), this->schema.GetDefaultVUI());
 
 	row.AddCell("Default View");
-	row.AddCell((defaultVUI.Exists() ? defaultVUI.GetURL(rootLevel) : this->schema.GetDefaultVUI()));
+	row.AddCell(CheckedURLLink(defaultVUI, schema.GetDefaultVUI(), rootLevel));
 	tbl.AddRow(row);
 	row.ClearCells();
 

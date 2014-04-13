@@ -90,20 +90,6 @@ string CARSchema::WebAlias()
 	return strm.str();
 }
 
-
-string CARSchema::LinkToVui(int vuiId, int fromRootLevel)
-{	
-	if (vuiId >= 0)
-	{
-		CARVui vui(this->GetInsideId(), vuiId);
-		if (vui.Exists())
-		{
-			return vui.GetURL(fromRootLevel);
-		}
-	}
-	return EmptyValue;
-}
-
 string CARSchema::GetName()
 {
 	return CARInside::GetInstance()->schemaList.SchemaGetName(GetInsideId());

@@ -75,9 +75,6 @@ public:
 	string WebAlias();
 	string GetURL(int rootLevel, bool useImage = true) const;
 
-	string LinkToVui(int vuiId, int fromRootLevel);
-	string VuiGetLabel(int vuiId);
-
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_SCHEMA; }
 	bool IsClonable() const;
