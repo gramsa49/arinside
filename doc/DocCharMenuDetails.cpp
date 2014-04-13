@@ -226,7 +226,7 @@ void CDocCharMenuDetails::SqlMenuDetails(CTable& table)
 			stringstream strm;
 			const ARCharMenuSQLStruct& menu = this->menu.GetDefinition().u.menuSQL;
 
-			// in case a field in placed within the SQL command
+			// in case a field is placed within the SQL command
 			CRefItem refItem(this->menu, REFM_CHARMENU_SQL);
 
 			strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
@@ -236,8 +236,8 @@ void CDocCharMenuDetails::SqlMenuDetails(CTable& table)
 
 			// add the table row now
 			CTableRow row;
-			row.AddCell( (schema.Exists() ? schema.GetURL(rootLevel) : MenuDefinitionText) );
-			row.AddCell( strm.str() );
+			row.AddCell(CheckedURLLink(schema, MenuDefinitionText, rootLevel));
+			row.AddCell(strm.str());
 			table.AddRow(row);
 		}
 	}
@@ -330,7 +330,7 @@ void CDocCharMenuDetails::DataDictMenuDetails(CTable& table)
 
 			// add the table row
 			CTableRow row;
-			row.AddCell((schema.Exists() ? schema.GetURL(rootLevel) : MenuDefinitionText));
+			row.AddCell(CheckedURLLink(schema, MenuDefinitionText, rootLevel));
 			row.AddCell(strm.str());
 			table.AddRow(row);
 		}
@@ -411,7 +411,7 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 
 			// now add the row to the table
 			CTableRow row;
-			row.AddCell((schema.Exists() ? schema.GetURL(rootLevel) : MenuDefinitionText));
+			row.AddCell(CheckedURLLink(schema, MenuDefinitionText, rootLevel));
 			row.AddCell(strm.str());
 			table.AddRow(row);
 		}

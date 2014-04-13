@@ -56,8 +56,7 @@ namespace OUTPUT
 	}
 	URLLink::URLLink(const CARServerObject &workflowObject, int rootLevel, bool showImage)
 	{
-		CPageParams linkToPage(PAGE_DETAILS, &workflowObject);
-		Init(workflowObject.GetName(), linkToPage, (showImage ? ImageTag(workflowObject, rootLevel) : ImageTag(ImageTag::NoImage, 0)), rootLevel, true, URLLink::TARGET_MODE_SELF);
+		InitObj(workflowObject, rootLevel, showImage);
 	}
 
 	// Central class initialization
@@ -91,6 +90,17 @@ namespace OUTPUT
 		link = strmTmp.str();
 	}
 
+	void URLLink::InitObj(const CARServerObject &workflowObject, int rootLevel, bool showImage)
+	{
+		CPageParams linkToPage(PAGE_DETAILS, &workflowObject);
+		Init(workflowObject.GetName(), linkToPage, (showImage ? ImageTag(workflowObject, rootLevel) : ImageTag(ImageTag::NoImage, 0)), rootLevel, true, URLLink::TARGET_MODE_SELF);
+	}
+
+	void URLLink::InitDirect(const std::string &linkHTML)
+	{
+		link = linkHTML;
+	}
+
 	void URLLink::AddCaption(std::ostream &strm, const std::string &caption, bool validate)
 	{
 		strm << (validate ? CWebUtil::Validate(caption) : caption);
@@ -115,3 +125,15 @@ namespace OUTPUT
 	}
 
 }; // end namespace OUTPUT
+
+CheckedURLLink::CheckedURLLink(const CARServerObject &workflowObject, const std::string &alternateHTML, int rootLevel, bool showImage)
+{
+	if (workflowObject.Exists())
+	{
+		InitObj(workflowObject, rootLevel, showImage);
+	}
+	else
+	{
+		InitDirect(alternateHTML);
+	}
+}

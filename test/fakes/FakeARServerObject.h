@@ -6,8 +6,10 @@
 class CFakeServerObject : public CARServerObject
 {
 public:
-	CFakeServerObject(const std::string &name = "TheTestObj", unsigned int xmlType = AR_STRUCT_ITEM_XML_ACTIVE_LINK, unsigned int overlayType = AR_ORIGINAL_OBJECT)
+	CFakeServerObject(const std::string &name, unsigned int xmlType = AR_STRUCT_ITEM_XML_ACTIVE_LINK, unsigned int overlayType = AR_ORIGINAL_OBJECT)
 		: CARServerObject(0) { objName = name; objType = xmlType; objOverlayType = overlayType; }
+	CFakeServerObject()
+		: CARServerObject(-1) { objType = 0; objOverlayType = 0; }
 
 	ARAccessNameType name;
 	string objName;
@@ -15,7 +17,7 @@ public:
 	unsigned int objOverlayType;
 
 	// from CARServerObject
-	virtual bool Exists() const { return true; }
+	virtual bool Exists() const { return (insideId>-1); }
 
 	virtual const char* GetHelpText() const { return ""; }
 	virtual ARTimestamp GetTimestamp() const { return 0; }
@@ -26,7 +28,7 @@ public:
 	virtual string GetURL(int rootLevel, bool showImage = true) const { return ""; }
 	virtual int GetServerObjectTypeXML() const { return objType; }
 
-	virtual CARServerObject* Clone() const { return new CFakeServerObject(); }
+	virtual CARServerObject* Clone() const { return NULL; }
 	virtual bool IsClonable() const { return true; }
 
 	// declarations for overlay support

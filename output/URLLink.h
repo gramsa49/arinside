@@ -43,12 +43,22 @@ namespace OUTPUT
 
 		std::ostream& ToStream(std::ostream &strm) const;
 		operator std::string () const;
+	protected:
+		URLLink() {};
 	private:
 		std::string link;
 
-	private:
+	protected:
 		void Init(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target);
+		void InitObj(const CARServerObject &workflowObject, int rootLevel, bool showImage);
+		void InitDirect(const std::string &linkHTML);
 		static void AddCaption(std::ostream &strm, const std::string &caption, bool validate);
+	};
+
+	class CheckedURLLink : public URLLink
+	{
+	public:
+		CheckedURLLink(const CARServerObject &workflowObject, const std::string &alternateHTML, int rootLevel, bool showImage = true);
 	};
 
 	std::ostream& operator<<(std::ostream &stream, const OUTPUT::URLLink &link);

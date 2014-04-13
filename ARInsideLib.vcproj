@@ -541,10 +541,6 @@
 				RelativePath=".\stdafx.h"
 				>
 			</File>
-			<File
-				RelativePath=".\output\URLLink.h"
-				>
-			</File>
 		</Filter>
 		<Filter
 			Name="core"
@@ -1215,6 +1211,10 @@
 			</File>
 			<File
 				RelativePath=".\output\URLLink.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\output\URLLink.h"
 				>
 			</File>
 			<File

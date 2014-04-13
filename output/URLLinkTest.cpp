@@ -66,7 +66,7 @@ TEST_F(URLLinkTests, MainLinkWithImageShort)
 
 TEST_F(URLLinkTests, ObjectLinkWithImage)
 {
-	CFakeServerObject fakeWorkflow;
+	CFakeServerObject fakeWorkflow("TheTestObj");
 
 	stringstream strm;
 	strm << URLLink(fakeWorkflow, rootLevel);
@@ -106,4 +106,27 @@ TEST_F(URLLinkTests, ObjectOverlayLink)
 	string result = strm.str();
 
 	ASSERT_STREQ("<img src=\"../img/overlay.gif\" style=\"background:url(../img/menu.gif)\" width=\"16\" height=\"16\" alt=\"menu.gif\" /><a href=\"../menu/SampleMenu.htm\">SampleMenu</a>", result.c_str());
+}
+
+TEST_F(URLLinkTests, CheckedObject)
+{
+	CFakeServerObject fakeWorkflow("TheTestObj", AR_STRUCT_ITEM_XML_ESCALATION);
+
+	stringstream strm;
+	strm << CheckedURLLink(fakeWorkflow, "<p>Object is missing</p>", rootLevel);
+	string result = strm.str();
+
+	ASSERT_STREQ("<img src=\"../img/escalation.gif\" width=\"16\" height=\"16\" alt=\"escalation.gif\" /><a href=\"../escalation/TheTestObj.htm\">TheTestObj</a>", result.c_str());
+}
+
+TEST_F(URLLinkTests, CheckedObjectMissing)
+{
+	const char* AlternateHTMLIfObjectDoesNotExist = "<p>Object is missing</p>";
+	CFakeServerObject noneExistingWorkflow;
+
+	stringstream strm;
+	strm << CheckedURLLink(noneExistingWorkflow, AlternateHTMLIfObjectDoesNotExist, rootLevel);
+	string result = strm.str();
+
+	ASSERT_STREQ(AlternateHTMLIfObjectDoesNotExist, result.c_str());
 }
