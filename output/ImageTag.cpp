@@ -130,7 +130,7 @@ namespace OUTPUT
 		{
 		case AR_STRUCT_ITEM_XML_SCHEMA:
 			{
-				const CARSchema &schema = dynamic_cast<const CARSchema&>(serverObj);
+				const CARSchema &schema = static_cast<const CARSchema&>(serverObj);
 				return GetSchemaImage(schema.GetCompound().schemaType);
 			}
 			break;
@@ -140,7 +140,7 @@ namespace OUTPUT
 		case AR_STRUCT_ITEM_XML_CHAR_MENU: return ImageTag::Menu;
 		case AR_STRUCT_ITEM_XML_CONTAINER:
 			{
-				const CARContainer &cnt = dynamic_cast<const CARContainer&>(serverObj);
+				const CARContainer &cnt = static_cast<const CARContainer&>(serverObj);
 				return GetContainerImage(cnt.GetType());
 			}
 			break;
