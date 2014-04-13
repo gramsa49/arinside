@@ -73,7 +73,6 @@ public:
 
 	// some helpers
 	string WebAlias();
-	string GetURL(int rootLevel, bool useImage = true) const;
 
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_SCHEMA; }

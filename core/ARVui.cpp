@@ -105,11 +105,6 @@ CARServerObject* CARVui::Clone() const
 	return new CARVui(*this);
 }
 
-string CARVui::GetURL(int rootLevel, bool showImage) const
-{
-	return CWebUtil::Link(this->GetName(), CPageParams(PAGE_DETAILS, this), "", rootLevel);
-}
-
 string CARVui::webAlias()
 {
 	try

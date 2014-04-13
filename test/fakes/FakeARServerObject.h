@@ -25,7 +25,6 @@ public:
 	virtual const ARAccessNameType& GetLastChanged() const { return name; }
 	virtual const char* GetChangeDiary() const { return ""; }
 	virtual const ARPropList& GetPropList() const { return emptyPropList; }
-	virtual string GetURL(int rootLevel, bool showImage = true) const { return ""; }
 	virtual int GetServerObjectTypeXML() const { return objType; }
 
 	virtual CARServerObject* Clone() const { return NULL; }
