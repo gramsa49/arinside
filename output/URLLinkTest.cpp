@@ -174,3 +174,12 @@ TEST_F(URLLinkTests, LinkToTop)
 
 	ASSERT_STREQ("<img src=\"../img/up.gif\" width=\"14\" height=\"10\" alt=\"up.gif\" /><a href=\"#top\">Top</a>", result.c_str());
 }
+
+TEST_F(URLLinkTests, LinkToJavascriptVoid)
+{
+	stringstream strm;
+	strm << DirectURLLink(DirectURLLink::JavascriptVoid, "JSLink", rootLevel);
+	string result = strm.str();
+
+	ASSERT_STREQ("<a href=\"javascript:void(0)\">JSLink</a>", result.c_str());
+}

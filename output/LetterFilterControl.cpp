@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "LetterFilterControl.h"
 #include "../core/ARServerObject.h"
+#include "../output/URLLink.h"
 
 LetterFilterControl::LetterFilterControl()
 {
@@ -48,7 +49,7 @@ void LetterFilterControl::Render(std::ostream &strm)
 			if (objCountPerLetter[i] > 0)
 			{
 				strm << "<td>";
-				strm << CWebUtil::Link( std::string(1, strValue.at(i)), "javascript:void(0)" , "", 0);
+				strm << DirectURLLink(DirectURLLink::JavascriptVoid, strValue.substr(i, 1), 0);
 			}
 			else
 			{

@@ -149,6 +149,14 @@ namespace OUTPUT
 		default: InitDirect("");
 		}
 	}
+	DirectURLLink::DirectURLLink(OUTPUT::DirectURLLink::DirectLinkEnum directLinkType, const std::string &caption, int rootLevel)
+	{
+		switch (directLinkType)
+		{
+		case JavascriptVoid: InitLinkEnum(caption, ImageTag::NoImage, "javascript:void(0)", rootLevel); break;
+		default: InitDirect("");
+		}
+	}
 
 	void DirectURLLink::InitLinkEnum(const std::string &caption, const OUTPUT::ImageTag::ImageEnum imageId, const std::string &href, int rootLevel)
 	{

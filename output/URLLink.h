@@ -68,9 +68,11 @@ namespace OUTPUT
 		enum DirectLinkEnum
 		{
 			CreateTop,
-			LinkToTop
+			LinkToTop,
+			JavascriptVoid,
 		};
 		DirectURLLink(DirectLinkEnum directLinkType, int rootLevel);
+		DirectURLLink(DirectLinkEnum directLinkType, const std::string &caption, int rootLevel);
 
 	private:
 		void InitLinkEnum(const std::string &caption, const OUTPUT::ImageTag::ImageEnum imageId, const std::string &href, int rootLevel);
