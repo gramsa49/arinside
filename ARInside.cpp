@@ -1052,7 +1052,7 @@ string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, const strin
 	CARField field(schemaInsideId, fieldInsideId);
 	if (field.Exists())
 	{
-		return field.GetURL(linkText, fromRootLevel);
+		return URLLink(linkText, field, fromRootLevel);
 	}
 
 	//Field has not been found

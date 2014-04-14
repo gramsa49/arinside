@@ -58,10 +58,6 @@ public:
 	const CARSchema& GetSchema() const;
 	const ARPropList& GetPropList() const;
 
-	// helpers
-	string GetURL(const string& linkText, int rootLevel, bool showImage = true) const;
-	string GetURL(int rootLevel, bool showImage = true) const;
-
 	// class type support
 	int GetServerObjectTypeXML() const { return AR_STRUCT_ITEM_XML_FIELD; }
 	bool IsClonable() const;

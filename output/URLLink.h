@@ -40,6 +40,7 @@ namespace OUTPUT
 		URLLink(const std::string &caption, unsigned int page, OUTPUT::ImageTag::ImageEnum imageId, int rootLevel);
 		URLLink(const std::string &caption, unsigned int page, int rootLevel);
 		URLLink(const CARServerObject &workflowObject, int rootLevel, bool showImage = true);
+		URLLink(const std::string &caption, const CARServerObject &workflowObject, int rootLevel, bool showImage = true);
 
 		std::ostream& ToStream(std::ostream &strm) const;
 		operator std::string () const;
@@ -50,7 +51,7 @@ namespace OUTPUT
 
 	protected:
 		void Init(const std::string &caption, const CPageParams &linkToPage, const OUTPUT::ImageTag &image, int rootLevel, bool validate, OUTPUT::URLLink::LinkTargetMode target);
-		void InitObj(const CARServerObject &workflowObject, int rootLevel, bool showImage);
+		void InitObj(const std::string &caption, const CARServerObject &workflowObject, int rootLevel, bool showImage);
 		void InitDirect(const std::string &linkHTML);
 		static void AddCaption(std::ostream &strm, const std::string &caption, bool validate);
 	};

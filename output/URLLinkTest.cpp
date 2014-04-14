@@ -108,6 +108,32 @@ TEST_F(URLLinkTests, ObjectOverlayLink)
 	ASSERT_STREQ("<img src=\"../img/overlay.gif\" style=\"background:url(../img/menu.gif)\" width=\"16\" height=\"16\" alt=\"menu.gif\" /><a href=\"../menu/SampleMenu.htm\">SampleMenu</a>", result.c_str());
 }
 
+TEST_F(URLLinkTests, SpecificCaptionForObject)
+{
+	// This construct is normally used for fields to show a different link name than 
+	// the fields name. But currently we can't test with a field, because of the
+	// CARSchema dependency of the CARField class. So we'll test with an escalation
+	// instead.
+	CFakeServerObject fakeWorkflow("TheTestObj", AR_STRUCT_ITEM_XML_ESCALATION);
+	
+	stringstream strm;
+	strm << URLLink("RealTestObj", fakeWorkflow, rootLevel, false);
+	string result = strm.str();
+
+	ASSERT_STREQ("<a href=\"../escalation/TheTestObj.htm\">RealTestObj</a>", result.c_str());
+}
+
+TEST_F(URLLinkTests, NoSpecificCaptionForObject)
+{
+	CFakeServerObject fakeWorkflow("TheTestObj", AR_STRUCT_ITEM_XML_ESCALATION);
+	
+	stringstream strm;
+	strm << URLLink("", fakeWorkflow, rootLevel, false);
+	string result = strm.str();
+
+	ASSERT_STREQ("<a href=\"../escalation/TheTestObj.htm\">TheTestObj</a>", result.c_str());
+}
+
 TEST_F(URLLinkTests, CheckedObject)
 {
 	CFakeServerObject fakeWorkflow("TheTestObj", AR_STRUCT_ITEM_XML_ESCALATION);
