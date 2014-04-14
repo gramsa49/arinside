@@ -55,7 +55,6 @@ void CRoleTable::AddRowJson(CARRole &role, int rootLevel)
 	CARContainer app(role.GetApplicationName());
 
 	CPageParams roleDetailPage(PAGE_DETAILS, &role);
-	CPageParams appDetailPage(PAGE_DETAILS, &app);
 	Document::AllocatorType &alloc = doc.GetAllocator();
 
 	Value roleRow;
@@ -66,7 +65,7 @@ void CRoleTable::AddRowJson(CARRole &role, int rootLevel)
 	string strAppName = role.GetApplicationName();
 	string strModifiedDate = CUtil::DateTimeToString(role.GetTimestamp());
 	string strLink = CWebUtil::GetRelativeURL(rootLevel, roleDetailPage);
-	string strAppLink = (app.Exists() ? CWebUtil::GetRelativeURL(rootLevel, appDetailPage) : "");
+	string strAppLink = (app.Exists() ? CWebUtil::GetRelativeURL(rootLevel, CPageParams(PAGE_DETAILS, &app)) : "");
 
 	Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
 	Value valAppName(strAppName.c_str(), static_cast<SizeType>(strAppName.size()), alloc);

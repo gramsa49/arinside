@@ -14,7 +14,7 @@ function initFilterTable() {
 				if (this.typeFilter[i]) { allTypeOff = false; }
 				if (!this.typeFilter[i]) { allTypeOn = false; }
 			}
-			return !(allTypeOff || allTypeOn)			
+			return !(allTypeOff || allTypeOn)
 		})
 		.onCheckTypeFilterForRow(function(row) {
 			for (i = 0; i < checkboxes.length; i++) { if (roleListObj.typeFilter[i] && row[3] == i) return true; }
@@ -45,7 +45,7 @@ function createRoleRowHtml(data) {
 		.append($("<td>").text(data[0]))
         .append($("<td>")
 			.append(getIcon(rootLevel,12,2))
-			.append($("<a>").attr("href", data[6]).text(data[2]))
+			.append((data[6] ? $("<a>").attr("href", data[6]).text(data[2]) : data[2] ))
 		)
         .append($("<td>").text(data[3]))
 		.append($("<td>").text(data[4]))
