@@ -26,6 +26,14 @@
 using namespace OUTPUT;
 using namespace OUTPUT::WebPage;
 
+// newline template to avoid lots of flush calls in file output stream
+// taken from http://kuhllib.com/2012/01/14/stop-excessive-use-of-stdendl/
+template <typename cT, typename Traits>
+std::basic_ostream<cT, Traits>& newline(std::basic_ostream<cT, Traits>& out) 
+{ 
+	return out << out.widen('\n'); 
+}
+
 extern int nFilesCreated;
 
 // TODO: replace fileName parameter with CPageParams obj and use IFileStructure internal to get fileName, folder and dirLevel
@@ -65,31 +73,31 @@ void CWebPage::AddContentHead(const string &description, const string &rightInfo
 
 void CWebPage::PageHeader(ostream &strm)
 {
-	strm << "<?xml version=\"1.0\" ?>" << endl;
-	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << endl;
-	strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << endl;
-	strm << "<!-- saved from url=(0025)http://arinside.org/ -->" << endl;
-	strm << "<head>" << endl;
-	strm << "<title>" << title << "</title>" << endl;
-	strm << "<meta http-equiv=\"content-language\" content=\"EN\" />" << endl;
-	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" << endl;
-	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << endl;
-	strm << "<meta name=\"author\" content=\"ARInside\" />" << endl;
-	strm << "<script type='text/javascript'>var rootLevel=" << rootLevel << ";</script>" << endl;
-	strm << GetReferenceManager() << endl;
-	strm << "</head>" << endl;
+	strm << "<?xml version=\"1.0\" ?>" << newline;
+	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << newline;
+	strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << newline;
+	strm << "<!-- saved from url=(0025)http://arinside.org/ -->" << newline;
+	strm << "<head>" << newline;
+	strm << "<title>" << title << "</title>" << newline;
+	strm << "<meta http-equiv=\"content-language\" content=\"EN\" />" << newline;
+	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" << newline;
+	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << newline;
+	strm << "<meta name=\"author\" content=\"ARInside\" />" << newline;
+	strm << "<script type='text/javascript'>var rootLevel=" << rootLevel << ";</script>" << newline;
+	strm << GetReferenceManager() << newline;
+	strm << "</head>" << newline;
 }
 
 void CWebPage::DynamicHeaderText(ostream &strm)
 {
-	strm << "<table>" << endl;
-	strm << "<tr>" << endl;
-	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Server, rootLevel) << "</td>" << endl;
-	strm << "<td>" << " (Server: " << URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel) << "</td>" << endl;
-	strm << "<td>" << "@" << "</td>" << endl;
-	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << endl;
-	strm << "</tr>" << endl;
-	strm << "</table>" << endl;	
+	strm << "<table>" << newline;
+	strm << "<tr>" << newline;
+	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Server, rootLevel) << "</td>" << newline;
+	strm << "<td>" << " (Server: " << URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel) << "</td>" << newline;
+	strm << "<td>" << "@" << "</td>" << newline;
+	strm << "<td>" << "<a href=\"" << appConfig.companyUrl << "\" target=\"_blank\">" << appConfig.companyName << "</a>" << ")" << "</td>" << newline;
+	strm << "</tr>" << newline;
+	strm << "</table>" << newline;	
 }
 
 string CWebPage::CurrentDateTime()
@@ -99,46 +107,46 @@ string CWebPage::CurrentDateTime()
 
 void CWebPage::DynamicFooterText(ostream &strm)
 {
-	strm << "<table><tr>" << endl;
-	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Next, rootLevel)<< "</td>" << endl;
-	strm << "<td>&nbsp;</td>" << endl;
-	strm << "<td>" << DirectURLLink(DirectURLLink::LinkToTop, rootLevel) << "</td>" << endl;
-	strm << "<td>&nbsp;</td>" << endl;
+	strm << "<table><tr>" << newline;
+	strm << "<td>" << URLLink("Main", PAGE_MAINHOME, ImageTag::Next, rootLevel)<< "</td>" << newline;
+	strm << "<td>&nbsp;</td>" << newline;
+	strm << "<td>" << DirectURLLink(DirectURLLink::LinkToTop, rootLevel) << "</td>" << newline;
+	strm << "<td>&nbsp;</td>" << newline;
 #if ARINSIDE_TEST_SUPPORT
 	if (appConfig.testMode)
 		strm << "<td>&nbsp;</td>";
 	else
 #endif
 		strm << "<td>(Page created " << CurrentDateTime() << " by <a href=\"http://arinside.org\" target=\"_blank\">ARInside v" << AppVersion <<"</a>)</td>";
-	strm << "</tr></table>" << endl;
+	strm << "</tr></table>" << newline;
 }
 
 void CWebPage::ContentOpen(ostream &strm)
 {
-	strm << "<body>" << endl;
-	strm << DirectURLLink::CreateTop << endl;
-	strm << "<table class=\"TblMain\">" << endl;
-	strm << "<tr><td class=\"TdMainHeader\" colspan=\"3\">" << endl;
+	strm << "<body>" << newline;
+	strm << DirectURLLink::CreateTop << newline;
+	strm << "<table class=\"TblMain\">" << newline;
+	strm << "<tr><td class=\"TdMainHeader\" colspan=\"3\">" << newline;
 	DynamicHeaderText(strm);
-	strm << "</td></tr><tr><td class=\"TdMainMenu\">" << endl;
+	strm << "</td></tr><tr><td class=\"TdMainMenu\">" << newline;
 	if (!navContent.empty())
 	{
-		strm << "<div id=\"form_navigation\" class=\"form_navigation\">" << endl;
-		strm << navContent << endl;
-		strm << "</div>" << endl;
+		strm << "<div id=\"form_navigation\" class=\"form_navigation\">" << newline;
+		strm << navContent << newline;
+		strm << "</div>" << newline;
 	}
-	strm << "<iframe id=\"IFrameMenu\" src=\"" << RootPath(rootLevel) << "template/navigation." << CWebUtil::WebPageSuffix() << "\" name=\"Navigation\" frameborder=\"0\">" << endl;
-	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << endl;
+	strm << "<iframe id=\"IFrameMenu\" src=\"" << RootPath(rootLevel) << "template/navigation." << CWebUtil::WebPageSuffix() << "\" name=\"Navigation\" frameborder=\"0\">" << newline;
+	strm << "<p>IFrame not supported by this browser.</p></iframe></td><td class=\"TdMainContent\">" << newline;
 }
 
 void CWebPage::ContentClose(ostream &strm)
 {
-	strm << "</td>" << endl;
-	strm << "<td></td>" << endl;	// TODO: this column isn't used at all. Remove it completely from the table.
+	strm << "</td>" << newline;
+	strm << "<td></td>" << newline;	// TODO: this column isn't used at all. Remove it completely from the table.
 
-	strm << "</tr><tr><td class=\"TdMainButtom\" colspan=\"3\">" << endl;
+	strm << "</tr><tr><td class=\"TdMainButtom\" colspan=\"3\">" << newline;
 	DynamicFooterText(strm);
-	strm << endl << "</td></tr></table></body></html>" << endl;
+	strm << newline << "</td></tr></table></body></html>" << newline;
 }
 
 
@@ -203,12 +211,12 @@ int CWebPage::SaveInFolder(const string &path)
 
 void CWebPage::AddScriptReference(std::ostream &strm, const std::string &scriptPath)
 {
-	strm << "<script src=\"" << RootPath(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << endl;
+	strm << "<script src=\"" << RootPath(rootLevel) << scriptPath << "\" type=\"text/javascript\"></script>" << newline;
 }
 
 void CWebPage::AddStyleSheetReference(std::ostream &strm, const std::string &cssPath)
 {
-	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << RootPath(rootLevel) << cssPath << "\" />" << endl;
+	strm << "<link rel=\"stylesheet\" type=\"text/css\" href=\"" << RootPath(rootLevel) << cssPath << "\" />" << newline;
 }
 
 HtmlReferenceList& CWebPage::GetReferenceManager()
