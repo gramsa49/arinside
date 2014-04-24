@@ -53,7 +53,8 @@ void CDocAlDetails::Documentation()
 			int overlayType = this->al.GetOverlayType();
 
 			// generate location info ("your are here")
-			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->al.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToActiveLinkIndex(this->rootLevel) << MenuSeparator 
+			         << ImageTag(al, rootLevel) << CWebUtil::ObjName(this->al.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!this->al.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->al.GetAppRefName(), this->rootLevel);

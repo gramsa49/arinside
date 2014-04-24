@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocPacklistDetails.h"
 #include "../core/ARImage.h"
+#include "../output/ImageTag.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "DocOverlayHelper.h"
 
@@ -49,7 +50,8 @@ void CDocPacklistDetails::Documentation()
 			strmHead.str("");
 			int overlayType = pPackList.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pPackList.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToPackingListIndex(this->rootLevel) << MenuSeparator
+			         << ImageTag(pPackList, rootLevel) << CWebUtil::ObjName(this->pPackList.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!this->pPackList.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->pPackList.GetAppRefName(), this->rootLevel);

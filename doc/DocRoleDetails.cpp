@@ -40,8 +40,9 @@ void CDocRoleDetails::Documentation()
 
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToRoleIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pRole->GetName()) << endl;
-		contHeadStrm << " (Id: " << this->pRole->GetRoleId() << ")";
+		contHeadStrm << CWebUtil::LinkToRoleIndex(this->rootLevel) << MenuSeparator
+		             << ImageTag(*pRole, rootLevel) << CWebUtil::ObjName(this->pRole->GetName())
+		             << " (Id: " << this->pRole->GetRoleId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//User details

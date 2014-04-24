@@ -49,7 +49,8 @@ void CDocFilterDetails::Documentation()
 			strmHead.str("");
 			int overlayType = this->filter.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(filter.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToFilterIndex(this->rootLevel) << MenuSeparator 
+			         << ImageTag(filter, rootLevel) << CWebUtil::ObjName(filter.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!filter.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(filter.GetAppRefName(), this->rootLevel);

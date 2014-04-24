@@ -46,7 +46,8 @@ void CDocApplicationDetails::Documentation()
 			//ContentHead informations
 			stringstream strmHead;
 			int overlayType = this->pApp.GetOverlayType();
-			strmHead << CWebUtil::LinkToApplicationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->pApp.GetName())  << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToApplicationIndex(this->rootLevel) << MenuSeparator
+			         << ImageTag(pApp, rootLevel) << CWebUtil::ObjName(this->pApp.GetName())  << CAREnum::GetOverlayTypeString(overlayType);
 
 			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());

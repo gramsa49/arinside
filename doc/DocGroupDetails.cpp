@@ -39,8 +39,9 @@ void CDocGroupDetails::Documentation()
 
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToGroupIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->group.GetName()) << endl;
-		contHeadStrm << " (Id: " << group.GetGroupId() << ")";
+		contHeadStrm << CWebUtil::LinkToGroupIndex(this->rootLevel) << MenuSeparator
+		             << ImageTag(group, rootLevel) << CWebUtil::ObjName(this->group.GetName())
+		             << " (Id: " << group.GetGroupId() << ")" << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 
 		//Group details
@@ -243,9 +244,9 @@ void CDocGroupDetails::UserDoc(int &nResult, string title)
 
 		//ContentHead informations
 		stringstream contHeadStrm;
-		contHeadStrm << CWebUtil::LinkToUserIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &this->group), rootLevel);
-		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
+		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel)
+		             << MenuSeparator << URLLink(group, rootLevel)
+		             << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
 
@@ -299,7 +300,7 @@ void CDocGroupDetails::FormsDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -401,7 +402,7 @@ void CDocGroupDetails::AlPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -454,7 +455,7 @@ void CDocGroupDetails::ContainerPermissionDoc(int &nResult, string title, int co
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -562,7 +563,7 @@ void CDocGroupDetails::FieldPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToGroupIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(group.GetName(), CPageParams(PAGE_DETAILS, &group), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(group, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");

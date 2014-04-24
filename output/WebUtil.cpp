@@ -188,7 +188,7 @@ string CWebUtil::Link(const string& caption, const string& linkTo, const string&
 
 string CWebUtil::LinkToActiveLinkIndex(int rootLevel)
 {
-	return LinkToActiveLinkIndex(-1, rootLevel);
+	return URLLink("Active Link", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ACTIVE_LINK), rootLevel);
 }
 
 string CWebUtil::LinkToActiveLinkIndex(int objectCount, int rootLevel)
@@ -199,7 +199,7 @@ string CWebUtil::LinkToActiveLinkIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToActiveLinkGuideIndex(int rootLevel)
 {
-	return LinkToActiveLinkGuideIndex(-1, rootLevel);
+	return URLLink("Active Link Guide", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_GUIDE), rootLevel);
 }
 
 string CWebUtil::LinkToActiveLinkGuideIndex(int objectCount, int rootLevel)
@@ -210,7 +210,7 @@ string CWebUtil::LinkToActiveLinkGuideIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToApplicationIndex(int rootLevel)
 {
-	return LinkToApplicationIndex(-1, rootLevel);
+	return URLLink("Application", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_APP), rootLevel);
 }
 
 string CWebUtil::LinkToApplicationIndex(int objectCount, int rootLevel)
@@ -221,7 +221,7 @@ string CWebUtil::LinkToApplicationIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToEscalationIndex(int rootLevel)
 {
-	return LinkToEscalationIndex(-1, rootLevel);
+	return URLLink("Escalation", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ESCALATION), rootLevel);
 }
 
 string CWebUtil::LinkToEscalationIndex(int objectCount, int rootLevel)
@@ -233,18 +233,18 @@ string CWebUtil::LinkToEscalationIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToFilterIndex(int rootLevel)
 {
-	return LinkToFilterIndex(-1, rootLevel);
+	return URLLink("Filter", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), rootLevel);
 }
 
 string CWebUtil::LinkToFilterIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1?"Filters":"Filter");
-	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel);	// TODO: retrieve folder name from IFileStructure later
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_FILTER), "filter.gif", rootLevel);
 }
 
 string CWebUtil::LinkToFilterGuideIndex(int rootLevel)
 {
-	return LinkToFilterGuideIndex(-1, rootLevel);
+	return URLLink("Filter Guide", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_FILTER_GUIDE), rootLevel);
 }
 
 string CWebUtil::LinkToFilterGuideIndex(int objectCount, int rootLevel)
@@ -255,7 +255,7 @@ string CWebUtil::LinkToFilterGuideIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToGroupIndex(int rootLevel)
 {
-	return LinkToGroupIndex(-1, rootLevel);
+	return URLLink("Group", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP), rootLevel);
 }
 
 string CWebUtil::LinkToGroupIndex(int objectCount, int rootLevel)
@@ -266,7 +266,7 @@ string CWebUtil::LinkToGroupIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToMenuIndex(int rootLevel)
 {
-	return LinkToMenuIndex(-1, rootLevel);
+	return URLLink("Menu", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CHAR_MENU), rootLevel);
 }
 
 string CWebUtil::LinkToMenuIndex(int objectCount, int rootLevel)
@@ -311,7 +311,7 @@ string CWebUtil::LinkToMenu(const CRefItem& refItem, int rootLevel)
 
 string CWebUtil::LinkToPackingListIndex(int rootLevel)
 {
-	return LinkToPackingListIndex(-1, rootLevel);
+	return URLLink("Packing List", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK), rootLevel);
 }
 
 string CWebUtil::LinkToPackingListIndex(int objectCount, int rootLevel)
@@ -322,7 +322,7 @@ string CWebUtil::LinkToPackingListIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToRoleIndex(int rootLevel)
 {
-	return LinkToRoleIndex(-1, rootLevel);
+	return URLLink("Role", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), rootLevel);
 }
 
 string CWebUtil::LinkToRoleIndex(int objectCount, int rootLevel)
@@ -344,7 +344,7 @@ string CWebUtil::LinkToSchemaIndex(int objectCount, int rootLevel, bool showImag
 
 string CWebUtil::LinkToUserIndex(int rootLevel)
 {
-	return LinkToUserIndex(-1, rootLevel);
+	return URLLink("User", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER), rootLevel);
 }
 
 string CWebUtil::LinkToUserIndex(int objectCount, int rootLevel)
@@ -355,7 +355,7 @@ string CWebUtil::LinkToUserIndex(int objectCount, int rootLevel)
 
 string CWebUtil::LinkToWebServiceIndex(int rootLevel)
 {
-	return LinkToWebServiceIndex(-1, rootLevel);
+	return URLLink("Web Service", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE), rootLevel);
 }
 
 string CWebUtil::LinkToWebServiceIndex(int objectCount, int rootLevel)	
@@ -402,7 +402,7 @@ string CWebUtil::ChkBoxInput(std::string nameAndValue, bool checked)
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 string CWebUtil::LinkToImageIndex(int rootLevel)
 {
-	return LinkToImageIndex(-1, rootLevel);
+	return URLLink("Image", CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_IMAGE), rootLevel);
 }
 
 string CWebUtil::LinkToImageIndex(int objectCount, int rootLevel)

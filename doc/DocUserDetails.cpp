@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocUserDetails.h"
+#include "../output/ImageTag.h"
 
 CDocUserDetails::CDocUserDetails(CARUser &arUser)
 {
@@ -36,7 +37,10 @@ void CDocUserDetails::Documentation()
 		CWebPage webPage(file->GetFileName(), this->pUser->GetName(), this->rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations
-		webPage.AddContentHead(CWebUtil::LinkToUserIndex(this->rootLevel) + MenuSeparator + CWebUtil::ObjName(this->pUser->GetName()));
+		stringstream contHeadStrm;
+		contHeadStrm << CWebUtil::LinkToUserIndex(this->rootLevel) << MenuSeparator
+		             << ImageTag(*pUser, rootLevel) << CWebUtil::ObjName(this->pUser->GetName());
+		webPage.AddContentHead(contHeadStrm.str());
 
 		//User details
 		CTable tbl("userDetails", "TblObjectList");

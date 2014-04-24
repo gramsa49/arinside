@@ -54,8 +54,9 @@ void CDocCharMenuDetails::Documentation()
 			strmHead.str("");
 			int overlayType = this->menu.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->menu.GetName()) 
-				<< " (" << CAREnum::MenuType(menuDef.menuType) << ")" << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToMenuIndex(this->rootLevel) << MenuSeparator
+			         << ImageTag(menu, rootLevel) << CWebUtil::ObjName(this->menu.GetName()) 
+			         << " (" << CAREnum::MenuType(menuDef.menuType) << ")" << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!this->menu.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->menu.GetAppRefName(), this->rootLevel);

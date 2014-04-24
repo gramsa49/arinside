@@ -17,8 +17,9 @@
 #include "stdafx.h"
 #include "DocImageDetails.h"
 #include "../core/ARImage.h"
-#include "../output/WorkflowReferenceTable.h"
+#include "../output/ImageTag.h"
 #include "../output/RootPath.h"
+#include "../output/WorkflowReferenceTable.h"
 #include "DocOverlayHelper.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
@@ -54,7 +55,9 @@ void CDocImageDetails::Documentation()
 		// contentHead informations
 		stringstream contHeadStrm;
 		int overlayType = image.GetOverlayType();
-		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator << CWebUtil::ObjName(image.GetName()) << CAREnum::GetOverlayTypeString(overlayType) << endl;
+		contHeadStrm << CWebUtil::LinkToImageIndex(rootLevel) << MenuSeparator
+		             << ImageTag(image, rootLevel) << CWebUtil::ObjName(image.GetName())
+		             << CAREnum::GetOverlayTypeString(overlayType) << endl;
 
 		webPage.AddContentHead(contHeadStrm.str(), overlayHelper.PlaceOverlayLink());
 		webPage.AddContent(overlayHelper.PlaceOverlaidNotice());

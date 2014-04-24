@@ -49,7 +49,8 @@ void CDocEscalationDetails::Documentation()
 			strmHead.str("");
 			int overlayType = this->escalation.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->escalation.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToEscalationIndex(this->rootLevel) << MenuSeparator
+			         << ImageTag(escalation, rootLevel) << CWebUtil::ObjName(this->escalation.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!this->escalation.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->escalation.GetAppRefName(), this->rootLevel);

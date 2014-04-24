@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocWebserviceDetails.h"
 #include "DocOverlayHelper.h"
+#include "../output/ImageTag.h"
 
 CDocWebserviceDetails::CDocWebserviceDetails(CARContainer &obj)
 : ws(obj)
@@ -44,8 +45,9 @@ void CDocWebserviceDetails::Documentation()
 
 			//ContentHead informations
 			stringstream strmHead;
-			strmHead << CWebUtil::LinkToWebServiceIndex(this->rootLevel) << MenuSeparator << CWebUtil::ObjName(this->ws.GetName());
-			strmHead << CAREnum::GetOverlayTypeString(ws.GetOverlayType());
+			strmHead << CWebUtil::LinkToWebServiceIndex(this->rootLevel) << MenuSeparator
+			         << ImageTag(ws, rootLevel) << CWebUtil::ObjName(this->ws.GetName())
+			         << CAREnum::GetOverlayTypeString(ws.GetOverlayType());
 
 			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());

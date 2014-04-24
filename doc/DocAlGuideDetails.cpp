@@ -49,7 +49,8 @@ void CDocAlGuideDetails::Documentation()
 			strmHead.str("");
 			int overlayType = this->alGuide.GetOverlayType();
 
-			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) << MenuSeparator << CWebUtil::ObjName(this->alGuide.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
+			strmHead << CWebUtil::LinkToActiveLinkGuideIndex(file->GetRootLevel()) << MenuSeparator
+			         << ImageTag(alGuide, rootLevel) << CWebUtil::ObjName(this->alGuide.GetName()) << CAREnum::GetOverlayTypeString(overlayType);
 
 			if(!this->alGuide.GetAppRefName().empty())
 				strmHead << MenuSeparator << " Application " << this->pInside->LinkToContainer(this->alGuide.GetAppRefName(), this->rootLevel);
