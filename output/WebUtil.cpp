@@ -328,7 +328,7 @@ string CWebUtil::LinkToRoleIndex(int rootLevel)
 string CWebUtil::LinkToRoleIndex(int objectCount, int rootLevel)
 {
 	string name = (objectCount > 1?"Roles":"Role");
-	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), "doc.gif", rootLevel);
+	return LinkToHelper(name, objectCount, CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE), "role.gif", rootLevel);
 }
 
 string CWebUtil::LinkToSchemaIndex(int rootLevel, bool showImage)

@@ -193,7 +193,7 @@ void CDocRoleDetails::FormsDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(*pRole, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -294,7 +294,7 @@ void CDocRoleDetails::AlPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(*pRole, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -350,7 +350,7 @@ void CDocRoleDetails::ContainerPermissionDoc(int &nResult, string title, int con
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(*pRole, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName(title) << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");
@@ -472,7 +472,7 @@ void CDocRoleDetails::FieldPermissionDoc(int &nResult, string title)
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToRoleIndex(rootLevel);
-		contHeadStrm << MenuSeparator << URLLink(pRole->GetName(), CPageParams(PAGE_DETAILS, pRole), rootLevel);
+		contHeadStrm << MenuSeparator << URLLink(*pRole, rootLevel);
 		contHeadStrm << MenuSeparator << CWebUtil::ObjName("Field Permissions") << endl;
 		webPage.AddContentHead(contHeadStrm.str());
 		contHeadStrm.str("");

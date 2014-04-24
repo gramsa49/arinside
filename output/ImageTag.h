@@ -47,6 +47,7 @@ namespace OUTPUT
 			Image,
 			User,
 			Group,
+			Role,
 			Hidden,
 			Visible,
 			Edit,

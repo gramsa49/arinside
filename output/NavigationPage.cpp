@@ -86,7 +86,7 @@ void CNavigationPage::Write()
 		fout << "<li>" << URLLink("Packing Lists"     , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_PACK)        , ImageTag(ImageTag::PackingList, rootLevel)    , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 		fout << "<li>" << URLLink("Webservices"       , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_CONTAINER, ARCON_WEBSERVICE)  , ImageTag(ImageTag::Webservice, rootLevel)     , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 		fout << "<li>" << URLLink("Groups"            , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_GROUP)                        , ImageTag(ImageTag::Group, rootLevel)          , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
-		fout << "<li>" << URLLink("Roles"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE)                         , docImage          , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
+		fout << "<li>" << URLLink("Roles"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_ROLE)                         , ImageTag(ImageTag::Role, rootLevel)           , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 		fout << "<li>" << URLLink("Users"             , CPageParams(PAGE_OVERVIEW, AR_STRUCT_ITEM_XML_USER)                         , ImageTag(ImageTag::User, rootLevel)           , rootLevel, URLLink::TARGET_MODE_PARENT) << "</li>";
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750

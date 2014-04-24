@@ -141,7 +141,7 @@ function getIcon(rootLevel, type, subtype, overlay) {
         case 17: alt = "image.gif"; break;
 		case 500: alt = "user.gif"; break;
 		case 501: alt = "group.gif"; break;
-		case 502: alt = "doc.gif"; width=15; height=10; break;
+		case 502: alt = "role.gif"; break;
         default: return "";
     };
     var src = "";

@@ -56,6 +56,7 @@ namespace OUTPUT
 		case ImageTag::Image: return "image.gif";
 		case ImageTag::User: return "user.gif";
 		case ImageTag::Group: return "group.gif";
+		case ImageTag::Role: return "role.gif";
 		case ImageTag::Hidden: return "hidden.gif";
 		case ImageTag::Visible: return "visible.gif";
 		case ImageTag::Edit: return "edit.gif";
@@ -147,7 +148,7 @@ namespace OUTPUT
 		case AR_STRUCT_ITEM_XML_IMAGE: return ImageTag::Image;
 		case AR_STRUCT_ITEM_XML_USER: return ImageTag::User;
 		case AR_STRUCT_ITEM_XML_GROUP: return ImageTag::Group;
-		case AR_STRUCT_ITEM_XML_ROLE: return ImageTag::Document;
+		case AR_STRUCT_ITEM_XML_ROLE: return ImageTag::Role;
 		default: return ImageTag::NoImage;
 		}
 	}
