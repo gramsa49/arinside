@@ -28,6 +28,7 @@ namespace OUTPUT
 		~CContainerTable(void);
 
 		void AddRow(CARContainer &cont, int rootLevel);
+		void AddRowJson(CARContainer &cont, int rootLevel);
 
 	private:
 		bool IsUnusedContainer(CARContainer &obj);

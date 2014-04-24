@@ -16,6 +16,7 @@ function createContainerRowHtml(data) {
 			.append($("<td>")
 					.append(getIcon(rootLevel, 12, containerType))
 					.append($("<a>").attr("href", data[3]).text(data[0]))
+					.append((data.length>4 && data[4]==0?" (<b>!</b>)":""))
 			)
 			.append($("<td>").text(data[1]))
 			.append($("<td>").text(data[2]))

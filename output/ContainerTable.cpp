@@ -19,6 +19,7 @@
 #include "URLLink.h"
 
 using namespace OUTPUT;
+using namespace rapidjson;
 
 CContainerTable::CContainerTable(CARInside &arIn, bool includeObjTypeColumn)
 : CObjectTable("containerList", "TblObjectList")
@@ -54,6 +55,41 @@ void CContainerTable::AddRow(CARContainer &cont, int rootLevel)
 	tblRow.AddCell( CTableCell(CUtil::DateTimeToHTMLString(cont.GetTimestamp())));
 	tblRow.AddCell( CTableCell(this->pInside->LinkToUser(cont.GetLastChanged(), rootLevel)));
 	this->tbl.AddRow(tblRow);
+}
+
+void CContainerTable::AddRowJson(CARContainer &cont, int rootLevel)
+{
+	CPageParams containerDetailPage(PAGE_DETAILS, &cont);
+	Document::AllocatorType &alloc = doc.GetAllocator();
+
+	unsigned int contType = cont.GetType();
+	bool unused = IsUnusedContainer(cont);
+
+	// create a new json row and make it an array
+	Value containerRow;
+	containerRow.SetArray();
+
+	// now build the needed temporary variables
+	string strName = cont.GetName();
+	string strModifiedDate = CUtil::DateTimeToString(cont.GetTimestamp());
+	string strLink = CWebUtil::GetRelativeURL(rootLevel, containerDetailPage);
+
+	// build the values
+	Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
+	Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
+	Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
+
+	// add everything to the row
+	containerRow.PushBack(valName, alloc);
+	containerRow.PushBack(valModifiedDate, alloc);
+	containerRow.PushBack(cont.GetLastChanged(), alloc);
+	containerRow.PushBack(valLink, alloc);
+	if (contType == ARCON_GUIDE || contType == ARCON_FILTER_GUIDE)
+	{
+		containerRow.PushBack((unused?0:1), alloc);
+	}
+
+	doc.PushBack(containerRow, alloc);
 }
 
 bool CContainerTable::IsUnusedContainer(CARContainer &obj)

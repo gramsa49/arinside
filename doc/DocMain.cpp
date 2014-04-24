@@ -1079,6 +1079,7 @@ unsigned int CDocMain::ContainerList(int nType, string title)
 			if (cont.GetType() == nType)	// the type must match
 			{
 				letterFilter.IncStartLetterOf(cont);
+				tbl.AddRowJson(cont, rootLevel);
 				objCount++;
 			}
 		}
@@ -1096,8 +1097,12 @@ unsigned int CDocMain::ContainerList(int nType, string title)
 			.AddScriptReference("img/jquery.address.min.js");
 
 		stringstream strmTmp;
-		strmTmp << "<span id='containerListResultCount'></span>" << CWebUtil::LinkToContainer(objCount, rootLevel, nType);
-		ContainerListJson(strmTmp, nType);
+		strmTmp << "<span id='containerListResultCount'></span>" << CWebUtil::LinkToContainer(objCount, rootLevel, nType) << endl;
+		strmTmp << "<script type=\"text/javascript\">" << endl;
+		strmTmp << "var rootLevel = " << rootLevel << ";";
+		strmTmp << "var containerType = " << nType << ";";
+		strmTmp << endl;
+		strmTmp << "</script>" << endl;
 		strmTmp << CreateContainerFilterControl() << endl;
 		strmTmp << letterFilter;
 		strmTmp << tbl;
@@ -1115,61 +1120,6 @@ unsigned int CDocMain::ContainerList(int nType, string title)
 		cout << "EXCEPTION ContainerList: " << e.what() << endl;
 	}
 	return objCount;
-}
-
-void CDocMain::ContainerListJson(std::ostream &strm, int nType)
-{
-	Document document;
-	Document::AllocatorType &alloc = document.GetAllocator();
-	document.SetArray();
-
-	unsigned int containerCount = this->pInside->containerList.GetCount();
-	for (unsigned int containerIndex = 0; containerIndex < containerCount; ++containerIndex)
-	{	
-		CARContainer container(containerIndex);
-
-		if (container.GetType() != nType)
-			continue;
-
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(container))
-			continue;
-#endif
-
-		CPageParams containerDetailPage(PAGE_DETAILS, &container);
-
-		// create a new json row and make it an array
-		Value containerRow;
-		containerRow.SetArray();
-
-		// now build the needed temporary variables
-		string strName = container.GetName();
-		string strModifiedDate = CUtil::DateTimeToString(container.GetTimestamp());
-		string strLink = CWebUtil::GetRelativeURL(rootLevel, containerDetailPage);
-
-		// build the values
-		Value valName(strName.c_str(), static_cast<SizeType>(strName.size()), alloc);
-		Value valModifiedDate(strModifiedDate.c_str(), static_cast<SizeType>(strModifiedDate.size()), alloc);
-		Value valLink(strLink.c_str(), static_cast<SizeType>(strLink.size()), alloc);
-
-		// add everything to the row
-		containerRow.PushBack(valName, alloc);
-		containerRow.PushBack(valModifiedDate, alloc);
-		containerRow.PushBack(container.GetLastChanged(), alloc);
-		containerRow.PushBack(valLink, alloc);
-
-		document.PushBack(containerRow, alloc);
-	}
-
-	GenericWriteStream output(strm);
-	Writer<GenericWriteStream> writer(output);
-
-	strm << endl << "<script type=\"text/javascript\">" << endl;
-	strm << "var containerList = "; document.Accept(writer); strm << ";";
-	strm << "var rootLevel = " << rootLevel << ";";
-	strm << "var containerType = " << nType << ";";
-	strm << endl;
-	strm << "</script>" << endl;
 }
 
 void CDocMain::RoleList()
