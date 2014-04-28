@@ -15,7 +15,7 @@ function updateEscalationTable() {
 function createEscalationRowHtml(data) {	
     var result = $("<tr>")
         .append($("<td>")
-            .append(getIcon(rootLevel, 9))
+            .append(getIcon(rootLevel, 9, 0, data[9]))
             .append($("<a>").attr("href", data[7]).text(data[0]))
         )
         .append($("<td>").text(AREnabled(data[1])));

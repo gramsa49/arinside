@@ -38,7 +38,7 @@ function updateFilterTable() {
 function createFilterRowHtml(data) {
     return ($("<tr>")
         .append($("<td>")
-            .append(getIcon(rootLevel, 5))
+            .append(getIcon(rootLevel, 5, 0, data[10]))
             .append($("<a>").attr("href", data[8]).text(data[0]))
         )
         .append($("<td>").text(AREnabled(data[1])))

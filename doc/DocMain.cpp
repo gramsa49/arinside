@@ -287,6 +287,7 @@ void CDocMain::ActiveLinkListJson(ostream &strm)
 			actlinkRow.PushBack(valModifiedDate, alloc);
 			actlinkRow.PushBack(actlink.GetLastChanged(), alloc);
 			actlinkRow.PushBack(valLink, alloc);
+			actlinkRow.PushBack(actlink.GetOverlayType(), alloc);
 
 			// add the row to the document
 			document.PushBack(actlinkRow, alloc);
@@ -521,6 +522,7 @@ void CDocMain::FilterListJson(std::ostream &strm)
 		filterRow.PushBack(filter.GetLastChanged(), alloc);
 		filterRow.PushBack(valLink, alloc);
 		filterRow.PushBack(filter.GetOperation(), alloc);
+		filterRow.PushBack(filter.GetOverlayType(), alloc);
 
 		document.PushBack(filterRow, alloc);
 	}
@@ -794,10 +796,8 @@ void CDocMain::EscalationListJson(std::ostream &strm)
 		escalRow.PushBack(valModifiedDate, alloc);
 		escalRow.PushBack(escalation.GetLastChanged(), alloc);
 		escalRow.PushBack(valLink, alloc);
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_710
-		if (pInside->CompareServerVersion(7, 1) >= 0)
-			escalRow.PushBack(escalation.GetPool(), alloc);			
-#endif
+		escalRow.PushBack(escalation.GetPool(), alloc);
+		escalRow.PushBack(escalation.GetOverlayType(), alloc);
 
 		// add the row to the document
 		document.PushBack(escalRow, alloc);
@@ -1039,6 +1039,7 @@ void CDocMain::MenuListJson(std::ostream &strm)
 		menuRow.PushBack(valModifiedDate, alloc);
 		menuRow.PushBack(menu.GetLastChanged(), alloc);
 		menuRow.PushBack(valLink, alloc);
+		menuRow.PushBack(menu.GetOverlayType(), alloc);
 		menuRow.PushBack((menu.IsUsedInWorkflow() ? 1 : 0), alloc);
 
 		// add the row to the document

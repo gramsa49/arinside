@@ -37,9 +37,9 @@ function updateMenuTable() {
 function createMenuRowHtml(data) {
     return ($("<tr>")
         .append($("<td>")
-            .append(getIcon(rootLevel, 8))
+            .append(getIcon(rootLevel, 8, 0, data[6]))
             .append($("<a>").attr("href", data[5]).text(data[0]))
-			.append((data[6]==0?" (<b>!</b>)":""))
+			.append((data[7]==0?" (<b>!</b>)":""))
         )
         .append($("<td>").text(ARMenuType(data[1])))
         .append($("<td>").text(ARMenuConnect(data[2])))

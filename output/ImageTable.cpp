@@ -82,6 +82,7 @@ void CImageTable::AddRowJson(int imageIndex, int rootLevel)
 	imageRow.PushBack(valModifiedDate, alloc);
 	imageRow.PushBack(image.GetLastChanged(), alloc);
 	imageRow.PushBack(valLink, alloc);
+	imageRow.PushBack(image.GetOverlayType(), alloc);
 
 	// add the row to the document
 	doc.PushBack(imageRow, alloc);	

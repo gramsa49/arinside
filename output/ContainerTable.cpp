@@ -84,6 +84,7 @@ void CContainerTable::AddRowJson(CARContainer &cont, int rootLevel)
 	containerRow.PushBack(valModifiedDate, alloc);
 	containerRow.PushBack(cont.GetLastChanged(), alloc);
 	containerRow.PushBack(valLink, alloc);
+	containerRow.PushBack(cont.GetOverlayType(), alloc);
 	if (contType == ARCON_GUIDE || contType == ARCON_FILTER_GUIDE)
 	{
 		containerRow.PushBack((unused?0:1), alloc);

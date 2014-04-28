@@ -14,7 +14,7 @@ function updateImageTable() {
 function createImageRowHtml(data) {
     return ($("<tr>")
         .append($("<td>")
-            .append(getIcon(rootLevel, 17))
+            .append(getIcon(rootLevel, 17, 0, data[5]))
             .append($("<a>").attr("href", data[4]).text(data[0]))
         )
         .append($("<td>").text(data[1]))
