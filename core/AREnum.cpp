@@ -2678,3 +2678,14 @@ const char* CAREnum::WeekDayName(int day)
 	default: return EnumDefault;
 	}
 }
+
+const char* CAREnum::CurrencyPart(int currencyPartType)
+{
+	switch (currencyPartType)
+	{
+	case AR_CURRENCY_PART_VALUE: return "VALUE";
+	case AR_CURRENCY_PART_TYPE: return "TYPE";
+	case AR_CURRENCY_PART_DATE: return "DATE";
+	default: return EnumDefault;
+	}
+}
