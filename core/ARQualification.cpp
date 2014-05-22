@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARQualification.h"
+#include "../output/URLLink.h"
 
 CARQualification::CARQualification(CARInside &arIn)
 {
@@ -298,29 +299,66 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 		break;
 	}
 	case AR_STAT_HISTORY:
-		qText << "'" << arIn->LinkToField(pFormId, 15, rootLevel) << ".";
-
-		if(!arIn->FieldreferenceExists(pFormId, 15, refItem))
 		{
-			arIn->AddFieldReference(pFormId, 15, refItem);
+			qText << "'" << arIn->LinkToField(pFormId, 15, rootLevel) << ".";
+
+			if(!arIn->FieldreferenceExists(pFormId, 15, refItem))
+			{
+				arIn->AddFieldReference(pFormId, 15, refItem);
+			}
+
+			string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
+			if(!tmp.empty())
+				qText << tmp;
+			else
+				qText << operand->u.statHistory.enumVal;
+
+			switch(operand->u.statHistory.userOrTime)
+			{
+			case AR_STAT_HISTORY_USER:
+				qText << ".USER";
+				break;
+			case AR_STAT_HISTORY_TIME:
+				qText << ".TIME";
+				break;
+			}
+			qText << "'";
 		}
-
-		string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
-		if(!tmp.empty())
-			qText << tmp;
-		else
-			qText << operand->u.statHistory.enumVal;
-
-		switch(operand->u.statHistory.userOrTime)
+		break;
+	case AR_CURRENCY_FLD:
 		{
-		case AR_STAT_HISTORY_USER:
-			qText << ".USER";
-			break;
-		case AR_STAT_HISTORY_TIME:
-			qText << ".TIME";
-			break;
+			qText << "'";
+
+			int iFieldId = operand->u.currencyField->fieldId;
+			CARField currencyField(pFormId, iFieldId);
+
+			if (currencyField.Exists())
+			{
+				qText << URLLink(currencyField, rootLevel);
+				arIn->AddFieldReference(pFormId, iFieldId, refItem);
+			}
+			else
+				qText << iFieldId;
+
+			unsigned int currencyFieldPart = operand->u.currencyField->partTag;
+			if (currencyFieldPart != AR_CURRENCY_PART_FIELD)
+			{
+				qText << ".";
+				switch (currencyFieldPart)
+				{
+				case AR_CURRENCY_PART_VALUE:
+				case AR_CURRENCY_PART_TYPE:
+				case AR_CURRENCY_PART_DATE:
+					qText << CAREnum::CurrencyPart(currencyFieldPart);
+					break;
+				case AR_CURRENCY_PART_FUNCTIONAL:
+					qText << operand->u.currencyField->currencyCode;
+					break;
+				}
+			}
+
+			qText << "'";
 		}
-		qText << "'";
 		break;
 	}
 }
