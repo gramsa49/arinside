@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARQualification.h"
+#include "../doc/DocCurrencyField.h"
 #include "../output/URLLink.h"
 
 CARQualification::CARQualification(CARInside &arIn)
@@ -327,36 +328,10 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 		break;
 	case AR_CURRENCY_FLD:
 		{
+			CDocCurrencyField docCurrency(pFormId, *operand->u.currencyField);
+			
 			qText << "'";
-
-			int iFieldId = operand->u.currencyField->fieldId;
-			CARField currencyField(pFormId, iFieldId);
-
-			if (currencyField.Exists())
-			{
-				qText << URLLink(currencyField, rootLevel);
-				arIn->AddFieldReference(pFormId, iFieldId, refItem);
-			}
-			else
-				qText << iFieldId;
-
-			unsigned int currencyFieldPart = operand->u.currencyField->partTag;
-			if (currencyFieldPart != AR_CURRENCY_PART_FIELD)
-			{
-				qText << ".";
-				switch (currencyFieldPart)
-				{
-				case AR_CURRENCY_PART_VALUE:
-				case AR_CURRENCY_PART_TYPE:
-				case AR_CURRENCY_PART_DATE:
-					qText << CAREnum::CurrencyPart(currencyFieldPart);
-					break;
-				case AR_CURRENCY_PART_FUNCTIONAL:
-					qText << operand->u.currencyField->currencyCode;
-					break;
-				}
-			}
-
+			docCurrency.GetResolvedAndLinkedField(qText, refItem, rootLevel);
 			qText << "'";
 		}
 		break;

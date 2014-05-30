@@ -69,6 +69,7 @@ SET(ARINSIDE_SRCS_DOC_CPP
  doc/DocBase.cpp
  doc/DocCharMenuDetails.cpp
  doc/DocContainerHelper.cpp
+ doc/DocCurrencyField.cpp
  doc/DocCustomWorkflow.cpp
  doc/DocEscalationDetails.cpp
  doc/DocFieldDetails.cpp
@@ -103,6 +104,7 @@ SET(ARINSIDE_SRCS_DOC_H
  doc/DocBase.h
  doc/DocCharMenuDetails.h
  doc/DocContainerHelper.h
+ doc/DocCurrencyField.h
  doc/DocCustomWorkflow.h
  doc/DocEscalationDetails.h
  doc/DocFieldDetails.h

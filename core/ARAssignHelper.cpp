@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARAssignHelper.h"
+#include "../doc/DocCurrencyField.h"
 #include "../output/URLLink.h"
 
 CARAssignHelper::CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject &obj, const CARSchema& schema1, const CARSchema& schema2)
@@ -324,38 +325,11 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 					break;
 				case AR_CURRENCY_FLD:
 					{
-						assignText << "$";
-
-						int iFieldId = assignment.u.field->u.currencyField->fieldId;
-						CARField currencyField(schemaInsideId2, iFieldId);
-
-						if (currencyField.Exists())
-						{
-							assignText << URLLink(currencyField, rootLevel);
-							arIn->AddFieldReference(schemaInsideId2, iFieldId, refItem);
-						}
-						else
-							assignText << iFieldId;
-
-						unsigned int currencyFieldPart = assignment.u.field->u.currencyField->partTag;
-						if (currencyFieldPart != AR_CURRENCY_PART_FIELD)
-						{
-							assignText << ".";
-							switch (currencyFieldPart)
-							{
-							case AR_CURRENCY_PART_VALUE:
-							case AR_CURRENCY_PART_TYPE:
-							case AR_CURRENCY_PART_DATE:
-								assignText << CAREnum::CurrencyPart(currencyFieldPart);
-								break;
-							case AR_CURRENCY_PART_FUNCTIONAL:
-								assignText << assignment.u.field->u.currencyField->currencyCode;
-								break;
-							}
-						}
+						CDocCurrencyField docCurrency(schemaInsideId2, *assignment.u.field->u.currencyField);
 
 						assignText << "$";
-
+						docCurrency.GetResolvedAndLinkedField(assignText, refItem, rootLevel);
+						assignText << "$";
 					}
 					break;
 				}
