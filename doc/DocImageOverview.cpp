@@ -96,5 +96,9 @@ void CDocImageOverview::SetupAdditionalPageResources(CWebPage &webPage)
 
 std::string CDocImageOverview::Header()
 {
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 	return "<span id='imageListFilterResultCount'></span>" + CWebUtil::LinkToImageIndex(objCount, rootLevel);
+#else
+	return "";
+#endif
 }

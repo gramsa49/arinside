@@ -145,7 +145,9 @@ namespace OUTPUT
 				return GetContainerImage(cnt.GetType());
 			}
 			break;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		case AR_STRUCT_ITEM_XML_IMAGE: return ImageTag::Image;
+#endif
 		case AR_STRUCT_ITEM_XML_USER: return ImageTag::User;
 		case AR_STRUCT_ITEM_XML_GROUP: return ImageTag::Group;
 		case AR_STRUCT_ITEM_XML_ROLE: return ImageTag::Role;

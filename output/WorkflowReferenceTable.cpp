@@ -26,11 +26,13 @@
 
 using namespace OUTPUT;
 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 WorkflowReferenceTable::WorkflowReferenceTable(const CARImage &image)
 : obj(image)
 {
 	InitIterators(image.GetReferences());
 }
+#endif
 
 WorkflowReferenceTable::WorkflowReferenceTable(const CARContainer& container)
 :obj(container)

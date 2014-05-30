@@ -28,7 +28,9 @@ namespace OUTPUT
 	class WorkflowReferenceTable
 	{
 	public:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 		WorkflowReferenceTable(const CARImage& image);
+#endif
 		WorkflowReferenceTable(const CARContainer& container);
 	
 		std::string ToString(int rootLevel);
