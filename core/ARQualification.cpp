@@ -327,10 +327,14 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 		}
 		break;
 	case AR_CURRENCY_FLD:
+	case AR_CURRENCY_FLD_DB:
+	case AR_CURRENCY_FLD_TRAN:
 		{
 			CDocCurrencyField docCurrency(pFormId, *operand->u.currencyField);
+			char *prefix = getFieldPrefix(operand);
 			
 			qText << "'";
+			if (prefix != NULL) qText << prefix;
 			docCurrency.GetResolvedAndLinkedField(qText, refItem, rootLevel);
 			qText << "'";
 		}
@@ -378,4 +382,19 @@ int CARQualification::FindCurrentEnumFieldId(int pFormId, int sFormId)
 	}
 
 	return -1;
+}
+
+char* CARQualification::getFieldPrefix(ARFieldValueOrArithStruct *operand)
+{
+	if (operand == NULL) return NULL;
+	switch (operand->tag)
+	{
+	case AR_FIELD_TRAN:
+	case AR_CURRENCY_FLD_TRAN:
+		return "TR.";
+	case AR_FIELD_DB:
+	case AR_CURRENCY_FLD_DB:
+		return "DB.";
+	}
+	return NULL;
 }

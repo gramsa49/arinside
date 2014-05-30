@@ -31,6 +31,7 @@ private:
 	CARInside *arIn;
 	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
 	int FindCurrentEnumFieldId(int pFormId, int sFormId);
+	char* getFieldPrefix(ARFieldValueOrArithStruct *operand);
 
 	int tmpFormId;
 	vector<const ARQualifierStruct*> qualLevels;
