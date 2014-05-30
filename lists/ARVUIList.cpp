@@ -109,40 +109,85 @@ bool CARVUIListServer::LoadFromServer()
 	memset(&vuiExists, 0, sizeof(ARBooleanList));
 	memset(&status, 0, sizeof(status));
 
-	// ok, get all informations of the fields we need
-	if (ARGetMultipleVUIs(&arIn->arControl,
-		schemaName, 
-		NULL, // all field ids
-		0,    // no changed since restriction
-		&vuiExists,
-		&ids,
-		&names,
-		&locales,
-		&types,
-		&dispProps,
-		&helpTexts,
-		&changedTimes,
-		&owners,
-		&changedUsers,
-		&changeDiary,
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-		&objProps,
-#endif
-		&status) == AR_RETURN_OK)
+	if (arIn->CompareServerVersion(6,3) < 0)
 	{
-		FreeARBooleanList(&vuiExists, false);
-
-		sortedList.reserve(names.numItems);
-		for (unsigned int i=0; i<names.numItems; ++i)
+		ARInternalIdList	vuiIdList;
+		ARZeroMemory(&vuiIdList);
+		if (ARGetListVUI(&arIn->arControl, schemaName, 0, 
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+			NULL,
+#endif			
+			&vuiIdList, &status) == AR_RETURN_OK)
 		{
-			sortedList.push_back(i);
+			Reserve(vuiIdList.numItems);
+
+			unsigned int currentWriteIndex = 0;
+			for (unsigned int idx = 0; idx < vuiIdList.numItems; ++idx)
+			{
+				if (ARGetVUI(&arIn->arControl,
+					schemaName,
+					vuiIdList.internalIdList[idx],
+					names.nameList[currentWriteIndex],
+					locales.localeList[currentWriteIndex],
+					&types.intList[currentWriteIndex],
+					&dispProps.propsList[currentWriteIndex],
+					&helpTexts.stringList[currentWriteIndex],
+					&changedTimes.timestampList[currentWriteIndex],
+					owners.nameList[currentWriteIndex],
+					changedUsers.nameList[currentWriteIndex],
+					&changeDiary.stringList[currentWriteIndex],
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+					&objProps.propsList[currentWriteIndex],
+#endif
+					&status) == AR_RETURN_OK)
+				{
+					ids.internalIdList[currentWriteIndex++] = vuiIdList.internalIdList[idx];
+				}
+				else
+					cerr << BuildMessageAndFreeStatus(status);
+			}
+			SetNumItems(currentWriteIndex);
+			BuildIndex();
+			return true;
 		}
-		return true;
+		else
+		{
+			cerr << BuildMessageAndFreeStatus(status);
+			return false;
+		}
 	}
 	else
 	{
-		cerr << BuildMessageAndFreeStatus(status);
-		return false;
+		// ok, get all informations of the fields we need
+		if (ARGetMultipleVUIs(&arIn->arControl,
+			schemaName, 
+			NULL, // all field ids
+			0,    // no changed since restriction
+			&vuiExists,
+			&ids,
+			&names,
+			&locales,
+			&types,
+			&dispProps,
+			&helpTexts,
+			&changedTimes,
+			&owners,
+			&changedUsers,
+			&changeDiary,
+	#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+			&objProps,
+	#endif
+			&status) == AR_RETURN_OK)
+		{
+			FreeARBooleanList(&vuiExists, false);
+			BuildIndex();
+			return true;
+		}
+		else
+		{
+			cerr << BuildMessageAndFreeStatus(status);
+			return false;
+		}
 	}
 }
 
@@ -175,4 +220,68 @@ const ARPropList& CARVUIListServer::VUIGetPropList(unsigned int index) const
 #else
 	return emptyPropList;
 #endif
+}
+
+void CARVUIListServer::Reserve(unsigned int amount)
+{
+	ids.internalIdList = new ARInternalId[amount];
+	ZeroMemory(ids.internalIdList, sizeof(ARInternalId) * amount);
+
+	names.nameList = new ARNameType[amount];
+	ZeroMemory(names.nameList, sizeof(ARNameType) * amount);
+
+	locales.localeList = new ARLocaleType[amount];
+	ZeroMemory(locales.localeList, sizeof(ARLocaleType) * amount);
+
+	types.intList = new unsigned int[amount];
+	ZeroMemory(types.intList, sizeof(unsigned int) * amount);
+
+	dispProps.propsList = new ARPropList[amount];
+	ZeroMemory(dispProps.propsList, sizeof(ARPropList) * amount);
+	
+	helpTexts.stringList = new char*[amount];
+	ZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
+
+	changedTimes.timestampList = new ARTimestamp[amount];
+	ZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
+	
+	owners.nameList = new ARAccessNameType[amount];
+	ZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
+	
+	changedUsers.nameList = new ARAccessNameType[amount];
+	ZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
+	
+	changeDiary.stringList = new char*[amount];
+	ZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
+
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	objProps.propsList = new ARPropList[amount];
+	ZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
+#endif
+}
+
+void CARVUIListServer::SetNumItems(unsigned int amount)
+{
+	ids.numItems = amount;
+	names.numItems = amount;
+	locales.numItems = amount;
+	types.numItems = amount;
+	dispProps.numItems = amount;
+	helpTexts.numItems = amount;
+	changedTimes.numItems = amount;
+	owners.numItems = amount;
+	changedUsers.numItems = amount;
+	changeDiary.numItems = amount;
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	objProps.numItems = amount;
+#endif
+}
+
+void CARVUIListServer::BuildIndex()
+{
+	sortedList.reserve(names.numItems);
+	for (unsigned int i=0; i<names.numItems; ++i)
+	{
+		sortedList.push_back(i);
+	}
 }

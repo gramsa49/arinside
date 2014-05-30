@@ -149,6 +149,11 @@ public:
 	virtual const ARPropList& FieldGetPropList(unsigned int index) const;
 
 private:
+	void Reserve(unsigned int amount);
+	void SetNumItems(unsigned int amount);
+	void BuildIndex();
+
+private:
 	unsigned int schemaId;
 
 	ARNameList names;

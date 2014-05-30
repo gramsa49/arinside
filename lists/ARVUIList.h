@@ -112,6 +112,11 @@ public:
 	virtual const ARPropList& VUIGetPropList(unsigned int index) const;
 
 private:
+	void Reserve(unsigned int amount);
+	void SetNumItems(unsigned int amount);
+	void BuildIndex();
+
+private:
 	unsigned int schemaId;
 	
 	ARInternalIdList ids;
