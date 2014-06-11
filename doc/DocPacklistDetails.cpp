@@ -132,7 +132,6 @@ string CDocPacklistDetails::PackListInformation()
 				break;
 			case ARREF_CONTAINER:
 				{
-					bool found = false;
 					CARContainer container(refs.referenceList[i].reference.u.name);
 					if (container.Exists())
 						srvType << CAREnum::ContainerType(container.GetType());

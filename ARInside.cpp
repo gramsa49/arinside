@@ -574,32 +574,9 @@ void CARInside::LoadFromServer(void)
 #endif
 
 	//Load schemas
-	int insideId = 0;
 	cout << endl << "Start loading Forms:" << endl;
-
 	nResult = LoadForms();
 	cout << nResult << " Forms loaded" << endl << endl;
-
-	// TODO: if we want to keep the old output, we need to iterate the forms and count all types
-	////Regular forms
-	//nResult = LoadForms(AR_LIST_SCHEMA_REGULAR, insideId);
-	//cout << nResult << " Regular Forms loaded" << endl;
-
-	////Dialogs
-	//nResult = LoadForms(AR_LIST_SCHEMA_DIALOG, insideId);
-	//cout << nResult << " Dialog Forms loaded" << endl;
-
-	////Join
-	//nResult = LoadForms(AR_LIST_SCHEMA_JOIN, insideId);
-	//cout << nResult << " Join Forms loaded" << endl;
-
-	////Vendor
-	//nResult = LoadForms(AR_LIST_SCHEMA_VENDOR, insideId);
-	//cout << nResult << " Vendor Forms loaded" << endl;
-
-	////View
-	//nResult = LoadForms(AR_LIST_SCHEMA_VIEW, insideId);
-	//cout << nResult << " View Forms loaded" << endl << endl;
 }
 
 int CARInside::LoadForms()
@@ -1572,8 +1549,6 @@ string CARInside::TextFindFields(string inText, string fieldSeparator, int schem
 			strmTmp.clear();
 			strmTmp.str("");
 		}
-
-		string dummySeparator = "##"; //dummy placeholder to avoid infinite replacements
 
 		string::size_type curPos = 0;
 		string::size_type startPos = 0;

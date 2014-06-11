@@ -40,7 +40,6 @@ void CDocAlDetails::Documentation()
 		FileSystemUtil filesysUtil(this->pInside->appConfig);
 		if(filesysUtil.CreateSubDirectory(file->GetPath())>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), this->al.GetName(), this->rootLevel, this->pInside->appConfig);
 			CDocOverlayHelper overlayHelper(al, rootLevel);
 

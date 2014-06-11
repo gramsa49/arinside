@@ -40,7 +40,6 @@ void CScanEscalations::Start()
 		if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(escal))
 			continue;
 
-		int overlayType = escal.GetOverlayType();
 		if (IsOverlayOrCustom(escal))
 		{
 			pInside->escalationList.AddOverlayOrCustom(escal.GetInsideId());

@@ -386,9 +386,6 @@ void CDocAlActionStruct::ActionSetChar(std::ostream& strm, const ARFieldCharacte
 			{
 			case AR_DPROP_LABEL_COLOR_TEXT:
 				{
-					stringstream strmTmp;
-					//strmTmp << CARValue::ValueToString(action.props.props[i].value);
-
 					bool colorUnknown = true;
 					char color[7];
 					size_t colorStrLen = 0;
@@ -636,15 +633,13 @@ void CDocAlActionStruct::ActionAutomation(std::ostream& strm, const ARAutomation
 
 			for(unsigned int nCnt = 0; nCnt < action.methodList.numItems; nCnt++)
 			{
-				string mId, mName, mValue;
-
+				string mId, mName;
 
 				if(action.methodList.methodList[nCnt].methodIId != NULL)
 					mId = action.methodList.methodList[nCnt].methodIId;
 
 				if(action.methodList.methodList[nCnt].methodName != NULL)
 					mName = action.methodList.methodList[nCnt].methodName;
-
 
 				CTableRow mRow("cssStdRow");
 				mRow.AddCell( CTableCell(mId) );
@@ -952,8 +947,6 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			}
 			else
 			{
-				stringstream tmpDesc;
-
 				strm << "<p>Report Type: ";
 				if (!reportType.empty() && reportType[0] == '$')
 				{
@@ -1141,8 +1134,6 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 			// additional report informations
 			if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 			{
-				stringstream tmpDesc;
-
 				strm << "<p>EntryIDs: ";
 				if (!entryIDs->empty() && entryIDs->operator[](0) == '$')
 				{

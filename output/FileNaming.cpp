@@ -1284,7 +1284,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 				case AR_STRUCT_ITEM_XML_CHAR_MENU: return new MenuDetail(params.obj1);
 				case AR_STRUCT_ITEM_XML_CONTAINER:
 					{
-						CARContainer* cont = (CARContainer*)params.obj1;
+						const CARContainer* cont = static_cast<const CARContainer*>(params.obj1);
 						switch (cont->GetType())
 						{
 						case ARCON_GUIDE: return new ALGuideDetail(params.obj1);

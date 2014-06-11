@@ -768,7 +768,6 @@ string CDocSchemaDetails::WorkflowDoc()
 		//CPageParams file(PAGE_SCHEMA_WORKFLOW, &this->schema);
 
 		Document document;
-		Document::AllocatorType &alloc = document.GetAllocator();
 		document.SetArray();
 
 		//Field references
@@ -1811,7 +1810,6 @@ string CDocSchemaDetails::ShowProperties()
 {
 	stringstream strm;
 	strm.str("");
-	map<ARLong32,ARValueStruct*> propIdx;
 	int schemaType = this->schema.GetCompound().schemaType;
 	
 	try

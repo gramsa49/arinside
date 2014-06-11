@@ -186,7 +186,6 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 				//populate operation string from input #6
 				string operation = "";
-				string form = "";
 
 				TiXmlDocument operationXML;
 				operationXML.Parse(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[6].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);

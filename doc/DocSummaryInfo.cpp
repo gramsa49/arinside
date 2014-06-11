@@ -34,7 +34,6 @@ void CDocSummaryInfo::Documentation()
 {
 	try
 	{		
-		stringstream pgStream;
 		CWebPage webPage("index", "Documentation Index", rootLevel, this->pInside->appConfig);
 
 		//ContentHead informations

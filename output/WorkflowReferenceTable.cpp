@@ -50,7 +50,6 @@ string WorkflowReferenceTable::ToString(int rootLevel)
 {
 	stringstream strm;
 	strm.str("");
-	CARInside *pInside = CARInside::GetInstance();
 
 	try
 	{

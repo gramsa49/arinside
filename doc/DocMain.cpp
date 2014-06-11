@@ -1358,7 +1358,6 @@ void CDocMain::MessageList()
 	try
 	{
 		int rootLevel = file->GetRootLevel();
-		int curMsgNumber = 0;
 		list<CMessageItem> listMsgItem;
 
 		//Search all activelinks

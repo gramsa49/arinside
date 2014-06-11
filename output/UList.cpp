@@ -48,7 +48,7 @@ string CUList::ToXHtml(string title, bool bItemImage)
 	list<CUListItem>::iterator iter;
 	CUListItem *listItem;	
 
-	for ( iter = this->listItem.begin(); iter != this->listItem.end(); iter++ )
+	for ( iter = this->listItem.begin(); iter != this->listItem.end(); ++iter )
 	{	
 		listItem = &(*iter);
 

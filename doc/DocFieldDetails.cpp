@@ -1101,22 +1101,6 @@ public:
 		}
 		return false;
 	}
-
-private:
-	unsigned int GetOrderOf(CRefItem& ref)
-	{
-		switch (ref.GetObjectType())
-		{
-		case AR_STRUCT_ITEM_XML_ACTIVE_LINK:
-			{
-				CARActiveLink al(ref.GetObjectId());
-				return al.GetOrder();
-			}
-			break;
-		default:
-			return 0;
-		}
-	}
 };
 
 string CDocFieldDetails::WorkflowAttached()

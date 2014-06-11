@@ -39,7 +39,6 @@ void CDocAnalyzer::Documentation()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Analyzer", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -72,7 +71,6 @@ void CDocAnalyzer::IndexAnalyzer()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Form Index Analyzer", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations

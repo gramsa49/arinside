@@ -65,7 +65,6 @@ void CDocCharMenuDetails::Documentation()
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			//ActiveLink Properties
-			stringstream strmTmp;
 			CTable tblObjProp("objProperties", "TblObjectList");
 			tblObjProp.AddColumn(30, "Property");	
 			tblObjProp.AddColumn(70, "Value");

@@ -39,7 +39,6 @@ void CDocEscalationDetails::Documentation()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(this->path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), this->escalation.GetName(), this->rootLevel, this->pInside->appConfig);
 			CARProplistHelper props(&this->escalation.GetPropList());
 			CDocOverlayHelper overlayHelper(escalation, rootLevel);
