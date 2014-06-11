@@ -21,8 +21,9 @@
 #include "FileSystemUtil.h"
 
 AppConfigReader::AppConfigReader(const std::string &filename)
+: configFile(filename)
 {
-	configFile = filename;
+	settingsFoundCount = 0;
 }
 
 AppConfigReader::~AppConfigReader(void)
