@@ -19,7 +19,7 @@
 #include "../ARApi.h"
 
 CARStatusList::CARStatusList(ARStatusList &statusList, bool autoFreeStruct)
-: status(statusList)
+: status(statusList), freeStatusList(autoFreeStruct)
 {
 }
 
