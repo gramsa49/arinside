@@ -29,7 +29,6 @@ public:
 	string BaseInfo();
 private:
 	CARContainer &container;
-	int rootLevel;
 
 	string PermissionList();	
 	string SubadminList();
