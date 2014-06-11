@@ -34,7 +34,7 @@ public:
 	int GetInsideId() { return insideId; }
 	int GetInsideId() const { return insideId; }
 	
-	string FileID() const { return CARObject::FileID(insideId); }
+	string FileID() const { return FileID(insideId); }
 	virtual string GetNameFirstChar() = 0;
 	virtual bool NameStandardFirstChar() = 0;
 
