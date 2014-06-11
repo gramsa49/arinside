@@ -88,7 +88,6 @@ CTable CDocVuiDetails::FieldProperties()
 		unsigned int fieldCount = schema.GetFields()->GetCount();
 		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			bool bInView = false;
 			stringstream tmpLabel;
 
 			CARField field(schema.GetInsideId(), 0, fieldIndex);
@@ -160,7 +159,6 @@ void CDocVuiDetails::FieldPropertiesCsv()
 		unsigned int fieldCount = schema.GetFields()->GetCount();
 		for(unsigned int fieldIndex = 0; fieldIndex < fieldCount; ++fieldIndex)
 		{
-			bool bInView = false;
 			stringstream tmpLabel;
 			tmpLabel.str("");
 

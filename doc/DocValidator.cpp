@@ -87,7 +87,6 @@ void CDocValidator::Main()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Validator", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -150,7 +149,6 @@ void CDocValidator::ContainerGroupValidator()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Container access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -210,7 +208,6 @@ void CDocValidator::AlGroupValidator()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Active Link access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -264,7 +261,6 @@ void CDocValidator::FieldGroupValidatorDetails(CARSchema &schema)
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Field access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -314,7 +310,6 @@ void CDocValidator::FieldGroupValidator()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Field access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -383,7 +378,6 @@ void CDocValidator::FormGroupValidator()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Form access group validation", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -437,7 +431,6 @@ void CDocValidator::FieldReferenceValidator()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Field validator", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
@@ -550,7 +543,6 @@ void CDocValidator::MenuReferenceValidator()
 		FileSystemUtil fsUtil(this->pInside->appConfig);
 		if(fsUtil.CreateSubDirectory(path)>=0)
 		{
-			stringstream pgStream;
 			CWebPage webPage(file->GetFileName(), "Menu validator", rootLevel, this->pInside->appConfig);
 
 			//ContentHead informations
