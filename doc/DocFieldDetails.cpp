@@ -561,10 +561,10 @@ string CDocFieldDetails::FieldLimits()
 				if(fLimit.qualifier.operation != AR_COND_OP_NONE)
 				{		
 					CRefItem refItem; // Dont change; reference to nothing, because table field references are already created
-					CARQualification arQual(*this->pInside);
+					CARQualification arQual(*this->pInside, refItem);
 					CARSchema tableSchema(tableSchemaName);
 
-					arQual.CheckQuery(&fLimit.qualifier, refItem, 0, schema.GetInsideId(), tableSchema.GetInsideId(), strmQuery, rootLevel);
+					arQual.CheckQuery(&fLimit.qualifier, 0, schema.GetInsideId(), tableSchema.GetInsideId(), strmQuery, rootLevel);
 				}
 				else
 				{

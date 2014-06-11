@@ -268,8 +268,8 @@ string CDocAlDetails::CreateSpecific(const string &schemaName)
 		{		
 			CRefItem refItem(this->al, REFM_RUNIF);
 
-			CARQualification arQual(*this->pInside);
-			arQual.CheckQuery(&this->al.GetRunIf(), refItem, 0, schemaInsideId, schemaInsideId, strmTmp, rootLevel);
+			CARQualification arQual(*this->pInside, refItem);
+			arQual.CheckQuery(&this->al.GetRunIf(), 0, schemaInsideId, schemaInsideId, strmTmp, rootLevel);
 		}
 		else
 		{

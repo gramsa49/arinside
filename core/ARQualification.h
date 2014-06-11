@@ -20,15 +20,16 @@
 class CARQualification
 {
 public:
-	CARQualification(CARInside &arIn);
+	CARQualification(CARInside &arIn, const CRefItem &referenceItem);
 	~CARQualification(void);
 
-	void CheckQuery(const ARQualifierStruct *query, const CRefItem &refItem, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
+	void CheckQuery(const ARQualifierStruct *query, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
 
 	int arsStructItemType;;
 
 private:
 	CARInside *arIn;
+	CRefItem refItem;
 	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
 	int FindCurrentEnumFieldId(int pFormId, int sFormId);
 	char* getFieldPrefix(ARFieldValueOrArithStruct *operand);

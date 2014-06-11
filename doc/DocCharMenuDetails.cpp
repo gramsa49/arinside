@@ -396,9 +396,9 @@ void CDocCharMenuDetails::SearchMenuDetails(CTable& table)
 
 			CRefItem refItemQuery(this->menu, REFM_CHARMENU_QUALIFICATION);
 
-			CARQualification arQual(*this->pInside);
+			CARQualification arQual(*this->pInside, refItemQuery);
 			arQual.arsStructItemType = AR_STRUCT_ITEM_XML_CHAR_MENU;
-			arQual.CheckQuery(&menu.qualifier, refItemQuery, 0, schema.GetInsideId(), querySchema.GetInsideId(), strmQuery, rootLevel);
+			arQual.CheckQuery(&menu.qualifier, 0, schema.GetInsideId(), querySchema.GetInsideId(), strmQuery, rootLevel);
 
 			if(strmQuery.str().length() > 0)
 			{

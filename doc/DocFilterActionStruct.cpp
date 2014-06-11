@@ -430,13 +430,13 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		stringstream strmTmpQual;
 
 		CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_IF);
-		CARQualification arQual(*arIn);
+		CARQualification arQual(*arIn, refItem);
 		arQual.arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;
 
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
 		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
 
-		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, refItem, 0, pFormId, sFormId, strmTmpQual, rootLevel);
+		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, 0, pFormId, sFormId, strmTmpQual, rootLevel);
 
 		if(strmTmpQual.str().length() > 0)
 		{
