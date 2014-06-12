@@ -215,7 +215,7 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 			CARQualification arQual(*this->pInside, refItem);
 			int pFormId = this->pInside->SchemaGetInsideId(schemaName);
 			int sFormId = pFormId;
-			arQual.CheckQuery(&this->escalation.GetRunIf(), 0, pFormId, sFormId, strmQuery, rootLevel);
+			arQual.CheckQuery(&this->escalation.GetRunIf(), pFormId, sFormId, strmQuery, rootLevel);
 		}
 		else
 		{

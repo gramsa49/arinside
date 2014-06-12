@@ -556,7 +556,7 @@ void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFields
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
 		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
 
-		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, 0, pFormId, sFormId, strmTmpQual, rootLevel);
+		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, pFormId, sFormId, strmTmpQual, rootLevel);
 
 		if(strmTmpQual.str().length() > 0)
 		{
@@ -1020,7 +1020,7 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 				CARQualification arQual(*this->arIn, refItem);
 				int pFormId = schemaInsideId; // this->arIn->SchemaGetInsideId(schemaName.c_str());
 				int sFormId = this->arIn->SchemaGetInsideId(openWindowSchema);
-				arQual.CheckQuery(&action.query, 0, pFormId, sFormId, strmTmpQual, rootLevel);
+				arQual.CheckQuery(&action.query, pFormId, sFormId, strmTmpQual, rootLevel);
 
 				strm << "<p>Qualification:<br/>" << endl;
 				strm << strmTmpQual.str() << "</p>";

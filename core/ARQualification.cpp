@@ -32,7 +32,7 @@ CARQualification::~CARQualification(void)
 }
 
 
-void CARQualification::CheckQuery(const ARQualifierStruct *query, int depth, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckQuery(const ARQualifierStruct *query, int pFormId, int sFormId, stringstream &qText, int rootLevel)
 {
 	qualLevels.push_back(query);
 	
@@ -46,7 +46,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int depth, int
 		case AR_COND_OP_OR:
 			{
 				if (query->u.andor.operandLeft->operation != query->operation && query->u.andor.operandLeft->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.andor.operandLeft, depth+1, pFormId, sFormId, qText, rootLevel);
+				CheckQuery(query->u.andor.operandLeft, pFormId, sFormId, qText, rootLevel);
 				if (query->u.andor.operandLeft->operation != query->operation && query->u.andor.operandLeft->operation != AR_COND_OP_REL_OP) qText << ")";
 
 				switch (query->operation)
@@ -56,7 +56,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int depth, int
 				}	
 
 				if (query->u.andor.operandRight->operation != query->operation && query->u.andor.operandRight->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.andor.operandRight, depth+1, pFormId, sFormId, qText, rootLevel);
+				CheckQuery(query->u.andor.operandRight, pFormId, sFormId, qText, rootLevel);
 				if (query->u.andor.operandRight->operation != query->operation && query->u.andor.operandRight->operation != AR_COND_OP_REL_OP) qText << ")";
 			}
 			break;
@@ -65,7 +65,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int depth, int
 			if(query->u.notQual != NULL)
 			{
 				if (query->u.notQual->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.notQual, depth+1, pFormId, sFormId, qText, rootLevel);
+				CheckQuery(query->u.notQual, pFormId, sFormId, qText, rootLevel);
 				if (query->u.notQual->operation != AR_COND_OP_REL_OP) qText << ")"; 
 			}
 			break;

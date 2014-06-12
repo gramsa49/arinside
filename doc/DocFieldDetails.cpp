@@ -564,7 +564,7 @@ string CDocFieldDetails::FieldLimits()
 					CARQualification arQual(*this->pInside, refItem);
 					CARSchema tableSchema(tableSchemaName);
 
-					arQual.CheckQuery(&fLimit.qualifier, 0, schema.GetInsideId(), tableSchema.GetInsideId(), strmQuery, rootLevel);
+					arQual.CheckQuery(&fLimit.qualifier, schema.GetInsideId(), tableSchema.GetInsideId(), strmQuery, rootLevel);
 				}
 				else
 				{

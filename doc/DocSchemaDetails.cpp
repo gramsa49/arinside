@@ -1207,7 +1207,7 @@ string CDocSchemaDetails::TypeDetails()
 					CARSchema memberA(compSchema.u.join.memberA);
 					CARSchema memberB(compSchema.u.join.memberB);
 
-					arQual.CheckQuery(&compSchema.u.join.joinQual, 0, memberA.GetInsideId(), memberB.GetInsideId(), strmQuery, rootLevel);
+					arQual.CheckQuery(&compSchema.u.join.joinQual, memberA.GetInsideId(), memberB.GetInsideId(), strmQuery, rootLevel);
 
 					strm << "Qualification: " << strmQuery.str();
 				}
@@ -2127,7 +2127,7 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 		{
 			CRefItem refItem(this->schema, REFM_SCHEMA_AUDIT_QUALIFICATION);
 			CARQualification arQual(*this->pInside, refItem);
-			arQual.CheckQuery(&audit.query, 0, pFormId, pFormId, qualStrm, rootLevel);
+			arQual.CheckQuery(&audit.query, pFormId, pFormId, qualStrm, rootLevel);
 		}
 		else
 		{
@@ -2222,7 +2222,7 @@ void CDocSchemaDetails::ShowArchiveProperties(std::ostream& strm)
 		{
 			CRefItem refItem(this->schema, REFM_SCHEMA_ARCHIVE_QUALIFICATION);
 			CARQualification arQual(*this->pInside, refItem);
-			arQual.CheckQuery(&archive.query, 0, pFormId, pFormId, qualStrm, rootLevel);
+			arQual.CheckQuery(&archive.query, pFormId, pFormId, qualStrm, rootLevel);
 		}
 		else
 		{

@@ -436,7 +436,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
 		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
 
-		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, 0, pFormId, sFormId, strmTmpQual, rootLevel);
+		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, pFormId, sFormId, strmTmpQual, rootLevel);
 
 		if(strmTmpQual.str().length() > 0)
 		{

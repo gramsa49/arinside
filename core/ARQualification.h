@@ -23,7 +23,7 @@ public:
 	CARQualification(CARInside &arIn, const CRefItem &referenceItem);
 	~CARQualification(void);
 
-	void CheckQuery(const ARQualifierStruct *query, int depth, int pFormId, int sformId, stringstream &qText, int rootLevel);
+	void CheckQuery(const ARQualifierStruct *query, int pFormId, int sformId, stringstream &qText, int rootLevel);
 
 	int arsStructItemType;;
 

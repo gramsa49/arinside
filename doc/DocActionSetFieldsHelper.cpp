@@ -107,7 +107,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 				CARQualification arQual(arIn, refItem);
 				arQual.arsStructItemType = arStructItemType;
-				arQual.CheckQuery(sfh.GetQualifier(), 0, pFormId, sFormId, strmTmpQual, rootLevel);
+				arQual.CheckQuery(sfh.GetQualifier(), pFormId, sFormId, strmTmpQual, rootLevel);
 
 				if(strmTmpQual.str().length() > 0)
 				{

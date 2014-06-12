@@ -99,7 +99,7 @@ void CScanFields::Start(CARField &field)
 					int pFormId = field.GetSchema().GetInsideId();
 					int sFormId = tableSourceSchema.GetInsideId();
 
-					arQual.CheckQuery(&fLimit.qualifier, 0, pFormId, sFormId, strmQuery, rootLevel);
+					arQual.CheckQuery(&fLimit.qualifier, pFormId, sFormId, strmQuery, rootLevel);
 				}
 			}
 			break;
