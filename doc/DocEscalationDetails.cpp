@@ -210,12 +210,11 @@ string CDocEscalationDetails::CreateSpecific(string schemaName)
 		stringstream strmQuery;
 		if(this->escalation.GetRunIf().operation != AR_COND_OP_NONE)
 		{		
-			CRefItem refItem(this->escalation, REFM_RUNIF);
-
-			CARQualification arQual(*this->pInside, refItem);
 			int pFormId = this->pInside->SchemaGetInsideId(schemaName);
-			int sFormId = pFormId;
-			arQual.CheckQuery(&this->escalation.GetRunIf(), pFormId, sFormId, strmQuery, rootLevel);
+
+			CRefItem refItem(this->escalation, REFM_RUNIF);
+			CARQualification arQual(*this->pInside, refItem, pFormId, rootLevel);
+			arQual.CheckQuery(&this->escalation.GetRunIf(), strmQuery);
 		}
 		else
 		{

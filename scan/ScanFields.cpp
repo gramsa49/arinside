@@ -94,12 +94,11 @@ void CScanFields::Start(CARField &field)
 				{		
 					stringstream strmQuery;
 					CRefItem refItem(field, REFM_TABLEFIELD_QUALIFICATION);
-
-					CARQualification arQual(*arIn, refItem);
 					int pFormId = field.GetSchema().GetInsideId();
 					int sFormId = tableSourceSchema.GetInsideId();
 
-					arQual.CheckQuery(&fLimit.qualifier, pFormId, sFormId, strmQuery, rootLevel);
+					CARQualification arQual(*arIn, refItem, pFormId, sFormId, rootLevel);
+					arQual.CheckQuery(&fLimit.qualifier, strmQuery);
 				}
 			}
 			break;

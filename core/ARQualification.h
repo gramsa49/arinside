@@ -20,18 +20,28 @@
 class CARQualification
 {
 public:
-	CARQualification(CARInside &arIn, const CRefItem &referenceItem);
+	// use this constructor in case only one form is involved (e.g. run if)
+	CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int rootLevel);
+	// use this constructor in case two forms are involved (e.g. setfield-if, pushfield-if)
+	CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int otherFormId, int rootLevel);
+
 	~CARQualification(void);
 
-	void CheckQuery(const ARQualifierStruct *query, int pFormId, int sformId, stringstream &qText, int rootLevel);
+	void CheckQuery(const ARQualifierStruct *query, stringstream &qText);
 
 	int arsStructItemType;;
 
 private:
 	CARInside *arIn;
 	CRefItem refItem;
-	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel);
-	int FindCurrentEnumFieldId(int pFormId, int sFormId);
+	int primaryFormId;
+	int secondaryFormId;
+	int rootLevel;
+	char primaryFormDelimiter;
+	char secondaryFormDelimiter;
+
+	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, stringstream &qText);
+	int FindCurrentEnumFieldId();
 	char* getFieldPrefix(ARFieldValueOrArithStruct *operand);
 
 	int tmpFormId;

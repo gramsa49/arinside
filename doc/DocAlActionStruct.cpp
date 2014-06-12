@@ -548,15 +548,15 @@ void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFields
 
 		// push field if **************************************
 		strm << "<br/>Push Field If<br/>" << endl;
-		stringstream strmTmpQual;
-
-		CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_IF);
-		CARQualification arQual(*arIn, refItem);
 
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
 		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
 
-		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, pFormId, sFormId, strmTmpQual, rootLevel);
+		stringstream strmTmpQual;
+		CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_IF);
+		CARQualification arQual(*arIn, refItem, pFormId, sFormId, rootLevel);
+
+		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, strmTmpQual);
 
 		if(strmTmpQual.str().length() > 0)
 		{
@@ -1015,12 +1015,12 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 				stringstream strmTmpQual;
 
 				CRefItem refItem(*this->obj, ifElse, nAction, REFM_OPENWINDOW_QUALIFICATION);
-
-				strmTmpQual.str("");
-				CARQualification arQual(*this->arIn, refItem);
 				int pFormId = schemaInsideId; // this->arIn->SchemaGetInsideId(schemaName.c_str());
 				int sFormId = this->arIn->SchemaGetInsideId(openWindowSchema);
-				arQual.CheckQuery(&action.query, pFormId, sFormId, strmTmpQual, rootLevel);
+
+				strmTmpQual.str("");
+				CARQualification arQual(*this->arIn, refItem, pFormId, sFormId, rootLevel);
+				arQual.CheckQuery(&action.query, strmTmpQual);
 
 				strm << "<p>Qualification:<br/>" << endl;
 				strm << strmTmpQual.str() << "</p>";

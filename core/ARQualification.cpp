@@ -19,12 +19,36 @@
 #include "../doc/DocCurrencyField.h"
 #include "../output/URLLink.h"
 
-CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceItem)
+CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int rootLevel)
 : refItem(referenceItem)
 {
 	this->arIn = &arIn;
 	this->tmpFormId = 0;
 	arsStructItemType = AR_STRUCT_ITEM_XML_NONE;
+
+	this->primaryFormId = currentFormId;
+	this->secondaryFormId = currentFormId;
+
+	this->primaryFormDelimiter = '\'';
+	this->secondaryFormDelimiter = '\'';
+
+	this->rootLevel = rootLevel;
+}
+
+CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int otherFormId, int rootLevel)
+: refItem(referenceItem)
+{
+	this->arIn = &arIn;
+	this->tmpFormId = 0;
+	arsStructItemType = AR_STRUCT_ITEM_XML_NONE;
+
+	this->primaryFormId = currentFormId;
+	this->secondaryFormId = otherFormId;
+
+	this->primaryFormDelimiter = '$';
+	this->secondaryFormDelimiter = '\'';
+
+	this->rootLevel = rootLevel;
 }
 
 CARQualification::~CARQualification(void)
@@ -32,7 +56,7 @@ CARQualification::~CARQualification(void)
 }
 
 
-void CARQualification::CheckQuery(const ARQualifierStruct *query, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckQuery(const ARQualifierStruct *query, stringstream &qText)
 {
 	qualLevels.push_back(query);
 	
@@ -46,7 +70,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int pFormId, i
 		case AR_COND_OP_OR:
 			{
 				if (query->u.andor.operandLeft->operation != query->operation && query->u.andor.operandLeft->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.andor.operandLeft, pFormId, sFormId, qText, rootLevel);
+				CheckQuery(query->u.andor.operandLeft, qText);
 				if (query->u.andor.operandLeft->operation != query->operation && query->u.andor.operandLeft->operation != AR_COND_OP_REL_OP) qText << ")";
 
 				switch (query->operation)
@@ -56,7 +80,7 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int pFormId, i
 				}	
 
 				if (query->u.andor.operandRight->operation != query->operation && query->u.andor.operandRight->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.andor.operandRight, pFormId, sFormId, qText, rootLevel);
+				CheckQuery(query->u.andor.operandRight, qText);
 				if (query->u.andor.operandRight->operation != query->operation && query->u.andor.operandRight->operation != AR_COND_OP_REL_OP) qText << ")";
 			}
 			break;
@@ -65,12 +89,12 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int pFormId, i
 			if(query->u.notQual != NULL)
 			{
 				if (query->u.notQual->operation != AR_COND_OP_REL_OP) qText << "(";
-				CheckQuery(query->u.notQual, pFormId, sFormId, qText, rootLevel);
+				CheckQuery(query->u.notQual, qText);
 				if (query->u.notQual->operation != AR_COND_OP_REL_OP) qText << ")"; 
 			}
 			break;
 		case AR_COND_OP_REL_OP:
-			CheckOperand(&query->u.relOp->operandLeft, NULL, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&query->u.relOp->operandLeft, NULL, qText);
 			switch (query->u.relOp->operation) 
 			{		
 			case AR_REL_OP_EQUAL:
@@ -95,72 +119,72 @@ void CARQualification::CheckQuery(const ARQualifierStruct *query, int pFormId, i
 				qText << " LIKE ";
 				break;
 			}
-			CheckOperand(&query->u.relOp->operandRight, NULL, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&query->u.relOp->operandRight, NULL, qText);
 			break;
 		case AR_COND_OP_FROM_FIELD: //A qualification located in a field on the form.
-			qText << "EXTERNAL ($" << arIn->LinkToField(pFormId, query->u.fieldId, rootLevel) << "$)";
+			qText << "EXTERNAL(" << primaryFormDelimiter << arIn->LinkToField(primaryFormId, query->u.fieldId, rootLevel) << primaryFormDelimiter << ")";
 
-			arIn->AddFieldReference(pFormId, query->u.fieldId, refItem);
+			arIn->AddFieldReference(primaryFormId, query->u.fieldId, refItem);
 			break;
 		}
 	}
 	qualLevels.pop_back();
 }
 
-void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, const CRefItem &refItem, int pFormId, int sFormId, stringstream &qText, int rootLevel)
+void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, stringstream &qText)
 {		
 	switch(operand->tag)
 	{
 	case AR_FIELD: //Foreign field id
-		tmpFormId = sFormId;
+		tmpFormId = secondaryFormId;
 
-		qText << "'" << arIn->LinkToField(sFormId, operand->u.fieldId, rootLevel) << "'";				
+		qText << primaryFormDelimiter << arIn->LinkToField(secondaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
 
-		if(!arIn->FieldreferenceExists(sFormId, operand->u.fieldId, refItem))
+		if(!arIn->FieldreferenceExists(secondaryFormId, operand->u.fieldId, refItem))
 		{
-			arIn->AddFieldReference(sFormId, operand->u.fieldId, refItem);
+			arIn->AddFieldReference(secondaryFormId, operand->u.fieldId, refItem);
 		}
 		break;	
 	case AR_FIELD_TRAN:
-		tmpFormId = pFormId;
+		tmpFormId = primaryFormId;
 
-		qText << "'TR." << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";		
+		qText << primaryFormDelimiter << "TR." << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
 
-		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem))
+		if(!arIn->FieldreferenceExists(primaryFormId, operand->u.fieldId, refItem))
 		{
-			arIn->AddFieldReference(pFormId, operand->u.fieldId, refItem);
+			arIn->AddFieldReference(primaryFormId, operand->u.fieldId, refItem);
 		}
 		break;	
 	case AR_FIELD_DB:
-		tmpFormId = pFormId;
+		tmpFormId = primaryFormId;
 
-		qText << "'DB." << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";				
+		qText << primaryFormDelimiter << "DB." << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
 
-		if(!arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem))
+		if(!arIn->FieldreferenceExists(primaryFormId, operand->u.fieldId, refItem))
 		{
-			arIn->AddFieldReference(pFormId, operand->u.fieldId, refItem);
+			arIn->AddFieldReference(primaryFormId, operand->u.fieldId, refItem);
 		}
 		break;	
 	case AR_FIELD_CURRENT:
-		tmpFormId = pFormId;
+		tmpFormId = primaryFormId;
 
-		if(arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK && pFormId == sFormId)
-			qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
-		else if(arsStructItemType == AR_STRUCT_ITEM_XML_FILTER && pFormId == sFormId)
-			qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
-		else if(arsStructItemType == AR_STRUCT_ITEM_XML_CHAR_MENU && pFormId == sFormId)
-			qText << "$" << arIn->LinkToMenuField(pFormId, operand->u.fieldId, rootLevel) << "$";
+		if(arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK && primaryFormId == secondaryFormId)
+			qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
+		else if(arsStructItemType == AR_STRUCT_ITEM_XML_FILTER && primaryFormId == secondaryFormId)
+			qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
+		else if(arsStructItemType == AR_STRUCT_ITEM_XML_CHAR_MENU && primaryFormId == secondaryFormId)
+			qText << primaryFormDelimiter << arIn->LinkToMenuField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
 		else
 		{
-			if (pFormId != sFormId)
-				qText << "$" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "$";
+			if (primaryFormId != secondaryFormId)
+				qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
 			else
-				qText << "'" << arIn->LinkToField(pFormId, operand->u.fieldId, rootLevel) << "'";
+				qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
 		}
 
-		if(arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU && !arIn->FieldreferenceExists(pFormId, operand->u.fieldId, refItem))
+		if(arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU && !arIn->FieldreferenceExists(primaryFormId, operand->u.fieldId, refItem))
 		{
-			arIn->AddFieldReference(pFormId, operand->u.fieldId, refItem);
+			arIn->AddFieldReference(primaryFormId, operand->u.fieldId, refItem);
 		}
 
 		break;
@@ -182,7 +206,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 		case AR_DATA_TYPE_ENUM:
 			try
 			{
-				int tmpFieldId = FindCurrentEnumFieldId(pFormId, sFormId);
+				int tmpFieldId = FindCurrentEnumFieldId();
 				string tmp = arIn->GetFieldEnumValue(tmpFormId, tmpFieldId, data->u.intVal);
 
 				if(!tmp.empty())
@@ -260,56 +284,56 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 		{
 		case AR_ARITH_OP_ADD:
 			if (addBracket) qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, qText);
 			qText << CAREnum::Operand(AR_ARITH_OP_ADD);
-			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, qText);
 			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_SUBTRACT:
 			if (addBracket) qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, qText);
 			qText << CAREnum::Operand(AR_ARITH_OP_SUBTRACT);
-			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, qText);
 			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_MULTIPLY:
 			if (addBracket) qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, qText);
 			qText << CAREnum::Operand(AR_ARITH_OP_MULTIPLY);
-			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, qText);
 			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_DIVIDE:
 			if (addBracket) qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, qText);
 			qText << CAREnum::Operand(AR_ARITH_OP_DIVIDE);
-			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, qText);
 			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_MODULO:
 			if (addBracket) qText << "(";
-			CheckOperand(&operand->u.arithOp->operandLeft, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandLeft, operand, qText);
 			qText << CAREnum::Operand(AR_ARITH_OP_MODULO);
-			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, qText);
 			if (addBracket) qText << ")";
 			break;
 		case AR_ARITH_OP_NEGATE:
 			qText << CAREnum::Operand(AR_ARITH_OP_NEGATE);
-			CheckOperand(&operand->u.arithOp->operandRight, operand, refItem, pFormId, sFormId, qText, rootLevel);
+			CheckOperand(&operand->u.arithOp->operandRight, operand, qText);
 			break;
 		}
 		break;
 	}
 	case AR_STAT_HISTORY:
 		{
-			qText << "'" << arIn->LinkToField(pFormId, 15, rootLevel) << ".";
+			qText << "'" << arIn->LinkToField(primaryFormId, 15, rootLevel) << ".";
 
-			if(!arIn->FieldreferenceExists(pFormId, 15, refItem))
+			if(!arIn->FieldreferenceExists(primaryFormId, 15, refItem))
 			{
-				arIn->AddFieldReference(pFormId, 15, refItem);
+				arIn->AddFieldReference(primaryFormId, 15, refItem);
 			}
 
-			string tmp = arIn->GetFieldEnumValue(pFormId, 7, operand->u.statHistory.enumVal);								
+			string tmp = arIn->GetFieldEnumValue(primaryFormId, 7, operand->u.statHistory.enumVal);								
 			if(!tmp.empty())
 				qText << tmp;
 			else
@@ -331,19 +355,19 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 	case AR_CURRENCY_FLD_DB:
 	case AR_CURRENCY_FLD_TRAN:
 		{
-			CDocCurrencyField docCurrency(pFormId, *operand->u.currencyField);
+			CDocCurrencyField docCurrency(primaryFormId, *operand->u.currencyField);
 			char *prefix = getFieldPrefix(operand);
 			
-			qText << "'";
+			qText << primaryFormDelimiter;
 			if (prefix != NULL) qText << prefix;
 			docCurrency.GetResolvedAndLinkedField(qText, refItem, rootLevel);
-			qText << "'";
+			qText << primaryFormDelimiter;
 		}
 		break;
 	}
 }
 
-int CARQualification::FindCurrentEnumFieldId(int pFormId, int sFormId)
+int CARQualification::FindCurrentEnumFieldId()
 {
 	int pos = (int)qualLevels.size() - 1;
 	
@@ -356,24 +380,24 @@ int CARQualification::FindCurrentEnumFieldId(int pFormId, int sFormId)
 			switch (current->u.relOp->operandLeft.tag)
 			{
 			case AR_FIELD:
-				tmpFormId = sFormId;
+				tmpFormId = secondaryFormId;
 				return current->u.relOp->operandLeft.u.fieldId;
 			case AR_FIELD_TRAN:
 			case AR_FIELD_DB:
 			case AR_FIELD_CURRENT:
-				tmpFormId = pFormId;
+				tmpFormId = primaryFormId;
 				return current->u.relOp->operandLeft.u.fieldId;
 			}
 
 			switch (current->u.relOp->operandRight.tag)
 			{
 			case AR_FIELD:
-				tmpFormId = sFormId;
+				tmpFormId = secondaryFormId;
 				return current->u.relOp->operandRight.u.fieldId;
 			case AR_FIELD_TRAN:
 			case AR_FIELD_DB:
 			case AR_FIELD_CURRENT:
-				tmpFormId = pFormId;
+				tmpFormId = primaryFormId;
 				return current->u.relOp->operandRight.u.fieldId;
 			}
 

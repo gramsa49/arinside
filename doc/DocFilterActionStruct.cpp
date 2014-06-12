@@ -429,14 +429,14 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		strm << "<br/>Push Field If<br/>" << endl;
 		stringstream strmTmpQual;
 
-		CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_IF);
-		CARQualification arQual(*arIn, refItem);
-		arQual.arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;
-
 		int pFormId = this->arIn->SchemaGetInsideId(schemaName);
 		int sFormId = this->arIn->SchemaGetInsideId(pushSchema);
 
-		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, pFormId, sFormId, strmTmpQual, rootLevel);
+		CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_IF);
+		CARQualification arQual(*arIn, refItem, pFormId, sFormId, rootLevel);
+		arQual.arsStructItemType = AR_STRUCT_ITEM_XML_FILTER;
+
+		arQual.CheckQuery(&action.pushFieldsList.pushFieldsList[0].field.qualifier, strmTmpQual);
 
 		if(strmTmpQual.str().length() > 0)
 		{
