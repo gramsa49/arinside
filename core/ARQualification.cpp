@@ -138,7 +138,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 	case AR_FIELD: //Foreign field id
 		tmpFormId = secondaryFormId;
 
-		qText << primaryFormDelimiter << arIn->LinkToField(secondaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
+		qText << secondaryFormDelimiter << arIn->LinkToField(secondaryFormId, operand->u.fieldId, rootLevel) << secondaryFormDelimiter;
 
 		if(!arIn->FieldreferenceExists(secondaryFormId, operand->u.fieldId, refItem))
 		{
@@ -354,14 +354,19 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 	case AR_CURRENCY_FLD:
 	case AR_CURRENCY_FLD_DB:
 	case AR_CURRENCY_FLD_TRAN:
+	case AR_CURRENCY_FLD_CURRENT:
 		{
-			CDocCurrencyField docCurrency(primaryFormId, *operand->u.currencyField);
+			int formId;
+			char delimiter;
+			getFormIdAndDelimiter(operand, formId, delimiter);
+
+			CDocCurrencyField docCurrency(formId, *operand->u.currencyField);
 			char *prefix = getFieldPrefix(operand);
 			
-			qText << primaryFormDelimiter;
+			qText << delimiter;
 			if (prefix != NULL) qText << prefix;
 			docCurrency.GetResolvedAndLinkedField(qText, refItem, rootLevel);
-			qText << primaryFormDelimiter;
+			qText << delimiter;
 		}
 		break;
 	}
@@ -423,3 +428,27 @@ char* CARQualification::getFieldPrefix(ARFieldValueOrArithStruct *operand)
 	}
 	return NULL;
 }
+
+bool CARQualification::getFormIdAndDelimiter(ARFieldValueOrArithStruct *operand, int &formId, char &delimiter)
+{
+	if (operand == NULL) return false;
+	switch (operand->tag)
+	{
+	case AR_FIELD:
+	case AR_CURRENCY_FLD:
+		formId = secondaryFormId;
+		delimiter = secondaryFormDelimiter;
+		return true;
+	case AR_FIELD_TRAN:
+	case AR_FIELD_DB:
+	case AR_FIELD_CURRENT:
+	case AR_CURRENCY_FLD_DB:
+	case AR_CURRENCY_FLD_TRAN:
+	case AR_CURRENCY_FLD_CURRENT:
+		formId = primaryFormId;
+		delimiter = primaryFormDelimiter;
+		return true;
+	}
+	throw exception("NotImplementedException");
+}
+
