@@ -135,59 +135,23 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 {		
 	switch(operand->tag)
 	{
-	case AR_FIELD: //Foreign field id
-		tmpFormId = secondaryFormId;
-
-		qText << secondaryFormDelimiter << arIn->LinkToField(secondaryFormId, operand->u.fieldId, rootLevel) << secondaryFormDelimiter;
-
-		if(!arIn->FieldreferenceExists(secondaryFormId, operand->u.fieldId, refItem))
-		{
-			arIn->AddFieldReference(secondaryFormId, operand->u.fieldId, refItem);
-		}
-		break;	
+	case AR_FIELD:
 	case AR_FIELD_TRAN:
-		tmpFormId = primaryFormId;
-
-		qText << primaryFormDelimiter << "TR." << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
-
-		if(!arIn->FieldreferenceExists(primaryFormId, operand->u.fieldId, refItem))
-		{
-			arIn->AddFieldReference(primaryFormId, operand->u.fieldId, refItem);
-		}
-		break;	
 	case AR_FIELD_DB:
-		tmpFormId = primaryFormId;
+	case AR_FIELD_CURRENT:
+		int formId;
+		char delimiter;
+		getFormIdAndDelimiter(operand, formId, delimiter);
 
-		qText << primaryFormDelimiter << "DB." << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
+		tmpFormId = formId;
 
-		if(!arIn->FieldreferenceExists(primaryFormId, operand->u.fieldId, refItem))
+		qText << delimiter << arIn->LinkToField(formId, operand->u.fieldId, rootLevel) << delimiter;
+
+		if(!arIn->FieldreferenceExists(formId, operand->u.fieldId, refItem))
 		{
-			arIn->AddFieldReference(primaryFormId, operand->u.fieldId, refItem);
+			arIn->AddFieldReference(formId, operand->u.fieldId, refItem);
 		}
 		break;	
-	case AR_FIELD_CURRENT:
-		tmpFormId = primaryFormId;
-
-		if(arsStructItemType == AR_STRUCT_ITEM_XML_ACTIVE_LINK && primaryFormId == secondaryFormId)
-			qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
-		else if(arsStructItemType == AR_STRUCT_ITEM_XML_FILTER && primaryFormId == secondaryFormId)
-			qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
-		else if(arsStructItemType == AR_STRUCT_ITEM_XML_CHAR_MENU && primaryFormId == secondaryFormId)
-			qText << primaryFormDelimiter << arIn->LinkToMenuField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
-		else
-		{
-			if (primaryFormId != secondaryFormId)
-				qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
-			else
-				qText << primaryFormDelimiter << arIn->LinkToField(primaryFormId, operand->u.fieldId, rootLevel) << primaryFormDelimiter;
-		}
-
-		if(arsStructItemType != AR_STRUCT_ITEM_XML_CHAR_MENU && !arIn->FieldreferenceExists(primaryFormId, operand->u.fieldId, refItem))
-		{
-			arIn->AddFieldReference(primaryFormId, operand->u.fieldId, refItem);
-		}
-
-		break;
 	case AR_QUERY:
 		qText << "*QUERY*";
 		break;
