@@ -163,79 +163,79 @@ string CDocTextReferences::TextFindFields()
 			}
 			else if (inText.compare(nextSearchPos, 15, "ADD-ATTACHMENT ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-ADD-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-ADD-ATTACHMENT");
 			}
 			else if (inText.compare(nextSearchPos, 18, "DELETE-ATTACHMENT ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-DELETE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-DELETE-ATTACHMENT");
 			}
 			else if (inText.compare(nextSearchPos, 16, "GET-FIELD-LABEL ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-GET-FIELD-LABEL", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-GET-FIELD-LABEL");
 			}
 			else if (inText.compare(nextSearchPos, 15, "GET-PREFERENCE ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-GET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-GET-PREFERENCE");
 			}
 			else if (inText.compare(nextSearchPos, 28, "NAV-FIELD-SET-SELECTED-ITEM ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-NAV-FIELD-SET-SELECTED-ITEM");
 			}
 			else if (inText.compare(nextSearchPos, 16, "OPEN-ATTACHMENT ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-OPEN-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-OPEN-ATTACHMENT");
 			}
 			else if (inText.compare(nextSearchPos, 16, "SAVE-ATTACHMENT ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-SAVE-ATTACHMENT", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-SAVE-ATTACHMENT");
 			}
 			else if (inText.compare(nextSearchPos, 15, "SET-PREFERENCE ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-SET-PREFERENCE", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-SET-PREFERENCE");
 			}
 			else if (inText.compare(nextSearchPos, 12, "TABLE-CLEAR ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR");
 			}
 			else if (inText.compare(nextSearchPos, 23, "TABLE-CLEAR-ROWCHANGED ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-CLEAR-ROWCHANGED");
 			}
 			else if (inText.compare(nextSearchPos, 18, "TABLE-DESELECTALL ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-DESELECTALL", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-DESELECTALL");
 			}
 			else if (inText.compare(nextSearchPos, 26, "TABLE-GET-SELECTED-COLUMN ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-GET-SELECTED-COLUMN");
 			}
 			else if (inText.compare(nextSearchPos, 23, "TABLE-IS-LEAF-SELECTED ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-IS-LEAF-SELECTED", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-IS-LEAF-SELECTED");
 			}
 			else if (inText.compare(nextSearchPos, 17, "TABLE-NEXT-CHUNK ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-NEXT-CHUNK", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-NEXT-CHUNK");
 			}
 			else if (inText.compare(nextSearchPos, 17, "TABLE-PREV-CHUNK ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-PREV-CHUNK", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-PREV-CHUNK");
 			}
 			else if (inText.compare(nextSearchPos, 14, "TABLE-REFRESH ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-REFRESH", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-REFRESH");
 			}
 			else if (inText.compare(nextSearchPos, 13, "TABLE-REPORT ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-REPORT", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-REPORT");
 			}
 			else if (inText.compare(nextSearchPos, 18, "TABLE-SELECT-NODE ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECT-NODE", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECT-NODE");
 			}
 			else if (inText.compare(nextSearchPos, 16, "TABLE-SELECTALL ") == 0)
 			{
-				strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECTALL", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processOneField("PERFORM-ACTION-TABLE-SELECTALL");
 			}
 			else
 			{
@@ -385,7 +385,7 @@ string CDocTextReferences::TextFindFields()
 	return inText;
 }
 
-string CDocTextReferences::processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
+string CDocTextReferences::processOneField(const string& command)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
