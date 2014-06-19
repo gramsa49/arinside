@@ -86,6 +86,7 @@ SET(ARINSIDE_SRCS_DOC_CPP
  doc/DocRoleDetails.cpp
  doc/DocSchemaDetails.cpp
  doc/DocSummaryInfo.cpp
+ doc/DocTextReferences.cpp
  doc/DocUserDetails.cpp
  doc/DocValidator.cpp
  doc/DocVuiDetails.cpp
@@ -120,6 +121,7 @@ SET(ARINSIDE_SRCS_DOC_H
  doc/DocRoleDetails.h
  doc/DocSchemaDetails.h
  doc/DocSummaryInfo.h
+ doc/DocTextReferences.h 
  doc/DocUserDetails.h
  doc/DocValidator.h
  doc/DocVuiDetails.h

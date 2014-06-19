@@ -974,6 +974,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocTextReferences.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocTextReferences.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocUserDetails.cpp"
 				>
 			</File>

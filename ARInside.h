@@ -142,7 +142,7 @@ public:
 	void AddFieldReference(int schemaId, int fieldId, const CRefItem& ref);
 	void AddMenuReference(const string& menuName, const CRefItem& ref);
 
-	string TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
+	string TextFindFields(const string &inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
 	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 
 	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CRefItem &refItem);
@@ -169,12 +169,6 @@ private:
 
 	void ParseVersionString(string version);
 	void ParseVersionString(int xmlVersion);
-
-	string processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 
 	bool WriteHTAccess();
 };
