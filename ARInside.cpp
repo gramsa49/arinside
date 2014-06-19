@@ -2112,11 +2112,6 @@ string CARInside::processSecondParameter(const string& command, const string& in
 
 	return strmTmp.str();
 }
-bool CARInside::getPos(const string& inText, const string& findText)
-{
-	size_t pos = inText.find(findText);
-	return (pos != std::string::npos);
-}
 
 string CARInside::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {

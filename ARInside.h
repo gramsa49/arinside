@@ -170,7 +170,6 @@ private:
 	void ParseVersionString(string version);
 	void ParseVersionString(int xmlVersion);
 
-	bool getPos(const string& inText, const string& findText);
 	string processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 	string processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 	string processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
