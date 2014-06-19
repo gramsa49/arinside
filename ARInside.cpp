@@ -1330,10 +1330,10 @@ void CARInside::AddMenuReference(const string& menuName, const CRefItem &ref)
 	}
 }
 
-string CARInside::TextFindFields(const string &inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem)
+string CARInside::TextFindFields(const string &inText, const string &fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem)
 {	
-	CDocTextReferences textRefs;
-	return textRefs.TextFindFields(inText, fieldSeparator, schemaInsideId, rootLevel, findKeywords, refItem);
+	CDocTextReferences textRefs(inText, fieldSeparator, schemaInsideId, rootLevel, findKeywords, refItem);
+	return textRefs.TextFindFields();
 }
 
 string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)

@@ -25,10 +25,18 @@ private:
 	CARInside *pInside;
 
 public:
-	CDocTextReferences();
+	CDocTextReferences(const std::string& inText, const std::string &fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
 	~CDocTextReferences() {}
 
-	string TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
+	string TextFindFields();
+
+private:
+	string inText;
+	string fieldSeparator;
+	int schemaInsideId;
+	int rootLevel;
+	bool findKeywords;
+	const CRefItem* refItem;
 
 private:
 	string processOneField(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);

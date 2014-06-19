@@ -19,12 +19,18 @@
 #include "../output/URLLink.h"
 #include "../ARInside.h"
 
-CDocTextReferences::CDocTextReferences()
+CDocTextReferences::CDocTextReferences(const string& inText, const string &fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem)
+: inText(inText), fieldSeparator(fieldSeparator)
 {
 	pInside = CARInside::GetInstance();
+
+	this->schemaInsideId = schemaInsideId;
+	this->rootLevel = rootLevel;
+	this->findKeywords = findKeywords;
+	this->refItem = refItem;
 }
 
-string CDocTextReferences::TextFindFields(string inText, string fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem)
+string CDocTextReferences::TextFindFields()
 {
 	try
 	{
