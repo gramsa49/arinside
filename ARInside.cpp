@@ -1544,16 +1544,6 @@ void CARInside::ParseVersionString(int xmlVersion)
 		arServerVersion = "7.0.00";
 		vMajor = 7; vMinor = 0; vRevision = 0;
 	}
-	else if (xmlVersion >= AR_XML_VERSION_710)
-	{
-		arServerVersion = "7.1.00";
-		vMajor = 7; vMinor = 1; vRevision = 0;
-	}
-	else if (xmlVersion >= AR_XML_VERSION_710)
-	{
-		arServerVersion = "7.1.00";
-		vMajor = 7; vMinor = 1; vRevision = 0;
-	}
 	else if (xmlVersion >= AR_XML_VERSION_600)
 	{
 		// 6.0 and 6.3 use the same export version number. To show keywords
