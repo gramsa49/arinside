@@ -553,6 +553,10 @@
 				RelativePath=".\core\ARDayStructHelperTest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\core\ARParseFieldTest.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="lists"

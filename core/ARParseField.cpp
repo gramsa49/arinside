@@ -1,0 +1,149 @@
+//Copyright (C) 2014 John Luthgers | jls17@gmx.net
+//
+//This file is part of ARInside.
+//
+//    ARInside is free software: you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation, version 2 of the License.
+//
+//    ARInside is distributed in the hope that it will be useful,
+//    but WITHOUT ANY WARRANTY; without even the implied warranty of
+//    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+//    GNU General Public License for more details.
+//
+//    You should have received a copy of the GNU General Public License
+//    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
+
+#include "stdafx.h"
+#include "../ARApi.h"
+#include "ARParseField.h"
+
+const char FIELD_PART_DELIMITER = '.';
+
+CARParseField::CARParseField(const std::string &fieldIdString)
+: fieldString(fieldIdString)
+{
+	ARZeroMemory(&field);
+	Parse();
+}
+
+void CARParseField::Parse()
+{
+	if (fieldString.empty())
+		return;
+
+	unsigned int readPos = 0;
+
+	int fieldId = 0;
+	ReadResult result = ReadInteger(readPos, fieldId);
+
+	if (result == FINISHED)
+	{
+		field.tag = AR_FIELD;
+		field.u.fieldId = fieldId;
+		return;
+	}
+	else if (result == NEXT)
+	{
+		int typeId = 0;
+		result = ReadInteger(readPos, typeId);
+
+		if (result == FINISHED)
+		{
+			result = FAILED;
+			return;
+		}
+		else if (result == NEXT)
+		{
+			int enumId = 0;
+			result = ReadInteger(readPos, enumId);
+
+			if (result == FAILED && fieldString.length() - readPos >= AR_MAX_CURRENCY_CODE_SIZE)
+			{
+				ARCurrencyCodeType cCode;
+				strncpy(cCode, fieldString.c_str() + readPos, AR_MAX_CURRENCY_CODE_SIZE);
+				cCode[AR_MAX_CURRENCY_CODE_SIZE] = 0;
+				readPos += AR_MAX_CURRENCY_CODE_SIZE;
+
+				if (fieldString.length() == readPos)
+				{
+					field.tag = AR_CURRENCY_FLD;
+					field.u.currencyField = new ARCurrencyPartStruct;
+					field.u.currencyField->fieldId = fieldId;
+					field.u.currencyField->partTag = typeId;
+					strncpy(field.u.currencyField->currencyCode, cCode, AR_MAX_CURRENCY_CODE_SIZE + 1);
+					return;
+				}
+			}
+			else if (result == FINISHED)
+			{
+				if (fieldId == 15)
+				{
+					field.tag = AR_STAT_HISTORY;
+					field.u.statHistory.userOrTime = typeId;
+					field.u.statHistory.enumVal = enumId;
+					return;
+				}
+			}
+		}
+	}
+}
+
+CARParseField::ReadResult CARParseField::ReadInteger(unsigned int &curPos, int &outInt)
+{
+	const int FIELD_BUFFER_SIZE = 16;
+
+	ReadResult result = FINISHED;
+	unsigned int readCount = 0;
+	char field[FIELD_BUFFER_SIZE];
+	unsigned int pos;
+
+	for (pos = curPos; pos < fieldString.length(); pos++)
+	{
+		if (readCount >= FIELD_BUFFER_SIZE)
+		{
+			return FAILED;
+		}
+
+		char currChar = fieldString.at(pos);
+		
+		// - is only allowed at the beginning
+		if (currChar == '-' && pos > curPos)  
+			return FAILED;
+
+		if (isValidChar(currChar))
+		{
+			field[readCount++] = currChar;
+		}
+		else if (readCount > 0 && currChar == FIELD_PART_DELIMITER)
+		{
+			pos++;
+			result = NEXT;
+			break;
+		}
+		else
+		{
+			return FAILED;
+		}
+	}
+
+	if (readCount > 0)
+	{
+		field[readCount] = 0;
+		outInt = atoi(field);
+
+		curPos = pos;
+		return result;
+	}
+	return FAILED;
+}
+
+bool CARParseField::isValidChar(char c)
+{
+	return (c >= '0' && c <= '9' || c == '-');
+}
+
+const ARParseField& CARParseField::getField()
+{
+	return field;
+}

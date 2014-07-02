@@ -15,6 +15,7 @@ SET (ARINSIDE_SRCS_CORE_CPP
  core/ARHandle.cpp
  core/ARImage.cpp
  core/ARObject.cpp
+ core/ARParseField.cpp
  core/ARProplistHelper.cpp
  core/ARQualification.cpp
  core/ARRole.cpp
@@ -43,6 +44,7 @@ SET (ARINSIDE_SRCS_CORE_H
  core/ARHandle.h
  core/ARImage.h
  core/ARObject.h
+ core/ARParseField.h
  core/ARProplistHelper.h
  core/ARQualification.h
  core/ARRole.h
@@ -376,6 +378,7 @@ SET(ARINSIDE_TEST_SRCS
  FileSystemUtilTest.h
  RapidJSONTests.cpp
  core/ARDayStructHelperTest.cpp
+ core/ARParseFieldTest.cpp
  doc/DocTextReferencesTest.cpp
  doc/DocTextReferencesTest.h
  lists/ARListHelpersTest.cpp

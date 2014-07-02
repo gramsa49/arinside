@@ -658,6 +658,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\core\ARParseField.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\ARParseField.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Core\ARProplistHelper.cpp"
 				>
 			</File>
