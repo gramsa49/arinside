@@ -44,6 +44,9 @@ private:
 	string processForm(const string& command, const CRefItem *refItem = NULL);
 	string processSecondParameter(const string& command);
 
+	void replaceAllSpecials();
+	void replaceAllFields();
+
 protected: /* this is protected to overwrite methods in subclasses for testing support */
 	virtual string refFieldID(int iFieldID);
 	virtual bool isInvalidSchemaId();
