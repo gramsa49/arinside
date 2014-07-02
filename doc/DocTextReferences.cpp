@@ -53,97 +53,97 @@ string CDocTextReferences::TextFindFields()
 
 			if (inText.compare(nextSearchPos, 17, "Copy-Field-Value ") == 0)
 			{
-				strmTmp << processTwoFields("Application-Copy-Field-Value", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processTwoFields("Application-Copy-Field-Value");
 			}
 			else if (inText.compare(nextSearchPos, 13, "Delete-Entry ") == 0)
 			{
 				CRefItem newRefItem(*refItem, REFM_DELETE_ENTRY_ACTION);
-				strmTmp << processForm("Application-Delete-Entry", inText, schemaInsideId, rootLevel, (refItem == NULL ? refItem : &newRefItem));
+				strmTmp << processForm("Application-Delete-Entry", (refItem == NULL ? refItem : &newRefItem));
 			}
 			else if (inText.compare(nextSearchPos, 12, "Format-Qual ") == 0)
 			{
-				strmTmp << processForm("Application-Format-Qual", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Format-Qual");
 			}
 			else if (inText.compare(nextSearchPos, 19, "Format-Qual-Filter ") == 0)
 			{
-				strmTmp << processForm("Application-Format-Qual-Filter", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Format-Qual-Filter");
 			}
 			else if (inText.compare(nextSearchPos, 15, "Format-Qual-ID ") == 0)
 			{
-				strmTmp << processForm("Application-Format-Qual-ID", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Format-Qual-ID");
 			}
 			else if (inText.compare(nextSearchPos, 14, "Format-Qual-L ") == 0)
 			{
-				strmTmp << processForm("Application-Format-Qual-L", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Format-Qual-L");
 			}
 			else if (inText.compare(nextSearchPos, 18, "Get-Approval-Join ") == 0)
 			{
-				strmTmp << processForm("Application-Get-Approval-Join", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-Approval-Join");
 			}
 			else if (inText.compare(nextSearchPos, 19, "Get-Approval-Join2 ") == 0)
 			{
-				strmTmp << processForm("Application-Get-Approval-Join2", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-Approval-Join2");
 			}
 			else if (inText.compare(nextSearchPos, 16, "Get-DetSig-Join ") == 0)
 			{
-				strmTmp << processForm("Application-Get-DetSig-Join", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-DetSig-Join");
 			}
 			else if (inText.compare(nextSearchPos, 17, "Get-DetSig-Join2 ") == 0)
 			{
-				strmTmp << processForm("Application-Get-DetSig-Join2", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-DetSig-Join2");
 			}
 			else if (inText.compare(nextSearchPos, 15, "Get-Form-Alias ") == 0)
 			{
-				strmTmp << processForm("Application-Get-Form-Alias", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-Form-Alias");
 			}
 			else if (inText.compare(nextSearchPos, 17, "Get-Locale-VuiID ") == 0)
 			{
-				strmTmp << processForm("Application-Get-Locale-VuiID", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-Locale-VuiID");
 			}
 			else if (inText.compare(nextSearchPos, 25, "Get-Next-Recurrence-Time ") == 0)
 			{
-				strmTmp << processForm("Application-Get-Next-Recurrence-Time", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Get-Next-Recurrence-Time");
 			}
 			else if (inText.compare(nextSearchPos, 17, "Map-Ids-To-Names ") == 0)
 			{
-				strmTmp << processForm("Application-Map-Ids-To-Names", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Map-Ids-To-Names");
 			}
 			else if (inText.compare(nextSearchPos, 19, "Map-Ids-To-Names-L ") == 0)
 			{
-				strmTmp << processForm("Application-Map-Ids-To-Names-L", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Map-Ids-To-Names-L");
 			}
 			else if (inText.compare(nextSearchPos, 17, "Map-Names-To-Ids ") == 0)
 			{
-				strmTmp << processForm("Application-Map-Names-To-Ids", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Map-Names-To-Ids");
 			}
 			else if (inText.compare(nextSearchPos, 19, "Map-Names-To-Ids-L ") == 0)
 			{
-				strmTmp << processForm("Application-Map-Names-To-Ids-L", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Map-Names-To-Ids-L");
 			}
 			else if (inText.compare(nextSearchPos, 11, "Parse-Qual ") == 0)
 			{
-				strmTmp << processForm("Application-Parse-Qual", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Parse-Qual");
 			}
 			else if (inText.compare(nextSearchPos, 18, "Parse-Qual-Filter ") == 0)
 			{
-				strmTmp << processForm("Application-Parse-Qual-Filter", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Parse-Qual-Filter");
 			}
 			else if (inText.compare(nextSearchPos, 13, "Parse-Qual-L ") == 0)
 			{
-				strmTmp << processForm("Application-Parse-Qual-L", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Parse-Qual-L");
 			}
 			else if (inText.compare(nextSearchPos, 20, "Parse-Qual-SField-L ") == 0)
 			{
-				strmTmp << processForm("Application-Parse-Qual-SField-L", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Parse-Qual-SField-L");
 			}
 			else if (inText.compare(nextSearchPos, 17, "Parse-Val-SField ") == 0)
 			{
-				strmTmp << processForm("Application-Parse-Val-SField", inText, schemaInsideId, rootLevel, NULL);
+				strmTmp << processForm("Application-Parse-Val-SField");
 			}
 			else if (inText.compare(nextSearchPos, 19, "Query-Delete-Entry ") == 0)
 			{
 				CRefItem newRefItem(*refItem, REFM_DELETE_ENTRY_ACTION);
-				strmTmp << processForm("Application-Query-Delete-Entry", inText, schemaInsideId, rootLevel, (refItem == NULL ? NULL : &newRefItem));
+				strmTmp << processForm("Application-Query-Delete-Entry", (refItem == NULL ? NULL : &newRefItem));
 			}
 			else
 			{
@@ -159,7 +159,7 @@ string CDocTextReferences::TextFindFields()
 
 			if (inText.compare(nextSearchPos, 12, "ACTIVE-LINK ") == 0)
 			{
-				strmTmp << processSecondParameter("PERFORM-ACTION-ACTIVE-LINK", inText, schemaInsideId, rootLevel, refItem);
+				strmTmp << processSecondParameter("PERFORM-ACTION-ACTIVE-LINK");
 			}
 			else if (inText.compare(nextSearchPos, 15, "ADD-ATTACHMENT ") == 0)
 			{
@@ -407,7 +407,7 @@ string CDocTextReferences::processOneField(const string& command)
 		fieldId = atoi(tmp.c_str());
 
 	if (fieldId != std::string::npos && fieldId > 0)
-		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+		strmTmp << refFieldID(fieldId);
 
 	if (pos != std::string::npos)
 	{
@@ -417,7 +417,7 @@ string CDocTextReferences::processOneField(const string& command)
 
 	return strmTmp.str();
 }
-string CDocTextReferences::processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
+string CDocTextReferences::processTwoFields(const string& command)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -438,7 +438,7 @@ string CDocTextReferences::processTwoFields(const string& command, const string&
 	{
 		pos = tmp.find(" ");
 		fieldId = atoi(tmp.substr(0,pos).c_str());
-		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+		strmTmp << refFieldID(fieldId);
 	}
 
 	//put a space between the field ID's
@@ -456,13 +456,13 @@ string CDocTextReferences::processTwoFields(const string& command, const string&
 	else
 	{
 		fieldId = atoi(tmp.c_str());
-		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem);
+		strmTmp << refFieldID(fieldId);
 	}
 
 	return strmTmp.str();
 }
 
-string CDocTextReferences::processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
+string CDocTextReferences::processForm(const string& command, const CRefItem *refItem)
 {
 	stringstream strmTmp;
 	string form = "";
@@ -516,7 +516,7 @@ string CDocTextReferences::processForm(const string& command, const string& inTe
 
 	return strmTmp.str();
 }
-string CDocTextReferences::processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
+string CDocTextReferences::processSecondParameter(const string& command)
 {
 	stringstream strmTmp;
 	int fieldId = 0;
@@ -541,13 +541,13 @@ string CDocTextReferences::processSecondParameter(const string& command, const s
 		tmp = tmp.substr(pos);
 		//set the fieldID = to the one we found
 		fieldId = atoi(tmp.c_str());
-		strmTmp << refFieldID(fieldId, schemaInsideId, rootLevel, refItem) << endl;
+		strmTmp << refFieldID(fieldId) << endl;
 	}
 
 	return strmTmp.str();
 }
 
-string CDocTextReferences::refFieldID(int iFieldId, int schemaInsideId, int rootLevel, const CRefItem *refItem)
+string CDocTextReferences::refFieldID(int iFieldId)
 {
 	stringstream strmTmp;
 

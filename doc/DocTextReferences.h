@@ -40,8 +40,8 @@ private:
 
 private:
 	string processOneField(const string& command);
-	string processTwoFields(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string processForm(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string processSecondParameter(const string& command, const string& inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
-	string refFieldID(int iFieldID, int schemaInsideId, int rootLevel, const CRefItem *refItem);
+	string processTwoFields(const string& command);
+	string processForm(const string& command, const CRefItem *refItem = NULL);
+	string processSecondParameter(const string& command);
+	string refFieldID(int iFieldID);
 };
