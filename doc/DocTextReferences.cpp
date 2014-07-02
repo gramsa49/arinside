@@ -37,8 +37,7 @@ string CDocTextReferences::TextFindFields()
 		if(inText.size() == 0)
 			return "";
 
-		CARSchema schema(schemaInsideId);
-		if (!schema.Exists())
+		if (!isInvalidSchemaId())
 			return inText;
 
 		stringstream strmTmp;
@@ -569,4 +568,10 @@ string CDocTextReferences::refFieldID(int iFieldId)
 	}
 
 	return strmTmp.str();
+}
+
+bool CDocTextReferences::isInvalidSchemaId()
+{
+	CARSchema schema(schemaInsideId);
+	return schema.Exists();
 }

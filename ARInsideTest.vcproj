@@ -582,6 +582,18 @@
 				>
 			</File>
 		</Filter>
+		<Filter
+			Name="doc"
+			>
+			<File
+				RelativePath=".\doc\DocTextReferencesTest.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocTextReferencesTest.h"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\AppConfigReaderTest.cpp"
 			>

@@ -376,6 +376,8 @@ SET(ARINSIDE_TEST_SRCS
  FileSystemUtilTest.h
  RapidJSONTests.cpp
  core/ARDayStructHelperTest.cpp
+ doc/DocTextReferencesTest.cpp
+ doc/DocTextReferencesTest.h
  lists/ARListHelpersTest.cpp
  lists/support/SchemaDbQueryBuilderTest.cpp
  output/webpage/HtmlReferenceListImplTest.cpp

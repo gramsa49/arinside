@@ -30,7 +30,7 @@ public:
 
 	string TextFindFields();
 
-private:
+protected:
 	string inText;
 	string fieldSeparator;
 	int schemaInsideId;
@@ -43,5 +43,8 @@ private:
 	string processTwoFields(const string& command);
 	string processForm(const string& command, const CRefItem *refItem = NULL);
 	string processSecondParameter(const string& command);
-	string refFieldID(int iFieldID);
+
+protected: /* this is protected to overwrite methods in subclasses for testing support */
+	virtual string refFieldID(int iFieldID);
+	virtual bool isInvalidSchemaId();
 };
