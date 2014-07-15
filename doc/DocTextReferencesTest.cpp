@@ -14,3 +14,11 @@ TEST(DocTextReferencesTests, InvalidFieldFormat)
 	string result = textRef.TextFindFields();
 	ASSERT_STREQ("select * from $8.35.19$", result.c_str());
 }
+
+TEST(DocTextReferencesTests, HasKeywordSupport)
+{
+	CDocTextReferencesTest textRef("select * from $-5$", "$", 1, 1, true, NULL);
+	textRef.CallReal_refFieldId(true);
+	string result = textRef.TextFindFields();
+	ASSERT_STREQ("select * from $SCHEMA$", result.c_str());
+}

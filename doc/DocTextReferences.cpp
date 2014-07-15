@@ -514,22 +514,22 @@ string CDocTextReferences::refFieldID(int iFieldId)
 {
 	stringstream strmTmp;
 
-	//add the reference
-	try {
-		CARField field(schemaInsideId, iFieldId);
-		if (field.Exists())
-		{
-			strmTmp << URLLink(field, rootLevel);
-		}
-		else
-			strmTmp << iFieldId;
+	if (iFieldId < 0)
+	{
+		// keyword support
+		int iKeyword = abs(iFieldId);
+		return CAREnum::Keyword(iKeyword);
+	}
 
+	CARField field(schemaInsideId, iFieldId);
+	if (field.Exists())
+	{
+		strmTmp << URLLink(field, rootLevel);
 		// add reference
 		pInside->AddFieldReference(schemaInsideId, iFieldId, *refItem);
 	}
-	catch (...) {
-		cout << "Exception in refFieldID" << endl;
-	}
+	else
+		strmTmp << iFieldId;
 
 	return strmTmp.str();
 }
