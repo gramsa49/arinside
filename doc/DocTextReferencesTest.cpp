@@ -5,5 +5,12 @@ TEST(DocTextReferencesTests, SimpleFieldReference)
 {
 	CDocTextReferencesTest textRef("select * from $8$", "$", 1, 1, true, NULL);
 	string result = textRef.TextFindFields();
-	ASSERT_EQ("select * from <a href='Test'>8</a>", result.c_str());
+	ASSERT_STREQ("select * from $<a href='Test'>8</a>$", result.c_str());
+}
+
+TEST(DocTextReferencesTests, InvalidFieldFormat)
+{
+	CDocTextReferencesTest textRef("select * from $8.35.19$", "$", 1, 1, true, NULL);
+	string result = textRef.TextFindFields();
+	ASSERT_STREQ("select * from $8.35.19$", result.c_str());
 }

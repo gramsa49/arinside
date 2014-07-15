@@ -9,7 +9,7 @@ public:
 		: CDocTextReferences(inText, fieldSeparator, schemaInsideId, rootLevel, findKeywords, refItem) { }
 
 protected:
-	virtual string refFieldId(int iFieldId) 
+	virtual string refFieldID(int iFieldId) 
 	{ 
 		stringstream tmp;	
 		tmp << "<a href='Test'>" 

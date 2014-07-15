@@ -16,6 +16,8 @@
 
 #include "stdafx.h"
 #include "DocTextReferences.h"
+#include "../core/ARParseField.h"
+#include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
 #include "../ARInside.h"
 
@@ -262,132 +264,86 @@ void CDocTextReferences::replaceAllSpecials()
 	}
 }
 
+void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsedField)
+{
+	int fieldId = 0;
+	switch (parsedField.tag)
+	{
+	case AR_FIELD:
+	case AR_STAT_HISTORY:
+		fieldId = parsedField.u.fieldId;
+		break;
+	case AR_CURRENCY_FLD:
+		fieldId = parsedField.u.currencyField->fieldId;
+		break;
+	}
+
+	strm << refFieldID(fieldId);
+
+	if (parsedField.tag == AR_STAT_HISTORY)
+	{
+		// handle status history
+		int enumId = parsedField.u.statHistory.enumVal;
+		string enumValue = pInside->GetFieldEnumValue(schemaInsideId, 7, enumId);
+
+		strm << ".";
+		if (enumValue.empty())
+			strm << enumId;
+		else
+			strm << enumValue;
+
+		strm << ".";
+		strm << CAREnum::StatHistoryTag(parsedField.u.statHistory.userOrTime);
+	}
+	else if (parsedField.tag == AR_CURRENCY_FLD)
+	{
+		// handle currency details
+		strm << ".";
+		strm << CAREnum::CurrencyPart(parsedField.u.currencyField->partTag);
+		strm << ".";
+		strm << parsedField.u.currencyField->currencyCode;
+	}
+}
+
 void CDocTextReferences::replaceAllFields()
 {
 	stringstream strmTmp;
 	string::size_type curPos = 0;
 	string::size_type startPos = 0;
 	string::size_type maxLen = inText.length();
-	string::size_type fieldIdPos = 0;
-
-	char fieldId[20];
-	char *enumId;    // points to the enum part of status history within fieldId later
-	char *usrOrTime; // points to the "user or time" part of status history within fieldId later
 
 	while ((startPos = inText.find(fieldSeparator.at(0),curPos)) != std::string::npos)
 	{
 		++startPos;
-		strmTmp << inText.substr(curPos,startPos - curPos);
+		strmTmp << inText.substr(curPos, startPos - curPos);
 		curPos = startPos;
 
-		// reset
-		fieldIdPos = 0;	
-		fieldId[0] = 0;
-		enumId = NULL;
-		usrOrTime = NULL;
+		string::size_type endPos = inText.find(fieldSeparator.at(0), startPos);
 
-		for (curPos = startPos; curPos < maxLen; ++curPos)
+		if (endPos != string::npos)
 		{
-			char currChar = inText.at(curPos);
-			if (currChar == '-' && fieldIdPos != 0)  
-				break; // - is only allowed at the beginning
-			if (currChar >= '0' && currChar <= '9' || currChar == '-' || currChar == '.')
+			CARParseField fieldParser(inText.substr(startPos, endPos - startPos));
+			const ARParseField& parsedField = fieldParser.getField();
+
+			if (parsedField.tag != 0)
 			{
-				if (fieldIdPos + 1 == 20)
-					break;	// max length .. that cant be a field
+				// now create documentation/link for the parsed field
+				docField(strmTmp, parsedField);
 
-				if (currChar != '.' && fieldIdPos > 1 && fieldId[fieldIdPos-1] == '.')
-				{
-					fieldId[fieldIdPos-1] = 0;
-					if (enumId == NULL)
-						enumId = &fieldId[fieldIdPos];
-					else if (usrOrTime == NULL)
-						usrOrTime = &fieldId[fieldIdPos];
-					else
-						break; // uhh ohh
-				}
-				// copy it over
-				fieldId[fieldIdPos++] = currChar;
-				continue;
+				// write the end-separator to the output and skip it for next parsing
+				strmTmp << inText.substr(endPos, 1);
+				endPos++;
 			}
-			if (currChar == fieldSeparator.at(0))
+			else
 			{
-				// end found
-				fieldId[fieldIdPos] = 0;
-
-				if (fieldId[0] == 0)
-					break;	// two $$ .. someone must be dreaming about more money
-
-				int iFieldId = atoi(fieldId);
-				if (iFieldId > 0)
-				{
-					CARField field(schemaInsideId, iFieldId);
-
-					if (!field.Exists())
-					{
-						strmTmp << fieldId << "$";
-						++curPos; // skip the $ so it isnt found again
-						break;
-					}
-
-					// now link to the field
-					strmTmp << URLLink(field, rootLevel);
-					if (refItem != NULL)
-						pInside->AddFieldReference(schemaInsideId, iFieldId, *refItem);
-
-					// special handling for status history
-					if (iFieldId == 15)
-					{
-						if (enumId == NULL || usrOrTime == NULL) break;
-
-						// resolve user or time attribute
-						int iUsrOrTime = atoi(usrOrTime);
-						const char* usrOrTimeStr = usrOrTime;
-						switch (iUsrOrTime)
-						{
-						case AR_STAT_HISTORY_USER:
-							usrOrTimeStr = "USER";
-							break;
-						case AR_STAT_HISTORY_TIME:
-							usrOrTimeStr = "TIME";
-							break;
-						}
-
-						// handle status history
-						CARField fieldStatus(schemaInsideId,7);	// get status field
-						string enumValue;
-						if (fieldStatus.Exists())
-						{
-							int iEnumId = atoi(enumId);
-							enumValue = pInside->GetFieldEnumValue(schemaInsideId, fieldStatus.GetInsideId(), iEnumId);
-						}
-
-						strmTmp << ".";
-						if (enumValue.empty())
-							strmTmp << enumId;
-						else
-							strmTmp << enumValue;
-						strmTmp << "." << usrOrTimeStr;
-					}
-					strmTmp << "$";
-					++curPos; // skip the $ so it isnt found again
-				}
-				else if (fieldId[0] == '-' && iFieldId <= 0)
-				{
-					// keyword handling
-					int iKeyword = abs(iFieldId);
-					strmTmp << CAREnum::Keyword(iKeyword) << "$";
-					++curPos; // skip the $ so it isnt found again
-				}
-				break;
+				strmTmp << inText.substr(curPos, endPos - curPos);
 			}
-			break;
+
+			curPos = endPos;
 		}
-		if (curPos < startPos)
-			strmTmp << inText.substr(curPos,startPos - curPos);
 	}
 	if (curPos < maxLen)
-		strmTmp << inText.substr(curPos,maxLen - curPos);
+		strmTmp << inText.substr(curPos);
 
 	inText = strmTmp.str();
 }

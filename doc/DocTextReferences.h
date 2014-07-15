@@ -18,6 +18,7 @@
 
 class CARInside;
 class CRefItem;
+struct ARParseField;
 
 class CDocTextReferences
 {
@@ -46,6 +47,8 @@ private:
 
 	void replaceAllSpecials();
 	void replaceAllFields();
+
+	void docField(std::ostream &strm, const ARParseField& parsedField);
 
 protected: /* this is protected to overwrite methods in subclasses for testing support */
 	virtual string refFieldID(int iFieldID);

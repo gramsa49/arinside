@@ -2689,3 +2689,13 @@ const char* CAREnum::CurrencyPart(int currencyPartType)
 	default: return EnumDefault;
 	}
 }
+
+const char* CAREnum::StatHistoryTag(int usrOrTime)
+{
+	switch (usrOrTime)
+	{
+	case AR_STAT_HISTORY_USER: return "USER";
+	case AR_STAT_HISTORY_TIME: return "TIME";
+	}
+	return EnumDefault;
+}

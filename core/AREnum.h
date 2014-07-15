@@ -93,4 +93,5 @@ public:
 	static const char* WeightedRelevancyFieldType(int nType);
 	static const char* WeekDayName(int day);
 	static const char* CurrencyPart(int currencyPartType);
+	static const char* StatHistoryTag(int usrOrTime);
 };
