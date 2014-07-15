@@ -49,4 +49,10 @@ private:
 	void Parse();
 	ReadResult ReadInteger(unsigned int &curPos, int &outInt);
 	static bool isValidChar(char c);
+	static bool IsValidStatHistorySubType(int usrOrTime);
+	static bool IsValidCurrencyPart(int currencyPart);
+
+	void SetupField(int fieldId);
+	void SetupStatusHistory(int fieldId, int usrOrTime, int enumId);
+	void SetupCurrencyField(int fieldId, int currencyPart, char* currencyCode);
 };

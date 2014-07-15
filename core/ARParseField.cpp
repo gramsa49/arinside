@@ -39,8 +39,7 @@ void CARParseField::Parse()
 
 	if (result == FINISHED)
 	{
-		field.tag = AR_FIELD;
-		field.u.fieldId = fieldId;
+		SetupField(fieldId);
 		return;
 	}
 	else if (result == NEXT)
@@ -67,23 +66,13 @@ void CARParseField::Parse()
 
 				if (fieldString.length() == readPos)
 				{
-					field.tag = AR_CURRENCY_FLD;
-					field.u.currencyField = new ARCurrencyPartStruct;
-					field.u.currencyField->fieldId = fieldId;
-					field.u.currencyField->partTag = typeId;
-					strncpy(field.u.currencyField->currencyCode, cCode, AR_MAX_CURRENCY_CODE_SIZE + 1);
+					SetupCurrencyField(fieldId, typeId, cCode);
 					return;
 				}
 			}
 			else if (result == FINISHED)
 			{
-				if (fieldId == 15)
-				{
-					field.tag = AR_STAT_HISTORY;
-					field.u.statHistory.userOrTime = typeId;
-					field.u.statHistory.enumVal = enumId;
-					return;
-				}
+				if (fieldId == 15) { SetupStatusHistory(fieldId, typeId, enumId); }
 			}
 		}
 	}
@@ -146,4 +135,56 @@ bool CARParseField::isValidChar(char c)
 const ARParseField& CARParseField::getField()
 {
 	return field;
+}
+
+void CARParseField::SetupField(int fieldId)
+{
+	field.tag = AR_FIELD;
+	field.u.fieldId = fieldId;
+}
+
+void CARParseField::SetupStatusHistory(int fieldId, int usrOrTime, int enumId)
+{
+	if (fieldId != 15 || !IsValidStatHistorySubType(usrOrTime))
+		return;
+	field.tag = AR_STAT_HISTORY;
+	field.u.statHistory.userOrTime = usrOrTime;
+	field.u.statHistory.enumVal = enumId;
+}
+
+bool CARParseField::IsValidStatHistorySubType(int usrOrTime)
+{
+	switch (usrOrTime)
+	{
+	case AR_STAT_HISTORY_USER:
+	case AR_STAT_HISTORY_TIME:
+		return true;
+	};
+	return false;
+}
+
+void CARParseField::SetupCurrencyField(int fieldId, int currencyPart, char* currencyCode)
+{
+	if (!IsValidCurrencyPart(currencyPart) || currencyCode == NULL)
+		return;
+
+	field.tag = AR_CURRENCY_FLD;
+	field.u.currencyField = new ARCurrencyPartStruct;
+	field.u.currencyField->fieldId = fieldId;
+	field.u.currencyField->partTag = currencyPart;
+	strncpy(field.u.currencyField->currencyCode, currencyCode, AR_MAX_CURRENCY_CODE_SIZE + 1);
+}
+
+bool CARParseField::IsValidCurrencyPart(int currencyPart)
+{
+	switch (currencyPart)
+	{
+	case AR_CURRENCY_PART_FIELD:
+	case AR_CURRENCY_PART_VALUE:
+	case AR_CURRENCY_PART_TYPE:
+	case AR_CURRENCY_PART_DATE:
+	case AR_CURRENCY_PART_FUNCTIONAL:
+		return true;
+	}
+	return false;
 }
