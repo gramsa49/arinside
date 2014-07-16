@@ -497,7 +497,7 @@ string CDocTextReferences::refFieldID(int iFieldId)
 {
 	stringstream strmTmp;
 
-	if (iFieldId < 0)
+	if (iFieldId <= 0)
 	{
 		// keyword support
 		int iKeyword = abs(iFieldId);
