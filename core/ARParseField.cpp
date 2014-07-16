@@ -49,6 +49,12 @@ void CARParseField::Parse()
 
 		if (result == FINISHED)
 		{
+			if (typeId >= AR_CURRENCY_PART_VALUE && typeId <= AR_CURRENCY_PART_DATE)
+			{
+				SetupCurrencyField(fieldId, typeId);
+				return;
+			}
+
 			result = FAILED;
 			return;
 		}
@@ -165,14 +171,22 @@ bool CARParseField::IsValidStatHistorySubType(int usrOrTime)
 
 void CARParseField::SetupCurrencyField(int fieldId, int currencyPart, char* currencyCode)
 {
-	if (!IsValidCurrencyPart(currencyPart) || currencyCode == NULL)
+	if (!IsValidCurrencyPart(currencyPart))
 		return;
 
 	field.tag = AR_CURRENCY_FLD;
 	field.u.currencyField = new ARCurrencyPartStruct;
 	field.u.currencyField->fieldId = fieldId;
 	field.u.currencyField->partTag = currencyPart;
-	strncpy(field.u.currencyField->currencyCode, currencyCode, AR_MAX_CURRENCY_CODE_SIZE + 1);
+
+	if (currencyCode == NULL)
+	{
+		ARZeroMemory(&field.u.currencyField->currencyCode);
+	}
+	else
+	{
+		strncpy(field.u.currencyField->currencyCode, currencyCode, AR_MAX_CURRENCY_CODE_SIZE + 1);
+	}
 }
 
 bool CARParseField::IsValidCurrencyPart(int currencyPart)

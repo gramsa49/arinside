@@ -54,5 +54,5 @@ private:
 
 	void SetupField(int fieldId);
 	void SetupStatusHistory(int fieldId, int usrOrTime, int enumId);
-	void SetupCurrencyField(int fieldId, int currencyPart, char* currencyCode);
+	void SetupCurrencyField(int fieldId, int currencyPart, char* currencyCode = NULL);
 };

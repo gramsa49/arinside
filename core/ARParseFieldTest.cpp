@@ -21,6 +21,15 @@ bool isCurrencyField(const ARParseField& field, int fieldId, int currencyPartTyp
 		strcmp(field.u.currencyField->currencyCode, partCode) == 0);
 }
 
+bool isCurrencyField(const ARParseField& field, int fieldId, int currencyPartType)
+{
+	return (field.tag == AR_CURRENCY_FLD &&
+		field.u.currencyField->fieldId == fieldId &&
+		field.u.currencyField->partTag == currencyPartType &&
+		field.u.currencyField->partTag != AR_CURRENCY_PART_FUNCTIONAL &&
+		strcmp(field.u.currencyField->currencyCode, "") == 0);
+}
+
 TEST(ARParseFieldTests, InvalidFieldExample1)
 {
 	CARParseField parseField("1234abc");
@@ -77,10 +86,18 @@ TEST(ARParseFieldTests, InvalidKeyword)
 	ASSERT_EQ(0, result.tag);
 }
 
-TEST(ARParseFieldTests, CurrencyField)
+TEST(ARParseFieldTests, CurrencyFieldFunctional)
 {
 	CARParseField parseField("536870987.1.USD");
 	const ARParseField &result = parseField.getField();
 
-	ASSERT_TRUE(isCurrencyField(result, 536870987, 1, "USD"));
+	ASSERT_TRUE(isCurrencyField(result, 536870987, AR_CURRENCY_PART_VALUE, "USD"));
+}
+
+TEST(ARParseFieldTests, CurrencyFieldSimple)
+{
+	CARParseField parseField("536870987.3");
+	const ARParseField &result = parseField.getField();
+
+	ASSERT_TRUE(isCurrencyField(result, 536870987, AR_CURRENCY_PART_DATE));
 }
