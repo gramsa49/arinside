@@ -270,6 +270,9 @@ void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsed
 {
 	switch (parsedField.tag)
 	{
+	case AR_FIELD:
+		strm << refFieldID(parsedField.u.fieldId);
+		break;
 	case AR_STAT_HISTORY:
 		{
 			CDocStatusHistoryField docStatusHistory(schemaInsideId, parsedField.u.statHistory);
@@ -283,9 +286,6 @@ void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsed
 		}
 		break;
 	}
-
-	int fieldId = parsedField.u.fieldId;
-	strm << refFieldID(fieldId);
 }
 
 void CDocTextReferences::replaceAllFields()
