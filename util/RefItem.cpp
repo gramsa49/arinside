@@ -82,7 +82,7 @@ CRefItem::CRefItem(const CRefItem& copyFrom, int dMessage)
 		objectId = copyFrom.objectId;
 		subObjectId = copyFrom.subObjectId;
 		actionIndex = copyFrom.actionIndex;
-		messageId = dMessage;
+		messageId = (copyFrom.messageId != -1 ? dMessage : copyFrom.messageId);
 	}
 	else 
 	{

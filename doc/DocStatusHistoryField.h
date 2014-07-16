@@ -23,7 +23,7 @@ class CDocStatusHistoryField
 {
 public:
 	CDocStatusHistoryField(int schemaInsideId, const ARStatHistoryValue& statHistValue);
-	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem &refItem, int rootLevel);
+	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem* refItem, int rootLevel);
 
 private:
 	int schemaId;

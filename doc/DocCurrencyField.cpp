@@ -25,7 +25,7 @@ CDocCurrencyField::CDocCurrencyField(int schemaInsideId, const ARCurrencyPartStr
 	schemaId = schemaInsideId;
 }
 
-void CDocCurrencyField::GetResolvedAndLinkedField(std::ostream &strm, const CRefItem &refItem, int rootLevel)
+void CDocCurrencyField::GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel)
 {
 	CARField currencyFieldObj(schemaId, currencyField.fieldId);
 	CARInside* arIn = CARInside::GetInstance();
@@ -33,7 +33,9 @@ void CDocCurrencyField::GetResolvedAndLinkedField(std::ostream &strm, const CRef
 	if (currencyFieldObj.Exists())
 	{
 		strm << URLLink(currencyFieldObj, rootLevel);
-		arIn->AddFieldReference(schemaId, currencyField.fieldId, refItem);
+		
+		if (refItem)
+			arIn->AddFieldReference(schemaId, currencyField.fieldId, *refItem);
 	}
 	else
 		strm << currencyField.fieldId;  // TODO: missing fields are normally maked red (see CARInside::LinkToField)

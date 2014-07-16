@@ -328,7 +328,7 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 						CDocCurrencyField docCurrency(schemaInsideId2, *assignment.u.field->u.currencyField);
 
 						assignText << "$";
-						docCurrency.GetResolvedAndLinkedField(assignText, refItem, rootLevel);
+						docCurrency.GetResolvedAndLinkedField(assignText, &refItem, rootLevel);
 						assignText << "$";
 					}
 					break;

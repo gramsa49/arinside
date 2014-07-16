@@ -22,7 +22,7 @@ class CDocCurrencyField
 {
 public:
 	CDocCurrencyField(int schemaInsideId, const ARCurrencyPartStruct &field);
-	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem &refItem, int rootLevel);
+	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel);
 
 private:
 	int schemaId;

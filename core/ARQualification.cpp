@@ -329,7 +329,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 			
 			qText << delimiter;
 			if (prefix != NULL) qText << prefix;
-			docCurrency.GetResolvedAndLinkedField(qText, refItem, rootLevel);
+			docCurrency.GetResolvedAndLinkedField(qText, &refItem, rootLevel);
 			qText << delimiter;
 		}
 		break;

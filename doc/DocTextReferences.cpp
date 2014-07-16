@@ -276,13 +276,13 @@ void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsed
 	case AR_STAT_HISTORY:
 		{
 			CDocStatusHistoryField docStatusHistory(schemaInsideId, parsedField.u.statHistory);
-			docStatusHistory.GetResolvedAndLinkedField(strm, *refItem, rootLevel);
+			docStatusHistory.GetResolvedAndLinkedField(strm, refItem, rootLevel);
 		}
 		break;
 	case AR_CURRENCY_FLD:
 		{
 			CDocCurrencyField docCurrency(schemaInsideId, *parsedField.u.currencyField);
-			docCurrency.GetResolvedAndLinkedField(strm, *refItem, rootLevel);
+			docCurrency.GetResolvedAndLinkedField(strm, refItem, rootLevel);
 		}
 		break;
 	}
@@ -509,7 +509,8 @@ string CDocTextReferences::refFieldID(int iFieldId)
 	{
 		strmTmp << URLLink(field, rootLevel);
 		// add reference
-		pInside->AddFieldReference(schemaInsideId, iFieldId, *refItem);
+		if (refItem)
+			pInside->AddFieldReference(schemaInsideId, iFieldId, *refItem);
 	}
 	else
 		strmTmp << iFieldId;

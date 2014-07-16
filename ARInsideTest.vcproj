@@ -514,6 +514,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\RefItemTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\util\UntarStreamTest.cpp"
 				>
 			</File>

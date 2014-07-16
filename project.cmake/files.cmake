@@ -392,6 +392,7 @@ SET(ARINSIDE_TEST_SRCS
  test/fakes/FakeARServerObject.cpp
  test/fakes/FakeARServerObject.h
  util/CommandLineValidatorTest.cpp
+ util/RefItemTest.cpp
  util/UntarStreamTest.cpp
  util/UntarStreamTest.h
 )

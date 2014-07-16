@@ -24,7 +24,7 @@ CDocStatusHistoryField::CDocStatusHistoryField(int schemaInsideId, const ARStatH
 {
 }
 
-void CDocStatusHistoryField::GetResolvedAndLinkedField(std::ostream &strm, const CRefItem &refItem, int rootLevel)
+void CDocStatusHistoryField::GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel)
 {
 	const int fieldId = AR_CORE_STATUS_HISTORY;
 
@@ -34,7 +34,8 @@ void CDocStatusHistoryField::GetResolvedAndLinkedField(std::ostream &strm, const
 	if (statHistoryField.Exists())
 	{
 		strm << URLLink(statHistoryField, rootLevel);
-		arIn->AddFieldReference(schemaId, fieldId, refItem);
+		if (refItem)
+			arIn->AddFieldReference(schemaId, fieldId, *refItem);
 	}
 	else
 		strm << fieldId;  // TODO: missing fields are normally maked red (see CARInside::LinkToField)
