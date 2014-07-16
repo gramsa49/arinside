@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocTextReferences.h"
 #include "DocCurrencyField.h"
+#include "DocStatusHistoryField.h"
 #include "../core/ARParseField.h"
 #include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
@@ -267,31 +268,24 @@ void CDocTextReferences::replaceAllSpecials()
 
 void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsedField)
 {
-	if (parsedField.tag == AR_CURRENCY_FLD)
+	switch (parsedField.tag)
 	{
-		CDocCurrencyField docCurrency(schemaInsideId, *parsedField.u.currencyField);
-		docCurrency.GetResolvedAndLinkedField(strm, *refItem, rootLevel);
-		return;
+	case AR_STAT_HISTORY:
+		{
+			CDocStatusHistoryField docStatusHistory(schemaInsideId, parsedField.u.statHistory);
+			docStatusHistory.GetResolvedAndLinkedField(strm, *refItem, rootLevel);
+		}
+		break;
+	case AR_CURRENCY_FLD:
+		{
+			CDocCurrencyField docCurrency(schemaInsideId, *parsedField.u.currencyField);
+			docCurrency.GetResolvedAndLinkedField(strm, *refItem, rootLevel);
+		}
+		break;
 	}
 
 	int fieldId = parsedField.u.fieldId;
 	strm << refFieldID(fieldId);
-
-	if (parsedField.tag == AR_STAT_HISTORY)
-	{
-		// handle status history
-		int enumId = parsedField.u.statHistory.enumVal;
-		string enumValue = pInside->GetFieldEnumValue(schemaInsideId, 7, enumId);
-
-		strm << ".";
-		if (enumValue.empty())
-			strm << enumId;
-		else
-			strm << enumValue;
-
-		strm << ".";
-		strm << CAREnum::StatHistoryTag(parsedField.u.statHistory.userOrTime);
-	}
 }
 
 void CDocTextReferences::replaceAllFields()

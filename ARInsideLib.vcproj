@@ -974,6 +974,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocStatusHistoryField.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocStatusHistoryField.h"
+				>
+			</File>
+			<File
 				RelativePath=".\doc\DocSummaryInfo.cpp"
 				>
 			</File>

@@ -87,6 +87,7 @@ SET(ARINSIDE_SRCS_DOC_CPP
  doc/DocApplicationDetails.cpp
  doc/DocRoleDetails.cpp
  doc/DocSchemaDetails.cpp
+ doc/DocStatusHistoryField.cpp
  doc/DocSummaryInfo.cpp
  doc/DocTextReferences.cpp
  doc/DocUserDetails.cpp
@@ -122,6 +123,7 @@ SET(ARINSIDE_SRCS_DOC_H
  doc/DocPacklistDetails.h
  doc/DocRoleDetails.h
  doc/DocSchemaDetails.h
+ doc/DocStatusHistoryField.h
  doc/DocSummaryInfo.h
  doc/DocTextReferences.h 
  doc/DocUserDetails.h
