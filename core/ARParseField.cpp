@@ -44,14 +44,14 @@ void CARParseField::Parse()
 	}
 	else if (result == NEXT)
 	{
-		int typeId = 0;
-		result = ReadInteger(readPos, typeId);
+		int secondId = 0;
+		result = ReadInteger(readPos, secondId);
 
 		if (result == FINISHED)
 		{
-			if (typeId >= AR_CURRENCY_PART_FIELD && typeId <= AR_CURRENCY_PART_DATE)
+			if (secondId >= AR_CURRENCY_PART_FIELD && secondId <= AR_CURRENCY_PART_DATE)
 			{
-				SetupCurrencyField(fieldId, typeId);
+				SetupCurrencyField(fieldId, secondId);
 				return;
 			}
 
@@ -60,8 +60,8 @@ void CARParseField::Parse()
 		}
 		else if (result == NEXT)
 		{
-			int enumId = 0;
-			result = ReadInteger(readPos, enumId);
+			int thirdId = 0;
+			result = ReadInteger(readPos, thirdId);
 
 			if (result == FAILED && fieldString.length() - readPos >= AR_MAX_CURRENCY_CODE_SIZE)
 			{
@@ -72,13 +72,13 @@ void CARParseField::Parse()
 
 				if (fieldString.length() == readPos)
 				{
-					SetupCurrencyField(fieldId, typeId, cCode);
+					SetupCurrencyField(fieldId, secondId, cCode);
 					return;
 				}
 			}
 			else if (result == FINISHED)
 			{
-				if (fieldId == 15) { SetupStatusHistory(fieldId, typeId, enumId); }
+				if (fieldId == 15) { SetupStatusHistory(fieldId, thirdId, secondId); }
 			}
 		}
 	}

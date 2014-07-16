@@ -54,17 +54,25 @@ TEST(ARParseFieldTests, BasicField)
 	ASSERT_TRUE(isField(result, 536870920));
 }
 
-TEST(ARParseFieldTests, StatusHistory)
+TEST(ARParseFieldTests, StatusHistory_User)
 {
-	CARParseField parseField("15.1.3");
+	CARParseField parseField("15.3.1");
 	const ARParseField &result = parseField.getField();
 
 	ASSERT_TRUE(isStatusHistory(result, AR_STAT_HISTORY_USER, 3));
 }
 
+TEST(ARParseFieldTests, StatusHistory_Time)
+{
+	CARParseField parseField("15.0.2");
+	const ARParseField &result = parseField.getField();
+
+	ASSERT_TRUE(isStatusHistory(result, AR_STAT_HISTORY_TIME, 0));
+}
+
 TEST(ARParseFieldTests, InvalidStatusHistory)
 {
-	CARParseField parseField("15.4.2");
+	CARParseField parseField("15.4.3");
 	const ARParseField &result = parseField.getField();
 
 	ASSERT_EQ(0, result.tag);
