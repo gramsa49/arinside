@@ -101,3 +101,11 @@ TEST(ARParseFieldTests, CurrencyFieldSimple)
 
 	ASSERT_TRUE(isCurrencyField(result, 536870987, AR_CURRENCY_PART_DATE));
 }
+
+TEST(ARParseFieldTests, CurrencySupportForFieldPartType)
+{
+	CARParseField parseField("536870987.0");
+	const ARParseField &result = parseField.getField();
+
+	ASSERT_TRUE(isCurrencyField(result, 536870987, AR_CURRENCY_PART_FIELD));
+}

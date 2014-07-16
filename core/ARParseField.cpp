@@ -49,7 +49,7 @@ void CARParseField::Parse()
 
 		if (result == FINISHED)
 		{
-			if (typeId >= AR_CURRENCY_PART_VALUE && typeId <= AR_CURRENCY_PART_DATE)
+			if (typeId >= AR_CURRENCY_PART_FIELD && typeId <= AR_CURRENCY_PART_DATE)
 			{
 				SetupCurrencyField(fieldId, typeId);
 				return;

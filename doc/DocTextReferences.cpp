@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocTextReferences.h"
+#include "DocCurrencyField.h"
 #include "../core/ARParseField.h"
 #include "../output/ObjNotFound.h"
 #include "../output/URLLink.h"
@@ -266,18 +267,14 @@ void CDocTextReferences::replaceAllSpecials()
 
 void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsedField)
 {
-	int fieldId = 0;
-	switch (parsedField.tag)
+	if (parsedField.tag == AR_CURRENCY_FLD)
 	{
-	case AR_FIELD:
-	case AR_STAT_HISTORY:
-		fieldId = parsedField.u.fieldId;
-		break;
-	case AR_CURRENCY_FLD:
-		fieldId = parsedField.u.currencyField->fieldId;
-		break;
+		CDocCurrencyField docCurrency(schemaInsideId, *parsedField.u.currencyField);
+		docCurrency.GetResolvedAndLinkedField(strm, *refItem, rootLevel);
+		return;
 	}
 
+	int fieldId = parsedField.u.fieldId;
 	strm << refFieldID(fieldId);
 
 	if (parsedField.tag == AR_STAT_HISTORY)
@@ -294,14 +291,6 @@ void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsed
 
 		strm << ".";
 		strm << CAREnum::StatHistoryTag(parsedField.u.statHistory.userOrTime);
-	}
-	else if (parsedField.tag == AR_CURRENCY_FLD)
-	{
-		// handle currency details
-		strm << ".";
-		strm << CAREnum::CurrencyPart(parsedField.u.currencyField->partTag);
-		strm << ".";
-		strm << parsedField.u.currencyField->currencyCode;
 	}
 }
 
