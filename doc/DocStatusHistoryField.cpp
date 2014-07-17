@@ -30,7 +30,7 @@ void CDocStatusHistoryField::GetResolvedAndLinkedField(std::ostream &strm, const
 
 	CARInside* arIn = CARInside::GetInstance();
 	int enumId = statusHistory.enumVal;
-	string enumValue = arIn->GetFieldEnumValue(schemaId, 7, enumId);
+	string enumValue = arIn->GetFieldEnumValue(schemaId, AR_CORE_STATUS, enumId);
 
 	strm << ".";
 	if (enumValue.empty())
