@@ -1,7 +1,7 @@
 #include "ARInsideTest.h"
 #include "DocTextReferencesTest.h"
 
-TEST(DocTextReferencesTests, SimpleFieldReference)
+TEST(DocTextReferencesTests, DISABLED_SimpleFieldReference)
 {
 	CDocTextReferencesTest textRef("select * from $8$", "$", 1, 1, true, NULL);
 	string result = textRef.TextFindFields();
@@ -37,4 +37,55 @@ TEST(DocTextReferencesTests, DISABLED_CurrencyDate)
 	CDocTextReferencesTest textRef("select $8.3$", "$", 1, 1, true, NULL);
 	string result = textRef.TextFindFields();
 	ASSERT_STREQ("select $<a href='Test'>8</a>.DATE$", result.c_str());
+}
+
+template <class derived>
+struct base
+{
+	std::string test()
+	{
+		return call_interface();
+	}
+
+	const char* call_interface()
+	{
+		return static_cast<derived*>(this)->the_interface();
+	}
+	const char* the_interface()
+	{
+		return "base";
+	}
+};
+
+struct baseImpl;
+typedef base<baseImpl> CBase;
+
+struct baseImpl : CBase
+{
+	const char* the_interface()
+	{
+		return CBase::the_interface();
+	}
+};
+
+struct theTest : base<struct theTest>
+{
+protected:
+	friend struct base<struct theTest>;
+	const char* the_interface()
+	{
+		return "test";
+	}
+};
+
+TEST(CompileTimePolymorphism, BaseWithImplementation)
+{
+	baseImpl b;
+	ASSERT_STREQ("base", b.test().c_str());
+}
+
+TEST(CompileTimePolimorphism, BaseWithTestImplementation)
+{
+	theTest t;
+	ASSERT_STREQ("test", t.test().c_str());
 }

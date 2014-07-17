@@ -69,6 +69,7 @@ SET(ARINSIDE_SRCS_DOC_CPP
  doc/DocAllMatchingIdsTable.cpp
  doc/DocAnalyzer.cpp
  doc/DocBase.cpp
+ doc/DocBasicField.cpp
  doc/DocCharMenuDetails.cpp
  doc/DocContainerHelper.cpp
  doc/DocCurrencyField.cpp
@@ -106,6 +107,7 @@ SET(ARINSIDE_SRCS_DOC_H
  doc/DocAnalyzer.h
  doc/DocApplicationDetails.h
  doc/DocBase.h
+ doc/DocBasicField.h
  doc/DocCharMenuDetails.h
  doc/DocContainerHelper.h
  doc/DocCurrencyField.h

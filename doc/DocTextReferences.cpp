@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "DocTextReferences.h"
+#include "DocBasicField.h"
 #include "DocCurrencyField.h"
 #include "DocStatusHistoryField.h"
 #include "../core/ARParseField.h"
@@ -271,7 +272,10 @@ void CDocTextReferences::docField(std::ostream &strm, const ARParseField &parsed
 	switch (parsedField.tag)
 	{
 	case AR_FIELD:
-		strm << refFieldID(parsedField.u.fieldId);
+		{
+			CDocBasicField docField(schemaInsideId, parsedField.u.fieldId);
+			docField.GetResolvedAndLinkedField(strm, refItem, rootLevel);
+		}
 		break;
 	case AR_STAT_HISTORY:
 		{

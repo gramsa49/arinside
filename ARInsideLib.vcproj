@@ -838,6 +838,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\doc\DocBasicField.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\doc\DocBasicField.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Doc\DocCharMenuDetails.cpp"
 				>
 			</File>
