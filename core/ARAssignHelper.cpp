@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARAssignHelper.h"
 #include "../doc/DocCurrencyField.h"
+#include "../doc/DocStatusHistoryField.h"
 #include "../output/URLLink.h"
 
 CARAssignHelper::CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject &obj, const CARSchema& schema1, const CARSchema& schema2)
@@ -286,40 +287,10 @@ unsigned int CARAssignHelper::CheckAssignment(int targetFieldId, ARAssignStruct*
 				case AR_STAT_HISTORY:
 					{
 						assignText << "$";
-						
-						int iFieldId = 15;
-						CARField statHistField(schemaInsideId2, iFieldId);
-						if (statHistField.Exists())
-						{
-							assignText << URLLink(statHistField, rootLevel);
-							arIn->AddFieldReference(schemaInsideId2, iFieldId, refItem);
-						}
-						else
-							assignText << iFieldId;
 
-						assignText << ".";
+						CDocStatusHistoryField docStatusHistory(schemaInsideId2, assignment.u.field->u.statHistory);
+						docStatusHistory.GetResolvedAndLinkedField(assignText, &refItem, rootLevel);
 
-						string enumValue = arIn->GetFieldEnumValue(schemaInsideId2, 7, assignment.u.field->u.statHistory.enumVal);
-						if (enumValue.empty())
-							assignText << assignment.u.field->u.statHistory.enumVal;
-						else
-							assignText << enumValue;
-
-						assignText << ".";
-
-						switch(assignment.u.field->u.statHistory.userOrTime)
-						{						
-						case AR_STAT_HISTORY_USER:
-							{
-								assignText << "USER";
-							}
-							break;
-						case AR_STAT_HISTORY_TIME:
-							{
-								assignText << "TIME";
-							}
-							break;
-						}
 						assignText << "$";
 					}
 					break;

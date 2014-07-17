@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "ARQualification.h"
 #include "../doc/DocCurrencyField.h"
+#include "../doc/DocStatusHistoryField.h"
 #include "../output/URLLink.h"
 
 CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int rootLevel)
@@ -290,28 +291,9 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 	}
 	case AR_STAT_HISTORY:
 		{
-			qText << "'" << arIn->LinkToField(primaryFormId, 15, rootLevel) << ".";
-
-			if(!arIn->FieldreferenceExists(primaryFormId, 15, refItem))
-			{
-				arIn->AddFieldReference(primaryFormId, 15, refItem);
-			}
-
-			string tmp = arIn->GetFieldEnumValue(primaryFormId, 7, operand->u.statHistory.enumVal);								
-			if(!tmp.empty())
-				qText << tmp;
-			else
-				qText << operand->u.statHistory.enumVal;
-
-			switch(operand->u.statHistory.userOrTime)
-			{
-			case AR_STAT_HISTORY_USER:
-				qText << ".USER";
-				break;
-			case AR_STAT_HISTORY_TIME:
-				qText << ".TIME";
-				break;
-			}
+			qText << "'";
+			CDocStatusHistoryField docStatusHistory(primaryFormId, operand->u.statHistory);
+			docStatusHistory.GetResolvedAndLinkedField(qText, &refItem, rootLevel);
 			qText << "'";
 		}
 		break;
