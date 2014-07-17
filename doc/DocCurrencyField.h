@@ -16,15 +16,14 @@
 
 #pragma once
 
-class CRefItem;
+#include "DocBasicField.h"
 
-class CDocCurrencyField
+class CDocCurrencyField : CDocBasicField
 {
 public:
 	CDocCurrencyField(int schemaInsideId, const ARCurrencyPartStruct &field);
 	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel);
 
 private:
-	int schemaId;
 	const ARCurrencyPartStruct &currencyField;
 };

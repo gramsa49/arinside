@@ -20,25 +20,13 @@
 #include "DocCurrencyField.h"
 
 CDocCurrencyField::CDocCurrencyField(int schemaInsideId, const ARCurrencyPartStruct &field)
-: currencyField(field)
+: CDocBasicField(schemaInsideId, field.fieldId), currencyField(field)
 {
-	schemaId = schemaInsideId;
 }
 
 void CDocCurrencyField::GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel)
 {
-	CARField currencyFieldObj(schemaId, currencyField.fieldId);
-	CARInside* arIn = CARInside::GetInstance();
-
-	if (currencyFieldObj.Exists())
-	{
-		strm << URLLink(currencyFieldObj, rootLevel);
-		
-		if (refItem)
-			arIn->AddFieldReference(schemaId, currencyField.fieldId, *refItem);
-	}
-	else
-		strm << currencyField.fieldId;  // TODO: missing fields are normally maked red (see CARInside::LinkToField)
+	CDocBasicField::GetResolvedAndLinkedField(strm, refItem, rootLevel);
 
 	unsigned int currencyFieldPart = currencyField.partTag;
 	if (currencyFieldPart != AR_CURRENCY_PART_FIELD)

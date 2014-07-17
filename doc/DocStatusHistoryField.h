@@ -16,16 +16,14 @@
 
 #pragma once
 #include "../ARApi.h"
+#include "DocBasicField.h"
 
-class CRefItem;
-
-class CDocStatusHistoryField
+class CDocStatusHistoryField : CDocBasicField
 {
 public:
 	CDocStatusHistoryField(int schemaInsideId, const ARStatHistoryValue& statHistValue);
 	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem* refItem, int rootLevel);
 
 private:
-	int schemaId;
 	ARStatHistoryValue statusHistory;
 };

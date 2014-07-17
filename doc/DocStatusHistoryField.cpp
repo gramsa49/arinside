@@ -20,26 +20,15 @@
 #include "../output/URLLink.h"
 
 CDocStatusHistoryField::CDocStatusHistoryField(int schemaInsideId, const ARStatHistoryValue& statHistValue)
-: schemaId(schemaInsideId), statusHistory(statHistValue)
+: CDocBasicField(schemaInsideId, AR_CORE_STATUS_HISTORY), statusHistory(statHistValue)
 {
 }
 
 void CDocStatusHistoryField::GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel)
 {
-	const int fieldId = AR_CORE_STATUS_HISTORY;
+	CDocBasicField::GetResolvedAndLinkedField(strm, refItem, rootLevel);
 
-	CARField statHistoryField(schemaId, fieldId);
 	CARInside* arIn = CARInside::GetInstance();
-
-	if (statHistoryField.Exists())
-	{
-		strm << URLLink(statHistoryField, rootLevel);
-		if (refItem)
-			arIn->AddFieldReference(schemaId, fieldId, *refItem);
-	}
-	else
-		strm << fieldId;  // TODO: missing fields are normally maked red (see CARInside::LinkToField)
-
 	int enumId = statusHistory.enumVal;
 	string enumValue = arIn->GetFieldEnumValue(schemaId, 7, enumId);
 

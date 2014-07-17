@@ -24,7 +24,7 @@ public:
 	CDocBasicField(int schemaInsideId, int refFieldId);
 	void GetResolvedAndLinkedField(std::ostream &strm, const CRefItem *refItem, int rootLevel);
 
-private:
+protected:
 	int schemaId;
 	int fieldId;
 };
