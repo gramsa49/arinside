@@ -642,7 +642,8 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 		{
 			int fieldId = atoi(&action.serviceSchema[1]);
 			serviceSchema = action.sampleSchema;
-			strm << "Service Form: " << "$" << arIn->LinkToField(this->schemaName, fieldId, rootLevel) << "$ (Sample Form: " << arIn->LinkToSchema(serviceSchema, rootLevel) << ")<br/>" << endl;
+			strm << "Service Form: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) 
+			     << "$ (Sample Form: " << arIn->LinkToSchema(serviceSchema, rootLevel) << ")<br/>" << endl;
 
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_SERVICE_FORM);
 			arIn->AddFieldReference(schemaInsideId, fieldId, refItem);
