@@ -83,7 +83,7 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 					fieldId = sfh.GetSchemaFieldId();
 					strmSchemaDisplay << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn.LinkToField(wfSchema.GetInsideId(), fieldId, rootLevel)) << "$ (Sample Form: " << arIn.LinkToSchema(readSchema, rootLevel) << ")";
-					schemaNameActionIsReadingFrom = readSchema;
+					schemaNameActionIsReadingFrom = (fieldId == (-AR_KEYWORD_SCHEMA) ? attachedSchemaName : readSchema);
 
 					CRefItem refItemForm(obj, ifElse, nAction, REFM_SETFIELDS_FORM);
 					arIn.AddFieldReference(pFormId, fieldId, refItemForm);
