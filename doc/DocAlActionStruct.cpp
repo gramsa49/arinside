@@ -1249,7 +1249,7 @@ void CDocAlActionStruct::ActionCallGuide(std::ostream& strm, const ARCallGuideSt
 	try
 	{
 		strm << "<p>";
-		if (action.serverName[0] == '$' /*&& action.sampleServer[0] != 0*/)
+		if (action.serverName[0] == '$' && action.serverName[1] != 0)
 		{
 			int fieldId = atoi(&action.serverName[1]);
 			strm << "Server: " << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$<br/>" << endl;
@@ -1262,7 +1262,7 @@ void CDocAlActionStruct::ActionCallGuide(std::ostream& strm, const ARCallGuideSt
 			strm << "Server : " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
 		}
 
-		if (action.guideName[0] == '$' /*&& action.sampleGuide[0] != 0*/)
+		if (action.guideName[0] == '$' && action.guideName[1] != 0)
 		{
 			int fieldId = atoi(&action.guideName[1]);
 			strm << "Guide: $" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$<br/>" << endl;

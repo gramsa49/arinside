@@ -548,10 +548,7 @@ string CDocFilterActionStruct::FilterActionCallGuide(ARCallGuideStruct &action, 
 
 	try
 	{
-		//if(action.serverName != NULL)
-		//	strm << "Server: " << arIn->LinkToServerInfo(action.serverName, rootLevel) << "<br/>" << endl;
-	
-		if (action.guideName[0] == '$' /*&& action.sampleGuide[0] != 0*/)
+		if (action.guideName[0] == '$' && action.guideName[1] != 0)
 		{
 			int fieldId = atoi(&action.guideName[1]);
 			strm << "Guide: $" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(this->schemaName, fieldId, rootLevel)) << "$<br/>" << endl;
