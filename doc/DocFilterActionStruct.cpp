@@ -400,7 +400,7 @@ string CDocFilterActionStruct::FilterActionPushFields(ARPushFieldsActionStruct &
 		{
 			int fieldId = atoi(&action.pushFieldsList.pushFieldsList[0].field.schema[1]);
 
-			pushSchema = action.sampleSchema;
+			pushSchema = (fieldId == (-AR_KEYWORD_SCHEMA) ? schemaName : action.sampleSchema);
 			strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(schemaInsideId, fieldId, rootLevel)) << "$ (Sample Schema: " << arIn->LinkToSchema(action.sampleSchema, rootLevel) << ")";
 
 			// create field reference

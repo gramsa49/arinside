@@ -526,6 +526,8 @@ void CDocAlActionStruct::ActionPushFields(std::ostream& strm, const ARPushFields
 			// create field reference
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_PUSHFIELD_FORM);
 			arIn->AddFieldReference(schemaInsideId, fieldId, refItem);
+
+			if (fieldId == - AR_KEYWORD_SCHEMA)	pushSchema = schemaName;
 		}
 		else
 		{
