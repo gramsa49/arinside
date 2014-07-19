@@ -1413,6 +1413,8 @@ void CDocAlActionStruct::ActionService(std::ostream& strm, const ARActiveLinkSvc
 
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_SERVICE_FORM);
 			arIn->AddFieldReference(schemaInsideId, fieldId, refItem);
+
+			if (fieldId == (-AR_KEYWORD_SCHEMA)) serviceSchema = schemaName;
 		}
 		else
 		{

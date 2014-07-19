@@ -646,6 +646,8 @@ string CDocFilterActionStruct::FilterActionService(ARSvcActionStruct &action, in
 
 			CRefItem refItem(*this->obj, ifElse, nAction, REFM_SERVICE_FORM);
 			arIn->AddFieldReference(schemaInsideId, fieldId, refItem);
+
+			if (fieldId == (-AR_KEYWORD_SCHEMA)) serviceSchema = schemaName;
 		}
 		else
 		{
