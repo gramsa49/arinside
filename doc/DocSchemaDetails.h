@@ -58,9 +58,6 @@ private:
 	string TypeDetails();
 	string ContainerReferences();
 	string TableFieldReferences();
-	string AlPushFieldsReferences();
-	string FilterPushFieldsReferences();
-	string EscalationPushFieldsReferences();
 	string AlWindowOpenReferences();
 	string JoinFormReferences();
 	string SearchMenuReferences();
