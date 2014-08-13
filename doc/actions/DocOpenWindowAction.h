@@ -32,6 +32,7 @@ private:
 	static bool ActionOpenDlgOutputMapping(int nWindowType);
 	static bool ActionOpenDlgPoolingInterval(int nWindowType);
 	static bool ActionOpenDlgMessage(int nWindowType);
+	static bool ActionOpenDlgInlineForm(int nWindowType);
 
 private:
 	Context &context;

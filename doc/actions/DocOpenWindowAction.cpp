@@ -37,6 +37,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		string openWindowServer;
 		string openWindowSchemaName;
 		CARSchema attachedSchema(context.getCurrentSchemaId());
+		CDocActionOpenWindowHelper reportData(action.reportString);
 
 		// check if we need to get the sample data
 		if(action.serverName[0] == '$')
@@ -79,6 +80,13 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 			}
 			strm << endl;
 		}
+
+		// show "inline form" option
+		if (ActionOpenDlgInlineForm(windowMode))
+		{
+			strm << "<br/><input type=\"checkbox\" name=\"inlineForm\" value=\"inline\" " << (reportData.getInlineForm().compare("true")==0 ? "checked" : "") << ">Inline Form<br/>" << endl;
+		}
+
 		strm << "</p>" << endl;
 
 		// ****************************************************
@@ -171,6 +179,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		string *queryOverride = NULL;
 		string *reportOperation = NULL;
 		string *charEncoding = NULL;
+		string *inlineForm = NULL;
 		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 		{
 			string reportType;
@@ -181,8 +190,9 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 			queryOverride = new string();
 			reportOperation = new string();
 			charEncoding = new string();
+			inlineForm = new string();
 
-			if (!CDocActionOpenWindowHelper::GetReportData(action.reportString, reportType, reportLocation, reportName, reportDestination, *entryIDs, *queryOverride, *reportOperation, *charEncoding))
+			if (!CDocActionOpenWindowHelper::GetReportData(action.reportString, reportType, reportLocation, reportName, reportDestination, *entryIDs, *queryOverride, *reportOperation, *charEncoding, *inlineForm))
 			{
 				strm << "<p>";
 				ObjNotFound notFound(strm);
@@ -443,6 +453,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 				delete queryOverride;
 				delete reportOperation;
 				delete charEncoding;
+				delete inlineForm;
 			}
 
 			// polling interval
@@ -587,6 +598,28 @@ bool DocOpenWindowAction::ActionOpenDlgMessage(int nWindowType)
 	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
 #endif
 	case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
+		return true;
+	default: return false;
+	}
+}
+
+bool DocOpenWindowAction::ActionOpenDlgInlineForm(int nWindowType)
+{
+	// The "Inline Form" option isn't displayed on open window actions of type Dialog, Report and Popup. Show it for all other types!
+
+	switch (nWindowType)
+	{
+	//case AR_ACTIVE_LINK_ACTION_OPEN_DLG:
+	case AR_ACTIVE_LINK_ACTION_OPEN_SEARCH:
+	case AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT:
+	//case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DISPLAY_DIRECT:
+#endif
+	//case AR_ACTIVE_LINK_ACTION_OPEN_POPUP:
 		return true;
 	default: return false;
 	}
