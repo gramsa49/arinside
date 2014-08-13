@@ -283,6 +283,12 @@ void CDocActionOpenWindowHelper::CheckAlreadyParsed()
 		isValid = ParseReportData();
 }
 
+bool CDocActionOpenWindowHelper::IsValid()
+{
+	CheckAlreadyParsed();
+	return isValid;
+}
+
 string CDocActionOpenWindowHelper::getReportType()
 {
 	CheckAlreadyParsed();

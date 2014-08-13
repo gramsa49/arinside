@@ -15,6 +15,12 @@ protected:
 	CDocActionOpenWindowHelper reportData;
 };
 
+// verify the testReportString above is valid for the parser
+TEST_F(DocActionOpenWindowHelperTests, ValidInput)
+{
+	ASSERT_TRUE(reportData.IsValid());
+}
+
 // now just verify a few values we've in the report string
 TEST_F(DocActionOpenWindowHelperTests, VerifyReportType)
 {
