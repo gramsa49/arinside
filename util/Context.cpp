@@ -17,3 +17,21 @@
 #include "stdafx.h"
 #include "Context.h"
 
+LookupFormContext::LookupFormContext(Context &context, int schemaId)
+: Context(context)
+{
+	CARSchema schema(schemaId);
+	lookupSchemaId = schema.GetInsideId();
+}
+
+string LookupFormContext::getLookupSchemaName()
+{
+	if (!lookupSchemaName.empty())
+		return lookupSchemaName;
+
+	CARSchema schema(lookupSchemaId);
+	if (schema.Exists())
+		return schema.GetName();
+
+	return "";
+}

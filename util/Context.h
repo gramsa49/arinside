@@ -47,6 +47,34 @@ protected:
 	int currentSchemaId;
 };
 
+class SettableContext : public Context
+{
+public:
+	SettableContext(CARServerObject &obj, IfElseState ifOrElseAction, int actionIndexPos, int currentWfSchemaId, int theRootLevel)
+		: Context(obj, ifOrElseAction, actionIndexPos, currentWfSchemaId, theRootLevel) {}
+	SettableContext(Context &ctx)
+		: Context(ctx) {}
+
+
+};
+
+class LookupFormContext : public Context
+{
+public:
+	LookupFormContext(Context &context, const std::string schemaName)
+		: Context(context), lookupSchemaName(schemaName)
+	{
+		lookupSchemaId = this->getInside().SchemaGetInsideId(lookupSchemaName);
+	}
+	LookupFormContext(Context &context, int schemaId);
+
+	string getLookupSchemaName();
+	int getLookupSchemaId() { return lookupSchemaId; }
+protected:
+	std::string lookupSchemaName;
+	int lookupSchemaId;
+};
+
 class MappingContext : public Context
 {
 public:
@@ -58,8 +86,8 @@ public:
 
 	int getSecondarySchemaId() { return secondarySchemaId; }
 
-	int setPrimarySchemaId(int value) { currentSchemaId = value; }
-	int setSecondarySchemaId(int value) { secondarySchemaId = value; }
+	void setPrimarySchemaId(int value) { currentSchemaId = value; }
+	void setSecondarySchemaId(int value) { secondarySchemaId = value; }
 
 protected:
 	int secondarySchemaId;

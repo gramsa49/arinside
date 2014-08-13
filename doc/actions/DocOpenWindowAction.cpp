@@ -121,7 +121,8 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 			strm << arIn->LinkToSchema(openWindowSchemaName, context.getRootLevel()) << endl;
 		}
 
-		CARSchema openWindowSchema(openWindowSchemaName);
+		LookupFormContext openWindowContext(context, openWindowSchemaName);
+		CARSchema openWindowSchema(openWindowContext.getLookupSchemaId());
 
 		strm << "<br/>View Name: ";
 		if(action.vuiLabel[0] == '$')// == NULL || strcmp(action.vuiLabel, "")==0)
@@ -363,7 +364,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 					sprintf(strFieldId, "%d", static_cast<int>(action.sortOrderList.sortList[i].fieldId));
 
 					CTableRow row("cssStdRow");
-					row.AddCell(arIn->LinkToField(openWindowSchemaName, action.sortOrderList.sortList[i].fieldId, rootLevel));
+					row.AddCell(arIn->LinkToField(openWindowContext, action.sortOrderList.sortList[i].fieldId));
 					row.AddCell(strFieldId);
 					row.AddCell((rField.Exists() ? CAREnum::DataType(rField.GetDataType()) : "Unknown"));
 					row.AddCell(CAREnum::SchemaSortOrder(action.sortOrderList.sortList[i].sortOrder));

@@ -1031,6 +1031,11 @@ string CARInside::LinkToField(Context &context, int fieldInsideId)
 	return LinkToField(context.getCurrentSchemaId(), fieldInsideId, context.getRootLevel());
 }
 
+string CARInside::LinkToField(LookupFormContext &lookupContext, int fieldInsideId)
+{
+	return LinkToField(lookupContext.getLookupSchemaId(), fieldInsideId, lookupContext.getRootLevel());
+}
+
 string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel)
 {	
 	CARField field(schemaInsideId, fieldInsideId);
@@ -1277,7 +1282,7 @@ string CARInside::LinkToServerInfo(const std::string &srvName, int rootLevel)
 
 string CARInside::LinkToServerInfo(Context &context, const std::string &srvName)
 {
-	LinkToServerInfo(srvName, context.getRootLevel());
+	return LinkToServerInfo(srvName, context.getRootLevel());
 }
 
 void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref)
@@ -1348,7 +1353,7 @@ string CARInside::TextFindFields(const string &inText, const string &fieldSepara
 
 string CARInside::TextFindFields(Context &context, const std::string &inText, bool findKeywords, const CRefItem *refItem)
 {
-	TextFindFields(inText, "$", context.getCurrentSchemaId(), context.getRootLevel(), findKeywords, refItem);
+	return TextFindFields(inText, "$", context.getCurrentSchemaId(), context.getRootLevel(), findKeywords, refItem);
 }
 
 string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)

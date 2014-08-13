@@ -53,7 +53,10 @@
 #include "lists/ARServerInfoList.h"
 
 extern const string AppVersion;
+
+// forward declarations
 class Context;
+class LookupFormContext;
 
 class CARInside
 {
@@ -111,7 +114,7 @@ public:
 #endif
 
 	string LinkToServerInfo(const std::string &srvName, int rootLevel);
-	inline string LinkToServerInfo(Context &context, const std::string &srvName);
+	string LinkToServerInfo(Context &context, const std::string &srvName);
 
 	int SchemaGetInsideId(string searchObjName);
 
@@ -119,7 +122,8 @@ public:
 	string LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel);	
 	string LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel);
 	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
-	string CARInside::LinkToField(Context &context, int fieldInsideId);
+	string LinkToField(Context &context, int fieldInsideId);
+	string LinkToField(LookupFormContext &context, int fuieldInsideId);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 
 	string LinkToContainer(string containerName, int rootLevel);
@@ -146,7 +150,7 @@ public:
 	void AddMenuReference(const string& menuName, const CRefItem& ref);
 
 	string TextFindFields(const string &inText, const string &fieldSeparator, int schemaInsideId, int rootLevel, bool findKeywords, const CRefItem *refItem);
-	inline string TextFindFields(Context &context, const string &inText, bool findKeywords, const CRefItem *refItem);
+	string TextFindFields(Context &context, const string &inText, bool findKeywords, const CRefItem *refItem);
 	string XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem);
 
 	bool FieldreferenceExists(int schemaInsideId, int fieldInsideId, const CRefItem &refItem);
