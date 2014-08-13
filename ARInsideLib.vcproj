@@ -1049,6 +1049,14 @@
 				Name="actions"
 				>
 				<File
+					RelativePath=".\doc\actions\DocAlMessageAction.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\doc\actions\DocAlMessageAction.h"
+					>
+				</File>
+				<File
 					RelativePath=".\doc\actions\DocOpenWindowAction.cpp"
 					>
 				</File>

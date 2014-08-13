@@ -15,6 +15,7 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "DocAlMessageAction.h"
 #include "DocOpenWindowAction.h"
 #include "../DocActionOpenWindowHelper.h"
 #include "../../core/ARQualification.h"
@@ -337,7 +338,9 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 			else if (action.msg.messageType > 0)
 			{
 				strm << "Show message<br/>";
-				ActionMessage(strm, action.msg, nAction);
+				
+				DocAlMessageAction docMessage(context, action.msg);
+				docMessage.ToStream(strm);
 			}
 			strm << "</p>" << endl;
 

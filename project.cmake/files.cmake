@@ -137,9 +137,11 @@ SET(ARINSIDE_SRCS_DOC_H
 SOURCE_GROUP(doc FILES ${ARINSIDE_SRCS_DOC_CPP} ${ARINSIDE_SRCS_DOC_H})
 
 SET(ARINSIDE_SRCS_DOC_ACTIONS_CPP
+ doc/actions/DocAlMessageAction.cpp
  doc/actions/DocOpenWindowAction.cpp
 )
 SET(ARINSIDE_SRCS_DOC_ACTIONS_H
+ doc/actions/DocAlMessageAction.h
  doc/actions/DocOpenWindowAction.h
 )
 SOURCE_GROUP(doc\\actions FILES ${ARINSIDE_SRCS_DOC_ACTIONS_CPP} ${ARINSIDE_SRCS_DOC_ACTIONS_H})

@@ -1346,6 +1346,11 @@ string CARInside::TextFindFields(const string &inText, const string &fieldSepara
 	return textRefs.TextFindFields();
 }
 
+string CARInside::TextFindFields(Context &context, const std::string &inText, bool findKeywords, const CRefItem *refItem)
+{
+	TextFindFields(inText, "$", context.getCurrentSchemaId(), context.getRootLevel(), findKeywords, refItem);
+}
+
 string CARInside::XMLFindFields(string inText, int schemaInsideId, int rootLevel, const CRefItem *refItem)
 {	
 	try
