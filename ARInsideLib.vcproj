@@ -1045,6 +1045,18 @@
 				RelativePath=".\Doc\MessageItem.h"
 				>
 			</File>
+			<Filter
+				Name="actions"
+				>
+				<File
+					RelativePath=".\doc\actions\DocOpenWindowAction.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\doc\actions\DocOpenWindowAction.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="output"

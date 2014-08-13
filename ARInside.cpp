@@ -1255,15 +1255,15 @@ string CARInside::LinkToContainer(const CRefItem& refItem, int rootLevel)
 	return EmptyValue;
 }
 
-string CARInside::LinkToServerInfo(string srvName, int rootLevel)
+string CARInside::LinkToServerInfo(const std::string &srvName, int rootLevel)
 {		
 	string result;
 
-	if(strcmp(srvName.c_str(), "")==0)
+	if(srvName.empty())
 	{
 		return URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel);
 	}
-	else if(strcmp(srvName.c_str(), AR_CURRENT_SERVER_TAG)==0 || strcmp(srvName.c_str(), AR_CURRENT_SCREEN_TAG)==0)
+	else if(srvName.compare(AR_CURRENT_SERVER_TAG)==0 || srvName.compare(AR_CURRENT_SCREEN_TAG)==0)
 	{
 		return URLLink(appConfig.serverName, PAGE_SERVER_INFO, rootLevel);
 	}
@@ -1272,8 +1272,12 @@ string CARInside::LinkToServerInfo(string srvName, int rootLevel)
 		return URLLink(srvName, PAGE_SERVER_INFO, rootLevel);
 	}
 
-
 	return result;
+}
+
+string CARInside::LinkToServerInfo(Context &context, const std::string &srvName)
+{
+	LinkToServerInfo(srvName, context.getRootLevel());
 }
 
 void CARInside::AddFieldReference(int schemaId, int fieldId, const CRefItem& ref)

@@ -110,7 +110,8 @@ public:
 	CARImageList	imageList;
 #endif
 
-	string LinkToServerInfo(string srvName, int rootLevel);
+	string LinkToServerInfo(const std::string &srvName, int rootLevel);
+	inline string LinkToServerInfo(Context &context, const std::string &srvName);
 
 	int SchemaGetInsideId(string searchObjName);
 

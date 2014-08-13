@@ -136,6 +136,14 @@ SET(ARINSIDE_SRCS_DOC_H
 )
 SOURCE_GROUP(doc FILES ${ARINSIDE_SRCS_DOC_CPP} ${ARINSIDE_SRCS_DOC_H})
 
+SET(ARINSIDE_SRCS_DOC_ACTIONS_CPP
+ doc/actions/DocOpenWindowAction.cpp
+)
+SET(ARINSIDE_SRCS_DOC_ACTIONS_H
+ doc/actions/DocOpenWindowAction.h
+)
+SOURCE_GROUP(doc\\actions FILES ${ARINSIDE_SRCS_DOC_ACTIONS_CPP} ${ARINSIDE_SRCS_DOC_ACTIONS_H})
+
 SET(ARINSIDE_SRCS_LISTS_CPP
  lists/ARActiveLinkList.cpp
  lists/ARContainerList.cpp
@@ -294,6 +302,7 @@ SET(ARINSIDE_SRCS_UTIL_CPP
  util/AppTimer.cpp
  util/BlackListItem.cpp
  util/CommandLineValidator.cpp
+ util/Context.cpp
  util/RefItem.cpp 
  util/ResourceFileLocatorAndExtractor.cpp
  util/UntarStream.cpp
@@ -303,6 +312,7 @@ SET(ARINSIDE_SRCS_UTIL_H
  util/AppTimer.h
  util/BlackListItem.h
  util/CommandLineValidator.h
+ util/Context.h
  util/RefItem.h
  util/ResourceFileLocatorAndExtractor.h
  util/Uncopyable.h
@@ -340,6 +350,7 @@ SET(ARINSIDE_SRCS_H
 SET(ARINSIDE_SRCS_CPP
  ${ARINSIDE_SRCS_CORE_CPP}
  ${ARINSIDE_SRCS_DOC_CPP}
+ ${ARINSIDE_SRCS_DOC_ACTIONS_CPP}
  ${ARINSIDE_SRCS_LISTS_CPP}
  ${ARINSIDE_SRCS_LISTS_SUPPORT_CPP}
  ${ARINSIDE_SRCS_OUTPUT_CPP}
@@ -353,6 +364,7 @@ SET(ARINSIDE_SRCS_CPP
 SET(ARINSIDE_SRCS_H
  ${ARINSIDE_SRCS_CORE_H}
  ${ARINSIDE_SRCS_DOC_H}
+ ${ARINSIDE_SRCS_DOC_ACTIONS_H}
  ${ARINSIDE_SRCS_LISTS_H}
  ${ARINSIDE_SRCS_LISTS_SUPPORT_H}
  ${ARINSIDE_SRCS_OUTPUT_H}
