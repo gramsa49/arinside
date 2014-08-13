@@ -693,6 +693,7 @@ bool CDocAlActionStruct::ActionOpenDlgTargetLocation(int nWindowType)
 	case AR_ACTIVE_LINK_ACTION_OPEN_SEARCH:
 	case AR_ACTIVE_LINK_ACTION_OPEN_SUBMIT:
 	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY:
+	case AR_ACTIVE_LINK_ACTION_OPEN_DSPLY:
 	case AR_ACTIVE_LINK_ACTION_OPEN_REPORT:
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 	case AR_ACTIVE_LINK_ACTION_OPEN_MODIFY_DIRECT: 
@@ -873,6 +874,8 @@ void CDocAlActionStruct::ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct
 				CRefItem refItem(*this->obj, ifElse, nAction, REFM_OPENWINDOW_FORM);
 				arIn->AddFieldReference(schemaInsideId, fieldId, refItem);
 			}
+
+			if (fieldId == (-AR_KEYWORD_SCHEMA)) openWindowSchema = schemaName;
 		}
 		else
 		{
