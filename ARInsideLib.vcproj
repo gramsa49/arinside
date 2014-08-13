@@ -2082,6 +2082,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\Context.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\Context.h"
+				>
+			</File>
+			<File
 				RelativePath=".\util\RefItem.cpp"
 				>
 			</File>
