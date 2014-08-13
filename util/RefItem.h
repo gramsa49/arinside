@@ -65,6 +65,7 @@
 
 // forward declaration
 class CARServerObject;
+class Context;
 
 // Reference Types ////////////////////////////////////////////////////////////
 // this values are returned by CRefItem::GetReferenceType to identify the
@@ -220,6 +221,7 @@ public:
 	CRefItem();	// constructor for reference to nothing
 	CRefItem(const CARServerObject& obj, int dMessage);
 	CRefItem(const CARServerObject& obj, int IfOrElse, int nAction, int dMessage);
+	CRefItem(Context &context, int dMessage);
 	CRefItem(const CRefItem& copyFrom, int dMessage); // to copy the referenced object, but change the message at the same time
 	// the following constructor is for openwindow-action references
 	CRefItem(const CARServerObject& obj, int IfOrElse, int nAction, int OpenOrClose, int dMessage);

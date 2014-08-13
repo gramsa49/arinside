@@ -22,12 +22,15 @@
 
 using namespace OUTPUT;
 
+class MappingContext;
+
 class CARAssignHelper
 {
 public:
 	CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject& obj, const CARSchema& schema1, const CARSchema& schema2);
 	CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject& obj, int schemaId1, int schemaId2);
 	CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject& obj, const string& schemaName1, const string& schemaName2);
+	CARAssignHelper(MappingContext &context);
 
 	~CARAssignHelper(void);
 

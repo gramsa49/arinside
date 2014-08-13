@@ -19,6 +19,7 @@
 #include "../doc/DocCurrencyField.h"
 #include "../doc/DocStatusHistoryField.h"
 #include "../output/URLLink.h"
+#include "../util/Context.h"
 
 CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int rootLevel)
 : refItem(referenceItem)
@@ -36,6 +37,22 @@ CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceIte
 	this->rootLevel = rootLevel;
 }
 
+CARQualification::CARQualification(Context &context, const CRefItem &referenceItem)
+: refItem(referenceItem)
+{
+	this->arIn = &context.getInside();
+	this->tmpFormId = 0;
+	arsStructItemType = AR_STRUCT_ITEM_XML_NONE;
+
+	this->primaryFormId = context.getCurrentSchemaId();
+	this->secondaryFormId = context.getCurrentSchemaId();
+
+	this->primaryFormDelimiter = '\'';
+	this->secondaryFormDelimiter = '\'';
+
+	this->rootLevel = context.getRootLevel();
+}
+
 CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int otherFormId, int rootLevel)
 : refItem(referenceItem)
 {
@@ -50,6 +67,22 @@ CARQualification::CARQualification(CARInside &arIn, const CRefItem &referenceIte
 	this->secondaryFormDelimiter = '\'';
 
 	this->rootLevel = rootLevel;
+}
+
+CARQualification::CARQualification(MappingContext &context, const CRefItem &referenceItem)
+: refItem(referenceItem)
+{
+	this->arIn = &context.getInside();
+	this->tmpFormId = 0;
+	arsStructItemType = AR_STRUCT_ITEM_XML_NONE;
+
+	this->primaryFormId = context.getCurrentSchemaId();
+	this->secondaryFormId = context.getSecondarySchemaId();
+
+	this->primaryFormDelimiter = '$';
+	this->secondaryFormDelimiter = '\'';
+
+	this->rootLevel = context.getRootLevel();
 }
 
 CARQualification::~CARQualification(void)

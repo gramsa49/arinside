@@ -17,13 +17,19 @@
 #pragma once
 #include "../ARInside.h"
 
+class Context;
+class MappingContext;
+
 class CARQualification
 {
 public:
 	// use this constructor in case only one form is involved (e.g. run if)
 	CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int rootLevel);
+	CARQualification(Context &context, const CRefItem &referenceItem);
+
 	// use this constructor in case two forms are involved (e.g. setfield-if, pushfield-if)
 	CARQualification(CARInside &arIn, const CRefItem &referenceItem, int currentFormId, int otherFormId, int rootLevel);
+	CARQualification(MappingContext &context, const CRefItem &referenceItem);
 
 	~CARQualification(void);
 

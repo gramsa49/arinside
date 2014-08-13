@@ -53,6 +53,7 @@
 #include "lists/ARServerInfoList.h"
 
 extern const string AppVersion;
+class Context;
 
 class CARInside
 {
@@ -117,6 +118,7 @@ public:
 	string LinkToField(const string& schemaName, int fieldInsideId, int fromRootLevel);	
 	string LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel);
 	string LinkToField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
+	string CARInside::LinkToField(Context &context, int fieldInsideId);
 	string LinkToMenuField(int schemaInsideId, int fieldInsideId, int fromRootLevel);
 
 	string LinkToContainer(string containerName, int rootLevel);

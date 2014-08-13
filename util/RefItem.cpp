@@ -17,6 +17,7 @@
 #include "stdafx.h"
 
 #include "RefItem.h"
+#include "Context.h"
 #include "../ARInside.h"
 #include "../core/ARServerObject.h"
 #include "../core/ARSchema.h"
@@ -65,6 +66,11 @@ CRefItem::CRefItem(const CARServerObject &obj, int dMessage)
 CRefItem::CRefItem(const CARServerObject &obj, int IfOrElse, int nAction, int dMessage)
 {
 	Init(obj, IfOrElse, nAction, dMessage);
+}
+
+CRefItem::CRefItem(Context &context, int dMessage)
+{
+	Init(context.getCurrentObject(), context.getIfElse(), context.getActionIndex(), dMessage);
 }
 
 CRefItem::CRefItem(const CARServerObject &obj, int IfOrElse, int nAction, int OpenOrClose, int dMessage)

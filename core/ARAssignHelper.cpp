@@ -19,6 +19,7 @@
 #include "../doc/DocCurrencyField.h"
 #include "../doc/DocStatusHistoryField.h"
 #include "../output/URLLink.h"
+#include "../util/Context.h"
 
 CARAssignHelper::CARAssignHelper(CARInside& arIn, int rootLevel, const CARServerObject &obj, const CARSchema& schema1, const CARSchema& schema2)
 {
@@ -50,6 +51,16 @@ CARAssignHelper::CARAssignHelper(CARInside &arIn, int rootLevel, const CARServer
 	this->schemaInsideId1 = schema1.GetInsideId();
 	this->schemaInsideId2 = schema2.GetInsideId();
 	this->rootLevel = rootLevel;
+	this->pushFieldFlag = false;
+}
+
+CARAssignHelper::CARAssignHelper(MappingContext &context)
+{
+	this->arIn = &context.getInside();
+	this->object = context.getCurrentObject().Clone();
+	this->schemaInsideId1 = context.getCurrentSchemaId();
+	this->schemaInsideId2 = context.getSecondarySchemaId();
+	this->rootLevel = context.getRootLevel();
 	this->pushFieldFlag = false;
 }
 

@@ -59,6 +59,7 @@
 #include "scan/ScanMain.h"
 
 #include "util/ResourceFileLocatorAndExtractor.h"
+#include "util/Context.h"
 
 /////////
 // the following file is generated via a pre-build step using "svnrev_template.h" as template. 
@@ -1023,6 +1024,11 @@ string CARInside::LinkToField(const string& schemaName, int fieldInsideId, int f
 {	
 	CARSchema schema(schemaName);
 	return LinkToField(schema.GetInsideId(), fieldInsideId, fromRootLevel);
+}
+
+string CARInside::LinkToField(Context &context, int fieldInsideId)
+{
+	return LinkToField(context.getCurrentSchemaId(), fieldInsideId, context.getRootLevel());
 }
 
 string CARInside::LinkToField(int schemaInsideId, int fieldInsideId, const string& linkText, int fromRootLevel)
