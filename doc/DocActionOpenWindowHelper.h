@@ -24,7 +24,6 @@ public:
 	~CDocActionOpenWindowHelper(void);
 
 	static bool GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string& server, string& schema);
-	static bool GetReportData(char* reportStr, string &reportType, string &reportLocation, string &reportName, string &reportDestination, string &entryIDs, string &queryOverride, string &reportOperation, string &charEncoding, std::string &inlineForm);
 
 	bool IsValid(); // returns true if the report string passed to the constructor could be parsed without errors
 	string getReportType();

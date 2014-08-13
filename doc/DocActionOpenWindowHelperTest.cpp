@@ -51,3 +51,23 @@ TEST_F(DocActionOpenWindowHelperTests, VerifyInlineForm)
 	string result = reportData.getInlineForm();
 	ASSERT_STREQ("true", result.c_str());
 }
+
+// even if the property (here "Report Name") is not in the (valid) report, it shouldn't fail
+TEST_F(DocActionOpenWindowHelperTests, TryToReadAValueNotInTheReportString)
+{
+	char* mostlyEmptyReport = "Report: \00121=AR System\001\nto-screen: ";
+	CDocActionOpenWindowHelper reportData(mostlyEmptyReport);
+
+	string result = reportData.getReportName();
+	ASSERT_STREQ("", result.c_str());
+}
+
+// if the report is simply invalid, it shouldn't fail as well
+TEST_F(DocActionOpenWindowHelperTests, TryToReadAValueFromInvalidReport)
+{
+	char* invalidReport = "WrongReport: \001";
+	CDocActionOpenWindowHelper reportData(invalidReport);
+
+	string result = reportData.getReportDestination();
+	ASSERT_STREQ("", result.c_str());
+}

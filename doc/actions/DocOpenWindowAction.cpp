@@ -175,24 +175,9 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		strm << "</p>" << endl;
 
 		// report details here
-		string *entryIDs = NULL;
-		string *queryOverride = NULL;
-		string *reportOperation = NULL;
-		string *charEncoding = NULL;
-		string *inlineForm = NULL;
 		if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 		{
-			string reportType;
-			string reportLocation;
-			string reportName;
-			string reportDestination;
-			entryIDs = new string();
-			queryOverride = new string();
-			reportOperation = new string();
-			charEncoding = new string();
-			inlineForm = new string();
-
-			if (!CDocActionOpenWindowHelper::GetReportData(action.reportString, reportType, reportLocation, reportName, reportDestination, *entryIDs, *queryOverride, *reportOperation, *charEncoding, *inlineForm))
+			if (!reportData.IsValid())
 			{
 				strm << "<p>";
 				ObjNotFound notFound(strm);
@@ -202,7 +187,12 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 			}
 			else
 			{
-				strm << "<p>Report Type: ";
+				string reportType = reportData.getReportType();
+				string reportLocation = reportData.getReportLocation();
+				string reportName = reportData.getReportName();
+				string reportDestination = reportData.getReportDestination();
+
+				strm << "<p>Report Type: ";				
 				if (!reportType.empty() && reportType[0] == '$')
 				{
 					int fieldId = atoi(&reportType.c_str()[1]);
@@ -394,10 +384,15 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 			// additional report informations
 			if (windowMode == AR_ACTIVE_LINK_ACTION_OPEN_REPORT)
 			{
+				string entryIDs = reportData.getEntryIds();
+				string queryOverride = reportData.getQueryOverride();
+				string reportOperation = reportData.getReportOperation();
+				string charEncoding = reportData.getCharEncoding();
+
 				strm << "<p>EntryIDs: ";
-				if (!entryIDs->empty() && entryIDs->operator[](0) == '$')
+				if (!entryIDs.empty() && entryIDs[0] == '$')
 				{
-					int fieldId = atoi(&entryIDs->c_str()[1]);
+					int fieldId = atoi(&entryIDs.c_str()[1]);
 					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(context, fieldId)) << "$";
 					if (fieldId > 0)
 					{
@@ -407,13 +402,13 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 				}
 				else
 				{
-					strm << *entryIDs;
+					strm << entryIDs;
 				}
 				
 				strm << "<br/>Query Override: ";
-				if (!queryOverride->empty() && queryOverride->operator[](0) == '$')
+				if (!queryOverride.empty() && queryOverride[0] == '$')
 				{
-					int fieldId = atoi(&entryIDs->c_str()[1]);
+					int fieldId = atoi(&entryIDs.c_str()[1]);
 					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(context, fieldId)) << "$";
 					if (fieldId > 0)
 					{
@@ -423,18 +418,18 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 				}
 				else
 				{
-					strm << *queryOverride;
+					strm << queryOverride;
 				}
 				
 				strm << "<br/>Report Operation: ";
-				int iReportOperation = atoi(reportOperation->c_str());
+				int iReportOperation = atoi(reportOperation.c_str());
 				if (iReportOperation == 0) iReportOperation = 2;	// set default to Run
 				strm << CAREnum::ReportOperation(iReportOperation);
 
 				strm << "<br/>Character Encoding: ";
-				if (!charEncoding->empty() && charEncoding->operator[](0) == '$')
+				if (!charEncoding.empty() && charEncoding[0] == '$')
 				{
-					int fieldId = atoi(&charEncoding->c_str()[1]);
+					int fieldId = atoi(&charEncoding.c_str()[1]);
 					strm << "$" << (fieldId < 0 ? CAREnum::Keyword(abs(fieldId)) : arIn->LinkToField(context, fieldId)) << "$";
 					if (fieldId > 0)
 					{
@@ -444,16 +439,9 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 				}
 				else
 				{
-					strm << *charEncoding;
+					strm << charEncoding;
 				}
 				strm << "</p>" << endl;
-
-				// clean up
-				delete entryIDs;
-				delete queryOverride;
-				delete reportOperation;
-				delete charEncoding;
-				delete inlineForm;
 			}
 
 			// polling interval
