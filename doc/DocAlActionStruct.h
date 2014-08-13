@@ -72,14 +72,6 @@ private:
 
 	// AR_ACTIVE_LINK_ACTION_OPENDLG
 	void ActionOpenDlg(std::ostream& strm, const AROpenDlgStruct &action, int nAction);
-	bool ActionOpenDlgTargetLocation(int nWindowType);
-	bool ActionOpenDlgQualifier(int nWindowType);
-	bool ActionOpenDlgCloseButton(int nWindowType);
-	bool ActionOpenDlgSuppressEmptyList(int nWindowType);
-	bool ActionOpenDlgInputMapping(int nWindowType);
-	bool ActionOpenDlgOutputMapping(int nWindowType);
-	bool ActionOpenDlgPoolingInterval(int nWindowType);
-	bool ActionOpenDlgMessage(int nWindowType);
 
 	// AR_ACTIVE_LINK_ACTION_COMMITC
 	void ActionCommitChanges(std::ostream& strm, const ARCommitChangesStruct &action, int nAction);
