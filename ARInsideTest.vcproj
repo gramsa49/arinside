@@ -594,6 +594,10 @@
 			Name="doc"
 			>
 			<File
+				RelativePath=".\doc\DocActionOpenWindowHelperTest.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\doc\DocTextReferencesTest.cpp"
 				>
 			</File>

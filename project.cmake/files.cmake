@@ -397,6 +397,7 @@ SET(ARINSIDE_TEST_SRCS
  RapidJSONTests.cpp
  core/ARDayStructHelperTest.cpp
  core/ARParseFieldTest.cpp
+ doc/DocActionOpenWindowHelperTest.cpp
  doc/DocTextReferencesTest.cpp
  doc/DocTextReferencesTest.h
  lists/ARListHelpersTest.cpp

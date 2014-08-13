@@ -19,11 +19,49 @@
 
 class CDocActionOpenWindowHelper
 {
-private:
-	CDocActionOpenWindowHelper(/*CARActiveLink &arALObject, AROpenDlgStruct& oWndStruct, string& ifElse, int numAction*/);
+public:
+	CDocActionOpenWindowHelper(char* reportString);
 	~CDocActionOpenWindowHelper(void);
 
 public:
 	static bool GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string& server, string& schema);
-	static bool GetReportData(char* reportStr, string &reportType, string &reportLocation, string &reportName, string &reportDestination, string &entryIDs, string &queryOverride, string &reportOperation, string &charEncoding);
+	static bool GetReportData(char* reportStr, string &reportType, string &reportLocation, string &reportName, string &reportDestination, string &entryIDs, string &queryOverride, string &reportOperation, string &charEncoding, std::string &inlineForm);
+
+	string getReportType();
+	string getReportLocation();
+	string getReportName();
+	string getReportDestination();
+	string getEntryIds();
+	string getQueryOverride();
+	string getReportOperation();
+	string getCharEncoding();
+	string getInlineForm();
+
+private:
+	void CheckAlreadyParsed();
+	bool ParseReportData();
+
+private:
+	bool isParsed;
+	bool isValid;
+	char* reportString;
+
+	const char* reportType_Start;
+	const char* reportType_End;
+	const char* reportLocation_Start;
+	const char* reportLocation_End;
+	const char* reportName_Start;
+	const char* reportName_End;
+	const char* reportDestination_Start;
+	//const char* reportDestination_End;
+	const char* entryIds_Start;
+	const char* entryIds_End;
+	const char* queryOverride_Start;
+	const char* queryOverride_End;
+	const char* reportOperation_Start;
+	const char* reportOperation_End;
+	const char* charEncoding_Start;
+	const char* charEncoding_End;
+	const char* inlineForm_Start;
+	const char* inlineForm_End;
 };
