@@ -258,11 +258,13 @@ string FileSystemUtil::GetExecutableDirectory(const char* argv_0)
 	// http://stackoverflow.com/questions/933850/how-to-find-the-location-of-the-executable-in-c
 #if WIN32
 	DWORD size = 1024;
-	LPTSTR buffer = (LPTSTR)malloc(size * sizeof(TCHAR));
+	LPTSTR buffer = NULL;
 ged_start:
-	if (realloc(buffer, size) == NULL)
+	buffer = (LPTSTR)realloc(buffer, size);
+	if (buffer == NULL)
 	{
 		cerr << "GetExecutableDirectory: Failed to realloc memory buffer to " << size << "!" << endl;
+		return "";
 	}
 	
 	if (GetModuleFileName(NULL, buffer, size) == 0)
