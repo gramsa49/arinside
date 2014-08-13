@@ -273,7 +273,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 				MappingContext qualContext(context, openWindowSchema.GetInsideId());
 
 				strmTmpQual.str("");
-				CARQualification arQual(context, refItem);
+				CARQualification arQual(qualContext, refItem);
 				arQual.CheckQuery(&action.query, strmTmpQual);
 
 				strm << "<p>Qualification:<br/>" << endl;
