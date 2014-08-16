@@ -762,11 +762,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\core\OpenWindowHelper.cpp"
+				RelativePath=".\core\OpenWindowReportData.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\core\OpenWindowHelper.h"
+				RelativePath=".\core\OpenWindowReportData.h"
 				>
 			</File>
 			<File

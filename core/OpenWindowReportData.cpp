@@ -15,9 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "OpenWindowHelper.h"
+#include "OpenWindowReportData.h"
 
-CDocActionOpenWindowHelper::CDocActionOpenWindowHelper(char* reportString)
+OpenWindowReportData::OpenWindowReportData(char* reportString)
 {
 	isValid = false;
 	isParsed = false;
@@ -43,11 +43,11 @@ CDocActionOpenWindowHelper::CDocActionOpenWindowHelper(char* reportString)
 	inlineForm_End = NULL;
 }
 
-CDocActionOpenWindowHelper::~CDocActionOpenWindowHelper()
+OpenWindowReportData::~OpenWindowReportData()
 {
 }
 
-bool CDocActionOpenWindowHelper::ParseReportData()
+bool OpenWindowReportData::ParseReportData()
 {
 	isParsed = true;
 	if (reportString == NULL) return false;
@@ -129,19 +129,19 @@ bool CDocActionOpenWindowHelper::ParseReportData()
 	return false;
 }
 
-void CDocActionOpenWindowHelper::CheckAlreadyParsed()
+void OpenWindowReportData::CheckAlreadyParsed()
 {
 	if (!isParsed)
 		isValid = ParseReportData();
 }
 
-bool CDocActionOpenWindowHelper::IsValid()
+bool OpenWindowReportData::IsValid()
 {
 	CheckAlreadyParsed();
 	return isValid;
 }
 
-string CDocActionOpenWindowHelper::getReportType()
+string OpenWindowReportData::getReportType()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -149,7 +149,7 @@ string CDocActionOpenWindowHelper::getReportType()
 	return string(reportType_Start, reportType_End);
 }
 
-string CDocActionOpenWindowHelper::getReportLocation()
+string OpenWindowReportData::getReportLocation()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -157,7 +157,7 @@ string CDocActionOpenWindowHelper::getReportLocation()
 	return string(reportLocation_Start, reportLocation_End);
 }
 
-string CDocActionOpenWindowHelper::getReportName()
+string OpenWindowReportData::getReportName()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -165,7 +165,7 @@ string CDocActionOpenWindowHelper::getReportName()
 	return string(reportName_Start, reportName_End);
 }
 
-string CDocActionOpenWindowHelper::getReportDestination()
+string OpenWindowReportData::getReportDestination()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -173,7 +173,7 @@ string CDocActionOpenWindowHelper::getReportDestination()
 	return reportDestination_Start;
 }
 
-string CDocActionOpenWindowHelper::getEntryIds()
+string OpenWindowReportData::getEntryIds()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -181,7 +181,7 @@ string CDocActionOpenWindowHelper::getEntryIds()
 	return string(entryIds_Start, entryIds_End);
 }
 
-string CDocActionOpenWindowHelper::getQueryOverride()
+string OpenWindowReportData::getQueryOverride()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -189,7 +189,7 @@ string CDocActionOpenWindowHelper::getQueryOverride()
 	return string(queryOverride_Start, queryOverride_End);
 }
 
-string CDocActionOpenWindowHelper::getReportOperation()
+string OpenWindowReportData::getReportOperation()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -197,7 +197,7 @@ string CDocActionOpenWindowHelper::getReportOperation()
 	return string(reportOperation_Start, reportOperation_End);
 }
 
-string CDocActionOpenWindowHelper::getCharEncoding()
+string OpenWindowReportData::getCharEncoding()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";
@@ -205,7 +205,7 @@ string CDocActionOpenWindowHelper::getCharEncoding()
 	return string(charEncoding_Start, charEncoding_End);
 }
 
-string CDocActionOpenWindowHelper::getInlineForm()
+string OpenWindowReportData::getInlineForm()
 {
 	CheckAlreadyParsed();
 	if (!isValid) return "";

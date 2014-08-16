@@ -17,7 +17,7 @@
 #include "stdafx.h"
 #include "DocAlActionStruct.h"
 #include "DocAllMatchingIdsTable.h"
-#include "../core/OpenWindowHelper.h"
+#include "../core/OpenWindowReportData.h"
 #include "actions/DocOpenWindowAction.h"
 #include "actions/DocAlMessageAction.h"
 #include "../output/ImageTag.h"

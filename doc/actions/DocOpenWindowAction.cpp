@@ -19,7 +19,7 @@
 #include "DocOpenWindowAction.h"
 #include "../../core/ARQualification.h"
 #include "../../core/ARAssignHelper.h"
-#include "../../core/OpenWindowHelper.h"
+#include "../../core/OpenWindowReportData.h"
 #include "../../core/OpenWindowSampleData.h"
 #include "../../output/ObjNotFound.h"
 #include "../../output/URLLink.h"
@@ -38,7 +38,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		string openWindowServer;
 		string openWindowSchemaName;
 		CARSchema attachedSchema(context.getCurrentSchemaId());
-		CDocActionOpenWindowHelper reportData(action.reportString);
+		OpenWindowReportData reportData(action.reportString);
 
 		// check if we need to get the sample data
 		if(action.serverName[0] == '$')

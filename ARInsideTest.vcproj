@@ -562,7 +562,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\core\OpenWindowHelperTest.cpp"
+				RelativePath=".\core\OpenWindowReportDataTest.cpp"
 				>
 			</File>
 		</Filter>

@@ -17,11 +17,11 @@
 #pragma once
 #include "../ARInside.h"
 
-class CDocActionOpenWindowHelper
+class OpenWindowReportData
 {
 public:
-	CDocActionOpenWindowHelper(char* reportString);
-	~CDocActionOpenWindowHelper(void);
+	OpenWindowReportData(char* reportString);
+	~OpenWindowReportData(void);
 
 	bool IsValid(); // returns true if the report string passed to the constructor could be parsed without errors
 	string getReportType();
