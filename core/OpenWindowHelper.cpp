@@ -15,7 +15,7 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
-#include "DocActionOpenWindowHelper.h"
+#include "OpenWindowHelper.h"
 
 CDocActionOpenWindowHelper::CDocActionOpenWindowHelper(char* reportString)
 {

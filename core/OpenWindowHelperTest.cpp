@@ -1,5 +1,5 @@
 #include "ARInsideTest.h"
-#include "DocActionOpenWindowHelper.h"
+#include "OpenWindowHelper.h"
 
 using namespace testing;
 

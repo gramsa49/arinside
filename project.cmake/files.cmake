@@ -28,6 +28,7 @@ SET (ARINSIDE_SRCS_CORE_CPP
  core/ARValue.cpp
  core/ARVui.cpp
  core/ChangeHistoryEntry.cpp
+ core/OpenWindowHelper.cpp
 )
 SET (ARINSIDE_SRCS_CORE_H
  core/ARActiveLink.h
@@ -57,11 +58,11 @@ SET (ARINSIDE_SRCS_CORE_H
  core/ARValue.h
  core/ARVui.h
  core/ChangeHistoryEntry.h
+ core/OpenWindowHelper.h
 )
 SOURCE_GROUP(core FILES ${ARINSIDE_SRCS_CORE_CPP} ${ARINSIDE_SRCS_CORE_H})
 
 SET(ARINSIDE_SRCS_DOC_CPP
- doc/DocActionOpenWindowHelper.cpp
  doc/DocActionSetFieldsHelper.cpp
  doc/DocAlActionStruct.cpp
  doc/DocAlDetails.cpp
@@ -98,7 +99,6 @@ SET(ARINSIDE_SRCS_DOC_CPP
  doc/MessageItem.cpp
 )
 SET(ARINSIDE_SRCS_DOC_H
- doc/DocActionOpenWindowHelper.h
  doc/DocActionSetFieldsHelper.h
  doc/DocAlActionStruct.h
  doc/DocAlDetails.h
@@ -397,7 +397,7 @@ SET(ARINSIDE_TEST_SRCS
  RapidJSONTests.cpp
  core/ARDayStructHelperTest.cpp
  core/ARParseFieldTest.cpp
- doc/DocActionOpenWindowHelperTest.cpp
+ core/OpenWindowHelperTest.cpp
  doc/DocTextReferencesTest.cpp
  doc/DocTextReferencesTest.h
  lists/ARListHelpersTest.cpp

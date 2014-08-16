@@ -561,6 +561,10 @@
 				RelativePath=".\core\ARParseFieldTest.cpp"
 				>
 			</File>
+			<File
+				RelativePath=".\core\OpenWindowHelperTest.cpp"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="lists"
@@ -593,10 +597,6 @@
 		<Filter
 			Name="doc"
 			>
-			<File
-				RelativePath=".\doc\DocActionOpenWindowHelperTest.cpp"
-				>
-			</File>
 			<File
 				RelativePath=".\doc\DocTextReferencesTest.cpp"
 				>

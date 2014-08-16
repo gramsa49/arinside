@@ -761,18 +761,18 @@
 				RelativePath=".\Core\ChangeHistoryEntry.h"
 				>
 			</File>
+			<File
+				RelativePath=".\core\OpenWindowHelper.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\OpenWindowHelper.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="doc"
 			>
-			<File
-				RelativePath=".\doc\DocActionOpenWindowHelper.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\doc\DocActionOpenWindowHelper.h"
-				>
-			</File>
 			<File
 				RelativePath=".\Doc\DocActionSetFieldsHelper.cpp"
 				>

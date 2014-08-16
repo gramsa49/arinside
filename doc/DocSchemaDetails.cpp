@@ -23,8 +23,8 @@
 #include "../output/URLLink.h"
 #include "../output/WorkflowReferenceTable.h"
 #include "../core/ARDayStructHelper.h"
-#include "DocActionOpenWindowHelper.h"
 #include "../core/ARHandle.h"
+#include "../core/OpenWindowHelper.h"
 #include "DocOverlayHelper.h"
 #include "DocMain.h"
 
