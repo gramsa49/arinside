@@ -25,6 +25,7 @@
 #include "../core/ARDayStructHelper.h"
 #include "../core/ARHandle.h"
 #include "../core/OpenWindowHelper.h"
+#include "../core/OpenWindowSampleData.h"
 #include "DocOverlayHelper.h"
 #include "DocMain.h"
 
@@ -1469,7 +1470,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 					if (action.schemaName[0] == '$' )
 					{
 						string sampleServer;
-						CDocActionOpenWindowHelper::GetSampleData(al, IES_IF, i,	sampleServer, openWindowSchema);
+						OpenWindowSampleData::GetSampleData(al, IES_IF, i,	sampleServer, openWindowSchema);
 					}
 					else
 						openWindowSchema = action.schemaName;
@@ -1497,7 +1498,7 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 						if (action.schemaName[0] == '$' )
 						{
 							string sampleServer;
-							CDocActionOpenWindowHelper::GetSampleData(al, IES_ELSE, i,	sampleServer, openWindowSchema);
+							OpenWindowSampleData::GetSampleData(al, IES_ELSE, i,	sampleServer, openWindowSchema);
 						}
 						else
 							openWindowSchema = action.schemaName;

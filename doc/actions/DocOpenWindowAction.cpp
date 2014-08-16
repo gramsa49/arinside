@@ -20,6 +20,7 @@
 #include "../../core/ARQualification.h"
 #include "../../core/ARAssignHelper.h"
 #include "../../core/OpenWindowHelper.h"
+#include "../../core/OpenWindowSampleData.h"
 #include "../../output/ObjNotFound.h"
 #include "../../output/URLLink.h"
 #include "../../util/Context.h"
@@ -42,7 +43,7 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		// check if we need to get the sample data
 		if(action.serverName[0] == '$')
 		{
-			CDocActionOpenWindowHelper::GetSampleData(context.getActLink(), context.getIfElse(), context.getActionIndex(), openWindowServer, openWindowSchemaName);
+			OpenWindowSampleData::GetSampleData(context.getActLink(), context.getIfElse(), context.getActionIndex(), openWindowServer, openWindowSchemaName);
 		}
 
 		// window type

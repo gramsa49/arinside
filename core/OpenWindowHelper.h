@@ -23,8 +23,6 @@ public:
 	CDocActionOpenWindowHelper(char* reportString);
 	~CDocActionOpenWindowHelper(void);
 
-	static bool GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string& server, string& schema);
-
 	bool IsValid(); // returns true if the report string passed to the constructor could be parsed without errors
 	string getReportType();
 	string getReportLocation();

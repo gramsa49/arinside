@@ -769,6 +769,14 @@
 				RelativePath=".\core\OpenWindowHelper.h"
 				>
 			</File>
+			<File
+				RelativePath=".\core\OpenWindowSampleData.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\core\OpenWindowSampleData.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="doc"

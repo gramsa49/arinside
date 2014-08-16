@@ -29,6 +29,7 @@ SET (ARINSIDE_SRCS_CORE_CPP
  core/ARVui.cpp
  core/ChangeHistoryEntry.cpp
  core/OpenWindowHelper.cpp
+ core/OpenWindowSampleData.cpp
 )
 SET (ARINSIDE_SRCS_CORE_H
  core/ARActiveLink.h
@@ -59,6 +60,7 @@ SET (ARINSIDE_SRCS_CORE_H
  core/ARVui.h
  core/ChangeHistoryEntry.h
  core/OpenWindowHelper.h
+ core/OpenWindowSampleData.h
 )
 SOURCE_GROUP(core FILES ${ARINSIDE_SRCS_CORE_CPP} ${ARINSIDE_SRCS_CORE_H})
 
