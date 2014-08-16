@@ -135,6 +135,11 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		LookupFormContext openWindowContext(context, openWindowSchemaName);
 		CARSchema openWindowSchema(openWindowContext.getLookupSchemaId());
 
+		// add a used-as-open-window-schema reference to the detected schema
+		CRefItem openWindowSchemaRef(context, REFM_OPENWINDOW_FORM);
+		if (!openWindowSchema.ReferenceExists(openWindowSchemaRef))
+			openWindowSchema.AddReference(openWindowSchemaRef);
+
 		strm << "<br/>View Name: ";
 		if(action.vuiLabel[0] == '$')// == NULL || strcmp(action.vuiLabel, "")==0)
 		{

@@ -1449,78 +1449,24 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 	{
 		CAlTable *alTable = new CAlTable(*this->pInside);
 
-		unsigned int alCount = pInside->alList.GetCount();
-		for (unsigned int alIndex = 0; alIndex < alCount; ++alIndex)
-		{
-			CARActiveLink al(alIndex);
+		const CARSchema::ReferenceList &references = schema.GetReferences();
+		CARSchema::ReferenceList::const_iterator curIt = references.begin();
+		CARSchema::ReferenceList::const_iterator endIt = references.end();
 
-			// skip this object in case it's overlaid (hidden)
+		for (; curIt != endIt; ++curIt)
+		{
+			if (curIt->GetMessageId() != REFM_OPENWINDOW_FORM && curIt->GetObjectType() != AR_STRUCT_ITEM_XML_ACTIVE_LINK)
+				continue;
+
+			CARActiveLink al(curIt->GetObjectId());
+
+			if (!al.Exists())
+				continue;
+
 			if (pInside->appConfig.bOverlaySupport && !IsVisibleObject(al))
 				continue;
 
-			bool bPushToForm = false;
-
-			//If-Actions
-			for(unsigned int i = 0; i < al.GetIfActions().numItems; i++)
-			{
-				if(al.GetIfActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
-				{
-					AROpenDlgStruct &action = al.GetIfActions().actionList[i].u.openDlg;                    
-					Context context(al, IES_IF, i, -1, 0);
-					OpenWindowSampleData sampleData(context);
-					
-					string openWindowSchema;
-					if (action.schemaName[0] == '$' )
-					{
-						openWindowSchema = sampleData.getSchema();
-					}
-					else
-						openWindowSchema = action.schemaName;
-
-					if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 && IsSchemaInWFConnectStruct(al.GetSchemaList())) ||
-						openWindowSchema.compare(schema.GetARName()) == 0)
-					{
-						bPushToForm = true;
-						break;
-					}
-
-				}
-			}	
-
-			//Else Actions
-			if(bPushToForm == false) // Only search the else actions if the al is still false
-			{
-				for(unsigned int i = 0; i < al.GetElseActions().numItems; i++)
-				{
-					if(al.GetElseActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
-					{
-						AROpenDlgStruct &action = al.GetElseActions().actionList[i].u.openDlg;
-						Context context(al, IES_ELSE, i, -1, 0);
-						OpenWindowSampleData sampleData(context);
-
-						string openWindowSchema;
-						if (action.schemaName[0] == '$' )
-						{
-							openWindowSchema = sampleData.getSchema();
-						}
-						else
-							openWindowSchema = action.schemaName;
-
-						if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 && IsSchemaInWFConnectStruct(al.GetSchemaList())) ||
-						openWindowSchema.compare(schema.GetARName()) == 0)
-						{
-							bPushToForm = true;
-							break;
-						}
-
-					}
-				}
-			}
-
-			if(bPushToForm == true)
-			{
-				alTable->AddRow(alIndex, rootLevel);
-			}
+			alTable->AddRow(curIt->GetObjectId(), rootLevel);
 		}
 
 		if(alTable->NumRows() > 0)
