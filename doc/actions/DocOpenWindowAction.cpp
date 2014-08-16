@@ -39,11 +39,13 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		string openWindowSchemaName;
 		CARSchema attachedSchema(context.getCurrentSchemaId());
 		OpenWindowReportData reportData(action.reportString);
+		OpenWindowSampleData sampleData(context);
 
 		// check if we need to get the sample data
 		if(action.serverName[0] == '$')
 		{
-			OpenWindowSampleData::GetSampleData(context.getActLink(), context.getIfElse(), context.getActionIndex(), openWindowServer, openWindowSchemaName);
+			openWindowServer = sampleData.getServer();
+			openWindowSchemaName = sampleData.getSchema();
 		}
 
 		// window type

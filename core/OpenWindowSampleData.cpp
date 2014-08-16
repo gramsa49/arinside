@@ -16,8 +16,9 @@
 
 #include "stdafx.h"
 #include "OpenWindowSampleData.h"
+#include "../util/Context.h"
 
-bool OpenWindowSampleData::GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string &server, string &schema)
+bool OpenWindowSampleData::ParseSampleData()
 {
 	// ok, this is a very ugly design of the ARS api. The sample data of
 	// the action is stored within the object properties of the active-
@@ -26,10 +27,10 @@ bool OpenWindowSampleData::GetSampleData(CARActiveLink& actLink, IfElseState ifE
 	// there is no ARDecode*** function. So we need to implement our
 	// own decode routine.
 
-	const ARPropList &propList = actLink.GetPropList();
+	const ARPropList &propList = context.getActLink().GetPropList();
 
 	// first, decide which property we are looking for
-	unsigned int PropID = (ifElse == IES_IF ? AR_OPROP_WINDOW_OPEN_IF_SAMPLE_SERVER_SCHEMA : AR_OPROP_WINDOW_OPEN_ELSE_SAMPLE_SERVER_SCHEMA);
+	unsigned int PropID = (context.getIfElse() == IES_IF ? AR_OPROP_WINDOW_OPEN_IF_SAMPLE_SERVER_SCHEMA : AR_OPROP_WINDOW_OPEN_ELSE_SAMPLE_SERVER_SCHEMA);
 
 	// now find the index of the object property
 	int propIndex = -1;
@@ -45,53 +46,84 @@ bool OpenWindowSampleData::GetSampleData(CARActiveLink& actLink, IfElseState ifE
 	if (propIndex > -1 && propList.props[propIndex].value.dataType == AR_DATA_TYPE_CHAR)
 	{
 		// the property is found and has correct data type
-		char* propData = propList.props[propIndex].value.u.charVal;
-		unsigned int chrIndex = 0;	// this holds the current position within propData
+		return ParseSampleList(propList.props[propIndex].value.u.charVal);
+	}
+	return false;
+}
+
+bool OpenWindowSampleData::ParseSampleList(char *encodedList)
+{
+	if (encodedList == NULL) return false;
+
+	// retrieve lists item count
+	int listCount = atoi(encodedList);
+
+	// find the \ after the list item count
+	const char* currentPos = strchr(encodedList, '\\');
+	if (currentPos == NULL) return false;
+
+	if (listCount > 0 && *currentPos != 0)
+	{
+		++currentPos; // skip the "\"
 		
-		int listCount = atoi(propData);	// retrieve lists item count
-		while (propData[chrIndex] != '\\' && propData[chrIndex] != 0) ++chrIndex;
-		if (listCount > 0 && propData[chrIndex] != 0)
+		// now we need to check each entry of the list against the action-index we're lookup for
+		for (int listIndex = 0; listIndex < listCount; ++listIndex)
 		{
-			++chrIndex; // skip last "\"
-			// now we need to check each entry of the list against this actions index
-			for (int listIndex = 0; listIndex < listCount; ++listIndex)
+			int propActionIndex = atoi(currentPos);
+			currentPos = strchr(currentPos, '\\');
+			if (currentPos == NULL) return false;
+			++currentPos; // skip the "\"
+
+			if (propActionIndex == context.getActionIndex() && *currentPos != 0)
 			{
-				int propActionIndex = atoi(&propData[chrIndex]);
-				while (propData[chrIndex] != '\\' && propData[chrIndex] != 0) ++chrIndex;
-				if (propData[chrIndex] == '\\') ++chrIndex;
+				// match! found the action we were looking for!
+				const char* strStart = currentPos;
+				currentPos = strchr(currentPos, '\\');
+				if (currentPos == NULL) return false;
 
-				if (propActionIndex == nAction && propData[chrIndex] != 0)
-				{
-					// match! found the action we were looking for!
-					unsigned int strStart = chrIndex;
-					while (propData[chrIndex] != '\\' && propData[chrIndex] != 0) ++chrIndex;
-					if (propData[chrIndex] == 0) break;
+				server_Start = strStart;
+				server_End = currentPos;
 
-					unsigned int strLen = chrIndex - strStart;
-					server.resize(strLen);
-					strncpy(&server[0], &propData[strStart], chrIndex - strStart);
+				++currentPos; // skip last "\"
+				strStart = currentPos;
+				while (*currentPos != '\\' && *currentPos != 0) ++currentPos; // we can't use strchr here, because we're looking to two possible chars
 
-					++chrIndex; // skip last "\"
-					strStart = chrIndex;
-					while (propData[chrIndex] != '\\' && propData[chrIndex] != 0) ++chrIndex;
-					//if (propData[chrIndex] == 0) break;
-
-					strLen = chrIndex - strStart;
-					schema.resize(strLen);
-					strncpy(&schema[0], &propData[strStart], chrIndex - strStart);
-					return true;	// we are done
-				}
-
-				// skip next two data entries now
-				for (int tmpDataCount = 0; tmpDataCount < 2; ++tmpDataCount)
-				{
-					while(propData[chrIndex] != '\\' && propData[chrIndex] != 0) ++chrIndex;
-					if (propData[chrIndex] == 0) break;
-					++chrIndex; // skip last "\"
-				}
-				if (propData[chrIndex] == 0) break;
+				schema_Start = strStart;
+				schema_End = currentPos;
+				return true;	// we are done
 			}
+
+			// skip next two data entries now
+			for (int tmpDataCount = 0; tmpDataCount < 2; ++tmpDataCount)
+			{
+				currentPos = strchr(currentPos, '\\');
+				if (currentPos == NULL) return false;
+				++currentPos; // skip last "\"
+			}
+			if (currentPos == NULL) return false;
 		}
 	}
 	return false;
+}
+
+void OpenWindowSampleData::CheckAlreadyParsed()
+{
+	if (!parsed)
+		valid = ParseSampleData();
+}
+
+string OpenWindowSampleData::getServer()
+{
+	CheckAlreadyParsed();
+	if (!valid) return "";
+
+	return string(server_Start, server_End);
+}
+
+string OpenWindowSampleData::getSchema()
+{
+	CheckAlreadyParsed();
+	if (!valid) return "";
+
+	return string(schema_Start, schema_End);
 }

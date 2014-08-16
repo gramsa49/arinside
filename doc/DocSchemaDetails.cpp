@@ -26,6 +26,7 @@
 #include "../core/ARHandle.h"
 #include "../core/OpenWindowReportData.h"
 #include "../core/OpenWindowSampleData.h"
+#include "../util/Context.h"
 #include "DocOverlayHelper.h"
 #include "DocMain.h"
 
@@ -1465,17 +1466,18 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 				if(al.GetIfActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 				{
 					AROpenDlgStruct &action = al.GetIfActions().actionList[i].u.openDlg;                    
+					Context context(al, IES_IF, i, -1, 0);
+					OpenWindowSampleData sampleData(context);
 					
 					string openWindowSchema;
 					if (action.schemaName[0] == '$' )
 					{
-						string sampleServer;
-						OpenWindowSampleData::GetSampleData(al, IES_IF, i,	sampleServer, openWindowSchema);
+						openWindowSchema = sampleData.getSchema();
 					}
 					else
 						openWindowSchema = action.schemaName;
 
-					if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 /*&& IsSchemaInWFConnectStruct(al->schemaList)*/) ||
+					if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 && IsSchemaInWFConnectStruct(al.GetSchemaList())) ||
 						openWindowSchema.compare(schema.GetARName()) == 0)
 					{
 						bPushToForm = true;
@@ -1493,17 +1495,18 @@ string CDocSchemaDetails::AlWindowOpenReferences()
 					if(al.GetElseActions().actionList[i].action == AR_ACTIVE_LINK_ACTION_OPENDLG)
 					{
 						AROpenDlgStruct &action = al.GetElseActions().actionList[i].u.openDlg;
+						Context context(al, IES_ELSE, i, -1, 0);
+						OpenWindowSampleData sampleData(context);
 
 						string openWindowSchema;
 						if (action.schemaName[0] == '$' )
 						{
-							string sampleServer;
-							OpenWindowSampleData::GetSampleData(al, IES_ELSE, i,	sampleServer, openWindowSchema);
+							openWindowSchema = sampleData.getSchema();
 						}
 						else
 							openWindowSchema = action.schemaName;
 
-						if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 /*&& IsSchemaInWFConnectStruct(al->schemaList)*/) ||
+						if ((openWindowSchema.compare(AR_CURRENT_SCHEMA_TAG) == 0 && IsSchemaInWFConnectStruct(al.GetSchemaList())) ||
 						openWindowSchema.compare(schema.GetARName()) == 0)
 						{
 							bPushToForm = true;

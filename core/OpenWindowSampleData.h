@@ -20,14 +20,22 @@
 class OpenWindowSampleData
 {
 public:
-	OpenWindowSampleData(Context &context) : context(context) {}
+	OpenWindowSampleData(Context &context) : context(context) { parsed = false; }
 
 	string getServer();
 	string getSchema();
 
-public:
-	static bool GetSampleData(CARActiveLink& actLink, IfElseState ifElse, int nAction, string& server, string& schema);
+private:
+	void CheckAlreadyParsed();
+	bool ParseSampleData();
+	bool ParseSampleList(char *encodedList);
 
 private:
 	Context &context;
+	bool parsed;
+	bool valid;
+	const char* server_Start;
+	const char* server_End;
+	const char* schema_Start;
+	const char* schema_End;
 };
