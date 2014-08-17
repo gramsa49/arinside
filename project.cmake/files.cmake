@@ -28,7 +28,7 @@ SET (ARINSIDE_SRCS_CORE_CPP
  core/ARValue.cpp
  core/ARVui.cpp
  core/ChangeHistoryEntry.cpp
- core/OpenWindowHelper.cpp
+ core/OpenWindowReportData.cpp
  core/OpenWindowSampleData.cpp
 )
 SET (ARINSIDE_SRCS_CORE_H
@@ -59,7 +59,7 @@ SET (ARINSIDE_SRCS_CORE_H
  core/ARValue.h
  core/ARVui.h
  core/ChangeHistoryEntry.h
- core/OpenWindowHelper.h
+ core/OpenWindowReportData.h
  core/OpenWindowSampleData.h
 )
 SOURCE_GROUP(core FILES ${ARINSIDE_SRCS_CORE_CPP} ${ARINSIDE_SRCS_CORE_H})
@@ -399,7 +399,7 @@ SET(ARINSIDE_TEST_SRCS
  RapidJSONTests.cpp
  core/ARDayStructHelperTest.cpp
  core/ARParseFieldTest.cpp
- core/OpenWindowHelperTest.cpp
+ core/OpenWindowReportDataTest.cpp
  doc/DocTextReferencesTest.cpp
  doc/DocTextReferencesTest.h
  lists/ARListHelpersTest.cpp
