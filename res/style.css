@@ -441,3 +441,11 @@ td.disabledLetter
 td.warn {
 	background-color: #efefef;
 }
+
+#search { line-height: 22px; float: left; }
+.left { float: left; }
+#filter { margin-right: 90px;}
+.filterOpts { margin-left: 110px; min-width: 130px; margin-right: 75px; }
+.checkbox { float: left; width: 130px; }
+.restrictions { padding: 1px; margin-left: 190px; border: 1px solid silver; overflow:auto; }
+#clearButton { float: right; }

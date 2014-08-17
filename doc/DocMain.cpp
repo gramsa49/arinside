@@ -1754,18 +1754,23 @@ string CDocMain::CreateSchemaReferenceFilterControl()
 {
 	stringstream content;
 	content << "<div>"
-		<< CreateStandardFilterControl("workflowFilter")
-		<< "<span class='multiFilter' id='referenceMultiFilter'>Restrict results to: "
-		<< "<input id='typeFilterActiveLink' type='checkbox' value='1'/><label for='typeFilterActiveLink'>&nbsp;ActiveLink</label>"
-		<< "<input id='typeFilterFilter' type='checkbox' value='2'/><label for='typeFilterFilter'>&nbsp;Filter</label>"
-		<< "<input id='typeFilterEscalation' type='checkbox' value='3'/><label for='typeFilterEscalation'>&nbsp;Escalation</label>"
-		<< "<input id='typeFilterALGuide' type='checkbox' value='4'/><label for='typeFilterALGuide'>&nbsp;ActiveLinkGuide</label>"
-		<< "<input id='typeFilterFilterGuide' type='checkbox' value='5'/><label for='typeFilterFilterGuide'>&nbsp;FilterGuide</label>"
-		<< "<input id='typeFilterApplication' type='checkbox' value='6'/><label for='typeFilterApplication'>&nbsp;Application</label>"
-		<< "<input id='typeFilterPackList' type='checkbox' value='7'/><label for='typeFilterPackList'>&nbsp;PackingList</label>"
-		<< "<input id='typeFilterWebservice' type='checkbox' value='8'/><label for='typeFilterWebservice'>&nbsp;Webservice</label>"
-		<< " <button id='typeFilterNone'>Clear All</button>"
-		<< "</span>"
+		<< "<div id='search'>" << CreateStandardFilterControl("workflowFilter") << "</div>"
+		<< "<div class='restrictions'>"
+			<< "<div id='clearButton'><button id='typeFilterNone'>Clear All</button>" << "</div>"
+			<< "<div id='referenceMultiFilter'>"
+				<< "<div class='left'>Restrict results to: " << "</div>"
+				<< "<div class='filterOpts'>"
+					<< "<div class='checkbox'><input id='typeFilterActiveLink' type='checkbox' value='1'/><label for='typeFilterActiveLink'>&nbsp;ActiveLink</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterFilter' type='checkbox' value='2'/><label for='typeFilterFilter'>&nbsp;Filter</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterEscalation' type='checkbox' value='3'/><label for='typeFilterEscalation'>&nbsp;Escalation</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterALGuide' type='checkbox' value='4'/><label for='typeFilterALGuide'>&nbsp;ActiveLinkGuide</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterFilterGuide' type='checkbox' value='5'/><label for='typeFilterFilterGuide'>&nbsp;FilterGuide</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterApplication' type='checkbox' value='6'/><label for='typeFilterApplication'>&nbsp;Application</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterPackList' type='checkbox' value='7'/><label for='typeFilterPackList'>&nbsp;PackingList</label>" << "</div>"
+					<< "<div class='checkbox'><input id='typeFilterWebservice' type='checkbox' value='8'/><label for='typeFilterWebservice'>&nbsp;Webservice</label>" << "</div>"
+				<< "</div>"
+			<< "</div>"
+		<< "</div>"
 	<< "</div>";
 	return content.str();
 }
