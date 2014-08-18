@@ -19,6 +19,7 @@
 #include <arfree.h>
 #include <arstruct.h>
 #include <arextern.h>
+#include "util/Memory.h"
 
 // this is just a little workaround for a bug in ar.h version 7.5
 #ifndef AR_FILTER_ERRHANDLER_ENABLE
@@ -90,7 +91,3 @@
 #define AR_XML_VERSION_700 9
 #define AR_XML_VERSION_710 10
 #define AR_XML_VERSION_750 11
-
-// template for clearing memory of AR structs
-template<class T>
-void ARZeroMemory(T* obj) { memset(obj, 0, sizeof(T)); }

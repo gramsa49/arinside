@@ -307,6 +307,7 @@ SET(ARINSIDE_SRCS_UTIL_CPP
  util/BlackListItem.cpp
  util/CommandLineValidator.cpp
  util/Context.cpp
+ util/Memory.cpp
  util/RefItem.cpp 
  util/ResourceFileLocatorAndExtractor.cpp
  util/UntarStream.cpp
@@ -317,6 +318,7 @@ SET(ARINSIDE_SRCS_UTIL_H
  util/BlackListItem.h
  util/CommandLineValidator.h
  util/Context.h
+ util/Memory.h
  util/RefItem.h
  util/ResourceFileLocatorAndExtractor.h
  util/Uncopyable.h

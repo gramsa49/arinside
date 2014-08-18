@@ -323,56 +323,56 @@ const ARPropList& CARFieldListServer::FieldGetPropList(unsigned int index) const
 void CARFieldListServer::Reserve(unsigned int amount)
 {
 	names.nameList = new ARNameType[amount];
-	ZeroMemory(names.nameList, sizeof(ARNameType) * amount);
+	ARZeroMemory(names.nameList, sizeof(ARNameType) * amount);
 
 	fieldIds.internalIdList = new ARInternalId[amount];
-	ZeroMemory(fieldIds.internalIdList, sizeof(ARInternalId) * amount);
+	ARZeroMemory(fieldIds.internalIdList, sizeof(ARInternalId) * amount);
 
 	fieldMaps.mappingList = new ARFieldMappingStruct[amount];
-	ZeroMemory(fieldMaps.mappingList, sizeof(ARFieldMappingStruct) * amount);
+	ARZeroMemory(fieldMaps.mappingList, sizeof(ARFieldMappingStruct) * amount);
 
 	dataTypes.intList = new unsigned int[amount];
-	ZeroMemory(dataTypes.intList, sizeof(unsigned int) * amount);
+	ARZeroMemory(dataTypes.intList, sizeof(unsigned int) * amount);
 
 	options.intList = new unsigned int[amount];
-	ZeroMemory(options.intList, sizeof(unsigned int) * amount);
+	ARZeroMemory(options.intList, sizeof(unsigned int) * amount);
 
 	createModes.intList = new unsigned int[amount];
-	ZeroMemory(createModes.intList, sizeof(unsigned int) * amount);
+	ARZeroMemory(createModes.intList, sizeof(unsigned int) * amount);
 	
 	fieldOptions.intList = new unsigned int[amount];
-	ZeroMemory(fieldOptions.intList, sizeof(unsigned int) * amount);
+	ARZeroMemory(fieldOptions.intList, sizeof(unsigned int) * amount);
 
 	defaultValues.valueList = new ARValueStruct[amount];
-	ZeroMemory(defaultValues.valueList, sizeof(ARValueStruct) * amount);
+	ARZeroMemory(defaultValues.valueList, sizeof(ARValueStruct) * amount);
 
 	permLists.permissionList = new ARPermissionList[amount];
-	ZeroMemory(permLists.permissionList, sizeof(ARPermissionList) * amount);
+	ARZeroMemory(permLists.permissionList, sizeof(ARPermissionList) * amount);
 
 	limits.fieldLimitList = new ARFieldLimitStruct[amount];
-	ZeroMemory(limits.fieldLimitList, sizeof(ARFieldLimitStruct) * amount);
+	ARZeroMemory(limits.fieldLimitList, sizeof(ARFieldLimitStruct) * amount);
 
 	dInstanceLists.dInstanceList = new ARDisplayInstanceList[amount];
-	ZeroMemory(dInstanceLists.dInstanceList, sizeof(ARDisplayInstanceList) * amount);
+	ARZeroMemory(dInstanceLists.dInstanceList, sizeof(ARDisplayInstanceList) * amount);
 
 	helpTexts.stringList = new char*[amount];
-	ZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
+	ARZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
 
 	changedTimes.timestampList = new ARTimestamp[amount];
-	ZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
+	ARZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
 
 	owners.nameList = new ARAccessNameType[amount];
-	ZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
+	ARZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
 
 	changedUsers.nameList = new ARAccessNameType[amount];
-	ZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
+	ARZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
 
 	changeDiary.stringList = new char*[amount];
-	ZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
+	ARZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 	objProps.propsList = new ARPropList[amount];
-	ZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
+	ARZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
 #endif
 }
 

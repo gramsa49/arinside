@@ -225,38 +225,38 @@ const ARPropList& CARVUIListServer::VUIGetPropList(unsigned int index) const
 void CARVUIListServer::Reserve(unsigned int amount)
 {
 	ids.internalIdList = new ARInternalId[amount];
-	ZeroMemory(ids.internalIdList, sizeof(ARInternalId) * amount);
+	ARZeroMemory(ids.internalIdList, sizeof(ARInternalId) * amount);
 
 	names.nameList = new ARNameType[amount];
-	ZeroMemory(names.nameList, sizeof(ARNameType) * amount);
+	ARZeroMemory(names.nameList, sizeof(ARNameType) * amount);
 
 	locales.localeList = new ARLocaleType[amount];
-	ZeroMemory(locales.localeList, sizeof(ARLocaleType) * amount);
+	ARZeroMemory(locales.localeList, sizeof(ARLocaleType) * amount);
 
 	types.intList = new unsigned int[amount];
-	ZeroMemory(types.intList, sizeof(unsigned int) * amount);
+	ARZeroMemory(types.intList, sizeof(unsigned int) * amount);
 
 	dispProps.propsList = new ARPropList[amount];
-	ZeroMemory(dispProps.propsList, sizeof(ARPropList) * amount);
+	ARZeroMemory(dispProps.propsList, sizeof(ARPropList) * amount);
 	
 	helpTexts.stringList = new char*[amount];
-	ZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
+	ARZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
 
 	changedTimes.timestampList = new ARTimestamp[amount];
-	ZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
+	ARZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
 	
 	owners.nameList = new ARAccessNameType[amount];
-	ZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
+	ARZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
 	
 	changedUsers.nameList = new ARAccessNameType[amount];
-	ZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
+	ARZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
 	
 	changeDiary.stringList = new char*[amount];
-	ZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
+	ARZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
 	objProps.propsList = new ARPropList[amount];
-	ZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
+	ARZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
 #endif
 }
 

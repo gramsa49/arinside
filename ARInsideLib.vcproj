@@ -2118,6 +2118,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\util\Memory.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\util\Memory.h"
+				>
+			</File>
+			<File
 				RelativePath=".\util\RefItem.cpp"
 				>
 			</File>

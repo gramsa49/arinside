@@ -340,7 +340,7 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 			getFormIdAndDelimiter(operand, formId, delimiter);
 
 			CDocCurrencyField docCurrency(formId, *operand->u.currencyField);
-			char *prefix = getFieldPrefix(operand);
+			const char *prefix = getFieldPrefix(operand);
 			
 			qText << delimiter;
 			if (prefix != NULL) qText << prefix;
@@ -393,7 +393,7 @@ int CARQualification::FindCurrentEnumFieldId()
 	return -1;
 }
 
-char* CARQualification::getFieldPrefix(ARFieldValueOrArithStruct *operand)
+const char* CARQualification::getFieldPrefix(ARFieldValueOrArithStruct *operand)
 {
 	if (operand == NULL) return NULL;
 	switch (operand->tag)
@@ -428,6 +428,6 @@ bool CARQualification::getFormIdAndDelimiter(ARFieldValueOrArithStruct *operand,
 		delimiter = primaryFormDelimiter;
 		return true;
 	}
-	throw exception("NotImplementedException");
+	throw AppException("NotImplementedException", "ARQual");
 }
 

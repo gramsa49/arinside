@@ -48,7 +48,7 @@ private:
 
 	void CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldValueOrArithStruct *parent, stringstream &qText);
 	int FindCurrentEnumFieldId();
-	char* getFieldPrefix(ARFieldValueOrArithStruct *operand);
+	const char* getFieldPrefix(ARFieldValueOrArithStruct *operand);
 	bool getFormIdAndDelimiter(ARFieldValueOrArithStruct *operand, int &formId, char &delimiter);
 
 	int tmpFormId;
