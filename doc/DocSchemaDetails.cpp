@@ -2343,13 +2343,8 @@ void CDocSchemaDetails::ShowChangeHistory(std::ostream &strm, CARProplistHelper 
 string CDocSchemaDetails::GetSchemaType()
 {
 	const ARCompoundSchema &compSchema = schema.GetCompound();
-	unsigned int schemaType = compSchema.schemaType;
+	unsigned int schemaType = schema.GetInternalSchemaType();
 	stringstream strm;
-
-	if (IsAuditTarget())
-	{
-		schemaType = AR_SCHEMA_AUDIT;
-	}
 
 	if (schemaType == AR_SCHEMA_JOIN)
 	{
@@ -2365,20 +2360,6 @@ string CDocSchemaDetails::GetSchemaType()
 	}
 
 	return strm.str();
-}
-
-bool CDocSchemaDetails::IsAuditTarget()
-{
-	const CARSchema::ReferenceList &references = schema.GetReferences();
-	CARSchema::ReferenceList::const_iterator curIt = references.begin();
-	CARSchema::ReferenceList::const_iterator endIt = references.end();
-
-	for (; curIt != endIt; ++curIt)
-	{
-		if (curIt->GetMessageId() == REFM_SCHEMA_AUDIT_SOURCE)
-			return true;
-	}
-	return false;
 }
 
 string CDocSchemaDetails::AuditTargetReferences()

@@ -313,3 +313,29 @@ const CARSchema::ReferenceList& CARSchema::GetReferences() const
 {
 	return CARInside::GetInstance()->schemaList.GetReferences(GetInsideId());
 }
+
+bool CARSchema::IsAuditTarget()
+{
+	const ReferenceList &references = GetReferences();
+	CARSchema::ReferenceList::const_iterator curIt = references.begin();
+	CARSchema::ReferenceList::const_iterator endIt = references.end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (curIt->GetMessageId() == REFM_SCHEMA_AUDIT_SOURCE)
+			return true;
+	}
+	return false;
+}
+
+unsigned int CARSchema::GetInternalSchemaType()
+{
+	unsigned int schemaType = GetCompound().schemaType;
+
+	if (IsAuditTarget())
+	{
+		schemaType = AR_SCHEMA_AUDIT;
+	}
+
+	return schemaType;
+}

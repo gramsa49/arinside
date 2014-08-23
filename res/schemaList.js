@@ -1,17 +1,18 @@
 function initSchemaTable() {
-    if (schemaList != null) {
+	if (schemaList != null) {
 		var inputControl = 'formFilter';
 		schemaListObj = new FilterableTable('schemaList', inputControl, 'schemaListFilterResultCount');
 		schemaListObj.typeFilter = new Array();
 		schemaListObj.onHasTypeFilter(function() {
 			var allTypeOn = true;
 			var allTypeOff = true;
-			for (i = 1; i < 6; i++) {
+			for (i = 1; i < 7; i++) {
+				if (i == 6) { i = 100; /* for special audit type support*/ }
 				this.typeFilter[i] = $('#multiFilter input[value="' + i + '"]').attr('checked');
 				if (this.typeFilter[i]) { allTypeOff = false; }
 				if (!this.typeFilter[i]) { allTypeOn = false; }
 			}
-			return !(allTypeOff || allTypeOn)			
+			return !(allTypeOff || allTypeOn)
 		})
 		.onCheckTypeFilterForRow(function(row) {
 			return schemaListObj.typeFilter[row[5]];
@@ -52,6 +53,7 @@ $('document').ready(function() {
 		if (hash === "#view") { value = 3; }
 		if (hash === "#dialog") { value = 4; }
 		if (hash === "#vendor") { value = 5; }
+		if (hash === "#audit") { value = 100; }
 		if (value>0) {
 			checkBoxes.filter('[value="'+value+'"]').attr("checked","checked");
 			updateSchemaTable();

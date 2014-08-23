@@ -1647,6 +1647,7 @@ string CDocMain::CreateSchemaFilterControl()
 		<< "<input id='typeFilterView' type='checkbox' value='3'/><label for='typeFilterView'>&nbsp;View</label>"
 		<< "<input id='typeFilterDialog' type='checkbox' value='4'/><label for='typeFilterDialog'>&nbsp;Dialog</label>"
 		<< "<input id='typeFilterVendor' type='checkbox' value='5'/><label for='typeFilterVendor'>&nbsp;Vendor</label>"
+		<< "<input id='typeFilterAudit' type='checkbox' value='100'/><label for='typeFilterAudit'>&nbsp;Audit</label>"
 		<< " <button id='typeFilterNone'>Clear All</button>"
 		<< "</span>"
 	<< "</div>";
@@ -1817,7 +1818,7 @@ void CDocMain::SchemaListJson(std::ostream &strm)
 			schemaRow.PushBack(valWebAlias, alloc);
 			schemaRow.PushBack(static_cast<int>(schema.GetFields()->GetCount()), alloc);
 			schemaRow.PushBack(static_cast<int>(schema.GetVUIs()->GetCount()), alloc);
-			schemaRow.PushBack(static_cast<int>(schema.GetCompound().schemaType), alloc);
+			schemaRow.PushBack(static_cast<int>(schema.GetInternalSchemaType()), alloc);
 			schemaRow.PushBack(valModifiedDate, alloc);
 			schemaRow.PushBack(schema.GetLastChanged(), alloc);
 			schemaRow.PushBack(valLink, alloc);

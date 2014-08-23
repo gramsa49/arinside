@@ -104,4 +104,7 @@ public:
 	const CARSchemaList::ObjectRefList& GetFilterGuides();
 	const CARSchemaList::ObjectRefList& GetPackingLists();
 	const CARSchemaList::ObjectRefList& GetWebservices();
+
+	bool IsAuditTarget();
+	unsigned int GetInternalSchemaType();
 };
