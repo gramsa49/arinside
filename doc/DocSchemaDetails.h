@@ -46,6 +46,7 @@ private:
 	string WorkflowDoc();
 
 	std::string GenerateReferencesTable(const ARCompoundSchema &compSchema);
+	std::string AuditTargetReferences();
 
 	string AllFields();
 	void AllFieldsCsv();
@@ -76,7 +77,10 @@ private:
 	bool InEscalList(string objName);
 	bool IsSchemaInWFConnectStruct(const ARWorkflowConnectStruct& wfCS);
 	bool IsJoinViewOrVendorForm();
+	bool IsAuditTarget();
 	list<string> uniqueAlList;
 	list<string> uniqueFilterList;
 	list<string> uniqueEscalList;
+
+	string GetSchemaType();
 };

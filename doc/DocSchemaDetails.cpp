@@ -1763,6 +1763,13 @@ void CDocSchemaDetails::ShowAuditProperties(std::ostream& strm)
 					tbl.AddRow(row);
 				}
 				break;
+			case AR_AUDIT_LOG_SHADOW:
+				{
+					row.AddCell("Audited From Forms");
+					row.AddCell(AuditTargetReferences());
+					tbl.AddRow(row);
+				}
+				break;
 		}
 
 		// audit qualification
@@ -2123,21 +2130,8 @@ string CDocSchemaDetails::ShowGeneralInfo()
 	row.ClearCells();
 
 	// generate the schema type row (and with additional details for special form types like join, view and vendor)
-	if (compSchema.schemaType == AR_SCHEMA_JOIN)
-	{
-		strm << CAREnum::JoinType(compSchema.u.join.option) << "-";
-	}
-	strm << CAREnum::SchemaType(compSchema.schemaType);
-
-	if(compSchema.schemaType == AR_SCHEMA_JOIN
-		|| compSchema.schemaType == AR_SCHEMA_VIEW
-		|| compSchema.schemaType == AR_SCHEMA_VENDOR)
-	{
-		strm << " " << this->TypeDetails();
-	}
-
 	row.AddCell("Type");
-	row.AddCell(strm.str());
+	row.AddCell(GetSchemaType());
 	tbl.AddRow(row);
 	row.ClearCells();
 	strm.str("");
@@ -2344,4 +2338,75 @@ void CDocSchemaDetails::ShowChangeHistory(std::ostream &strm, CARProplistHelper 
 {
 	strm << "<h2>" << ImageTag(ImageTag::Document, rootLevel) << "Change History &amp; Helptext" << "</h2>"
 	     << "<div>" << this->pInside->ServerObjectHistory(&this->schema, rootLevel, true) << "</div>" << endl;
+}
+
+string CDocSchemaDetails::GetSchemaType()
+{
+	const ARCompoundSchema &compSchema = schema.GetCompound();
+	unsigned int schemaType = compSchema.schemaType;
+	stringstream strm;
+
+	if (IsAuditTarget())
+	{
+		schemaType = AR_SCHEMA_AUDIT;
+	}
+
+	if (schemaType == AR_SCHEMA_JOIN)
+	{
+		strm << CAREnum::JoinType(compSchema.u.join.option) << "-";
+	}
+	strm << CAREnum::SchemaType(schemaType);
+
+	if(schemaType == AR_SCHEMA_JOIN
+		|| schemaType == AR_SCHEMA_VIEW
+		|| schemaType == AR_SCHEMA_VENDOR)
+	{
+		strm << " " << this->TypeDetails();
+	}
+
+	return strm.str();
+}
+
+bool CDocSchemaDetails::IsAuditTarget()
+{
+	const CARSchema::ReferenceList &references = schema.GetReferences();
+	CARSchema::ReferenceList::const_iterator curIt = references.begin();
+	CARSchema::ReferenceList::const_iterator endIt = references.end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (curIt->GetMessageId() == REFM_SCHEMA_AUDIT_SOURCE)
+			return true;
+	}
+	return false;
+}
+
+string CDocSchemaDetails::AuditTargetReferences()
+{
+	vector<int> schemas;
+
+	const CARSchema::ReferenceList &references = schema.GetReferences();
+	CARSchema::ReferenceList::const_iterator curIt = references.begin();
+	CARSchema::ReferenceList::const_iterator endIt = references.end();
+
+	for (; curIt != endIt; ++curIt)
+	{
+		if (curIt->GetMessageId() == REFM_SCHEMA_AUDIT_SOURCE && curIt->GetObjectType() == AR_STRUCT_ITEM_XML_SCHEMA)
+			schemas.push_back(curIt->GetObjectId());
+	}
+
+	if (schemas.size() > 0)
+	{
+		stringstream strm;
+		
+		size_t count = schemas.size();
+
+		for (size_t index = 0; index < count; ++index)
+		{
+			if (index > 0) { strm << "<br/>"; }
+			strm << pInside->LinkToSchema(schemas[index], rootLevel);
+		}
+		return strm.str();
+	}
+	return "";
 }
