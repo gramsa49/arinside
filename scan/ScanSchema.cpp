@@ -76,7 +76,7 @@ void CScanSchema::Scan()
 void CScanSchema::ScanAuditReference()
 {
 	const ARAuditInfoStruct &audit = schema.GetAuditInfo();
-	if (audit.formName[0] != 0)
+	if (audit.style != AR_AUDIT_NONE && audit.formName[0] != 0)
 	{
 		CARSchema auditForm(audit.formName);
 		if (auditForm.Exists())
