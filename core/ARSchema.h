@@ -105,6 +105,7 @@ public:
 	const CARSchemaList::ObjectRefList& GetPackingLists();
 	const CARSchemaList::ObjectRefList& GetWebservices();
 
+	bool IsArchiveTarget();
 	bool IsAuditTarget();
 	unsigned int GetInternalSchemaType();
 };

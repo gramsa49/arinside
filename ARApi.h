@@ -60,6 +60,7 @@
 
 // normally audit forms are just regular form, but to distinct we define and use our own constant
 #define AR_SCHEMA_AUDIT        100
+#define AR_SCHEMA_ARCHIVE      101
 
 // to support our own xml object types used in lists
 #define AR_STRUCT_ITEM_USER    500

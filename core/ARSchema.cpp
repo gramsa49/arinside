@@ -328,6 +328,12 @@ bool CARSchema::IsAuditTarget()
 	return false;
 }
 
+bool CARSchema::IsArchiveTarget()
+{
+	const ARArchiveInfoStruct &archive = GetArchiveInfo();
+	return (archive.archiveType == AR_ARCHIVE_NONE && archive.archiveFrom[0] != 0);
+}
+
 unsigned int CARSchema::GetInternalSchemaType()
 {
 	unsigned int schemaType = GetCompound().schemaType;
@@ -335,6 +341,10 @@ unsigned int CARSchema::GetInternalSchemaType()
 	if (IsAuditTarget())
 	{
 		schemaType = AR_SCHEMA_AUDIT;
+	}
+	else if (IsArchiveTarget())
+	{
+		schemaType = AR_SCHEMA_ARCHIVE;
 	}
 
 	return schemaType;

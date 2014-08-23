@@ -644,6 +644,9 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 	case REFM_SCHEMA_AUDIT_SOURCE:
 		strm << "Audit Source Form";
 		break;
+	case REFM_SCHEMA_ARCHIVE_SOURCE:
+		strm << "Archive Source Form";
+		break;
 	case REFM_WEBSERVICE_PROPERTY:
 		strm << "Webservice Property";
 		break;

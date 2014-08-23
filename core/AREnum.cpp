@@ -1391,6 +1391,7 @@ string CAREnum::SchemaType(int nType)
 	case AR_SCHEMA_DIALOG: return "Dialog";
 	case AR_SCHEMA_VENDOR: return "Vendor";
 	case AR_SCHEMA_AUDIT: return "Audit";
+	case AR_SCHEMA_ARCHIVE: return "Archive";
 	default: return EnumDefault;
 	}
 }
