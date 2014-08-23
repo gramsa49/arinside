@@ -1246,44 +1246,12 @@ string CDocSchemaDetails::ContainerReferences()
 	strm.str("");
 	try
 	{
-		//// Active Link Guides ////
-		const CARSchemaList::ObjectRefList& alg = schema.GetActLinkGuides();
-		CARSchemaList::ObjectRefList::const_iterator curIt = alg.begin();
-		CARSchemaList::ObjectRefList::const_iterator endIt = alg.end();
-
 		CContainerTable *contTable = new CContainerTable(*this->pInside);
 
-		for (; curIt != endIt; ++curIt)
-		{
-			CARContainer cont(*curIt);
-			contTable->AddRow(cont, rootLevel);
-		}
-
-		//// Filter Guides ////
-		const CARSchemaList::ObjectRefList& flg = schema.GetFilterGuides();
-		curIt = flg.begin();
-		endIt = flg.end();
-
-		for (; curIt != endIt; ++curIt)
-		{
-			CARContainer cont(*curIt);
-			contTable->AddRow(cont, rootLevel);
-		}
-
-		//// Packing Lists ////
+		//// Add Packing Lists ////
 		const CARSchemaList::ObjectRefList& pkl = schema.GetPackingLists();
-		curIt = pkl.begin();
-		endIt = pkl.end();
-
-		for (; curIt != endIt; ++curIt)
-		{
-			CARContainer cont(*curIt);
-			contTable->AddRow(cont, rootLevel);
-		}
-
-		const CARSchemaList::ObjectRefList& ws = schema.GetWebservices();
-		curIt = ws.begin();
-		endIt = ws.end();
+		CARSchemaList::ObjectRefList::const_iterator curIt = pkl.begin();
+		CARSchemaList::ObjectRefList::const_iterator endIt = pkl.end();
 
 		for (; curIt != endIt; ++curIt)
 		{
