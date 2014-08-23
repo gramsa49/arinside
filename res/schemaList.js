@@ -6,8 +6,10 @@ function initSchemaTable() {
 		schemaListObj.onHasTypeFilter(function() {
 			var allTypeOn = true;
 			var allTypeOff = true;
-			for (i = 1; i < 7; i++) {
-				if (i == 6) { i = 100; /* for special audit type support*/ }
+			for (l = 1; l < 8; l++) {
+				if (l == 6) { i = 100; /* for special audit type support*/ }
+				else if (l == 7) { i = 101; /* for special archive type support*/ }
+				else { i = l; }
 				this.typeFilter[i] = $('#multiFilter input[value="' + i + '"]').attr('checked');
 				if (this.typeFilter[i]) { allTypeOff = false; }
 				if (!this.typeFilter[i]) { allTypeOn = false; }
@@ -54,6 +56,7 @@ $('document').ready(function() {
 		if (hash === "#dialog") { value = 4; }
 		if (hash === "#vendor") { value = 5; }
 		if (hash === "#audit") { value = 100; }
+		if (hash === "#archive") { value = 101; }
 		if (value>0) {
 			checkBoxes.filter('[value="'+value+'"]').attr("checked","checked");
 			updateSchemaTable();

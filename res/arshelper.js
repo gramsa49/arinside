@@ -114,6 +114,7 @@ function ARSchemaType(schemaType) {
         case 4: return "Dialog";
         case 5: return "Vendor";
         case 100: return "Audit";
+        case 101: return "Archive";
         default: return "unknown";
     }
 }

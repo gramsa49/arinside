@@ -1648,6 +1648,7 @@ string CDocMain::CreateSchemaFilterControl()
 		<< "<input id='typeFilterDialog' type='checkbox' value='4'/><label for='typeFilterDialog'>&nbsp;Dialog</label>"
 		<< "<input id='typeFilterVendor' type='checkbox' value='5'/><label for='typeFilterVendor'>&nbsp;Vendor</label>"
 		<< "<input id='typeFilterAudit' type='checkbox' value='100'/><label for='typeFilterAudit'>&nbsp;Audit</label>"
+		<< "<input id='typeFilterArchive' type='checkbox' value='101'/><label for='typeFilterArchive'>&nbsp;Archive</label>"
 		<< " <button id='typeFilterNone'>Clear All</button>"
 		<< "</span>"
 	<< "</div>";

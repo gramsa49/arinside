@@ -1084,6 +1084,7 @@ string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
 		case AR_SCHEMA_DIALOG: page = PAGE_SCHEMA_DIALOG; break;
 		case AR_SCHEMA_VENDOR: page = PAGE_SCHEMA_VENDOR; break;
 		case AR_SCHEMA_AUDIT: page = PAGE_SCHEMA_AUDIT; break;
+		case AR_SCHEMA_ARCHIVE: page = PAGE_SCHEMA_ARCHIVE; break;
 	}
 
 	return URLLink(CAREnum::SchemaType(schemaType), page, rootLevel);

@@ -181,6 +181,10 @@ const unsigned int PAGE_SCHEMA_VUIFIELDS_CSV = 1016;
 // CPageParams: none
 const unsigned int PAGE_SCHEMA_AUDIT = 1017;
 
+// === PAGE_SCHEMA_ARCHIVE ===
+// CPageParams: none
+const unsigned int PAGE_SCHEMA_ARCHIVE = 1018;
+
 // === PAGE_GROUP_SCHEMA_LIST ===
 // CPageParams: data1 = groupObj
 const unsigned int PAGE_GROUP_SCHEMA_LIST = 1101;

@@ -269,6 +269,16 @@ public:
 	virtual unsigned int GetRootLevel() const { return 1; }
 };
 
+class SchemaArchive : public IFileStructure
+{
+public:
+	SchemaArchive() { }
+	virtual string GetFileName() const { return FILE_INDEX; }
+	virtual string GetFullFileName() const { return GetPath() + "/" + CWebUtil::DocName(GetFileName()) + "#archive"; }
+	virtual string GetPath() const { return DIR_SCHEMA; }
+	virtual unsigned int GetRootLevel() const { return 1; }
+};
+
 class SchemaLetterOverview : public IFileStructure
 {
 public:
@@ -1367,6 +1377,7 @@ IFileStructure* DefaultFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_SCHEMA_DIALOG: return new SchemaDialog();
 		case PAGE_SCHEMA_VENDOR: return new SchemaVendor();
 		case PAGE_SCHEMA_AUDIT: return new SchemaAudit();
+		case PAGE_SCHEMA_ARCHIVE: return new SchemaArchive();
 
 		case PAGE_FILTER_ERRORHANDLERS: return new FilterErrorHandlerOverview();
 
@@ -2482,6 +2493,7 @@ IFileStructure* ObjectNameFileNamingStrategy::GetFileNameOf(CPageParams &params)
 		case PAGE_SCHEMA_DIALOG: return new SchemaDialog();
 		case PAGE_SCHEMA_VENDOR: return new SchemaVendor();
 		case PAGE_SCHEMA_AUDIT: return new SchemaAudit();
+		case PAGE_SCHEMA_ARCHIVE: return new SchemaArchive();
 
 		case PAGE_SCHEMA_FIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_SCHEMA); return new ObjectNameSchemaFieldsCSV(static_cast<const CARSchema*>(params.obj1));
 		case PAGE_SCHEMA_VUIFIELDS_CSV: assert(params.obj1 != NULL && params.obj1->GetServerObjectTypeXML() == AR_STRUCT_ITEM_XML_VUI); return new ObjectNameSchemaVUIFieldsCSV(static_cast<const CARVui*>(params.obj1));
