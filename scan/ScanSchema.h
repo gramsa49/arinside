@@ -31,4 +31,5 @@ public:
 private:
 	CARSchema& schema;
 	void Scan();
+	void ScanAuditReference();
 };

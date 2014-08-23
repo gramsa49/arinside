@@ -68,5 +68,21 @@ void CScanSchema::Scan()
 		CScanFields scanFld;
 		scanFld.Start(field);
 	}
+
+	ScanAuditReference();
 	cout << ".";
+}
+
+void CScanSchema::ScanAuditReference()
+{
+	ARAuditInfoStruct &audit = schema.GetAuditInfo();
+	if (audit.formName[0] != 0)
+	{
+		CARSchema auditForm(audit.formName);
+		if (auditForm.Exists())
+		{
+			CRefItem refItem(schema, REFM_SCHEMA_AUDIT_SOURCE);
+			auditForm.AddReference(refItem);
+		}
+	}
 }

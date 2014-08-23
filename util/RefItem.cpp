@@ -641,6 +641,9 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 	case REFM_SCHEMA_FTS_WEIGHTED_RELEVANCY_FIELD:
 		strm << "FTS Weighted Relevancy Field";
 		break;
+	case REFM_SCHEMA_AUDIT_SOURCE:
+		strm << "Audit Source Form";
+		break;
 	case REFM_WEBSERVICE_PROPERTY:
 		strm << "Webservice Property";
 		break;
