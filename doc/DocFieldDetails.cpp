@@ -54,7 +54,7 @@ void CDocFieldDetails::Documentation()
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel, false) << endl;
-		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schemaType, rootLevel) << endl;
+		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schema.GetInternalSchemaType(), rootLevel) << endl;
 		contHeadStrm << MenuSeparator << URLLink(this->schema, rootLevel) << endl;
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schemaOverlayType);
@@ -134,7 +134,7 @@ void CDocFieldDetails::Documentation()
 
 
 		//Join Form References
-		if(this->schema.GetCompound().schemaType != AR_SCHEMA_DIALOG)
+		if(schemaType != AR_SCHEMA_DIALOG)
 		{
 			tmp = this->JoinFormReferences();
 			if(tmp.empty())

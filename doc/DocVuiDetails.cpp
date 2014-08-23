@@ -45,7 +45,7 @@ void CDocVuiDetails::Documentation()
 		//ContentHead informations
 		stringstream contHeadStrm;
 		contHeadStrm << CWebUtil::LinkToSchemaIndex(this->rootLevel, false) << endl;
-		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schemaType, this->rootLevel) << endl;
+		contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schema.GetInternalSchemaType(), this->rootLevel) << endl;
 		contHeadStrm << MenuSeparator << URLLink(this->schema, rootLevel);
 		if (overlayHelper.IsOriginal() || overlayHelper.IsCustom())
 			contHeadStrm << CAREnum::GetOverlayTypeString(schema.GetOverlayType());

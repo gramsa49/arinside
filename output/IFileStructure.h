@@ -177,6 +177,10 @@ const unsigned int PAGE_SCHEMA_FIELDS_CSV = 1015;
 // CPageParams: obj1 = vuiObj (CARVui*)
 const unsigned int PAGE_SCHEMA_VUIFIELDS_CSV = 1016;
 
+// === PAGE_SCHEMA_AUDIT ===
+// CPageParams: none
+const unsigned int PAGE_SCHEMA_AUDIT = 1017;
+
 // === PAGE_GROUP_SCHEMA_LIST ===
 // CPageParams: data1 = groupObj
 const unsigned int PAGE_GROUP_SCHEMA_LIST = 1101;

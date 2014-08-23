@@ -70,7 +70,7 @@ void CDocSchemaDetails::Documentation()
 			//ContentHead informations
 			stringstream contHeadStrm;
 			contHeadStrm << CWebUtil::LinkToSchemaIndex(rootLevel, false) << endl;
-			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(compSchema.schemaType, rootLevel) << endl;
+			contHeadStrm << MenuSeparator << this->pInside->LinkToSchemaTypeList(schema.GetInternalSchemaType(), rootLevel) << endl;
 			contHeadStrm << MenuSeparator << ImageTag(schema, rootLevel) << CWebUtil::ObjName(this->schema.GetName());
 			contHeadStrm << CAREnum::GetOverlayTypeString(overlayType);
 

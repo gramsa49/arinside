@@ -74,7 +74,7 @@
 #elif defined(_ARINSIDE_BETA)
 #define VERSION_STR VERSION "." SVN_REV_STR " Beta"
 #else
-#define VERSION_STR VERSION "." SVN_REV_STR " DevBuild"
+#define VERSION_STR VERSION "." SVN_REV_STR
 #endif
 const string AppVersion = VERSION_STR;
 /////////
@@ -1083,6 +1083,7 @@ string CARInside::LinkToSchemaTypeList(int schemaType, int rootLevel)
 		case AR_SCHEMA_VIEW: page = PAGE_SCHEMA_VIEW; break;
 		case AR_SCHEMA_DIALOG: page = PAGE_SCHEMA_DIALOG; break;
 		case AR_SCHEMA_VENDOR: page = PAGE_SCHEMA_VENDOR; break;
+		case AR_SCHEMA_AUDIT: page = PAGE_SCHEMA_AUDIT; break;
 	}
 
 	return URLLink(CAREnum::SchemaType(schemaType), page, rootLevel);
