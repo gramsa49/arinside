@@ -10,7 +10,7 @@ function initSchemaTable() {
 				if (l == 6) { i = 100; /* for special audit type support*/ }
 				else if (l == 7) { i = 101; /* for special archive type support*/ }
 				else { i = l; }
-				this.typeFilter[i] = $('#multiFilter input[value="' + i + '"]').attr('checked');
+				this.typeFilter[i] = $('#listMultiFilter input[value="' + i + '"]').attr('checked');
 				if (this.typeFilter[i]) { allTypeOff = false; }
 				if (!this.typeFilter[i]) { allTypeOn = false; }
 			}
@@ -45,7 +45,7 @@ function createSchemaRowHtml(data) {
 }
 
 $('document').ready(function() {
-    var checkBoxes = $('#multiFilter input[type="checkbox"]');
+    var checkBoxes = $('#listMultiFilter input[type="checkbox"]');
 
     $.address.change(function(event) {
 		var hash = window.location.hash;
