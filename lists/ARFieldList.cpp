@@ -173,8 +173,47 @@ bool CARFieldListServer::LoadFromServer()
 	memset(&fldExists, 0, sizeof(ARBooleanList));
 	memset(&status, 0, sizeof(status));
 
-	if (arIn->CompareServerVersion(6,3) < 0)
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleFields(&arIn->arControl,
+		schemaName, 
+		NULL, // all field ids
+		&fldExists,
+		&fieldIds,
+		&names,
+		&fieldMaps,
+		&dataTypes,
+		&options,
+		&createModes,
+		&fieldOptions,
+		&defaultValues,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		NULL, // groupListList // TODO: support static inherited permissions
+#endif
+		&permLists,
+		&limits,
+		&dInstanceLists,
+		&helpTexts,
+		&changedTimes,
+		&owners,
+		&changedUsers,
+		&changeDiary,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		&objProps,
+#endif
+		&status) == AR_RETURN_OK)
 	{
+		FreeARBooleanList(&fldExists, false);
+		BuildIndex();
+		return true;
+	}
+	else
+	{
+		cerr << BuildMessageAndFreeStatus(status);
+
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt field that keeps us from getting all fields at once
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow field loading for: " << schemaName << endl;
+
 		ARInternalIdList fieldIdList;
 		ARZeroMemory(&fieldIdList);
 
@@ -216,50 +255,9 @@ bool CARFieldListServer::LoadFromServer()
 					fieldIds.internalIdList[currentWriteIndex++] = fieldIdList.internalIdList[idx];
 				}
 				else
-					cerr << BuildMessageAndFreeStatus(status);
+					cerr << "Schema: " << schemaName << " -- Failed to load field " << fieldIdList.internalIdList[idx] << ": " << BuildMessageAndFreeStatus(status);
 			}
 			SetNumItems(currentWriteIndex);
-			BuildIndex();
-			return true;
-		}
-		else
-		{
-			cerr << BuildMessageAndFreeStatus(status);
-			return false;
-		}
-	}
-	else
-	{
-		// ok, get all informations of the fields we need
-		if (ARGetMultipleFields(&arIn->arControl,
-			schemaName, 
-			NULL, // all field ids
-			&fldExists,
-			&fieldIds,
-			&names,
-			&fieldMaps,
-			&dataTypes,
-			&options,
-			&createModes,
-			&fieldOptions,
-			&defaultValues,
-	#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			NULL, // groupListList // TODO: support static inherited permissions
-	#endif
-			&permLists,
-			&limits,
-			&dInstanceLists,
-			&helpTexts,
-			&changedTimes,
-			&owners,
-			&changedUsers,
-			&changeDiary,
-	#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			&objProps,
-	#endif
-			&status) == AR_RETURN_OK)
-		{
-			FreeARBooleanList(&fldExists, false);
 			BuildIndex();
 			return true;
 		}

@@ -207,6 +207,11 @@ int CARInside::Init(string user, string pw, string server, int port, int rpc)
 #endif
 			cout << "User '" << this->arControl.user <<"' connected to server " << srvFullHostName << endl;
 
+			// the most ARGetMultiple... calls aren't supported below ARServer 6.3 so it's better to 
+			// switch to slow object loadinig automatically
+			if (CompareServerVersion(6,3) < 0)
+				appConfig.slowObjectLoading = true;
+
 			blackList.LoadFromServer(appConfig.blackList);
 		}
 	}

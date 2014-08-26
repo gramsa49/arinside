@@ -109,8 +109,39 @@ bool CARVUIListServer::LoadFromServer()
 	memset(&vuiExists, 0, sizeof(ARBooleanList));
 	memset(&status, 0, sizeof(status));
 
-	if (arIn->CompareServerVersion(6,3) < 0)
+	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleVUIs(&arIn->arControl,
+		schemaName, 
+		NULL, // all field ids
+		0,    // no changed since restriction
+		&vuiExists,
+		&ids,
+		&names,
+		&locales,
+		&types,
+		&dispProps,
+		&helpTexts,
+		&changedTimes,
+		&owners,
+		&changedUsers,
+		&changeDiary,
+#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
+		&objProps,
+#endif
+		&status) == AR_RETURN_OK)
 	{
+		FreeARBooleanList(&vuiExists, false);
+		BuildIndex();
+		return true;
+	}
+	else
+	{
+		cerr << BuildMessageAndFreeStatus(status);
+
+		// ok, fallback to slow data retrieval
+		// this could be necessaray if there is a corrupt vui that keeps us from getting all vuis at once
+		if (!arIn->appConfig.slowObjectLoading)
+			cout << "WARN: switching to slow vui loading for: " << schemaName << endl;
+
 		ARInternalIdList	vuiIdList;
 		ARZeroMemory(&vuiIdList);
 		if (ARGetListVUI(&arIn->arControl, schemaName, 0, 
@@ -144,42 +175,9 @@ bool CARVUIListServer::LoadFromServer()
 					ids.internalIdList[currentWriteIndex++] = vuiIdList.internalIdList[idx];
 				}
 				else
-					cerr << BuildMessageAndFreeStatus(status);
+					cerr << "Schema: " << schemaName << " -- Failed to load vui " << vuiIdList.internalIdList[idx] << ": " << BuildMessageAndFreeStatus(status);
 			}
 			SetNumItems(currentWriteIndex);
-			BuildIndex();
-			return true;
-		}
-		else
-		{
-			cerr << BuildMessageAndFreeStatus(status);
-			return false;
-		}
-	}
-	else
-	{
-		// ok, get all informations of the fields we need
-		if (ARGetMultipleVUIs(&arIn->arControl,
-			schemaName, 
-			NULL, // all field ids
-			0,    // no changed since restriction
-			&vuiExists,
-			&ids,
-			&names,
-			&locales,
-			&types,
-			&dispProps,
-			&helpTexts,
-			&changedTimes,
-			&owners,
-			&changedUsers,
-			&changeDiary,
-	#if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-			&objProps,
-	#endif
-			&status) == AR_RETURN_OK)
-		{
-			FreeARBooleanList(&vuiExists, false);
 			BuildIndex();
 			return true;
 		}
