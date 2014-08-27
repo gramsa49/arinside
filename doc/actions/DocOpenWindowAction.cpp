@@ -76,6 +76,24 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 						arIn->AddFieldReference(context.getCurrentSchemaId(), fieldId, refItem);
 					}
 				}
+				else if (IsViewFieldReference(action.targetLocation))
+				{
+					int fieldId = atoi(&action.targetLocation[2]);
+
+					if (fieldId > 0)
+					{
+						strm << "VF" << arIn->LinkToField(context.getCurrentSchemaId(), fieldId, &action.targetLocation[2], context.getRootLevel());
+						CRefItem refItem(context, REFM_OPENWINDOW_LOCATION_VIEWFIELD);
+						if (!arIn->FieldreferenceExists(context.getCurrentSchemaId(), fieldId, refItem))
+						{
+							arIn->AddFieldReference(context.getCurrentSchemaId(), fieldId, refItem);
+						}
+					}
+					else
+					{
+						strm << action.targetLocation;
+					}
+				}
 				else
 				{
 					strm << action.targetLocation;
@@ -620,3 +638,22 @@ bool DocOpenWindowAction::ActionOpenDlgInlineForm(int nWindowType)
 	default: return false;
 	}
 }
+
+bool DocOpenWindowAction::IsViewFieldReference(const char *targetLocation)
+{
+	if (targetLocation != NULL && strncmp("VF", targetLocation, 2) == 0)
+	{
+		int index = 2;
+		while (targetLocation[index] != 0)
+		{
+			char chr = targetLocation[index];
+			if (chr < '0' || chr > '9')
+				return false;
+
+			index++;
+		}
+		return true;
+	}
+	return false;
+}
+

@@ -497,6 +497,9 @@ void CRefItem::GetDescription(std::ostream &strm, int rootLevel) const
 	case REFM_OPENWINDOW_LOCATION:
 		strm << "Window Open Location " << IfElse() << "-Action " << ActionIndex();
 		break;
+	case REFM_OPENWINDOW_LOCATION_VIEWFIELD:
+		strm << "OpenWindow Location ViewField in " << IfElse() << "-Action " << ActionIndex();
+		break;
 	case REFM_OPENWINDOW_SERVER:
 		strm << "Window Open Server Name " << IfElse() << "-Action " << ActionIndex();
 		break;

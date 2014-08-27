@@ -33,6 +33,7 @@ private:
 	static bool ActionOpenDlgPoolingInterval(int nWindowType);
 	static bool ActionOpenDlgMessage(int nWindowType);
 	static bool ActionOpenDlgInlineForm(int nWindowType);
+	static bool IsViewFieldReference(const char* targetLocation);
 
 private:
 	Context &context;
