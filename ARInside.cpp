@@ -117,7 +117,9 @@ CARInside::~CARInside(void)
 
 int CARInside::Init(string user, string pw, string server, int port, int rpc)
 {
-	cout << endl << "Connecting to server " << server << "..." << endl;
+	cout << endl << "Connecting to server " << server;
+	if (port > 0) { cout << ":" << port; }
+	cout << " ..." << endl;
 
 	ARStatusList status;
 

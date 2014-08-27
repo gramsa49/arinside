@@ -203,6 +203,7 @@ void AppConfig::Dump()
 	cout << "DeleteExistingFiles: " << bDeleteExistingFiles << endl;
 	cout << "OverlayMode: " << overlayMode << endl;
 	cout << "RunNotes: " << runNotes << endl;
+	cout << "APITimeout: " << apiTimeout << endl;
 	cout << endl;
 }
 
