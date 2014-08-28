@@ -75,6 +75,8 @@ void CScanSchema::Scan()
 
 void CScanSchema::ScanAuditReference()
 {
+	if (CARInside::GetInstance()->CompareServerVersion(7,0) < 0) return;
+
 	const ARAuditInfoStruct &audit = schema.GetAuditInfo();
 	if (audit.style != AR_AUDIT_NONE && audit.formName[0] != 0)
 	{
