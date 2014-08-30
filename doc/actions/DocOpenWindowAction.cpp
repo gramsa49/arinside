@@ -103,9 +103,14 @@ void DocOpenWindowAction::ToStream(std::ostream& strm)
 		}
 
 		// show "inline form" option
-		if (ActionOpenDlgInlineForm(windowMode))
 		{
-			strm << "<br/><input type=\"checkbox\" name=\"inlineForm\" value=\"inline\" " << (reportData.getInlineForm().compare("true")==0 ? "checked" : "") << ">Inline Form<br/>" << endl;
+			string inlineOption = reportData.getInlineForm();
+			
+			// hide the option if server version is below 7.6.04; the "inlineOption not empty"-check is there for xml-files which show server version 7.5 for a 7.6.04 export
+			if (ActionOpenDlgInlineForm(windowMode) && (arIn->CompareServerVersion(7,6,4) >= 0 || !inlineOption.empty()))
+			{
+				strm << "<br/><input type=\"checkbox\" name=\"inlineForm\" value=\"inline\" " << (inlineOption.compare("true")==0 ? "checked" : "") << ">Inline Form<br/>" << endl;
+			}
 		}
 
 		strm << "</p>" << endl;
