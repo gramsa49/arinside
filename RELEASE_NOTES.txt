@@ -4,6 +4,28 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
+2014-09-01
+[3.1.1]
+E - new filter control on the schema page workflow-tab
+E - added full support for currency fields (#132)
+E - advanced workflow using $SCHEMA$ is now documented using the attached schemas instead of
+    the sample data form (#134)
+E - added keyword support the to service action sample data
+E - added support for the "Inline Form" option of open-window actions
+E - audit and archive forms aren't documented as regular forms any more (#130) and could be easily
+    identified on the all-forms page
+E - audit log forms show references to the source form(s) in the audit section
+E - added icons for different schema types and for overlay and custom objects
+
+D - fixed a crash while running ARInside on a 5.x server (#133)
+D - fixed a crash during role documentation (#131)
+D - in some cases the qualifications were documented incorrectly (regarding used delimiter, e.g. 
+    'field' or $field$)
+D - fixed a crash in the directory detection of program's executable
+
+N - on the schema page, actlink- and filter-guides aren't shown on the reference tab any more. They
+    are listed on the workflow tab. 
+
 2014-03-30
 [3.1.0]
 E - Redesign of the whole schema-page (added tab-control to organize the different informations)
