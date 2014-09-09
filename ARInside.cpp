@@ -858,7 +858,7 @@ void CARInside::Documentation(void)
 		{
 			CARVui vui(schema.GetInsideId(), 0, vuiIndex);
 
-			LOG << "SchemaView '" << vui.GetName() << "': ";
+			LOG << "SchemaView '" << vui.GetName() << "' [" << (vuiIndex + 1) << "-" << objCount << "]: ";
 			CDocVuiDetails *vuiDetails = new CDocVuiDetails(schema.GetInsideId(), vui, rootLevel);
 			vuiDetails->Documentation();
 			delete vuiDetails;
@@ -870,6 +870,8 @@ void CARInside::Documentation(void)
 		for (unsigned int fieldIndex = 0; fieldIndex < objCount; ++fieldIndex)
 		{	
 			CARField field(schema.GetInsideId(), 0, fieldIndex);
+
+			LOG << "[" << (fieldIndex + 1) << "-" << objCount << "]: ";
 			CDocFieldDetails *fieldDetails = new CDocFieldDetails(schema.GetInsideId(), field, rootLevel);
 			fieldDetails->Documentation();
 			delete fieldDetails;
@@ -891,7 +893,7 @@ void CARInside::Documentation(void)
 	cout << "Starting Image Documentation" << endl;
 	for (unsigned int imgIndex = 0; imgIndex < tmpCount; ++imgIndex)
 	{
-		LOG << "Image [" << imgIndex << "-" << nTmpCnt << "] '" << imageList.ImageGetName(imgIndex) << "': ";
+		LOG << "Image [" << imgIndex << "-" << tmpCount << "] '" << imageList.ImageGetName(imgIndex) << "': ";
 
 		CDocImageDetails imgDetails(imgIndex);
 		imgDetails.Documentation();
