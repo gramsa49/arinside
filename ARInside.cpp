@@ -782,7 +782,7 @@ void CARInside::Documentation(void)
 	cout << "Starting ActiveLink Documentation" << endl;
 	for (unsigned int actlinkIndex = 0; actlinkIndex < tmpCount; ++actlinkIndex)
 	{	
-		LOG << "ActiveLink [" << actlinkIndex << "-" << nTmpCnt << "] '" << alList.ActiveLinkGetName(actlinkIndex) << "': ";
+		LOG << "ActiveLink [" << actlinkIndex << "-" << tmpCount << "] '" << alList.ActiveLinkGetName(actlinkIndex) << "': ";
 		CDocAlDetails alDetails(actlinkIndex);
 		alDetails.Documentation();
 	}
