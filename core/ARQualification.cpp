@@ -173,17 +173,22 @@ void CARQualification::CheckOperand(ARFieldValueOrArithStruct *operand, ARFieldV
 	case AR_FIELD_TRAN:
 	case AR_FIELD_DB:
 	case AR_FIELD_CURRENT:
-		int formId;
-		char delimiter;
-		getFormIdAndDelimiter(operand, formId, delimiter);
-
-		tmpFormId = formId;
-
-		qText << delimiter << arIn->LinkToField(formId, operand->u.fieldId, rootLevel) << delimiter;
-
-		if(!arIn->FieldreferenceExists(formId, operand->u.fieldId, refItem))
 		{
-			arIn->AddFieldReference(formId, operand->u.fieldId, refItem);
+			int formId;
+			char delimiter;
+			getFormIdAndDelimiter(operand, formId, delimiter);
+
+			tmpFormId = formId;
+			const char *prefix = getFieldPrefix(operand);
+
+			qText << delimiter;
+			if (prefix != NULL) qText << prefix;
+			qText << arIn->LinkToField(formId, operand->u.fieldId, rootLevel) << delimiter;
+
+			if(!arIn->FieldreferenceExists(formId, operand->u.fieldId, refItem))
+			{
+				arIn->AddFieldReference(formId, operand->u.fieldId, refItem);
+			}
 		}
 		break;	
 	case AR_QUERY:
