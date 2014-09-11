@@ -86,54 +86,83 @@ bool CARUserList::LoadFromServer()
 			// clean up status before we use it again
 			FreeARStatusList(&status, false);
 
-			if (ARGetListEntryWithFields(
-				&arIn->arControl,
-				schemaName,
-				&qualifier,
-				&fields,
-				NULL,0,0,0, // sort, first, max, locale,
-				&values,
-				0,&status) == AR_RETURN_OK)
-			{
-				Reserve(values.numItems);
+			unsigned int offset = 0;
+			unsigned int numMatches = 0;
 
-				for (unsigned int row=0; row<values.numItems; ++row)
+			do
+			{
+				// the matches are just loaded on the first pass
+				unsigned int *numMatchesPtr = (offset == 0 ? &numMatches : NULL);
+
+				int callResult = ARGetListEntryWithFields(
+					&arIn->arControl,
+					schemaName,
+					&qualifier,
+					&fields,
+					NULL,  // sortList
+					offset,
+					0,     // maxRetrieve
+					0,     // useLocale
+					&values,
+					numMatchesPtr,
+					&status);
+
+				if (callResult == AR_RETURN_OK || callResult == AR_RETURN_WARNING)
 				{
-					if (values.entryList[row].entryValues->numItems != fields.numItems)
-						continue;
+					// on the first pass reserve space for the expected users
+					if (numMatchesPtr != NULL && numMatches > 0)
+						Reserve(numMatches);
 
-					AREntryIdList& entryId = values.entryList[row].entryId;
-					ARFieldValueList& rowValues = *values.entryList[row].entryValues;
+					for (unsigned int row=0; row<values.numItems; ++row)
+					{
+						if (values.entryList[row].entryValues->numItems != fields.numItems)
+							continue;
 
-					sortedList.push_back(static_cast<int>(requestId.size()));
-					requestId.push_back((entryId.numItems == 1 ? entryId.entryIdList[0] : ""));
-					
-					StoreEntry(rowValues);
-					
-					// check count and fill-up any missing array items
-					if (names.size() < requestId.size()) names.resize(requestId.size());
-					if (email.size() < requestId.size()) email.resize(requestId.size());
-					if (group.size() < requestId.size()) group.resize(requestId.size());
-					if (fullName.size() < requestId.size()) fullName.resize(requestId.size());
-					if (defaultNotify.size() < requestId.size()) defaultNotify.resize(requestId.size());
-					if (licType.size() < requestId.size()) licType.resize(requestId.size());
-					if (ftLicType.size() < requestId.size()) ftLicType.resize(requestId.size());
-					if (createDate.size() < requestId.size()) createDate.resize(requestId.size());
-					if (modifiedDate.size() < requestId.size()) modifiedDate.resize(requestId.size());
-					while (owners.numItems < requestId.size()) { ARZeroMemory(owners.nameList[owners.numItems++]); }
-					while (changedUsers.numItems < requestId.size()) { ARZeroMemory(changedUsers.nameList[changedUsers.numItems++]); }
-					
-					LOG << "User '" << names.back() <<"' [OK]" << endl;
+						AREntryIdList& entryId = values.entryList[row].entryId;
+						ARFieldValueList& rowValues = *values.entryList[row].entryValues;
+
+						sortedList.push_back(static_cast<int>(requestId.size()));
+						requestId.push_back((entryId.numItems == 1 ? entryId.entryIdList[0] : ""));
+						
+						StoreEntry(rowValues);
+						
+						// check count and fill-up any missing array items
+						if (names.size() < requestId.size()) names.resize(requestId.size());
+						if (email.size() < requestId.size()) email.resize(requestId.size());
+						if (group.size() < requestId.size()) group.resize(requestId.size());
+						if (fullName.size() < requestId.size()) fullName.resize(requestId.size());
+						if (defaultNotify.size() < requestId.size()) defaultNotify.resize(requestId.size());
+						if (licType.size() < requestId.size()) licType.resize(requestId.size());
+						if (ftLicType.size() < requestId.size()) ftLicType.resize(requestId.size());
+						if (createDate.size() < requestId.size()) createDate.resize(requestId.size());
+						if (modifiedDate.size() < requestId.size()) modifiedDate.resize(requestId.size());
+						while (owners.numItems < requestId.size()) { ARZeroMemory(owners.nameList[owners.numItems++]); }
+						while (changedUsers.numItems < requestId.size()) { ARZeroMemory(changedUsers.nameList[changedUsers.numItems++]); }
+						
+						LOG << "User '" << names.back() <<"' [OK]" << endl;
+					}
+
+					// in case the result set is limited by server, load next chunk
+					if (values.numItems > 0 && callResult == AR_RETURN_WARNING && status.numItems > 0 && status.statusList[0].messageNum == AR_WARN_MAX_ENTRIES_SERVER)
+					{
+						offset += values.numItems;
+					}
+					else
+					{
+						offset = 0;
+					}
+
+					FreeAREntryListFieldValueList(&values,false);
+					if (callResult == AR_RETURN_OK) { result = true; }
 				}
-				FreeAREntryListFieldValueList(&values,false);
-				Sort();
-				result = true;
+				else // ARGetListEntryWithFields failed
+				{
+					cerr << BuildMessageAndFreeStatus(status);
+				}
 			}
-			else // ARGetListEntryWithFields failed
-			{
-				cerr << BuildMessageAndFreeStatus(status);
-			}
+			while (offset > 0);
 			FreeARQualifierStruct(&qualifier, false);
+			Sort();
 		}
 		else // ARLoadARQualifierStruct failed
 		{
