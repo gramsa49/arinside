@@ -52,6 +52,9 @@ public:
 	static const ARPropList& RoleGetPropList(/*unsigned int index*/) { return emptyPropList; }
 
 private:
+	void StoreEntry(ARFieldValueList& value);
+
+private:
 	vector<string> requestId;
 	vector<string> applicationName;
 	vector<string> names;

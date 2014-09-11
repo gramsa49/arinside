@@ -115,69 +115,12 @@ bool CARRoleList::LoadFromServer()
 						continue;
 
 					AREntryIdList& entryId = values.entryList[row].entryId;
-					ARFieldValueList& value = *values.entryList[row].entryValues;
+					ARFieldValueList& rowValues = *values.entryList[row].entryValues;
 
 					sortedList.push_back(static_cast<int>(requestId.size()));
 					requestId.push_back((entryId.numItems == 1 ? entryId.entryIdList[0] : ""));
 
-					for (unsigned int curFieldPos = 0; curFieldPos != value.numItems; ++curFieldPos)
-					{
-						switch (value.fieldValueList[curFieldPos].fieldId)
-						{
-						case AR_RESERV_ROLE_MAPPING_APPLICATION:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-								applicationName.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
-							break;
-						case AR_RESERV_ROLE_MAPPING_ROLE_NAME:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-								names.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
-							break;
-						case AR_RESERV_ROLE_MAPPING_ROLE_ID:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
-								roleId.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
-							break;
-						case AR_RESERV_APP_STATE_TEST:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								vector<int> gids;
-								GetGroupStringAsVector(value.fieldValueList[curFieldPos].value.u.charVal, gids);
-								groupsTest.push_back(gids);
-							}
-							break;
-						case AR_RESERV_APP_STATE_PRODUCTION:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								vector<int> gids;
-								GetGroupStringAsVector(value.fieldValueList[curFieldPos].value.u.charVal, gids);
-								groupsProd.push_back(gids);
-							}
-							break;
-						case AR_CORE_SUBMITTER:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								int index = owners.numItems++;
-								strncpy(owners.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
-								owners.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
-							}
-							break;
-						case AR_CORE_CREATE_DATE:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
-								createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
-							break;
-						case AR_CORE_LAST_MODIFIED_BY:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								int index = changedUsers.numItems++;
-								strncpy(changedUsers.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
-								changedUsers.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
-							}
-							break;
-						case AR_CORE_MODIFIED_DATE:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
-								modifiedDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
-							break;
-						}
-					}
+					StoreEntry(rowValues);
 
 					if (names.size() < requestId.size()) names.resize(requestId.size());
 					if (applicationName.size() < requestId.size()) applicationName.resize(requestId.size());
@@ -255,3 +198,64 @@ void CARRoleList::Sort()
 	}
 }
 
+void CARRoleList::StoreEntry(ARFieldValueList& value)
+{
+	for (unsigned int curFieldPos = 0; curFieldPos != value.numItems; ++curFieldPos)
+	{
+		switch (value.fieldValueList[curFieldPos].fieldId)
+		{
+		case AR_RESERV_ROLE_MAPPING_APPLICATION:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+				applicationName.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
+			break;
+		case AR_RESERV_ROLE_MAPPING_ROLE_NAME:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+				names.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
+			break;
+		case AR_RESERV_ROLE_MAPPING_ROLE_ID:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
+				roleId.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
+			break;
+		case AR_RESERV_APP_STATE_TEST:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+			{
+				vector<int> gids;
+				GetGroupStringAsVector(value.fieldValueList[curFieldPos].value.u.charVal, gids);
+				groupsTest.push_back(gids);
+			}
+			break;
+		case AR_RESERV_APP_STATE_PRODUCTION:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+			{
+				vector<int> gids;
+				GetGroupStringAsVector(value.fieldValueList[curFieldPos].value.u.charVal, gids);
+				groupsProd.push_back(gids);
+			}
+			break;
+		case AR_CORE_SUBMITTER:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+			{
+				int index = owners.numItems++;
+				strncpy(owners.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
+				owners.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
+			}
+			break;
+		case AR_CORE_CREATE_DATE:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
+				createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+			break;
+		case AR_CORE_LAST_MODIFIED_BY:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+			{
+				int index = changedUsers.numItems++;
+				strncpy(changedUsers.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
+				changedUsers.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
+			}
+			break;
+		case AR_CORE_MODIFIED_DATE:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
+				modifiedDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+			break;
+		}
+	}
+}
