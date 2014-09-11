@@ -98,67 +98,12 @@ bool CARGroupList::LoadFromServer()
 						continue;
 
 					AREntryIdList& entryId = values.entryList[row].entryId;
-					ARFieldValueList& value = *values.entryList[row].entryValues;
+					ARFieldValueList& rowValues = *values.entryList[row].entryValues;
 
 					sortedList.push_back(static_cast<int>(requestId.size()));
 					requestId.push_back((entryId.numItems == 1 ? entryId.entryIdList[0] : ""));
 
-					for (unsigned int curFieldPos = 0; curFieldPos != value.numItems; ++curFieldPos)
-					{
-						switch (value.fieldValueList[curFieldPos].fieldId)
-						{
-						case AR_RESERV_GROUP_NAME:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-								names.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
-							break;
-						case AR_RESERV_GROUP_ID:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
-								ids.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
-							break;
-						case AR_RESERV_GROUP_TYPE:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_ENUM ||
-							    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
-								types.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
-							break;
-						case AR_CORE_SHORT_DESCRIPTION:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-								longNames.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
-							break;
-						case AR_CORE_SUBMITTER:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								int index = owners.numItems++;
-								strncpy(owners.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
-								owners.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
-							}
-							break;
-						case AR_CORE_CREATE_DATE:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
-								createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
-							break;
-						case AR_CORE_LAST_MODIFIED_BY:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-							{
-								int index = changedUsers.numItems++;
-								strncpy(changedUsers.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
-								changedUsers.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
-							}
-							break;
-						case AR_CORE_MODIFIED_DATE:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
-								modifiedDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
-							break;
-						case AR_RESERV_GROUP_CATEGORY:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_ENUM ||
-							    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
-								category.push_back(value.fieldValueList[curFieldPos].value.u.enumVal);
-							break;
-						case AR_RESERV_COMPUTED_GROUP_QUAL:
-							if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
-								computedQual.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
-							break;
-						}
-					}
+					StoreEntry(rowValues);
 
 					if (names.size() < requestId.size()) names.resize(requestId.size());
 					if (ids.size() < requestId.size()) ids.resize(requestId.size());
@@ -235,5 +180,65 @@ void CARGroupList::Sort()
 	{
 		GenerateSortableList sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+	}
+}
+
+void CARGroupList::StoreEntry(ARFieldValueList& value)
+{
+	for (unsigned int curFieldPos = 0; curFieldPos != value.numItems; ++curFieldPos)
+	{
+		switch (value.fieldValueList[curFieldPos].fieldId)
+		{
+		case AR_RESERV_GROUP_NAME:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+				names.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
+			break;
+		case AR_RESERV_GROUP_ID:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
+				ids.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
+			break;
+		case AR_RESERV_GROUP_TYPE:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_ENUM ||
+			    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
+				types.push_back(value.fieldValueList[curFieldPos].value.u.intVal);
+			break;
+		case AR_CORE_SHORT_DESCRIPTION:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+				longNames.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
+			break;
+		case AR_CORE_SUBMITTER:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+			{
+				int index = owners.numItems++;
+				strncpy(owners.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
+				owners.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
+			}
+			break;
+		case AR_CORE_CREATE_DATE:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
+				createDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+			break;
+		case AR_CORE_LAST_MODIFIED_BY:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+			{
+				int index = changedUsers.numItems++;
+				strncpy(changedUsers.nameList[index], value.fieldValueList[curFieldPos].value.u.charVal, AR_MAX_ACCESS_NAME_SIZE);
+				changedUsers.nameList[index][AR_MAX_ACCESS_NAME_SIZE] = 0;
+			}
+			break;
+		case AR_CORE_MODIFIED_DATE:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_TIME)
+				modifiedDate.push_back(value.fieldValueList[curFieldPos].value.u.dateVal);
+			break;
+		case AR_RESERV_GROUP_CATEGORY:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_ENUM ||
+			    value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_INTEGER)
+				category.push_back(value.fieldValueList[curFieldPos].value.u.enumVal);
+			break;
+		case AR_RESERV_COMPUTED_GROUP_QUAL:
+			if (value.fieldValueList[curFieldPos].value.dataType == AR_DATA_TYPE_CHAR)
+				computedQual.push_back(value.fieldValueList[curFieldPos].value.u.charVal);
+			break;
+		}
 	}
 }

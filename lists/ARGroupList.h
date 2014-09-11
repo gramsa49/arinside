@@ -50,6 +50,9 @@ public:
 	static const ARPropList& GroupGetPropList(/*unsigned int index*/) { return emptyPropList; }
 
 private:
+	void StoreEntry(ARFieldValueList& value);
+
+private:
 	vector<string> requestId;
 	vector<string> names;
 	vector<string> longNames;
