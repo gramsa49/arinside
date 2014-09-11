@@ -53,6 +53,9 @@ public:
 	static const ARPropList& UserGetPropList() { return emptyPropList; }
 
 private:
+	void StoreEntry(ARFieldValueList& value);
+
+private:
 	vector<string> requestId;
 	vector<string> names;
 	vector<string> email;
