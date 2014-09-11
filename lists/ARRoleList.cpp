@@ -171,6 +171,7 @@ bool CARRoleList::LoadFromServer()
 				}
 			}
 			while (offset > 0);
+			FreeARQualifierStruct(&qualifier, false);
 			Sort();
 		}
 		else // ARLoadARQualifierStruct failed
