@@ -444,7 +444,7 @@ void CARSchemaList::LoadDatabaseDetails()
 		{
 			StoreDatabaseDetails(valueList);
 
-			if (valueList.numItems > 0 && status.numItems > 0 && status.statusList[0].messageNum == 66)
+			if (valueList.numItems > 0 && status.numItems > 0 && status.statusList[0].messageNum == AR_WARN_MAX_ENTRIES_RETRIEVED)
 			{
 				unsigned int lastReceiveSchemaId = 0;
 				SchemaDbQueryBuilder::TryReadSchemaId(valueList.valueListList[valueList.numItems-1], lastReceiveSchemaId);

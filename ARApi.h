@@ -18,6 +18,7 @@
 #include <ar.h>
 #include <arfree.h>
 #include <arstruct.h>
+#include <arerrno.h>
 #include <arextern.h>
 #include "util/Memory.h"
 

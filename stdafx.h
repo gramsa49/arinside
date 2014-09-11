@@ -46,6 +46,7 @@
 
 #include <sys/stat.h>
 
+#include "ARApi.h"
 #include "util/Util.h"
 
 extern const char* MenuSeparator;
