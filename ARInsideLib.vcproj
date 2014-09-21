@@ -1073,6 +1073,18 @@
 					>
 				</File>
 			</Filter>
+			<Filter
+				Name="menus"
+				>
+				<File
+					RelativePath=".\doc\menus\DocCharacterMenu.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\doc\menus\DocCharacterMenu.h"
+					>
+				</File>
+			</Filter>
 		</Filter>
 		<Filter
 			Name="output"

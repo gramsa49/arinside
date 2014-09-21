@@ -21,6 +21,7 @@
 #include "../output/URLLink.h"
 #include "DocOverlayHelper.h"
 #include "../core/ARQualification.h"
+#include "menus/DocCharacterMenu.h"
 
 const char* MenuDefinitionText = "Menu Definition";
 
@@ -83,44 +84,6 @@ void CDocCharMenuDetails::Documentation()
 	catch(exception& e)
 	{
 		cout << "EXCEPTION Menu doc of '" << this->menu.GetName() << "': " << e.what() << endl;
-	}
-}
-
-void CDocCharMenuDetails::CharMenuDetails(CTable& table)
-{
-	try
-	{
-		CTable tbl("menuItems", "TblObjectList");
-		tbl.AddColumn(20, "Type");	
-		tbl.AddColumn(40, "Label");
-		tbl.AddColumn(40, "Value");
-
-		const ARCharMenuList& menu = this->menu.GetDefinition().u.menuList;
-		for(unsigned int i=0; i< menu.numItems; i++)
-		{
-			CTableRow row("cssStdRow");		
-			CTableCell cellItemType(CAREnum::MenuItemType(menu.charMenuList[i].menuType), "");				
-			CTableCell cellItemLabel(menu.charMenuList[i].menuLabel, "");
-
-			string mValue = "";
-			if(menu.charMenuList[i].menuType == AR_MENU_TYPE_VALUE)
-				mValue = menu.charMenuList[i].u.menuValue;
-			CTableCell cellItemValue(mValue, "");
-
-			row.AddCell(cellItemType);
-			row.AddCell(cellItemLabel);
-			row.AddCell(cellItemValue);
-			tbl.AddRow(row);		
-		}
-		
-		CTableRow row;
-		row.AddCell(MenuDefinitionText);
-		row.AddCell(tbl.ToXHtml());
-		table.AddRow(row);
-	}
-	catch(exception& e)
-	{
-		cout << "EXCEPTION Menu details doc of '" << this->menu.GetName() << "': " << e.what() << endl;
 	}
 }
 
@@ -569,8 +532,11 @@ string CDocCharMenuDetails::ShowGeneralInfo()
 	//Menuspecific
 	switch (menuDef.menuType)
 	{		
-	case AR_CHAR_MENU_LIST: 
-		CharMenuDetails(tblObjProp);
+	case AR_CHAR_MENU_LIST:
+		{
+			CDocCharacterMenu docStruct(tblObjProp, menu);
+			docStruct.Documentation();
+		}
 		break;
 	case AR_CHAR_MENU_QUERY:
 		SearchMenuDetails(tblObjProp);
