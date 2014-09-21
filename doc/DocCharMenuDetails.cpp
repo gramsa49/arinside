@@ -137,12 +137,15 @@ void CDocCharMenuDetails::FileMenuDetails(CTable& table)
 		stringstream strm;
 
 		const ARCharMenuFileStruct& menu = this->menu.GetDefinition().u.menuFile;
-		strm << "File Name: " << menu.filename << "<br/>";
-		strm << "Location: " << CAREnum::MenuFileLocation(menu.fileLocation) << endl;
 
 		CTableRow row;
-		row.AddCell(MenuDefinitionText);
-		row.AddCell(strm.str());
+		row.AddCell("Location");
+		row.AddCell(CAREnum::MenuFileLocation(menu.fileLocation));
+		table.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("File Name");
+		row.AddCell(menu.filename);
 		table.AddRow(row);
 	}
 	catch(exception& e)
@@ -153,9 +156,25 @@ void CDocCharMenuDetails::FileMenuDetails(CTable& table)
 
 void CDocCharMenuDetails::SqlMenuDetails(CTable& table)
 {
-
 	try
 	{
+		const ARCharMenuSQLStruct& menu = this->menu.GetDefinition().u.menuSQL;
+
+		CTableRow row;
+		row.AddCell("Server");
+		row.AddCell(pInside->LinkToServerInfo(menu.server, rootLevel));
+		table.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("Label Index List");
+		row.AddCell(GetSQLLabelList(&menu));
+		table.AddRow(row);
+
+		row.ClearCells();
+		row.AddCell("Value Index");
+		row.AddCell(menu.valueIndex);
+		table.AddRow(row);
+
 		vector<int> attachedToSchemaList;
 		BuildUniqueSchemaList(attachedToSchemaList);
 
@@ -169,21 +188,14 @@ void CDocCharMenuDetails::SqlMenuDetails(CTable& table)
 		{
 			CARSchema schema(*curIt);
 
-			stringstream strm;
-			const ARCharMenuSQLStruct& menu = this->menu.GetDefinition().u.menuSQL;
-
 			// in case a field is placed within the SQL command
 			CRefItem refItem(this->menu, REFM_CHARMENU_SQL);
-
-			strm << "Server: " << this->pInside->LinkToServerInfo(menu.server, rootLevel) << "<br/>" << endl;
-			strm << "Label Index List: " << GetSQLLabelList(&menu) << "<br/>" << endl;
-			strm << "Value Index: " << menu.valueIndex << "<br/><br/>" << endl;
-			strm << "SQL Command: " << pInside->TextFindFields(menu.sqlCommand, "$", *curIt, rootLevel, true, &refItem) << endl;
+			string sqlWithLinkedFields = pInside->TextFindFields(menu.sqlCommand, "$", *curIt, rootLevel, true, &refItem);
 
 			// add the table row now
 			CTableRow row;
 			row.AddCell(CheckedURLLink(schema, MenuDefinitionText, rootLevel));
-			row.AddCell(strm.str());
+			row.AddCell(sqlWithLinkedFields);
 			table.AddRow(row);
 		}
 	}
@@ -547,11 +559,12 @@ string CDocCharMenuDetails::ShowGeneralInfo()
 {
 	const ARCharMenuStruct& menuDef = menu.GetDefinition();
 
-	CTable tblObjProp("objProperties", "TblObjectList");
-	tblObjProp.AddColumn(30, "Property");	
-	tblObjProp.AddColumn(70, "Value");
+	CTable tblObjProp("objProperties", "TblNoBorder");
+	tblObjProp.AddColumn(20, "");	
+	tblObjProp.AddColumn(80, "");
+	tblObjProp.DisableHeader();
 
-	CTableRow row("cssStdRow");		
+	CTableRow row;		
 	CTableCell cellProp("Refresh", "");				
 	CTableCell cellPropValue(CAREnum::MenuRefresh(this->menu.GetRefreshCode()), "");
 	row.AddCell(cellProp);
