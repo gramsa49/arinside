@@ -17,6 +17,7 @@
 #include "stdafx.h"
 #include "DocCharMenuDetails.h"
 #include "../output/ContainerTable.h"
+#include "../output/TabControl.h"
 #include "../output/URLLink.h"
 #include "DocOverlayHelper.h"
 #include "../core/ARQualification.h"
@@ -64,8 +65,17 @@ void CDocCharMenuDetails::Documentation()
 			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
-			webPage.AddContent(ShowGeneralInfo());
-			webPage.AddContent(ShowReferences());
+			// add the javascript we need for this page to display correctly
+			webPage.GetReferenceManager()
+				.AddScriptReference("img/menu_page.js")
+				.AddScriptReference("img/jquery.address.min.js");
+
+			CTabControl tabControl;
+
+			tabControl.AddTab("General", ShowGeneralInfo());
+			tabControl.AddTab("References", ShowReferences());
+
+			webPage.AddContent(tabControl.ToXHtml());
 
 			//Properties
 			webPage.AddContent(CARProplistHelper::GetList(this->menu.GetPropList()));
