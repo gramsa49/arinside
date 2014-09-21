@@ -28,6 +28,9 @@ public:
 	void Documentation();
 
 private:
+	void CreateItemList(const ARCharMenuList &menu);
+
+private:
 	OUTPUT::CTable &outputTable;
 	auto_ptr<OUTPUT::CTable> itemTable;
 	CARCharMenu &menu;

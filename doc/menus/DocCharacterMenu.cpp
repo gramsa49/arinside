@@ -34,23 +34,10 @@ void CDocCharacterMenu::Documentation()
 {
 	try
 	{
-		const ARCharMenuList& menu = this->menu.GetDefinition().u.menuList;
-		for(unsigned int i=0; i< menu.numItems; i++)
-		{
-			CTableRow row("cssStdRow");		
-			CTableCell cellItemType(CAREnum::MenuItemType(menu.charMenuList[i].menuType), "");				
-			CTableCell cellItemLabel(menu.charMenuList[i].menuLabel, "");
+		const ARCharMenuStruct &menuDef = menu.GetDefinition();
+		assert(menuDef.menuType == AR_CHAR_MENU_LIST);
 
-			string mValue = "";
-			if(menu.charMenuList[i].menuType == AR_MENU_TYPE_VALUE)
-				mValue = menu.charMenuList[i]	.u.menuValue;
-			CTableCell cellItemValue(mValue, "");
-
-			row.AddCell(cellItemType);
-			row.AddCell(cellItemLabel);
-			row.AddCell(cellItemValue);
-			itemTable->AddRow(row);		
-		}
+		CreateItemList(menuDef.u.menuList);
 		
 		CTableRow row;
 		row.AddCell("Menu Definition");
@@ -60,5 +47,25 @@ void CDocCharacterMenu::Documentation()
 	catch(exception& e)
 	{
 		cout << "EXCEPTION Menu details doc of '" << this->menu.GetName() << "': " << e.what() << endl;
+	}
+}
+
+void CDocCharacterMenu::CreateItemList(const ARCharMenuList &menu)
+{
+	for(unsigned int i=0; i< menu.numItems; i++)
+	{
+		CTableRow row("cssStdRow");		
+		CTableCell cellItemType(CAREnum::MenuItemType(menu.charMenuList[i].menuType), "");				
+		CTableCell cellItemLabel(menu.charMenuList[i].menuLabel, "");
+
+		string mValue = "";
+		if(menu.charMenuList[i].menuType == AR_MENU_TYPE_VALUE)
+			mValue = menu.charMenuList[i]	.u.menuValue;
+		CTableCell cellItemValue(mValue, "");
+
+		row.AddCell(cellItemType);
+		row.AddCell(cellItemLabel);
+		row.AddCell(cellItemValue);
+		itemTable->AddRow(row);		
 	}
 }
