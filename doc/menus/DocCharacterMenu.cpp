@@ -23,7 +23,7 @@
 using namespace OUTPUT;
 
 CDocCharacterMenu::CDocCharacterMenu(CTable &table, CARCharMenu &menuObj)
-: outputTable(table), menu(menuObj), itemTable(new OUTPUT::CTable("menuItems", "TblObjectList"))
+: outputTable(table), menu(menuObj), itemTable(new OUTPUT::CTable("menuItems", "TblObjectList")), itemStrm(new stringstream()), valueStrm(new stringstream())
 {
 	itemTable->AddColumn(20, "Type");	
 	itemTable->AddColumn(40, "Label");
@@ -37,7 +37,13 @@ void CDocCharacterMenu::Documentation()
 		const ARCharMenuStruct &menuDef = menu.GetDefinition();
 		assert(menuDef.menuType == AR_CHAR_MENU_LIST);
 
+		*itemStrm  << "<div id='menuItems'>";
+		*valueStrm << "<div id='menuItems'>";
 		CreateItemList(menuDef.u.menuList);
+		*valueStrm << "</div>";
+		*itemStrm  << "</div>";
+
+		CreateItemTable();
 		
 		CTableRow row;
 		row.AddCell("Menu Definition");
@@ -50,22 +56,46 @@ void CDocCharacterMenu::Documentation()
 	}
 }
 
+void CDocCharacterMenu::CreateItemTable()
+{
+	CTableRow row("cssStdRow");
+	row.AddCell("&nbsp;");
+	row.AddCell(itemStrm->str());
+	row.AddCell(valueStrm->str());
+	itemTable->AddRow(row);
+}
+
 void CDocCharacterMenu::CreateItemList(const ARCharMenuList &menu)
 {
+	*itemStrm << "<ul>";
+
 	for(unsigned int i=0; i< menu.numItems; i++)
 	{
-		CTableRow row("cssStdRow");		
-		CTableCell cellItemType(CAREnum::MenuItemType(menu.charMenuList[i].menuType), "");				
-		CTableCell cellItemLabel(menu.charMenuList[i].menuLabel, "");
+		*itemStrm << "<li>" << menu.charMenuList[i].menuLabel << "</li>";
 
-		string mValue = "";
-		if(menu.charMenuList[i].menuType == AR_MENU_TYPE_VALUE)
-			mValue = menu.charMenuList[i]	.u.menuValue;
-		CTableCell cellItemValue(mValue, "");
-
-		row.AddCell(cellItemType);
-		row.AddCell(cellItemLabel);
-		row.AddCell(cellItemValue);
-		itemTable->AddRow(row);		
+		switch (menu.charMenuList[i].menuType)
+		{
+		case AR_MENU_TYPE_VALUE:
+			{
+				*valueStrm << "<li>" << menu.charMenuList[i].u.menuValue << "</li>";
+			}
+			break;
+		case AR_MENU_TYPE_MENU:
+			{
+				*valueStrm << "<li>" << "&nbsp;" << "</li>";
+				ARCharMenuStruct *subMenu = menu.charMenuList[i].u.childMenu;
+				if (subMenu != NULL && subMenu->menuType == AR_CHAR_MENU_LIST)
+				{
+					CreateItemList(subMenu->u.menuList);
+				}
+				else
+				{
+					assert(false);
+				}
+			}
+			break;
+		}
 	}
+
+	*itemStrm << "</ul>";	
 }

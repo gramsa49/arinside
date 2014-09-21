@@ -29,9 +29,12 @@ public:
 
 private:
 	void CreateItemList(const ARCharMenuList &menu);
+	void CreateItemTable();
 
 private:
 	OUTPUT::CTable &outputTable;
 	auto_ptr<OUTPUT::CTable> itemTable;
+	auto_ptr<std::stringstream> itemStrm;
+	auto_ptr<std::stringstream> valueStrm;
 	CARCharMenu &menu;
 };

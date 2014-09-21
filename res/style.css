@@ -452,3 +452,5 @@ td.warn {
 #clearButton { float: right; }
 .ptop { padding-top: 3px; }
 
+#menuItems li { padding: 0px; list-style-type: none; }
+#menuItems ul { padding: 0px; margin-top: 0px; margin-bottom: 0px; } 
