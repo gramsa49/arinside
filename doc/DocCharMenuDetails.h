@@ -44,4 +44,5 @@ private:
 
 	std::string ShowGeneralInfo();
 	std::string ShowReferences();
+	std::string ShowProperties();
 };

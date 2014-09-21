@@ -77,12 +77,6 @@ void CDocCharMenuDetails::Documentation()
 
 			webPage.AddContent(tabControl.ToXHtml());
 
-			//Properties
-			webPage.AddContent(CARProplistHelper::GetList(this->menu.GetPropList()));
-
-			//History
-			webPage.AddContent(this->pInside->ServerObjectHistory(&menu, this->rootLevel));
-
 			webPage.SaveInFolder(this->path);
 		}
 	}
@@ -558,6 +552,7 @@ void CDocCharMenuDetails::BuildUniqueSchemaList(std::vector<int>& schemaList)
 string CDocCharMenuDetails::ShowGeneralInfo()
 {
 	const ARCharMenuStruct& menuDef = menu.GetDefinition();
+	stringstream strm;
 
 	CTable tblObjProp("objProperties", "TblNoBorder");
 	tblObjProp.AddColumn(20, "");	
@@ -596,7 +591,11 @@ string CDocCharMenuDetails::ShowGeneralInfo()
 		tblObjProp.AddRow(row);	
 		break;
 	}
-	return tblObjProp.ToXHtml();
+	strm << tblObjProp.ToXHtml();
+	strm << "<hr/>";
+	strm << ShowProperties();
+	strm << "<hr/>";
+	return strm.str();
 }
 
 string CDocCharMenuDetails::ShowReferences()
@@ -630,4 +629,21 @@ string CDocCharMenuDetails::ShowReferences()
 	tblObjProp.AddRow(row);
 
 	return tblObjProp.ToXHtml();
+}
+
+string CDocCharMenuDetails::ShowProperties()
+{
+	stringstream strm;
+
+	strm << "<div id='menuProperties'>";
+	//Properties
+	CARProplistHelper props(&menu.GetPropList());
+	strm << props.UnusedPropertiesToHTML(rootLevel);
+
+	//History
+	strm << pInside->ServerObjectHistory(&menu, this->rootLevel);
+
+	strm << "</div>";
+
+	return strm.str();
 }
