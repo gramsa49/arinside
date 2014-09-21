@@ -129,9 +129,11 @@ void AppConfig::Validate(CommandLineValidator& cmdLine)
 	}
 
 	// now configure the environment
+#ifdef ARINSIDE_ENABLE_ZLIB_SUPPORT
 	if (bGZCompression)
 		CWebUtil::webpageFileExtension = CWebUtil::HtmlGZPageSuffix();
 	else
+#endif
 		CWebUtil::webpageFileExtension = CWebUtil::HtmlPageSuffix();
 
 	// later we can support configuring specific layer documentation

@@ -249,8 +249,10 @@ void CARInside::Prepare(void)
 	if( docMain->Index() == 1)
 	{
 		InitFileNamingStrategy();
+#ifdef ARINSIDE_ENABLE_ZLIB_SUPPORT
 		if (appConfig.bGZCompression)
 			WriteHTAccess();
+#endif
 	}
 
 	delete docMain;
