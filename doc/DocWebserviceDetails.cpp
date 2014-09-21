@@ -123,7 +123,13 @@ string CDocWebserviceDetails::WSInformation()
 	try
 	{
 		const ARReferenceList& refs = this->ws.GetContent();
-		CARSchema wsOwnerSchema(ws.GetOwnerObjects().ownerObjList[0].ownerName);
+		CARSchema wsOwnerSchema;
+
+		const ARContainerOwnerObjList &wsOwners = ws.GetOwnerObjects();
+		if (wsOwners.numItems > 0)
+		{
+			wsOwnerSchema = CARSchema(wsOwners.ownerObjList[0].ownerName);
+		}
 
 		for(unsigned int i=0; i< refs.numItems; i++)
 		{
