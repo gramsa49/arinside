@@ -41,4 +41,6 @@ private:
 
 	string GetSQLLabelList(const ARCharMenuSQLStruct* sqlMenu);
 	void BuildUniqueSchemaList(vector<int>& schemaList);
+
+	std::string ShowGeneralInfo();
 };

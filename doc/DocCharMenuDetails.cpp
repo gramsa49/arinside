@@ -64,49 +64,16 @@ void CDocCharMenuDetails::Documentation()
 			webPage.AddContentHead(strmHead.str(), overlayHelper.PlaceOverlayLink());
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
-			//ActiveLink Properties
+			webPage.AddContent(ShowGeneralInfo());
+
 			CTable tblObjProp("objProperties", "TblObjectList");
 			tblObjProp.AddColumn(30, "Property");	
 			tblObjProp.AddColumn(70, "Value");
 
-			//Status
-			CTableRow row("cssStdRow");		
-			CTableCell cellProp("Refresh", "");				
-			CTableCell cellPropValue(CAREnum::MenuRefresh(this->menu.GetRefreshCode()), "");
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
-
-			//Menuspecific
-			switch (menuDef.menuType)
-			{		
-			case AR_CHAR_MENU_LIST: 
-				CharMenuDetails(tblObjProp);
-				break;
-			case AR_CHAR_MENU_QUERY:
-				SearchMenuDetails(tblObjProp);
-				break;
-			case AR_CHAR_MENU_FILE:
-				FileMenuDetails(tblObjProp);
-				break;
-			case AR_CHAR_MENU_SQL:
-				SqlMenuDetails(tblObjProp);
-				break;
-			case AR_CHAR_MENU_DATA_DICTIONARY:
-				DataDictMenuDetails(tblObjProp); 
-				break;
-			default:
-				row.ClearCells();
-				row.AddCell(MenuDefinitionText);
-				row.AddCell(EnumDefault);
-				tblObjProp.AddRow(row);	
-				break;
-			}		
-
 			//RelatedFields
-			row.ClearCells();
-			cellProp.content = "Related Fields";
-			cellPropValue.content = this->RelatedFields();
+			CTableRow row("cssStdRow");		
+			CTableCell cellProp("Related Fields", "");				
+			CTableCell cellPropValue(this->RelatedFields(), "");
 			row.AddCell(cellProp);
 			row.AddCell(cellPropValue);
 			tblObjProp.AddRow(row);	
@@ -595,4 +562,47 @@ void CDocCharMenuDetails::BuildUniqueSchemaList(std::vector<int>& schemaList)
 	}
 
 	SortAndRemoveDuplicates(schemaList);
+}
+
+string CDocCharMenuDetails::ShowGeneralInfo()
+{
+	const ARCharMenuStruct& menuDef = menu.GetDefinition();
+
+	CTable tblObjProp("objProperties", "TblObjectList");
+	tblObjProp.AddColumn(30, "Property");	
+	tblObjProp.AddColumn(70, "Value");
+
+	CTableRow row("cssStdRow");		
+	CTableCell cellProp("Refresh", "");				
+	CTableCell cellPropValue(CAREnum::MenuRefresh(this->menu.GetRefreshCode()), "");
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);	
+
+	//Menuspecific
+	switch (menuDef.menuType)
+	{		
+	case AR_CHAR_MENU_LIST: 
+		CharMenuDetails(tblObjProp);
+		break;
+	case AR_CHAR_MENU_QUERY:
+		SearchMenuDetails(tblObjProp);
+		break;
+	case AR_CHAR_MENU_FILE:
+		FileMenuDetails(tblObjProp);
+		break;
+	case AR_CHAR_MENU_SQL:
+		SqlMenuDetails(tblObjProp);
+		break;
+	case AR_CHAR_MENU_DATA_DICTIONARY:
+		DataDictMenuDetails(tblObjProp); 
+		break;
+	default:
+		row.ClearCells();
+		row.AddCell(MenuDefinitionText);
+		row.AddCell(EnumDefault);
+		tblObjProp.AddRow(row);	
+		break;
+	}
+	return tblObjProp.ToXHtml();
 }
