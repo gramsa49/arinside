@@ -22,15 +22,18 @@
 
 using namespace OUTPUT;
 
+CDocCharacterMenu::CDocCharacterMenu(CTable &table, CARCharMenu &menuObj)
+: outputTable(table), menu(menuObj), itemTable(new OUTPUT::CTable("menuItems", "TblObjectList"))
+{
+	itemTable->AddColumn(20, "Type");	
+	itemTable->AddColumn(40, "Label");
+	itemTable->AddColumn(40, "Value");
+}
+
 void CDocCharacterMenu::Documentation()
 {
 	try
 	{
-		CTable tbl("menuItems", "TblObjectList");
-		tbl.AddColumn(20, "Type");	
-		tbl.AddColumn(40, "Label");
-		tbl.AddColumn(40, "Value");
-
 		const ARCharMenuList& menu = this->menu.GetDefinition().u.menuList;
 		for(unsigned int i=0; i< menu.numItems; i++)
 		{
@@ -46,13 +49,13 @@ void CDocCharacterMenu::Documentation()
 			row.AddCell(cellItemType);
 			row.AddCell(cellItemLabel);
 			row.AddCell(cellItemValue);
-			tbl.AddRow(row);		
+			itemTable->AddRow(row);		
 		}
 		
 		CTableRow row;
 		row.AddCell("Menu Definition");
-		row.AddCell(tbl.ToXHtml());
-		table.AddRow(row);
+		row.AddCell(itemTable->ToXHtml());
+		outputTable.AddRow(row);
 	}
 	catch(exception& e)
 	{

@@ -23,11 +23,12 @@ class CARCharMenu;
 class CDocCharacterMenu
 {
 public:
-	CDocCharacterMenu(OUTPUT::CTable &table, CARCharMenu &menuObj) : table(table), menu(menuObj) {}
+	CDocCharacterMenu(OUTPUT::CTable &table, CARCharMenu &menuObj);
 
 	void Documentation();
 
 private:
-	OUTPUT::CTable &table;
+	OUTPUT::CTable &outputTable;
+	auto_ptr<OUTPUT::CTable> itemTable;
 	CARCharMenu &menu;
 };
