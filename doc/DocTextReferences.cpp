@@ -461,8 +461,9 @@ string CDocTextReferences::processForm(const string& command, const CRefItem *re
 		strmTmp << form;
 	}
 
-	//write anything past the form to output
-	strmTmp << tmp.substr(pos);
+	// if there is anything past the form-parameter, write it to output
+	if (pos != string::npos)
+		strmTmp << tmp.substr(pos);
 
 	return strmTmp.str();
 }
