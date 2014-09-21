@@ -65,38 +65,7 @@ void CDocCharMenuDetails::Documentation()
 			webPage.AddContent(overlayHelper.PlaceOverlaidNotice());
 
 			webPage.AddContent(ShowGeneralInfo());
-
-			CTable tblObjProp("objProperties", "TblObjectList");
-			tblObjProp.AddColumn(30, "Property");	
-			tblObjProp.AddColumn(70, "Value");
-
-			//RelatedFields
-			CTableRow row("cssStdRow");		
-			CTableCell cellProp("Related Fields", "");				
-			CTableCell cellPropValue(this->RelatedFields(), "");
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
-
-			//RelatedActiveLinks
-			row.ClearCells();
-			cellProp.content = "Related ActiveLinks (Change Field)";
-			cellPropValue.content = this->RelatedActiveLinks();
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);	
-
-			//used in container?
-			row.ClearCells();
-			cellProp.content = "Container References";
-			cellPropValue.content = this->ContainerReferences();				
-			row.AddCell(cellProp);
-			row.AddCell(cellPropValue);
-			tblObjProp.AddRow(row);
-
-			//Add table to page
-			webPage.AddContent(tblObjProp.ToXHtml());
-			tblObjProp.Clear();
+			webPage.AddContent(ShowReferences());
 
 			//Properties
 			webPage.AddContent(CARProplistHelper::GetList(this->menu.GetPropList()));
@@ -604,5 +573,38 @@ string CDocCharMenuDetails::ShowGeneralInfo()
 		tblObjProp.AddRow(row);	
 		break;
 	}
+	return tblObjProp.ToXHtml();
+}
+
+string CDocCharMenuDetails::ShowReferences()
+{
+	CTable tblObjProp("objProperties", "TblObjectList");
+	tblObjProp.AddColumn(30, "Property");	
+	tblObjProp.AddColumn(70, "Value");
+
+	//RelatedFields
+	CTableRow row("cssStdRow");		
+	CTableCell cellProp("Related Fields", "");				
+	CTableCell cellPropValue(this->RelatedFields(), "");
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);	
+
+	//RelatedActiveLinks
+	row.ClearCells();
+	cellProp.content = "Related ActiveLinks (Change Field)";
+	cellPropValue.content = this->RelatedActiveLinks();
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);	
+
+	//used in container?
+	row.ClearCells();
+	cellProp.content = "Container References";
+	cellPropValue.content = this->ContainerReferences();				
+	row.AddCell(cellProp);
+	row.AddCell(cellPropValue);
+	tblObjProp.AddRow(row);
+
 	return tblObjProp.ToXHtml();
 }

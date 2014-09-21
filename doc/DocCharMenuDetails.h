@@ -43,4 +43,5 @@ private:
 	void BuildUniqueSchemaList(vector<int>& schemaList);
 
 	std::string ShowGeneralInfo();
+	std::string ShowReferences();
 };
