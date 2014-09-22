@@ -37,6 +37,12 @@ TEST(TinyXmlUTF8, DecodeIfCorrectUTF8String_Ticket141)
 	inputXML.Parse(xmlDoc, 0, TIXML_DEFAULT_ENCODING);
 
 	ASSERT_FALSE(inputXML.Error());
+
+	TiXmlHandle inputHandle(&inputXML);
+	TiXmlElement *element = inputHandle.FirstChild("arDocMapping").FirstChild("element").ToElement();
+	const char* attr = element->Attribute("form");
+
+	ASSERT_STREQ("qualified", attr);
 }
 
 /*
@@ -55,9 +61,18 @@ TEST(TinyXmlUTF8, DecodeIfCorrectWin1252String_Ticket141)
 
 	TiXmlDocument inputXML;
 
+	// parsing the first time fails!
 	inputXML.Parse(xmlDoc, 0, TIXML_DEFAULT_ENCODING);
 	ASSERT_TRUE(inputXML.Error());
 
+	// parsing in legacy mode doesn't fail, but ....
 	inputXML.Parse(xmlDoc, 0, TIXML_ENCODING_LEGACY);
 	ASSERT_FALSE(inputXML.Error());
+
+	// ... the document isn't parsed correctly. We can't read the 'form' attribute!
+	TiXmlHandle inputHandle(&inputXML);
+	TiXmlElement *element = inputHandle.FirstChild("arDocMapping").FirstChild("element").ToElement();
+	const char* attr = element->Attribute("form");
+
+	ASSERT_EQ(NULL, attr);
 }
