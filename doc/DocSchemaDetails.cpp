@@ -276,15 +276,38 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 							CPageParams fldLeftLink(PAGE_DETAILS, &fldLeft);
 							CPageParams fldRightLink(PAGE_DETAILS, &fldRight);
 
-							string leftFieldName = fldLeft.GetName();
-							string leftFieldLink = CWebUtil::GetRelativeURL(rootLevel, fldLeftLink);
-							string leftSchemaName = schemaLeft.GetName();
-							string leftSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaLeftLink);
+							string leftFieldName;
+							string leftFieldLink;
+							if (fldLeft.Exists())
+							{
+								leftFieldName = fldLeft.GetName();
+								leftFieldLink = CWebUtil::GetRelativeURL(rootLevel, fldLeftLink);
+							}
+							else
+							{
+								leftFieldName = "1";
+							}
+
+							string leftSchemaName = compSchema.u.join.memberA;
+							string leftSchemaLink;
+							if (schemaLeft.Exists())
+								leftSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaLeftLink);
 							
-							string rightFieldName = fldRight.GetName();
-							string rightFieldLink = CWebUtil::GetRelativeURL(rootLevel, fldRightLink);
-							string rightSchemaName = schemaRight.GetName();
-							string rightSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaRightLink);
+							string rightFieldName;
+							string rightFieldLink;
+							if (fldRight.Exists())
+							{
+								rightFieldName = fldRight.GetName();
+								rightFieldLink = CWebUtil::GetRelativeURL(rootLevel, fldRightLink);
+							}
+							else
+							{
+								rightFieldName = "1";
+							}
+							string rightSchemaName = compSchema.u.join.memberB;
+							string rightSchemaLink;
+							if (schemaRight.Exists())
+								rightSchemaLink = CWebUtil::GetRelativeURL(rootLevel, schemaRightLink);
 
 							Value leftNameVal(leftFieldName.c_str(), static_cast<SizeType>(leftFieldName.size()), alloc);
 							Value leftLinkVal(leftFieldLink.c_str(), static_cast<SizeType>(leftFieldLink.size()), alloc);
@@ -320,9 +343,26 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 								CARField baseField(baseSchema.GetInsideId(), field.GetMapping().u.join.realId);
 								CPageParams baseFieldPage(PAGE_DETAILS, &baseField);
 
-								string baseFieldName = baseField.GetName();
-								string baseFieldLink = CWebUtil::GetRelativeURL(rootLevel, baseFieldPage);
-								string baseSchemaLink = CWebUtil::GetRelativeURL(rootLevel, baseSchemaPage);
+								string baseFieldName;
+								string baseFieldLink;
+
+								// now check if the field exists in the join-member! Otherwise we can't determine the field name and URL!
+								if (baseField.Exists())
+								{
+									baseFieldName = baseField.GetName();
+									baseFieldLink = CWebUtil::GetRelativeURL(rootLevel, baseFieldPage);
+								}
+								else
+								{
+									// if this field doesn't exist in the join member, show the fieldid instead!
+									stringstream baseFieldIdStrm;
+									baseFieldIdStrm << field.GetMapping().u.join.realId;
+									baseFieldName = baseFieldIdStrm.str();
+								}
+								
+								string baseSchemaLink; 
+								if (baseSchema.Exists())
+									baseSchemaLink = CWebUtil::GetRelativeURL(rootLevel, baseSchemaPage);
 								
 								Value baseFileNameVal(baseFieldName.c_str(), static_cast<SizeType>(baseFieldName.size()), alloc);
 								Value baseFileLinkVal(baseFieldLink.c_str(), static_cast<SizeType>(baseFieldLink.size()), alloc);

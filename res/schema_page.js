@@ -21,10 +21,16 @@ var schemaFieldManager = {
         for (pos; pos + 3 < schemaFieldList[row].length; pos += 4) {
             if (first > 0) { div.append($("<br/>")); }
 
-            div.append($("<a>").attr("href", schemaFieldList[row][pos + 1]).text(schemaFieldList[row][pos]));
+            if (schemaFieldList[row][pos+1]==="")
+              div.append($("<span class='fieldNotFound'>").text(schemaFieldList[row][pos]));
+            else
+              div.append($("<a>").attr("href", schemaFieldList[row][pos + 1]).text(schemaFieldList[row][pos]));
             div.appendText("\u00a0 -> \u00a0");
             div.append($("<img>").attr("width", 16).attr("height", 16).attr("alt", "schema.gif").attr("src", "../../img/schema.gif"));
-            div.append($("<a>").attr("href", schemaFieldList[row][pos + 3]).text(schemaFieldList[row][pos + 2]));
+            if (schemaFieldList[row][pos+3]==="")
+              div.append($("<span>").text(schemaFieldList[row][pos+2]));
+            else
+              div.append($("<a>").attr("href", schemaFieldList[row][pos + 3]).text(schemaFieldList[row][pos + 2]));
 
             first++;
         }
