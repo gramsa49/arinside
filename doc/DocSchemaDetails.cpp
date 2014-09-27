@@ -311,23 +311,15 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 
 							Value leftNameVal(leftFieldName.c_str(), static_cast<SizeType>(leftFieldName.size()), alloc);
 							Value leftLinkVal(leftFieldLink.c_str(), static_cast<SizeType>(leftFieldLink.size()), alloc);
-							Value leftSchemaVal(leftSchemaName.c_str(), static_cast<SizeType>(leftSchemaName.size()), alloc);
-							Value leftSchemaLinkVal(leftSchemaLink.c_str(), static_cast<SizeType>(leftSchemaLink.size()), alloc);
 
 							Value rightNameVal(rightFieldName.c_str(), static_cast<SizeType>(rightFieldName.size()), alloc);
 							Value rightLinkVal(rightFieldLink.c_str(), static_cast<SizeType>(rightFieldLink.size()), alloc);
-							Value rightSchemaVal(rightSchemaName.c_str(), static_cast<SizeType>(rightSchemaName.size()), alloc);
-							Value rightSchemaLinkVal(rightSchemaLink.c_str(), static_cast<SizeType>(rightSchemaLink.size()), alloc);
 
 							item.PushBack(leftNameVal, alloc);
 							item.PushBack(leftLinkVal, alloc);
-							item.PushBack(leftSchemaVal, alloc);
-							item.PushBack(leftSchemaLinkVal, alloc);
 
 							item.PushBack(rightNameVal, alloc);
 							item.PushBack(rightLinkVal, alloc);
-							item.PushBack(rightSchemaVal, alloc);
-							item.PushBack(rightSchemaLinkVal, alloc);
 						}
 						else
 						{
@@ -366,18 +358,12 @@ void CDocSchemaDetails::AllFieldsJson(std::ostream &out)
 								
 								Value baseFileNameVal(baseFieldName.c_str(), static_cast<SizeType>(baseFieldName.size()), alloc);
 								Value baseFileLinkVal(baseFieldLink.c_str(), static_cast<SizeType>(baseFieldLink.size()), alloc);
-								Value baseSchemaNameVal(baseSchemaName.c_str(), static_cast<SizeType>(baseSchemaName.size()), alloc);
-								Value baseSchemaLinkVal(baseSchemaLink.c_str(), static_cast<SizeType>(baseSchemaLink.size()), alloc);
 
 								item.PushBack(baseFileNameVal, alloc);
 								item.PushBack(baseFileLinkVal, alloc);
-								item.PushBack(baseSchemaNameVal, alloc);
-								item.PushBack(baseSchemaLinkVal, alloc);
-
-								//strmTmp << this->pInside->LinkToField(tmpBaseSchema, field.GetMapping().u.join.realId, rootLevel) << "&nbsp;" << MenuSeparator << "&nbsp;" << this->pInside->LinkToSchema(tmpBaseSchema, rootLevel);
+								// write the schema-index (left- or right join-member) so we could link to the correct form
+								item.PushBack(field.GetMapping().u.join.schemaIndex, alloc);
 							}
-							//else
-							//	strmTmp << "&nbsp;";
 						}
 					}
 					break;
@@ -1238,7 +1224,7 @@ string CDocSchemaDetails::TypeDetails()
 		{
 		case AR_SCHEMA_JOIN:
 			{
-				strm << "(" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel) << " <-> " << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel) << ")" << "<br/>";
+				strm << "(" << "<span id='join-left'>" << this->pInside->LinkToSchema(compSchema.u.join.memberA, rootLevel) << "</span>" << " <-> " << "<span id='join-right'>" << this->pInside->LinkToSchema(compSchema.u.join.memberB, rootLevel) << "</span>" << ")" << "<br/>";
 
 				if(compSchema.u.join.joinQual.operation != AR_COND_OP_NONE)
 				{
