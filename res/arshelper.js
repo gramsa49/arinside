@@ -73,7 +73,7 @@ function ARActLinkExecuteOn(val) {
     if (val & 4) { result = StrAppend(result, "Submit"); }
     if (val & 8) { result = StrAppend(result, "Modify"); }
     if (val & 16) { result = StrAppend(result, "Display"); }
-    if (val & 128) { result = StrAppend(result, "Menu Choise"); }
+    if (val & 128) { result = StrAppend(result, "Menu Choice"); }
     if (val & 256) { result = StrAppend(result, "Loose Focus"); }
     if (val & 512) { result = StrAppend(result, "Set Default"); }
     if (val & 1024) { result = StrAppend(result, "Search"); }
