@@ -18,6 +18,7 @@
 #include "DocActionSetFieldsHelper.h"
 #include "DocAllMatchingIdsTable.h"
 #include "../core/ARAssignHelper.h"
+#include "../output/ObjNotFound.h"
 
 CDocActionSetFieldsHelper::CDocActionSetFieldsHelper(CARInside &arInside, CARServerObject &arServerObject, const string& objAttachedToSchemaName, const ARSetFieldsActionStruct& sFieldStruct, int structItemType, IfElseState ifElseMode, int numAction, int rootLevel)
 : arIn(arInside), obj(arServerObject), attachedSchemaName(objAttachedToSchemaName), setFieldsStruct(sFieldStruct), ifElse(ifElseMode), rootLevel(rootLevel)
@@ -209,14 +210,29 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 					TiXmlDocument inputXML;
 					inputXML.Parse(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[9].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
+
+					// TODO: this is just a quick and dirty workarround, which might work in some but not all cases. See test/TinyXmlTests.cpp for
+					//       more details. Full UTF-8 support might be needed for a real solution.
+					if (inputXML.Error())
+					{
+						cout << "WARN: parsing input xml of filter '" << obj.GetName() << "' failed with: " << inputXML.ErrorDesc() << "!" << endl;						
+					}
+
 					TiXmlHandle inputHandle(&inputXML);
 					TiXmlNode *element = inputHandle.FirstChild("arDocMapping").FirstChild("formMapping").ToNode();
 
 					CTable tblInputMappingList("pushFieldsList", "TblObjectList");
 					tblInputMappingList.AddColumn(30, "Element");
 					tblInputMappingList.AddColumn(70, "Field");
+
 					input << processMappingXML(element, "", tblInputMappingList, "", WMM_INPUT);
 					input << tblInputMappingList;
+					if (inputXML.Error())
+					{
+						ObjNotFound notFound(input);
+						notFound << "<p>Parsing webservice input mapping failed! " << inputXML.ErrorDesc() << " (" << inputXML.ErrorRow() << "," << inputXML.ErrorCol() << ")" << " Mapping might be incomplete!" << "</p>";
+						notFound.End();
+					}
 					writer << "<BR/>";
 					writer << "Input Mapping: " << input.str() << "<BR/>";
 				}
@@ -229,6 +245,12 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 					TiXmlDocument outputXML;
 					outputXML.Parse(setFieldsStruct.fieldList.fieldAssignList[0].assignment.u.filterApi->inputValues[10].u.value.u.charVal, 0, TIXML_DEFAULT_ENCODING);
+
+					if (outputXML.Error())
+					{
+						cout << "WARN: parsing output xml of filter '" << obj.GetName() << "' failed with: " << outputXML.ErrorDesc() << "!" << endl;
+					}
+
 					TiXmlHandle outputHandle(&outputXML);
 					TiXmlNode *element = outputHandle.FirstChild("arDocMapping").FirstChild("formMapping").ToNode();
 
@@ -238,6 +260,12 @@ ostream& CDocActionSetFieldsHelper::ToStream(std::ostream &writer)
 
 					output << processMappingXML(element, "", tblOutputMappingList, "", WMM_OUTPUT);
 					output << tblOutputMappingList;
+					if (outputXML.Error())
+					{
+						ObjNotFound notFound(output);
+						notFound << "<p>Parsing webservice output mapping failed! " << outputXML.ErrorDesc() << " (" << outputXML.ErrorRow() << "," << outputXML.ErrorCol() << ")" << " Mapping might be incomplete!" << "</p>";
+						notFound.End();
+					}
 					writer << "Output Mapping: " << output.str();
 				}
 
@@ -310,17 +338,40 @@ string CDocActionSetFieldsHelper::processMappingXML( TiXmlNode* pParent, string 
 	switch ( t )
 	{
 	case TiXmlNode::ELEMENT:
+#ifdef _DEBUG
+		{
+			const TiXmlElement *pEl = pParent->ToElement();
+			cout << "<" << pEl->Value() << endl;
+			const TiXmlAttribute *pAttr = pEl->FirstAttribute();
+			for (; pAttr != NULL; pAttr = pAttr->Next())
+			{
+				cout << "  Name: " << pAttr->Name() << " -- Value: " << pAttr->Value() << endl;
+			}
+			cout << ">" << endl;
+		}
+#endif
 		if (strcmp("element",pParent->Value()) == 0)
 		{
-			sParent = pParent->ToElement()->Attribute("name");
+			const char* name = pParent->ToElement()->Attribute("name");
+			if (name)
+				sParent = name;
+			else
+				sParent.clear();
 		}
 		else if (strcmp("formMapping",pParent->Value()) == 0)
 		{
-			form = pParent->FirstChild("form")->ToElement()->Attribute("formName");
+			const char* formName = pParent->FirstChild("form")->ToElement()->Attribute("formName");
+			if (formName)
+				form = formName;
+			else
+				form.clear();
 		}
 		else if (strcmp("fieldMapping",pParent->Value()) == 0)
 		{
-			int fieldID = atoi(pParent->ToElement()->Attribute("arFieldId"));
+			const char* arFieldId = pParent->ToElement()->Attribute("arFieldId");
+			int fieldID = 0;
+			if (arFieldId)
+				fieldID = atoi(arFieldId);
 
 			CTableRow row("cssStdRow");
 			row.AddCell(CTableCell(sParent));

@@ -678,6 +678,10 @@
 			RelativePath=".\RapidJSONTests.cpp"
 			>
 		</File>
+		<File
+			RelativePath=".\test\TinyXmlTests.cpp"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

@@ -4,6 +4,19 @@ N - Note
 E - Enhancement
 D - Defect fixed
 
+2014-10-01
+[3.1.2]
+E - added some more details for fields and vuis in verbose logging
+E - added chunk-loading for user, groups and roles in case the row cout is limited by Max-Entries-Per-Query
+
+D - TR/DB field-prefix was missing in qualifications (#138)
+D - small fix in verbose logging (regarding activelink count)
+D - the GZCompression option in the settings.ini file wasn't working none-windows platforms (#140)
+D - an exception was thrown if the command passed to the processForm method did have only one parameter (#142)
+D - fixed a crash in case a webservice isn't attached to any form
+D - fixed a crash if a field in a join form is pointing to a deleted field in one of the join-members (#143)
+
+
 2014-09-01
 [3.1.1]
 E - new filter control on the schema page workflow-tab

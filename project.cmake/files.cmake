@@ -422,6 +422,7 @@ SET(ARINSIDE_TEST_SRCS
  output/URLLinkTest.cpp
  test/fakes/FakeARServerObject.cpp
  test/fakes/FakeARServerObject.h
+ test/TinyXmlTests.cpp
  util/CommandLineValidatorTest.cpp
  util/RefItemTest.cpp
  util/UntarStreamTest.cpp

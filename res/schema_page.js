@@ -14,17 +14,31 @@ var schemaFieldManager = {
     view_vendor_RFR: function(row) {
         return (schemaFieldList[row].length > 7 ? schemaFieldList[row][7] : "");
     },
+    join_left: null,
+    join_right: null,
     join_RFR: function(row) {
         var pos = 7;
         var div = $("<div>");
         var first = 0;
-        for (pos; pos + 3 < schemaFieldList[row].length; pos += 4) {
+        for (pos; pos + 2 <= schemaFieldList[row].length; pos += 2) {
             if (first > 0) { div.append($("<br/>")); }
 
-            div.append($("<a>").attr("href", schemaFieldList[row][pos + 1]).text(schemaFieldList[row][pos]));
+            if (schemaFieldList[row][pos+1]==="")
+              div.append($("<span>").addClass('fieldNotFound').text(schemaFieldList[row][pos]));
+            else
+              div.append($("<a>").attr("href", schemaFieldList[row][pos + 1]).text(schemaFieldList[row][pos]));
             div.appendText("\u00a0 -> \u00a0");
-            div.append($("<img>").attr("width", 16).attr("height", 16).attr("alt", "schema.gif").attr("src", "../../img/schema.gif"));
-            div.append($("<a>").attr("href", schemaFieldList[row][pos + 3]).text(schemaFieldList[row][pos + 2]));
+
+						var joinSchema = schemaFieldList[row][9];
+						if (schemaFieldList[row].length == 10 && (joinSchema == '0' || joinSchema == '1')) {
+							var joinLink = (joinSchema == '0' ? this.join_left : this.join_right);
+							div.append($("<span>").append(joinLink.clone()));
+							pos++;
+						}
+						else if (schemaFieldList[row].length == 11) {
+							var joinLink = (first?this.join_right:this.join_left);
+							div.append($("<span>").append(joinLink.clone()));
+						}
 
             first++;
         }
@@ -39,8 +53,11 @@ var schemaFieldManager = {
     setRenderer: function(type) {
         if (type === "view" || type === "vendor")
             this.realFieldRenderer = this.view_vendor_RFR;
-        if (type === "join")
+        if (type === "join") {
+            this.join_left = $('#join-left');
+            this.join_right = $('#join-right');
             this.realFieldRenderer = this.join_RFR;
+        }
     }
 };
 
