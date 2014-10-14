@@ -398,7 +398,63 @@ ADD_MSVC_PRECOMPILED_HEADER("stdafx.h" "stdafx.cpp" ARINSIDE_SRCS_CPP)
 SET(ARINSIDE_MAIN_SRCS
  ARInsideMain.cpp
  ARInsideMain.h
+ CrashHandler.cpp
+ CrashHandler.h
 )
+
+###############################################################################
+## Breakpad sources used in ARInside executable
+IF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+	SET(ARINSIDE_BREAKPAD_SRCS
+	 thirdparty/breakpad/src/client/windows/crash_generation/client_info.cc
+	 thirdparty/breakpad/src/client/windows/crash_generation/client_info.h
+	 thirdparty/breakpad/src/client/windows/crash_generation/crash_generation_client.cc
+	 thirdparty/breakpad/src/client/windows/crash_generation/crash_generation_client.h
+	 thirdparty/breakpad/src/client/windows/crash_generation/crash_generation_server.h
+	 thirdparty/breakpad/src/client/windows/handler/exception_handler.cc
+	 thirdparty/breakpad/src/client/windows/handler/exception_handler.h
+	 thirdparty/breakpad/src/common/windows/guid_string.cc
+	 thirdparty/breakpad/src/common/windows/guid_string.h
+	 thirdparty/breakpad/src/common/windows/string_utils-inl.h
+	 thirdparty/breakpad/src/common/windows/string_utils.cc
+	)
+ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Windows")
+IF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+	SET(ARINSIDE_BREAKPAD_SRCS
+	 thirdparty/breakpad/src/client/minidump_file_writer.cc
+	 thirdparty/breakpad/src/client/linux/handler/exception_handler.cc
+	 thirdparty/breakpad/src/client/linux/handler/exception_handler.h
+	 thirdparty/breakpad/src/client/linux/handler/minidump_descriptor.cc
+	 thirdparty/breakpad/src/client/linux/handler/minidump_descriptor.h
+	 thirdparty/breakpad/src/client/linux/crash_generation/client_info.h
+	 thirdparty/breakpad/src/client/linux/crash_generation/crash_generation_client.cc
+	 thirdparty/breakpad/src/client/linux/crash_generation/crash_generation_client.h
+	 thirdparty/breakpad/src/client/linux/crash_generation/crash_generation_server.cc
+	 thirdparty/breakpad/src/client/linux/crash_generation/crash_generation_server.h
+	 thirdparty/breakpad/src/client/linux/log/log.cc
+	 thirdparty/breakpad/src/client/linux/log/log.h
+	 thirdparty/breakpad/src/client/linux/minidump_writer/linux_core_dumper.cc
+	 thirdparty/breakpad/src/client/linux/minidump_writer/linux_dumper.cc
+	 thirdparty/breakpad/src/client/linux/minidump_writer/linux_ptrace_dumper.cc
+	 thirdparty/breakpad/src/client/linux/minidump_writer/minidump_writer.cc
+	 thirdparty/breakpad/src/common/linux/elf_core_dump.cc
+	 thirdparty/breakpad/src/common/linux/elfutils.cc
+	 thirdparty/breakpad/src/common/linux/file_id.cc
+	 thirdparty/breakpad/src/common/linux/guid_creator.cc
+	 thirdparty/breakpad/src/common/linux/linux_libc_support.cc
+	 thirdparty/breakpad/src/common/linux/memory_mapped_file.cc
+	 thirdparty/breakpad/src/common/linux/safe_readlink.cc
+	 thirdparty/breakpad/src/common/convert_UTF.c
+	 thirdparty/breakpad/src/common/string_conversion.cc
+	)
+ENDIF(CMAKE_SYSTEM_NAME STREQUAL "Linux")
+SOURCE_GROUP(breakpad-client FILES ${ARINSIDE_BREAKPAD_SRCS})
+
+SET(ARINSIDE_MAIN_FILES ${ARINSIDE_MAIN_SRCS})
+
+IF(ARINSIDE_BREAKPAD_SUPPORT)
+	SET(ARINSIDE_MAIN_FILES ${ARINSIDE_MAIN_FILES} ${ARINSIDE_BREAKPAD_SRCS})
+ENDIF(ARINSIDE_BREAKPAD_SUPPORT)
 
 ###############################################################################
 ## ARInsideTest source files

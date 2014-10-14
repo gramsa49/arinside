@@ -1,0 +1,1 @@
+svn checkout http://google-breakpad.googlecode.com/svn/trunk/@1381 .

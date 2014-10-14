@@ -45,7 +45,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;ARINSIDE_BREAKPAD_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -100,7 +100,7 @@
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			CharacterSet="2"
+			CharacterSet="1"
 			>
 			<Tool
 				Name="VCPreBuildEventTool"
@@ -121,8 +121,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include;&quot;thirdparty\breakpad\src&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;ARINSIDE_BREAKPAD_SUPPORT"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -199,7 +199,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ARINSIDE_BREAKPAD_SUPPORT"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -253,7 +253,7 @@
 			OutputDirectory="$(SolutionDir)$(PlatformName)\$(ConfigurationName)"
 			IntermediateDirectory="$(PlatformName)\$(ConfigurationName)\$(ProjectName)"
 			ConfigurationType="1"
-			CharacterSet="2"
+			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
 			<Tool
@@ -276,11 +276,12 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include;&quot;thirdparty\breakpad\src&quot;"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ARINSIDE_BREAKPAD_SUPPORT"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
+				PrecompiledHeaderThrough="ARInsideMain.h"
 				WarningLevel="3"
 				DebugInformationFormat="3"
 			/>
@@ -354,7 +355,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ARINSIDE_BREAKPAD_SUPPORT"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -432,7 +433,7 @@
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
 				AdditionalIncludeDirectories="..\..\api810\include;.\;..\..\libs\zlib\include"
-				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;ARINSIDE_BREAKPAD_SUPPORT"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="2"
@@ -485,6 +486,62 @@
 	<References>
 	</References>
 	<Files>
+		<Filter
+			Name="breakpad-client"
+			>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\crash_generation\client_info.cc"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\crash_generation\client_info.h"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\crash_generation\crash_generation_client.cc"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\crash_generation\crash_generation_client.h"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\crash_generation\crash_generation_server.h"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\handler\exception_handler.cc"
+				>
+				<FileConfiguration
+					Name="Debug|x64"
+					>
+					<Tool
+						Name="VCCLCompilerTool"
+						UsePrecompiledHeader="2"
+					/>
+				</FileConfiguration>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\client\windows\handler\exception_handler.h"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\common\windows\guid_string.cc"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\common\windows\guid_string.h"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\common\windows\string_utils-inl.h"
+				>
+			</File>
+			<File
+				RelativePath="thirdparty\breakpad\src\common\windows\string_utils.cc"
+				>
+			</File>
+		</Filter>
 		<File
 			RelativePath=".\ARInsideMain.cpp"
 			>
@@ -543,6 +600,14 @@
 		</File>
 		<File
 			RelativePath=".\ARInsideMain.h"
+			>
+		</File>
+		<File
+			RelativePath=".\CrashHandler.cpp"
+			>
+		</File>
+		<File
+			RelativePath=".\CrashHandler.h"
 			>
 		</File>
 	</Files>

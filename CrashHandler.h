@@ -1,4 +1,4 @@
-//Copyright (C) 2012 John Luthgers | jls17
+//Copyright (C) 2014 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -14,16 +14,24 @@
 //    You should have received a copy of the GNU General Public License
 //    along with ARInside. If not, see <http://www.gnu.org/licenses/>.
 
-#include "ARInsideMain.h"
-#include "Main.h"
-#include "CrashHandler.h"
+#pragma once
 
-int main(int argc, char* argv[])
-{
 #ifdef ARINSIDE_BREAKPAD_SUPPORT
-	CrashHandler crashHandler;
-#endif
-	CMain theMain;
-	return theMain.Run(argc, argv);
 
-}
+// forward declarations
+namespace google_breakpad {
+class ExceptionHandler;
+};
+
+// class definition
+class CrashHandler
+{
+public:
+	CrashHandler();
+	~CrashHandler();
+
+private:
+	google_breakpad::ExceptionHandler *handler;
+};
+
+#endif // ARINSIDE_BREAKPAD_SUPPORT
