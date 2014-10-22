@@ -73,14 +73,16 @@ void CWebPage::AddContentHead(const string &description, const string &rightInfo
 
 void CWebPage::PageHeader(ostream &strm)
 {
+	CARInside *pInside = CARInside::GetInstance();
+	const char *encoding = (pInside->appConfig.bUseUtf8 ? "UTF-8" : "ISO-8859-1");
+
 	strm << "<?xml version=\"1.0\" ?>" << newline;
 	strm << "<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Transitional//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd\">" << newline;
 	strm << "<html xmlns=\"http://www.w3.org/1999/xhtml\" xml:lang=\"en\" lang=\"en\">" << newline;
-	strm << "<!-- saved from url=(0025)http://arinside.org/ -->" << newline;
-	strm << "<head>" << newline;
-	strm << "<title>" << title << "</title>" << newline;
+	strm << "<head>" << newline;	
+	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=" << encoding << "\" />" << newline;
 	strm << "<meta http-equiv=\"content-language\" content=\"EN\" />" << newline;
-	strm << "<meta http-equiv=\"content-type\" content=\"text/html; charset=ISO-8859-1\" />" << newline;
+	strm << "<title>" << title << "</title>" << newline;
 	strm << "<meta http-equiv=\"expires\" content=\"-1\" />" << newline;
 	strm << "<meta name=\"author\" content=\"ARInside\" />" << newline;
 	strm << "<script type='text/javascript'>var rootLevel=" << rootLevel << ";</script>" << newline;
