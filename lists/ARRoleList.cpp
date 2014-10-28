@@ -225,8 +225,8 @@ void CARRoleList::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter indexSorter(names);
-		indexSorter.Sort(sortedList);
+		IndexSorter indexSorter(CARInside::GetInstance()->appConfig.bUseUtf8);
+		indexSorter.SortBy(names).Sort(sortedList);
 	}
 }
 

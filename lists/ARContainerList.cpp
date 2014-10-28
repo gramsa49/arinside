@@ -425,8 +425,8 @@ void CARContainerList::Sort()
 		NormalizeNameListForSorting(names, objProps);
 #endif
 
-		IndexSorter indexSorter(names);
-		indexSorter.Sort(sortedList);
+		IndexSorter indexSorter(CARInside::GetInstance()->appConfig.bUseUtf8);
+		indexSorter.SortBy(names).Sort(sortedList);
 	}
 
 	// setup lookup map

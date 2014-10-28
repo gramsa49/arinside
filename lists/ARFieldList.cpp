@@ -77,8 +77,8 @@ void CARFieldListXML::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter indexSorter(this->fieldInfo);
-		indexSorter.Sort(sortedList);
+		IndexSorter indexSorter(CARInside::GetInstance()->appConfig.bUseUtf8);
+		indexSorter.SortBy(this->fieldInfo).Sort(sortedList);
 	}
 }
 
@@ -303,8 +303,8 @@ void CARFieldListServer::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter indexSorter(names);
-		indexSorter.Sort(sortedList);
+		IndexSorter indexSorter(CARInside::GetInstance()->appConfig.bUseUtf8);
+		indexSorter.SortBy(names).Sort(sortedList);
 	}
 }
 

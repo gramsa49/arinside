@@ -20,11 +20,13 @@
 class IndexSorter : Uncopyable
 {
 public:
-	IndexSorter(ARNameList &list);
-	IndexSorter(vector<string> &list);
-	IndexSorter(ARFieldInfoList &list);
-	IndexSorter(ARVuiInfoList &list);
+	IndexSorter(bool isUTF8);
 	~IndexSorter();
+
+	IndexSorter& SortBy(ARNameList &list);
+	IndexSorter& SortBy(vector<string> &list);
+	IndexSorter& SortBy(ARFieldInfoList &list);
+	IndexSorter& SortBy(ARVuiInfoList &list);
 
 	void Sort(vector<int> &indexList);
 	bool operator()(int l, int r) { return (strcoll(theList->nameList[l], theList->nameList[r]) < 0); }
@@ -33,7 +35,10 @@ private:
 	void AllocateList(unsigned int size);
 	void PushBackTrimmed(ARNameType &value);
 	void PushBackTrimmed(const std::string &value);
+
+private:
 	ARNameList* theList;
+	bool isUtf8List;
 };
 
 // a sorting delegate is needed, because the sort-algorithm copies the object multiple times

@@ -20,34 +20,43 @@
 
 ARPropList emptyPropList;
 
-IndexSorter::IndexSorter(ARNameList &list)
+IndexSorter::IndexSorter(bool isUTF8)
+{
+	theList = NULL;
+	isUtf8List = isUTF8;
+}
+
+IndexSorter& IndexSorter::SortBy(ARNameList &list)
 {
 	AllocateList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
 		PushBackTrimmed(list.nameList[i]);
 	}
+	return *this;
 }
 
-IndexSorter::IndexSorter(ARFieldInfoList &list)
+IndexSorter& IndexSorter::SortBy(ARFieldInfoList &list)
 {
 	AllocateList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
 		PushBackTrimmed(list.fieldList[i].fieldName);
 	}
+	return *this;
 }
 
-IndexSorter::IndexSorter(ARVuiInfoList &list)
+IndexSorter& IndexSorter::SortBy(ARVuiInfoList &list)
 {
 	AllocateList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
 		PushBackTrimmed(list.vuiList[i].vuiName);
 	}
+	return *this;
 }
 
-IndexSorter::IndexSorter(vector<string> &list)
+IndexSorter& IndexSorter::SortBy(vector<string> &list)
 {
 	size_t totalCount = list.size();
 	AllocateList(static_cast<unsigned int>(totalCount));
@@ -55,6 +64,7 @@ IndexSorter::IndexSorter(vector<string> &list)
 	{
 		PushBackTrimmed(list[index]);
 	}
+	return *this;
 }
 
 IndexSorter::~IndexSorter()

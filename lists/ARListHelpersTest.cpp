@@ -13,8 +13,8 @@ TEST(IndexSorter, VectorOfStringsTest)
 	indexList.push_back(1); // this is the index of testList's "Demo" value
 	indexList.push_back(2); // this is the index of testList's " temp" value
 
-	IndexSorter indexSorter(testList);
-	indexSorter.Sort(indexList);
+	IndexSorter indexSorter(false);
+	indexSorter.SortBy(testList).Sort(indexList);
 
 	ASSERT_EQ(1, indexList[0]); // in the sorted index, the value "demo" comes first
 	ASSERT_EQ(2, indexList[1]); // ... followed by the value "temp"
