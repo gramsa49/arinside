@@ -378,7 +378,7 @@ void CAREscalationList::Sort()
 #endif
 
 		GenerateSortableList sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
 	}
 
 	// setup lookup map

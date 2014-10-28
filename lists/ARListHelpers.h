@@ -15,7 +15,9 @@
 //    along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 #pragma once
 
-class GenerateSortableList
+#include "../util/Uncopyable.h"
+
+class GenerateSortableList : Uncopyable
 {
 public:
 	GenerateSortableList(ARNameList &list);
@@ -24,21 +26,25 @@ public:
 	GenerateSortableList(ARVuiInfoList &list);
 	~GenerateSortableList();
 
-	ARNameList* GetList();
+	bool operator()(int l, int r) { return (strcoll(theList->nameList[l], theList->nameList[r]) < 0); }
 
 private:
 	void InitList(unsigned int size);
+	void PushBackTrimmed(ARNameType &value);
+	void PushBackTrimmed(const std::string &value);
 	ARNameList* theList;
 };
 
-class SortByName
+// a sorting delegate is needed, because the sort-algorithm copies the object multiple times
+class SortingDelegate
 {
 public:
-	SortByName(GenerateSortableList &p) { list = p.GetList(); }
-	bool operator()(int l, int r) { return (strcoll(list->nameList[l], list->nameList[r]) < 0); }
+	SortingDelegate(GenerateSortableList &SortRef) : theSortFn(SortRef) {}
+	bool operator()(int l, int r) { return theSortFn(l,r); }
 private:
-	ARNameList* list;
+	GenerateSortableList &theSortFn;
 };
+
 
 template<class C>
 struct DeletePointer : unary_function<C*, void>

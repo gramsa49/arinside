@@ -211,7 +211,7 @@ void CARUserList::Sort()
 	if (GetCount() > 0)
 	{
 		GenerateSortableList sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortByName(sortableContent));
+		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
 	}
 
 	// setup lookup map

@@ -25,12 +25,7 @@ GenerateSortableList::GenerateSortableList(ARNameList &list)
 	InitList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
-		unsigned int curWritePos = 0;
-		for (unsigned int j = 0; j < AR_MAX_NAME_SIZE; ++j)
-		{
-			if (list.nameList[i][j] == ' ' && curWritePos == 0) continue;	// skip space at the beginning
-			theList->nameList[i][curWritePos++] = tolower(list.nameList[i][j]);
-		}
+		PushBackTrimmed(list.nameList[i]);
 	}
 }
 
@@ -39,12 +34,7 @@ GenerateSortableList::GenerateSortableList(ARFieldInfoList &list)
 	InitList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
-		unsigned int curWritePos = 0;
-		for (unsigned int j = 0; j < AR_MAX_NAME_SIZE; ++j)
-		{
-			if (list.fieldList[i].fieldName[j] == ' ' && curWritePos == 0) continue;	// skip space at the beginning
-			theList->nameList[i][curWritePos++] = tolower(list.fieldList[i].fieldName[j]);
-		}
+		PushBackTrimmed(list.fieldList[i].fieldName);
 	}
 }
 
@@ -53,29 +43,17 @@ GenerateSortableList::GenerateSortableList(ARVuiInfoList &list)
 	InitList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
-		unsigned int curWritePos = 0;
-		for (unsigned int j = 0; j < AR_MAX_NAME_SIZE; ++j)
-		{
-			if (list.vuiList[i].vuiName[j] == ' ' && curWritePos == 0) continue;	// skip space at the beginning
-			theList->nameList[i][curWritePos++] = tolower(list.vuiList[i].vuiName[j]);
-		}
+		PushBackTrimmed(list.vuiList[i].vuiName);
 	}
 }
 
 GenerateSortableList::GenerateSortableList(vector<string> &list)
 {
-	InitList(static_cast<unsigned int>(list.size()));
-	for (unsigned int i = 0; i < theList->numItems; ++i)
+	size_t totalCount = list.size();
+	InitList(static_cast<unsigned int>(totalCount));
+	for (size_t index = 0; index < totalCount; ++index)
 	{
-		unsigned int curWritePos = 0;
-		size_t maxSourceLength = list[i].length();
-		memset(theList->nameList[i], '\0', AR_MAX_NAME_SIZE + 1);
-		
-		for (unsigned int j = 0; j < maxSourceLength; ++j)
-		{
-			if (list[i][j] == ' ' && curWritePos == 0) continue;	// skip space at the beginning
-			theList->nameList[i][curWritePos++] = tolower(list[i][j]);
-		}
+		PushBackTrimmed(list[index]);
 	}
 }
 
@@ -92,12 +70,27 @@ void GenerateSortableList::InitList(unsigned int size)
 {
 	theList = new ARNameList;
 	theList->nameList = new ARNameType[size];
-	theList->numItems = size;
+	theList->numItems = 0;
 }
 
-ARNameList* GenerateSortableList::GetList()
+void GenerateSortableList::PushBackTrimmed(ARNameType &value)
 {
-	return theList;
+	unsigned int skippedSpaces = 0;
+	while (value[skippedSpaces] == ' ') skippedSpaces++;
+
+	strncpy(theList->nameList[theList->numItems], &value[skippedSpaces], AR_MAX_NAME_SIZE);
+	theList->nameList[theList->numItems][AR_MAX_NAME_SIZE] = 0;
+	theList->numItems++;
+}
+
+void GenerateSortableList::PushBackTrimmed(const std::string &value)
+{
+	unsigned int skippedSpaces = 0;
+	while (value[skippedSpaces] == ' ') skippedSpaces++;
+
+	strncpy(theList->nameList[theList->numItems], (value.c_str() + skippedSpaces), AR_MAX_NAME_SIZE);
+	theList->nameList[theList->numItems][AR_MAX_NAME_SIZE] = 0;
+	theList->numItems++;
 }
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
