@@ -17,6 +17,8 @@
 
 #include "../util/Uncopyable.h"
 
+class InternalNameList;
+
 class IndexSorter : Uncopyable
 {
 public:
@@ -29,26 +31,15 @@ public:
 	IndexSorter& SortBy(ARVuiInfoList &list);
 
 	void Sort(vector<int> &indexList);
-	bool operator()(int l, int r) { return (strcoll(theList->nameList[l], theList->nameList[r]) < 0); }
 
 private:
 	void AllocateList(unsigned int size);
 	void PushBackTrimmed(ARNameType &value);
 	void PushBackTrimmed(const std::string &value);
 
-private:
-	ARNameList* theList;
+private:	
 	bool isUtf8List;
-};
-
-// a sorting delegate is needed, because the sort-algorithm copies the object multiple times
-class SortingDelegate
-{
-public:
-	SortingDelegate(IndexSorter &SortRef) : theSortFn(SortRef) {}
-	bool operator()(int l, int r) { return theSortFn(l,r); }
-private:
-	IndexSorter &theSortFn;
+	InternalNameList* theList;
 };
 
 
