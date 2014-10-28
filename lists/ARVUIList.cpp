@@ -37,8 +37,8 @@ void CARVUIListXML::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter sortableContent(vuiList);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(vuiList);
+		indexSorter.Sort(sortedList);
 	}
 }
 
@@ -205,8 +205,8 @@ void CARVUIListServer::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(names);
+		indexSorter.Sort(sortedList);
 	}
 }
 

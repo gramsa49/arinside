@@ -93,6 +93,11 @@ void IndexSorter::PushBackTrimmed(const std::string &value)
 	theList->numItems++;
 }
 
+void IndexSorter::Sort(std::vector<int> &indexList)
+{
+	std::sort(indexList.begin(),indexList.end(),SortingDelegate(*this));
+}
+
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
 /////// additional functions ///////
 void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps)

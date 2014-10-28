@@ -78,7 +78,7 @@ public:
 	friend class CARSchemaList;
 private:
 	ARVuiInfoList vuiList;
-	vector<unsigned int> sortedList;  // sorted by vui name
+	vector<int> sortedList;  // sorted by vui name
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -132,5 +132,5 @@ private:
 	ARPropListList objProps;
 #endif
 
-	vector<unsigned int> sortedList;
+	vector<int> sortedList;
 };

@@ -679,8 +679,8 @@ void CARSchemaList::Sort()
 		NormalizeNameListForSorting(names, objProps);
 #endif
 
-		IndexSorter sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(names);
+		indexSorter.Sort(sortedList);
 
 		if (GetCount() > schemaDbValues.size())
 			InitDatabaseDetails();

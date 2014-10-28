@@ -423,8 +423,8 @@ void CARActiveLinkList::Sort()
 		NormalizeNameListForSorting(names, objProps);
 #endif
 
-		IndexSorter sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(names);
+		indexSorter.Sort(sortedList);
 	}
 
 	// setup lookup map

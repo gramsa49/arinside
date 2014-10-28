@@ -26,6 +26,7 @@ public:
 	IndexSorter(ARVuiInfoList &list);
 	~IndexSorter();
 
+	void Sort(vector<int> &indexList);
 	bool operator()(int l, int r) { return (strcoll(theList->nameList[l], theList->nameList[r]) < 0); }
 
 private:

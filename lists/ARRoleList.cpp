@@ -225,8 +225,8 @@ void CARRoleList::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(names);
+		indexSorter.Sort(sortedList);
 	}
 }
 

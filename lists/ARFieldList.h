@@ -108,7 +108,7 @@ public:
 	friend class CARSchemaList;
 private:
 	ARFieldInfoList fieldInfo;
-	vector<unsigned int> sortedList;  // sorted by field name
+	vector<int> sortedList;  // sorted by field name
 };
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -175,5 +175,5 @@ private:
 	ARPropListList objProps;
 #endif
 
-	vector<unsigned int> sortedList;  // sorted by field name
+	vector<int> sortedList;  // sorted by field name
 };

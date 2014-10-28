@@ -77,8 +77,8 @@ void CARFieldListXML::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter sortableContent(this->fieldInfo);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(this->fieldInfo);
+		indexSorter.Sort(sortedList);
 	}
 }
 
@@ -303,8 +303,8 @@ void CARFieldListServer::Sort()
 {
 	if (GetCount() > 0)
 	{
-		IndexSorter sortableContent(names);
-		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
+		IndexSorter indexSorter(names);
+		indexSorter.Sort(sortedList);
 	}
 }
 
