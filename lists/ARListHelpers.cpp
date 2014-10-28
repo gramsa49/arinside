@@ -22,7 +22,7 @@ ARPropList emptyPropList;
 
 IndexSorter::IndexSorter(ARNameList &list)
 {
-	InitList(list.numItems);
+	AllocateList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
 		PushBackTrimmed(list.nameList[i]);
@@ -31,7 +31,7 @@ IndexSorter::IndexSorter(ARNameList &list)
 
 IndexSorter::IndexSorter(ARFieldInfoList &list)
 {
-	InitList(list.numItems);
+	AllocateList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
 		PushBackTrimmed(list.fieldList[i].fieldName);
@@ -40,7 +40,7 @@ IndexSorter::IndexSorter(ARFieldInfoList &list)
 
 IndexSorter::IndexSorter(ARVuiInfoList &list)
 {
-	InitList(list.numItems);
+	AllocateList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
 	{
 		PushBackTrimmed(list.vuiList[i].vuiName);
@@ -50,7 +50,7 @@ IndexSorter::IndexSorter(ARVuiInfoList &list)
 IndexSorter::IndexSorter(vector<string> &list)
 {
 	size_t totalCount = list.size();
-	InitList(static_cast<unsigned int>(totalCount));
+	AllocateList(static_cast<unsigned int>(totalCount));
 	for (size_t index = 0; index < totalCount; ++index)
 	{
 		PushBackTrimmed(list[index]);
@@ -66,7 +66,7 @@ IndexSorter::~IndexSorter()
 	}
 }
 
-void IndexSorter::InitList(unsigned int size)
+void IndexSorter::AllocateList(unsigned int size)
 {
 	theList = new ARNameList;
 	theList->nameList = new ARNameType[size];

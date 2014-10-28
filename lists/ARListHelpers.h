@@ -30,7 +30,7 @@ public:
 	bool operator()(int l, int r) { return (strcoll(theList->nameList[l], theList->nameList[r]) < 0); }
 
 private:
-	void InitList(unsigned int size);
+	void AllocateList(unsigned int size);
 	void PushBackTrimmed(ARNameType &value);
 	void PushBackTrimmed(const std::string &value);
 	ARNameList* theList;
