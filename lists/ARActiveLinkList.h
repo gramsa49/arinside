@@ -16,7 +16,6 @@
 #pragma once
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
-#include "ARListHelpers.h"
 #include <assert.h>
 
 class CARActiveLinkList : Uncopyable

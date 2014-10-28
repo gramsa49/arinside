@@ -15,6 +15,7 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "ARListHelpers.h"
 #include "ARRoleList.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
@@ -289,4 +290,9 @@ void CARRoleList::StoreEntry(ARFieldValueList& value)
 			break;
 		}
 	}
+}
+
+const ARPropList& CARRoleList::RoleGetPropList(/*unsigned int index*/)
+{
+	return emptyPropList;
 }

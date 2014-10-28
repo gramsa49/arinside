@@ -15,6 +15,7 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "ARListHelpers.h"
 #include "ARVUIList.h"
 #include "../ARInside.h"
 #include "../core/ARStatusList.h"

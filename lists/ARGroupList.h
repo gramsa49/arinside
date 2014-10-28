@@ -16,7 +16,6 @@
 #pragma once
 
 #include "../util/Uncopyable.h"
-#include "ARListHelpers.h"
 #include <assert.h>
 
 class CARGroupList : Uncopyable
@@ -47,7 +46,7 @@ public:
 	ARTimestamp GroupGetModifiedDate(unsigned int index) { assert(index < modifiedDate.size()); return modifiedDate[sortedList[index]]; }
 	const ARAccessNameType& GroupGetCreatedBy(unsigned int index) { assert(index < owners.numItems); return owners.nameList[sortedList[index]]; }
 	const ARAccessNameType& GroupGetModifiedBy(unsigned int index) { assert(index < changedUsers.numItems); return changedUsers.nameList[sortedList[index]]; }
-	static const ARPropList& GroupGetPropList(/*unsigned int index*/) { return emptyPropList; }
+	static const ARPropList& GroupGetPropList(/*unsigned int index*/);
 
 private:
 	void StoreEntry(ARFieldValueList& value);

@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARGroupList.h"
+#include "ARListHelpers.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
 #include "../core/ARStatusList.h"
@@ -271,4 +272,9 @@ void CARGroupList::StoreEntry(ARFieldValueList& value)
 			break;
 		}
 	}
+}
+
+const ARPropList& CARGroupList::GroupGetPropList()
+{
+	return emptyPropList;
 }

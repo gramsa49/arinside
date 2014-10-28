@@ -46,6 +46,8 @@
 #include "doc/DocCustomWorkflow.h"
 #include "doc/DocTextReferences.h"
 
+#include "lists/ARListHelpers.h"
+
 #include "output/ObjNotFound.h"
 #include "output/ImageTag.h"
 #include "output/Table.h"

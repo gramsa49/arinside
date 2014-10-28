@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARFieldList.h"
+#include "ARListHelpers.h"
 #include "../ARInside.h"
 #include "../core/ARStatusList.h"
 #include "../util/RefItem.h"

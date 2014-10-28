@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARImageList.h"
+#include "ARListHelpers.h"
 #include "../ARInside.h"
 #include "../output/WebUtil.h"
 #include "../core/ARImage.h"

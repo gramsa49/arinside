@@ -17,7 +17,6 @@
 #include "../ARApi.h"
 #include "../util/Uncopyable.h"
 #include "../util/RefItem.h"
-#include "ARListHelpers.h"
 #include <assert.h>
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750

@@ -15,6 +15,7 @@
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
 
 #include "stdafx.h"
+#include "ARListHelpers.h"
 #include "ARUserList.h"
 #include "../ARInside.h"
 #include "../AppConfig.h"
@@ -301,4 +302,9 @@ void CARUserList::StoreEntry(ARFieldValueList& value)
 			break;
 		}
 	}
+}
+
+const ARPropList& CARUserList::UserGetPropList()
+{
+	return emptyPropList;
 }

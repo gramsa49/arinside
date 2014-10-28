@@ -16,6 +16,7 @@
 
 #include "stdafx.h"
 #include "ARActiveLinkList.h"
+#include "ARListHelpers.h"
 #include "../ARInside.h"
 #include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
