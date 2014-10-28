@@ -1,7 +1,7 @@
 #include "ARInsideTest.h"
 #include "ARListHelpers.h"
 
-TEST(GenerateSortableList, VectorOfStringsTest)
+TEST(IndexSorter, VectorOfStringsTest)
 {
 	vector<string> testList;
 	testList.push_back("  Test");
@@ -13,7 +13,7 @@ TEST(GenerateSortableList, VectorOfStringsTest)
 	indexList.push_back(1); // this is the index of testList's "Demo" value
 	indexList.push_back(2); // this is the index of testList's " temp" value
 
-	GenerateSortableList sortableContent(testList);
+	IndexSorter sortableContent(testList);
 	std::sort(indexList.begin(), indexList.end(), SortingDelegate(sortableContent));
 
 	ASSERT_EQ(1, indexList[0]); // in the sorted index, the value "demo" comes first

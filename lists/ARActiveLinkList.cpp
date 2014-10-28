@@ -423,7 +423,7 @@ void CARActiveLinkList::Sort()
 		NormalizeNameListForSorting(names, objProps);
 #endif
 
-		GenerateSortableList sortableContent(names);
+		IndexSorter sortableContent(names);
 		std::sort(sortedList.begin(),sortedList.end(),SortingDelegate(sortableContent));
 	}
 

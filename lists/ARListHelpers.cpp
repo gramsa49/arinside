@@ -20,7 +20,7 @@
 
 ARPropList emptyPropList;
 
-GenerateSortableList::GenerateSortableList(ARNameList &list)
+IndexSorter::IndexSorter(ARNameList &list)
 {
 	InitList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
@@ -29,7 +29,7 @@ GenerateSortableList::GenerateSortableList(ARNameList &list)
 	}
 }
 
-GenerateSortableList::GenerateSortableList(ARFieldInfoList &list)
+IndexSorter::IndexSorter(ARFieldInfoList &list)
 {
 	InitList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
@@ -38,7 +38,7 @@ GenerateSortableList::GenerateSortableList(ARFieldInfoList &list)
 	}
 }
 
-GenerateSortableList::GenerateSortableList(ARVuiInfoList &list)
+IndexSorter::IndexSorter(ARVuiInfoList &list)
 {
 	InitList(list.numItems);
 	for (unsigned int i = 0; i < list.numItems; ++i)
@@ -47,7 +47,7 @@ GenerateSortableList::GenerateSortableList(ARVuiInfoList &list)
 	}
 }
 
-GenerateSortableList::GenerateSortableList(vector<string> &list)
+IndexSorter::IndexSorter(vector<string> &list)
 {
 	size_t totalCount = list.size();
 	InitList(static_cast<unsigned int>(totalCount));
@@ -57,7 +57,7 @@ GenerateSortableList::GenerateSortableList(vector<string> &list)
 	}
 }
 
-GenerateSortableList::~GenerateSortableList()
+IndexSorter::~IndexSorter()
 {
 	if (theList != NULL)
 	{
@@ -66,14 +66,14 @@ GenerateSortableList::~GenerateSortableList()
 	}
 }
 
-void GenerateSortableList::InitList(unsigned int size)
+void IndexSorter::InitList(unsigned int size)
 {
 	theList = new ARNameList;
 	theList->nameList = new ARNameType[size];
 	theList->numItems = 0;
 }
 
-void GenerateSortableList::PushBackTrimmed(ARNameType &value)
+void IndexSorter::PushBackTrimmed(ARNameType &value)
 {
 	unsigned int skippedSpaces = 0;
 	while (value[skippedSpaces] == ' ') skippedSpaces++;
@@ -83,7 +83,7 @@ void GenerateSortableList::PushBackTrimmed(ARNameType &value)
 	theList->numItems++;
 }
 
-void GenerateSortableList::PushBackTrimmed(const std::string &value)
+void IndexSorter::PushBackTrimmed(const std::string &value)
 {
 	unsigned int skippedSpaces = 0;
 	while (value[skippedSpaces] == ' ') skippedSpaces++;

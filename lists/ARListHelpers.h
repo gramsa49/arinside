@@ -17,14 +17,14 @@
 
 #include "../util/Uncopyable.h"
 
-class GenerateSortableList : Uncopyable
+class IndexSorter : Uncopyable
 {
 public:
-	GenerateSortableList(ARNameList &list);
-	GenerateSortableList(vector<string> &list);
-	GenerateSortableList(ARFieldInfoList &list);
-	GenerateSortableList(ARVuiInfoList &list);
-	~GenerateSortableList();
+	IndexSorter(ARNameList &list);
+	IndexSorter(vector<string> &list);
+	IndexSorter(ARFieldInfoList &list);
+	IndexSorter(ARVuiInfoList &list);
+	~IndexSorter();
 
 	bool operator()(int l, int r) { return (strcoll(theList->nameList[l], theList->nameList[r]) < 0); }
 
@@ -39,10 +39,10 @@ private:
 class SortingDelegate
 {
 public:
-	SortingDelegate(GenerateSortableList &SortRef) : theSortFn(SortRef) {}
+	SortingDelegate(IndexSorter &SortRef) : theSortFn(SortRef) {}
 	bool operator()(int l, int r) { return theSortFn(l,r); }
 private:
-	GenerateSortableList &theSortFn;
+	IndexSorter &theSortFn;
 };
 
 
