@@ -21,6 +21,7 @@
 #include "../core/ARStatusList.h"
 #include "../output/WebUtil.h"
 #include "BlackList.h"
+#include "support/IndexSorter.h"
 
 CARMenuList::CARMenuList(void)
 {

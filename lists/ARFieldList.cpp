@@ -20,6 +20,7 @@
 #include "../ARInside.h"
 #include "../core/ARStatusList.h"
 #include "../util/RefItem.h"
+#include "support/IndexSorter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CARFieldList implementation

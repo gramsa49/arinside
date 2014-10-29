@@ -22,6 +22,7 @@
 #include "../core/ARImage.h"
 #include "../core/ARHandle.h"
 #include "../core/ARStatusList.h"
+#include "support/IndexSorter.h"
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_750
 

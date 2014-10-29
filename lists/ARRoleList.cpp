@@ -20,6 +20,7 @@
 #include "../ARInside.h"
 #include "../AppConfig.h"
 #include "../core/ARStatusList.h"
+#include "support/IndexSorter.h"
 
 void GetGroupStringAsVector(const char* groupStr, vector<int>& addToGroupList)
 {

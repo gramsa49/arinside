@@ -1,4 +1,4 @@
-//Copyright (C) 2009 John Luthgers | jls17
+//Copyright (C) 2014 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -13,19 +13,17 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
+
 #pragma once
 
-template<class C>
-struct DeletePointer : unary_function<C*, void>
+// a sorting delegate is needed, because the sort-algorithm copies the object multiple times
+template<class S>
+class SortingDelegate
 {
-	void operator()(C* p) { delete p; }
+public:
+	SortingDelegate(S &SortRef) : theSortFn(SortRef) {}
+	bool operator()(int l, int r) { return theSortFn(l,r); }
+private:
+	S &theSortFn;
 };
 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps);
-void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps);
-#endif
-
-// the following prop list should be used in CARServerObject derived classes if
-// they don't have their own propList available. It's initialized in CARInside.
-extern ARPropList emptyPropList;

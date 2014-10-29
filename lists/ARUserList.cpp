@@ -20,6 +20,7 @@
 #include "../ARInside.h"
 #include "../AppConfig.h"
 #include "../core/ARStatusList.h"
+#include "support/IndexSorter.h"
 
 CARUserList::CARUserList(void)
 {

@@ -22,6 +22,7 @@
 #include "../output/WebUtil.h"
 #include "../output/IFileStructure.h"
 #include "BlackList.h"
+#include "support/IndexSorter.h"
 
 CARActiveLinkList::CARActiveLinkList(void)
 {

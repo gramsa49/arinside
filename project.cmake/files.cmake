@@ -193,10 +193,20 @@ SET(ARINSIDE_SRCS_LISTS_H
 SOURCE_GROUP(lists FILES ${ARINSIDE_SRCS_LISTS_CPP} ${ARINSIDE_SRCS_LISTS_H})
 
 SET(ARINSIDE_SRCS_LISTS_SUPPORT_CPP
+ lists/support/BasicStringList.cpp
+ lists/support/IndexSorter.cpp
+ lists/support/LocaleDetector.cpp
  lists/support/SchemaDbQueryBuilder.cpp
+ lists/support/UTF8StringList.cpp
 )
 SET(ARINSIDE_SRCS_LISTS_SUPPORT_H
+ lists/support/BasicStringList.h
+ lists/support/IndexSorter.h
+ lists/support/InternalNameList.h
+ lists/support/LocaleDetector.h
  lists/support/SchemaDbQueryBuilder.h
+ lists/support/SortingDelegate.h
+ lists/support/UTF8StringList.h
 )
 SOURCE_GROUP(lists\\support FILES ${ARINSIDE_SRCS_LISTS_SUPPORT_CPP} ${ARINSIDE_SRCS_LISTS_SUPPORT_H})
 
@@ -471,6 +481,7 @@ SET(ARINSIDE_TEST_SRCS
  doc/DocTextReferencesTest.cpp
  doc/DocTextReferencesTest.h
  lists/ARListHelpersTest.cpp
+ lists/support/IndexSorterTest.cpp
  lists/support/SchemaDbQueryBuilderTest.cpp
  output/webpage/HtmlReferenceListImplTest.cpp
  output/ImageTagTest.cpp

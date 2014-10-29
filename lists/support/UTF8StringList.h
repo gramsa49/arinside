@@ -1,4 +1,4 @@
-//Copyright (C) 2009 John Luthgers | jls17
+//Copyright (C) 2014 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -13,19 +13,38 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
+
 #pragma once
 
-template<class C>
-struct DeletePointer : unary_function<C*, void>
-{
-	void operator()(C* p) { delete p; }
-};
+#include "InternalNameList.h"
 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps);
-void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps);
+class UTF8StringList : public InternalNameList
+{
+public:
+#ifdef WIN32
+	typedef wchar_t sort_char_t;
+	typedef std::wstring list_string_t;
+#else
+	typedef char sort_char_t;
+	typedef std::string list_string_t;
 #endif
 
-// the following prop list should be used in CARServerObject derived classes if
-// they don't have their own propList available. It's initialized in CARInside.
-extern ARPropList emptyPropList;
+private:
+#ifdef WIN32
+	std::locale systemLocale;
+#else
+	LocaleDetector localeDetection;
+#endif
+	const std::collate<sort_char_t> &coll;
+
+public:
+	UTF8StringList();
+
+	virtual void Allocate(unsigned int size);
+	virtual void PushBack(ARNameType &value);
+	virtual void PushBack(const std::string &value);
+
+	bool operator()(int l, int r);
+
+	vector<list_string_t> list;
+};

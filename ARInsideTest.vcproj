@@ -577,6 +577,10 @@
 				Name="support"
 				>
 				<File
+					RelativePath=".\lists\support\IndexSorterTest.cpp"
+					>
+				</File>
+				<File
 					RelativePath=".\lists\support\SchemaDbQueryBuilderTest.cpp"
 					>
 				</File>

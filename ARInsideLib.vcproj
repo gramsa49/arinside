@@ -2301,11 +2301,51 @@
 				Name="support"
 				>
 				<File
+					RelativePath=".\lists\support\BasicStringList.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\BasicStringList.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\IndexSorter.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\IndexSorter.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\InternalNameList.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\LocaleDetector.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\LocaleDetector.h"
+					>
+				</File>
+				<File
 					RelativePath=".\lists\support\SchemaDbQueryBuilder.cpp"
 					>
 				</File>
 				<File
 					RelativePath=".\lists\support\SchemaDbQueryBuilder.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\SortingDelegate.h"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\UTF8StringList.cpp"
+					>
+				</File>
+				<File
+					RelativePath=".\lists\support\UTF8StringList.h"
 					>
 				</File>
 			</Filter>

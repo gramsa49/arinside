@@ -1,4 +1,4 @@
-//Copyright (C) 2009 John Luthgers | jls17
+//Copyright (C) 2014 John Luthgers | jls17
 //
 //This file is part of ARInside.
 //
@@ -13,19 +13,32 @@
 //
 //    You should have received a copy of the GNU General Public License
 //    along with ARInside.  If not, see <http://www.gnu.org/licenses/>.
-#pragma once
 
-template<class C>
-struct DeletePointer : unary_function<C*, void>
+#pragma once
+#include "../util/Uncopyable.h"
+
+class InternalNameList;
+
+class IndexSorter : Uncopyable
 {
-	void operator()(C* p) { delete p; }
+public:
+	IndexSorter(bool isUTF8);
+	~IndexSorter();
+
+	IndexSorter& SortBy(ARNameList &list);
+	IndexSorter& SortBy(vector<string> &list);
+	IndexSorter& SortBy(ARFieldInfoList &list);
+	IndexSorter& SortBy(ARVuiInfoList &list);
+
+	void Sort(vector<int> &indexList);
+
+private:
+	void AllocateList(unsigned int size);
+	void PushBackTrimmed(ARNameType &value);
+	void PushBackTrimmed(const std::string &value);
+
+private:	
+	bool isUtf8List;
+	InternalNameList* theList;
 };
 
-#if AR_CURRENT_API_VERSION >= AR_API_VERSION_764
-void NormalizeNameListForSorting(ARNameList &names, ARPropListList &objProps);
-void NormalizeNameListToRealNames(ARNameList &names, ARPropListList &objProps);
-#endif
-
-// the following prop list should be used in CARServerObject derived classes if
-// they don't have their own propList available. It's initialized in CARInside.
-extern ARPropList emptyPropList;

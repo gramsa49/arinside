@@ -20,6 +20,7 @@
 #include "../ARInside.h"
 #include "../core/ARStatusList.h"
 #include "BlackList.h"
+#include "support/IndexSorter.h"
 
 CARContainerList::CARContainerList(void)
 {

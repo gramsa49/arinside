@@ -19,6 +19,7 @@
 #include "ARVUIList.h"
 #include "../ARInside.h"
 #include "../core/ARStatusList.h"
+#include "support/IndexSorter.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 // CARVUIListXML - implementation
