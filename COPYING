@@ -65,3 +65,15 @@ License:  MIT (https://jquery.org/license/)
 jQuery is a fast, small, and feature-rich JavaScript library. jQuery UI is a 
 curated set of user interface interactions, effects, widgets, and themes built
 on top of the jQuery JavaScript Library.
+
+== google-breakpad ==
+Homepage: https://code.google.com/p/google-breakpad/
+License:  New BSD License (http://opensource.org/licenses/BSD-3-Clause)
+
+An open-source multi-platform crash reporting system.
+
+== utf8cpp ==
+Homepage: http://utfcpp.sourceforge.net/
+License:  license at the beginning of the thirdparty/utf8cpp/source/utf8.h file
+
+UTF-8 with C++ in a Portable Way
