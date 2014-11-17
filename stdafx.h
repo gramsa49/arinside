@@ -31,6 +31,7 @@
 #include <algorithm>
 #include <functional>
 #include <assert.h>
+#include <stdexcept>
 
 #ifdef WIN32 // JLS17 LINUX
 #include <windows.h>

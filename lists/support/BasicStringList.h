@@ -31,4 +31,7 @@ public:
 	bool operator()(int l, int r);
 
 	ARNameList *list;
+
+private:
+	void MakeLower(ARNameType &value);
 };

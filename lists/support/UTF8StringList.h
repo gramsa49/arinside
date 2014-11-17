@@ -17,6 +17,9 @@
 #pragma once
 
 #include "InternalNameList.h"
+#ifndef WIN32
+#include "LocaleDetector.h"
+#endif
 
 class UTF8StringList : public InternalNameList
 {
@@ -45,6 +48,10 @@ public:
 	virtual void PushBack(const std::string &value);
 
 	bool operator()(int l, int r);
+	sort_char_t operator() (sort_char_t c);
 
 	vector<list_string_t> list;
+
+private:
+	void MakeLower(list_string_t &str);
 };

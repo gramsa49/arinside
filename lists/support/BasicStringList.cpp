@@ -39,6 +39,7 @@ void BasicStringList::PushBack(ARNameType &value)
 	while (value[skippedSpaces] == ' ') skippedSpaces++;
 
 	strncpy(list->nameList[list->numItems], &value[skippedSpaces], AR_MAX_NAME_SIZE);
+	MakeLower(list->nameList[list->numItems]);
 	list->nameList[list->numItems][AR_MAX_NAME_SIZE] = 0;
 	list->numItems++;
 }
@@ -49,6 +50,7 @@ void BasicStringList::PushBack(const std::string &value)
 	while (value[skippedSpaces] == ' ') skippedSpaces++;
 
 	strncpy(list->nameList[list->numItems], (value.c_str() + skippedSpaces), AR_MAX_NAME_SIZE);
+	MakeLower(list->nameList[list->numItems]);
 	list->nameList[list->numItems][AR_MAX_NAME_SIZE] = 0;
 	list->numItems++;
 }
@@ -56,4 +58,14 @@ void BasicStringList::PushBack(const std::string &value)
 bool BasicStringList::operator()(int l, int r) 
 {
 	return (strcoll(list->nameList[l], list->nameList[r]) < 0);
+}
+
+void BasicStringList::MakeLower(ARNameType &name)
+{
+	for (unsigned int idx = 0; idx < AR_MAX_NAME_SIZE; ++idx)
+	{
+		char c = name[idx];
+		if (c == 0) break;
+		name[idx] = tolower(c);
+	}	
 }

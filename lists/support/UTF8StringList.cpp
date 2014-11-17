@@ -21,9 +21,11 @@
 
 UTF8StringList::UTF8StringList()
 #ifdef WIN32
-: systemLocale(""), coll(std::use_facet<std::collate<sort_char_t> >(systemLocale))
+#define UTF8_SORT_LOCALE systemLocale
+: systemLocale(""), coll(std::use_facet<std::collate<sort_char_t> >(UTF8_SORT_LOCALE))
 #else
-: coll(std::use_facet<std::collate<char> >(localeDetection.sortLocale))
+#define UTF8_SORT_LOCALE localeDetection.sortLocale
+: coll(std::use_facet<std::collate<char> >(UTF8_SORT_LOCALE))
 #endif
 {
 }
@@ -39,12 +41,12 @@ void UTF8StringList::PushBack(ARNameType &value)
 	while (value[skippedSpaces] == ' ') skippedSpaces++;
 
 #ifdef WIN32
-	vector<wchar_t> wideString;
+	std::wstring wideString;
+	wideString.reserve(AR_MAX_NAME_SIZE + 1);
 	utf8::utf8to16(&value[skippedSpaces], &value[strlen(value)], back_inserter(wideString));
-	wideString.push_back(0);
-	
-	wchar_t *uStr = &wideString[0];
-	list.push_back(uStr);
+	MakeLower(wideString);
+
+	list.push_back(wideString);
 #else
 	list.push_back(&value[skippedSpaces]);
 #endif
@@ -56,12 +58,12 @@ void UTF8StringList::PushBack(const std::string &value)
 	while (value[skippedSpaces] == ' ') skippedSpaces++;
 
 #ifdef WIN32
-	vector<wchar_t> wideString;
+	std::wstring wideString;
+	wideString.reserve(AR_MAX_NAME_SIZE + 1);
 	utf8::utf8to16(value.begin() + skippedSpaces, value.end(), back_inserter(wideString));
-	wideString.push_back(0);
+	MakeLower(wideString);
 	
-	wchar_t *uStr = &wideString[0];
-	list.push_back(uStr);
+	list.push_back(wideString);
 #else
 	list.push_back(value.c_str() + skippedSpaces);
 #endif
@@ -73,4 +75,14 @@ bool UTF8StringList::operator() (int l, int r)
 		coll.compare(list[l].c_str(), list[l].c_str() + list[l].size(),
 		             list[r].c_str(), list[r].c_str() + list[r].size()
 		            ) < 0);
+}
+
+UTF8StringList::sort_char_t UTF8StringList::operator () (sort_char_t c)
+{
+	return std::tolower(c, UTF8_SORT_LOCALE);
+}
+
+void UTF8StringList::MakeLower(list_string_t &str)
+{
+	std::transform(str.begin(), str.end(), str.begin(), *this);
 }
