@@ -61,13 +61,11 @@ TEST(FileSystemUtil, CombinePathSecondPathStartsWithRootDir)
 #endif
 }
 
-#ifdef WIN32
 TEST(FileSystemUtil, CombinePathSecondPathStartsWithRootDir2)
 {
 	string directory = FileSystemUtil::CombinePath("C:\\Windows", "/Temp");
 	ASSERT_STREQ("/Temp", directory.c_str());
 }
-#endif
 
 TEST(FileSystemUtil, CombinePathWithMixedSeparators)
 {
