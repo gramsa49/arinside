@@ -127,22 +127,7 @@ const ARPropList& CARFieldListXML::FieldGetPropList(unsigned int index) const
 CARFieldListServer::CARFieldListServer(unsigned int schemaInsideId)
 {
 	schemaId = schemaInsideId;
-	ARZeroMemory(&names);
-	ARZeroMemory(&fieldIds);
-	ARZeroMemory(&fieldMaps);
-	ARZeroMemory(&dataTypes);
-	ARZeroMemory(&options);
-	ARZeroMemory(&createModes);
-	ARZeroMemory(&fieldOptions);
-	ARZeroMemory(&defaultValues);
-	ARZeroMemory(&permLists);
-	ARZeroMemory(&limits);
-	ARZeroMemory(&dInstanceLists);
-	ARZeroMemory(&helpTexts);
-	ARZeroMemory(&changedTimes);
-	ARZeroMemory(&owners);
-	ARZeroMemory(&changedUsers);
-	ARZeroMemory(&changeDiary);
+	ClearAllStructs();
 }
 
 CARFieldListServer::~CARFieldListServer()
@@ -165,6 +150,26 @@ CARFieldListServer::~CARFieldListServer()
 	FreeARTextStringList(&changeDiary, false);
 }
 
+void CARFieldListServer::ClearAllStructs()
+{
+	ARZeroMemory(&names);
+	ARZeroMemory(&fieldIds);
+	ARZeroMemory(&fieldMaps);
+	ARZeroMemory(&dataTypes);
+	ARZeroMemory(&options);
+	ARZeroMemory(&createModes);
+	ARZeroMemory(&fieldOptions);
+	ARZeroMemory(&defaultValues);
+	ARZeroMemory(&permLists);
+	ARZeroMemory(&limits);
+	ARZeroMemory(&dInstanceLists);
+	ARZeroMemory(&helpTexts);
+	ARZeroMemory(&changedTimes);
+	ARZeroMemory(&owners);
+	ARZeroMemory(&changedUsers);
+	ARZeroMemory(&changeDiary);
+}
+
 bool CARFieldListServer::LoadFromServer()
 {
 	ARBooleanList   fldExists;
@@ -173,7 +178,7 @@ bool CARFieldListServer::LoadFromServer()
 	ARNameType			schemaName; memcpy(schemaName, arIn->schemaList.SchemaGetName(schemaId), sizeof(ARNameType));
 
 	memset(&fldExists, 0, sizeof(ARBooleanList));
-	memset(&status, 0, sizeof(status));
+	memset(&status, 0, sizeof(status));	
 
 	if (!arIn->appConfig.slowObjectLoading && ARGetMultipleFields(&arIn->arControl,
 		schemaName, 
@@ -322,58 +327,102 @@ const ARPropList& CARFieldListServer::FieldGetPropList(unsigned int index) const
 
 void CARFieldListServer::Reserve(unsigned int amount)
 {
-	names.nameList = new ARNameType[amount];
-	ARZeroMemory(names.nameList, sizeof(ARNameType) * amount);
+	unsigned int objAllocIndex = 0;
+	try
+	{
+		names.nameList = new ARNameType[amount];
+		ARZeroMemory(names.nameList, sizeof(ARNameType) * amount);
+		objAllocIndex++;
 
-	fieldIds.internalIdList = new ARInternalId[amount];
-	ARZeroMemory(fieldIds.internalIdList, sizeof(ARInternalId) * amount);
+		fieldIds.internalIdList = new ARInternalId[amount];
+		ARZeroMemory(fieldIds.internalIdList, sizeof(ARInternalId) * amount);
+		objAllocIndex++;
 
-	fieldMaps.mappingList = new ARFieldMappingStruct[amount];
-	ARZeroMemory(fieldMaps.mappingList, sizeof(ARFieldMappingStruct) * amount);
+		fieldMaps.mappingList = new ARFieldMappingStruct[amount];
+		ARZeroMemory(fieldMaps.mappingList, sizeof(ARFieldMappingStruct) * amount);
+		objAllocIndex++;
 
-	dataTypes.intList = new unsigned int[amount];
-	ARZeroMemory(dataTypes.intList, sizeof(unsigned int) * amount);
+		dataTypes.intList = new unsigned int[amount];
+		ARZeroMemory(dataTypes.intList, sizeof(unsigned int) * amount);
+		objAllocIndex++;
 
-	options.intList = new unsigned int[amount];
-	ARZeroMemory(options.intList, sizeof(unsigned int) * amount);
+		options.intList = new unsigned int[amount];
+		ARZeroMemory(options.intList, sizeof(unsigned int) * amount);
+		objAllocIndex++;
 
-	createModes.intList = new unsigned int[amount];
-	ARZeroMemory(createModes.intList, sizeof(unsigned int) * amount);
-	
-	fieldOptions.intList = new unsigned int[amount];
-	ARZeroMemory(fieldOptions.intList, sizeof(unsigned int) * amount);
+		createModes.intList = new unsigned int[amount];
+		ARZeroMemory(createModes.intList, sizeof(unsigned int) * amount);
+		objAllocIndex++;
+		
+		fieldOptions.intList = new unsigned int[amount];
+		ARZeroMemory(fieldOptions.intList, sizeof(unsigned int) * amount);
+		objAllocIndex++;
 
-	defaultValues.valueList = new ARValueStruct[amount];
-	ARZeroMemory(defaultValues.valueList, sizeof(ARValueStruct) * amount);
+		defaultValues.valueList = new ARValueStruct[amount];
+		ARZeroMemory(defaultValues.valueList, sizeof(ARValueStruct) * amount);
+		objAllocIndex++;
 
-	permLists.permissionList = new ARPermissionList[amount];
-	ARZeroMemory(permLists.permissionList, sizeof(ARPermissionList) * amount);
+		permLists.permissionList = new ARPermissionList[amount];
+		ARZeroMemory(permLists.permissionList, sizeof(ARPermissionList) * amount);
+		objAllocIndex++;
 
-	limits.fieldLimitList = new ARFieldLimitStruct[amount];
-	ARZeroMemory(limits.fieldLimitList, sizeof(ARFieldLimitStruct) * amount);
+		limits.fieldLimitList = new ARFieldLimitStruct[amount];
+		ARZeroMemory(limits.fieldLimitList, sizeof(ARFieldLimitStruct) * amount);
+		objAllocIndex++;
 
-	dInstanceLists.dInstanceList = new ARDisplayInstanceList[amount];
-	ARZeroMemory(dInstanceLists.dInstanceList, sizeof(ARDisplayInstanceList) * amount);
+		dInstanceLists.dInstanceList = new ARDisplayInstanceList[amount];
+		ARZeroMemory(dInstanceLists.dInstanceList, sizeof(ARDisplayInstanceList) * amount);
+		objAllocIndex++;
 
-	helpTexts.stringList = new char*[amount];
-	ARZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
+		helpTexts.stringList = new char*[amount];
+		ARZeroMemory(helpTexts.stringList, sizeof(char*) * amount);
+		objAllocIndex++;
 
-	changedTimes.timestampList = new ARTimestamp[amount];
-	ARZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
+		changedTimes.timestampList = new ARTimestamp[amount];
+		ARZeroMemory(changedTimes.timestampList, sizeof(ARTimestamp) * amount);
+		objAllocIndex++;
 
-	owners.nameList = new ARAccessNameType[amount];
-	ARZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
+		owners.nameList = new ARAccessNameType[amount];
+		ARZeroMemory(owners.nameList, sizeof(ARAccessNameType) * amount);
+		objAllocIndex++;
 
-	changedUsers.nameList = new ARAccessNameType[amount];
-	ARZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
+		changedUsers.nameList = new ARAccessNameType[amount];
+		ARZeroMemory(changedUsers.nameList, sizeof(ARAccessNameType) * amount);
+		objAllocIndex++;
 
-	changeDiary.stringList = new char*[amount];
-	ARZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
+		changeDiary.stringList = new char*[amount];
+		ARZeroMemory(changeDiary.stringList, sizeof(char*) * amount);
+		objAllocIndex++;
 
 #if AR_CURRENT_API_VERSION >= AR_API_VERSION_763
-	objProps.propsList = new ARPropList[amount];
-	ARZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
+		objProps.propsList = new ARPropList[amount];
+		ARZeroMemory(objProps.propsList, sizeof(ARPropList) * amount);
+		objAllocIndex++;
 #endif
+	}
+	catch (exception &e)
+	{
+		cout << "Failed to allocate memory (" << e.what() << ") for " << CARInside::GetInstance()->schemaList.SchemaGetName(schemaId) << " [" << objAllocIndex << ", " << amount << "]" << endl;
+		delete[] objProps.propsList;
+		delete[] changeDiary.stringList;
+		delete[] changedUsers.nameList;
+		delete[] owners.nameList;
+		delete[] changedTimes.timestampList;
+		delete[] helpTexts.stringList;
+		delete[] dInstanceLists.dInstanceList;
+		delete[] limits.fieldLimitList;
+		delete[] permLists.permissionList;
+		delete[] defaultValues.valueList;
+		delete[] fieldOptions.intList;
+		delete[] createModes.intList;
+		delete[] options.intList;
+		delete[] dataTypes.intList;
+		delete[] fieldMaps.mappingList;
+		delete[] fieldIds.internalIdList;
+		delete[] names.nameList;
+		ClearAllStructs();
+		throw;
+	}
 }
 
 void CARFieldListServer::SetNumItems(unsigned int amount)

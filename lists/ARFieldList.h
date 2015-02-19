@@ -151,6 +151,7 @@ private:
 	void Reserve(unsigned int amount);
 	void SetNumItems(unsigned int amount);
 	void BuildIndex();
+	void ClearAllStructs();
 
 private:
 	unsigned int schemaId;

@@ -20,10 +20,14 @@
 
 int main(int argc, char* argv[])
 {
+	void *pCrashHandler =
 #ifdef ARINSIDE_BREAKPAD_SUPPORT
-	CrashHandler crashHandler;
+		new CrashHandler();
+#else
+		NULL;
 #endif
 	CMain theMain;
+	theMain.SetCrashHandler(pCrashHandler);
 	return theMain.Run(argc, argv);
 
 }

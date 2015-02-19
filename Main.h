@@ -24,6 +24,8 @@ class AppConfig;
 class CMain
 {
 public:
+	CMain();
+	void SetCrashHandler(void *pAddr);
 	int Run(int argc, char* argv[]);
 
 private:
@@ -37,4 +39,5 @@ private:
 
 private:
 	CAppTimer mTimer;
+	void*     crashHandler;
 };

@@ -31,6 +31,11 @@ using namespace TCLAP;
 // TODO: remote this global dependency
 int nFilesCreated;
 
+CMain::CMain()
+{
+	crashHandler = NULL;
+}
+
 int CMain::Run(int argc, char* argv[])
 {
 	mTimer.StartTimer();
@@ -45,6 +50,9 @@ int CMain::Run(int argc, char* argv[])
 			return cmdLineValidator.GetExitCode();
 
 		string settingsIni = cmdLineValidator.GetIniFilename();
+
+		if (crashHandler != NULL)
+			LOG << "Crash handler is installed" << endl;
 
 		cout << endl << "Load application configuration settings: '" << settingsIni << "' " << endl;
 		AppConfigReader reader(settingsIni);
@@ -132,6 +140,11 @@ int CMain::Run(int argc, char* argv[])
 	}
 
 	return result;
+}
+
+void CMain::SetCrashHandler(void *pAddr)
+{
+	crashHandler = pAddr;
 }
 
 const char* CMain::GetPlatformString() const

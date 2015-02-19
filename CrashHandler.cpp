@@ -76,6 +76,7 @@ bool BreakpadMinidumpCallback(
 #endif
 {
 	cout << "Application crash! Mini dump written to: ";
+	cout.flush();
 #ifdef WIN32
   wcout << dump_path << minidump_id << L".dmp";
 #else

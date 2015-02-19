@@ -373,9 +373,19 @@ bool CARSchemaList::LoadFromServer()
 
 	for (unsigned int schemaIndex = 0; schemaIndex < count; ++schemaIndex)
 	{
-		CARFieldListServer *srvFieldList = new CARFieldListServer(schemaIndex);
-		srvFieldList->LoadFromServer(); // TODO: maybe check if successfully loaded
-		srvFieldList->Sort();
+		CARFieldListServer *srvFieldList = NULL;
+		try
+		{
+			srvFieldList = new CARFieldListServer(schemaIndex);
+			srvFieldList->LoadFromServer(); // TODO: maybe check if successfully loaded
+			srvFieldList->Sort();
+		}
+		catch (exception &e)
+		{
+			cerr << "FATAL: loading fields for '" << SchemaGetName(schemaIndex) << "' failed with: " << e.what() << endl;
+			if (srvFieldList != NULL) { delete srvFieldList; }
+			srvFieldList = new CARFieldListServer(schemaIndex);
+		}
 		fieldLists.push_back(srvFieldList);
 	}
 
